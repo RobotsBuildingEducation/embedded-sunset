@@ -88,7 +88,7 @@ const MultipleChoiceQuestion = ({
 
   const handleContainerBlur = (e) => {
     setTimeout(() => {
-      if (!e.currentTarget.contains(document.activeElement)) {
+      if (!e.currentTarget?.contains(document?.activeElement)) {
         setIsComponentFocused(false);
         setFocusedIndex(-1);
       }

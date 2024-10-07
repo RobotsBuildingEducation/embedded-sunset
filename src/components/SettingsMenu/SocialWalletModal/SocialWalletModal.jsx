@@ -76,7 +76,7 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
             userLanguage={userLanguage}
           />
           <ActionButton
-            href="https://robotsbuildingeducation.com"
+            href="https://embedded-rox.app"
             text={translation[userLanguage]["settings.button.yourTutor"]}
             userLanguage={userLanguage}
           />

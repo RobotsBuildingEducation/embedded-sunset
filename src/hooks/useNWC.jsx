@@ -1,9 +1,9 @@
 import { useState } from "react";
-import NDK, {
-  NDKPrivateKeySigner,
-  NDKEvent,
-  NDKKind,
-} from "@nostr-dev-kit/ndk";
+// import NDK, {
+//   NDKPrivateKeySigner,
+//   NDKEvent,
+//   NDKKind,
+// } from "@nostr-dev-kit/ndk";
 import { Buffer } from "buffer";
 import { bech32 } from "bech32";
 import { getPublicKey } from "nostr-tools";

@@ -2,22 +2,30 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Match any document in the 'users' collection
     match /users/{userId} {
 
-      // Allow read access if the document's npub field matches the document ID (userId).
+      // Allow read access if the existing document's npub field matches the document ID (userId)
       allow read: if resource.data.npub == userId;
 
-      // Allow create access if the document's npub field matches the document ID (userId).
+      // Allow create access if the incoming npub value matches the document ID (userId)
       allow create: if request.resource.data.npub == userId;
 
-      // Allow update access if:
-      // 1. The request includes an `npub` field that matches the document ID.
-      // 2. The existing document's `npub` matches the document ID.
-      allow update: if request.resource.data.npub == userId 
-                    && resource.data.npub == userId;
+      // Allow update access if both the existing document's npub and the incoming npub value match the document ID (userId)
+      allow update: if request.resource.data.npub == userId && resource.data.npub == userId;
 
-      // Deny listing (query) access to the entire collection.
+      // Deny listing (query) access to the entire collection
       allow list: if false;
+
+      // Define access rules for all subcollections under each user's document
+      match /{subcollection=**} {
+
+        // Allow read, create, and update access to subcollections if the parent document's npub field matches the document ID
+        allow read, create, update: if get(/databases/$(database)/documents/users/$(userId)).data.npub == userId;
+
+        // Deny listing for subcollections as well
+        allow list: if false;
+      }
     }
   }
 }

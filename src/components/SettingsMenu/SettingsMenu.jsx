@@ -233,7 +233,7 @@ const SettingsMenu = ({
                 // as="a"
 
                 onClick={() => {
-                  window.open("https://chatgpt.com/g/g-09h5uQiFC-rox");
+                  window.open("https://chatgpt.com/g/g-LPoMAiBoa-sunset");
                 }}
                 variant={"outline"}
                 boxShadow={"0px 0.5px 0.5px 1px black"}

@@ -154,10 +154,10 @@ const MultipleAnswerQuestion = ({
                 borderRadius="15%"
                 borderWidth="2px"
                 borderColor={
-                  selectedOptions.includes(option) ? "pink.500" : "gray.300"
+                  selectedOptions.includes(option) ? "pink.300" : "gray.300"
                 }
                 backgroundColor={
-                  selectedOptions.includes(option) ? "pink.500" : "transparent"
+                  selectedOptions.includes(option) ? "pink.300" : "transparent"
                 }
               />
               <Text flex="1" noOfLines={[2, 3, 4]}>

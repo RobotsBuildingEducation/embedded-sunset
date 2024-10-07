@@ -116,7 +116,7 @@ import { PasscodeModal } from "./components/PasscodeModal/PasscodeModal";
 import { usePasscodeModalStore } from "./usePasscodeModalStore";
 
 // logEvent(analytics, "page_view", {
-//   page_location: "https://program-ai.app/",
+//   page_location: "https://embedded-rox.app/",
 // });
 
 const phraseToSymbolMap = {
@@ -607,6 +607,7 @@ export const VoiceInput = ({
             onMouseDown={handleAiStart}
             colorScheme="pink"
             variant={"outline"}
+            border="1px solid rgb(254,224,232)"
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 handleAiStart(); // Select the option on Enter or Space key
@@ -1272,7 +1273,7 @@ const Step = ({
       cashTap();
 
       postNostrContent(
-        `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://program-ai.app \n\n${step.question?.questionText} #LearnWithNostr https://m.primal.net/KBLq.png`
+        `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://embedded-rox.app \n\n${step.question?.questionText} #LearnWithNostr https://m.primal.net/KBLq.png`
       );
       if (step.isConversationReview) {
         assignExistingBadgeToNpub(transcript[step.group]["address"]);
@@ -1896,11 +1897,11 @@ const Step = ({
                 icon={<EmailIcon padding="4px" fontSize="18px" />}
                 mr={2}
                 onMouseDown={() =>
-                  (window.location.href = `mailto:sheilfer@robotsbuildingeducation.com?subject=Program AI ${translation[userLanguage]["email.question"]} ${currentStep}: ${step.question.questionText} | ${step.description}&body=${translation[userLanguage]["email.donotdelete"]}       \n\n ${JSON.stringify(emailText)}  `)
+                  (window.location.href = `mailto:sheilfer@robotsbuildingeducation.com?subject=Sunset ${translation[userLanguage]["email.question"]} ${currentStep}: ${step.question.questionText} | ${step.description}&body=${translation[userLanguage]["email.donotdelete"]}       \n\n ${JSON.stringify(emailText)}  `)
                 }
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
-                    window.location.href = `mailto:sheilfer@robotsbuildingeducation.com?subject=Program AI ${translation[userLanguage]["email.question"]} ${currentStep}: ${step.question.questionText} | ${step.description}&body=${translation[userLanguage]["email.donotdelete"]}       \n\n ${JSON.stringify(emailText)}  `;
+                    window.location.href = `mailto:sheilfer@robotsbuildingeducation.com?subject=Sunset ${translation[userLanguage]["email.question"]} ${currentStep}: ${step.question.questionText} | ${step.description}&body=${translation[userLanguage]["email.donotdelete"]}       \n\n ${JSON.stringify(emailText)}  `;
                   }
                 }}
               />
@@ -2168,13 +2169,13 @@ const Step = ({
                     borderRadius="3xl"
                     width="100%"
                     maxWidth="600px"
-                    background={isCorrect ? "#dcecfc" : "#fcdcdc"}
+                    background={isCorrect ? "orange.100" : "#fcdcdc"}
                     transition="0.2s all ease-in-out"
                     borderBottomRightRadius={"0px"}
                   >
                     <Text
                       textAlign={"left"}
-                      color={isCorrect ? "blue.500" : "red.500"}
+                      color={isCorrect ? "orange.500" : "red.500"}
                     >
                       {feedback}{" "}
                       {grade ? (
@@ -2307,6 +2308,7 @@ const Home = ({
 
   const handleCreateAccount = async () => {
     setIsCreatingAccount(true);
+    setLoadingMessage();
     const newKeys = await generateNostrKeys(
       userName,
       setLoadingMessage,
@@ -2482,7 +2484,7 @@ const Home = ({
                   }
                 }}
                 onMouseDown={handleCreateAccount}
-                colorScheme="cyan"
+                colorScheme="purple"
                 variant={"outline"}
                 isDisabled={userName.length < 1}
                 style={{ width: "150px" }}
@@ -2494,6 +2496,7 @@ const Home = ({
                 colorScheme="pink"
                 backgroundColor="pink.50"
                 variant={"outline"}
+                border="1px solid rgb(254,224,232)"
                 onMouseDown={() => setView("signIn")}
                 style={{ width: "150px" }}
                 onKeyDown={(e) => {
@@ -2575,6 +2578,7 @@ const Home = ({
               onMouseDown={handleSignIn}
               colorScheme="pink"
               backgroundColor="pink.50"
+              border="1px solid rgb(254,224,232)"
               variant={"outline"}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
@@ -2597,7 +2601,7 @@ const Home = ({
             // gravity={0.75}
             numberOfPieces={100}
             recycle={false}
-            colors={["#FFCCCC", "#CCEFFF", "#D9A8FF", "#FF99CC", "#FFD1B3"]} // Array of colors matching the logo
+            colors={["#f2dcfa", "#f9d4fa", "#fca4b3", "#fcb7a4", "#fcd4a4"]} // Array of colors matching the logo
           />
           <PanRightComponent>
             <Text
@@ -2605,8 +2609,9 @@ const Home = ({
               maxWidth="600px"
               width="100%"
               textAlign={"left"}
+              background="orange.100"
               style={{
-                backgroundColor: "#dcecfc",
+                // backgroundColor: "#dcecfc",
                 display: "flex",
                 flexDirection: "column",
               }}
@@ -2874,48 +2879,57 @@ function App({ isShutDown }) {
   useEffect(() => {
     const initializeApp = async () => {
       const npub = localStorage.getItem("local_npub");
+
       if (npub && window.location.pathname !== "/dashboard") {
-        const step = await getUserStep(npub); // Fetch the current step
+        try {
+          const step = await getUserStep(npub); // Fetch the current step
 
-        if (step == 0) {
-          localStorage.clear();
-          navigate("/");
-        } else {
-          auth(localStorage.getItem("local_nsec"));
-          setIsSignedIn(true);
-          setCurrentStep(step);
-          // Fetch user language preference
-          const userDoc = doc(database, "users", npub);
-          const userSnapshot = await getDoc(userDoc);
-          if (userSnapshot.exists()) {
-            const userData = userSnapshot.data();
-            // console.log("userData.userLanguage", userData.language);
-            setUserLanguage(userData.userLanguage || "en"); // Set user language preference
-            localStorage.setItem("userLanguage", userData.language);
-          }
-
-          if (location.pathname === "/about") {
-          } else if (
-            step === "subscription" ||
-            (step > 9 &&
-              localStorage.getItem("passcode") !==
-                import.meta.env.VITE_PATREON_PASSCODE)
-          ) {
-            navigate("/subscription");
-          } else if (step === "award") {
-            navigate("/award");
+          if (step == 0) {
+            localStorage.clear();
+            navigate("/");
           } else {
-            if (step !== 0) {
-              topRef.current?.scrollIntoView();
-              navigate(`/q/${step}`);
+            console.log("nope");
+            auth(localStorage.getItem("local_nsec"));
+            setIsSignedIn(true);
+            setCurrentStep(step);
+
+            const userDoc = doc(database, "users", npub);
+            const userSnapshot = await getDoc(userDoc);
+
+            // Wrap Firestore getDoc in try...catch to handle potential errors
+            if (userSnapshot.exists()) {
+              const userData = userSnapshot.data();
+              setUserLanguage(userData.userLanguage || "en");
+              localStorage.setItem("userLanguage", userData.language);
+            }
+
+            if (location.pathname === "/about") {
+              // Do nothing if on /about
+            } else if (
+              step === "subscription" ||
+              (step > 9 &&
+                localStorage.getItem("passcode") !==
+                  import.meta.env.VITE_PATREON_PASSCODE)
+            ) {
+              navigate("/subscription");
+            } else if (step === "award") {
+              navigate("/award");
+            } else {
+              if (step !== 0) {
+                topRef.current?.scrollIntoView();
+                navigate(`/q/${step}`);
+              }
             }
           }
-        }
-
-        if (localStorage.getItem("userLanguage")) {
-          setUserLanguage(localStorage.getItem("userLanguage") || "en");
-        } else {
-          localStorage.setItem("userLanguage", "en");
+        } catch (error) {
+          // Catch permission denied errors and handle them accordingly
+          if (error.code === "permission-denied") {
+            console.error("Permission Denied: ", error);
+            localStorage.clear(); // Clear any local state or authentication
+            navigate("/"); // Redirect to the root route or any other route
+          } else {
+            console.error("Unexpected Error: ", error);
+          }
         }
       }
       setLoading(false);
@@ -3183,6 +3197,7 @@ export const AppWrapper = () => {
       {/* <div>
         <b>Test Version 0.9.1</b>
       </div> */}
+      <b>Test Version 0.9.1</b>
       <App isShutDown={isShutDown} />
     </Router>
   );

@@ -59,12 +59,13 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       currentMetadata.picture = profilePictureUrl;
 
       // Create a new metadata event (kind: 0)
-      const metadataEvent = new NDKEvent(ndkInstance, {
+      const metadataEvent = new (ndkInstance,
+      {
         kind: NDKKind.Metadata,
         pubkey: hexNpub,
         created_at: Math.floor(Date.now() / 1000),
         content: JSON.stringify(currentMetadata),
-      });
+      })();
 
       // Sign and publish the metadata event
       await metadataEvent.sign(signer);
@@ -118,13 +119,13 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
         encodedNsec
       );
 
-      setLoadingMessage("createAccount.isCreatingProfilePicture");
-      //Creating profile picture... 3/4
-      setProfilePicture(
-        "https://primal.b-cdn.net/media-cache?s=o&a=1&u=https%3A%2F%2Fm.primal.net%2FKBLq.png",
-        publicKey,
-        encodedNsec
-      );
+      // setLoadingMessage("createAccount.isCreatingProfilePicture");
+      // //Creating profile picture... 3/4
+      // setProfilePicture(
+      //   "https://primal.b-cdn.net/media-cache?s=o&a=1&u=https%3A%2F%2Fm.primal.net%2FKBLq.png",
+      //   publicKey,
+      //   encodedNsec
+      // );
 
       // if (
       //   window.location.hostname !== "localhost" &&

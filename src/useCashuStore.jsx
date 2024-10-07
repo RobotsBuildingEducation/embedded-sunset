@@ -1,7 +1,13 @@
 import { create } from "zustand";
-import { CashuMint, CashuWallet, getEncodedToken } from "@cashu/cashu-ts";
+// import { CashuMint, CashuWallet, getEncodedToken } from "@cashu/cashu-ts";
 import { addDoc, collection } from "firebase/firestore";
 import { database } from "./database/firebaseResources";
+import { CashuWallet } from "@cashu/cashu-ts/src/CashuWallet";
+import { CashuMint } from "@cashu/cashu-ts/src/CashuMint";
+import { getEncodedToken } from "@cashu/cashu-ts/src/utils";
+// import { CashuWallet } from "@cashu/cashu-ts";
+
+// import { CashuMint, CashuWallet, getEncodedToken } from "@cashu/cashu-ts";
 
 const useCashuStore = create((set, get) => ({
   proofs: JSON.parse(localStorage.getItem("proofs")) || [],

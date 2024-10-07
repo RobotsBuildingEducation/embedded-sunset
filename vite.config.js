@@ -11,13 +11,13 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 3000000, // Set to 4MB or any higher value
       },
       manifest: {
-        name: "Program AI",
-        short_name: "Program AI",
+        name: "Sunset",
+        short_name: "Sunset",
         start_url: "./",
         display: "standalone",
         theme_color: "#000000",
         background_color: "#ffffff",
-        description: "PWA install handler package for Program AI",
+        description: "PWA install handler package for Sunset",
         icons: [
           {
             src: "https://res.cloudinary.com/dtkeyccga/image/upload/v1723193585/8_sexlqw.png",

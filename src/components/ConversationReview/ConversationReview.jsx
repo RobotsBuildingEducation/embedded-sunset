@@ -272,6 +272,7 @@ const ConversationReview = ({
         isDisabled={response?.length < 1}
         onMouseDown={handleSubmit}
         colorScheme="pink"
+        background={"pink.300"}
         mt={4}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {

@@ -3,6 +3,7 @@ import { DataTags } from "../elements/DataTag";
 
 export let translation = {
   en: {
+    "button.pickedup": "Picked up",
     "toast.title.keysCopied": "Keys copied.",
     "toast.description.keysCopied":
       "Your keys have been copied to the clipboard.",
@@ -29,7 +30,7 @@ export let translation = {
     "createAccount.isLoading": "Creating...",
 
     "createAccount.isCreating": "Creating account... 1/3",
-    "createAccount.isCreatingProfile": "Creating account... 2/3",
+    "createAccount.isCreatingProfile": "Creating profile... 2/3",
     "createAccount.isCreatingProfilePicture": "Creating profile picture...3/4",
     "createAccount.isCreatingIntroPost":
       "Creating community #introductions post... 3/3",
@@ -39,7 +40,7 @@ export let translation = {
     "nostrContent.onboardedProfileAbout":
       "A student onboarded with Robots Building Education",
     "nostrContent.introductionPost":
-      "gm nostr! I'm here from Tiktok by creating an account through https://program-ai.app so I can learn how to code with AI. Looking forward to meeting folks in the cypherpunk community! #introductions #LearnWithNostr",
+      "gm nostr! I'm here from Tiktok by creating an account through https://embedded-rox.app so I can learn how to code with AI. Looking forward to meeting folks in the cypherpunk community! #introductions #LearnWithNostr",
 
     "createAccount.successMessage": "That's it!",
     "createAccount.awareness":
@@ -557,6 +558,8 @@ export let translation = {
     cancel: "Cancel",
   },
   es: {
+    "button.pickedup": "Recogido",
+
     confirm: "Confirmar",
     cancel: "Cancelar",
     "label.new": "¡Nuevo!",
@@ -641,10 +644,10 @@ export let translation = {
     "nostrContent.onboardedProfileAbout":
       "Un estudiante se unió con Robots Building Education",
     "nostrContent.introductionPost":
-      "¡Buenos días, Nostr! Estoy aquí desde Tiktok, creando una cuenta a través de https://program-ai.app para aprender a programar con IA. ¡Espero conocer a personas de la comunidad cypherpunk! #introductions #LearnWithNostr",
+      "¡Buenos días, Nostr! Estoy aquí desde Tiktok, creando una cuenta a través de https://embedded-rox.app para aprender a programar con IA. ¡Espero conocer a personas de la comunidad cypherpunk! #introductions #LearnWithNostr",
     "createAccount.isCreating": "Creando cuenta... 1/3",
     "createAccount.isCreatingProfile": "Creando perfil... 2/3",
-    "createAccount.isCreatingProfilePicture": "Creando foto de perfil... 3/4",
+    // "createAccount.isCreatingProfilePicture": "Creando foto de perfil... 3/4",
     "createAccount.isCreatingIntroPost":
       "Creando publicación de introducción en la comunidad #introductions... 3/3",
     chapter: "Capítulo",

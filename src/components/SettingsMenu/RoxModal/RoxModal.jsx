@@ -47,7 +47,7 @@ const RoxModal = ({ isOpen, onClose, userLanguage }) => {
           <br />
           <Button
             as="a"
-            href="https://robotsbuildingeducation.com"
+            href="https://embedded-rox.app"
             mt={2}
             mb={4}
             variant={"outline"}

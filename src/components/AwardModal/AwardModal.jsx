@@ -16,6 +16,7 @@ import {
   HStack,
   extendTheme,
   useStyleConfig,
+  useToast,
 } from "@chakra-ui/react";
 import { SunsetCanvas } from "../../elements/SunsetCanvas";
 import Editor from "react-simple-code-editor";
@@ -35,6 +36,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
     localStorage.getItem("local_npub"),
     localStorage.getItem("local_nsec")
   );
+  const toast = useToast();
   useEffect(() => {
     async function getBadges() {
       let data = await getUserBadges();
@@ -67,7 +69,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
     >
       <ModalOverlay></ModalOverlay>
       <ModalContent
-        background={"#6B46C1"}
+        background={"orange.400"}
         // color="white"
         borderRadius="lg"
         boxShadow="2xl"
@@ -96,7 +98,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
             // gravity={0.75}
             numberOfPieces={100}
             recycle={false}
-            colors={["#FFCCCC", "#CCEFFF", "#D9A8FF", "#FF99CC", "#FFD1B3"]} // Array of colors matching the logo
+            colors={["#f2dcfa", "#f9d4fa", "#fca4b3", "#fcb7a4", "#fcd4a4"]} // Array of colors matching the logo
           />
           {translation[userLanguage]["modal.decentralizedTranscript.youEarned"]}
           <br />
@@ -108,6 +110,15 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
             href={`https://badges.page/a/${
               transcript[step.group]?.["address"] || ""
             }`}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                window.open(
+                  `https://badges.page/a/${
+                    transcript[step.group]?.["address"] || ""
+                  }`
+                );
+              }
+            }}
           >
             <img
               src={transcript[step.group]?.["imgSrc"]}
@@ -120,7 +131,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
           </a>
           <br />
           <br />
-          <Button onMouseDown={handleCopyKeys} mb={2}>
+          <Button onClick={handleCopyKeys} mb={2}>
             🔑 {translation[userLanguage]["button.copyKey"]}
           </Button>
 
@@ -131,8 +142,14 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
               ]
             }{" "}
             <a
-              href="https://robotsbuildingeducation.com"
+              target="_blank"
+              href="https://embedded-rox.app"
               style={{ textDecoration: "underline", fontWeight: "bold" }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  window.open("https://embedded-rox.app");
+                }
+              }}
             >
               {translation[userLanguage][
                 "settings.button.yourTutor"
@@ -176,6 +193,13 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
                   <a
                     href={`https://badges.page/a/${badge.badgeAddress}`}
                     target="_blank"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        window.open(
+                          `https://badges.page/a/${badge.badgeAddress}`
+                        );
+                      }
+                    }}
                   >
                     <img
                       src={badge.image}
@@ -203,6 +227,11 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
             variant="solid"
             size="lg"
             boxShadow={"0px 0.5px 0.5px 1px black"}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                onClose();
+              }
+            }}
           >
             {translation[userLanguage]["button.close"]}
           </Button>

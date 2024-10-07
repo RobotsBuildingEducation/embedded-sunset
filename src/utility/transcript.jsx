@@ -1,4 +1,4 @@
-// Answered the questions on the foundations of frontend software development on https://program-ai.app
+// Answered the questions on the foundations of frontend software development on https://embedded-rox.app
 
 export let transcript = {
   tutorial: {
