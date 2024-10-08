@@ -11,7 +11,6 @@ const MultipleChoiceQuestion = ({
   handleModalCheck,
 }) => {
   const [focusedIndex, setFocusedIndex] = useState(-1);
-  const [isComponentFocused, setIsComponentFocused] = useState(false);
   const optionRefs = useRef([]);
   const learnButtonRef = useRef(null);
 
@@ -19,18 +18,12 @@ const MultipleChoiceQuestion = ({
     switch (e.key) {
       case "ArrowUp":
         e.preventDefault();
-        if (!isComponentFocused) {
-          setIsComponentFocused(true);
-        }
         setFocusedIndex((prevIndex) =>
           prevIndex > 0 ? prevIndex - 1 : question.options.length - 1
         );
         break;
       case "ArrowDown":
         e.preventDefault();
-        if (!isComponentFocused) {
-          setIsComponentFocused(true);
-        }
         setFocusedIndex((prevIndex) =>
           prevIndex < question.options.length - 1 ? prevIndex + 1 : 0
         );
@@ -42,22 +35,6 @@ const MultipleChoiceQuestion = ({
           setSelectedOption(question.options[focusedIndex]);
         }
         break;
-      case "Tab":
-        if (e.shiftKey && focusedIndex === 0) {
-          learnButtonRef.current.focus();
-          setFocusedIndex(-1);
-        } else if (!e.shiftKey && focusedIndex === -1) {
-          e.preventDefault();
-          optionRefs.current[0]?.focus();
-          setFocusedIndex(0);
-        } else if (
-          !e.shiftKey &&
-          focusedIndex === question.options.length - 1
-        ) {
-          setIsComponentFocused(false);
-          setFocusedIndex(-1);
-        }
-        break;
       default:
         break;
     }
@@ -66,65 +43,24 @@ const MultipleChoiceQuestion = ({
   const handleOptionClick = (option, index) => {
     setSelectedOption(option);
     setFocusedIndex(index);
-    setIsComponentFocused(true);
   };
 
   useEffect(() => {
     if (
-      isComponentFocused &&
       focusedIndex >= 0 &&
-      optionRefs.current[focusedIndex]
+      optionRefs.current[focusedIndex] &&
+      document.activeElement !== optionRefs.current[focusedIndex]
     ) {
       optionRefs.current[focusedIndex].focus();
     }
-  }, [focusedIndex, isComponentFocused]);
-
-  const handleContainerFocus = () => {
-    if (!isComponentFocused) {
-      setIsComponentFocused(true);
-      setFocusedIndex(-1); // Start with no focus initially
-    }
-  };
-
-  const handleContainerBlur = (e) => {
-    setTimeout(() => {
-      if (!e.currentTarget?.contains(document?.activeElement)) {
-        setIsComponentFocused(false);
-        setFocusedIndex(-1);
-      }
-    }, 0);
-  };
-
-  useEffect(() => {
-    const handleGlobalKeyDown = (e) => {
-      if (
-        !isComponentFocused &&
-        (e.key === "ArrowUp" || e.key === "ArrowDown")
-      ) {
-        e.preventDefault();
-        optionRefs.current[0]?.focus();
-        setIsComponentFocused(true);
-        setFocusedIndex(0);
-      }
-    };
-    window.addEventListener("keydown", handleGlobalKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleGlobalKeyDown);
-    };
-  }, [isComponentFocused]);
+  }, [focusedIndex]);
 
   const handleOptionFocus = (index) => {
     setFocusedIndex(index);
-    setIsComponentFocused(true);
   };
 
   return (
-    <VStack
-      spacing={4}
-      onFocus={handleContainerFocus}
-      onBlur={handleContainerBlur}
-      onKeyDown={handleKeyDown}
-    >
+    <VStack spacing={4} onKeyDown={handleKeyDown}>
       <Button
         ref={learnButtonRef}
         onMouseDown={() => handleModalCheck(onLearnClick)}

@@ -58,7 +58,7 @@ const theme = extendTheme({
   // },
 });
 
-localStorage.setItem("features_passcode", "ANDREA");
+// localStorage.setItem("features_passcode", "TEST1234");
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ChakraProvider theme={theme}>

@@ -1923,9 +1923,9 @@ await addDoc(doc(db, 'users'), {
       isTerminal: true,
       question: {
         questionText:
-          "Use the terminal to clone a progr.ai Github project by Robots Building Education using git commands.",
+          "Use the terminal to clone the embedded-sunset Github project by Robots Building Education using git commands.",
         answer:
-          "git clone https://github.com/RobotsBuildingEducation/progr.ai.git",
+          "git clone https://github.com/RobotsBuildingEducation/embedded-sunset.git",
       },
     },
     {

@@ -3197,7 +3197,7 @@ export const AppWrapper = () => {
       {/* <div>
         <b>Test Version 0.9.1</b>
       </div> */}
-      <b>Test Version 0.9.1</b>
+      {/* <b>Test Version 0.9.1</b> */}
       <App isShutDown={isShutDown} />
     </Router>
   );

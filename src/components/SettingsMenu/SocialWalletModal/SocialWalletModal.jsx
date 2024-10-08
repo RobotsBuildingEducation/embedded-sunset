@@ -98,13 +98,13 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 window.open(
-                  "https://primal.net/p/npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt"
+                  "https://primal.net/p/npub15wt8k4j0xms2drym28mv0suf8kuc3595uk20zh2suek93s2cx2lqz9usr3"
                 );
               }
             }}
             type="external"
             as="a"
-            href="https://primal.net/p/npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt"
+            href="https://primal.net/p/npub15wt8k4j0xms2drym28mv0suf8kuc3595uk20zh2suek93s2cx2lqz9usr3"
             target="_blank"
             textDecor={"underline"}
           >
