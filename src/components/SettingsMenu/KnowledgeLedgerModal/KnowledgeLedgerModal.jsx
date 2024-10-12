@@ -24,6 +24,7 @@ import { translation } from "../../../utility/translation";
 import { useAlertStore } from "../../../useAlertStore";
 import { usePasscodeModalStore } from "../../../usePasscodeModalStore";
 import { PasscodeModal } from "../../PasscodeModal/PasscodeModal";
+import { SunsetCanvas } from "../../../elements/SunsetCanvas";
 
 export const KnowledgeLedgerModal = ({
   isOpen,
@@ -34,6 +35,7 @@ export const KnowledgeLedgerModal = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [suggestion, setSuggestion] = useState("");
+  const [isAnimating, setIsAnimating] = useState(false);
   const { submitPrompt, messages, resetMessages } = useChatCompletion();
   const { alert, hideAlert, showAlert } = useAlertStore();
   const { openPasscodeModal } = usePasscodeModalStore();
@@ -51,6 +53,9 @@ export const KnowledgeLedgerModal = ({
           setIsLoading(false);
         } else {
           setSuggestion(lastMessage.content);
+          if (lastMessage.content.length > 0) {
+            setIsAnimating(false);
+          }
         }
       } catch (error) {
         showAlert("warning", translation[userLanguage]["ai.error"]);
@@ -72,6 +77,18 @@ export const KnowledgeLedgerModal = ({
   };
 
   const handleSuggestNext = async () => {
+    setIsAnimating(true);
+    let knwldctrl = parseInt(localStorage.getItem("knwldctrl") || "0", 10);
+
+    // Check if the user has already generated 3 questions
+    if (knwldctrl >= 3) {
+      // Silently skip the function
+      return;
+    }
+
+    // Increment the counter and store it back in localStorage
+    knwldctrl += 1;
+    localStorage.setItem("knwldctrl", knwldctrl);
     setIsLoading(true);
     setSuggestion("");
     resetMessages();
@@ -125,7 +142,7 @@ export const KnowledgeLedgerModal = ({
             <Box maxHeight="400px">
               <Box mt={4}>
                 <Button
-                  colorScheme="pink"
+                  colorScheme="purple"
                   onMouseDown={() => handleModalCheck(handleSuggestNext)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
@@ -135,14 +152,25 @@ export const KnowledgeLedgerModal = ({
                   isDisabled={isLoading}
                   variant={"outline"}
                 >
-                  {isLoading ? (
+                  {/* {isLoading ? (
                     <Spinner size="sm" />
-                  ) : (
+                  ) : ( */}
+                  {
                     translation[userLanguage][
                       "modal.adaptiveLearning.recommendButton"
                     ]
-                  )}
+                  }
+                  {/* )} */}
                 </Button>
+
+                {isAnimating ? (
+                  <>
+                    <br />
+                    <br />
+                    <SunsetCanvas isLoader={true} regulateWidth={false} />
+                  </>
+                ) : null}
+
                 <br />
                 <br />
                 {suggestion && (

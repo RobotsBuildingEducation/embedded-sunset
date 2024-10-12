@@ -24,7 +24,7 @@ export const PasscodeModal = ({ userLanguage }) => {
 
   const handleConfirm = () => {
     if (enteredPasscode === import.meta.env.VITE_PATREON_FEATURES_PASSCODE) {
-      localStorage.setItem("passcode", enteredPasscode);
+      localStorage.setItem("features_passcode", enteredPasscode);
       toast({
         title: "Features unlocked!",
         description: "AI features have been enabled on your device.",

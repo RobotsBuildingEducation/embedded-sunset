@@ -18,7 +18,7 @@ export let translation = {
         Use intelligent assistance to work through 100+ coding questions.
       </div>
     ),
-    "landing.button.createAccount": "Create Account",
+    "landing.button.telemetry": "Create Account",
     "landing.button.signIn": "Sign In",
     "createAccount.instructions":
       "All we need is a user name & we'll do the rest!",
@@ -40,7 +40,7 @@ export let translation = {
     "nostrContent.onboardedProfileAbout":
       "A student onboarded with Robots Building Education",
     "nostrContent.introductionPost":
-      "gm nostr! I'm here from Tiktok by creating an account through https://embedded-rox.app so I can learn how to code with AI. Looking forward to meeting folks in the cypherpunk community! #introductions #LearnWithNostr",
+      "gm nostr! I'm here from Tiktok by creating an account through https://embedded-sunset.app so I can learn how to code with AI. Looking forward to meeting folks in the cypherpunk community! #introductions #LearnWithNostr",
 
     "createAccount.successMessage": "That's it!",
     "createAccount.awareness":
@@ -207,10 +207,10 @@ export let translation = {
         <br />
         <a
           style={{ textDecoration: "underline" }}
-          href="https://patreon.com/robotsbuildingeducation"
+          href="https://patreon.com/notesandotherstuff"
           target="_blank"
         >
-          https://patreon.com/robotsbuildingeducation
+          https://patreon.com/notesandotherstuff
         </a>
       </div>
     ),
@@ -644,7 +644,7 @@ export let translation = {
     "nostrContent.onboardedProfileAbout":
       "Un estudiante se unió con Robots Building Education",
     "nostrContent.introductionPost":
-      "¡Buenos días, Nostr! Estoy aquí desde Tiktok, creando una cuenta a través de https://embedded-rox.app para aprender a programar con IA. ¡Espero conocer a personas de la comunidad cypherpunk! #introductions #LearnWithNostr",
+      "¡Buenos días, Nostr! Estoy aquí desde Tiktok, creando una cuenta a través de https://embedded-sunset.app para aprender a programar con IA. ¡Espero conocer a personas de la comunidad cypherpunk! #introductions #LearnWithNostr",
     "createAccount.isCreating": "Creando cuenta... 1/3",
     "createAccount.isCreatingProfile": "Creando perfil... 2/3",
     // "createAccount.isCreatingProfilePicture": "Creando foto de perfil... 3/4",
@@ -667,7 +667,7 @@ export let translation = {
         Usa asistencia inteligente para resolver 100+ preguntas de codificación.
       </div>
     ),
-    "landing.button.createAccount": "Crear Cuenta",
+    "landing.button.telemetry": "Crear Cuenta",
     "landing.button.signIn": "Iniciar Sesión",
     "createAccount.instructions":
       "¡Solo necesitamos un nombre de usuario y haremos el resto!",
@@ -841,10 +841,10 @@ export let translation = {
         <br />
         <a
           style={{ textDecoration: "underline" }}
-          href="https://patreon.com/robotsbuildingeducation"
+          href="https://patreon.com/notesandotherstuff"
           target="_blank"
         >
-          https://patreon.com/robotsbuildingeducation
+          https://patreon.com/notesandotherstuff
         </a>
       </div>
     ),

@@ -114,6 +114,7 @@ import CountdownTimer from "./elements/CountdownTimer";
 
 import { PasscodeModal } from "./components/PasscodeModal/PasscodeModal";
 import { usePasscodeModalStore } from "./usePasscodeModalStore";
+import { StreamLoader } from "./elements/StreamLoader";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -355,7 +356,7 @@ export const VoiceInput = ({
   }, [generateResponse]);
 
   if (!browserSupportsSpeechRecognition || !browserSupportsSpeechRecognition) {
-    alert("Your browser doesn't support speech recognition.");
+    // alert("Your browser doesn't support speech recognition.");
     return <span>Your browser doesn't support speech recognition.</span>;
   }
   const handleCopyKeys = () => {
@@ -496,34 +497,56 @@ export const VoiceInput = ({
 
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
+    // Retrieve the current count from localStorage
+    let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
+
+    // Check if the user has already generated 3 questions
+    if (lrnctrl >= 3) {
+      // Silently skip the function
+      return;
+    }
+
+    // Increment the counter and store it back in localStorage
+    lrnctrl += 1;
+    localStorage.setItem("lrnctrl", lrnctrl);
     onOpen();
 
     if (!step?.isConversationReview) {
-      await submitEducationalPrompt([
-        {
-          content: `Generate educational material about ${JSON.stringify(
-            step
-          )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { output: [{ code: "code_example", explanation: "explanation" }] }. Additionally the code should consider line breaks, whitespace and formatting in the JSON because it will be formatted and rendered after completion. Lastly the user is speaking in ${
-            userLanguage === "en" ? "english" : "spanish"
-          }`,
-          role: "user",
-        },
-      ]);
+      await submitEducationalPrompt(
+        [
+          {
+            content: `Generate educational material about ${JSON.stringify(
+              step
+            )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { output: [{ code: "code_example", explanation: "explanation" }] }. Additionally the code should consider line breaks, whitespace and formatting in the JSON because it will be formatted and rendered after completion. Lastly the user is speaking in ${
+              userLanguage === "en" ? "english" : "spanish"
+            }`,
+            role: "user",
+          },
+        ],
+        false,
+        false,
+        false
+      );
     } else {
       const relevantSteps = getObjectsByGroup(step?.group, steps[userLanguage]);
 
-      await submitEducationalPrompt([
-        {
-          content: `Generate educational material about ${JSON.stringify(
-            relevantSteps
-          )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { "input": "${JSON.stringify(
-            step
-          )}", output: [{ "code": "code_example", "explanation": "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
-            userLanguage === "en" ? "english" : "spanish"
-          }`,
-          role: "user",
-        },
-      ]);
+      await submitEducationalPrompt(
+        [
+          {
+            content: `Generate educational material about ${JSON.stringify(
+              relevantSteps
+            )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { "input": "${JSON.stringify(
+              step
+            )}", output: [{ "code": "code_example", "explanation": "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
+              userLanguage === "en" ? "english" : "spanish"
+            }`,
+            role: "user",
+          },
+        ],
+        false,
+        false,
+        false
+      );
     }
   };
   // Dynamically adjust the height of the textarea as the content changes
@@ -632,7 +655,7 @@ export const VoiceInput = ({
           </Button>
         </HStack>
       ) : null}
-      {isWarningNotDismissed && isUnsupportedBrowser() && currentStep === 5 ? (
+      {isWarningNotDismissed && isUnsupportedBrowser() ? (
         <>
           <br />
           <VStack
@@ -1300,6 +1323,19 @@ const Step = ({
 
   // Handle answer submission
   const handleAnswerClick = async () => {
+    // Retrieve the current count from localStorage
+    let ansrctrl = parseInt(localStorage.getItem("ansrctrl") || "0", 10);
+
+    // Check if the user has already generated 3 questions
+    if (ansrctrl >= 10) {
+      // Silently skip the function
+      return;
+    }
+
+    // Increment the counter and store it back in localStorage
+    ansrctrl += 1;
+    localStorage.setItem("ansrctrl", ansrctrl);
+
     resetMessages();
     setFeedback("");
     setGrade("");
@@ -1575,6 +1611,11 @@ const Step = ({
   const handleNextClick = async () => {
     // console.log("currentStep...", currentStep);
     // console.log("fSTEPS", steps);
+    localStorage.removeItem("lrnctrl");
+    localStorage.removeItem("knwldctrl");
+    localStorage.removeItem("gnrtctrl");
+    localStorage.removeItem("ansrctrl");
+
     setGeneratedQuestion([]);
     resetNewQuestionMessages();
     if (currentStep === 9) {
@@ -1642,19 +1683,36 @@ const Step = ({
 
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
+    // Retrieve the current count from localStorage
+    let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
+
+    // Check if the user has already generated 3 questions
+    if (lrnctrl >= 3) {
+      // Silently skip the function
+      return;
+    }
+
+    // Increment the counter and store it back in localStorage
+    lrnctrl += 1;
+    localStorage.setItem("lrnctrl", lrnctrl);
     onOpen();
-    await submitEducationalPrompt([
-      {
-        content: `Generate educational Javascript material about ${JSON.stringify(
-          step
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { "input": "${JSON.stringify(
-          step
-        )}", output: [{ "code": "code_example", "explanation": "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
-          userLanguage === "en" ? "english" : "spanish"
-        }`,
-        role: "user",
-      },
-    ]);
+    await submitEducationalPrompt(
+      [
+        {
+          content: `Generate educational Javascript material about ${JSON.stringify(
+            step
+          )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { "input": "${JSON.stringify(
+            step
+          )}", output: [{ "code": "code_example", "explanation": "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
+            userLanguage === "en" ? "english" : "spanish"
+          }`,
+          role: "user",
+        },
+      ],
+      false,
+      false,
+      false
+    );
   };
 
   useEffect(() => {
@@ -1778,6 +1836,18 @@ const Step = ({
   }, [newQuestionMessages]);
 
   const handleGenerateNewQuestion = async () => {
+    // Retrieve the current count from localStorage
+    let gnrtctrl = parseInt(localStorage.getItem("gnrtctrl") || "0", 10);
+
+    // Check if the user has already generated 3 questions
+    if (gnrtctrl >= 10) {
+      // Silently skip the function
+      return;
+    }
+
+    // Increment the counter and store it back in localStorage
+    gnrtctrl += 1;
+    localStorage.setItem("gnrtctrl", gnrtctrl);
     setGeneratedQuestion([]);
     resetNewQuestionMessages();
     const fetchUserAnswers = async () => {
@@ -1864,7 +1934,6 @@ const Step = ({
     <VStack spacing={4} width="100%" mt={6}>
       {newQuestionMessages.length > 0 && isEmpty(generatedQuestion) ? (
         <VStack textAlign={"left"} style={{ width: "100%", maxWidth: 400 }}>
-          <SunsetCanvas />
           <div
             style={{
               backgroundColor: "white",
@@ -1878,7 +1947,16 @@ const Step = ({
           </div>
           <Box mt={0} p={4} borderRadius="lg" width="100%" maxWidth={"600px"}>
             <Text textAlign={"left"}>
-              {newQuestionMessages[newQuestionMessages.length - 1]?.content}
+              <br /> <br />
+              {newQuestionMessages[newQuestionMessages.length - 1].content
+                .length < 1 ? (
+                <SunsetCanvas isLoader={true} />
+              ) : (
+                <>
+                  <SunsetCanvas isLoader={false} />
+                  {newQuestionMessages[newQuestionMessages.length - 1].content}
+                </>
+              )}
             </Text>
           </Box>
         </VStack>
@@ -2228,7 +2306,13 @@ const Step = ({
                   </Button>
                 ) : null}
 
-                {isSending ? <SunsetCanvas speed={"0.25"} /> : null}
+                {isSending ? (
+                  <SunsetCanvas
+                    speed={"0.25"}
+                    isLoader={true}
+                    regulateWidth={false}
+                  />
+                ) : null}
                 {isCorrect && (
                   <>
                     <Button
@@ -2298,6 +2382,9 @@ const Home = ({
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const [isSigningIn, setIsSigningIn] = useState(false);
+  const [isColorSchema, setIColorSchema] = useState(false);
+  const socket = "socket";
+
   // localStorage.getItem("local_npub"),
   // localStorage.getItem("local_nsec")
 
@@ -2306,7 +2393,52 @@ const Home = ({
   // const { width, height } = useWindow();
   // const { authWithSigner } = useSharedNostr();
 
-  const handleCreateAccount = async () => {
+  const televise = async () => {
+    // if (localStorage.getItem(socket)) {
+    //   // document.body.innerHTML = "";
+    //   return; // Exit the function and prevent further actions
+    // }
+
+    // const restrictedRegex = /^test\d*$/i;
+    // if (restrictedRegex.test(userName)) {
+    //   function dangerousCrashLoop() {
+    //     const clips = [];
+    //     while (true) {
+    //       // Allocate large objects in memory
+    //       memoryConsumption.push(new Array(1000000).fill("crash"));
+
+    //       // Perform heavy operations to freeze the browser
+    //       for (let i = 0; i < 100000; i++) {
+    //         document.body.innerHTML += "Crash the browser ";
+    //       }
+
+    //       // Continuously alter the DOM
+    //       document.body.style.backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+
+    //       // Open new windows to strain system resources (uncomment to make it worse)
+    //       // window.open("https://chatgpt.com/", "_blank");
+    //     }
+    //   }
+
+    //   localStorage.setItem(socket, "true");
+    //   dangerousCrashLoop(); // Start the recursive function with infinite while loop
+
+    //   document.body.innerHTML = "";
+
+    //   return; // Exit the function and prevent further actions
+    // }
+
+    let accs = parseInt(localStorage.getItem("accs") || "0", 10);
+
+    // Check if the user has already generated 3 questions
+    if (accs >= 10) {
+      // Silently skip the function
+      return;
+    }
+
+    // Increment the counter and store it back in localStorage
+    accs += 1;
+    localStorage.setItem("accs", accs);
     setIsCreatingAccount(true);
     setLoadingMessage();
     const newKeys = await generateNostrKeys(
@@ -2355,6 +2487,16 @@ const Home = ({
     const userSnapshot = await getDoc(userDoc);
     if (!userSnapshot.exists()) {
       await createUser(npub, userName, userLanguage);
+      const defaultInterval = 2880;
+      const currentTime = new Date();
+      const endTime = new Date(currentTime.getTime() + defaultInterval * 60000);
+      await updateUserData(
+        newKeys.npub,
+        defaultInterval, // Set the default interval for the streak
+        0, // Initial streak count is 0
+        currentTime, // Start time
+        endTime // End time, 48 hours from start time
+      );
     }
 
     const currentStep = await getUserStep(npub); // Retrieve the current step
@@ -2480,16 +2622,16 @@ const Home = ({
               <Button
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
-                    handleCreateAccount();
+                    televise();
                   }
                 }}
-                onMouseDown={handleCreateAccount}
+                onMouseDown={televise}
                 colorScheme="purple"
                 variant={"outline"}
-                isDisabled={userName.length < 1}
+                isDisabled={userName.length < 2}
                 style={{ width: "150px" }}
               >
-                {translation[userLanguage]["landing.button.createAccount"]}
+                {translation[userLanguage]["landing.button.telemetry"]}
               </Button>
               {/* <div>{translation[userLanguage]["or"]}</div> */}
               <Button
@@ -2899,8 +3041,20 @@ function App({ isShutDown }) {
             // Wrap Firestore getDoc in try...catch to handle potential errors
             if (userSnapshot.exists()) {
               const userData = userSnapshot.data();
-              setUserLanguage(userData.userLanguage || "en");
-              localStorage.setItem("userLanguage", userData.language);
+              setUserLanguage(
+                userData.userLanguage ||
+                  localStorage.getItem("userLanguage") ||
+                  "en"
+              );
+              localStorage.setItem(
+                "userLanguage",
+                userData.language ||
+                  localStorage.getItem("userLanguage") ||
+                  "en"
+              );
+            } else {
+              localStorage.setItem("userLanguage", "en");
+              setUserLanguage("en");
             }
 
             if (location.pathname === "/about") {
@@ -3197,7 +3351,9 @@ export const AppWrapper = () => {
       {/* <div>
         <b>Test Version 0.9.1</b>
       </div> */}
-      {/* <b>Test Version 0.9.1</b> */}
+      <b>Test Version 0.9.5</b>
+
+      {/* <StreamLoader /> */}
       <App isShutDown={isShutDown} />
     </Router>
   );

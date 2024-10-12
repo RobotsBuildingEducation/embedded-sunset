@@ -5,14 +5,23 @@ service cloud.firestore {
     // Match any document in the 'users' collection
     match /users/{userId} {
 
+      // Function to validate that the userId is a valid npub ID
+      function isValidNpubID(id) {
+        // npub IDs start with 'npub1' and are 63 characters long
+        // Bech32 charset includes '023456789acdefghjklmnpqrstuvwxyz'
+        return id.matches('^npub1[023456789acdefghjklmnpqrstuvwxyz]{58}$') && id.size() == 63;
+      }
+
       // Allow read access if the existing document's npub field matches the document ID (userId)
-      allow read: if resource.data.npub == userId;
+      allow read: if resource.data.npub == userId && isValidNpubID(userId);
 
       // Allow create access if the incoming npub value matches the document ID (userId)
-      allow create: if request.resource.data.npub == userId;
+      allow create: if request.resource.data.npub == userId && isValidNpubID(userId);
 
       // Allow update access if both the existing document's npub and the incoming npub value match the document ID (userId)
-      allow update: if request.resource.data.npub == userId && resource.data.npub == userId;
+      allow update: if request.resource.data.npub == userId &&
+                     resource.data.npub == userId &&
+                     isValidNpubID(userId);
 
       // Deny listing (query) access to the entire collection
       allow list: if false;
@@ -21,7 +30,8 @@ service cloud.firestore {
       match /{subcollection=**} {
 
         // Allow read, create, and update access to subcollections if the parent document's npub field matches the document ID
-        allow read, create, update: if get(/databases/$(database)/documents/users/$(userId)).data.npub == userId;
+        allow read, create, update: if get(/databases/$(database)/documents/users/$(userId)).data.npub == userId &&
+                                     isValidNpubID(userId);
 
         // Deny listing for subcollections as well
         allow list: if false;

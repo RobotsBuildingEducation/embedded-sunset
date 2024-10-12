@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FadeInComponent } from "./RandomCharacter";
+import { StreamLoader } from "./StreamLoader";
 
 export const hexToHSL = (hex) => {
   // Convert hex to RGB first
@@ -42,7 +43,13 @@ export const hexToHSL = (hex) => {
   return { hue: h, saturation: s, lightness: l };
 };
 
-export const SunsetCanvas = (alternativeSpeed = null) => {
+export const SunsetCanvas = ({
+  alternativeSpeed = null,
+  isLoader = false,
+  hasAnimation = true,
+  hasInitialFade = true,
+  regulateWidth = true,
+}) => {
   const canvasRef = useRef(null);
   let requestId;
 
@@ -113,24 +120,43 @@ export const SunsetCanvas = (alternativeSpeed = null) => {
   };
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas.getContext("2d");
-    canvas.width = 75;
-    canvas.height = 75;
-    animate(context);
-    return () => {
-      cancelAnimationFrame(requestId);
-    };
+    if (hasAnimation) {
+      const canvas = canvasRef.current;
+      const context = canvas.getContext("2d");
+      canvas.width = 75;
+      canvas.height = 75;
+      animate(context);
+      return () => {
+        cancelAnimationFrame(requestId);
+      };
+    }
   }, []);
 
   return (
-    <FadeInComponent speed={"1s"}>
-      <canvas
+    <FadeInComponent speed={hasInitialFade ? "1s" : "0s"}>
+      <div
         style={{
-          borderRadius: "45%",
+          width: regulateWidth ? null : "100%",
+          minWidth: regulateWidth ? null : "300px",
+          maxWidth: regulateWidth ? null : "600px",
+          display: isLoader ? "flex" : null,
+          flexDirection: isLoader ? "column" : "",
+          alignItems: isLoader ? "center" : "",
         }}
-        ref={canvasRef}
-      ></canvas>
+      >
+        {hasAnimation ? (
+          <div>
+            <canvas
+              style={{
+                borderRadius: "45%",
+              }}
+              ref={canvasRef}
+            ></canvas>
+          </div>
+        ) : null}
+
+        {isLoader === true ? <StreamLoader /> : null}
+      </div>
     </FadeInComponent>
   );
 };
@@ -224,12 +250,14 @@ export const BigSunset = () => {
   }, []);
 
   return (
-    <canvas
-      style={{
-        borderRadius: "45%",
-        zoom: "0.25",
-      }}
-      ref={canvasRef}
-    ></canvas>
+    <>
+      <canvas
+        style={{
+          borderRadius: "45%",
+          zoom: "0.25",
+        }}
+        ref={canvasRef}
+      ></canvas>
+    </>
   );
 };

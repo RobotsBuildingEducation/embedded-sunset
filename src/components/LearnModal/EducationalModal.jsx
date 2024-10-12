@@ -93,7 +93,13 @@ const EducationalModal = ({
           {educationalMessages.length === 0 && <Spinner size="xl" />}
 
           {educationalMessages.length > 0 && !educationalContent.length > 0 ? (
-            <div style={{ color: "#FAF3E0" }}>
+            <div
+              style={{
+                color: "#FAF3E0",
+
+                width: "100%",
+              }}
+            >
               <b
                 style={{
                   backgroundColor: "white",
@@ -107,9 +113,17 @@ const EducationalModal = ({
               </b>
               <br />
               <br />
-              {
+              {educationalMessages[educationalMessages.length - 1]?.content
+                .length < 1 ? (
+                <SunsetCanvas
+                  hasAnimation={false}
+                  isLoader={true}
+                  hasInitialFade={false}
+                  regulateWidth={false}
+                />
+              ) : (
                 educationalMessages[educationalMessages.length - 1]?.content
-              }{" "}
+              )}{" "}
               <Box ref={bottomRef}></Box>
             </div>
           ) : null}

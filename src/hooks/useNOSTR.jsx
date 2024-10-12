@@ -192,7 +192,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     }
   };
 
-  const auth = async (nsecPassword) => {
+  const auth = (nsecPassword) => {
     let testnsec = nsecPassword;
 
     let decoded = nip19.decode(testnsec);
