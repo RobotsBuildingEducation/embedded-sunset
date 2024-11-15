@@ -28,6 +28,13 @@ const theme = extendTheme({
         },
       },
     },
+    // Toast: {
+    //   baseStyle: {
+    //     container: {
+    //       bg: "#FEEBC8", // You can set your preferred color here
+    //     },
+    //   },
+    // },
   },
 
   styles: {
@@ -59,6 +66,8 @@ const theme = extendTheme({
 });
 
 // localStorage.setItem("features_passcode", "TEST1234");
+localStorage.setItem("passcode", "ANDREA");
+localStorage.setItem("features_passcode", "ANDREA");
 localStorage.setItem("CANARY_KEY", "Y2FuYXJ5");
 
 ReactDOM.createRoot(document.getElementById("root")).render(

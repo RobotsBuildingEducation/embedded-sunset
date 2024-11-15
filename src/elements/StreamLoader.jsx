@@ -81,8 +81,9 @@ export const StreamLoader = () => {
         // whiteSpace="pre-wrap"
         wordBreak={"break-all"}
         // margin="20px auto"
-        maxWidth="800px"
+        maxWidth="600px"
         fontFamily="monospace"
+        width="100%"
       >
         {/* Display the single JSON object with the "thinking" key */}
         <Text fontSize="lg" lineHeight="1.6">

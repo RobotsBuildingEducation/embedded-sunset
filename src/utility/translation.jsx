@@ -3,8 +3,14 @@ import { DataTags } from "../elements/DataTag";
 
 export let translation = {
   en: {
+    "chatcom.instructions.1":
+      "Generate a useful, friendly and professional lecture with javascript coding examples in",
+    "chatcom.instructions.2": "for beginners on the following question/answer:",
     "button.pickedup": "Picked up",
     "toast.title.keysCopied": "Keys copied.",
+    "toast.title.chatDataCopied": "Opening ChatGPT...",
+    "toast.description.chatDataCopied":
+      "Paste the data in the following chat to learn more.",
     "toast.description.keysCopied":
       "Your keys have been copied to the clipboard.",
     "toast.title.addressCopied": "Lightning address copied.",
@@ -55,8 +61,8 @@ export let translation = {
     "signIn.instructions": "Enter your nostr secret key",
     "signIn.input.placeholder": "Enter your secret key",
     "button.dismiss": "Dimiss",
-    "app.progress": "Progress",
-    "app.streak": "Streak",
+    "app.progress": "progress",
+    "app.streak": "streak",
     "app.button.answer": "Answer",
     "app.button.nextQuestion": "Next Question",
     "app.button.voiceToText": "Voice To Text",
@@ -475,7 +481,7 @@ export let translation = {
     "modal.transcript.instructions": "",
     yourID: "Your ID",
     noTranscriptFound: "No older transcripts awards were found.",
-    chapter: "Chapter",
+    chapter: "chapter",
     tutorial: "Tutorial",
     congratulations: "Congratulations!",
     "congrats.message":
@@ -556,8 +562,17 @@ export let translation = {
     "label.new": "New!",
     confirm: "Confirm",
     cancel: "Cancel",
+    analyzer: "Analyzing your progress & creating new question card",
   },
   es: {
+    "toast.title.chatDataCopied": "Abriendo ChatGPT...",
+    "chatcom.instructions.1":
+      "Genera una conferencia útil, amigable y profesional con ejemplos de código en JavaScript en",
+    "chatcom.instructions.2":
+      "para principiantes sobre la siguiente pregunta/respuesta:",
+    "toast.description.chatDataCopied":
+      "Pega los datos en el siguiente chat para aprender más.",
+    analyzer: "Analizando tu progreso y creando una nueva tarjeta de preguntas",
     "button.pickedup": "Recogido",
 
     confirm: "Confirmar",
@@ -650,7 +665,7 @@ export let translation = {
     // "createAccount.isCreatingProfilePicture": "Creando foto de perfil... 3/4",
     "createAccount.isCreatingIntroPost":
       "Creando publicación de introducción en la comunidad #introductions... 3/3",
-    chapter: "Capítulo",
+    chapter: "capítulo",
     tutorial: "Tutorial",
     "tags.grade": "Calificación: ",
     "toast.title.keysCopied": "Claves copiadas.",
@@ -690,8 +705,8 @@ export let translation = {
     "signIn.instructions": "Ingrese su clave secreta de nostr",
     "signIn.input.placeholder": "Ingrese su clave secreta",
     "button.dismiss": "Descartar",
-    "app.progress": "Progreso",
-    "app.streak": "Racha",
+    "app.progress": "progreso",
+    "app.streak": "racha",
     "app.button.answer": "Responder",
     "app.button.nextQuestion": "Siguiente Pregunta",
     "app.button.voiceToText": "Voz a Texto",

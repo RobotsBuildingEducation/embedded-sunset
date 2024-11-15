@@ -16,6 +16,7 @@ import {
   HStack,
   extendTheme,
   useStyleConfig,
+  useToast,
 } from "@chakra-ui/react";
 import { BigSunset, SunsetCanvas } from "../../elements/SunsetCanvas";
 import Editor from "react-simple-code-editor";
@@ -25,6 +26,8 @@ import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
 import { translation } from "../../utility/translation";
 import RandomCharacter from "../../elements/RandomCharacter";
+import { CopyButtonIcon } from "../../elements/CopyButtonIcon";
+import { animateBorderLoading } from "../../utility/animations";
 
 const EducationalModal = ({
   isOpen,
@@ -35,18 +38,86 @@ const EducationalModal = ({
 }) => {
   const bottomRef = useRef();
   const topRef = useRef();
+  const toast = useToast();
+  const [borderState, setBorderState] = useState("0px solid #793feb");
+
   //          feedbackRef.current?.scrollIntoView({ behavior: "smooth" });
   useEffect(() => {
-    if (educationalMessages.length > 0 && !educationalContent.length > 0) {
-      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
+    // if (educationalMessages.length > 0 && !educationalContent.length > 0) {
+    //   bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    // }
   }, [educationalMessages]);
 
   useEffect(() => {
-    if (educationalContent.length > 0) {
-      topRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
+    // if (educationalContent.length > 0) {
+    //   topRef.current?.scrollIntoView({ behavior: "smooth" });
+    // }
   }, [educationalContent]);
+  const handleCopyKeys = (id) => {
+    if (id) {
+      const keys = id; // replace with actual keys
+      navigator.clipboard.writeText(keys);
+      // toast({
+      //   title: translation[userLanguage]["toast.title.keysCopied"],
+      //   description: translation[userLanguage]["toast.description.keysCopied"],
+      //   status: "info",
+      //   duration: 1500,
+      //   isClosable: true,
+      //   position: "top",
+      //   render: () => (
+      //     <Box
+      //       color="black"
+      //       p={3}
+      //       bg="#FEEBC8" // Custom background color here!
+      //       borderRadius="md"
+      //       boxShadow="lg"
+      //     >
+      //       <Text fontWeight="bold">
+      //         {translation[userLanguage]["toast.title.keysCopied"]}
+      //       </Text>
+      //       <Text>
+      //         {translation[userLanguage]["toast.description.keysCopied"]}
+      //       </Text>
+      //     </Box>
+      //   ),
+      // });
+    } else {
+      const keys = localStorage.getItem("local_nsec"); // replace with actual keys
+      navigator.clipboard.writeText(keys);
+      // toast({
+      //   title: translation[userLanguage]["toast.title.keysCopied"],
+      //   description: translation[userLanguage]["toast.description.keysCopied"],
+      //   status: "info",
+      //   duration: 1500,
+      //   isClosable: true,
+      //   position: "top",
+      //   render: () => (
+      //     <Box
+      //       color="black"
+      //       p={3}
+      //       bg="#FEEBC8" // Custom background color here!
+      //       borderRadius="md"
+      //       boxShadow="lg"
+      //     >
+      //       <Text fontWeight="bold">
+      //         {translation[userLanguage]["toast.title.keysCopied"]}
+      //       </Text>
+      //       <Text>
+      //         {translation[userLanguage]["toast.description.keysCopied"]}
+      //       </Text>
+      //     </Box>
+      //   ),
+      // });
+    }
+
+    animateBorderLoading(
+      setBorderState,
+      "2px solid teal",
+      "0px solid #793feb",
+      500
+    );
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -148,9 +219,9 @@ const EducationalModal = ({
                     style={{
                       //   color: "#696969",
                       backgroundColor: "#faf3e0",
-                      width: "100%",
+                      // width: "100%",
                       padding: 20,
-                      wordBreak: "break-word",
+                      // wordBreak: "break-word",
                       display: "flex",
                       flexDirection: "column",
                       borderRadius: 30,
@@ -158,7 +229,9 @@ const EducationalModal = ({
                       zoom: "0.8",
                     }}
                   >
-                    <pre style={{ whiteSpace: "pre-wrap" }}>
+                    <pre
+                    // style={{ whiteSpace: "pre-wrap" }}
+                    >
                       <Editor
                         value={content.code}
                         highlight={(input) => highlight(input, languages.js)}
@@ -171,6 +244,32 @@ const EducationalModal = ({
                         disabled
                       />
                     </pre>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <Button
+                        style={{
+                          display: "flex",
+                          border: borderState,
+                        }}
+                        tabIndex={0}
+                        onClick={() => handleCopyKeys(content.code)}
+                        width={24}
+                      >
+                        <div style={{ width: "min-content" }}>
+                          <CopyButtonIcon color="black" />
+                        </div>
+                        &nbsp;
+                        {/* <div> */}
+                        {/* <b>{translation[userLanguage]["yourID"]}</b> */}
+                        {/* {localStorage?.getItem("local_npub")?.substr(0, 16) ||
+                          ""} */}
+                        {/* </div> */}
+                      </Button>
+                    </div>
                   </div>
                   {/* <Text fontSize="xl" fontWeight="bold" mt={3}>
                     Explanation:

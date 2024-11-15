@@ -91,9 +91,7 @@ app.post("/obsessed-stalker", verifyAppCheckToken, async (req, res) => {
 
     // Calculate the number of characters in the input messages
     const characterCount = calculateCharacterCount(messages || []);
-
-    // Set the maximum character limit for input
-    const maxCharacterLimit = 7500;
+    const maxCharacterLimit = 25000;
 
     if (characterCount > maxCharacterLimit) {
       return res.status(400).send({
@@ -105,7 +103,7 @@ app.post("/obsessed-stalker", verifyAppCheckToken, async (req, res) => {
     const constructor = {
       model: "gpt-4o-mini",
       messages: messages || [],
-      stream: true, // Enable streaming
+      stream: false, // Disable streaming
       ...restOfApiParams,
     };
 
@@ -124,8 +122,6 @@ app.post("/obsessed-stalker", verifyAppCheckToken, async (req, res) => {
 
     if (openaiResponse.status === 429) {
       const retryAfter = "300"; // Default to 300 seconds if header is missing
-
-      // Set 'Retry-After' header and send a 429 status to the client
       res.setHeader("Retry-After", retryAfter);
       return res.status(429).send({
         error: "Rate limit exceeded.",
@@ -137,54 +133,11 @@ app.post("/obsessed-stalker", verifyAppCheckToken, async (req, res) => {
       throw new Error(`OpenAI API error: ${openaiResponse.statusText}`);
     }
 
-    // Set headers to keep the connection alive for streaming
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
+    // Parse the entire response body as JSON
+    const openaiData = await openaiResponse.json();
 
-    let buffer = ""; // Accumulate incomplete chunks here
-
-    await pipelineAsync(
-      openaiResponse.body, // Node.js readable stream from fetch
-      async (source) => {
-        for await (const chunk of source) {
-          buffer += chunk.toString(); // Accumulate the chunk in the buffer
-
-          // Try to parse the buffer whenever a new chunk is received
-          try {
-            // Check if we have a valid JSON object in the buffer
-            if (buffer.startsWith("data:")) {
-              buffer = buffer.replace("data:", "").trim(); // Clean up the 'data:' prefix
-            }
-
-            const parsed = JSON.parse(buffer); // Attempt to parse the buffer
-            const content = parsed.choices?.[0]?.delta?.content ?? "";
-
-            if (content) {
-              // Send each chunk of content to the client
-              res.write(`data: ${JSON.stringify({ content })}\n\n`);
-            }
-
-            // Reset buffer after successful parse
-            buffer = "";
-          } catch (err) {
-            // If parsing fails, it's likely incomplete data—wait for more chunks
-            if (err.message.includes("Unexpected end of JSON input")) {
-              // Wait for more data, do nothing
-            } else {
-              // Log and handle errors in the message
-              console.error("Could not parse message:", buffer, err);
-              res.write(`data: ${buffer}\n\n`); // Send the raw message as a response
-              buffer = ""; // Reset buffer
-            }
-          }
-        }
-      }
-    );
-
-    // Close the response when done
-    res.write("data: [DONE]\n\n");
-    res.end();
+    // Send the complete response back to the frontend
+    res.status(200).json(openaiData);
   } catch (error) {
     console.error("Error generating completion:", error);
     res.status(500).send({ error: error.message });

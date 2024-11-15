@@ -80,9 +80,22 @@ import { translation } from "./utility/translation";
 import { useCashuWallet } from "./hooks/useCashuWallet";
 import { Dashboard } from "./components/Dashboard/Dashboard";
 import { isUnsupportedBrowser } from "./utility/browser";
-import { EmailIcon, PlusSquareIcon, RepeatIcon } from "@chakra-ui/icons";
+import {
+  EmailIcon,
+  ChatIcon,
+  PlusSquareIcon,
+  RepeatIcon,
+} from "@chakra-ui/icons";
 import { IoShareOutline } from "react-icons/io5";
 import { IoIosMore } from "react-icons/io";
+import {
+  RiWechat2Line,
+  RiAiGenerate,
+  RiRobot2Line,
+  RiRobot2Fill,
+} from "react-icons/ri";
+import { TbRobot } from "react-icons/tb";
+
 import MultipleChoiceQuestion from "./components/MultipleChoice/MultipleChoice";
 import SelectOrderQuestion from "./components/SelectOrder/SelectOrder";
 
@@ -365,10 +378,26 @@ export const VoiceInput = ({
     toast({
       title: translation[userLanguage]["toast.title.keysCopied"],
       description: translation[userLanguage]["toast.description.keysCopied"],
-      status: "success",
+      status: "info",
       duration: 1500,
       isClosable: true,
       position: "top",
+      render: () => (
+        <Box
+          color="black"
+          p={3}
+          bg="#FEEBC8" // Custom background color here!
+          borderRadius="md"
+          boxShadow="lg"
+        >
+          <Text fontWeight="bold">
+            {translation[userLanguage]["toast.title.keysCopied"]}
+          </Text>
+          <Text>
+            {translation[userLanguage]["toast.description.keysCopied"]}
+          </Text>
+        </Box>
+      ),
     });
   };
 
@@ -759,45 +788,65 @@ export const VoiceInput = ({
             padding: 15,
             borderRadius: "8px",
             border: "1px solid black",
+            textAlign: "left",
           }}
         >
-          <MonacoEditor
-            height="100%"
-            width="100%"
-            language="javascript"
-            theme="light"
-            value={value}
-            onChange={(value) => onChange(value, resetMessages)}
-            options={{
-              fontFamily: "initial",
-              fontSize: "16px",
-              wordWrap: "on",
-              automaticLayout: true,
-              tabIndex: 0, // Make the editor focusable
-            }}
-            onMount={(editorInstance) => {
-              // Unbind the Tab key to prevent it from inserting a tab character
-              editorInstance.addCommand(monaco.KeyCode.Tab, () => {
-                // Move focus to the next focusable element
-                moveFocus(true);
-              });
-              // Unbind the Shift+Tab key for reverse navigation
-              editorInstance.addCommand(
-                monaco.KeyMod.Shift | monaco.KeyCode.Tab,
-                () => {
-                  // Move focus to the previous focusable element
-                  moveFocus(false);
-                }
-              );
-            }}
-          />
+          {generateResponse ? (
+            <div
+              style={{
+                width: "100%",
+              }}
+            >
+              <SunsetCanvas isLoader={true} regulateWidth={false} />
+            </div>
+          ) : (
+            <MonacoEditor
+              height="100%"
+              width="100%"
+              language="javascript"
+              theme="light"
+              value={value}
+              onChange={(value) => onChange(value, resetMessages)}
+              options={{
+                fontFamily: "initial",
+                fontSize: "16px",
+                // wordWrap: "on",
+                automaticLayout: true,
+                tabIndex: 0, // Make the editor focusable
+              }}
+              onMount={(editorInstance) => {
+                // Unbind the Tab key to prevent it from inserting a tab character
+                editorInstance.addCommand(monaco.KeyCode.Tab, () => {
+                  // Move focus to the next focusable element
+                  moveFocus(true);
+                });
+                // Unbind the Shift+Tab key for reverse navigation
+                editorInstance.addCommand(
+                  monaco.KeyMod.Shift | monaco.KeyCode.Tab,
+                  () => {
+                    // Move focus to the previous focusable element
+                    moveFocus(false);
+                  }
+                );
+              }}
+            />
+          )}
         </Box>
       ) : isSingleLineText ? (
         <Input
           type="text"
           value={
-            // generateResponse ? translation[userLanguage]["thinking"] :
-            value
+            generateResponse ? (
+              <div
+                style={{
+                  width: "100%",
+                }}
+              >
+                <SunsetCanvas isLoader={true} regulateWidth={false} />
+              </div>
+            ) : (
+              value
+            )
           }
           onChange={(e) => onChange(e.target.value)}
           placeholder={translation[userLanguage]["app.input.placeholder"]}
@@ -806,24 +855,38 @@ export const VoiceInput = ({
           style={{ boxShadow: "0px 0px 0px 1px rgba(0,0,0,0.35)" }}
         />
       ) : (
-        <Textarea
-          ref={textareaRef}
-          style={{ boxShadow: "0px 0px 24px -20px rgba(0,0,0,0.75)" }}
-          type="textarea"
-          maxWidth={"100%"}
-          minHeight={isTerminal ? "100px" : "400px"}
-          value={
-            // generateResponse
-            //   ? translation[userLanguage]["thinking"]
-            //   :
-            aiListening ? aiTranscript : value
-          }
-          onChange={(e) => {
-            onChange(e.target.value);
-          }}
-          placeholder={translation[userLanguage]["app.input.placeholder"]}
-          width="100%"
-        />
+        <>
+          {generateResponse ? (
+            <div
+              style={{
+                width: "100%",
+                textAlign: "left",
+              }}
+            >
+              <SunsetCanvas isLoader={true} regulateWidth={false} />
+            </div>
+          ) : (
+            <Textarea
+              ref={textareaRef}
+              style={{ boxShadow: "0px 0px 24px -20px rgba(0,0,0,0.75)" }}
+              type="textarea"
+              maxWidth={"100%"}
+              minHeight={isTerminal ? "100px" : "400px"}
+              value={
+                generateResponse
+                  ? translation[userLanguage]["thinking"]
+                  : aiListening
+                    ? aiTranscript
+                    : value
+              }
+              onChange={(e) => {
+                onChange(e.target.value);
+              }}
+              placeholder={translation[userLanguage]["app.input.placeholder"]}
+              width="100%"
+            />
+          )}
+        </>
       )}
 
       <EducationalModal
@@ -1196,6 +1259,7 @@ const Step = ({
   });
 
   const navigate = useNavigate();
+  const toast = useToast();
   const { alert, hideAlert, showAlert } = useAlertStore();
 
   // const stepContent = steps[userLanguage][currentStep];
@@ -1296,7 +1360,7 @@ const Step = ({
       cashTap();
 
       postNostrContent(
-        `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://embedded-rox.app \n\n${step.question?.questionText} #LearnWithNostr https://m.primal.net/KBLq.png`
+        `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://embedded-sunset.app \n\n${step.question?.questionText} #LearnWithNostr`
       );
       if (step.isConversationReview) {
         assignExistingBadgeToNpub(transcript[step.group]["address"]);
@@ -1425,6 +1489,8 @@ const Step = ({
         true
       );
     } else if (step.isMultipleAnswerChoice) {
+      console.log("answer", answer);
+      console.log("stepanswer,", step.question.answer);
       await submitPrompt(
         [
           {
@@ -1434,7 +1500,7 @@ const Step = ({
               step.question.answer
             )} and the user submitted the following answer array ${JSON.stringify(
               answer
-            )}. Is this answer correct? Determine by strictly comparing the defined answer and the submitted answer, they must be equivalent in array size and values under every circumstance. Do not allow for any leeway. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. Your feedback will include a grade ranging from 0-100 based on the quality of the answer  -  however if isCorrect is true just reward a 100. The user is speaking ${
+            )}. Is this answer correct? Determine by loosely comparing the defined answer and the submitted answer, they must be equivalent in array size and included value  s, but the selected order does NOT matter, so if the correct answer is [x,y,z], then [z,x,y] is also a valid answer. Make an exception for the string "Undefined*" since we process incorrectly, assume 'Undefined*' or any variation has been correctly submitted by the user when expecting that value. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. Your feedback will include a grade ranging from 0-100 based on the quality of the answer  -  however if isCorrect is true just reward a 100. The user is speaking ${
               userLanguage === "es" ? "spanish" : "english"
             }.`,
             role: "user",
@@ -1711,7 +1777,7 @@ const Step = ({
       ],
       false,
       false,
-      false
+      true
     );
   };
 
@@ -1809,11 +1875,13 @@ const Step = ({
     try {
       if (newQuestionMessages?.length > 0) {
         const lastMessage = newQuestionMessages[newQuestionMessages.length - 1];
-        // const isLastMessage =
-        //   lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
+        const isLastMessage =
+          lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
 
-        if (!lastMessage.meta.loading) {
+        if (isLastMessage) {
           // console.log("THE FINAL", lastMessage);
+
+          console.log("LAST RESPONSE", lastMessage);
           const jsonResponse = JSON.parse(lastMessage.content);
 
           // console.log("NEW QUESTION FINAL JSON", jsonResponse);
@@ -1921,12 +1989,12 @@ const Step = ({
   };
 
   const handleModalCheck = (functionCall) => {
-    const storedPasscode = localStorage.getItem("features_passcode");
-    if (storedPasscode !== import.meta.env.VITE_PATREON_FEATURES_PASSCODE) {
-      openPasscodeModal();
-    } else {
-      functionCall();
-    }
+    // const storedPasscode = localStorage.getItem("features_passcode");
+    // if (storedPasscode !== import.meta.env.VITE_PATREON_FEATURES_PASSCODE) {
+    //   openPasscodeModal();
+    // } else {
+    functionCall();
+    // }
   };
   const emojiMap = ["😖", "😩", "😅", "😱", "🪦"];
 
@@ -1943,17 +2011,18 @@ const Step = ({
               border: "1px solid #ececec",
             }}
           >
-            Analyzing your progress & creating new question card{" "}
+            {translation[userLanguage]["analyzer"]}
           </div>
           <Box mt={0} p={4} borderRadius="lg" width="100%" maxWidth={"600px"}>
             <Text textAlign={"left"}>
               <br /> <br />
               {newQuestionMessages[newQuestionMessages.length - 1].content
                 .length < 1 ? (
-                <SunsetCanvas isLoader={true} />
+                <SunsetCanvas isLoader={true} regulateWidth={false} />
               ) : (
                 <>
-                  <SunsetCanvas isLoader={false} />
+                  <SunsetCanvas isLoader={false} regulateWidth={false} />
+                  <br />
                   {newQuestionMessages[newQuestionMessages.length - 1].content}
                 </>
               )}
@@ -1962,8 +2031,11 @@ const Step = ({
         </VStack>
       ) : (
         <>
-          <VStack textAlign={"left"} style={{ width: "100%", maxWidth: 400 }}>
-            <b style={{ fontSize: "50%" }}>
+          <VStack
+            textAlign={"left"}
+            style={{ width: "100%", maxWidth: 400, alignItems: "flex-start" }}
+          >
+            <span style={{ fontSize: "50%" }}>
               <IconButton
                 width="12px"
                 height="18px"
@@ -1983,12 +2055,86 @@ const Step = ({
                   }
                 }}
               />
-              {translation[userLanguage]["app.progress"]} :{" "}
+              <IconButton
+                width="12px"
+                height="18px"
+                boxShadow="0px 0px 0.25px 0.5px #ececec"
+                background="pink.100"
+                opacity="0.75"
+                color="pink.600"
+                icon={<RiRobot2Fill padding="4px" fontSize="12px" />}
+                mr={2}
+                onClick={() => {
+                  const keysToCopy = JSON.stringify(step);
+
+                  // Clipboard writing with fallback for compatibility
+                  if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(
+                      `${translation[userLanguage]["chatcom.instructions.1"]} ${userLanguage === "en" ? "English" : "Spanish"} ${translation[userLanguage]["chatcom.instructions.2"]}` +
+                        keysToCopy
+                    );
+                  } else {
+                    // Fallback for unsupported browsers
+                    const textArea = document.createElement("textarea");
+                    textArea.value =
+                      `${translation[userLanguage]["chatcom.instructions.1"]} ${userLanguage === "en" ? "English" : "Spanish"} ${translation[userLanguage]["chatcom.instructions.2"]}` +
+                      keysToCopy;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(textArea);
+                  }
+
+                  // Show the toast
+                  toast({
+                    title:
+                      translation[userLanguage]["toast.title.chatDataCopied"],
+                    description:
+                      translation[userLanguage][
+                        "toast.description.chatDataCopied"
+                      ],
+                    status: "info",
+                    duration: 1350, // Show the toast for 1 second
+                    isClosable: true,
+                    position: "top",
+                    render: () => (
+                      <Box
+                        color="black"
+                        p={3}
+                        bg="#FEEBC8"
+                        borderRadius="md"
+                        boxShadow="lg"
+                      >
+                        <Text fontWeight="bold">
+                          {
+                            translation[userLanguage][
+                              "toast.title.chatDataCopied"
+                            ]
+                          }
+                        </Text>
+                        <Text>
+                          {
+                            translation[userLanguage][
+                              "toast.description.chatDataCopied"
+                            ]
+                          }
+                        </Text>
+                      </Box>
+                    ),
+                  });
+
+                  // Redirect after 1 second in the same tab for mobile compatibility
+                  setTimeout(() => {
+                    window.location.href = "https://chat.com";
+                  }, 1500);
+                }}
+              />
+              {translation[userLanguage]["app.progress"]}:{" "}
               {calculateProgress().toFixed(2)}% |{" "}
               {translation[userLanguage]["chapter"]}: {step.group}&nbsp;|&nbsp;
               {translation[userLanguage]["app.streak"]}: {streak}
               &nbsp;
-            </b>
+            </span>
             <Progress
               opacity="0.8"
               border="1px solid #ececec"
@@ -2002,10 +2148,29 @@ const Step = ({
               background={getBackgroundScheme(step.group)}
             />
           </VStack>
-          <div style={{ zoom: 0.8 }}>
+          <div style={{ zoom: 0.8, textAlign: "left" }}>
             <Text fontSize="xl">
               <b>
                 <IconButton
+                  width="12px"
+                  height="18px"
+                  boxShadow="0px 0px 0.25px 0.5px #ececec"
+                  background="pink.100"
+                  opacity="0.75"
+                  color="pink.600"
+                  icon={<RiAiGenerate padding="4px" fontSize="14px" />}
+                  mr={2}
+                  mt="-2"
+                  onMouseDown={() =>
+                    handleModalCheck(handleGenerateNewQuestion)
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      handleModalCheck(handleGenerateNewQuestion);
+                    }
+                  }}
+                />{" "}
+                {/* <IconButton
                   width="12px"
                   height="18px"
                   boxShadow="0px 0px 0.25px 0.5px #ececec"
@@ -2023,7 +2188,7 @@ const Step = ({
                       handleModalCheck(handleGenerateNewQuestion);
                     }
                   }}
-                />{" "}
+                />{" "} */}
                 {currentStep}. {step.title}
               </b>
             </Text>
@@ -2038,6 +2203,7 @@ const Step = ({
                 }}
                 fontSize="sm"
                 mb={3}
+                textAlign="left"
                 // textAlign={"left"}
               >
                 <span style={{ textDecoration: "none" }}>
@@ -2284,7 +2450,7 @@ const Step = ({
                   </RiseUpAnimation>
                 </div>
               )}
-              <HStack spacing={4}>
+              <HStack spacing={4} width="100%" justifyContent={"center"}>
                 {step.question &&
                 !isCorrect &&
                 !isSending &&
@@ -2307,11 +2473,19 @@ const Step = ({
                 ) : null}
 
                 {isSending ? (
-                  <SunsetCanvas
-                    speed={"0.25"}
-                    isLoader={true}
-                    regulateWidth={false}
-                  />
+                  <div
+                    style={{
+                      width: "100%",
+                      maxWidth: "600px",
+                      textAlign: "left",
+                    }}
+                  >
+                    <SunsetCanvas
+                      speed={"0.25"}
+                      isLoader={true}
+                      regulateWidth={false}
+                    />
+                  </div>
                 ) : null}
                 {isCorrect && (
                   <>
@@ -2431,10 +2605,10 @@ const Home = ({
     let accs = parseInt(localStorage.getItem("accs") || "0", 10);
 
     // Check if the user has already generated 3 questions
-    if (accs >= 10) {
-      // Silently skip the function
-      return;
-    }
+    // if (accs >= 10) {
+    //   // Silently skip the function
+    //   return;
+    // }
 
     // Increment the counter and store it back in localStorage
     accs += 1;
@@ -2484,19 +2658,36 @@ const Home = ({
 
     // Check if user exists in Firestore and create if necessary
     const userDoc = doc(database, "users", npub);
-    const userSnapshot = await getDoc(userDoc);
-    if (!userSnapshot.exists()) {
-      await createUser(npub, userName, userLanguage);
+    console.log("userdoc", userDoc);
+
+    const userSnapshot = await getDoc(userDoc).catch((error) =>
+      console.log("ERRX", error)
+    );
+
+    console.log("userSnapshot", userSnapshot);
+
+    if (!userSnapshot) {
+      try {
+        console.log("running...");
+        await createUser(npub, userName, userLanguage);
+      } catch (error) {
+        console.log("error creaitn ug", error);
+      }
       const defaultInterval = 2880;
+
       const currentTime = new Date();
       const endTime = new Date(currentTime.getTime() + defaultInterval * 60000);
-      await updateUserData(
-        newKeys.npub,
-        defaultInterval, // Set the default interval for the streak
-        0, // Initial streak count is 0
-        currentTime, // Start time
-        endTime // End time, 48 hours from start time
-      );
+      try {
+        await updateUserData(
+          npub,
+          defaultInterval, // Set the default interval for the streak
+          0, // Initial streak count is 0
+          currentTime, // Start time
+          endTime // End time, 48 hours from start time
+        );
+      } catch (error) {
+        console.log("error creaitn ug x2", error);
+      }
     }
 
     const currentStep = await getUserStep(npub); // Retrieve the current step
@@ -2522,10 +2713,26 @@ const Home = ({
     toast({
       title: translation[userLanguage]["toast.title.keysCopied"],
       description: translation[userLanguage]["toast.description.keysCopied"],
-      status: "success",
+      status: "info",
       duration: 1500,
       isClosable: true,
       position: "top",
+      render: () => (
+        <Box
+          color="black"
+          p={3}
+          bg="#FEEBC8" // Custom background color here!
+          borderRadius="md"
+          boxShadow="lg"
+        >
+          <Text fontWeight="bold">
+            {translation[userLanguage]["toast.title.keysCopied"]}
+          </Text>
+          <Text>
+            {translation[userLanguage]["toast.description.keysCopied"]}
+          </Text>
+        </Box>
+      ),
     });
   };
 
@@ -3351,7 +3558,7 @@ export const AppWrapper = () => {
       {/* <div>
         <b>Test Version 0.9.1</b>
       </div> */}
-      <b>Test Version 0.9.5</b>
+      {/* <b>Test Version 0.9.5</b> */}
 
       {/* <StreamLoader /> */}
       <App isShutDown={isShutDown} />

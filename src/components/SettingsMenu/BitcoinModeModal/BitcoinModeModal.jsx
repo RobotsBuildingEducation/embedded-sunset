@@ -76,7 +76,7 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
     toast({
       title: translation[userLanguage]["toast.title.addressCopied"],
       description: translation[userLanguage]["toast.description.addressCopied"],
-      status: "success",
+      status: "warning",
       duration: 1500,
       isClosable: true,
       position: "top",

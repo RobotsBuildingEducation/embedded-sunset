@@ -23,19 +23,19 @@ export default defineConfig({
         description: "PWA install handler package for Sunset",
         icons: [
           {
-            src: "https://res.cloudinary.com/dtkeyccga/image/upload/v1723193585/8_sexlqw.png",
+            src: "https://res.cloudinary.com/dtkeyccga/image/upload/v1728270558/zre4dehmebfdikzeasoh.png",
             sizes: "192x192",
             type: "image/png",
             purpose: "any",
           },
           {
-            src: "https://res.cloudinary.com/dtkeyccga/image/upload/v1723193585/8_sexlqw.png",
+            src: "https://res.cloudinary.com/dtkeyccga/image/upload/v1728270558/zre4dehmebfdikzeasoh.png",
             sizes: "256x256",
             type: "image/png",
             purpose: "any",
           },
           {
-            src: "https://res.cloudinary.com/dtkeyccga/image/upload/v1723193585/8_sexlqw.png",
+            src: "https://res.cloudinary.com/dtkeyccga/image/upload/v1728270558/zre4dehmebfdikzeasoh.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "any",

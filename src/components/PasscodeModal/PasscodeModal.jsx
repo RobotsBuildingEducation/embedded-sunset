@@ -25,13 +25,30 @@ export const PasscodeModal = ({ userLanguage }) => {
   const handleConfirm = () => {
     if (enteredPasscode === import.meta.env.VITE_PATREON_FEATURES_PASSCODE) {
       localStorage.setItem("features_passcode", enteredPasscode);
+      //convert to spanish if we ever use this again
       toast({
         title: "Features unlocked!",
         description: "AI features have been enabled on your device.",
-        status: "success",
+        status: "info",
         duration: 3000,
         isClosable: true,
         position: "top",
+        // render: () => (
+        //   <Box
+        //     color="black"
+        //     p={3}
+        //     bg="#FEEBC8" // Custom background color here!
+        //     borderRadius="md"
+        //     boxShadow="lg"
+        //   >
+        //     <Text fontWeight="bold">
+        //       {translation[userLanguage]["toast.title.keysCopied"]}
+        //     </Text>
+        //     <Text>
+        //       {translation[userLanguage]["toast.description.keysCopied"]}
+        //     </Text>
+        //   </Box>
+        // ),
       });
       closePasscodeModal();
       //   onConfirm();

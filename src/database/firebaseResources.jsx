@@ -26,9 +26,9 @@ export const app = initializeApp(firebaseConfig);
 const database = getFirestore(app);
 const analytics = getAnalytics(app);
 
-// if (window.location.hostname === "localhost") {
-//   self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-// }
+if (window.location.hostname === "localhost") {
+  self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+}
 
 export const appCheck = initializeAppCheck(app, {
   provider: new ReCaptchaV3Provider("6LdzBVwqAAAAABT9kfIUQjeLb0nWjqZ3WzbhZIjh"),

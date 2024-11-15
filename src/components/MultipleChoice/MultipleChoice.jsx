@@ -80,7 +80,7 @@ const MultipleChoiceQuestion = ({
         {question.options.map((option, index) => (
           <Button
             ref={(el) => (optionRefs.current[index] = el)}
-            p={8}
+            p={8} // Responsive padding
             variant={"outline"}
             key={index}
             onMouseDown={() => handleOptionClick(option, index)}
@@ -109,9 +109,7 @@ const MultipleChoiceQuestion = ({
                   selectedOption === option ? "pink.300" : "transparent"
                 }
               />
-              <Text flex="1" noOfLines={[2, 3, 4]}>
-                {option}
-              </Text>
+              <Text flex="1">{option}</Text>
             </HStack>
           </Button>
         ))}

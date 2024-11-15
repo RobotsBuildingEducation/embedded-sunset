@@ -37,7 +37,7 @@ const FeedbackModal = ({ isOpen, onClose, userLanguage }) => {
         title: translation[userLanguage]["toast.feedbackSubmittedTitle"],
         description:
           translation[userLanguage]["toast.feedbackSubmittedDescription"],
-        status: "success",
+        status: "info",
         duration: 2000,
         isClosable: true,
         position: "top",

@@ -53,6 +53,9 @@ export const KnowledgeLedgerModal = ({
           setIsLoading(false);
         } else {
           setSuggestion(lastMessage.content);
+
+          console.log("placed content");
+
           if (lastMessage.content.length > 0) {
             setIsAnimating(false);
           }
@@ -107,6 +110,9 @@ export const KnowledgeLedgerModal = ({
           role: "user",
         },
       ]);
+
+      console.log("submit prompt is done");
+      setIsAnimating(false);
     } catch (error) {
       console.error("Error fetching suggestion:", error);
       setSuggestion("Error fetching suggestion");

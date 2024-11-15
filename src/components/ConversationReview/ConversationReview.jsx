@@ -234,7 +234,9 @@ const ConversationReview = ({
                   ))}
                 </Box>
               </Flex>
-            ) : null}
+            ) : (
+              <SunsetCanvas isLoader={true} regulateWidth={false} />
+            )}
             {messages.length > 0 && !item.response && (
               <Box
                 mt={4}

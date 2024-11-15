@@ -142,6 +142,7 @@ export const SunsetCanvas = ({
           display: isLoader ? "flex" : null,
           flexDirection: isLoader ? "column" : "",
           alignItems: isLoader ? "center" : "",
+          textAlign: regulateWidth ? "left" : null,
         }}
       >
         {hasAnimation ? (

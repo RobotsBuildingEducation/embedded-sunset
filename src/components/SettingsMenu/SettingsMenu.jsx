@@ -250,6 +250,7 @@ const SettingsMenu = ({
                 }}
                 variant={"outline"}
                 boxShadow={"0px 0.5px 0.5px 1px black"}
+                border="2px solid gold"
               >
                 <b> {translation[userLanguage]["settings.button.patreon"]}</b>
               </Button>
@@ -305,6 +306,7 @@ const SettingsMenu = ({
         />
       ) : null}
 
+      {/* I dont think this is in use anymore */}
       <RoxModal
         isOpen={isRoxModalOpen}
         userLanguage={userLanguage}
@@ -325,6 +327,7 @@ const SettingsMenu = ({
         currentStep={currentStep}
       />
 
+      {/* not in use anymore */}
       <FeedbackModal
         userLanguage={userLanguage}
         isOpen={isFeedbackOpen}

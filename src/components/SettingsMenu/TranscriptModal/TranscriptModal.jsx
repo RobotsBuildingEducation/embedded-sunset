@@ -55,10 +55,26 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
       toast({
         title: translation[userLanguage]["toast.title.keysCopied"],
         description: translation[userLanguage]["toast.description.keysCopied"],
-        status: "success",
+        status: "info",
         duration: 1500,
         isClosable: true,
         position: "top",
+        render: () => (
+          <Box
+            color="black"
+            p={3}
+            bg="#FEEBC8" // Custom background color here!
+            borderRadius="md"
+            boxShadow="lg"
+          >
+            <Text fontWeight="bold">
+              {translation[userLanguage]["toast.title.keysCopied"]}
+            </Text>
+            <Text>
+              {translation[userLanguage]["toast.description.keysCopied"]}
+            </Text>
+          </Box>
+        ),
       });
     } else {
       const keys = localStorage.getItem("local_nsec"); // replace with actual keys
@@ -66,10 +82,26 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
       toast({
         title: translation[userLanguage]["toast.title.keysCopied"],
         description: translation[userLanguage]["toast.description.keysCopied"],
-        status: "success",
+        status: "info",
         duration: 1500,
         isClosable: true,
         position: "top",
+        render: () => (
+          <Box
+            color="black"
+            p={3}
+            bg="#FEEBC8" // Custom background color here!
+            borderRadius="md"
+            boxShadow="lg"
+          >
+            <Text fontWeight="bold">
+              {translation[userLanguage]["toast.title.keysCopied"]}
+            </Text>
+            <Text>
+              {translation[userLanguage]["toast.description.keysCopied"]}
+            </Text>
+          </Box>
+        ),
       });
     }
   };
