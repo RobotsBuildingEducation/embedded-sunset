@@ -246,6 +246,21 @@ const SettingsMenu = ({
                 // as="a"
 
                 onClick={() => {
+                  window.open(
+                    "https://github.com/RobotsBuildingEducation/RobotsBuildingEducation/blob/main/README.md"
+                  );
+                }}
+                variant={"outline"}
+                boxShadow={"0px 0.5px 0.5px 1px black"}
+              >
+                <b>{translation[userLanguage]["settings.button.studyGuide"]}</b>
+              </Button>
+              <Button
+                p={6}
+                style={{ width: "100%" }}
+                // as="a"
+
+                onClick={() => {
                   window.open("https://patreon.com/notesandotherstuff");
                 }}
                 variant={"outline"}
@@ -254,6 +269,7 @@ const SettingsMenu = ({
               >
                 <b> {translation[userLanguage]["settings.button.patreon"]}</b>
               </Button>
+
               <Button
                 style={{ width: "100%" }}
                 onClick={() => {

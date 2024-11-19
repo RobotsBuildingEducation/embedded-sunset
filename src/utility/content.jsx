@@ -5,10 +5,164 @@ export const getObjectsByGroup = (groupNumber, arrayOfObjects) => {
 export const steps = {
   en: [
     {
-      group: "0",
-      title: "Welcome to the Sunset!",
+      group: "introduction",
+      title: "Introduction To Software Development",
+      isStudyGuide: true,
       description:
-        "Press 'Let's start' to begin your journey in learning how to code.",
+        "Expose yourself to fundamentals to improve the quality of your learning before making progress.",
+      question: {
+        questionText:
+          "One of the best predictors for student success is exposure to course material before studying it. You're encouraged to read about the fundamentals of software before starting.",
+        metaData: `### Welcome to Github!
+Github is a platform that let's software developers collaborate with code. Think of it like Google Docs but for software engineers. We'll learn more about using Git and Github another time but for now this serves as a warm welcome to the world of software construction.
+
+### Advice
+It's important to remember this as a beginner:
+
+1. Building things with software is mostly about organizing information rather than being good at math. Programming languages use logic and computation to express ideas instead of equations and algebra.
+
+2. Like the English language, you can express things in many different ways.
+
+3. When something challenges you, fail faster and break the problem into more understandable steps.
+
+
+### Exposure
+The idea here is to expose you to concepts before you start to answer questions about it in the app so you aren't intimidated by it later. Don't worry about not understanding everything. In fact, try your best to make sense out of it at a glance or use AI to your advantage to create an understanding.
+
+### Code
+
+Let's observe these lists. We can see that:
+- \`my_custom_data && my_custom_list\` are equivalent.
+- \`data_set && data_object\` are also fundamentally equivalent.
+
+
+\`\`\`js
+let my_custom_data = [1, 2, 3, 'a', 'b', 'c', null, false]
+const my_custom_list = new Array(1,2,3,'a','b','c', null, false)
+my_custom_data.push('new data')
+my_custom_list.push('new data')
+
+let data_set = {
+  introduction: "Welcome",
+  title: "Chapter 1",
+  is_live: true
+}
+data_set.page = 4
+data_set['book'] = 'Coding Basics'
+
+let data_object = new Object()
+data_object.introduction = 'Welcome'
+data_object.title = 'Chapter 1'
+data_object.is_live = true
+data_object.page = 4
+data_object['book'] = 'Coding Basics'
+
+\`\`\`
+
+Additionally, in the example above, we're exposed to variable definitions, data types, arrays, functions and objects. A lot of the software that you likely operates on those concepts under the hood. This is way \`[]\` and \`new Array\` can create the same data - it translates the same way when it comes to turning your code into signals that can be sent across the internet.
+
+Now in the example below, we take a look at creating our own custom objects. We create our own custom object, along with an interface of functions. Generally when it comes to data, you're able to create, retrieve, update or delete it in some form or another.
+
+\`\`\`js
+class House {
+  house_paint = null
+
+  constructor(paint){
+    this.house_paint = paint
+  }
+
+  getPaint(){
+    return this.house_paint
+  }
+
+  setPaint(paint) = (paint) => {
+    this.house_paint = paint
+  }
+
+  deletePaint = () => {
+    this.house_paint = null
+  }
+}
+
+let first_home = new House("pink")
+let next_home = new House("blue")
+
+let first_paint = first_house.getPaint() // returns the value "pink"
+let next_paint = new_home.house_paint // returns the value "blue"
+next_paint = new_home['house_paint'] // still returns the value 'blue'
+
+\`\`\`
+
+So that's creating data and working with data. You'll find that you can usually combine ideas depending on what you need to create. For example, the above component can also be written the following way:
+
+\`\`\`js
+function createHouse(paint = null) {
+  return {
+    house_paint: paint,
+
+    getPaint() {
+      return this.house_paint;
+    },
+
+    setPaint(paint) {
+      this.house_paint = paint;
+    },
+
+    deletePaint() {
+      this.house_paint = null;
+    },
+  };
+}
+
+//what is the value of the result by the end of the program?
+const myHouse = createHouse('blue');
+let paint = myHouse.house_paint;
+
+myHouse.house_paint = 'red'; 
+paint = myHouse.getPaint()
+
+myHouse.setPaint('green'); 
+paint = myHouse.house_paint
+
+myHouse.deletePaint(); 
+
+let result = myHouse['house_paint']
+\`\`\`
+
+
+Finally, we combine this to work with some code that renders the following screen
+\`\`\`jsx
+const CelebrationMessage = ({ name }) => {
+  const styling_data = {
+    textAlign: 'center'
+  }
+  
+  return <div style={styling_data}>{name}</div>
+}
+
+const App = () => {
+  return (
+    <section style={{ border: '3px solid black' }}>
+      <header>
+        <h2>Good job!</h2>
+      </header>
+      
+      <CelebrationMessage name="You created a small app!" />
+     </section>
+  )
+}
+\`\`\`
+
+
+And that's all! In the last example, we've used a library called React, which gives us access to special functions that are specialized for rendering elements on a screen. But it follows the same thought process as the stuff before it.
+
+### Conclusion
+Remember that failing faster is in your best interest when learning new skills with software. This one pager document will be available inside of the app. There are also many other features to help your journey along the way, but I'll leave that to your exploration of the platform and everything it has to offer.
+
+Stay focused and best of luck with the rest!
+
+        `,
+      },
     },
     {
       group: "tutorial",
@@ -2719,10 +2873,161 @@ list.add('reels');`,
   ],
   es: [
     {
-      group: "0",
-      title: "¡Bienvenido a la aplicación de Program AI!",
+      group: "introducción",
+      title: "Introducción al Desarrollo de Software",
+      isStudyGuide: true,
       description:
-        "Presiona 'Empecemos' para comenzar tu viaje en el aprendizaje de programación.",
+        "Expóngase a los fundamentos para mejorar la calidad de su aprendizaje antes de avanzar.",
+      question: {
+        questionText:
+          "Uno de los mejores predictores del éxito estudiantil es la exposición al material del curso antes de estudiarlo. Se le anima a leer sobre los fundamentos del software antes de comenzar.",
+        metaData: `### ¡Bienvenido a Github!
+    Github es una plataforma que permite a los desarrolladores de software colaborar con código. Piénsalo como Google Docs pero para ingenieros de software. Aprenderemos más sobre el uso de Git y Github en otra ocasión, pero por ahora esto sirve como una cálida bienvenida al mundo de la construcción de software.
+    
+    ### Consejos
+    Es importante recordar esto como principiante:
+    
+    1. Construir cosas con software se trata principalmente de organizar información en lugar de ser bueno en matemáticas. Los lenguajes de programación usan lógica y computación para expresar ideas en lugar de ecuaciones y álgebra.
+    
+    2. Al igual que el idioma inglés, puedes expresar las cosas de muchas maneras diferentes.
+    
+    3. Cuando algo te desafíe, falla más rápido y divide el problema en pasos más comprensibles.
+    
+    ### Exposición
+    La idea aquí es exponerte a conceptos antes de que empieces a responder preguntas al respecto en la aplicación para que no te intimide más tarde. No te preocupes por no entender todo. De hecho, haz tu mejor esfuerzo para darle sentido de un vistazo o usa la IA a tu favor para crear una comprensión.
+    
+    ### Código
+    
+    Observemos estas listas. Podemos ver que:
+    - \`mis_datos_personalizados && mi_lista_personalizada\` son equivalentes.
+    - \`conjunto_de_datos && objeto_de_datos\` también son fundamentalmente equivalentes.
+    
+    \`\`\`js
+    let mis_datos_personalizados = [1, 2, 3, 'a', 'b', 'c', null, false]
+    const mi_lista_personalizada = new Array(1, 2, 3, 'a', 'b', 'c', null, false)
+    mis_datos_personalizados.push('nuevos datos')
+    mi_lista_personalizada.push('nuevos datos')
+    
+    let conjunto_de_datos = {
+      introduccion: "Bienvenido",
+      titulo: "Capítulo 1",
+      esta_en_vivo: true
+    }
+    conjunto_de_datos.pagina = 4
+    conjunto_de_datos['libro'] = 'Conceptos Básicos de Programación'
+    
+    let objeto_de_datos = new Object()
+    objeto_de_datos.introduccion = 'Bienvenido'
+    objeto_de_datos.titulo = 'Capítulo 1'
+    objeto_de_datos.esta_en_vivo = true
+    objeto_de_datos.pagina = 4
+    objeto_de_datos['libro'] = 'Conceptos Básicos de Programación'
+    
+    \`\`\`
+    
+    Además, en el ejemplo anterior, estamos expuestos a definiciones de variables, tipos de datos, arrays, funciones y objetos. Gran parte del software que probablemente utilizas opera con esos conceptos bajo el capó. Es por eso que \`[]\` y \`new Array\` pueden crear los mismos datos: se traduce de la misma manera cuando se trata de convertir tu código en señales que pueden enviarse a través de Internet.
+    
+    Ahora, en el ejemplo a continuación, echamos un vistazo a crear nuestros propios objetos personalizados. Creamos nuestro propio objeto personalizado, junto con una interfaz de funciones. Generalmente, cuando se trata de datos, puedes crearlos, recuperarlos, actualizarlos o eliminarlos de una forma u otra.
+    
+    \`\`\`js
+    class Casa {
+      pintura_casa = null
+    
+      constructor(pintura){
+        this.pintura_casa = pintura
+      }
+    
+      obtenerPintura(){
+        return this.pintura_casa
+      }
+    
+      establecerPintura(pintura){
+        this.pintura_casa = pintura
+      }
+    
+      eliminarPintura(){
+        this.pintura_casa = null
+      }
+    }
+    
+    let primera_casa = new Casa("rosa")
+    let siguiente_casa = new Casa("azul")
+    
+    let primera_pintura = primera_casa.obtenerPintura() // devuelve el valor "rosa"
+    let siguiente_pintura = siguiente_casa.pintura_casa // devuelve el valor "azul"
+    siguiente_pintura = siguiente_casa['pintura_casa'] // aún devuelve el valor 'azul'
+    
+    \`\`\`
+    
+    Entonces, eso es crear datos y trabajar con datos. Descubrirás que generalmente puedes combinar ideas dependiendo de lo que necesites crear. Por ejemplo, el componente anterior también puede escribirse de la siguiente manera:
+    
+    \`\`\`js
+    function crearCasa(pintura = null) {
+      return {
+        pintura_casa: pintura,
+    
+        obtenerPintura() {
+          return this.pintura_casa;
+        },
+    
+        establecerPintura(pintura) {
+          this.pintura_casa = pintura;
+        },
+    
+        eliminarPintura() {
+          this.pintura_casa = null;
+        },
+      };
+    }
+    
+    //¿cuál es el valor del resultado al final del programa?
+    const miCasa = crearCasa('azul');
+    let pintura = miCasa.pintura_casa;
+    
+    miCasa.pintura_casa = 'rojo'; 
+    pintura = miCasa.obtenerPintura();
+    
+    miCasa.establecerPintura('verde'); 
+    pintura = miCasa.pintura_casa;
+    
+    miCasa.eliminarPintura(); 
+    
+    let resultado = miCasa['pintura_casa'];
+    \`\`\`
+    
+    Finalmente, combinamos esto para trabajar con algún código que renderiza la siguiente pantalla:
+    
+    \`\`\`jsx
+    const MensajeDeCelebracion = ({ nombre }) => {
+      const datos_de_estilo = {
+        textAlign: 'center'
+      }
+      
+      return <div style={datos_de_estilo}>{nombre}</div>
+    }
+    
+    const Aplicacion = () => {
+      return (
+        <section style={{ border: '3px solid black' }}>
+          <header>
+            <h2>¡Buen trabajo!</h2>
+          </header>
+          
+          <MensajeDeCelebracion nombre="¡Creaste una pequeña aplicación!" />
+         </section>
+      )
+    }
+    \`\`\`
+    
+    Y eso es todo. En el último ejemplo, hemos utilizado una biblioteca llamada React, que nos da acceso a funciones especiales especializadas para renderizar elementos en una pantalla. Pero sigue el mismo proceso de pensamiento que lo anterior.
+    
+    ### Conclusión
+    Recuerda que fallar más rápido está en tu mejor interés cuando aprendes nuevas habilidades con software. Este documento de una página estará disponible dentro de la aplicación. También hay muchas otras características para ayudar en tu viaje, pero dejaré eso a tu exploración de la plataforma y todo lo que tiene para ofrecer.
+    
+    Mantente enfocado y ¡mucha suerte con el resto!
+    
+                `,
+      },
     },
     {
       group: "tutorial",

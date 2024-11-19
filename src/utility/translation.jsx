@@ -82,6 +82,7 @@ export let translation = {
     "settings.button.yourProfile": "Your Profile",
     "settings.button.nostrApps": "App Collection",
     "settings.button.patreon": "Subscription",
+    "settings.button.studyGuide": "Study Guide",
     "settings.button.feedback": "Feedback",
     "settings.button.signOut": "Sign Out",
     "modal.title.decentralizedTranscript": "Decentralized Transcript",
@@ -723,8 +724,11 @@ export let translation = {
     "settings.button.tutorGPT": "Abrir Tutor (GPT)",
     "settings.button.socialWallet": "Descentralizar",
     "settings.button.patreon": "Suscripción",
+    "settings.button.studyGuide": "Guía de Estudio",
+
     "settings.button.feedback": "Comentarios",
     "settings.button.signOut": "Cerrar sesión",
+
     "modal.title.selfPace": "Auto ritmo",
     "modal.selfPace.instruction":
       "Elija cuánto tiempo puede transcurrir para aumentar su racha.",

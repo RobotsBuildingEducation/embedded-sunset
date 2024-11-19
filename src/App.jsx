@@ -1372,7 +1372,9 @@ const Step = ({
 
   // Calculate progress through the steps
   const calculateProgress = () => {
-    return ((currentStep - 1) / (steps[userLanguage].length - 1)) * 100;
+    let result = ((currentStep - 1) / (steps[userLanguage].length - 1)) * 100;
+    if (result < 0) return 0;
+    return result;
   };
 
   // Handle input change
@@ -1684,6 +1686,7 @@ const Step = ({
 
     setGeneratedQuestion([]);
     resetNewQuestionMessages();
+    //
     if (currentStep === 9) {
       const npub = localStorage.getItem("local_npub");
 
@@ -1701,6 +1704,7 @@ const Step = ({
           await storeCorrectAnswer(step, feedback);
 
           setIsPostingWithNostr(false);
+
           navigate(`/q/${currentStep + 1}`);
         } catch (error) {
           setIsPostingWithNostr(false);
@@ -1716,9 +1720,13 @@ const Step = ({
       try {
         const npub = localStorage.getItem("local_npub");
         await incrementUserStep(npub);
-        await storeCorrectAnswer(step, feedback);
+        if (currentStep > 0) {
+          await storeCorrectAnswer(step, feedback);
+        }
 
         setIsPostingWithNostr(false);
+        console.log("CurrentStep", currentStep);
+        console.log("CurrentStep/q/", `/q/${currentStep + 1}`);
         navigate(`/q/${currentStep + 1}`);
       } catch (error) {
         setIsPostingWithNostr(false);
@@ -1998,6 +2006,9 @@ const Step = ({
   };
   const emojiMap = ["😖", "😩", "😅", "😱", "🪦"];
 
+  console.log("step from step", step);
+  console.log(" x current step ", currentStep);
+
   return (
     <VStack spacing={4} width="100%" mt={6}>
       {newQuestionMessages.length > 0 && isEmpty(generatedQuestion) ? (
@@ -2148,6 +2159,7 @@ const Step = ({
               background={getBackgroundScheme(step.group)}
             />
           </VStack>
+
           <div style={{ zoom: 0.8, textAlign: "left" }}>
             <Text fontSize="xl">
               <b>
@@ -2189,7 +2201,7 @@ const Step = ({
                     }
                   }}
                 />{" "} */}
-                {currentStep}. {step.title}
+                {currentStep > 0 ? currentStep + "." : null} {step.title}
               </b>
             </Text>
             {step.question && (
@@ -2222,6 +2234,48 @@ const Step = ({
               </Text>
             )}
           </div>
+
+          {step.isStudyGuide && (
+            <div>
+              <Button
+                onMouseDown={() => {
+                  window.open(
+                    userLanguage === "en"
+                      ? "https://github.com/RobotsBuildingEducation/RobotsBuildingEducation/blob/main/README.md"
+                      : "https://github.com/RobotsBuildingEducation/RobotsBuildingEducation/blob/main/README.spanish.md"
+                  );
+                }}
+                mb={4}
+                boxShadow={"0px 0.5px 0.5px 1px black"}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    window.open(
+                      userLanguage === "en"
+                        ? "https://github.com/RobotsBuildingEducation/RobotsBuildingEducation/blob/main/README.md"
+                        : "https://github.com/RobotsBuildingEducation/RobotsBuildingEducation/blob/main/README.spanish.md"
+                    );
+                  }
+                }}
+              >
+                {translation[userLanguage]["settings.button.studyGuide"]}{" "}
+              </Button>
+              &nbsp;&nbsp; &nbsp;&nbsp;
+              <Button
+                background="white"
+                variant={"outline"}
+                onMouseDown={handleNextClick}
+                mb={4}
+                boxShadow={"0px 0.5px 0.5px 1px black"}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleNextClick();
+                  }
+                }}
+              >
+                {translation[userLanguage]["app.button.nextQuestion"]}{" "}
+              </Button>
+            </div>
+          )}
 
           {step.isSingleLineText && (
             <VoiceInput
@@ -2452,6 +2506,7 @@ const Step = ({
               )}
               <HStack spacing={4} width="100%" justifyContent={"center"}>
                 {step.question &&
+                currentStep > 0 &&
                 !isCorrect &&
                 !isSending &&
                 !(parseInt(localStorage.getItem("incorrectAttempts")) >= "5") &&
@@ -2703,7 +2758,7 @@ const Home = ({
 
   const handleLaunchApp = () => {
     if (isCheckboxChecked) {
-      navigate("/q/1");
+      navigate("/q/0");
     }
   };
 
@@ -3233,10 +3288,11 @@ function App({ isShutDown }) {
         try {
           const step = await getUserStep(npub); // Fetch the current step
 
-          if (step == 0) {
-            localStorage.clear();
-            navigate("/");
-          } else {
+          // if (step == 0) {
+          //   localStorage.clear();
+          //   navigate("/");
+          // } else {
+          if (step > -1) {
             console.log("nope");
             auth(localStorage.getItem("local_nsec"));
             setIsSignedIn(true);
@@ -3276,10 +3332,10 @@ function App({ isShutDown }) {
             } else if (step === "award") {
               navigate("/award");
             } else {
-              if (step !== 0) {
-                topRef.current?.scrollIntoView();
-                navigate(`/q/${step}`);
-              }
+              // if (step !== 0) {
+              topRef.current?.scrollIntoView();
+              navigate(`/q/${step}`);
+              // }
             }
           }
         } catch (error) {

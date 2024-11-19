@@ -58,7 +58,7 @@ export const incrementUserStep = async (npub) => {
   const userSnapshot = await getDoc(userDoc);
 
   if (userSnapshot.exists()) {
-    const currentStep = userSnapshot.data().step || 1;
+    const currentStep = userSnapshot.data().step || 0;
     await updateDoc(userDoc, {
       previousStep: currentStep + 1,
       step: currentStep + 1,
@@ -95,7 +95,7 @@ export const getUserStep = async (npub) => {
   const userSnapshot = await getDoc(userDoc);
 
   if (userSnapshot.exists()) {
-    return userSnapshot.data().step || 1;
+    return userSnapshot.data().step || 0;
   } else {
     return 0; // Default to step 0 if user document does not exist
   }
