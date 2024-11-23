@@ -134,8 +134,9 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
 
       setLoadingMessage("createAccount.isCreatingIntroPost");
       //Creating introduction post... 4/4
-      postNostrContent(introductionPost, 1, publicKey, encodedNsec);
-
+      if (window.location.hostname !== "localhost") {
+        postNostrContent(introductionPost, 1, publicKey, encodedNsec);
+      }
       // await followUserOnNostr(
       //   "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt",
       //   publicKey,

@@ -3,7 +3,7 @@ export const isUnsupportedBrowser = () => {
 
   const isByteDanceWebview = /ByteDanceWebview/.test(userAgent) && "Tiktok";
   const isByteLocale = /ByteLocale/.test(userAgent) && "Tiktok";
-  const isMusicalLy = /musical_ly/.test(userAgent) && "TIktok";
+  const isMusicalLy = /musical_ly/.test(userAgent) && "Tiktok";
   const isInstagram = /Instagram/.test(userAgent) && "Instagram";
   const isPinterest = /Pinterest/.test(userAgent) && "Pinterest";
   const isNotValid =
