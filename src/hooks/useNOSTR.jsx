@@ -177,11 +177,9 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
         ],
       });
 
-      console.log("connect...");
       // Connect to the relays
       await ndkInstance.connect();
 
-      console.log("Ndk instance", ndkInstance);
       setIsConnected(true);
 
       // Return the connected NDK instance and signer
@@ -335,7 +333,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
 
       const addressPointer = await getAddressPointer(addy);
 
-      console.log("BDT", addressPointer);
       // Create a filter for badge events (kind 30008) for the given user
       const filter = {
         kinds: [NDKKind.BadgeDefinition], // Use the NDKKind enum for better readability
@@ -393,7 +390,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       const badges = [];
 
       subscription.on("event", (event) => {
-        console.log("EVENT", event);
         const badgeInfo = {
           content: event.content,
           createdAt: event.created_at,
@@ -404,7 +400,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
 
       await new Promise((resolve) => subscription.on("eose", resolve));
 
-      console.log("badges", badges);
       const uniqueNAddresses = [
         ...new Set(
           badges.flatMap(
@@ -416,7 +411,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
         ),
       ];
 
-      console.log("uniqueNAddresses", uniqueNAddresses);
       let badgeData = uniqueNAddresses.map((naddress) =>
         getBadgeData(naddress)
       );
@@ -428,13 +422,12 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       // Loop through each outer array in the badgeDataArray
       resolvedBadges.forEach((badgeArray) => {
         // For each inner badge object array (which should have one object), extract name and image
-        console.log("badge arr", badgeArray);
+
         badgeArray.forEach((badge) => {
           let name = "";
           let image = "";
 
           badge.tags.forEach((tag) => {
-            console.log("TAG", tag);
             if (tag[0] === "name") {
               name = tag[1];
             }
@@ -454,7 +447,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
         });
       });
 
-      console.log("formattedBadges", formattedBadges);
       return formattedBadges;
     } catch (error) {
       console.error("Error retrieving badges:", error);
@@ -532,6 +524,49 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
   //   }
   // };
 
+  const getLastNotesByNpub = async (npub) => {
+    console.log("running npub operation");
+    try {
+      const connection = await connectToNostr();
+      if (!connection) return [];
+
+      const { ndkInstance } = connection;
+      const hexNpub = getHexNPub(npub); // Convert npub to hex
+
+      // Create a filter for kind: 1 (text notes) by the author
+      const filter = {
+        kinds: [NDKKind.Text], // Kind 1 is for text notes
+        authors: [hexNpub], // Filter by the author's public key
+        limit: 5, // Limit to the last 100 events
+      };
+
+      // Create a subscription to fetch the events
+      const subscription = ndkInstance.subscribe(filter, { closeOnEose: true });
+
+      const notes = [];
+
+      subscription.on("event", (event) => {
+        notes.push({
+          content: event.content,
+          createdAt: event.created_at,
+          tags: event.tags,
+          id: event.id,
+        });
+      });
+
+      // Wait for the subscription to finish
+      await new Promise((resolve) => subscription.on("eose", resolve));
+
+      // Return the retrieved notes
+      console.log("final notes", notes);
+      return notes;
+    } catch (error) {
+      console.error("Error retrieving notes:", error);
+      setErrorMessage(error.message);
+      return [];
+    }
+  };
+
   return {
     isConnected,
     errorMessage,
@@ -542,5 +577,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     auth,
     assignExistingBadgeToNpub,
     getUserBadges,
+    getLastNotesByNpub,
   };
 };

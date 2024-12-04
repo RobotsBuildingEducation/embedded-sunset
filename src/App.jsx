@@ -8,23 +8,18 @@ import {
   VStack,
   Input,
   HStack,
-  Spinner,
   useDisclosure,
   useToast,
   Checkbox,
-  Link,
   Textarea,
   Progress,
-  Select,
   FormControl,
   FormLabel,
   Switch,
   Heading,
   OrderedList,
   ListItem,
-  Icon,
   IconButton,
-  Fade,
   Accordion,
   AccordionItem,
   AccordionButton,
@@ -59,11 +54,7 @@ import {
   incrementUserStep,
   updateUserData,
 } from "./utility/nosql";
-import {
-  getObjectsByGroup,
-  steps,
-  tutorial_interface,
-} from "./utility/content";
+import { getObjectsByGroup, steps } from "./utility/content";
 import { PrivateRoute } from "./PrivateRoute";
 import {
   addDoc,
@@ -74,27 +65,17 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { database, analytics } from "./database/firebaseResources";
-import { logEvent } from "firebase/analytics";
+import { database } from "./database/firebaseResources";
+
 import { translation } from "./utility/translation";
-import { useCashuWallet } from "./hooks/useCashuWallet";
+
 import { Dashboard } from "./components/Dashboard/Dashboard";
 import { isUnsupportedBrowser } from "./utility/browser";
-import {
-  EmailIcon,
-  ChatIcon,
-  PlusSquareIcon,
-  RepeatIcon,
-} from "@chakra-ui/icons";
+import { EmailIcon, PlusSquareIcon } from "@chakra-ui/icons";
 import { IoShareOutline } from "react-icons/io5";
 import { IoIosMore } from "react-icons/io";
-import {
-  RiWechat2Line,
-  RiAiGenerate,
-  RiRobot2Line,
-  RiRobot2Fill,
-} from "react-icons/ri";
-import { TbRobot } from "react-icons/tb";
+import { RiAiGenerate, RiRobot2Fill } from "react-icons/ri";
+import { IoPlay } from "react-icons/io5";
 
 import MultipleChoiceQuestion from "./components/MultipleChoice/MultipleChoice";
 import SelectOrderQuestion from "./components/SelectOrder/SelectOrder";
@@ -104,7 +85,6 @@ import { About } from "./About";
 import ConversationReview from "./components/ConversationReview/ConversationReview";
 import RandomCharacter, {
   FadeInComponent,
-  PanLeftComponent,
   PanRightComponent,
   RiseUpAnimation,
 } from "./elements/RandomCharacter";
@@ -118,7 +98,6 @@ import isEmpty from "lodash/isEmpty";
 import {
   Alert,
   AlertIcon,
-  AlertTitle,
   AlertDescription,
   CloseButton,
 } from "@chakra-ui/react";
@@ -128,6 +107,8 @@ import CountdownTimer from "./elements/CountdownTimer";
 import { PasscodeModal } from "./components/PasscodeModal/PasscodeModal";
 import { usePasscodeModalStore } from "./usePasscodeModalStore";
 import { StreamLoader } from "./elements/StreamLoader";
+import { OrbCanvas } from "./elements/OrbCanvas";
+import LectureModal from "./components/LectureModal/LectureModal";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -208,9 +189,6 @@ const AwardScreen = (userLanguage) => {
     saveCompletionData();
   }, []);
 
-  console.log("translation", translation);
-  console.log("language", userLanguage);
-  console.log("x", translation[userLanguage.userLanguage]["badBrowser.header"]);
   return (
     <Box
       textAlign="center"
@@ -456,7 +434,7 @@ export const VoiceInput = ({
           step?.group,
           steps[userLanguage]
         );
-        console.log("relevant steps", relevantSteps);
+
         await submitPrompt([
           {
             content:
@@ -509,7 +487,6 @@ export const VoiceInput = ({
         lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
 
       if (isLastMessage) {
-        console.log("LAST MESSAGE", lastMessage);
         let jsonResponse = {};
         try {
           jsonResponse = JSON.parse(lastMessage.content);
@@ -833,27 +810,37 @@ export const VoiceInput = ({
           )}
         </Box>
       ) : isSingleLineText ? (
-        <Input
-          type="text"
-          value={
-            generateResponse ? (
-              <div
-                style={{
-                  width: "100%",
-                }}
-              >
-                <SunsetCanvas isLoader={true} regulateWidth={false} />
-              </div>
-            ) : (
-              value
-            )
-          }
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={translation[userLanguage]["app.input.placeholder"]}
-          maxWidth="600px"
-          width="100%"
-          style={{ boxShadow: "0px 0px 0px 1px rgba(0,0,0,0.35)" }}
-        />
+        generateResponse ? (
+          <div
+            style={{
+              width: "100%",
+            }}
+          >
+            <SunsetCanvas isLoader={true} regulateWidth={false} />
+          </div>
+        ) : (
+          <Input
+            type="text"
+            value={
+              generateResponse ? (
+                <div
+                  style={{
+                    width: "100%",
+                  }}
+                >
+                  <SunsetCanvas isLoader={true} regulateWidth={false} />
+                </div>
+              ) : (
+                value
+              )
+            }
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={translation[userLanguage]["app.input.placeholder"]}
+            maxWidth="600px"
+            width="100%"
+            style={{ boxShadow: "0px 0px 0px 1px rgba(0,0,0,0.35)" }}
+          />
+        )
       ) : (
         <>
           {generateResponse ? (
@@ -1277,6 +1264,13 @@ const Step = ({
     onOpen: onAwardModalOpen,
     onClose: onAwardModalClose,
   } = useDisclosure();
+
+  const {
+    isOpen: isLectureModalOpen,
+    onOpen: onLectureModalOpen,
+    onClose: onLectureModalClose,
+  } = useDisclosure();
+
   const {
     resetMessages: resetNewQuestionMessages,
     messages: newQuestionMessages,
@@ -1390,17 +1384,17 @@ const Step = ({
   // Handle answer submission
   const handleAnswerClick = async () => {
     // Retrieve the current count from localStorage
-    let ansrctrl = parseInt(localStorage.getItem("ansrctrl") || "0", 10);
+    // let ansrctrl = parseInt(localStorage.getItem("ansrctrl") || "0", 10);
 
-    // Check if the user has already generated 3 questions
-    if (ansrctrl >= 10) {
-      // Silently skip the function
-      return;
-    }
+    // // Check if the user has already generated 3 questions
+    // if (ansrctrl >= 10) {
+    //   // Silently skip the function
+    //   return;
+    // }
 
-    // Increment the counter and store it back in localStorage
-    ansrctrl += 1;
-    localStorage.setItem("ansrctrl", ansrctrl);
+    // // Increment the counter and store it back in localStorage
+    // ansrctrl += 1;
+    // localStorage.setItem("ansrctrl", ansrctrl);
 
     resetMessages();
     setFeedback("");
@@ -1682,7 +1676,7 @@ const Step = ({
     localStorage.removeItem("lrnctrl");
     localStorage.removeItem("knwldctrl");
     localStorage.removeItem("gnrtctrl");
-    localStorage.removeItem("ansrctrl");
+    // localStorage.removeItem("ansrctrl");
 
     setGeneratedQuestion([]);
     resetNewQuestionMessages();
@@ -1889,7 +1883,6 @@ const Step = ({
         if (isLastMessage) {
           // console.log("THE FINAL", lastMessage);
 
-          console.log("LAST RESPONSE", lastMessage);
           const jsonResponse = JSON.parse(lastMessage.content);
 
           // console.log("NEW QUESTION FINAL JSON", jsonResponse);
@@ -2006,11 +1999,9 @@ const Step = ({
   };
   const emojiMap = ["😖", "😩", "😅", "😱", "🪦"];
 
-  console.log("step from step", step);
-  console.log(" x current step ", currentStep);
-
   return (
     <VStack spacing={4} width="100%" mt={6}>
+      {/* <OrbCanvas width={500} height={500} /> */}
       {newQuestionMessages.length > 0 && isEmpty(generatedQuestion) ? (
         <VStack textAlign={"left"} style={{ width: "100%", maxWidth: 400 }}>
           <div
@@ -2047,99 +2038,127 @@ const Step = ({
             style={{ width: "100%", maxWidth: 400, alignItems: "flex-start" }}
           >
             <span style={{ fontSize: "50%" }}>
-              <IconButton
-                width="12px"
-                height="18px"
-                boxShadow="0px 0px 0.25px 0.5px #ececec"
-                // border="1px solid #ececec"
-                background="pink.100"
-                opacity="0.75"
-                color="pink.600"
-                icon={<EmailIcon padding="4px" fontSize="18px" />}
-                mr={2}
-                onMouseDown={() =>
-                  (window.location.href = `mailto:sheilfer@robotsbuildingeducation.com?subject=Sunset ${translation[userLanguage]["email.question"]} ${currentStep}: ${step.question.questionText} | ${step.description}&body=${translation[userLanguage]["email.donotdelete"]}       \n\n ${JSON.stringify(emailText)}  `)
-                }
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    window.location.href = `mailto:sheilfer@robotsbuildingeducation.com?subject=Sunset ${translation[userLanguage]["email.question"]} ${currentStep}: ${step.question.questionText} | ${step.description}&body=${translation[userLanguage]["email.donotdelete"]}       \n\n ${JSON.stringify(emailText)}  `;
+              <Box mb={"-1"}>
+                {userLanguage === "en" ? (
+                  <IconButton
+                    width="12px"
+                    height="18px"
+                    boxShadow="0px 0px 0.25px 0.5px #ececec"
+                    // border="1px solid #ececec"
+                    background="pink.100"
+                    opacity="0.75"
+                    color="pink.600"
+                    icon={<IoPlay padding="4px" fontSize="12px" />}
+                    mr={3}
+                    onMouseDown={() => {
+                      //open modal
+                      onLectureModalOpen();
+                      return;
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        onLectureModalOpen();
+                        //open modal
+                        return;
+                      }
+                    }}
+                  />
+                ) : null}
+                <IconButton
+                  width="12px"
+                  height="18px"
+                  boxShadow="0px 0px 0.25px 0.5px #ececec"
+                  // border="1px solid #ececec"
+                  background="pink.100"
+                  opacity="0.75"
+                  color="pink.600"
+                  icon={<EmailIcon padding="4px" fontSize="18px" />}
+                  mr={3}
+                  onMouseDown={() =>
+                    (window.location.href = `mailto:sheilfer@robotsbuildingeducation.com?subject=Sunset ${translation[userLanguage]["email.question"]} ${currentStep}: ${step.question.questionText} | ${step.description}&body=${translation[userLanguage]["email.donotdelete"]}       \n\n ${JSON.stringify(emailText)}  `)
                   }
-                }}
-              />
-              <IconButton
-                width="12px"
-                height="18px"
-                boxShadow="0px 0px 0.25px 0.5px #ececec"
-                background="pink.100"
-                opacity="0.75"
-                color="pink.600"
-                icon={<RiRobot2Fill padding="4px" fontSize="12px" />}
-                mr={2}
-                onClick={() => {
-                  const keysToCopy = JSON.stringify(step);
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      window.location.href = `mailto:sheilfer@robotsbuildingeducation.com?subject=Sunset ${translation[userLanguage]["email.question"]} ${currentStep}: ${step.question.questionText} | ${step.description}&body=${translation[userLanguage]["email.donotdelete"]}       \n\n ${JSON.stringify(emailText)}  `;
+                    }
+                  }}
+                />
+                <IconButton
+                  width="12px"
+                  height="18px"
+                  boxShadow="0px 0px 0.25px 0.5px #ececec"
+                  background="pink.100"
+                  opacity="0.75"
+                  color="pink.600"
+                  icon={<RiRobot2Fill padding="4px" fontSize="12px" />}
+                  mr={0}
+                  onClick={() => {
+                    const keysToCopy = JSON.stringify(step);
 
-                  // Clipboard writing with fallback for compatibility
-                  if (navigator.clipboard && navigator.clipboard.writeText) {
-                    navigator.clipboard.writeText(
-                      `${translation[userLanguage]["chatcom.instructions.1"]} ${userLanguage === "en" ? "English" : "Spanish"} ${translation[userLanguage]["chatcom.instructions.2"]}` +
-                        keysToCopy
-                    );
-                  } else {
-                    // Fallback for unsupported browsers
-                    const textArea = document.createElement("textarea");
-                    textArea.value =
-                      `${translation[userLanguage]["chatcom.instructions.1"]} ${userLanguage === "en" ? "English" : "Spanish"} ${translation[userLanguage]["chatcom.instructions.2"]}` +
-                      keysToCopy;
-                    document.body.appendChild(textArea);
-                    textArea.select();
-                    document.execCommand("copy");
-                    document.body.removeChild(textArea);
-                  }
+                    // Clipboard writing with fallback for compatibility
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                      navigator.clipboard.writeText(
+                        `${translation[userLanguage]["chatcom.instructions.1"]} ${userLanguage === "en" ? "English" : "Spanish"} ${translation[userLanguage]["chatcom.instructions.2"]}` +
+                          keysToCopy
+                      );
+                    } else {
+                      // Fallback for unsupported browsers
+                      const textArea = document.createElement("textarea");
+                      textArea.value =
+                        `${translation[userLanguage]["chatcom.instructions.1"]} ${userLanguage === "en" ? "English" : "Spanish"} ${translation[userLanguage]["chatcom.instructions.2"]}` +
+                        keysToCopy;
+                      document.body.appendChild(textArea);
+                      textArea.select();
+                      document.execCommand("copy");
+                      document.body.removeChild(textArea);
+                    }
 
-                  // Show the toast
-                  toast({
-                    title:
-                      translation[userLanguage]["toast.title.chatDataCopied"],
-                    description:
-                      translation[userLanguage][
-                        "toast.description.chatDataCopied"
-                      ],
-                    status: "info",
-                    duration: 1350, // Show the toast for 1 second
-                    isClosable: true,
-                    position: "top",
-                    render: () => (
-                      <Box
-                        color="black"
-                        p={3}
-                        bg="#FEEBC8"
-                        borderRadius="md"
-                        boxShadow="lg"
-                      >
-                        <Text fontWeight="bold">
-                          {
-                            translation[userLanguage][
-                              "toast.title.chatDataCopied"
-                            ]
-                          }
-                        </Text>
-                        <Text>
-                          {
-                            translation[userLanguage][
-                              "toast.description.chatDataCopied"
-                            ]
-                          }
-                        </Text>
-                      </Box>
-                    ),
-                  });
+                    // Show the toast
+                    toast({
+                      title:
+                        translation[userLanguage]["toast.title.chatDataCopied"],
+                      description:
+                        translation[userLanguage][
+                          "toast.description.chatDataCopied"
+                        ],
+                      status: "info",
+                      duration: 1350, // Show the toast for 1 second
+                      isClosable: true,
+                      position: "top",
+                      render: () => (
+                        <Box
+                          color="black"
+                          p={3}
+                          bg="#FEEBC8"
+                          borderRadius="md"
+                          boxShadow="lg"
+                        >
+                          <Text fontWeight="bold">
+                            {
+                              translation[userLanguage][
+                                "toast.title.chatDataCopied"
+                              ]
+                            }
+                          </Text>
+                          <Text>
+                            {
+                              translation[userLanguage][
+                                "toast.description.chatDataCopied"
+                              ]
+                            }
+                          </Text>
+                        </Box>
+                      ),
+                    });
 
-                  // Redirect after 1 second in the same tab for mobile compatibility
-                  setTimeout(() => {
-                    window.location.href = "https://chat.com";
-                  }, 1500);
-                }}
-              />
+                    // Redirect after 1 second in the same tab for mobile compatibility
+                    setTimeout(() => {
+                      window.location.href = "https://chat.com";
+                    }, 1500);
+                  }}
+                />
+              </Box>
+              <br />
               {translation[userLanguage]["app.progress"]}:{" "}
               {calculateProgress().toFixed(2)}% |{" "}
               {translation[userLanguage]["chapter"]}: {step.group}&nbsp;|&nbsp;
@@ -2572,6 +2591,15 @@ const Step = ({
             userLanguage={userLanguage}
           />
 
+          {isLectureModalOpen ? (
+            <LectureModal
+              userLanguage={userLanguage}
+              currentStep={currentStep}
+              isOpen={isLectureModalOpen}
+              onClose={onLectureModalClose}
+            />
+          ) : null}
+
           <>
             <AwardModal
               isOpen={isAwardModalOpen}
@@ -2713,17 +2741,13 @@ const Home = ({
 
     // Check if user exists in Firestore and create if necessary
     const userDoc = doc(database, "users", npub);
-    console.log("userdoc", userDoc);
 
     const userSnapshot = await getDoc(userDoc).catch((error) =>
       console.log("ERRX", error)
     );
 
-    console.log("userSnapshot", userSnapshot);
-
     if (!userSnapshot) {
       try {
-        console.log("running...");
         await createUser(npub, userName, userLanguage);
       } catch (error) {
         console.log("error creaitn ug", error);
@@ -2762,35 +2786,6 @@ const Home = ({
     }
   };
 
-  const handleCopyKeys = () => {
-    const keysToCopy = `${localStorage.getItem("local_nsec")}`;
-    navigator.clipboard.writeText(keysToCopy);
-    toast({
-      title: translation[userLanguage]["toast.title.keysCopied"],
-      description: translation[userLanguage]["toast.description.keysCopied"],
-      status: "info",
-      duration: 1500,
-      isClosable: true,
-      position: "top",
-      render: () => (
-        <Box
-          color="black"
-          p={3}
-          bg="#FEEBC8" // Custom background color here!
-          borderRadius="md"
-          boxShadow="lg"
-        >
-          <Text fontWeight="bold">
-            {translation[userLanguage]["toast.title.keysCopied"]}
-          </Text>
-          <Text>
-            {translation[userLanguage]["toast.description.keysCopied"]}
-          </Text>
-        </Box>
-      ),
-    });
-  };
-
   useEffect(() => {
     if (view === "buttons" || view === "createAccount") {
       setIsSignedIn(false);
@@ -2818,6 +2813,35 @@ const Home = ({
         language: newLanguage,
       });
     }
+  };
+
+  const handleCopyKeys = () => {
+    const keysToCopy = `${localStorage.getItem("local_nsec")}`;
+    navigator.clipboard.writeText(keysToCopy);
+    toast({
+      title: translation[userLanguage]["toast.title.keysCopied"],
+      description: translation[userLanguage]["toast.description.keysCopied"],
+      status: "info",
+      duration: 1500,
+      isClosable: true,
+      position: "top",
+      render: () => (
+        <Box
+          color="black"
+          p={3}
+          bg="#FEEBC8" // Custom background color here!
+          borderRadius="md"
+          boxShadow="lg"
+        >
+          <Text fontWeight="bold">
+            {translation[userLanguage]["toast.title.keysCopied"]}
+          </Text>
+          <Text>
+            {translation[userLanguage]["toast.description.keysCopied"]}
+          </Text>
+        </Box>
+      ),
+    });
   };
 
   return (
@@ -3388,8 +3412,6 @@ function App({ isShutDown }) {
     JSON.stringify(steps?.["en"]?.[currentStep] || {})
   );
 
-  console.log("userLanguage", userLanguage);
-
   return (
     <Box textAlign="center" fontSize="xl" p={4} ref={topRef}>
       {alert.isOpen && (
@@ -3617,6 +3639,8 @@ export const AppWrapper = () => {
       {/* <b>Test Version 0.9.5</b> */}
 
       {/* <StreamLoader /> */}
+
+      {/* <OrbCanvas width={200} height={200} /> */}
       <App isShutDown={isShutDown} />
     </Router>
   );

@@ -106,7 +106,7 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
             userLanguage={userLanguage}
           />
           <ActionButton
-            href="https://nostrapps.com"
+            href="https://otherstuff.app"
             text={translation[userLanguage]["settings.button.nostrApps"]}
             userLanguage={userLanguage}
           />
@@ -124,7 +124,7 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
             as="a"
             href="https://primal.net/p/npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt"
             target="_blank"
-            textDecor={"underline"}
+            style={{ textDecoration: "underline" }}
           >
             {translation[userLanguage]["link.connectWithMe"]}
           </a>

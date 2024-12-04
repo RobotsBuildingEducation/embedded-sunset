@@ -5496,6 +5496,27 @@ console.log(arr);
   ],
 };
 
+export const lectureSummaries = {
+  en: {
+    tutorial: {},
+    1: {},
+    2: {},
+    3: {},
+    4: {},
+    5: {},
+    6: {},
+  },
+  es: {
+    tutorial: {},
+    1: {},
+    2: {},
+    3: {},
+    4: {},
+    5: {},
+    6: {},
+  },
+};
+
 export const generatedSteps = [];
 
 export const tutorial_interface = [

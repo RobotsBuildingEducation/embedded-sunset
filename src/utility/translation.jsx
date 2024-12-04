@@ -3,6 +3,632 @@ import { DataTags } from "../elements/DataTag";
 
 export let translation = {
   en: {
+    transcriptBadges: "Transcript Badges",
+    instructions: "Instructions",
+    "tutorModal.instructions.1":
+      "These videos are from the connected tutoring platform on ",
+    "tutorModal.instructions.1.33": "Rox the tutor",
+    "tutorModal.instructions.1.66":
+      "Access the tutor by logging in with your key. Fun fact: The questions found on this app are based on the lessons learned in these videos!",
+    "tutorModal.instructions.2": "To earn badges:",
+    "tutorModal.instructions.3":
+      "Watch 80% of the video, read the summary and complete the practice exercise for each chapter in this tutoring modal.",
+    "tutorModal.instructions.4":
+      "Complete the chapter by answering questions in the main application.",
+    "video.summary.tutorial": `Welcome to **Robots Building Education**! This introductory lecture addresses common concerns and sets the stage for your journey in learning coding and building businesses with AI, specifically using tools like ChatGPT (referred to here as Roxana).
+
+### Overcoming Doubts and Imposter Syndrome
+
+Feeling intimidated or questioning your abilities is normal. Even the instructor experiences imposter syndrome. These feelings indicate you're challenging yourself and aiming for higher standards. Ground yourself and recognize that with the right preparation, you can overcome these challenges.
+
+### FAQs Speed Run
+
+Here are quick answers to common questions:
+
+- **Is programming hard?** No.
+- **What computer do I need?** No specific requirement.
+- **Am I too old?** No.
+- **What kind of jobs can I do?** Numerous opportunities across various fields.
+- **Is a bootcamp worth it?** No.
+
+For more details, visit the FAQs on [embedded-rox.app](https://embedded-rox.app).
+
+#### Learning Approach
+
+The learning process consists of four key steps:
+
+1. **Imagine and Illustrate**: Visualize concepts to enhance understanding.
+2. **Draw Connections and Relationships**: Link new ideas with existing knowledge.
+3. **Observe New Information**: Pay attention to new insights and data.
+4. **Practice**: Apply what you've learned through hands-on activities.
+
+### Embracing the Learning Experience
+
+The aim is to help you experience the sensation of learning, unlocking the potential to learn anything you desire. Coding is not just about programming; it's a means to engineer solutions, communicate ideas, and interact with the world.
+
+### The Versatility of Computer Science
+
+Computer science is the science of solving problems and can be applied to any field—climate technology, psychology, cancer research, art, sports, and more. Technology plays a role wherever information exists.
+
+### Encouragement to Proceed
+
+Take time to internalize these lessons. Allow yourself to become the person who embraces challenges and continues to move forward. With courage and persistence, you'll transform the unknown into familiarity and make a significant impact.
+
+    `,
+    "video.summary.2": `
+## Overview
+
+This lecture introduces the fundamentals of coding, focusing on:
+
+- **Objects**
+- **Functions**
+- **Loops**
+- **Data and Logic**
+- **Network Functions**
+
+The approach is to start with more challenging concepts and work down to the basics, catering to learners from diverse backgrounds.
+
+## Objects
+
+- **Definition**: Objects in code model the digital world using information, data, and logic.
+- **Classes**: Define how objects are created, including their state and functionality.
+- **Key Point**: Objects have a common way to define their state and manage it through functionality.
+- **Examples**:
+  - Creating a \`Robot\` class in JavaScript.
+  - Using objects to structure data in applications like social media posts or crypto transactions.
+- **Takeaway**: Coding is about organizing information, not about math.
+
+## Functions
+
+- **Purpose**: Essential for organizing and handling data.
+- **Types**:
+  - **Synchronous Functions**: Execute tasks sequentially (like cooking in a pan).
+  - **Asynchronous Functions**: Allow other processes to run concurrently (like cooking in an oven).
+- **Importance**: Understanding functions helps manage data flow, especially when handling data across networks.
+
+## Loops
+
+- **Usage**: Perform repeatable actions on groups of data.
+- **Types of Looping Functions**:
+  - Transforming values.
+  - Filtering values.
+  - Reversing values.
+- **Example**: Using \`forEach\` in JavaScript to find an artist with the highest Spotify monthly listeners.
+- **Documentation**: Encouraged to read language documentation to understand built-in methods and functionalities.
+
+## Data and Logic
+
+- **Fundamentals**:
+  - Data types include words, numbers, groups, and logical conclusions.
+  - Logic boils down to true or false values—how computers interpret the world.
+- **Examples**:
+  - Defining objects like \`obama\` and \`elon\` with properties.
+  - Creating functions that use logical conditions to return results.
+- **Key Point**: Individual pieces of data create logic; groups of data create functionality.
+
+## Coding and Logic (Reinforced)
+
+- **Coding**: The organization of information.
+- **Logic**: Determining if statements are true or false.
+- **Real-World Connection**: Observing how everyday items and situations can be represented in code.
+- **Encouragement**: Understand that coding concepts can be grasped without heavy emphasis on math.
+
+## Practice and Learning Strategies
+
+- **Use AI Assistance**: Utilize AI tools like ChatGPT for guidance.
+- **Hands-On Practice**:
+  - Write code by hand on paper.
+  - Draw connections and visualize data structures.
+- **Model Real-World Data**: Practice representing real-world scenarios as data models in code.
+- **Mindset**: Focus on learning and understanding rather than worrying about right or wrong.
+
+## Conclusion
+
+- **Main Takeaways**:
+  - Coding models the digital world with information, data, and logic.
+  - Organizing information is the essence of coding.
+  - Logic in coding is about true or false values.
+- **Next Steps**:
+  - Prepare to build visual applications using HTML, CSS, JavaScript, and React.
+- **Encouragement**:
+  - Slow down and internalize the lessons.
+  - Embrace challenges and trust the learning process.
+  - Practice consistently to strengthen your skills.
+
+---
+
+**Note**: The lecture emphasizes starting with foundational concepts and building upon them to create a solid understanding of coding. It encourages using available resources, practicing regularly, and maintaining a positive mindset towards learning.
+
+    `,
+    "video.summary.1": `
+**UI/UX** stands for User Interfaces and User Experiences. It's a multidisciplinary approach based on the study of human-computer interaction, also known as **Interaction Design** or simply **Design**. This field goes beyond visual design and idea brainstorming; it's a thoughtful practice applicable in many environments.
+
+## Role of an Interaction Designer
+
+Interaction designers:
+
+- Research and design based on human-computer interaction.
+- Conduct surveys, interviews, and observations to gather deeper insights into a product.
+- Focus on improving experiences, such as enhancing a restaurant's experience or determining which movie trailer generates the most anticipation.
+- Combine technical skills and business acumen to amplify impact.
+
+## Accessibility
+
+- **Importance**: Accessibility focuses on enabling more people to use products and services.
+- **Considerations**:
+  - Designing for blind users who rely on screen readers.
+  - Organizing information to make sense for both visual and auditory users.
+- **Benefits**:
+  - Thoughtful accessibility design often benefits all users.
+  - Effective organization can make content more meaningful for people using only audio, such as in podcasts or radio.
+
+## Multidisciplinarity
+
+- Design is fundamentally multidisciplinary and can be applied in fields like chemical engineering, business, architecture, and education.
+- **Impact of Choices**:
+  - The words you choose can influence how search engines and social media algorithms distribute your material.
+  - The intent behind features and the tone you use can affect user retention and success.
+- **Attention to Detail**: Good design is about making the people you're designing for happy, which requires direct communication and research.
+
+## Heuristics
+
+- **Definition**: Heuristics are guidelines used when creating with constraints or limited feedback.
+- **Application**:
+  - Considering how a user can correct a mistake or malfunction.
+  - Using concepts like **affordances**, which are signals or properties of an object that inform a user of its possible uses.
+- **Examples**:
+  - Recognizing that a water pitcher is meant for pouring water, not as a glove.
+  - Understanding that pixels on a screen represent interactive buttons.
+
+## Design Systems
+
+- **Tools and Methods**:
+  - Paper prototypes, surveys, personal interviews, online tools.
+- **Considerations**:
+  - Each tool has trade-offs that affect outcomes.
+  - Resources and budgets can influence the effectiveness of methods.
+  - Different settings (e.g., boardroom vs. TikTok) can yield different results.
+- **Collaboration**:
+  - Over time, you discover what works well with you and different teams.
+  - It's important to think critically and keep an open mind when making design choices.
+
+## Further Reading
+
+- **"The Design of Everyday Things"** by Don Norman: A foundational book in the field of human-computer interaction.
+- **NNGroup.com**: Resources from the Nielsen Norman Group for professionals concerned with usability standards.
+- **Bitcoin.design**: An open-source platform supporting usability research and development for Bitcoin.
+
+## Conclusion
+
+Interaction design is a discipline that combines research, creativity, and empathy to improve user experiences. By integrating principles of accessibility, multidisciplinarity, and heuristics, designers can create meaningful and effective solutions. Members of the Robots Building Education community are encouraged to apply these principles to communicate ideas, improvements, or case studies to gain experience. Collaboration and brainstorming are welcomed to enhance our AI mentoring platform.
+
+---
+
+**Note**: If you're part of the Robots Building Education community, feel free to use design principles to communicate ideas, improvements, or case studies to gain experience here too! I'm happy to sit down with you and brainstorm on things that can improve our little AI mentoring platform.
+`,
+    "video.summary.3": `
+- **Review of Lesson 1**: Fundamentals of organizing data with code using objects, functions, loops, and logic.
+- **Focus of Lesson 2**: Understanding React components and event-driven programming to create user interfaces and experiences.
+
+## React Components
+
+- **Components**: Functions that return UI elements and manage their own state and properties.
+- **Main Parts of a React Component**:
+  1. **Hooks**: Functions that handle and synchronize operations with the component's state (e.g., \`useState\`).
+  2. **State**: Dynamic data within the component that changes over time, triggering re-renders.
+  3. **Properties (Props)**: Data passed into the component that should remain unchanged within it.
+
+- **Event-Based Programming**: React components respond to user interactions (events) that trigger state changes and UI updates.
+
+## Data Flow in React
+
+- React uses a **one-way data flow**, making it intuitive to design relationships and manage data.
+- **Updating State**: Changing a component's state refreshes the display and re-renders the component.
+- **Props vs. State**:
+  - **Props**: Immutable data received from parent components.
+  - **State**: Mutable data managed within the component.
+
+## Practical Example: Tweet Component
+
+- Demonstrated a \`Tweet\` component that displays tweet information and handles user interactions like likes.
+- Showed how to:
+  - Use hooks (\`useState\`) to manage state.
+  - Pass functions and data as props to child components.
+  - Update state in response to events (e.g., \`createLike\` function).
+
+## Overcoming Challenges
+
+- Recognized that combining hooks, state, and props can be complex.
+- Encouraged practice, experimentation, and embracing challenges to understand React's data flow.
+- Emphasized that professional software engineers also navigate these complexities.
+
+## HTML and Structuring the Display
+
+- **HTML (HyperText Markup Language)**: Used to structure content on the web.
+- **Elements and Attributes**:
+  - **Events**: Handle user interactions like clicks and hovers.
+  - **ID**: Unique identifier for elements.
+  - **Class**: Groups elements for styling.
+  - **Style**: Inline styling of elements.
+
+- Recommended thinking of HTML elements as containers organized logically.
+
+## CSS and Styling Elements
+
+- **CSS (Cascading Style Sheets)**: Styles the appearance of HTML elements.
+- **Key Concepts**:
+  - **Box Model**: Shapes elements using properties like \`margin\`, \`padding\`, \`border\`, and \`width\`.
+  - **Flexbox Model**: Positions elements in rows or columns for responsive design.
+  - **Animation Model**: Animates elements using CSS animations or JavaScript.
+
+- Suggested using inline styles or CSS-in-JS libraries like Styled-Components with React for better control.
+
+## Combining Concepts
+
+- Provided examples of combining React components with HTML and CSS to create interactive UI elements.
+- Showed how to use state and event handlers to manage data and user interactions.
+- Emphasized the importance of understanding how these technologies work together.
+
+## Practice and Learning
+
+- Encouraged using resources like W3Schools and documentation to explore HTML and CSS attributes.
+- Recommended leveraging AI tools like ChatGPT for assistance.
+- Highlighted the value of hands-on experimentation and breaking down complex problems.
+
+## Conclusion
+
+- Reinforced that mastering frontend development involves understanding components, data flow, and styling.
+- Encouraged continuous practice and exploration to build proficiency.
+- Previewed building real-world applications using the concepts learned.
+
+---
+
+**Note**: This lecture emphasizes the integration of React components with HTML and CSS to create dynamic and responsive user interfaces. Understanding event-driven programming and data flow in React is crucial for developing efficient frontend applications.
+
+    `,
+    "video.summary.4": `
+Backend software engineering often appears mysterious and complex, but this lesson aims to clarify its concepts and make it accessible.
+
+## Lessons Covered
+
+1. **Creating Users**
+2. **Database Foundations**
+3. **Backend Clouds**
+4. **Operating Systems & Machines**
+
+## Operating Systems
+
+- **Modeling the Real World**: Computer science uses technology to simulate real-world systems.
+- **Analogy with a Restaurant Kitchen**: Just as a kitchen has many moving parts to deliver a meal, operating systems manage numerous processes to deliver user experiences.
+- **Variety of Machines**: Understanding different operating systems helps in working with diverse devices like MacBooks, Bitcoin miners, or Tesla robots.
+
+## Command Line Interface (CLI)
+
+- **Text-Based Interaction**: The CLI allows direct communication with the operating system through text commands.
+- **Usability**: Similar to how ChatGPT differs from Google Search, the CLI offers a different form of usability compared to graphical interfaces.
+- **Efficiency**: Engineers use the CLI for efficient and powerful control over the system.
+
+## Backend Engineering
+
+- **Letting Machines Work**: Emphasizes the importance of automating tasks and utilizing powerful tools.
+- **Building Pipelines**: Involves constructing data pathways and routes for various needs, such as distributing data for machine learning or ensuring smooth user experiences.
+- **Modeling Logic**: Programming uses logic to model real-world operations, making complex systems predictable and manageable.
+
+## Using the Command Line
+
+- **Practical Skills**: Encourages familiarity with basic command-line operations like navigating file systems, downloading, installing, and saving files.
+- **Cheat Sheets**: Recommends using cheat sheets to remember essential commands.
+- **Exploration**: Suggests delving into more advanced techniques as curiosity grows.
+
+## Databases
+
+- **Data Storage**: Databases are where data is stored and managed responsibly.
+- **Types of Databases**:
+  - **Relational Databases**: Use tables and structured query language (SQL) to manage data (e.g., Excel spreadsheets).
+  - **Non-Relational Databases**: Use key-value pairs for more flexible data structures.
+- **Organizing Information**: Focuses on using identities and relationships to organize data.
+- **Real-World Example**: Describing restaurant operations using identities like the restaurant name, city, order number, and order type.
+
+## Creating Users
+
+- **User Accounts**: Created by combining data such as login information, personal details, and financial data to form a unique identity.
+- **Authentication**: Uses secret keys and authorization servers to verify and secure user accounts.
+- **Data Direction**: Unique user identities help direct data appropriately within services and applications.
+
+## Conclusion
+
+- **Internalization**: Encourages taking time to understand and imagine the concepts discussed.
+- **Creativity**: Invites learners to be creative and not fear making mistakes.
+- **Acknowledging Challenges**: Recognizes the difficulty but emphasizes that understanding data structures and algorithms aids in grasping larger systems.
+- **Next Steps**: Preparing to connect systems and create an app with user functionalities in upcoming lessons.
+
+---
+
+**Note**: This lesson demystifies backend software engineering by drawing parallels with real-world systems and highlighting the importance of operating systems, command lines, databases, and user creation in building complex applications.
+
+    `,
+    "video.summary.5": `In this lesson, we're going step-by-step to piece together everything we've learned so that we can build an application by connecting systems together, culminating in having real users. Tools like Google, YouTube, ChatGPT, and Stack Overflow will be your best friends here if you come across something you want to learn more about.
+
+    ## Setting Up The Backend
+    
+    1. **Install Necessary Tools**:
+       - Download and install **VSCode** (code editor).
+       - Download and install **Node.js** (allows you to build JavaScript apps).
+    
+    2. **Install npm**:
+       - Open your command line terminal.
+       - Install npm (Node Package Manager) to use packages shared by other developers.
+       - *Note*: Use \`sudo\` cautiously on Unix systems; on Windows, adjust permissions if you encounter errors.
+    
+    3. **Create a Project Folder**:
+       - Create a folder named after your project (e.g., *The Digital Border*).
+    
+    4. **Initialize the Project**:
+       - Open VSCode and open your project folder.
+       - Open the integrated terminal in VSCode.
+       - Run \`npm create vite@latest\` to start a React project with Vite.
+       - Follow the prompts to configure the project (choose React and JavaScript).
+       - The configuration might look like this:
+         - Framework: React
+         - Variant: JavaScript
+    
+    5. **Install Dependencies**:
+       - Run \`npm install\` to install project dependencies listed in \`package.json\`.
+    
+    6. **Run the Application**:
+       - Build the app with \`npm run build\`.
+       - Start the development server with \`npm run dev\`.
+    
+    7. **Set Up Firebase (Backend Services)**:
+       - Install Firebase CLI: \`npm install -g firebase-tools\`.
+       - Log in to Firebase: \`firebase login\` (authenticate via Google account).
+       - Go to [Firebase Console](https://console.firebase.google.com) and create a new project.
+       - Activate **Authentication**, **Firestore**, and **Hosting** services.
+    
+    8. **Initialize Firebase in Your Project**:
+       - Run \`firebase init\` and select options to configure Firestore and Hosting.
+       - Choose your existing project when prompted.
+       - Accept defaults for creating rules and indexes files.
+       - Configuration steps:
+         - Activate Firestore and Hosting.
+         - Select "Use an existing project" and choose your project.
+         - Allow Firebase to create rules and indexes files.
+    
+    9. **Deploy the App**:
+       - Build your app again with \`npm run build\`.
+       - Deploy to Firebase Hosting with \`firebase deploy\`.
+       - Access your app via the provided Firebase Hosting URL.
+    
+    ## Creating Users
+    
+    1. **Install Firebase and React Firebase UI**:
+       - Run \`npm install --save firebase react-firebaseui --legacy-peer-deps\`.
+    
+    2. **Enable Authentication in Firebase**:
+       - In the Firebase Console, go to **Authentication** > **Sign-in method**.
+       - Enable **Google** sign-in.
+    
+    3. **Obtain Firebase Configuration**:
+       - Go to your project settings in Firebase Console.
+       - Select the web app icon to register your app.
+       - Retrieve your app's configuration keys.
+    
+    4. **Set Up Firebase in Your Code**:
+       - Create a folder \`database\` inside \`src\` and add \`firebaseResources.js\`.
+       - Initialize Firebase with your configuration keys in this file.
+    
+    5. **Implement Authentication UI**:
+       - In \`App.jsx\`, import the sign-in button component from \`react-firebaseui\`.
+       - Render the sign-in button in your app.
+    
+    6. **Manage User State**:
+       - Import necessary Firebase authentication functions.
+       - Define state to track the user's authentication status.
+       - Use the \`useEffect\` hook to handle authentication state changes.
+       - Create a header component to display user information based on authentication state.
+    
+    7. **Update and Deploy**:
+       - Insert the header component into your app's render method.
+       - Build your app with \`npm run build\`.
+       - Deploy the updated app with \`firebase deploy\`.
+    
+    ## Summary
+    
+    - **Set Up Application**: Used the command line to set up a React application with Firebase.
+    - **Configured Code**: Connected frontend and backend using identities and keys.
+    - **Created Users**: Implemented authentication to create user accounts.
+    - **Designed User Experiences**: Built UI components to enhance user interaction.
+    - **Frontend vs. Backend**:
+      - *Frontend*: Manages user experiences, visual elements, and events.
+      - *Backend*: Designs pipelines to communicate and move data across networks.
+    
+    ## Working with Other Engineers: GitHub
+    
+    - **GitHub**: A platform to collaborate with other engineers, similar to Google Drive but optimized for code with version control.
+    - **Key Concepts**:
+      1. **Cloning**: Copying code from GitHub to your computer.
+      2. **Adding**: Preparing your code's changes to be shipped to GitHub.
+      3. **Commit**: Adding a label, identity, and description to your container of changes.
+      4. **Pushing**: Deploying or sending your code changes to your GitHub repository.
+      5. **Pulling**: Bringing in any updates from other people to the code.
+      6. **Branches**: Copies of the codebase within the repository itself.
+      7. **Forks**: Copies of the codebase within your profile.
+      8. **Pull Requests**: Comparing changes between branches/forks and merging them.
+      9. **Merging**: Updating code once and for all; completes a lifecycle of updates.
+    
+    - **Challenge**: Learn GitHub workflows independently to simulate real-world engineering tasks and enhance your problem-solving skills.
+    
+    ## Conclusion
+    
+    - **Mindset**: Engage your imagination and embrace challenges to build your confidence.
+    - **Support**: Private tutoring is available if you need assistance with the material or next steps.
+    - **Continuous Learning**: Expect these lessons to upgrade over time.
+    - **Gratitude**: Thank you for supporting Robots Building Education. Looking forward to creating more awesome stuff for you!`,
+    "video.summary.6": `
+Data Structures and Algorithms is a subject that often intimidates students due to its complexity and its use in challenging interviews. While it is indeed challenging and requires practice, with proper guidance, the concepts can become more approachable.
+
+## Programming Languages
+
+- **Understanding Code Interpretation**:
+- Computers interpret code by breaking it down into tokens and translating it into machine code.
+- Example:
+  \`\`\`javascript
+  let musician = new Musician("Drake");
+  let top_song = musician.getTopSong();
+  \`\`\`
+- Tokens in the code include keywords (let, new), identifiers (musician, top_song, Musician), operators (=), and literals ("Drake").
+
+- **String Conversion**:
+- Strings are broken down into arrays of characters.
+  - "Drake" becomes \`['D', 'r', 'a', 'k', 'e']\`.
+- Each character is mapped to numerical codes (e.g., ASCII or Unicode) and then to binary representations.
+
+## Data Structures
+
+- **Memory Management**:
+- Computers reserve space in memory and create addresses to reference information.
+- Understanding how data is stored and referenced is crucial for grasping complex data structures.
+
+- **Linked Lists**:
+- A foundational data structure that helps in understanding more complex structures like trees and graphs.
+- Represents a sequence of nodes where each node points to the next.
+
+## Trees and Algorithms
+
+- **Traversing Trees**:
+- **Depth-First Search (DFS)**:
+  - Explores as far as possible along each branch before backtracking.
+  - Useful for scenarios where you need to explore all possible paths.
+
+- **Breadth-First Search (BFS)**:
+  - Explores all neighbors of a node before moving to the next level.
+  - Ideal for finding the shortest path in unweighted graphs.
+
+- **Example of DFS Counting Null Nodes**:
+\`\`\`javascript
+let countNull = (root) => {
+  let count = 0;
+
+  let depthFirstSearch = (currentRoot) => {
+    if (currentRoot === null) {
+      count++;
+      return;
+    }
+
+    for (let nextLocation in currentRoot) {
+      depthFirstSearch(currentRoot[nextLocation]);
+    }
+  };
+
+  depthFirstSearch(root);
+  return count;
+};
+\`\`\`
+
+- **Understanding Traversal**:
+- Visualizing how algorithms navigate through data structures helps in comprehending their functionality.
+- Breaking down each step and counting operations can clarify complex processes.
+
+## Linked Lists
+
+- **Definition**:
+- A linear data structure where each element (node) contains data and a reference (link) to the next node.
+
+- **Building a Linked List**:
+\`\`\`javascript
+class ListItem {
+  constructor(value) {
+    this.value = value;
+    this.linkedTo = null;
+  }
+
+  setLinkedTo(listItem) {
+    this.linkedTo = listItem;
+  }
+
+  getLinkedTo() {
+    return this.linkedTo;
+  }
+}
+
+let meta = new ListItem("meta");
+let instagram = new ListItem("instagram");
+let reels = new ListItem("reels");
+
+// Linking nodes
+instagram.setLinkedTo(reels);
+meta.setLinkedTo(instagram);
+
+class LinkedList {
+  constructor(head) {
+    this.head = head;
+  }
+
+  getLastItem() {
+    let currentItem = this.head;
+    while (currentItem.getLinkedTo()) {
+      currentItem = currentItem.getLinkedTo();
+    }
+    return currentItem;
+  }
+}
+
+let company = new LinkedList(meta);
+console.log(company.getLastItem()); // Outputs the last item in the list
+\`\`\`
+
+- **Reversing a Linked List**:
+\`\`\`javascript
+reverse(head) {
+  let previousItem = null;
+  let currentItem = head;
+
+  while (currentItem) {
+    let nextItem = currentItem.getLinkedTo();
+    currentItem.setLinkedTo(previousItem);
+    previousItem = currentItem;
+    currentItem = nextItem;
+  }
+  return previousItem;
+}
+\`\`\`
+
+## Practice and Perseverance
+
+- **Importance of Repetition**:
+- Repeatedly practicing these concepts helps in making them second nature.
+- Taking time to thoroughly understand foundational structures is crucial for tackling advanced topics.
+
+- **Approach to Learning**:
+- Break down complex problems into smaller, manageable parts.
+- Use visualization and counting techniques to follow algorithm steps.
+
+## Advanced Challenges
+
+- **N-Queens Problem**:
+- A classic algorithmic puzzle that involves placing N queens on an N×N chessboard so that no two queens threaten each other.
+- Demonstrates the concept of backtracking and combinatorial complexity.
+- Encourages thinking about optimization and efficient solution strategies.
+- [Learn more about the Eight Queens Puzzle](https://en.wikipedia.org/wiki/Eight_queens_puzzle)
+
+## Conclusion
+
+- **Continuous Learning**:
+- Mastery of data structures and algorithms requires ongoing practice and dedication.
+- Investing time and resources into learning these concepts pays off in the long run.
+
+- **Positive Mindset**:
+- Avoid self-doubt and recognize that challenges are part of the learning process.
+- Affirm your capability to learn and grow in the field of computer science.
+
+- **Seeking Support**:
+- Engage with tutors, mentors, and communities to enhance your understanding.
+- Collaboration and discussion can provide new insights and reinforce learning.
+
+---
+
+**Note**: This lecture emphasizes the foundational importance of data structures like linked lists and trees, and algorithms such as depth-first search. Understanding these core concepts is essential for advancing in computer science and tackling more complex problems.
+    `,
     "chatcom.instructions.1":
       "Generate a useful, friendly and professional lecture with javascript coding examples in",
     "chatcom.instructions.2": "for beginners on the following question/answer:",
@@ -80,7 +706,7 @@ export let translation = {
     "settings.button.socialWallet": "Decentralize",
     "settings.button.yourTutor": "Your Tutor",
     "settings.button.yourProfile": "Your Profile",
-    "settings.button.nostrApps": "App Collection",
+    "settings.button.nostrApps": "App Store",
     "settings.button.patreon": "Subscription",
     "settings.button.studyGuide": "Study Guide",
     "settings.button.feedback": "Feedback",
@@ -566,6 +1192,633 @@ export let translation = {
     analyzer: "Analyzing your progress & creating new question card",
   },
   es: {
+    transcriptBadges: "Insignias de Transcripción",
+    instructions: "Instrucciones",
+    "tutorModal.instructions.1":
+      "Estos videos son de la plataforma de tutoría conectada en ",
+    "tutorModal.instructions.1.33": "Rox, la tutora",
+    "tutorModal.instructions.1.66":
+      "Accede a la tutora iniciando sesión con tu clave. Dato curioso: ¡Las preguntas que se encuentran en esta aplicación están basadas en las lecciones aprendidas en estos videos!",
+    "tutorModal.instructions.2": "Para ganar insignias:",
+    "tutorModal.instructions.3":
+      "1. Mira el 80% del video, lee el resumen y completa el ejercicio práctico para cada capítulo en este modal de tutoría.",
+    "tutorModal.instructions.4":
+      "2. Completa el capítulo respondiendo preguntas en la aplicación principal.",
+    "video.summary.tutorial": `¡Bienvenido a **Robots Building Education**! Esta conferencia introductoria aborda preocupaciones comunes y establece el escenario para tu viaje en el aprendizaje de programación y construcción de negocios con IA, específicamente utilizando herramientas como ChatGPT (referida aquí como Roxana).
+
+## Superando Dudas y el Síndrome del Impostor
+
+Sentirse intimidado o cuestionar tus habilidades es normal. Incluso el instructor experimenta el síndrome del impostor. Estos sentimientos indican que te estás desafiando y apuntando a estándares más altos. Enfócate y reconoce que, con la preparación adecuada, puedes superar estos desafíos.
+
+## Respuestas Rápidas a Preguntas Frecuentes
+
+Aquí están las respuestas rápidas a preguntas comunes:
+
+- **¿Es difícil programar?** No.
+- **¿Qué computadora necesito?** No hay un requisito específico.
+- **¿Soy demasiado mayor?** No.
+- **¿Qué tipo de trabajos puedo hacer?** Numerosas oportunidades en varios campos.
+- **¿Vale la pena un bootcamp?** No.
+
+Para más detalles, visita las preguntas frecuentes en [robotsbuildingeducation.com](https://robotsbuildingeducation.com).
+
+## Enfoque de Aprendizaje
+
+El proceso de aprendizaje consta de cuatro pasos clave:
+
+1. **Imaginar e Ilustrar**: Visualiza conceptos para mejorar la comprensión.
+2. **Establecer Conexiones y Relaciones**: Vincula nuevas ideas con conocimientos existentes.
+3. **Observar Nueva Información**: Presta atención a nuevas ideas y datos.
+4. **Practicar**: Aplica lo que has aprendido mediante actividades prácticas.
+
+## Abrazando la Experiencia de Aprendizaje
+
+El objetivo es ayudarte a experimentar la sensación de aprender, desbloqueando el potencial para aprender cualquier cosa que desees. La programación no es solo sobre código; es un medio para diseñar soluciones, comunicar ideas e interactuar con el mundo.
+
+## La Versatilidad de la Ciencia de la Computación
+
+La ciencia de la computación es la ciencia de resolver problemas y puede aplicarse a cualquier campo: tecnología climática, psicología, investigación del cáncer, arte, deportes y más. La tecnología juega un papel donde exista información.
+
+## Aliento para Seguir Adelante
+
+Tómate tiempo para internalizar estas lecciones. Permítete convertirte en la persona que abraza los desafíos y continúa avanzando. Con coraje y persistencia, transformarás lo desconocido en familiaridad y generarás un impacto significativo.
+`,
+    "video.summary.2": `
+## Visión General
+
+Esta conferencia introduce los fundamentos de la programación, enfocándose en:
+
+- **Objetos**
+- **Funciones**
+- **Bucles**
+- **Datos y Lógica**
+- **Funciones de Red**
+
+El enfoque es comenzar con conceptos más desafiantes y descender a lo básico, atendiendo a estudiantes de diversos antecedentes.
+
+## Objetos
+
+- **Definición**: Los objetos en código modelan el mundo digital utilizando información, datos y lógica.
+- **Clases**: Definen cómo se crean los objetos, incluyendo su estado y funcionalidad.
+- **Punto Clave**: Los objetos tienen una forma común de definir su estado y gestionarlo a través de funcionalidades.
+- **Ejemplos**:
+  - Creación de una clase \`Robot\` en JavaScript.
+  - Uso de objetos para estructurar datos en aplicaciones como publicaciones en redes sociales o transacciones de criptomonedas.
+- **Conclusión**: La programación se trata de organizar información, no de matemáticas.
+
+## Funciones
+
+- **Propósito**: Esenciales para organizar y manejar datos.
+- **Tipos**:
+  - **Funciones Sincrónicas**: Ejecutan tareas secuencialmente (como cocinar en una sartén).
+  - **Funciones Asíncronas**: Permiten que otros procesos se ejecuten simultáneamente (como cocinar en un horno).
+- **Importancia**: Comprender las funciones ayuda a gestionar el flujo de datos, especialmente al manejar datos a través de redes.
+
+## Bucles
+
+- **Uso**: Realizar acciones repetibles en grupos de datos.
+- **Tipos de Funciones de Bucle**:
+  - Transformar valores.
+  - Filtrar valores.
+  - Invertir valores.
+- **Ejemplo**: Uso de \`forEach\` en JavaScript para encontrar el artista con más oyentes mensuales en Spotify.
+- **Documentación**: Se anima a leer la documentación del lenguaje para entender los métodos y funcionalidades integradas.
+
+## Datos y Lógica
+
+- **Fundamentos**:
+  - Los tipos de datos incluyen palabras, números, grupos y conclusiones lógicas.
+  - La lógica se reduce a valores verdaderos o falsos: cómo las computadoras interpretan el mundo.
+- **Ejemplos**:
+  - Definición de objetos como \`obama\` y \`elon\` con propiedades.
+  - Creación de funciones que usan condiciones lógicas para devolver resultados.
+- **Punto Clave**: Las piezas individuales de datos crean lógica; los grupos de datos crean funcionalidad.
+
+## Programación y Lógica (Refuerzo)
+
+- **Programación**: La organización de la información.
+- **Lógica**: Determinar si las afirmaciones son verdaderas o falsas.
+- **Conexión con el Mundo Real**: Observar cómo los objetos y situaciones cotidianas pueden representarse en código.
+- **Aliento**: Entender que los conceptos de programación pueden captarse sin un gran énfasis en las matemáticas.
+
+## Estrategias de Práctica y Aprendizaje
+
+- **Uso de Asistencia de IA**: Utilizar herramientas de IA como ChatGPT para orientación.
+- **Práctica Práctica**:
+  - Escribir código a mano en papel.
+  - Dibujar conexiones y visualizar estructuras de datos.
+- **Modelar Datos del Mundo Real**: Practicar representando escenarios del mundo real como modelos de datos en código.
+- **Mentalidad**: Enfocarse en aprender y entender en lugar de preocuparse por estar bien o mal.
+
+## Conclusión
+
+- **Puntos Principales**:
+  - La programación modela el mundo digital con información, datos y lógica.
+  - Organizar información es la esencia de la programación.
+  - La lógica en programación trata sobre valores verdaderos o falsos.
+- **Próximos Pasos**:
+  - Prepararse para construir aplicaciones visuales usando HTML, CSS, JavaScript y React.
+- **Aliento**:
+  - Reduzca la velocidad y asimile las lecciones.
+  - Acepte los desafíos y confíe en el proceso de aprendizaje.
+  - Practique consistentemente para fortalecer sus habilidades.
+
+---
+
+**Nota**: La conferencia enfatiza comenzar con conceptos fundamentales y construir sobre ellos para crear una comprensión sólida de la  programación. Anima a utilizar los recursos disponibles, practicar regularmente y mantener una actitud positiva hacia el aprendizaje.
+
+`,
+    "video.summary.1": `
+El **UI/UX** (Interfaz de Usuario y Experiencia de Usuario) es un enfoque multidisciplinario basado en el estudio de la interacción humano-computadora. Se conoce también como **Diseño de Interacción** o simplemente **Diseño**. Este campo va más allá del diseño visual y la generación de ideas creativas; es una práctica reflexiva que se puede aplicar en diversos entornos.
+
+## Rol del Diseñador de Interacción
+
+Los diseñadores de interacción:
+
+- Investigan y diseñan basados en la interacción humano-computadora.
+- Realizan encuestas, entrevistas y observaciones para obtener información profunda sobre un producto.
+- Se enfocan en mejorar experiencias, como la de un restaurante o la eficacia de anfitriones en AirBnB.
+- Combinan habilidades técnicas y de negocios para amplificar el impacto de sus soluciones.
+
+## Accesibilidad
+
+- **Importancia**: La accesibilidad se centra en habilitar a más personas para que puedan utilizar productos y servicios.
+- **Consideraciones**:
+  - Diseñar para personas con discapacidad visual que usan lectores de pantalla.
+  - Organizar información para usuarios visuales y auditivos.
+- **Beneficios**:
+  - Mejora la experiencia para todos los usuarios.
+  - Formatos como radio y podcasts se benefician de prácticas accesibles.
+
+## Multidisciplinariedad
+
+- El diseño es fundamentalmente multidisciplinario y se aplica en campos como ingeniería química, negocios, arquitectura y educación.
+- **Impacto de las Decisiones**:
+  - Las palabras clave afectan cómo los motores de búsqueda y algoritmos distribuyen el contenido.
+  - La intención detrás de las características y el tono influye en la retención y éxito del producto.
+- **Atención al Detalle**: El buen diseño se enfoca en hacer felices a los usuarios para quienes se está diseñando.
+
+## Heurísticas
+
+- **Definición**: Son guías que se utilizan al crear con limitaciones o retroalimentación limitada.
+- **Aplicación**:
+  - Considerar cómo un usuario puede corregir errores o malfuncionamientos.
+  - Uso de conceptos como las **afordancias**, que son señales o propiedades de un objeto que informan al usuario sobre sus posibles usos.
+- **Ejemplos**:
+  - Un pichel de agua se reconoce como un objeto para verter agua.
+  - Los iconos en pantalla representan botones interactuables.
+
+## Sistemas de Diseño
+
+- **Herramientas y Métodos**:
+  - Prototipos en papel, encuestas, entrevistas personales, herramientas en línea.
+- **Consideraciones**:
+  - Cada herramienta tiene ventajas y desventajas que afectan los resultados.
+  - Es importante pensar críticamente y mantener una mente abierta al elegir métodos de diseño.
+- **Colaboración**:
+  - Con el tiempo, se descubre qué funciona mejor con diferentes equipos.
+
+## Lecturas Adicionales
+
+- **"The Design of Everyday Things"** por Don Norman: Un libro fundamental en el campo de la interacción humano-computadora.
+- **NNGroup.com**: Recursos del Nielsen Norman Group para profesionales interesados en estándares de usabilidad.
+- **Bitcoin.design**: Plataforma de código abierto para investigación y desarrollo de usabilidad en Bitcoin.
+
+## Conclusión
+
+El diseño de interacción es una disciplina que combina investigación, creatividad y empatía para mejorar la experiencia del usuario. Al integrar principios de accesibilidad, multidisciplinariedad y heurísticas, los diseñadores pueden crear soluciones significativas y efectivas. Se anima a los miembros de la comunidad de Robots Building Education a aplicar estos principios para comunicar ideas y mejorar nuestra plataforma de mentoría con IA.
+
+---
+
+**Nota**: Si formas parte de la comunidad de Robots Building Education, siéntete libre de utilizar los principios de diseño para comunicar ideas, mejoras o estudios de caso y así ganar experiencia. Estoy dispuesto a colaborar contigo para desarrollar y mejorar nuestra plataforma de mentoría con IA.
+`,
+    "video.summary.3": `
+- **Revisión de la Lección 1**: Fundamentos de organizar datos con código usando objetos, funciones, bucles y lógica.
+- **Enfoque de la Lección 2**: Comprender los componentes de React y la programación dirigida por eventos para crear interfaces y experiencias de usuario.
+
+## Componentes de React
+
+- **Componentes**: Funciones que devuelven elementos de la interfaz de usuario y gestionan su propio estado y propiedades.
+- **Partes Principales de un Componente de React**:
+  1. **Hooks**: Funciones que manejan y sincronizan operaciones con el estado del componente (por ejemplo, \`useState\`).
+  2. **Estado**: Datos dinámicos dentro del componente que cambian con el tiempo, provocando re-renderizados.
+  3. **Propiedades (Props)**: Datos pasados al componente que deben permanecer sin cambios dentro de él.
+
+- **Programación Basada en Eventos**: Los componentes de React responden a interacciones del usuario (eventos) que desencadenan cambios de estado y actualizaciones de la interfaz de usuario.
+
+## Flujo de Datos en React
+
+- React utiliza un **flujo de datos unidireccional**, lo que hace intuitivo diseñar relaciones y gestionar datos.
+- **Actualización del Estado**: Cambiar el estado de un componente refresca la pantalla y re-renderiza el componente.
+- **Props vs. Estado**:
+  - **Props**: Datos inmutables recibidos de componentes padres.
+  - **Estado**: Datos mutables gestionados dentro del componente.
+
+## Ejemplo Práctico: Componente de Tweet
+
+- Demostración de un componente \`Tweet\` que muestra información de un tweet y maneja interacciones del usuario como los "me gusta".
+- Se mostró cómo:
+  - Utilizar hooks (\`useState\`) para gestionar el estado.
+  - Pasar funciones y datos como props a componentes hijos.
+  - Actualizar el estado en respuesta a eventos (por ejemplo, función \`createLike\`).
+
+## Superando Desafíos
+
+- Reconocimiento de que combinar hooks, estado y props puede ser complejo.
+- Se anima a practicar, experimentar y enfrentar desafíos para entender el flujo de datos en React.
+- Se enfatiza que los ingenieros de software profesionales también navegan estas complejidades.
+
+## HTML y Estructuración de la Pantalla
+
+- **HTML (Lenguaje de Marcado de Hipertexto)**: Se utiliza para estructurar contenido en la web.
+- **Elementos y Atributos**:
+  - **Eventos**: Manejan interacciones del usuario como clics y desplazamientos del ratón.
+  - **ID**: Identificador único para elementos.
+  - **Clase**: Agrupa elementos para estilos.
+  - **Estilo**: Estiliza elementos en línea.
+
+- Se recomienda pensar en los elementos HTML como contenedores organizados lógicamente.
+
+## CSS y Estilización de Elementos
+
+- **CSS (Hojas de Estilo en Cascada)**: Estiliza la apariencia de elementos HTML.
+- **Conceptos Clave**:
+  - **Modelo de Caja**: Da forma a los elementos usando propiedades como \`margin\`, \`padding\`, \`border\` y \`width\`.
+  - **Modelo Flexbox**: Posiciona elementos en filas o columnas para diseño responsivo.
+  - **Modelo de Animación**: Anima elementos usando animaciones CSS o JavaScript.
+
+- Se sugiere usar estilos en línea o bibliotecas CSS-in-JS como Styled-Components con React para un mejor control.
+
+## Combinando Conceptos
+
+- Se proporcionaron ejemplos de cómo combinar componentes de React con HTML y CSS para crear elementos de interfaz de usuario interactivos.
+- Se mostró cómo usar estado y controladores de eventos para gestionar datos e interacciones del usuario.
+- Se enfatiza la importancia de entender cómo estas tecnologías trabajan juntas.
+
+## Práctica y Aprendizaje
+
+- Se anima a usar recursos como W3Schools y documentación para explorar atributos de HTML y CSS.
+- Se recomienda aprovechar herramientas de IA como ChatGPT para asistencia.
+- Se destaca el valor de la experimentación práctica y la descomposición de problemas complejos.
+
+## Conclusión
+
+- Se refuerza que dominar el desarrollo frontend implica entender componentes, flujo de datos y estilos.
+- Se anima a practicar continuamente y explorar para desarrollar competencia.
+- Se anticipa la construcción de aplicaciones del mundo real usando los conceptos aprendidos.
+
+---
+
+**Nota**: Esta lección enfatiza la integración de componentes de React con HTML y CSS para crear interfaces de usuario dinámicas y responsivas. Comprender la programación dirigida por eventos y el flujo de datos en React es crucial para desarrollar aplicaciones frontend eficientes.
+    `,
+    "video.summary.4": `
+La ingeniería de software backend a menudo parece misteriosa y compleja, pero esta lección tiene como objetivo aclarar sus conceptos y hacerlos accesibles.
+
+## Lecciones Cubiertas
+
+1. **Creación de Usuarios**
+2. **Fundamentos de Bases de Datos**
+3. **Nubes Backend**
+4. **Sistemas Operativos y Máquinas**
+
+## Sistemas Operativos
+
+- **Modelando el Mundo Real**: La informática utiliza la tecnología para simular sistemas del mundo real.
+- **Analogía con una Cocina de Restaurante**: Así como una cocina tiene muchos componentes para entregar una comida, los sistemas operativos gestionan numerosos procesos para ofrecer experiencias de usuario.
+- **Variedad de Máquinas**: Entender diferentes sistemas operativos ayuda a trabajar con dispositivos diversos como MacBooks, mineros de Bitcoin o robots de Tesla.
+
+## Interfaz de Línea de Comandos (CLI)
+
+- **Interacción Basada en Texto**: La CLI permite comunicación directa con el sistema operativo mediante comandos de texto.
+- **Usabilidad**: Al igual que ChatGPT difiere de una búsqueda en Google, la CLI ofrece una forma distinta de usabilidad en comparación con las interfaces gráficas.
+- **Eficiencia**: Los ingenieros utilizan la CLI para un control eficiente y poderoso sobre el sistema.
+
+## Ingeniería Backend
+
+- **Dejar que las Máquinas Trabajen**: Se enfatiza la importancia de automatizar tareas y utilizar herramientas poderosas.
+- **Construcción de Canalizaciones**: Implica construir rutas y vías de datos para diversas necesidades, como distribuir datos para aprendizaje automático o asegurar experiencias de usuario fluidas.
+- **Modelando la Lógica**: La programación utiliza la lógica para modelar operaciones del mundo real, haciendo que sistemas complejos sean predecibles y manejables.
+
+## Uso de la Línea de Comandos
+
+- **Habilidades Prácticas**: Fomenta la familiaridad con operaciones básicas de línea de comandos como navegar por sistemas de archivos, descargar, instalar y guardar archivos.
+- **Hojas de Consulta**: Recomienda usar hojas de consulta para recordar comandos esenciales.
+- **Exploración**: Sugiere profundizar en técnicas más avanzadas a medida que crece la curiosidad.
+
+## Bases de Datos
+
+- **Almacenamiento de Datos**: Las bases de datos son donde se almacenan y gestionan los datos de forma responsable.
+- **Tipos de Bases de Datos**:
+  - **Bases de Datos Relacionales**: Utilizan tablas y lenguaje SQL para gestionar datos (por ejemplo, hojas de cálculo de Excel).
+  - **Bases de Datos No Relacionales**: Utilizan pares clave-valor para estructuras de datos más flexibles.
+- **Organización de la Información**: Se enfoca en usar identidades y relaciones para organizar datos.
+- **Ejemplo del Mundo Real**: Describir operaciones de un restaurante usando identidades como el nombre del restaurante, ciudad, número de orden y tipo de pedido.
+
+## Creación de Usuarios
+
+- **Cuentas de Usuario**: Se crean combinando datos como información de inicio de sesión, detalles personales y datos financieros para formar una identidad única.
+- **Autenticación**: Utiliza claves secretas y servidores de autorización para verificar y asegurar cuentas de usuario.
+- **Dirección de Datos**: Las identidades únicas de usuario ayudan a dirigir los datos apropiadamente dentro de servicios y aplicaciones.
+
+## Conclusión
+
+- **Internalización**: Anima a tomarse el tiempo para entender e imaginar los conceptos discutidos.
+- **Creatividad**: Invita a los estudiantes a ser creativos y no temer cometer errores.
+- **Reconocimiento de Desafíos**: Reconoce la dificultad pero enfatiza que entender estructuras de datos y algoritmos ayuda a comprender sistemas más grandes.
+- **Próximos Pasos**: Prepararse para conectar sistemas y crear una aplicación con funcionalidades de usuario en próximas lecciones.
+
+---
+
+**Nota**: Esta lección desmitifica la ingeniería de software backend al establecer paralelismos con sistemas del mundo real y destacar la importancia de los sistemas operativos, la línea de comandos, las bases de datos y la creación de usuarios en la construcción de aplicaciones complejas.
+
+    `,
+    "video.summary.5": `
+    En esta lección, vamos paso a paso para unir todo lo que hemos aprendido y así construir una aplicación conectando sistemas, culminando en tener usuarios reales. Herramientas como Google, YouTube, ChatGPT y Stack Overflow serán tus mejores amigos si encuentras algo sobre lo que quieras aprender más.
+
+    ## Configuración del Backend
+    
+    1. **Instalar Herramientas Necesarias**:
+       - Descarga e instala **VSCode** (editor de código).
+       - Descarga e instala **Node.js** (te permite construir aplicaciones JavaScript).
+    
+    2. **Instalar npm**:
+       - Abre tu terminal de línea de comandos.
+       - Instala npm (Node Package Manager) para usar paquetes compartidos por otros desarrolladores.
+       - *Nota*: Usa \`sudo\` con precaución en sistemas Unix; en Windows, ajusta los permisos si encuentras errores.
+    
+    3. **Crear una Carpeta de Proyecto**:
+       - Crea una carpeta nombrada después de tu proyecto (por ejemplo, *La Frontera Digital*).
+    
+    4. **Inicializar el Proyecto**:
+       - Abre VSCode y abre tu carpeta de proyecto.
+       - Abre la terminal integrada en VSCode.
+       - Ejecuta \`npm create vite@latest\` para iniciar un proyecto React con Vite.
+       - Sigue las indicaciones para configurar el proyecto (elige React y JavaScript).
+       - La configuración podría verse así:
+         - Framework: React
+         - Variante: JavaScript
+    
+    5. **Instalar Dependencias**:
+       - Ejecuta \`npm install\` para instalar las dependencias del proyecto listadas en \`package.json\`.
+    
+    6. **Ejecutar la Aplicación**:
+       - Construye la aplicación con \`npm run build\`.
+       - Inicia el servidor de desarrollo con \`npm run dev\`.
+    
+    7. **Configurar Firebase (Servicios Backend)**:
+       - Instala Firebase CLI: \`npm install -g firebase-tools\`.
+       - Inicia sesión en Firebase: \`firebase login\` (autentícate con tu cuenta de Google).
+       - Ve a [Firebase Console](https://console.firebase.google.com) y crea un nuevo proyecto.
+       - Activa los servicios de **Autenticación**, **Firestore** y **Hosting**.
+    
+    8. **Inicializar Firebase en Tu Proyecto**:
+       - Ejecuta \`firebase init\` y selecciona opciones para configurar Firestore y Hosting.
+       - Elige tu proyecto existente cuando se te pida.
+       - Acepta los valores predeterminados para crear archivos de reglas e índices.
+       - Pasos de configuración:
+         - Activa Firestore y Hosting.
+         - Selecciona "Usar un proyecto existente" y elige tu proyecto.
+         - Permite que Firebase cree archivos de reglas e índices.
+    
+    9. **Desplegar la Aplicación**:
+       - Construye tu aplicación nuevamente con \`npm run build\`.
+       - Despliega en Firebase Hosting con \`firebase deploy\`.
+       - Accede a tu aplicación a través de la URL proporcionada por Firebase Hosting.
+    
+    ## Creando Usuarios
+    
+    1. **Instalar Firebase y React Firebase UI**:
+       - Ejecuta \`npm install --save firebase react-firebaseui --legacy-peer-deps\`.
+    
+    2. **Habilitar Autenticación en Firebase**:
+       - En la Consola de Firebase, ve a **Autenticación** > **Método de inicio de sesión**.
+       - Habilita el inicio de sesión con **Google**.
+    
+    3. **Obtener Configuración de Firebase**:
+       - Ve a la configuración de tu proyecto en la Consola de Firebase.
+       - Selecciona el icono de aplicación web (\</\>) para registrar tu aplicación.
+       - Obtén las claves de configuración de tu aplicación.
+    
+    4. **Configurar Firebase en Tu Código**:
+       - Crea una carpeta \`database\` dentro de \`src\` y añade \`firebaseResources.js\`.
+       - Inicializa Firebase con tus claves de configuración en este archivo.
+    
+    5. **Implementar la Interfaz de Autenticación**:
+       - En \`App.jsx\`, importa el componente de botón de inicio de sesión de \`react-firebaseui\`.
+       - Renderiza el botón de inicio de sesión en tu aplicación.
+    
+    6. **Gestionar el Estado del Usuario**:
+       - Importa las funciones necesarias de autenticación de Firebase.
+       - Define el estado para rastrear el estado de autenticación del usuario.
+       - Usa el hook \`useEffect\` para manejar los cambios de estado de autenticación.
+       - Crea un componente de encabezado para mostrar información del usuario según el estado de autenticación.
+    
+    7. **Actualizar y Desplegar**:
+       - Inserta el componente de encabezado en el método de renderizado de tu aplicación.
+       - Construye tu aplicación con \`npm run build\`.
+       - Despliega la aplicación actualizada con \`firebase deploy\`.
+    
+    ## Resumen
+    
+    - **Configurar la Aplicación**: Usamos la línea de comandos para configurar una aplicación React con Firebase.
+    - **Configurar el Código**: Conectamos el frontend y el backend usando identidades y claves.
+    - **Crear Usuarios**: Implementamos autenticación para crear cuentas de usuario.
+    - **Diseñar Experiencias de Usuario**: Construimos componentes de interfaz de usuario para mejorar la interacción del usuario.
+    - **Frontend vs. Backend**:
+      - *Frontend*: Gestiona experiencias de usuario, elementos visuales y eventos.
+      - *Backend*: Diseña canalizaciones para comunicar y mover datos a través de redes.
+    
+    ## Trabajando con Otros Ingenieros: GitHub
+    
+    - **GitHub**: Una plataforma para colaborar con otros ingenieros, similar a Google Drive pero optimizada para código con control de versiones.
+    - **Conceptos Clave**:
+      1. **Clonar**: Copiar código de GitHub a tu computadora.
+      2. **Agregar (Add)**: Preparar los cambios de tu código para ser enviados a GitHub.
+      3. **Commit**: Añadir una etiqueta, identidad y descripción a tu conjunto de cambios.
+      4. **Push**: Desplegar o enviar tus cambios de código a tu repositorio de GitHub.
+      5. **Pull**: Traer cualquier actualización de otras personas al código.
+      6. **Ramas (Branches)**: Copias de la base de código dentro del mismo repositorio.
+      7. **Forks**: Copias de la base de código dentro de tu perfil.
+      8. **Pull Requests**: Comparar cambios entre ramas/forks y fusionarlos.
+      9. **Fusionar (Merge)**: Actualizar el código de una vez por todas; completa un ciclo de actualizaciones.
+    
+    - **Desafío**: Aprende los flujos de trabajo de GitHub de forma independiente para simular tareas de ingeniería del mundo real y mejorar tus habilidades de resolución de problemas.
+    
+    ## Conclusión
+    
+    - **Mentalidad**: Involucra tu imaginación y abraza los desafíos para construir tu confianza.
+    - **Apoyo**: La tutoría privada está disponible si necesitas ayuda con el material o los próximos pasos.
+    - **Aprendizaje Continuo**: Espera que estas lecciones se actualicen con el tiempo.
+    - **Agradecimiento**: ¡Gracias por apoyar a Robots Building Education! ¡Espero crear más cosas increíbles para ti!
+    `,
+    "video.summary.6": `
+## Introducción
+
+Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los estudiantes debido a su complejidad y su uso en entrevistas desafiantes. Aunque es ciertamente desafiante y requiere práctica, con la orientación adecuada, los conceptos pueden volverse más accesibles.
+
+## Lenguajes de Programación
+
+- **Entendiendo la Interpretación del Código**:
+  - Las computadoras interpretan el código descomponiéndolo en tokens y traduciéndolo a código máquina.
+  - Ejemplo:
+    \`\`\`javascript
+    let musician = new Musician("Drake");
+    let top_song = musician.getTopSong();
+    \`\`\`
+  - Los tokens en el código incluyen palabras clave (\`let\`, \`new\`), identificadores (\`musician\`, \`top_song\`, \`Musician\`), operadores (\`=\`) y literales (\`"Drake"\`).
+
+- **Conversión de Cadenas**:
+  - Las cadenas se descomponen en arrays de caracteres.
+    - \`"Drake"\` se convierte en \`['D', 'r', 'a', 'k', 'e']\`.
+  - Cada carácter se mapea a códigos numéricos (por ejemplo, ASCII o Unicode) y luego a representaciones binarias.
+
+## Estructuras de Datos
+
+- **Gestión de Memoria**:
+  - Las computadoras reservan espacio en memoria y crean direcciones para referenciar información.
+  - Comprender cómo se almacenan y referencian los datos es crucial para captar estructuras de datos complejas.
+
+- **Listas Enlazadas**:
+  - Una estructura de datos fundamental que ayuda a entender estructuras más complejas como árboles y grafos.
+  - Representa una secuencia de nodos donde cada nodo apunta al siguiente.
+
+## Árboles y Algoritmos
+
+- **Recorridos de Árboles**:
+  - **Búsqueda en Profundidad (DFS)**:
+    - Explora lo más profundo posible a lo largo de cada rama antes de retroceder.
+    - Útil en escenarios donde necesitas explorar todos los caminos posibles.
+
+  - **Búsqueda en Anchura (BFS)**:
+    - Explora todos los vecinos de un nodo antes de pasar al siguiente nivel.
+    - Ideal para encontrar el camino más corto en grafos no ponderados.
+
+- **Ejemplo de DFS Contando Nodos Nulos**:
+  \`\`\`javascript
+  let contarNulos = (raiz) => {
+    let contador = 0;
+
+    let busquedaEnProfundidad = (nodoActual) => {
+      if (nodoActual === null) {
+        contador++;
+        return;
+      }
+
+      for (let siguienteNodo in nodoActual) {
+        busquedaEnProfundidad(nodoActual[siguienteNodo]);
+      }
+    };
+
+    busquedaEnProfundidad(raiz);
+    return contador;
+  };
+  \`\`\`
+
+- **Entendiendo el Recorrido**:
+  - Visualizar cómo los algoritmos navegan a través de las estructuras de datos ayuda a comprender su funcionalidad.
+  - Desglosar cada paso y contar operaciones puede aclarar procesos complejos.
+
+## Listas Enlazadas
+
+- **Definición**:
+  - Una estructura de datos lineal donde cada elemento (nodo) contiene datos y una referencia (enlace) al siguiente nodo.
+
+- **Construyendo una Lista Enlazada**:
+  \`\`\`javascript
+  class Nodo {
+    constructor(valor) {
+      this.valor = valor;
+      this.enlace = null;
+    }
+
+    setEnlace(nodo) {
+      this.enlace = nodo;
+    }
+
+    getEnlace() {
+      return this.enlace;
+    }
+  }
+
+  let meta = new Nodo("meta");
+  let instagram = new Nodo("instagram");
+  let reels = new Nodo("reels");
+
+  // Enlazando nodos
+  instagram.setEnlace(reels);
+  meta.setEnlace(instagram);
+
+  class ListaEnlazada {
+    constructor(cabeza) {
+      this.cabeza = cabeza;
+    }
+
+    getUltimoNodo() {
+      let nodoActual = this.cabeza;
+      while (nodoActual.getEnlace()) {
+        nodoActual = nodoActual.getEnlace();
+      }
+      return nodoActual;
+    }
+  }
+
+  let empresa = new ListaEnlazada(meta);
+  console.log(empresa.getUltimoNodo()); // Muestra el último nodo de la lista
+  \`\`\`
+
+- **Revirtiendo una Lista Enlazada**:
+  \`\`\`javascript
+  reverse(cabeza) {
+    let nodoPrevio = null;
+    let nodoActual = cabeza;
+
+    while (nodoActual) {
+      let siguienteNodo = nodoActual.getEnlace();
+      nodoActual.setEnlace(nodoPrevio);
+      nodoPrevio = nodoActual;
+      nodoActual = siguienteNodo;
+    }
+    return nodoPrevio;
+  }
+  \`\`\`
+
+## Práctica y Perseverancia
+
+- **Importancia de la Repetición**:
+  - Practicar repetidamente estos conceptos ayuda a hacerlos naturales.
+  - Tomarse el tiempo para entender a fondo las estructuras fundamentales es crucial para abordar temas avanzados.
+
+- **Enfoque de Aprendizaje**:
+  - Desglosa problemas complejos en partes más pequeñas y manejables.
+  - Utiliza técnicas de visualización y conteo para seguir los pasos de los algoritmos.
+
+## Desafíos Avanzados
+
+- **Problema de las N-Reinas**:
+  - Un clásico rompecabezas algorítmico que implica colocar N reinas en un tablero de ajedrez de N×N de manera que ninguna reina amenace a otra.
+  - Demuestra el concepto de backtracking y complejidad combinatoria.
+  - Fomenta el pensamiento sobre optimización y estrategias de solución eficientes.
+  - [Aprende más sobre el Problema de las Ocho Reinas](https://es.wikipedia.org/wiki/Problema_de_las_ocho_reinas)
+
+## Conclusión
+
+- **Aprendizaje Continuo**:
+  - Dominar las estructuras de datos y algoritmos requiere práctica y dedicación constante.
+  - Invertir tiempo y recursos en aprender estos conceptos rinde frutos a largo plazo.
+
+- **Mentalidad Positiva**:
+  - Evita la autocrítica y reconoce que los desafíos son parte del proceso de aprendizaje.
+  - Afirma tu capacidad para aprender y crecer en el campo de la informática.
+
+- **Buscar Apoyo**:
+  - Participa con tutores, mentores y comunidades para mejorar tu comprensión.
+  - La colaboración y discusión pueden proporcionar nuevas ideas y reforzar el aprendizaje.
+
+---
+
+**Nota**: Esta conferencia enfatiza la importancia fundamental de estructuras de datos como listas enlazadas y árboles, y algoritmos como la búsqueda en profundidad. Comprender estos conceptos centrales es esencial para avanzar en informática y abordar problemas más complejos.
+
+    `,
     "toast.title.chatDataCopied": "Abriendo ChatGPT...",
     "chatcom.instructions.1":
       "Genera una conferencia útil, amigable y profesional con ejemplos de código en JavaScript en",
@@ -1110,7 +2363,7 @@ export let translation = {
     "button.subjectsCovered": "Temas cubiertos",
     "settings.button.yourTutor": "Tu Tutor",
     "settings.button.yourProfile": "Tu Perfil",
-    "settings.button.nostrApps": "Colección de Apps",
+    "settings.button.nostrApps": "App Store",
     "link.connectWithMe": "¡Conéctate conmigo!",
     "Sunset Tutorial": "Tutorial de Sunset",
     "Basics of Coding": "Fundamentos de la Programación",
