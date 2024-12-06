@@ -6,10 +6,10 @@ import { RobotDialogue } from "../elements/RoboticDialogue";
 export let transcript = {
   tutorial: {
     address:
-      "naddr1qqt4qun0vaexzmfdg9yj6stswqk4gat5daexjctvqy28wumn8ghj7un9d3shjtnyv9kh2uewd9hsyg9ty9kqftakjrsw5p55z5nnsqwxld6xns5darqsrey7kqcuqrlz6upsgqqqw5usnvfkyg",
+      "naddr1qq84xatwwdjhgt25w46x7unfv9kqyg9ty9kqftakjrsw5p55z5nnsqwxld6xns5darqsrey7kqcuqrlz6upsgqqqw5usc665uz",
     name: "Sunset Tutorial",
     imgSrc:
-      "https://image.nostr.build/d2d3d7857bbb6dc81dc3052aa34cf584d19144f8a94ed4e1fd1f09b9d811b155.png",
+      "https://res.cloudinary.com/dtkeyccga/image/upload/v1728270558/zre4dehmebfdikzeasoh.png",
   },
   1: {
     address:

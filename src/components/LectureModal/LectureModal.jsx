@@ -175,6 +175,7 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
 
     if (isOpen) {
       getProgress();
+
       getBadges();
     } else {
       setAreBadgesLoading(true);
@@ -368,11 +369,14 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
           title: "Badge awarded",
           description: `Great job! You've earned the ${transcriptObject.name} badge on your decentralized transcript!`,
           status: "success",
-          duration: 5000,
+          duration: 3000,
+          position: "top",
           isClosable: true,
         });
 
-        await assignExistingBadgeToNpub(transcriptObject.address);
+        await assignExistingBadgeToNpub(
+          transcriptObject.name.replace(/ /g, "-")
+        );
         getBadges();
       }
     } catch (error) {
@@ -414,6 +418,8 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
   //     `video.summary.${step.group === "introduction" ? "tutorial" : step.group}`
   //   ]
   // );
+
+  console.log("name", transcriptObject.name.replace(/ /g, "-"));
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="3xl" isCentered>
       <ModalOverlay />

@@ -25,7 +25,7 @@ import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
 import { translation } from "../../utility/translation";
-import { transcript } from "../../utility/transcript";
+import { transcript, videoTranscript } from "../../utility/transcript";
 import ReactConfetti from "react-confetti";
 import { useSharedNostr } from "../../hooks/useNOSTR";
 
@@ -207,12 +207,66 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
                   }}
                 >
                   <a
-                    href={`https://badges.page/a/${badge.badgeAddress}`}
+                    href={`https://badges.page/a/${(() => {
+                      const badgeName = badge.badgeAddress.split(":")[2];
+
+                      const matchingTranscript = Object.values(transcript).find(
+                        (entry) => {
+                          console.log("entry.name", entry.name);
+                          return entry.name.replace(/\s+/g, "-") === badgeName;
+                        }
+                      );
+
+                      const matchingVideoTranscript = Object.values(
+                        videoTranscript
+                      ).find((entry) => {
+                        console.log("entry.name", entry.name);
+                        return entry.name.replace(/\s+/g, "-") === badgeName;
+                      });
+
+                      console.log(
+                        "matchingTranscript",
+                        matchingTranscript || matchingVideoTranscript
+                      );
+                      let result =
+                        matchingTranscript?.address ||
+                        matchingVideoTranscript?.address;
+                      return result;
+                    })()}`}
                     target="_blank"
-                    onKeyDown={(e) => {
+                    onKeyDown={() => {
                       if (e.key === "Enter" || e.key === " ") {
                         window.open(
-                          `https://badges.page/a/${badge.badgeAddress}`
+                          `https://badges.page/a/${(() => {
+                            const badgeName = badge.badgeAddress.split(":")[2];
+
+                            const matchingTranscript = Object.values(
+                              transcript
+                            ).find((entry) => {
+                              console.log("entry.name", entry.name);
+                              return (
+                                entry.name.replace(/\s+/g, "-") === badgeName
+                              );
+                            });
+
+                            const matchingVideoTranscript = Object.values(
+                              videoTranscript
+                            ).find((entry) => {
+                              console.log("entry.name", entry.name);
+                              return (
+                                entry.name.replace(/\s+/g, "-") === badgeName
+                              );
+                            });
+
+                            console.log(
+                              "matchingTranscript",
+                              matchingTranscript || matchingVideoTranscript
+                            );
+                            let result =
+                              matchingTranscript?.address ||
+                              matchingVideoTranscript?.address;
+                            return result;
+                          })()}`
                         );
                       }
                     }}

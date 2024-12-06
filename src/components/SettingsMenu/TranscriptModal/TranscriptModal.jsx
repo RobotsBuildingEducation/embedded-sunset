@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import isEmpty from "lodash/isEmpty";
+import get from "lodash/get";
 import {
   Box,
   Button,
@@ -18,7 +20,7 @@ import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
 import ReactConfetti from "react-confetti";
 
-import { transcript } from "../../../utility/transcript";
+import { transcript, videoTranscript } from "../../../utility/transcript";
 
 import { useSharedNostr } from "../../../hooks/useNOSTR";
 import { SunsetCanvas } from "../../../elements/SunsetCanvas";
@@ -221,44 +223,102 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
               flexWrap="wrap"
               height="min-content"
             >
-              {badges.map((badge) => (
-                <div
-                  style={{
-                    margin: 6,
+              {badges.map((badge) => {
+                console.log("BDGE!!!!!@@@", badge);
+                return (
+                  <div
+                    style={{
+                      margin: 6,
 
-                    width: "250px",
-                    height: "100px",
-                    display: "flex",
-                  }}
-                >
-                  <a
-                    href={`https://badges.page/a/${badge.badgeAddress}`}
-                    target="_blank"
-                    onKeyDown={() => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        window.open(
-                          `https://badges.page/a/${badge.badgeAddress}`
-                        );
-                      }
+                      width: "250px",
+                      height: "100px",
+                      display: "flex",
                     }}
                   >
-                    <img
-                      src={badge.image}
-                      width={100}
-                      style={{
-                        borderRadius: "33%",
-                        boxShadow: "0px 1px 1px 2px black",
-                        marginBottom: 4,
+                    <a
+                      href={`https://badges.page/a/${(() => {
+                        const badgeName = badge.badgeAddress.split(":")[2];
+
+                        const matchingTranscript = Object.values(
+                          transcript
+                        ).find((entry) => {
+                          console.log("entry.name", entry.name);
+                          return entry.name.replace(/\s+/g, "-") === badgeName;
+                        });
+
+                        const matchingVideoTranscript = Object.values(
+                          videoTranscript
+                        ).find((entry) => {
+                          console.log("entry.name", entry.name);
+                          return entry.name.replace(/\s+/g, "-") === badgeName;
+                        });
+
+                        console.log(
+                          "matchingTranscript",
+                          matchingTranscript || matchingVideoTranscript
+                        );
+                        let result =
+                          matchingTranscript?.address ||
+                          matchingVideoTranscript?.address;
+                        return result;
+                      })()}`}
+                      target="_blank"
+                      onKeyDown={() => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          window.open(
+                            `https://badges.page/a/${(() => {
+                              const badgeName =
+                                badge.badgeAddress.split(":")[2];
+
+                              const matchingTranscript = Object.values(
+                                transcript
+                              ).find((entry) => {
+                                console.log("entry.name", entry.name);
+                                return (
+                                  entry.name.replace(/\s+/g, "-") === badgeName
+                                );
+                              });
+
+                              const matchingVideoTranscript = Object.values(
+                                videoTranscript
+                              ).find((entry) => {
+                                console.log("entry.name", entry.name);
+                                return (
+                                  entry.name.replace(/\s+/g, "-") === badgeName
+                                );
+                              });
+
+                              console.log(
+                                "matchingTranscript",
+                                matchingTranscript || matchingVideoTranscript
+                              );
+                              let result =
+                                matchingTranscript?.address ||
+                                matchingVideoTranscript?.address;
+                              return result;
+                            })()}`
+                          );
+                        }
                       }}
-                    />
-                  </a>
-                  <div style={{ padding: 6 }}>
-                    <Text fontSize={"sm"}>
-                      {translation[userLanguage][badge.name] || badge.name}
-                    </Text>
+                    >
+                      <img
+                        src={badge.image}
+                        width={100}
+                        style={{
+                          borderRadius: "33%",
+                          boxShadow: "0px 1px 1px 2px black",
+                          marginBottom: 4,
+                        }}
+                      />
+                    </a>
+                    <div style={{ padding: 6 }}>
+                      <Text fontSize={"sm"}>
+                        {translation[userLanguage][badge.name] || badge.name}
+                      </Text>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </Box>
           )}
         </ModalBody>

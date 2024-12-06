@@ -259,7 +259,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
   };
 
   const assignExistingBadgeToNpub = async (
-    badgeNaddr,
+    badgeNaddr, //name or address
     awardeeNpub = localStorage.getItem("local_npub"), // The public key of the user being awarded
     ownerNsec = import.meta.env.VITE_SECRET_KEY // Your private key to sign the event
   ) => {
@@ -288,12 +288,14 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     const badgeAwardEvent = new NDKEvent(ndkInstance, {
       kind: NDKKind.BadgeAward, // Badge Award event kind
       tags: [
-        ["a", badgeNaddr], // Reference to the Badge Definition event
+        // ["a", badgeNaddr], // Reference to the Badge Definition event
         [
-          "p",
-          //npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt
-          getHexNPub(localStorage.getItem("local_npub")),
-        ], // Public key of the awardee
+          "a",
+          `${NDKKind.BadgeDefinition}:${getHexNPub(
+            "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt"
+          )}:${badgeNaddr}`,
+        ],
+        ["p", getHexNPub(localStorage.getItem("local_npub"))],
       ],
       created_at: Math.floor(Date.now() / 1000),
       //npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt
@@ -303,6 +305,12 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       // Your public key as the issuer
     });
 
+    console.log(
+      "my pubkey",
+      getHexNPub(
+        "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt"
+      )
+    );
     // Sign the badge event
     try {
       await badgeAwardEvent.sign(signer);
@@ -320,6 +328,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
   };
 
   const getAddressPointer = (naddr) => {
+    console.log("naddr", naddr);
     return nip19.decode(naddr).data;
   };
 
@@ -331,13 +340,15 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
 
       const { ndkInstance, hexNpub } = connection;
 
-      const addressPointer = await getAddressPointer(addy);
+      // const addressPointer = await getAddressPointer(addy);
+      let addressPointer = addy.split(":");
+      console.log("addressPointer", addressPointer);
 
       // Create a filter for badge events (kind 30008) for the given user
       const filter = {
         kinds: [NDKKind.BadgeDefinition], // Use the NDKKind enum for better readability
-        authors: [addressPointer.pubkey], // The user's hex-encoded npub
-        "#d": [addressPointer.identifier],
+        authors: [addressPointer[1]], // The user's hex-encoded npub
+        "#d": [addressPointer[2]],
         limit: 1,
       };
 
@@ -377,6 +388,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
 
       const { ndkInstance } = connection;
       const hexNpub = getHexNPub(npub); // Convert npub to hex
+      console.log("hx", hexNpub);
 
       // Create a filter for badge award events (kind 30009) where the user is the recipient
       const filter = {
@@ -410,6 +422,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
           )
         ),
       ];
+      console.log("badge data", uniqueNAddresses);
 
       let badgeData = uniqueNAddresses.map((naddress) =>
         getBadgeData(naddress)

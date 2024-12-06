@@ -1357,7 +1357,13 @@ const Step = ({
         `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://embedded-sunset.app \n\n${step.question?.questionText} #LearnWithNostr`
       );
       if (step.isConversationReview) {
-        assignExistingBadgeToNpub(transcript[step.group]["address"]);
+        console.log(
+          "name???",
+          transcript[step.group]["name"].replace(/ /g, "-")
+        );
+        assignExistingBadgeToNpub(
+          transcript[step.group]["name"].replace(/ /g, "-")
+        );
 
         onAwardModalOpen();
       }
