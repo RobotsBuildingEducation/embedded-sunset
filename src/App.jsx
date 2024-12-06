@@ -110,6 +110,8 @@ import { StreamLoader } from "./elements/StreamLoader";
 import { OrbCanvas } from "./elements/OrbCanvas";
 import LectureModal from "./components/LectureModal/LectureModal";
 
+import { WalletSetup } from "./components/WalletSetup/WalletSetup";
+
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
 // });
@@ -3314,7 +3316,11 @@ function App({ isShutDown }) {
     const initializeApp = async () => {
       const npub = localStorage.getItem("local_npub");
 
-      if (npub && window.location.pathname !== "/dashboard") {
+      if (
+        npub &&
+        (window.location.pathname !== "/dashboard" ||
+          window.location.pathname !== "/wallet")
+      ) {
         try {
           const step = await getUserStep(npub); // Fetch the current step
 
@@ -3463,6 +3469,7 @@ function App({ isShutDown }) {
       )}
 
       <Routes>
+        <Route path="/wallet" element={<WalletSetup />} />
         <Route
           path="/"
           element={
@@ -3647,6 +3654,9 @@ export const AppWrapper = () => {
       {/* <StreamLoader /> */}
 
       {/* <OrbCanvas width={200} height={200} /> */}
+
+      {/* <iframe src="https://wallet.cashu.me"></iframe> */}
+
       <App isShutDown={isShutDown} />
     </Router>
   );

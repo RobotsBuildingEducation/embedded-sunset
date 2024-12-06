@@ -226,6 +226,10 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     if (!connection) return;
 
     const { ndkInstance, hexNpub, signer } = connection;
+    ndkInstance.pool.relays.forEach((relay) => {
+      console.log("checking relays");
+      console.log(relay.url, relay.status);
+    });
 
     // Create a new note event
     const noteEvent = new NDKEvent(ndkInstance, {
