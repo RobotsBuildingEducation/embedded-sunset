@@ -110,7 +110,8 @@ import { StreamLoader } from "./elements/StreamLoader";
 import { OrbCanvas } from "./elements/OrbCanvas";
 import LectureModal from "./components/LectureModal/LectureModal";
 
-import { WalletSetup } from "./components/WalletSetup/WalletSetup";
+import { TestNostrWallet } from "./components/WalletSetup/TestNostrWallet";
+import { useNostrWalletStore } from "./hooks/useNostrWalletStore";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -1237,7 +1238,13 @@ const Step = ({
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [interval, setInterval] = useState(0);
-  const { cashTap, loadWallet } = useCashuStore();
+  // const { cashTap, loadWallet } = useCashuStore();
+  const { sendOneSatToNpub, initWalletService } = useNostrWalletStore(
+    (state) => ({
+      sendOneSatToNpub: state.sendOneSatToNpub, // renamed from cashTap
+      initWalletService: state.initWalletService, // renamed from loadWallet
+    })
+  );
   const [grade, setGrade] = useState("");
   const [isTimerExpired, setIsTimerExpired] = useState(true);
 
@@ -1291,7 +1298,7 @@ const Step = ({
     // const stepContent = steps[userLanguage][currentStep];
     // setStep(stepContent);
     const fetchUserData = async () => {
-      loadWallet();
+      await initWalletService();
       const userId = localStorage.getItem("local_npub");
       const userData = await getUserData(userId);
 
@@ -1353,7 +1360,16 @@ const Step = ({
   useEffect(() => {
     if (isCorrect) {
       localStorage.setItem("incorrectAttempts", 0);
-      cashTap();
+      let getRecipient = async () => {
+        const userData = await getUserData(localStorage.getItem("local_npub"));
+        if (userData?.identity) {
+          console.log("we have the recipient", userData?.identity);
+          sendOneSatToNpub(userData?.identity);
+        }
+        return userData?.identity || "";
+      };
+
+      getRecipient();
 
       postNostrContent(
         `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://embedded-sunset.app \n\n${step.question?.questionText} #LearnWithNostr`
@@ -3285,15 +3301,29 @@ function App({ isShutDown }) {
   const topRef = useRef();
   const { alert, hideAlert, showAlert } = useAlertStore();
 
+  // const {
+  //   generateNostrKeys,
+  //   auth,
+  //   postNostrContent,
+  //   assignExistingBadgeToNpub,
+  // } = useSharedNostr(
+  //   localStorage.getItem("local_npub"),
+  //   localStorage.getItem("local_nsec")
+  // );
+
   const {
     generateNostrKeys,
     auth,
     postNostrContent,
     assignExistingBadgeToNpub,
-  } = useSharedNostr(
-    localStorage.getItem("local_npub"),
-    localStorage.getItem("local_nsec")
-  );
+  } = useNostrWalletStore((state) => ({
+    generateNostrKeys: state.generateNostrKeys,
+    auth: state.auth,
+    postNostrContent: state.postNostrContent,
+    assignExistingBadgeToNpub: state.assignExistingBadgeToNpub,
+    sendOneSatToNpub: state.sendOneSatToNpub, // renamed from cashTap
+    initWalletService: state.initWalletService, // renamed from loadWallet
+  }));
 
   const handleToggle = async () => {
     const newLanguage = userLanguage === "en" ? "es" : "en";
@@ -3316,11 +3346,7 @@ function App({ isShutDown }) {
     const initializeApp = async () => {
       const npub = localStorage.getItem("local_npub");
 
-      if (
-        npub &&
-        (window.location.pathname !== "/dashboard" ||
-          window.location.pathname !== "/wallet")
-      ) {
+      if (npub && window.location.pathname !== "/dashboard") {
         try {
           const step = await getUserStep(npub); // Fetch the current step
 
@@ -3356,7 +3382,8 @@ function App({ isShutDown }) {
               setUserLanguage("en");
             }
 
-            if (location.pathname === "/about") {
+            if (location.pathname === "/wallet") {
+            } else if (location.pathname === "/about") {
               // Do nothing if on /about
             } else if (
               step === "subscription" ||
@@ -3469,7 +3496,7 @@ function App({ isShutDown }) {
       )}
 
       <Routes>
-        <Route path="/wallet" element={<WalletSetup />} />
+        <Route path="/wallet" element={<TestNostrWallet />} />
         <Route
           path="/"
           element={

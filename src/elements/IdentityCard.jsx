@@ -288,7 +288,7 @@ export const IdentityCard = ({
             }}
           >
             <CardNumber animate={animate}>{number}</CardNumber>
-            <CopyButton
+            {/* <CopyButton
               onMouseDown={() => handleCopy(theme)}
               theme={theme}
               copied={copied}
@@ -309,7 +309,7 @@ export const IdentityCard = ({
                             : "#ffb300"
                 }
               />
-            </CopyButton>
+            </CopyButton> */}
           </div>
 
           <div

@@ -425,7 +425,7 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader style={{ display: "flex", alignItems: "center" }}>
-          {translation[userLanguage]["settings.button.yourTutor"]} (beta)
+          {translation[userLanguage]["settings.button.yourTutor"]} (beta 0.9)
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>

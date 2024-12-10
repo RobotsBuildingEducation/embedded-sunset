@@ -29,8 +29,16 @@ app.use(express.json());
 // Dynamic allowed origins based on environment
 const allowedOrigins =
   process.env.NODE_ENV === "production"
-    ? ["https://embedded-sunset.app", "http://localhost:4445"]
-    : ["https://embedded-sunset.app", "http://localhost:4445"];
+    ? [
+        "https://embedded-sunset.app",
+        "http://localhost:4445",
+        "https://robotsbuildingeducation.com",
+      ]
+    : [
+        "https://embedded-sunset.app",
+        "http://localhost:4445",
+        "https://robotsbuildingeducation.com",
+      ];
 
 // Middleware to check the Referer or Origin header
 app.use((req, res, next) => {

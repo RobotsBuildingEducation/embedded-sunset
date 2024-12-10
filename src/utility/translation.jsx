@@ -725,9 +725,31 @@ reverse(head) {
     "modal.adaptiveLearning.title": "Adaptive Learning",
     "modal.adaptiveLearning.recommendButton": "Recommend what to study next",
     "modal.adaptiveLearning.stepsTaken": "Steps taken",
+    //create wallet
     "modal.bitcoinMode.title": "Bitcoin Wallet",
-    "modal.bitcoinMode.instructions":
-      "Scan the QR code with Cash App to deposit Bitcoin. This is a test feature that will deposit $0.01 worth of Bitcoin to show that you can create scholarships by using and learning with the app.",
+    "modal.bitcoinMode.instructions.createWallet.1":
+      "1. The goal is to create scholarships with learning!",
+
+    "modal.bitcoinMode.instructions.createWallet.2":
+      "Selecting a recipient and creating a wallet allows you to deposit a maximum of about $0.05 in Bitcoin. When you answer a question, your Bitcoin deposit gets spent and sent to your receipient!",
+
+    "modal.bitcoinMode.instructions.createWallet.3":
+      "We recommend using Cash App to buy Bitcoin and connect your deposit!",
+
+    //deposit bitcoin
+    "modal.bitcoinMode.instructions.deposit.1":
+      "Press deposit to generate a QR code that you can scan or an address you can send to. This will request about $0.05 in Bitcoin from your Bitcoin wallet.",
+
+    "modal.bitcoinMode.instructions.activeWallet.1":
+      "You're now using Bitcoin!",
+
+    "modal.bitcoinMode.instructions.activeWallet.2":
+      "Answer more questions to create scholarships with learning.",
+    "modal.bitcoinMode.instructions.activeWallet.3":
+      "Verify your transactions ",
+
+    "modal.bitcoinMode.instructions.activeWallet.4": "in the public record",
+
     "modal.bitcoinMode.copyAddressButton": "Copy Address",
     "modal.bitcoinMode.rechargeButton": "Generate Address",
     "modal.bitcoinMode.successMessage": "You're now using Bitcoin!",

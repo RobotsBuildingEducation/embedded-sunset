@@ -24,10 +24,10 @@ import NDKWalletService, { NDKCashuWallet } from "@nostr-dev-kit/ndk-wallet";
  * the configured cross-platform wallet.
  */
 
-export const useSharedNostr = (
+export const useNostrWallet = (
   initialNpub,
-  initialNsec,
-  isWalletCall = false
+  initialNsec
+  // setLocalCashu = null
 ) => {
   const [isConnected, setIsConnected] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -310,7 +310,7 @@ export const useSharedNostr = (
   const assignExistingBadgeToNpub = async (
     badgeNaddr,
     awardeeNpub = localStorage.getItem("local_npub"),
-    ownerNsec = import.meta.env.VITE_SECRET_KEY
+    ownerNsec = import.meta?.env?.VITE_SECRET_KEY
   ) => {
     if (!awardeeNpub) {
       console.error("Awardee public key is required to award the badge.");
@@ -642,9 +642,7 @@ export const useSharedNostr = (
       setNdkInstance(ndk);
       setSigner(s);
       console.log("initlizating wallet.");
-      if (isWalletCall) {
-        await initWalletService(ndk, s);
-      }
+      await initWalletService(ndk, s);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nostrPubKey, nostrPrivKey]);

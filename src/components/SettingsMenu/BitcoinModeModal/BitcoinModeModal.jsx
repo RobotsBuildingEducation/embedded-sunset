@@ -11,68 +11,132 @@ import {
   Text,
   VStack,
   useToast,
+  Select,
   Link,
 } from "@chakra-ui/react";
 import QRCode from "qrcode.react";
-import { useCashuWallet } from "../../../hooks/useCashuWallet";
 import { IdentityCard } from "../../../elements/IdentityCard";
 import { translation } from "../../../utility/translation";
 import { SunsetCanvas } from "../../../elements/SunsetCanvas";
-import useCashuStore from "../../../useCashuStore";
+import { useSharedNostr } from "../../../hooks/useNOSTR";
+import { useNostrWalletStore } from "../../../hooks/useNostrWalletStore";
+import { database } from "../../../database/firebaseResources";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
 
 const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
-  const [isModalActive, setisModalActive] = useState(false);
-  const [isRecharging, setIsRecharging] = useState(false);
   const toast = useToast();
+  const [lnInvoice, setLnInvoice] = useState(""); // LN invoice for deposit
+  const [initializingWallet, setInitializingWallet] = useState(false);
+  const [depositing, setDepositing] = useState(false);
+  const [selectedIdentity, setSelectedIdentity] = useState(""); // State to track selected identity
+  const [loading, setLoading] = useState(false);
+
+  /**
+   * Hook from useSharedNostr:
+   * - createNewWallet(): creates a new Cashu wallet event and sets up the wallet
+   * - initiateDeposit(amount): returns a LN invoice to deposit sats
+   * - walletBalance: array of proofs; sum their values to get total balance
+   * - cashuWallet: if null, no wallet yet
+   */
+
   const {
-    formData,
-    setFormData,
-    wallet,
-    balance,
-    setMint,
-    mintTokens,
-    handleSwapSend,
-    recharge,
-    cashTap,
-    lightningAddress,
-    loadWallet,
-  } = useCashuStore();
+    cashuWallet,
+    walletBalance,
+    createNewWallet,
+    initiateDeposit,
+    invoice,
+  } = useNostrWalletStore((state) => ({
+    cashuWallet: state.cashuWallet,
+    walletBalance: state.walletBalance,
+    createNewWallet: state.createNewWallet,
+    initiateDeposit: state.initiateDeposit,
+    invoice: state.invoice,
+  }));
+
+  // Helper: sum up wallet balance
+  const totalBalance =
+    (walletBalance || [])?.reduce((sum, b) => sum + (b.amount || 0), 0) || null;
 
   useEffect(() => {
-    setisModalActive(isOpen);
-  }, [isOpen]);
-
-  // useEffect(() => {
-  //   setisModalActive(true);
-  // }, []);
-
-  useEffect(() => {
-    setisModalActive(true);
-    loadWallet(); // Load the wallet from localStorage on component mount
-  }, []);
-
-  useEffect(() => {
-    if (balance === 0) {
-      recharge();
+    // If we have a deposit in progress and the user pays it, after proofs update
+    // the totalBalance should become > 0.
+    // If totalBalance changes and we now have sats, clear invoice.
+    console.log("TOTAL BALANCE", totalBalance);
+    if (totalBalance > 0) {
+      setLnInvoice("");
     }
-  }, [balance]);
+  }, [totalBalance]);
 
-  useEffect(() => {
-    console.log("address has changed", localStorage.getItem("address"));
-  }, [localStorage.getItem("address")]);
+  const handleIdentityChange = async (e) => {
+    const value = e.target.value;
+    setSelectedIdentity(value);
 
-  const cashTapx = () => {
-    /**
-      returns a cashu token, which you process based on your needs
-        cashuToken = await handleSwapSend();
-        await storeTokenInFirestore(cashuToken); (redeem you)
-     */
-    handleSwapSend();
+    try {
+      setLoading(true);
+
+      // Save the selected identity to Firestore under the user's document
+      const userDocRef = doc(
+        database,
+        "users",
+        localStorage.getItem("local_npub")
+      ); // Replace "users" with your Firestore collection
+      await updateDoc(userDocRef, { identity: value });
+
+      console.log("Identity saved successfully:", value);
+    } catch (error) {
+      console.error("Error saving identity to Firestore:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleCopyKeys = () => {
-    const keys = localStorage.getItem("address"); // replace with actual keys
-    navigator.clipboard.writeText(keys);
+  const handleCreateWallet = async () => {
+    setInitializingWallet(true);
+    try {
+      // Create a new wallet
+      // await createNewWallet();
+      if (cashuWallet) {
+        // After wallet is created, show deposit instructions
+        console.log("created wallet", cashuWallet);
+        // await handleInitiateDeposit();
+      }
+    } catch (err) {
+      console.error("Error creating wallet:", err);
+      toast({
+        title: "Error",
+        description: "Failed to create wallet",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+    setInitializingWallet(false);
+  };
+
+  const handleInitiateDeposit = async () => {
+    setDepositing(true);
+    try {
+      // Initiate a deposit for 10 sats (example)
+      const pr = await initiateDeposit(10);
+      // pr is a LN invoice (bolt11)
+      // if (pr) {
+      //   setLnInvoice(pr);
+      // }
+    } catch (err) {
+      console.error("Error initiating deposit:", err);
+      toast({
+        title: "Error",
+        description: "Failed to initiate deposit",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+    setDepositing(false);
+  };
+
+  const handleCopyInvoice = () => {
+    navigator.clipboard.writeText(invoice);
     toast({
       title: translation[userLanguage]["toast.title.addressCopied"],
       description: translation[userLanguage]["toast.description.addressCopied"],
@@ -83,16 +147,27 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
     });
   };
 
-  console.log("running");
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>
-          {translation[userLanguage]["modal.bitcoinMode.title"]}
-        </ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
+  /**
+   * Render logic:
+   * 1. If no wallet exists (cashuWallet === null), show instructions & create wallet button.
+   * 2. If wallet exists but balance = 0 and no invoice yet, show instructions to deposit & a button to generate invoice.
+   * 3. If wallet exists and we have an invoice (lnInvoice) and balance=0, show QR code and copy button.
+   * 4. If wallet exists and balance > 0, show the Identity card with balance.
+   */
+
+  useEffect(() => {
+    console.log("cashu wallet from modal", cashuWallet);
+    if (cashuWallet) {
+      setInitializingWallet(true);
+    }
+  }, [cashuWallet]);
+
+  console.log("running cashu", cashuWallet);
+  const renderContent = () => {
+    if (!cashuWallet) {
+      // Step 1: No wallet yet
+      return (
+        <>
           <Text
             mb={4}
             textAlign={"left"}
@@ -101,115 +176,255 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
             p={6}
             borderRadius="12px"
           >
-            {balance > 0 ? (
+            <Text mb={2}>
               <b>
-                {translation[userLanguage]["modal.bitcoinMode.successMessage"]}
-              </b>
-            ) : (
-              <b>
-                {translation[userLanguage]["modal.bitcoinMode.instructions"]}{" "}
-                <br />
-                <br />
-                <a
-                  target="_blank"
-                  style={{ textDecoration: "underline", color: "#05fcb6" }}
-                  href="https://cash.app"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      window.open("https://cash.app");
-                    }
-                  }}
-                >
-                  Cash App
-                </a>
-              </b>
-            )}
-          </Text>
-          <VStack style={{ display: "flex", justifyContent: "center" }}>
-            {localStorage.getItem("address") && balance === 0 ? (
-              <>
-                <QRCode
-                  value={localStorage.getItem("address")}
-                  size={256}
-                  style={{ zIndex: 1000000 }}
-                />
-                <div style={{ marginTop: "8px" }}>
-                  {translation[userLanguage]["or"]} &nbsp;
-                  <Button onMouseDown={handleCopyKeys}>
-                    🔑{" "}
-                    {
-                      translation[userLanguage][
-                        "modal.bitcoinMode.copyAddressButton"
-                      ]
-                    }
-                  </Button>
-                </div>
-              </>
-            ) : balance > 0 ? null : (
-              <SunsetCanvas />
-            )}
-
-            {balance > 0 ? (
-              <IdentityCard
-                number={
-                  localStorage.getItem("address")?.substr(0, 16).substr(0, 16) +
-                  "..."
+                {
+                  translation[userLanguage][
+                    "modal.bitcoinMode.instructions.createWallet.1"
+                  ]
                 }
-                name={
+              </b>
+            </Text>
+
+            <Text mb={2}>
+              {
+                translation[userLanguage][
+                  "modal.bitcoinMode.instructions.createWallet.2"
+                ]
+              }
+            </Text>
+          </Text>
+
+          <VStack>
+            <Select
+              mb={4}
+              onChange={handleIdentityChange}
+              value={selectedIdentity} // Bind to state
+              isDisabled={loading} // Disable dropdown while saving
+            >
+              <option value="" disabled>
+                Select your scholarship recipient
+              </option>
+              <option value="npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt">
+                sheilfer@primal.net
+              </option>
+              <option value="more-schools" disabled>
+                More schools, teachers and students soon!
+              </option>
+            </Select>
+            <Button
+              onClick={createNewWallet}
+              isLoading={initializingWallet}
+              loadingText={translation[userLanguage]["loading"]}
+            >
+              Create Wallet
+              {/* {
+                translation[userLanguage][
+                  "modal.bitcoinMode.createWalletButton"
+                ]
+              } */}
+            </Button>
+
+            <Text mt={2} fontSize="xs">
+              {
+                translation[userLanguage][
+                  "modal.bitcoinMode.instructions.createWallet.3"
+                ]
+              }
+            </Text>
+          </VStack>
+        </>
+      );
+    }
+
+    console.log("wallet balance", walletBalance);
+    console.log("Total balance...", totalBalance);
+    // We have a wallet now
+    if (totalBalance > 0) {
+      // Step 4: Balance > 0, show Identity Card
+      return (
+        <>
+          <Text
+            mb={4}
+            textAlign={"left"}
+            background="#7a7a7a"
+            color="white"
+            p={6}
+            pb={4}
+            borderRadius="12px"
+          >
+            <Text mb={2} fontWeight={"bold"}>
+              {
+                translation[userLanguage][
+                  "modal.bitcoinMode.instructions.activeWallet.1"
+                ]
+              }
+            </Text>
+            <Text mb={4}>
+              {
+                translation[userLanguage][
+                  "modal.bitcoinMode.instructions.activeWallet.2"
+                ]
+              }
+            </Text>
+
+            <Text fontSize="sm">
+              {
+                translation[userLanguage][
+                  "modal.bitcoinMode.instructions.activeWallet.3"
+                ]
+              }{" "}
+              <Link
+                href="https://nutlife.lol"
+                target="_blank"
+                style={{ textDecoration: "underline" }}
+              >
+                {
+                  translation[userLanguage][
+                    "modal.bitcoinMode.instructions.activeWallet.4"
+                  ]
+                }
+              </Link>
+            </Text>
+          </Text>
+          <VStack>
+            <IdentityCard
+              number={
+                cashuWallet.walletId || "Robots Building Education Wallet"
+              }
+              name={
+                <div>
+                  {translation[userLanguage]["modal.bitcoinMode.cardNameLabel"]}
                   <div>
                     {
                       translation[userLanguage][
-                        "modal.bitcoinMode.cardNameLabel"
+                        "modal.bitcoinMode.balanceLabel"
                       ]
                     }
-                    <div>
-                      {
-                        translation[userLanguage][
-                          "modal.bitcoinMode.balanceLabel"
-                        ]
-                      }
-                      : {balance}
-                    </div>
+                    : {totalBalance || 0} sats
                   </div>
-                }
-                theme="BTC"
-                animateOnChange={false}
-                realValue={localStorage.getItem("address")}
-              />
-            ) : null}
+                </div>
+              }
+              theme="BTC"
+              animateOnChange={false}
+              realValue={cashuWallet.walletId}
+            />
           </VStack>
-        </ModalBody>
-        <ModalFooter>
-          {balance ? (
-            <Button
-              style={{ marginBottom: 8 }}
-              className="swap-send-button"
-              onMouseDown={cashTap}
-              variant={"ghost"}
+        </>
+      );
+    } else {
+      // Balance = 0, so either show invoice or show button to get invoice
+      if (invoice) {
+        // Step 3: We have an invoice but no balance yet
+        return (
+          <>
+            <Text
+              mb={4}
+              textAlign={"left"}
+              background="#7a7a7a"
+              color="white"
+              p={6}
+              borderRadius="12px"
             >
-              {translation[userLanguage]["modal.bitcoinMode.testCashTapButton"]}
-            </Button>
-          ) : null}
-          &nbsp;&nbsp;
-          {balance < 1 ? (
-            <Button
-              style={{ marginBottom: 8 }}
-              className="swap-send-button"
-              onMouseDown={() => {
-                setIsRecharging(true);
-                recharge();
-              }}
-              variant={"ghost"}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  setIsRecharging(true);
-                  recharge();
+              <b>
+                {
+                  translation[userLanguage][
+                    "modal.bitcoinMode.instructions.deposit.1"
+                  ]
                 }
-              }}
+              </b>
+            </Text>
+            <VStack>
+              <QRCode value={invoice} size={256} style={{ zIndex: 1000000 }} />
+              <div style={{ marginTop: "8px" }}>
+                {translation[userLanguage]["or"]} &nbsp;
+                <Button onClick={handleCopyInvoice}>
+                  🔑{" "}
+                  {
+                    translation[userLanguage][
+                      "modal.bitcoinMode.copyAddressButton"
+                    ]
+                  }
+                </Button>
+              </div>
+            </VStack>
+          </>
+        );
+      } else {
+        // Step 2: Wallet exists but no invoice yet
+        return (
+          <>
+            <Text
+              mb={4}
+              textAlign={"left"}
+              background="#7a7a7a"
+              color="white"
+              p={6}
+              borderRadius="12px"
             >
-              {translation[userLanguage]["modal.bitcoinMode.rechargeButton"]}
-            </Button>
-          ) : null}
+              <b>
+                {
+                  translation[userLanguage][
+                    "modal.bitcoinMode.instructions.deposit.1"
+                  ]
+                }
+              </b>
+            </Text>
+            <IdentityCard
+              number={
+                cashuWallet.walletId || "Robots Building Education Wallet"
+              }
+              name={
+                <div>
+                  {translation[userLanguage]["modal.bitcoinMode.cardNameLabel"]}
+                  <div>
+                    {
+                      translation[userLanguage][
+                        "modal.bitcoinMode.balanceLabel"
+                      ]
+                    }
+                    : {totalBalance || 0} sats
+                  </div>
+                </div>
+              }
+              theme="BTC"
+              animateOnChange={false}
+              realValue={cashuWallet.walletId}
+            />
+            <br />
+            <br />
+            <VStack>
+              {/* <SunsetCanvas /> */}
+              <Button
+                onClick={handleInitiateDeposit}
+                isLoading={depositing}
+                loadingText={translation[userLanguage]["loading"]}
+              >
+                {/* {
+                  translation[userLanguage][
+                    "modal.bitcoinMode.showInvoiceButton"
+                  ]
+                } */}
+                Deposit
+              </Button>
+            </VStack>
+          </>
+        );
+      }
+    }
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>
+          {translation[userLanguage]["modal.bitcoinMode.title"]}
+        </ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>{renderContent()}</ModalBody>
+        <ModalFooter>
+          {/** You can add any footer actions if needed */}
         </ModalFooter>
       </ModalContent>
     </Modal>
