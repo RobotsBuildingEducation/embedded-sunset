@@ -1,52 +1,24 @@
 import { useState, useEffect } from "react";
 
+import { Buffer } from "buffer";
+import { bech32 } from "bech32";
+import { nip19 } from "nostr-tools";
 import NDK, {
   NDKPrivateKeySigner,
   NDKKind,
   NDKEvent,
-  NDKUser,
 } from "@nostr-dev-kit/ndk";
 
-import { Buffer } from "buffer";
-import { bech32 } from "bech32";
-import { getPublicKey, nip19 } from "nostr-tools";
+const ndk = new NDK({
+  explicitRelayUrls: ["wss://relay.damus.io", "wss://relay.primal.net"],
+});
 
-// NEW IMPORTS FOR WALLET INTEGRATION
-import NDKWalletService, { NDKCashuWallet } from "@nostr-dev-kit/ndk-wallet";
-
-/**
- * This hook manages Nostr keys, events (metadata, notes, etc.), and now also integrates
- * NDK-based Cashu wallet functionalities for cross-platform usage.
- *
- * All original logic from the initial provided snippet is retained.
- * We've added NDKWalletService and NDKCashuWallet initialization after the user keys are known.
- * We've also added a sendOneSatToNpub method to demonstrate sending 1 sat from
- * the configured cross-platform wallet.
- */
-
-export const useSharedNostr = (
-  initialNpub,
-  initialNsec,
-  isWalletCall = false
-) => {
+export const useSharedNostr = (initialNpub, initialNsec) => {
   const [isConnected, setIsConnected] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [nostrPubKey, setNostrPubKey] = useState(initialNpub || "");
   const [nostrPrivKey, setNostrPrivKey] = useState(initialNsec || "");
 
-  // NEW STATES FOR WALLET INTEGRATION
-  const [ndkInstance, setNdkInstance] = useState(null);
-  const [signer, setSigner] = useState(null);
-  const [walletService, setWalletService] = useState(null);
-  const [cashuWallet, setCashuWallet] = useState(null);
-  const [walletBalance, setWalletBalance] = useState(0);
-
-  const defaultMint = "https://mint.minibits.cash/Bitcoin";
-  const defaultRelays = ["wss://relay.damus.io", "wss://relay.primal.net"];
-
-  // useEffect(() => {
-  //   if (cashuWallet) setLocalCashu(cashuWallet);
-  // }, [cashuWallet]);
   useEffect(() => {
     // Load keys from local storage if they exist
     const storedNpub = localStorage.getItem("local_npub");
@@ -59,62 +31,18 @@ export const useSharedNostr = (
     if (storedNsec) {
       setNostrPrivKey(storedNsec);
     }
+
+    ndk
+      .connect()
+      .then(() => {
+        setIsConnected(true);
+      })
+      .catch((err) => {
+        console.error("Error connecting to Nostr:", err);
+        setErrorMessage(err.message);
+      });
   }, []);
 
-  const fetchUserPaymentInfo = async (recipientNpub) => {
-    if (!ndkInstance) {
-      console.error("NDK instance not ready");
-      return { mints: [defaultMint], p2pkPubkey: null, relays: [] };
-    }
-
-    const hexNpub = getHexNPub(recipientNpub);
-    const filter = {
-      kinds: [10019],
-      authors: [hexNpub],
-      limit: 1,
-    };
-
-    const subscription = ndkInstance.subscribe(filter, { closeOnEose: true });
-    let userEvent = null;
-
-    subscription.on("event", (event) => {
-      userEvent = event;
-    });
-
-    await new Promise((resolve) => subscription.on("eose", resolve));
-
-    if (!userEvent) {
-      // If no kind:10019, fallback to defaults
-      return { mints: [defaultMint], p2pkPubkey: hexNpub, relays: [] };
-    }
-
-    // Parse tags
-    let mints = [];
-    let relays = [];
-    let p2pkPubkey = null; // If provided in a 'pubkey' tag
-
-    for (const tag of userEvent.tags) {
-      const [t, v1, v2, v3] = tag;
-      if (t === "mint" && v1) {
-        mints.push(v1);
-      } else if (t === "relay" && v1) {
-        relays.push(v1);
-      } else if (t === "pubkey" && v1) {
-        p2pkPubkey = v1;
-      }
-    }
-
-    if (mints.length === 0) {
-      mints = [defaultMint];
-    }
-
-    // If no p2pkPubkey is provided, just use the recipient's main key.
-    if (!p2pkPubkey) {
-      p2pkPubkey = hexNpub;
-    }
-
-    return { mints, p2pkPubkey, relays };
-  };
   const setProfilePicture = async (
     profilePictureUrl = "https://primal.b-cdn.net/media-cache?s=o&a=1&u=https%3A%2F%2Fm.primal.net%2FKBLq.png",
     npubRef,
@@ -144,12 +72,13 @@ export const useSharedNostr = (
       currentMetadata.picture = profilePictureUrl;
 
       // Create a new metadata event (kind: 0)
-      const metadataEvent = new NDKEvent(ndkInstance, {
+      const metadataEvent = new (ndkInstance,
+      {
         kind: NDKKind.Metadata,
         pubkey: hexNpub,
         created_at: Math.floor(Date.now() / 1000),
         content: JSON.stringify(currentMetadata),
-      });
+      })();
 
       // Sign and publish the metadata event
       await metadataEvent.sign(signer);
@@ -167,7 +96,7 @@ export const useSharedNostr = (
     profileAbout,
     introductionPost
   ) => {
-    setLoadingMessage && setLoadingMessage("createAccount.isCreating");
+    setLoadingMessage("createAccount.isCreating");
     const privateKeySigner = NDKPrivateKeySigner.generate();
 
     const privateKey = privateKeySigner.privateKey;
@@ -188,22 +117,48 @@ export const useSharedNostr = (
     setNostrPubKey(publicKey);
 
     if (!localStorage.getItem("local_nsec")) {
-      setLoadingMessage && setLoadingMessage("createAccount.isCreatingProfile");
+      //Creating profile... 2/4
+      setLoadingMessage("createAccount.isCreatingProfile");
+      console.log("USER DISPLAY", userDisplayName);
+      console.log("USER profileAbout", profileAbout);
+      console.log(publicKey);
+      console.log(encodedNsec);
       await postNostrContent(
         JSON.stringify({
           name: userDisplayName,
           about: profileAbout,
+          // profilePictureUrl:
+          //   "https://image.nostr.build/c8d21fe8773d7c5ddf3d6ef73ffe76dbeeec881c131bfb59927ce0b8b71a5607.png",
+          // // "https://primal.b-cdn.net/media-cache?s=o&a=1&u=https%3A%2F%2Fm.primal.net%2FKBLq.png",
         }),
         0,
         publicKey,
         encodedNsec
       );
 
-      setLoadingMessage &&
-        setLoadingMessage("createAccount.isCreatingIntroPost");
+      // setLoadingMessage("createAccount.isCreatingProfilePicture");
+      // //Creating profile picture... 3/4
+      // setProfilePicture(
+      //   "https://primal.b-cdn.net/media-cache?s=o&a=1&u=https%3A%2F%2Fm.primal.net%2FKBLq.png",
+      //   publicKey,
+      //   encodedNsec
+      // );
+
+      // if (
+      //   window.location.hostname !== "localhost" &&
+      //   window.location.hostname !== "127.0.0.1"
+      // ) {
+
+      setLoadingMessage("createAccount.isCreatingIntroPost");
+      //Creating introduction post... 4/4
       if (window.location.hostname !== "localhost") {
         postNostrContent(introductionPost, 1, publicKey, encodedNsec);
       }
+      // await followUserOnNostr(
+      //   "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt",
+      //   publicKey,
+      //   encodedNsec
+      // );
     }
 
     localStorage.setItem("local_nsec", encodedNsec);
@@ -214,13 +169,23 @@ export const useSharedNostr = (
   };
 
   const connectToNostr = async (npubRef = null, nsecRef = null) => {
-    const defaultNsec = import.meta?.env?.VITE_GLOBAL_NOSTR_NSEC;
+    const defaultNsec = import.meta.env.VITE_GLOBAL_NOSTR_NSEC;
     const defaultNpub =
       "npub1mgt5c7qh6dm9rg57mrp89rqtzn64958nj5w9g2d2h9dng27hmp0sww7u2v";
 
-    const nsec = nsecRef || nostrPrivKey || defaultNsec;
-    const npub = npubRef || nostrPubKey || defaultNpub;
+    const nsec =
+      nsecRef ||
+      localStorage.getItem("local_nsec") ||
+      nostrPrivKey ||
+      defaultNsec;
+    const npub =
+      npubRef ||
+      localStorage.getItem("local_npub") ||
+      nostrPubKey ||
+      defaultNpub;
 
+    console.log("nsec", nsec);
+    console.log("npub", npub);
     try {
       // Decode the nsec from Bech32
       const { words: nsecWords } = bech32.decode(nsec);
@@ -239,6 +204,7 @@ export const useSharedNostr = (
 
       setIsConnected(true);
 
+      // Return the connected NDK instance and signer
       return { ndkInstance, hexNpub, signer: new NDKPrivateKeySigner(hexNsec) };
     } catch (err) {
       console.error("Error connecting to Nostr:", err);
@@ -247,25 +213,29 @@ export const useSharedNostr = (
     }
   };
 
-  const auth = (nsecPassword) => {
-    let testnsec = nsecPassword;
+  const auth = async (nsec) => {
+    try {
+      // Decode nsec to hex
+      const { words: nsecWords } = bech32.decode(nsec);
+      const hexNsec = Buffer.from(bech32.fromWords(nsecWords)).toString("hex");
 
-    let decoded = nip19.decode(testnsec);
+      const signer = new NDKPrivateKeySigner(hexNsec);
+      await signer.blockUntilReady(); // Wait for signer user resolution
+      ndk.signer = signer;
 
-    const pubkey = getPublicKey(decoded.data);
+      const user = await signer.user();
+      setNostrPubKey(user.npub);
+      setNostrPrivKey(nsec);
+      localStorage.setItem("local_npub", user.npub);
+      localStorage.setItem("local_nsec", nsec);
+      setErrorMessage(null);
 
-    const ndk = new NDK({
-      explicitRelayUrls: ["wss://relay.damus.io", "wss://relay.primal.net"],
-    });
-
-    let user = ndk.getUser({ pubkey: pubkey });
-
-    setNostrPrivKey(testnsec);
-    setNostrPubKey(user.npub);
-
-    localStorage.setItem("local_nsec", testnsec);
-    localStorage.setItem("local_npub", user.npub);
-    localStorage.setItem("uniqueId", user.npub);
+      return { user, signer };
+    } catch (error) {
+      console.error("Error logging in with keys:", error);
+      setErrorMessage(error.message);
+      return null;
+    }
   };
 
   const postNostrContent = async (
@@ -274,43 +244,54 @@ export const useSharedNostr = (
     npubRef = null,
     nsecRef = null
   ) => {
-    const connection = await connectToNostr(npubRef, nsecRef);
-    if (!connection) return;
-
-    const { ndkInstance, hexNpub, signer } = connection;
-
-    // Create a new note event
-    const noteEvent = new NDKEvent(ndkInstance, {
-      kind,
-      tags: [],
-      content: content,
-      created_at: Math.floor(Date.now() / 1000),
-      pubkey: hexNpub,
-    });
-
     try {
-      await noteEvent.sign(signer);
-    } catch (error) {
-      console.error("Error signing note event:", error);
-    }
+      // If a nsecRef is provided, login with it
+      if (nsecRef) {
+        const loginResult = await auth(nsecRef);
+        if (!loginResult) return;
+      }
 
-    try {
-      await noteEvent.publish();
+      // Ensure we have a signer after login
+      if (!ndk.signer) {
+        setErrorMessage("No signer available. Please login first.");
+        return;
+      }
+
+      // If npubRef is provided, we can decode it to hex if needed.
+      // But it's generally not required since NDKEvent uses ndk.signer to determine the pubkey.
+      const event = new NDKEvent(ndk, {
+        kind,
+        tags: [],
+        content: content,
+        created_at: Math.floor(Date.now() / 1000),
+      });
+
+      await event.sign(ndk.signer);
+      const relays = await event.publish();
+
+      if (relays.size > 0) {
+        console.log("Posted successfully to relays:", Array.from(relays));
+      } else {
+        console.warn("No relay acknowledged the event.");
+      }
     } catch (error) {
-      console.log("error publishing note event:", error);
+      console.error("Error posting content:", error);
+      setErrorMessage(error.message);
     }
   };
 
   const getHexNPub = (npub) => {
+    // Decode the npub from Bech32
     const { words: npubWords } = bech32.decode(npub);
     const hexNpub = Buffer.from(bech32.fromWords(npubWords)).toString("hex");
+
     return hexNpub;
   };
 
   const assignExistingBadgeToNpub = async (
-    badgeNaddr,
-    awardeeNpub = localStorage.getItem("local_npub"),
-    ownerNsec = import.meta.env.VITE_SECRET_KEY
+    badgeNaddr, //name or address
+    awardeeNpub = localStorage.getItem("local_npub"), // The public key of the user being awarded
+    ownerNsec = import.meta.env.VITE_SECRET_KEY // Your private key to sign the event
   ) => {
     if (!awardeeNpub) {
       console.error("Awardee public key is required to award the badge.");
@@ -324,17 +305,22 @@ export const useSharedNostr = (
       return;
     }
 
-    const connection = await connectToNostr(
-      "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt",
-      ownerNsec
-    );
-    if (!connection) return;
+    const { words: nsecWords } = bech32.decode(ownerNsec);
+    const hexNsec = Buffer.from(bech32.fromWords(nsecWords)).toString("hex");
 
-    const { ndkInstance, signer } = connection;
+    let signer = new NDKPrivateKeySigner(hexNsec);
 
-    const badgeAwardEvent = new NDKEvent(ndkInstance, {
-      kind: NDKKind.BadgeAward, // Badge Award event kind (30009)
+    // Connect to Nostr as the badge owner
+    // const connection = await connectToNostr(
+    //   "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt",
+    //   ownerNsec
+    // );
+
+    // Create the event for awarding the badge
+    const badgeAwardEvent = new NDKEvent(ndk, {
+      kind: NDKKind.BadgeAward, // Badge Award event kind
       tags: [
+        // ["a", badgeNaddr], // Reference to the Badge Definition event
         [
           "a",
           `${NDKKind.BadgeDefinition}:${getHexNPub(
@@ -344,17 +330,28 @@ export const useSharedNostr = (
         ["p", getHexNPub(localStorage.getItem("local_npub"))],
       ],
       created_at: Math.floor(Date.now() / 1000),
-      pubkey: getHexNPub(
-        "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt"
-      ),
+      //npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt
+      // pubkey: getHexNPub(
+      //   "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt"
+      // ),
+      // Your public key as the issuer
     });
 
+    console.log(
+      "my pubkey",
+      getHexNPub(
+        "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt"
+      )
+    );
+    // Sign the badge event
     try {
       await badgeAwardEvent.sign(signer);
     } catch (error) {
       console.error("Error signing badge event:", error);
     }
 
+    console.log("Badge award event", badgeAwardEvent);
+    // Publish the badge event
     try {
       await badgeAwardEvent.publish();
       console.log("Badge awarded successfully to:", awardeeNpub);
@@ -364,28 +361,37 @@ export const useSharedNostr = (
   };
 
   const getAddressPointer = (naddr) => {
+    console.log("naddr", naddr);
     return nip19.decode(naddr).data;
   };
 
   const getBadgeData = async (addy) => {
     try {
+      // Connect to Nostr
       const connection = await connectToNostr();
       if (!connection) return [];
 
-      const { ndkInstance } = connection;
+      const { ndkInstance, hexNpub } = connection;
 
+      // const addressPointer = await getAddressPointer(addy);
       let addressPointer = addy.split(":");
+      console.log("addressPointer", addressPointer);
+
+      // Create a filter for badge events (kind 30008) for the given user
       const filter = {
-        kinds: [NDKKind.BadgeDefinition],
-        authors: [addressPointer[1]],
+        kinds: [NDKKind.BadgeDefinition], // Use the NDKKind enum for better readability
+        authors: [addressPointer[1]], // The user's hex-encoded npub
         "#d": [addressPointer[2]],
         limit: 1,
       };
 
+      // Create a subscription to fetch the events
       const subscription = ndkInstance.subscribe(filter, { closeOnEose: true });
 
+      // Array to hold badges
       const badges = [];
 
+      // Listen for events
       subscription.on("event", (event) => {
         const badgeInfo = {
           content: event.content,
@@ -396,7 +402,10 @@ export const useSharedNostr = (
         badges.push(badgeInfo);
       });
 
+      // Wait for the subscription to finish
       await new Promise((resolve) => subscription.on("eose", resolve));
+
+      // Log the retrieved badges
 
       return badges;
     } catch (error) {
@@ -405,19 +414,20 @@ export const useSharedNostr = (
       return [];
     }
   };
-
   const getUserBadges = async (npub = localStorage.getItem("local_npub")) => {
     try {
       const connection = await connectToNostr();
       if (!connection) return [];
 
       const { ndkInstance } = connection;
-      const hexNpub = getHexNPub(npub);
+      const hexNpub = getHexNPub(npub); // Convert npub to hex
+      console.log("hx", hexNpub);
 
+      // Create a filter for badge award events (kind 30009) where the user is the recipient
       const filter = {
-        kinds: [NDKKind.BadgeAward],
-        "#p": [hexNpub],
-        limit: 100,
+        kinds: [NDKKind.BadgeAward], // Kind 30009 for badge awards
+        "#p": [hexNpub], // Filter by the user's hex-encoded public key as the recipient
+        limit: 100, // Adjust the limit as needed
       };
 
       const subscription = ndkInstance.subscribe(filter, { closeOnEose: true });
@@ -437,22 +447,28 @@ export const useSharedNostr = (
 
       const uniqueNAddresses = [
         ...new Set(
-          badges.flatMap((badge) =>
-            badge.tags
-              .filter((tag) => tag[0] === "a" && tag[1])
-              .map((tag) => tag[1])
+          badges.flatMap(
+            (badge) =>
+              badge.tags
+                .filter((tag) => tag[0] === "a" && tag[1]) // Find tags where the first element is "a"
+                .map((tag) => tag[1]) // Extract the naddress
           )
         ),
       ];
+      console.log("badge data", uniqueNAddresses);
 
       let badgeData = uniqueNAddresses.map((naddress) =>
         getBadgeData(naddress)
       );
+
       let resolvedBadges = await Promise.all(badgeData);
 
       const formattedBadges = [];
 
+      // Loop through each outer array in the badgeDataArray
       resolvedBadges.forEach((badgeArray) => {
+        // For each inner badge object array (which should have one object), extract name and image
+
         badgeArray.forEach((badge) => {
           let name = "";
           let image = "";
@@ -466,6 +482,7 @@ export const useSharedNostr = (
             }
           });
 
+          // Push the object containing name and image to the badges array
           if (name && image) {
             formattedBadges.push({
               name,
@@ -483,20 +500,93 @@ export const useSharedNostr = (
     }
   };
 
+  // const followUserOnNostr = async (pubkeyToFollow, npubRef, nsecRef) => {
+  //   const connection = await connectToNostr(npubRef, nsecRef);
+  //   if (!connection) return;
+
+  //   const { ndkInstance, hexNpub, signer } = connection;
+
+  //   try {
+  //     const contactList = [];
+  //     let subscription;
+
+  //     // Subscribe to current user's kind-3 (Follow List) event
+  //     subscription = ndkInstance.subscribe({
+  //       kinds: [NDKKind.ContactList],
+  //       authors: [getHexNPub(pubkeyToFollow)],
+  //       limit: 1,
+  //     });
+
+  //     subscription.on("event", (event) => {
+  //       // Extract the follow list from the 'p' tags
+  //       event.tags.forEach((tag) => {
+  //         console.log("there is an event tag");
+  //         if (tag[0] === "p") {
+  //           console.log("there is a key", tag);
+
+  //           contactList.push(tag[1]); // Push hex key of followed profile
+  //         }
+  //       });
+  //     });
+
+  //     console.log("contactList...", contactList);
+  //     // Wait for the subscription to finish or timeout after 5 seconds
+  //     await new Promise((resolve, reject) => {
+  //       const timeout = setTimeout(() => {
+  //         console.warn("Subscription timed out.");
+  //         resolve();
+  //       }, 5000);
+
+  //       subscription.on("eose", () => {
+  //         clearTimeout(timeout);
+  //         subscription.unsub(); // Unsubscribe once we receive 'eose'
+  //         resolve();
+  //       });
+  //     });
+
+  //     // Check if the user is already being followed
+  //     if (!contactList.includes(pubkeyToFollow)) {
+  //       contactList.push(getHexNPub(pubkeyToFollow)); // Add new pubkey if not already in the list
+  //     }
+
+  //     // Construct the new kind-3 (Follow List) event
+  //     const contactListEvent = new NDKEvent(ndkInstance, {
+  //       kind: NDKKind.ContactList, // Kind 3 - Follow List
+  //       tags: contactList.map((pubkey) => ["p", pubkey, "", ""]), // Format as per NIP-02
+  //       pubkey: hexNpub, // Your public key
+  //       created_at: Math.floor(Date.now() / 1000), // Unix timestamp
+  //       content: "", // Content not used in kind 3 events
+  //     });
+
+  //     // Sign the event with the user's private key (via signer)
+  //     await contactListEvent.sign(signer);
+
+  //     // Publish the new kind-3 event (updated follow list)
+  //     await contactListEvent.publish();
+
+  //     console.log(Successfully followed user with pubkey: ${pubkeyToFollow});
+  //   } catch (err) {
+  //     console.error("Error following user on Nostr:", err);
+  //   }
+  // };
+
   const getLastNotesByNpub = async (npub) => {
+    console.log("running npub operation");
     try {
       const connection = await connectToNostr();
       if (!connection) return [];
 
       const { ndkInstance } = connection;
-      const hexNpub = getHexNPub(npub);
+      const hexNpub = getHexNPub(npub); // Convert npub to hex
 
+      // Create a filter for kind: 1 (text notes) by the author
       const filter = {
-        kinds: [NDKKind.Text],
-        authors: [hexNpub],
-        limit: 5,
+        kinds: [NDKKind.Text], // Kind 1 is for text notes
+        authors: [hexNpub], // Filter by the author's public key
+        limit: 5, // Limit to the last 100 events
       };
 
+      // Create a subscription to fetch the events
       const subscription = ndkInstance.subscribe(filter, { closeOnEose: true });
 
       const notes = [];
@@ -510,286 +600,16 @@ export const useSharedNostr = (
         });
       });
 
+      // Wait for the subscription to finish
       await new Promise((resolve) => subscription.on("eose", resolve));
 
+      // Return the retrieved notes
+      console.log("final notes", notes);
       return notes;
     } catch (error) {
       console.error("Error retrieving notes:", error);
       setErrorMessage(error.message);
       return [];
-    }
-  };
-
-  async function createNewWallet(
-    mintUrls = [],
-    relayUrls = defaultRelays,
-    walletName = "My Wallet"
-  ) {
-    if (!ndkInstance || !signer) {
-      setErrorMessage(
-        "NDK or signer not initialized. Cannot create wallet yet."
-      );
-      return null;
-    }
-
-    // Create a new NDKCashuWallet event
-    const newWallet = new NDKCashuWallet(ndkInstance);
-    newWallet.name = walletName;
-    newWallet.relays = relayUrls;
-    newWallet.setPublicTag("relay", "wss://relay.damus.io");
-    newWallet.setPublicTag("relay", "wss://relay.primal.net");
-
-    newWallet.mints = mintUrls.length > 0 ? mintUrls : [defaultMint];
-    newWallet.walletId = "my-wallet-id"; // This ensures a 'd' tag is included when publishing
-
-    newWallet.unit = "sat";
-    newWallet.setPublicTag("unit", "sat");
-    // If you want P2PK locking:
-    // For new users who have no privkey set, generate one:
-    // Note: If you have a known privkey, you can set it here.
-    const pk = signer.privateKey;
-    if (pk) {
-      newWallet.privkey = pk;
-    }
-
-    // Publish the wallet event so that it’s discoverable
-
-    try {
-      await newWallet.publish();
-      console.log("Published wallet event:", newWallet.event.rawEvent());
-      const connection = await connectToNostr(
-        localStorage.getItem("local_npub"),
-        localStorage.getItem("local_nsec")
-      );
-      // console.log("connection....d.d.d.d.d", connection);
-      if (!connection) return;
-
-      const { ndkInstance: ndk, hexNpub, signer: s } = connection;
-
-      setNdkInstance(ndk);
-      setSigner(s);
-      console.log("initlizating wallet.");
-      await initWalletService(ndk, s);
-      await setupWalletListeners(newWallet); // This sets cashuWallet and balance
-
-      setCashuWallet(newWallet);
-
-      // After publishing, if you want a mint list event:
-      // const cashuMintList = new NDKCashuMintList(ndkInstance);
-      // cashuMintList.relays = relayUrls;
-      // cashuMintList.mints = mintUrls;
-      // await cashuMintList.publishReplaceable();
-      // const connection = await connectToNostr(
-      //   localStorage.getItem("local_npub", localStorage.getItem("local_nsec"))
-      // );
-      // // console.log("connection....d.d.d.d.d", connection);
-      // if (!connection) return;
-
-      // const { ndkInstance: ndk, hexNpub, signer: s } = connection;
-
-      // setNdkInstance(ndk);
-      // setSigner(s);
-      // console.log("initlizating wallet.");
-      // await initWalletService(ndk, s);
-
-      return newWallet;
-    } catch (error) {
-      console.error("Error creating new wallet:", error);
-      setErrorMessage(error.message);
-      return null;
-    }
-  }
-  // NEW FUNCTION: INIT WALLET SERVICE
-  const initWalletService = async (ndk, signer) => {
-    ndk.signer = signer;
-    const user = await signer.user();
-    console.log("User pubkey on refresh:", user.pubkey);
-
-    user.signer = signer;
-
-    const wService = new NDKWalletService(ndk);
-    wService.on("wallet:default", (w) => {
-      console.log("wallet:default", w);
-      setupWalletListeners(w);
-    });
-    wService.on("wallet", (w) => {
-      // could handle multiple wallets if needed
-      console.log("on wallet", w);
-    });
-
-    wService.start();
-
-    console.log("WSERV", wService);
-    console.log("WALLETSXXXX", wService.wallets);
-    setWalletService(wService);
-  };
-
-  // Initialize NDK and wallet once we have keys
-  useEffect(() => {
-    (async () => {
-      // console.log("np", nostrPubKey);
-      // console.log("ns", nostrPrivKey);
-      if (!nostrPubKey || !nostrPrivKey) return;
-      const connection = await connectToNostr(
-        localStorage.getItem("local_npub"),
-        localStorage.getItem("local_nsec")
-      );
-      // console.log("connection....d.d.d.d.d", connection);
-      if (!connection) return;
-
-      const { ndkInstance: ndk, hexNpub, signer: s } = connection;
-
-      setNdkInstance(ndk);
-      setSigner(s);
-      console.log("initlizating wallet.");
-      if (isWalletCall) {
-        await initWalletService(ndk, s);
-      }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nostrPubKey, nostrPrivKey]);
-
-  // NEW METHOD: SEND 1 SAT TO SPECIFIC NPUB
-  // const sendOneSatToNpub = async (recipientNpub) => {
-  //   if (!cashuWallet) {
-  //     console.error("Wallet not initialized or no balance.");
-  //     return;
-  //   }
-
-  //   try {
-  //     const amount = 1; // sending 1 sat
-  //     const unit = "sat";
-  //     const { proofs, mint } = await cashuWallet.cashuPay({
-  //       amount,
-  //       unit,
-  //       info: {
-  //         mints: [defaultMint], // Ensure you have defined defaultMint somewhere as "https://mint.minibits.cash/Bitcoin"
-  //       },
-  //     });
-
-  //     // Optionally notify the recipient via a Nostr event:
-  //     await postNostrContent(
-  //       Sent you ${amount} ${unit} using ${mint},
-  //       NDKKind.Text,
-  //       recipientNpub,
-  //       nostrPrivKey
-  //     );
-  //     console.log(Successfully sent 1 sat to ${recipientNpub}!);
-  //   } catch (e) {
-  //     console.error("Error sending 1 sat:", e);
-  //   }
-  // };
-
-  const sendOneSatToNpub = async (recipientNpub) => {
-    if (!cashuWallet) {
-      console.error("Wallet not initialized or no balance.");
-      return;
-    }
-
-    try {
-      const amount = 1000;
-      const unit = "msat";
-      const mints =
-        cashuWallet.mints.length > 0 ? cashuWallet.mints : [defaultMint];
-
-      // Fetch recipient payment info: mints, p2pkPubkey, etc.
-      const {
-        // mints,
-        p2pkPubkey,
-        relays,
-      } = await fetchUserPaymentInfo(recipientNpub);
-
-      // Use cashuPay instead of nutPay
-      // NutPayment = { amount, unit, mints, p2pk?: string }
-      const confirmation = await cashuWallet.cashuPay({
-        amount,
-        unit,
-        mints,
-        p2pk: p2pkPubkey,
-      });
-
-      // confirmation should have { proofs, mint } for the ecash
-      const { proofs, mint } = confirmation;
-      if (!proofs || !mint) {
-        console.log("mint", mint);
-        console.log("proofs", proofs);
-        throw new Error("No proofs returned from cashuPay.");
-      }
-
-      // Create kind:9321 nutzap event,
-      const hexRecipient = getHexNPub(recipientNpub);
-
-      const proofData = JSON.stringify({ proofs, mint });
-      const tags = [
-        ["amount", amount.toString()],
-        ["unit", unit],
-        ["proof", proofData],
-        ["u", mint],
-        ["p", hexRecipient],
-      ];
-
-      const content = "testing int";
-
-      const nutzapEvent = new NDKEvent(ndkInstance, {
-        kind: 9321,
-        tags,
-        content,
-        created_at: Math.floor(Date.now() / 1000),
-      });
-
-      await nutzapEvent.sign(signer);
-      await nutzapEvent.publish();
-
-      await cashuWallet.checkProofs();
-      const updatedBalance = await cashuWallet.balance();
-      console.log("Updated balance after sending:", updatedBalance);
-      setWalletBalance(updatedBalance || []);
-
-      console.log(`Successfully sent nutzap (1 sat) to ${recipientNpub}!`);
-    } catch (e) {
-      console.error("Error sending nutzap:", e);
-    }
-  };
-
-  const initiateDeposit = async (amountInSats = 10) => {
-    console.log("CASHU", cashuWallet);
-
-    if (!cashuWallet) {
-      console.error("Wallet not initialized.");
-      return;
-    }
-
-    // We assume the default mint and unit "sat" from the code above
-    const deposit = cashuWallet.deposit(amountInSats, defaultMint, "sat");
-    const pr = await deposit.start(); // This returns a LN invoice (bolt11)
-
-    deposit.on("success", async (token) => {
-      console.log("Deposit successful!", token);
-      await cashuWallet.checkProofs();
-      const updatedBalance = await cashuWallet.balance();
-      setWalletBalance(updatedBalance || []);
-      setInvoice(""); // Clear invoice after success
-    });
-
-    deposit.on("error", (e) => {
-      console.error("Deposit failed:", e);
-    });
-
-    return pr;
-  };
-
-  const setupWalletListeners = async (wallet) => {
-    if (!wallet) return;
-    if (wallet && wallet instanceof NDKCashuWallet) {
-      wallet.on("balance_updated", async () => {
-        const bal = (await wallet.balance()) || [];
-        setWalletBalance(bal);
-      });
-
-      // Set initial balance if available
-      const initialBal = (await wallet.balance()) || [];
-      setWalletBalance(initialBal);
-      setCashuWallet(wallet);
     }
   };
 
@@ -804,12 +624,5 @@ export const useSharedNostr = (
     assignExistingBadgeToNpub,
     getUserBadges,
     getLastNotesByNpub,
-    setProfilePicture,
-    // sendOneSatToNpub,
-    initiateDeposit,
-    sendOneSatToNpub,
-    cashuWallet,
-    walletBalance,
-    createNewWallet,
   };
 };

@@ -89,7 +89,7 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
             userLanguage={userLanguage}
           /> */}
           <ActionButton
-            href={`https://nostter.app/${localStorage.getItem("local_npub")}`}
+            href={`https://primal.net/p/${localStorage.getItem("local_npub")}`}
             text={translation[userLanguage]["settings.button.yourProfile"]}
             userLanguage={userLanguage}
           />

@@ -3,6 +3,8 @@ import { DataTags } from "../elements/DataTag";
 
 export let translation = {
   en: {
+    "select.recipient": "Select your scholarship recipient",
+    "disabled.select.soon": "More schools, teachers and students soon!",
     transcriptBadges: "Transcript Badges",
     instructions: "Instructions",
     "tutorModal.instructions.1":
@@ -731,7 +733,7 @@ reverse(head) {
       "1. The goal is to create scholarships with learning!",
 
     "modal.bitcoinMode.instructions.createWallet.2":
-      "Selecting a recipient and creating a wallet allows you to deposit a maximum of about $0.05 in Bitcoin. When you answer a question, your Bitcoin deposit gets spent and sent to your receipient!",
+      "Selecting a recipient and creating a wallet allows you to deposit a maximum of about $0.01 in Bitcoin. When you answer a question, your Bitcoin deposit gets spent and sent to your receipient!",
 
     "modal.bitcoinMode.instructions.createWallet.3":
       "We recommend using Cash App to buy Bitcoin and connect your deposit!",
@@ -749,6 +751,8 @@ reverse(head) {
       "Verify your transactions ",
 
     "modal.bitcoinMode.instructions.activeWallet.4": "in the public record",
+    "deposit.button": "Deposit",
+    "createWallet.button": "Create wallet",
 
     "modal.bitcoinMode.copyAddressButton": "Copy Address",
     "modal.bitcoinMode.rechargeButton": "Generate Address",
@@ -827,7 +831,7 @@ reverse(head) {
         globally. You are encouraged to imagine, think big and work hard in
         order to find success here.
         <br />
-        <br /> Sunset is a service created by Robots Building Education, a
+        <br /> The app is a service created by Robots Building Education, a
         platform founded on researching technology the following three
         priorities:
         <br /> <br />
@@ -873,10 +877,10 @@ reverse(head) {
     "about.featuresHeader": "Features",
 
     "about.title": "What is this?",
-    "about.title.programAiApp": "App: Sunset",
+    "about.title.programAiApp": "App: Robots Building Education",
     "about.platform.programAiApp": (
       <div>
-        Sunset is a series of 100 questions meant to be easily integrated into
+        The app is a series of 100 questions meant to be easily integrated into
         social media with AI. The goal is to make access to education easier
         while also making it possible to learn skills like coding on mobile
         devices with useful AI features.
@@ -891,7 +895,7 @@ reverse(head) {
         courses on the material that informs the questions inside of Program AI
         App experience. Although robotic looking, it's mostly me doing the
         majority of the teaching. Once the main product, now a feature connected
-        to Sunset.
+        to Robots Building Education.
       </div>
     ),
     "about.platform.roxGPT": (
@@ -968,8 +972,8 @@ reverse(head) {
     "about.feature.spanishMode": (
       <div>
         <DataTags isProgramAI />
-        Sunset is available in Spanish. You're welcome to learning in Spanish to
-        practice your human language skills too!
+        Robots Building Education is available in Spanish. You're welcome to
+        learning in Spanish to practice your human language skills too!
       </div>
     ),
     "about.feature.streaks": (
@@ -1214,6 +1218,33 @@ reverse(head) {
     analyzer: "Analyzing your progress & creating new question card",
   },
   es: {
+    "modal.bitcoinMode.instructions.createWallet.1":
+      "1. ¡El objetivo es crear becas con aprendizaje!",
+
+    "modal.bitcoinMode.instructions.createWallet.2":
+      "Seleccionar un destinatario y crear una billetera te permite depositar un máximo de aproximadamente $0.01 en Bitcoin. ¡Cuando respondes una pregunta, tu depósito en Bitcoin se gasta y se envía a tu destinatario!",
+
+    "modal.bitcoinMode.instructions.createWallet.3":
+      "¡Recomendamos usar Cash App para comprar Bitcoin y conectar tu depósito!",
+
+    //depositar bitcoin
+    "modal.bitcoinMode.instructions.deposit.1":
+      "Presiona depositar para generar un código QR que puedes escanear o una dirección a la que puedes enviar. Esto solicitará aproximadamente $0.05 en Bitcoin desde tu billetera de Bitcoin.",
+
+    "modal.bitcoinMode.instructions.activeWallet.1":
+      "¡Ahora estás usando Bitcoin!",
+
+    "modal.bitcoinMode.instructions.activeWallet.2":
+      "Responde más preguntas para crear becas con aprendizaje.",
+    "modal.bitcoinMode.instructions.activeWallet.3":
+      "Verifica tus transacciones",
+
+    "modal.bitcoinMode.instructions.activeWallet.4": "en el registro público",
+    "deposit.button": "Depositar",
+    "createWallet.button": "Crear billetera",
+    "select.recipient": "Selecciona el destinatario de tu beca",
+    "disabled.select.soon": "¡Pronto más escuelas, profesores y estudiantes!",
+
     transcriptBadges: "Insignias de Transcripción",
     instructions: "Instrucciones",
     "tutorModal.instructions.1":
@@ -2148,10 +2179,10 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "about.title.programAiApp": "App: Sunset",
     "about.platform.programAiApp": (
       <div>
-        Sunset es una serie de 100 preguntas diseñadas para ser fácilmente
-        integradas en las redes sociales con IA. El objetivo es facilitar el
-        acceso a la educación mientras también se hacen posibles aprender
-        habilidades como la codificación en dispositivos móviles con
+        Robots Building Education es una serie de 100 preguntas diseñadas para
+        ser fácilmente integradas en las redes sociales con IA. El objetivo es
+        facilitar el acceso a la educación mientras también se hacen posibles
+        aprender habilidades como la codificación en dispositivos móviles con
         características útiles de IA.
         <br />
         <br />
@@ -2161,9 +2192,10 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
       <div>
         Rox es un asistente de enseñanza hecho a mano que entrega conferencias o
         cursos sobre el material que informa las preguntas dentro de la
-        experiencia de Sunset. Aunque parece robótico, en su mayoría soy yo
-        quien realiza la mayor parte de la enseñanza. Una vez fue el producto
-        principal, ahora es una característica conectada a Sunset.
+        experiencia de Robots Building Education. Aunque parece robótico, en su
+        mayoría soy yo quien realiza la mayor parte de la enseñanza. Una vez fue
+        el producto principal, ahora es una característica conectada a Robots
+        Building Education.
       </div>
     ),
     "about.platform.roxGPT": (
@@ -2242,8 +2274,9 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "about.feature.spanishMode": (
       <div>
         <DataTags isProgramAI />
-        Sunset está disponible en español. ¡Bienvenido a aprender en español
-        para practicar también tus habilidades de lenguaje humano!
+        Robots Building Education está disponible en español. ¡Bienvenido a
+        aprender en español para practicar también tus habilidades de lenguaje
+        humano!
       </div>
     ),
     "about.feature.streaks": (

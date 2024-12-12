@@ -419,6 +419,9 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
   //   ]
   // );
 
+  useEffect(() => {
+    assignExistingBadgeToNpub(transcriptObject.name.replace(/ /g, "-"));
+  }, []);
   console.log("name", transcriptObject.name.replace(/ /g, "-"));
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="3xl" isCentered>

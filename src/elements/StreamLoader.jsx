@@ -22,7 +22,7 @@ const transformBinarySet = (binarySet) => {
   return transformed;
 };
 
-export const StreamLoader = () => {
+export const StreamLoader = ({ isAbsolute, instructions }) => {
   const [displayedText, setDisplayedText] = useState(""); // Holds the streamed out JSON structure and binary sets
   const [thinkingValue, setThinkingValue] = useState([]); // Holds the array of binary sets as the value of "thinking"
   const [isJsonStructureDisplayed, setIsJsonStructureDisplayed] =
@@ -84,9 +84,17 @@ export const StreamLoader = () => {
         maxWidth="600px"
         fontFamily="monospace"
         width="100%"
+        position={isAbsolute ? "absolute" : ""}
       >
         {/* Display the single JSON object with the "thinking" key */}
-        <Text fontSize="lg" lineHeight="1.6">
+        <Text
+          fontSize={isAbsolute ? "sm" : "lg"}
+          lineHeight="1.6"
+          color={isAbsolute ? "gray" : ""}
+          textShadow={"1px 1px 1px solid black"}
+        >
+          {instructions}
+          <br />
           {displayedText !== undefined && displayedText !== null
             ? displayedText
             : ""}

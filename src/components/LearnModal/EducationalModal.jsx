@@ -28,6 +28,7 @@ import { translation } from "../../utility/translation";
 import RandomCharacter from "../../elements/RandomCharacter";
 import { CopyButtonIcon } from "../../elements/CopyButtonIcon";
 import { animateBorderLoading } from "../../utility/animations";
+import { OrbCanvas } from "../../elements/OrbCanvas";
 
 const EducationalModal = ({
   isOpen,
@@ -122,177 +123,347 @@ const EducationalModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="4xl"
+      size="full"
       scrollBehavior={"inside"}
     >
       <ModalOverlay />
-      <ModalContent
-        background={"orange.400"}
-        // color="white"
-        borderRadius="lg"
-        boxShadow="2xl"
-        p={0}
-        width="100%"
+      {/* Add OrbCanvas as a background */}
 
-        // style={{ fontFamily: "Roboto Serif, serif" }}
-      >
-        <Box ref={topRef}></Box>
-        <ModalHeader
-          fontSize="3xl"
-          fontWeight="bold"
-          marginTop={0}
-          paddingTop={0}
-          padding={3}
+      {educationalMessages.length > 0 && !educationalContent.length > 0 ? (
+        // <ModalOverlay>
+        //   <OrbCanvas
+        //     instructions={
+        //       <b> {translation[userLanguage]["modal.learn.instructions"]}</b>
+        //     }
+        //   />
+        // </ModalOverlay>
+        <ModalContent
+          style={{ background: "black" }}
+          // color="white"
+          borderRadius="lg"
+          boxShadow="2xl"
+          p={0}
+          width="100%"
+
+          // style={{ fontFamily: "Roboto Serif, serif" }}
         >
-          <HStack>
-            <div style={{ width: "fit-content" }}>
-              {educationalMessages.length > 0 &&
-              !educationalContent.length > 0 ? (
-                <BigSunset />
-              ) : (
-                <RandomCharacter />
-              )}
-            </div>
-            &nbsp;
-            <div style={{ color: "white" }}>
-              {translation[userLanguage]["modal.learn.title"]}
-            </div>
-          </HStack>
-        </ModalHeader>
+          <Box ref={topRef}></Box>
+          <ModalHeader
+            fontSize="xl"
+            fontWeight="bold"
+            marginTop={0}
+            paddingTop={0}
+            padding={3}
+          >
+            <ModalCloseButton color="white" size="lg" />
+            <HStack>
+              <div style={{ width: "fit-content" }}>
+                {educationalMessages.length > 0 &&
+                !educationalContent.length > 0 ? (
+                  <BigSunset />
+                ) : (
+                  <RandomCharacter />
+                )}
+              </div>
+              &nbsp;
+              <div style={{ color: "white" }}>
+                {translation[userLanguage]["modal.learn.title"]}
+              </div>
+            </HStack>
+          </ModalHeader>
 
-        <ModalBody p={2} style={{ width: "100%" }}>
-          {educationalMessages.length === 0 && <Spinner size="xl" />}
+          <ModalBody p={2} style={{ width: "100%" }}>
+            {educationalMessages.length === 0 && <Spinner size="xl" />}
 
-          {educationalMessages.length > 0 && !educationalContent.length > 0 ? (
-            <div
-              style={{
-                color: "#FAF3E0",
-
-                width: "100%",
-              }}
-            >
-              <b
+            {educationalMessages.length > 0 &&
+            !educationalContent.length > 0 ? (
+              <div
                 style={{
-                  backgroundColor: "white",
-                  color: "black",
-                  padding: 4,
-                  borderRadius: "6px",
+                  color: "#FAF3E0",
+
+                  width: "100%",
                 }}
               >
-                {" "}
-                {translation[userLanguage]["modal.learn.instructions"]}
-              </b>
-              <br />
-              <br />
-              {educationalMessages[educationalMessages.length - 1]?.content
-                .length < 1 ? (
-                <SunsetCanvas
-                  hasAnimation={false}
-                  isLoader={true}
-                  hasInitialFade={false}
-                  regulateWidth={false}
-                />
-              ) : (
-                educationalMessages[educationalMessages.length - 1]?.content
-              )}{" "}
-              <Box ref={bottomRef}></Box>
-            </div>
-          ) : null}
-          <VStack spacing={6} alignItems="flex-start">
-            {educationalContent.length > 0 &&
-              educationalContent.map((content, index) => (
-                <Box
-                  fontFamily={"Avenir"}
-                  key={index}
-                  p={4}
-                  bg="#170029"
-                  borderRadius="md"
-                  borderWidth={1}
-                  borderColor="rgba(255, 255, 255, 0.2)"
-                  width="100%"
-                  boxShadow="md"
-                >
-                  {/* <Text fontSize="xl" fontWeight="bold">
-                    Code Example:
-                  </Text> */}
-                  <div
-                    style={{
-                      //   color: "#696969",
-                      backgroundColor: "#faf3e0",
-                      // width: "100%",
-                      padding: 20,
-                      // wordBreak: "break-word",
-                      display: "flex",
-                      flexDirection: "column",
-                      borderRadius: 30,
-                      boxShadow: "4px 4px 5px 0px rgba(0,0,0,0.75)",
-                      zoom: "0.8",
-                    }}
+                {educationalMessages[educationalMessages.length - 1]?.content
+                  .length < 1 ? (
+                  <OrbCanvas
+                    instructions={
+                      <b>
+                        {" "}
+                        {translation[userLanguage]["modal.learn.instructions"]}
+                      </b>
+                    }
+                  />
+                ) : (
+                  educationalMessages[educationalMessages.length - 1]?.content
+                )}{" "}
+                <Box ref={bottomRef}></Box>
+              </div>
+            ) : null}
+            <VStack spacing={6} alignItems="flex-start">
+              {educationalContent.length > 0 &&
+                educationalContent.map((content, index) => (
+                  <Box
+                    fontFamily={"Avenir"}
+                    key={index}
+                    p={4}
+                    bg="#170029"
+                    borderRadius="md"
+                    borderWidth={1}
+                    borderColor="rgba(255, 255, 255, 0.2)"
+                    width="100%"
+                    boxShadow="md"
                   >
-                    <pre
-                    // style={{ whiteSpace: "pre-wrap" }}
-                    >
-                      <Editor
-                        value={content.code}
-                        highlight={(input) => highlight(input, languages.js)}
-                        padding={10}
-                        style={{
-                          fontFamily: '"Fira code", "Fira Mono", monospace',
-                          fontSize: 14,
-                          borderRadius: "8px",
-                        }}
-                        disabled
-                      />
-                    </pre>
+                    {/* <Text fontSize="xl" fontWeight="bold">
+                  Code Example:
+                </Text> */}
                     <div
                       style={{
+                        //   color: "#696969",
+                        backgroundColor: "#faf3e0",
+                        // width: "100%",
+                        padding: 20,
+                        // wordBreak: "break-word",
                         display: "flex",
-                        justifyContent: "flex-end",
+                        flexDirection: "column",
+                        borderRadius: 30,
+                        boxShadow: "4px 4px 5px 0px rgba(0,0,0,0.75)",
+                        zoom: "0.8",
                       }}
                     >
-                      <Button
+                      <pre
+                      // style={{ whiteSpace: "pre-wrap" }}
+                      >
+                        <Editor
+                          value={content.code}
+                          highlight={(input) => highlight(input, languages.js)}
+                          padding={10}
+                          style={{
+                            fontFamily: '"Fira code", "Fira Mono", monospace',
+                            fontSize: 14,
+                            borderRadius: "8px",
+                          }}
+                          disabled
+                        />
+                      </pre>
+                      <div
                         style={{
                           display: "flex",
-                          border: borderState,
+                          justifyContent: "flex-end",
                         }}
-                        tabIndex={0}
-                        onClick={() => handleCopyKeys(content.code)}
-                        width={24}
                       >
-                        <div style={{ width: "min-content" }}>
-                          <CopyButtonIcon color="black" />
-                        </div>
-                        &nbsp;
-                        {/* <div> */}
-                        {/* <b>{translation[userLanguage]["yourID"]}</b> */}
-                        {/* {localStorage?.getItem("local_npub")?.substr(0, 16) ||
-                          ""} */}
-                        {/* </div> */}
-                      </Button>
+                        <Button
+                          style={{
+                            display: "flex",
+                            border: borderState,
+                          }}
+                          tabIndex={0}
+                          onClick={() => handleCopyKeys(content.code)}
+                          width={24}
+                        >
+                          <div style={{ width: "min-content" }}>
+                            <CopyButtonIcon color="black" />
+                          </div>
+                          &nbsp;
+                          {/* <div> */}
+                          {/* <b>{translation[userLanguage]["yourID"]}</b> */}
+                          {/* {localStorage?.getItem("local_npub")?.substr(0, 16) ||
+                        ""} */}
+                          {/* </div> */}
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                  {/* <Text fontSize="xl" fontWeight="bold" mt={3}>
+                    {/* <Text fontSize="xl" fontWeight="bold" mt={3}>
+                  Explanation:
+                </Text> */}
+                    <br />
+                    <Text style={{ color: "white" }} fontSize="sm">
+                      {content.explanation}
+                    </Text>
+                  </Box>
+                ))}
+            </VStack>
+          </ModalBody>
+          {/* <ModalFooter margin={0} padding={3}>
+            <Button
+              onMouseDown={onClose}
+              variant="solid"
+              size="lg"
+              boxShadow={"0px 0.5px 0.5px 1px black"}
+            >
+              {translation[userLanguage]["button.close"]}
+            </Button>
+          </ModalFooter> */}
+        </ModalContent>
+      ) : (
+        <ModalContent
+          style={{ backgroundColor: "#FFA500" }}
+          // color="white"
+          borderRadius="lg"
+          boxShadow="2xl"
+          p={0}
+          width="100%"
+
+          // style={{ fontFamily: "Roboto Serif, serif" }}
+        >
+          <Box ref={topRef}></Box>
+          <ModalHeader
+            fontSize="xl"
+            fontWeight="bold"
+            marginTop={0}
+            paddingTop={0}
+          >
+            <HStack>
+              <div style={{ width: "fit-content" }}>
+                {educationalMessages.length > 0 &&
+                !educationalContent.length > 0 ? (
+                  <BigSunset />
+                ) : (
+                  <RandomCharacter />
+                )}
+              </div>
+              &nbsp;
+              <div style={{ color: "white" }}>
+                {translation[userLanguage]["modal.learn.title"]}
+              </div>
+            </HStack>
+          </ModalHeader>
+
+          <ModalBody p={2} style={{ width: "100%" }}>
+            {educationalMessages.length === 0 && <Spinner size="xl" />}
+
+            {educationalMessages.length > 0 &&
+            !educationalContent.length > 0 ? (
+              <div
+                style={{
+                  color: "#FAF3E0",
+
+                  width: "100%",
+                }}
+              >
+                <b
+                  style={{
+                    backgroundColor: "white",
+                    color: "black",
+                    padding: 4,
+                    borderRadius: "6px",
+                  }}
+                >
+                  {" "}
+                  {translation[userLanguage]["modal.learn.instructions"]}
+                </b>
+                <br />
+                <br />
+                {educationalMessages[educationalMessages.length - 1]?.content
+                  .length < 1 ? (
+                  <SunsetCanvas
+                    hasAnimation={false}
+                    isLoader={true}
+                    hasInitialFade={false}
+                    regulateWidth={false}
+                  />
+                ) : (
+                  educationalMessages[educationalMessages.length - 1]?.content
+                )}{" "}
+                <Box ref={bottomRef}></Box>
+              </div>
+            ) : null}
+            <VStack spacing={6} alignItems="flex-start">
+              {educationalContent.length > 0 &&
+                educationalContent.map((content, index) => (
+                  <Box
+                    fontFamily={"Avenir"}
+                    key={index}
+                    p={4}
+                    bg="#170029"
+                    borderRadius="md"
+                    borderWidth={1}
+                    borderColor="rgba(255, 255, 255, 0.2)"
+                    width="100%"
+                    boxShadow="md"
+                  >
+                    {/* <Text fontSize="xl" fontWeight="bold">
+                    Code Example:
+                  </Text> */}
+                    <div
+                      style={{
+                        //   color: "#696969",
+                        backgroundColor: "#faf3e0",
+                        // width: "100%",
+                        padding: 20,
+                        // wordBreak: "break-word",
+                        display: "flex",
+                        flexDirection: "column",
+                        borderRadius: 30,
+                        boxShadow: "4px 4px 5px 0px rgba(0,0,0,0.75)",
+                        zoom: "0.8",
+                      }}
+                    >
+                      <pre
+                      // style={{ whiteSpace: "pre-wrap" }}
+                      >
+                        <Editor
+                          value={content.code}
+                          highlight={(input) => highlight(input, languages.js)}
+                          padding={10}
+                          style={{
+                            fontFamily: '"Fira code", "Fira Mono", monospace',
+                            fontSize: 14,
+                            borderRadius: "8px",
+                          }}
+                          disabled
+                        />
+                      </pre>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "flex-end",
+                        }}
+                      >
+                        <Button
+                          style={{
+                            display: "flex",
+                            border: borderState,
+                          }}
+                          tabIndex={0}
+                          onClick={() => handleCopyKeys(content.code)}
+                          width={24}
+                        >
+                          <div style={{ width: "min-content" }}>
+                            <CopyButtonIcon color="black" />
+                          </div>
+                          &nbsp;
+                          {/* <div> */}
+                          {/* <b>{translation[userLanguage]["yourID"]}</b> */}
+                          {/* {localStorage?.getItem("local_npub")?.substr(0, 16) ||
+                          ""} */}
+                          {/* </div> */}
+                        </Button>
+                      </div>
+                    </div>
+                    {/* <Text fontSize="xl" fontWeight="bold" mt={3}>
                     Explanation:
                   </Text> */}
-                  <br />
-                  <Text style={{ color: "white" }} fontSize="sm">
-                    {content.explanation}
-                  </Text>
-                </Box>
-              ))}
-          </VStack>
-        </ModalBody>
-        <ModalFooter margin={0} padding={3}>
-          <Button
-            onMouseDown={onClose}
-            variant="solid"
-            size="lg"
-            boxShadow={"0px 0.5px 0.5px 1px black"}
-          >
-            {translation[userLanguage]["button.close"]}
-          </Button>
-        </ModalFooter>
-      </ModalContent>
+                    <br />
+                    <Text style={{ color: "white" }} fontSize="sm">
+                      {content.explanation}
+                    </Text>
+                  </Box>
+                ))}
+            </VStack>
+          </ModalBody>
+          <ModalFooter margin={0} padding={3}>
+            <Button
+              onMouseDown={onClose}
+              variant="solid"
+              size="lg"
+              boxShadow={"0px 0.5px 0.5px 1px black"}
+            >
+              {translation[userLanguage]["button.close"]}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      )}
     </Modal>
   );
 };

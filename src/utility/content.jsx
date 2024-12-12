@@ -5498,7 +5498,11 @@ console.log(arr);
 
 export const lectureSummaries = {
   en: {
-    tutorial: {},
+    tutorial: {
+      videoSrc: "", //string url
+      content: <div>Hello world</div>, //jsx
+      challengeQuestion: "",
+    },
     1: {},
     2: {},
     3: {},

@@ -45,14 +45,22 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
     createNewWallet,
     initiateDeposit,
     invoice,
+    init,
   } = useNostrWalletStore((state) => ({
     cashuWallet: state.cashuWallet,
     walletBalance: state.walletBalance,
     createNewWallet: state.createNewWallet,
     initiateDeposit: state.initiateDeposit,
     invoice: state.invoice,
+    init: state.init,
   }));
 
+  useEffect(() => {
+    let asyncStart = async () => {
+      await init();
+    };
+    asyncStart();
+  }, []);
   // Helper: sum up wallet balance
   const totalBalance =
     (walletBalance || [])?.reduce((sum, b) => sum + (b.amount || 0), 0) || null;
@@ -61,7 +69,7 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
     // If we have a deposit in progress and the user pays it, after proofs update
     // the totalBalance should become > 0.
     // If totalBalance changes and we now have sats, clear invoice.
-    console.log("TOTAL BALANCE", totalBalance);
+
     if (totalBalance > 0) {
       setLnInvoice("");
     }
@@ -203,13 +211,13 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
               isDisabled={loading} // Disable dropdown while saving
             >
               <option value="" disabled>
-                Select your scholarship recipient
+                {translation[userLanguage]["select.recipient"]}
               </option>
               <option value="npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt">
                 sheilfer@primal.net
               </option>
               <option value="more-schools" disabled>
-                More schools, teachers and students soon!
+                {translation[userLanguage]["disabled.select.soon"]}
               </option>
             </Select>
             <Button
@@ -217,7 +225,7 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
               isLoading={initializingWallet}
               loadingText={translation[userLanguage]["loading"]}
             >
-              Create Wallet
+              {translation[userLanguage]["createWallet.button"]}
               {/* {
                 translation[userLanguage][
                   "modal.bitcoinMode.createWalletButton"
@@ -405,7 +413,7 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
                     "modal.bitcoinMode.showInvoiceButton"
                   ]
                 } */}
-                Deposit
+                {translation[userLanguage]["deposit.button"]}
               </Button>
             </VStack>
           </>

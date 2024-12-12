@@ -25,6 +25,7 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
+  Spinner,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
@@ -44,7 +45,7 @@ import { useChatCompletion } from "./hooks/useChatCompletion";
 import { SunsetCanvas, BigSunset } from "./elements/SunsetCanvas";
 import EducationalModal from "./components/LearnModal/EducationalModal";
 import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
-import { useSharedNostr } from "./hooks/useNOSTR";
+
 import {
   createUser,
   getUserData,
@@ -110,8 +111,13 @@ import { StreamLoader } from "./elements/StreamLoader";
 import { OrbCanvas } from "./elements/OrbCanvas";
 import LectureModal from "./components/LectureModal/LectureModal";
 
-import { TestNostrWallet } from "./components/WalletSetup/TestNostrWallet";
+// import { TestNostrWallet } from "./components/WalletSetup/TestNostrWallet";
 import { useNostrWalletStore } from "./hooks/useNostrWalletStore";
+import { useSharedNostr } from "./hooks/useNOSTR";
+import { TestNostrWallet } from "./components/WalletSetup/TestNostrWallet";
+import { Tester } from "./components/WalletSetup/Tester";
+import Markdown from "react-markdown";
+import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -1239,10 +1245,11 @@ const Step = ({
   const [endTime, setEndTime] = useState(null);
   const [interval, setInterval] = useState(0);
   // const { cashTap, loadWallet } = useCashuStore();
-  const { sendOneSatToNpub, initWalletService } = useNostrWalletStore(
+  const { sendOneSatToNpub, initWalletService, init } = useNostrWalletStore(
     (state) => ({
       sendOneSatToNpub: state.sendOneSatToNpub, // renamed from cashTap
       initWalletService: state.initWalletService, // renamed from loadWallet
+      init: state.init,
     })
   );
   const [grade, setGrade] = useState("");
@@ -1267,6 +1274,9 @@ const Step = ({
   const [finalConversation, setFinalConversation] = useState([]);
 
   const { openPasscodeModal } = usePasscodeModalStore();
+  const [suggestionMessage, setSuggestionMessage] = useState("");
+  const [suggestionLoading, setSuggestionLoading] = useState(false);
+  const [isAdaptiveLearning, setIsAdaptiveLearning] = useState(false);
 
   const {
     isOpen: isAwardModalOpen,
@@ -1288,16 +1298,64 @@ const Step = ({
     response_format: { type: "json_object" },
   });
 
+  const {
+    resetMessages: resetSuggestionMessages,
+    messages: suggestionMessages,
+    submitPrompt: submitSuggestionMessages,
+  } = useChatCompletion({});
+
   useEffect(() => {
     setStep(steps[userLanguage][currentStep]);
+    const generateSuggestionForNewStep = async () => {
+      setSuggestionLoading(true);
+      try {
+        const fetchUserAnswers = async () => {
+          const userId = localStorage.getItem("local_npub");
+          const answersRef = collection(database, `users/${userId}/answers`);
+          const answerDocs = await getDocs(answersRef);
+          const answers = answerDocs.docs.map((doc) => doc.data());
+          return answers;
+        };
+
+        const userAnswers = await fetchUserAnswers();
+        const subjectsCompleted = steps[userLanguage]
+          .slice(1, currentStep) // All completed steps
+          .map((step) => step.title);
+
+        await submitSuggestionMessages([
+          {
+            content: `
+            The user is on question ${currentStep}. If the question number is 0 offer some words of encouragement when it comes to learning journeys and do not proceed with further instruction. If the question is 1, suggest learning the very basics of coding in two sentences and ignore the rest of this instruction. Otherwise, for any other question, the user has completed the following subjects: ${JSON.stringify(subjectsCompleted)}. Based on their progress, suggest the next best topic to learn and explain why.             
+            
+            This applies to any question: Respond in minimalist markdown without any headers, only bold facing is allowed to indicate headers for new paragraphs. Never reference the user's subjects, that's for your eyes only. Never reference other businesses or organizations.
+              The user is speaking ${
+                userLanguage === "en" ? "English" : "Spanish"
+              }.
+            `,
+            role: "user",
+          },
+        ]);
+      } catch (error) {
+        console.error("Error generating suggestion:", error);
+        showAlert("warning", translation[userLanguage]["ai.error"]);
+      } finally {
+        setSuggestionLoading(false);
+      }
+    };
+
+    if (isAdaptiveLearning && isEmpty(suggestionMessage)) {
+      generateSuggestionForNewStep();
+    }
   }, [userLanguage]);
 
   // Fetch user data and manage streaks and timers
   useEffect(() => {
+    console.log("init has run");
     // alert("running..");
     // const stepContent = steps[userLanguage][currentStep];
     // setStep(stepContent);
     const fetchUserData = async () => {
+      await init();
       await initWalletService();
       const userId = localStorage.getItem("local_npub");
       const userData = await getUserData(userId);
@@ -1306,6 +1364,7 @@ const Step = ({
       setStartTime(new Date(userData.startTime));
       setEndTime(new Date(userData.endTime));
       setInterval(userData.timer || 0);
+      setIsAdaptiveLearning(userData?.isAdaptiveLearning || false);
 
       const currentTime = new Date();
       if (currentTime > new Date(userData.endTime)) {
@@ -1341,6 +1400,20 @@ const Step = ({
   }, []);
 
   // Initialize items for Select Order question
+  const handleToggleChange = async () => {
+    const newValue = !isAdaptiveLearning;
+    setIsAdaptiveLearning(newValue);
+
+    try {
+      const userId = localStorage.getItem("local_npub");
+      const userDocRef = doc(database, "users", userId);
+      await updateDoc(userDocRef, { isAdaptiveLearning: newValue });
+      console.log("Adaptive learning updated:", newValue);
+    } catch (error) {
+      console.error("Error updating adaptive learning:", error);
+    }
+  };
+
   useEffect(() => {
     // console.log("runrunrunrunrunrun");
     if (step.isSelectOrder) {
@@ -1350,12 +1423,120 @@ const Step = ({
     // console.log("generatedQuestion", generatedQuestion);
 
     if (isEmpty(generatedQuestion) && isEmpty(newQuestionMessages)) {
-      // alert("it doesnt exist");
-      // console.log("running loop?");
       const stepContent = steps[userLanguage][currentStep];
       setStep(stepContent);
     }
-  }, [step, currentStep]);
+
+    const generateSuggestionForNewStep = async () => {
+      setSuggestionLoading(true);
+      try {
+        const fetchUserAnswers = async () => {
+          const userId = localStorage.getItem("local_npub");
+          const answersRef = collection(database, `users/${userId}/answers`);
+          const answerDocs = await getDocs(answersRef);
+          const answers = answerDocs.docs.map((doc) => doc.data());
+          return answers;
+        };
+
+        const userAnswers = await fetchUserAnswers();
+        const subjectsCompleted = steps[userLanguage]
+          .slice(1, currentStep) // All completed steps
+          .map((step) => step.title);
+
+        await submitSuggestionMessages([
+          {
+            content: `
+            The user is on question ${currentStep}. If the question number is 0 offer some words of encouragement when it comes to learning journeys and do not proceed with further instruction. If the question is 1, suggest learning the very basics of coding in two sentences and ignore the rest of this instruction. Otherwise, for any other question, the user has completed the following subjects: ${JSON.stringify(subjectsCompleted)}. Based on their progress, suggest the next best topic to learn and explain why. 
+
+            This applies to any question: Respond in minimalist markdown without any headers, only bold facing is allowed to indicate headers for new paragraphs. Never reference the user's subjects, that's for your eyes only. Never reference other businesses or organizations.
+              The user is speaking ${
+                userLanguage === "en" ? "English" : "Spanish"
+              }.
+            `,
+            role: "user",
+          },
+        ]);
+      } catch (error) {
+        console.error("Error generating suggestion:", error);
+        showAlert("warning", translation[userLanguage]["ai.error"]);
+      } finally {
+        setSuggestionLoading(false);
+      }
+    };
+
+    if (isAdaptiveLearning && !suggestionLoading) {
+      console.log("it runs....", currentStep);
+      console.log("it runs", step);
+      generateSuggestionForNewStep();
+    }
+  }, [currentStep, step]);
+
+  useEffect(() => {
+    const generateSuggestionForNewStep = async () => {
+      setSuggestionLoading(true);
+      try {
+        const fetchUserAnswers = async () => {
+          const userId = localStorage.getItem("local_npub");
+          const answersRef = collection(database, `users/${userId}/answers`);
+          const answerDocs = await getDocs(answersRef);
+          const answers = answerDocs.docs.map((doc) => doc.data());
+          return answers;
+        };
+
+        const userAnswers = await fetchUserAnswers();
+        const subjectsCompleted = steps[userLanguage]
+          .slice(1, currentStep) // All completed steps
+          .map((step) => step.title);
+
+        await submitSuggestionMessages([
+          {
+            content: `
+            The user is on question ${currentStep}. If the question number is 0 offer some words of encouragement when it comes to learning journeys and do not proceed with further instruction. If the question is 1, suggest learning the very basics of coding in two sentences and ignore the rest of this instruction. Otherwise, for any other question, the user has completed the following subjects: ${JSON.stringify(subjectsCompleted)}. Based on their progress, suggest the next best topic to learn and explain why. 
+            
+            This applies to any question: Respond in minimalist markdown without any headers, only bold facing is allowed to indicate headers for new paragraphs. Never reference the user's subjects, that's for your eyes only. Never reference other businesses or organizations.
+              The user is speaking ${
+                userLanguage === "en" ? "English" : "Spanish"
+              }.
+            `,
+            role: "user",
+          },
+        ]);
+      } catch (error) {
+        console.error("Error generating suggestion:", error);
+        showAlert("warning", translation[userLanguage]["ai.error"]);
+      } finally {
+        setSuggestionLoading(false);
+      }
+    };
+
+    if (isAdaptiveLearning && isEmpty(suggestionMessage)) {
+      generateSuggestionForNewStep();
+    }
+  }, [isAdaptiveLearning]);
+  useEffect(() => {
+    if (suggestionMessages?.length > 0) {
+      try {
+        const lastMessage = suggestionMessages[suggestionMessages.length - 1];
+        const isLastMessage =
+          lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
+
+        console.log("LAST MESS", lastMessage);
+        if (isLastMessage) {
+          setSuggestionMessage(lastMessage.content); // Store suggestion
+        } else {
+          setSuggestionMessage(lastMessage.content);
+          setSuggestionLoading(false);
+
+          // if (lastMessage.content.length > 0) {
+          //   setIsAnimating(false);
+          // }
+        }
+      } catch (error) {
+        console.error("Error processing suggestion response:", error);
+        showAlert("warning", translation[userLanguage]["ai.error"]);
+      }
+    }
+  }, [suggestionMessages]);
 
   useEffect(() => {
     if (isCorrect) {
@@ -1687,6 +1868,8 @@ const Step = ({
   // Reset state for a new step
   useEffect(() => {
     setInputValue("");
+
+    setSuggestionMessage("");
     setFeedback("");
     setFeedback("");
     setIsCorrect(null);
@@ -1700,10 +1883,11 @@ const Step = ({
     localStorage.removeItem("lrnctrl");
     localStorage.removeItem("knwldctrl");
     localStorage.removeItem("gnrtctrl");
-    // localStorage.removeItem("ansrctrl");
+    localStorage.removeItem("ansrctrl");
 
     setGeneratedQuestion([]);
     resetNewQuestionMessages();
+    resetSuggestionMessages();
     //
     if (currentStep === 9) {
       const npub = localStorage.getItem("local_npub");
@@ -1779,10 +1963,10 @@ const Step = ({
     let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
 
     // Check if the user has already generated 3 questions
-    if (lrnctrl >= 3) {
-      // Silently skip the function
-      return;
-    }
+    // if (lrnctrl >= 6) {
+    //   // Silently skip the function
+    //   return;
+    // }
 
     // Increment the counter and store it back in localStorage
     lrnctrl += 1;
@@ -1933,10 +2117,10 @@ const Step = ({
     let gnrtctrl = parseInt(localStorage.getItem("gnrtctrl") || "0", 10);
 
     // Check if the user has already generated 3 questions
-    if (gnrtctrl >= 10) {
-      // Silently skip the function
-      return;
-    }
+    // if (gnrtctrl >= 10) {
+    //   // Silently skip the function
+    //   return;
+    // }
 
     // Increment the counter and store it back in localStorage
     gnrtctrl += 1;
@@ -1981,7 +2165,7 @@ const Step = ({
         
         Remember, the types are things like isText, isTerminal, isMultipleChoice, isCodeCompletion, etc. But it must strictly be a different UI type than the step that the user started you off with. For example, if the user is sending you an isText: true question, you can't respond with an isText: true output.
         
-        Return the question in the proper JSON format as guided.}
+        Return the question in the proper JSON format as guided in the language of ${userLanguage === "en" ? "English" : "Spanish"}.}
       `;
 
       // console.log("PROMPT", prompt);
@@ -2026,8 +2210,10 @@ const Step = ({
   return (
     <VStack spacing={4} width="100%" mt={6}>
       {/* <OrbCanvas width={500} height={500} /> */}
+
       {newQuestionMessages.length > 0 && isEmpty(generatedQuestion) ? (
         <VStack textAlign={"left"} style={{ width: "100%", maxWidth: 400 }}>
+          {" "}
           <div
             style={{
               backgroundColor: "white",
@@ -2039,16 +2225,16 @@ const Step = ({
           >
             {translation[userLanguage]["analyzer"]}
           </div>
+          <OrbCanvas isAbsolute={false} />
           <Box mt={0} p={4} borderRadius="lg" width="100%" maxWidth={"600px"}>
             <Text textAlign={"left"}>
               <br /> <br />
               {newQuestionMessages[newQuestionMessages.length - 1].content
-                .length < 1 ? (
-                <SunsetCanvas isLoader={true} regulateWidth={false} />
-              ) : (
+                .length < 1 ? null : (
+                // <SunsetCanvas isLoader={true} regulateWidth={false} />
                 <>
-                  <SunsetCanvas isLoader={false} regulateWidth={false} />
-                  <br />
+                  {/* <SunsetCanvas isLoader={false} regulateWidth={false} />
+                  <br /> */}
                   {newQuestionMessages[newQuestionMessages.length - 1].content}
                 </>
               )}
@@ -2099,14 +2285,15 @@ const Step = ({
                   icon={<EmailIcon padding="4px" fontSize="18px" />}
                   mr={3}
                   onMouseDown={() =>
-                    (window.location.href = `mailto:sheilfer@robotsbuildingeducation.com?subject=Sunset ${translation[userLanguage]["email.question"]} ${currentStep}: ${step.question.questionText} | ${step.description}&body=${translation[userLanguage]["email.donotdelete"]}       \n\n ${JSON.stringify(emailText)}  `)
+                    (window.location.href = `mailto:sheilfer@robotsbuildingeducation.com?subject=Robots Building Education ${translation[userLanguage]["email.question"]} ${currentStep}: ${step.question.questionText} | ${step.description}&body=${translation[userLanguage]["email.donotdelete"]}       \n\n ${JSON.stringify(emailText)}  `)
                   }
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
-                      window.location.href = `mailto:sheilfer@robotsbuildingeducation.com?subject=Sunset ${translation[userLanguage]["email.question"]} ${currentStep}: ${step.question.questionText} | ${step.description}&body=${translation[userLanguage]["email.donotdelete"]}       \n\n ${JSON.stringify(emailText)}  `;
+                      window.location.href = `mailto:sheilfer@robotsbuildingeducation.com?subject=Robots Building Education ${translation[userLanguage]["email.question"]} ${currentStep}: ${step.question.questionText} | ${step.description}&body=${translation[userLanguage]["email.donotdelete"]}       \n\n ${JSON.stringify(emailText)}  `;
                     }
                   }}
                 />
+
                 <IconButton
                   width="12px"
                   height="18px"
@@ -2115,7 +2302,7 @@ const Step = ({
                   opacity="0.75"
                   color="pink.600"
                   icon={<RiRobot2Fill padding="4px" fontSize="12px" />}
-                  mr={0}
+                  mr={3}
                   onClick={() => {
                     const keysToCopy = JSON.stringify(step);
 
@@ -2181,6 +2368,20 @@ const Step = ({
                     }, 1500);
                   }}
                 />
+                <IconButton
+                  width="12px"
+                  height="18px"
+                  boxShadow="0px 0px 0.5px 1px #ececec"
+                  background="#ffecc7"
+                  opacity="0.75"
+                  color="#FFA500"
+                  icon={<RiRobot2Fill padding="4px" fontSize="12px" />}
+                  mr={0}
+                  onClick={() => {
+                    window.location.href =
+                      "https://chatgpt.com/g/g-LPoMAiBoa-robots-building-education";
+                  }}
+                />
               </Box>
               <br />
               {translation[userLanguage]["app.progress"]}:{" "}
@@ -2196,7 +2397,7 @@ const Step = ({
               value={calculateProgress()}
               size="md"
               colorScheme={getColorScheme(step.group)}
-              width="100%"
+              width="80%"
               mb={4}
               borderRadius="4px"
               background={getBackgroundScheme(step.group)}
@@ -2606,7 +2807,48 @@ const Step = ({
               </HStack>
             </>
           )}
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            width="100%"
+          >
+            <Switch
+              isChecked={isAdaptiveLearning}
+              onChange={handleToggleChange}
+              colorScheme="yellow"
+            />
+            &nbsp;
+            <Text fontSize="md">
+              {!isAdaptiveLearning
+                ? "Adaptive learning is off."
+                : "Adaptive learning is on."}
+            </Text>
+          </Box>
 
+          {suggestionMessages.length > 0 && isEmpty(suggestionMessage) ? (
+            <Box mt={4} p={4} textAlign="center">
+              <SunsetCanvas isLoader={true} />
+              <Text mt={2}>
+                {translation[userLanguage]["loading.suggestion"]}
+              </Text>
+            </Box>
+          ) : !isAdaptiveLearning ? null : suggestionMessage.length > 0 ? (
+            <Box
+              mt={4}
+              mb={4}
+              p={4}
+              borderRadius="lg"
+              background="gray.100"
+              maxWidth="600px"
+              textAlign={"left"}
+            >
+              <Markdown
+                components={ChakraUIRenderer()}
+                children={suggestionMessage}
+              />
+            </Box>
+          ) : null}
           <EducationalModal
             isOpen={isOpen}
             onClose={onClose}
@@ -2868,6 +3110,18 @@ const Home = ({
     });
   };
 
+  const renderContentBasedOnURL = () => {
+    const hostname = window.location.hostname;
+
+    if (hostname === "embedded-sunset.app") {
+      return "Sunset";
+    } else if (hostname === "robotsbuildingeducation.com") {
+      return "Robots Building Education";
+    } else {
+      return "Sunset"; // Fallback content
+    }
+  };
+
   return (
     <Box
       textAlign="center"
@@ -2907,7 +3161,8 @@ const Home = ({
               </HStack>
 
               <Text fontSize="xl">
-                {translation[userLanguage]["landing.welcome"]}
+                {/* {translation[userLanguage]["landing.welcome"]} */}
+                {renderContentBasedOnURL()}
               </Text>
               <Text fontSize="sm">
                 {translation[userLanguage]["landing.introduction"]}
@@ -3316,14 +3571,10 @@ function App({ isShutDown }) {
     auth,
     postNostrContent,
     assignExistingBadgeToNpub,
-  } = useNostrWalletStore((state) => ({
-    generateNostrKeys: state.generateNostrKeys,
-    auth: state.auth,
-    postNostrContent: state.postNostrContent,
-    assignExistingBadgeToNpub: state.assignExistingBadgeToNpub,
-    sendOneSatToNpub: state.sendOneSatToNpub, // renamed from cashTap
-    initWalletService: state.initWalletService, // renamed from loadWallet
-  }));
+  } = useSharedNostr(
+    localStorage.getItem("local_npub"),
+    localStorage.getItem("local_nsec")
+  );
 
   const handleToggle = async () => {
     const newLanguage = userLanguage === "en" ? "es" : "en";
@@ -3496,6 +3747,7 @@ function App({ isShutDown }) {
       )}
 
       <Routes>
+        <Route path="/test" element={<Tester />} />
         <Route path="/wallet" element={<TestNostrWallet />} />
         <Route
           path="/"

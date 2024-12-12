@@ -30,6 +30,8 @@ import FeedbackModal from "./FeedbackModal/FeedbackModal";
 import { translation } from "../../utility/translation";
 import { database } from "../../database/firebaseResources";
 import { doc, updateDoc } from "firebase/firestore";
+import { FaBitcoin } from "react-icons/fa";
+
 import TranscriptModal from "./TranscriptModal/TranscriptModal";
 
 const SettingsMenu = ({
@@ -145,6 +147,20 @@ const SettingsMenu = ({
           aria-label="Settings"
         />
       ) : null}
+      {isSignedIn ? (
+        <IconButton
+          ref={btnRef}
+          icon={<FaBitcoin />}
+          onClick={onBitcoinModeOpen}
+          variant="outline"
+          position="fixed"
+          color="orange"
+          top={16}
+          right={4}
+          style={{ backgroundColor: "white", zIndex: 1000 }}
+          aria-label="Bitcoin"
+        />
+      ) : null}
       <Drawer
         isOpen={isOpen}
         placement="right"
@@ -200,7 +216,7 @@ const SettingsMenu = ({
               >
                 {translation[userLanguage]["settings.button.adaptiveLearning"]}
               </Button>
-              <Button
+              {/* <Button
                 p={6}
                 colorScheme="pink"
                 background="pink.300"
@@ -208,7 +224,7 @@ const SettingsMenu = ({
                 onClick={onBitcoinModeOpen}
               >
                 {translation[userLanguage]["settings.button.bitcoinMode"]}
-              </Button>
+              </Button> */}
               <Button
                 p={6}
                 colorScheme="pink"
@@ -227,19 +243,21 @@ const SettingsMenu = ({
               >
                 {translation[userLanguage]["settings.button.socialWallet"]}
               </Button>
-              <Button
+              {/* <Button
                 p={6}
                 style={{ width: "100%" }}
                 // as="a"
 
                 onClick={() => {
-                  window.open("https://chatgpt.com/g/g-LPoMAiBoa-sunset");
+                  window.open(
+                    "https://chatgpt.com/g/g-LPoMAiBoa-robots-building-education"
+                  );
                 }}
                 variant={"outline"}
                 boxShadow={"0px 0.5px 0.5px 1px black"}
               >
                 <b>{translation[userLanguage]["settings.button.tutorGPT"]}</b>
-              </Button>
+              </Button> */}
               <Button
                 p={6}
                 style={{ width: "100%" }}
@@ -350,12 +368,14 @@ const SettingsMenu = ({
         onClose={onFeedbackClose}
       />
 
-      <TranscriptModal
-        userLanguage={userLanguage}
-        isOpen={isTranscriptOpen}
-        onClose={onTranscriptClose}
-        step={step}
-      />
+      {isTranscriptOpen ? (
+        <TranscriptModal
+          userLanguage={userLanguage}
+          isOpen={isTranscriptOpen}
+          onClose={onTranscriptClose}
+          step={step}
+        />
+      ) : null}
     </>
   );
 };
