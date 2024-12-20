@@ -33,6 +33,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { FaBitcoin } from "react-icons/fa";
 
 import TranscriptModal from "./TranscriptModal/TranscriptModal";
+import { InstallAppModal } from "../InstallModal/InstallModal";
 
 const SettingsMenu = ({
   isSignedIn,
@@ -55,6 +56,12 @@ const SettingsMenu = ({
     isOpen: isSelfPacedOpen,
     onOpen: onSelfPacedOpen,
     onClose: onSelfPacedClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isInstallModalOpen,
+    onOpen: onInstallModalOpen,
+    onClose: onInstallModalClose,
   } = useDisclosure();
 
   const {
@@ -236,6 +243,15 @@ const SettingsMenu = ({
               </Button>
               <Button
                 p={6}
+                colorScheme="pink"
+                background="pink.300"
+                style={{ width: "100%" }}
+                onClick={onInstallModalOpen}
+              >
+                {translation[userLanguage]["installApp"]}
+              </Button>
+              <Button
+                p={6}
                 style={{ width: "100%" }}
                 onClick={onSocialWalletOpen}
                 variant={"outline"}
@@ -374,6 +390,23 @@ const SettingsMenu = ({
           isOpen={isTranscriptOpen}
           onClose={onTranscriptClose}
           step={step}
+        />
+      ) : null}
+
+      {isTranscriptOpen ? (
+        <TranscriptModal
+          userLanguage={userLanguage}
+          isOpen={isTranscriptOpen}
+          onClose={onTranscriptClose}
+          step={step}
+        />
+      ) : null}
+
+      {isInstallModalOpen ? (
+        <InstallAppModal
+          userLanguage={userLanguage}
+          isOpen={isInstallModalOpen}
+          onClose={onInstallModalClose}
         />
       ) : null}
     </>

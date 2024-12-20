@@ -72,15 +72,8 @@ export let videoTranscript = {
             <RobotDialogue
               text={
                 <p>
-                  🎛️ If you right click this page and inspect element you'll
-                  open up your browser's control panel for this website. Select
-                  the console at the top to see the data being displayed by the
-                  console. Many developers use this code to test logic they're
-                  working on.
-                  <br />
-                  <br />
-                  Professionally, it's used to communicate data between systems
-                  like errors or other important messages.
+                  🎛️ Professionally, it's used to communicate data between
+                  systems like errors or other important messages.
                 </p>
               }
               background="lightyellow"

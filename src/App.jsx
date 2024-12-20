@@ -114,10 +114,11 @@ import LectureModal from "./components/LectureModal/LectureModal";
 // import { TestNostrWallet } from "./components/WalletSetup/TestNostrWallet";
 import { useNostrWalletStore } from "./hooks/useNostrWalletStore";
 import { useSharedNostr } from "./hooks/useNOSTR";
-import { TestNostrWallet } from "./components/WalletSetup/TestNostrWallet";
-import { Tester } from "./components/WalletSetup/Tester";
+
 import Markdown from "react-markdown";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
+import { TestCoinbaseUI } from "./experiments/TestCoinbaseUI";
+import ExternalLinkModal from "./components/ExternalLinkModal/ExternalLinkModal";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -1278,6 +1279,39 @@ const Step = ({
   const [suggestionLoading, setSuggestionLoading] = useState(false);
   const [isAdaptiveLearning, setIsAdaptiveLearning] = useState(false);
 
+  const [isExternalLinkModalOpen, setIsExternalLinkModalOpen] = useState(false);
+  const [dontShowAgain, setDontShowAgain] = useState(false);
+  const [skipExternalWarning, setSkipExternalWarning] = useState(false);
+
+  const externalUrl = "https://chat.com";
+
+  const handleExternalLinkClick = async () => {
+    if (skipExternalWarning) {
+      // If user already set "dont tell me again", skip modal
+      window.location.href = externalUrl;
+    } else {
+      // Show the modal
+      setIsExternalLinkModalOpen(true);
+    }
+  };
+
+  const handleModalConfirm = async () => {
+    if (dontShowAgain) {
+      // Update the user's Firestore document
+      const userDocRef = doc(
+        database,
+        "users",
+        localStorage.getItem("local_npub")
+      );
+      await updateDoc(userDocRef, {
+        skipExternalWarning: true,
+      });
+    }
+    window.location.href = externalUrl;
+  };
+
+  const handleModalClose = () => setIsExternalLinkModalOpen(false);
+
   const {
     isOpen: isAwardModalOpen,
     onOpen: onAwardModalOpen,
@@ -1365,6 +1399,8 @@ const Step = ({
       setEndTime(new Date(userData.endTime));
       setInterval(userData.timer || 0);
       setIsAdaptiveLearning(userData?.isAdaptiveLearning || false);
+
+      setSkipExternalWarning(userData?.skipExternalWarning);
 
       const currentTime = new Date();
       if (currentTime > new Date(userData.endTime)) {
@@ -2212,7 +2248,11 @@ const Step = ({
       {/* <OrbCanvas width={500} height={500} /> */}
 
       {newQuestionMessages.length > 0 && isEmpty(generatedQuestion) ? (
-        <VStack textAlign={"left"} style={{ width: "100%", maxWidth: 400 }}>
+        <VStack
+          textAlign={"left"}
+          style={{ width: "100%", maxWidth: 400 }}
+          mt={24}
+        >
           {" "}
           <div
             style={{
@@ -2294,7 +2334,7 @@ const Step = ({
                   }}
                 />
 
-                <IconButton
+                {/* <IconButton
                   width="12px"
                   height="18px"
                   boxShadow="0px 0px 0.25px 0.5px #ececec"
@@ -2367,14 +2407,87 @@ const Step = ({
                       window.location.href = "https://chat.com";
                     }, 1500);
                   }}
-                />
+                /> */}
+
+                {/* <IconButton
+                  width="12px"
+                  height="18px"
+                  boxShadow="0px 0px 0.25px 0.5px #ececec"
+                  background="pink.100"
+                  opacity="0.75"
+                  color="pink.600"
+                  icon={<RiRobot2Fill padding="4px" fontSize="12px" />}
+                  mr={3}
+                  onClick={() => {
+                    const keysToCopy = JSON.stringify(step);
+
+                    // Clipboard writing
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                      navigator.clipboard.writeText(
+                        `${translation[userLanguage]["chatcom.instructions.1"]} ${userLanguage === "en" ? "English" : "Spanish"} ${translation[userLanguage]["chatcom.instructions.2"]}` +
+                          keysToCopy
+                      );
+                    } else {
+                      // Fallback for unsupported browsers
+                      const textArea = document.createElement("textarea");
+                      textArea.value =
+                        `${translation[userLanguage]["chatcom.instructions.1"]} ${userLanguage === "en" ? "English" : "Spanish"} ${translation[userLanguage]["chatcom.instructions.2"]}` +
+                        keysToCopy;
+                      document.body.appendChild(textArea);
+                      textArea.select();
+                      document.execCommand("copy");
+                      document.body.removeChild(textArea);
+                    }
+
+                    // Show the toast
+                    // toast({
+                    //   title:
+                    //     translation[userLanguage]["toast.title.chatDataCopied"],
+                    //   description:
+                    //     translation[userLanguage][
+                    //       "toast.description.chatDataCopied"
+                    //     ],
+                    //   status: "info",
+                    //   duration: 1350,
+                    //   isClosable: true,
+                    //   position: "top",
+                    //   render: () => (
+                    //     <Box
+                    //       color="black"
+                    //       p={3}
+                    //       bg="#FEEBC8"
+                    //       borderRadius="md"
+                    //       boxShadow="lg"
+                    //     >
+                    //       <Text fontWeight="bold">
+                    //         {
+                    //           translation[userLanguage][
+                    //             "toast.title.chatDataCopied"
+                    //           ]
+                    //         }
+                    //       </Text>
+                    //       <Text>
+                    //         {
+                    //           translation[userLanguage][
+                    //             "toast.description.chatDataCopied"
+                    //           ]
+                    //         }
+                    //       </Text>
+                    //     </Box>
+                    //   ),
+                    // });
+
+                    // Show modal before redirecting
+                    handleExternalLinkClick();
+                  }}
+                /> */}
                 <IconButton
                   width="12px"
                   height="18px"
                   boxShadow="0px 0px 0.5px 1px #ececec"
-                  background="#ffecc7"
+                  background="pink.100"
                   opacity="0.75"
-                  color="#FFA500"
+                  color="pink.600"
                   icon={<RiRobot2Fill padding="4px" fontSize="12px" />}
                   mr={0}
                   onClick={() => {
@@ -2407,25 +2520,27 @@ const Step = ({
           <div style={{ zoom: 0.8, textAlign: "left" }}>
             <Text fontSize="xl">
               <b>
-                <IconButton
-                  width="12px"
-                  height="18px"
-                  boxShadow="0px 0px 0.25px 0.5px #ececec"
-                  background="pink.100"
-                  opacity="0.75"
-                  color="pink.600"
-                  icon={<RiAiGenerate padding="4px" fontSize="14px" />}
-                  mr={2}
-                  mt="-2"
-                  onMouseDown={() =>
-                    handleModalCheck(handleGenerateNewQuestion)
-                  }
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      handleModalCheck(handleGenerateNewQuestion);
+                {currentStep === 0 ? null : (
+                  <IconButton
+                    width="12px"
+                    height="18px"
+                    boxShadow="0px 0px 0.25px 0.5px #ececec"
+                    background="pink.100"
+                    opacity="0.75"
+                    color="pink.600"
+                    icon={<RiAiGenerate padding="4px" fontSize="14px" />}
+                    mr={2}
+                    mt="-2"
+                    onMouseDown={() =>
+                      handleModalCheck(handleGenerateNewQuestion)
                     }
-                  }}
-                />{" "}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        handleModalCheck(handleGenerateNewQuestion);
+                      }
+                    }}
+                  />
+                )}
                 {/* <IconButton
                   width="12px"
                   height="18px"
@@ -2479,334 +2594,339 @@ const Step = ({
             )}
           </div>
 
-          {step.isStudyGuide && (
-            <div>
-              <Button
-                onMouseDown={() => {
-                  window.open(
-                    userLanguage === "en"
-                      ? "https://github.com/RobotsBuildingEducation/RobotsBuildingEducation/blob/main/README.md"
-                      : "https://github.com/RobotsBuildingEducation/RobotsBuildingEducation/blob/main/README.spanish.md"
-                  );
-                }}
-                mb={4}
-                boxShadow={"0px 0.5px 0.5px 1px black"}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
+          <>
+            {step.isStudyGuide && (
+              <div>
+                <Button
+                  onMouseDown={() => {
                     window.open(
                       userLanguage === "en"
                         ? "https://github.com/RobotsBuildingEducation/RobotsBuildingEducation/blob/main/README.md"
                         : "https://github.com/RobotsBuildingEducation/RobotsBuildingEducation/blob/main/README.spanish.md"
                     );
-                  }
-                }}
-              >
-                {translation[userLanguage]["settings.button.studyGuide"]}{" "}
-              </Button>
-              &nbsp;&nbsp; &nbsp;&nbsp;
-              <Button
-                background="white"
-                variant={"outline"}
-                onMouseDown={handleNextClick}
-                mb={4}
-                boxShadow={"0px 0.5px 0.5px 1px black"}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    handleNextClick();
-                  }
-                }}
-              >
-                {translation[userLanguage]["app.button.nextQuestion"]}{" "}
-              </Button>
-            </div>
-          )}
+                  }}
+                  mb={4}
+                  boxShadow={"0px 0.5px 0.5px 1px black"}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      window.open(
+                        userLanguage === "en"
+                          ? "https://github.com/RobotsBuildingEducation/RobotsBuildingEducation/blob/main/README.md"
+                          : "https://github.com/RobotsBuildingEducation/RobotsBuildingEducation/blob/main/README.spanish.md"
+                      );
+                    }
+                  }}
+                >
+                  {translation[userLanguage]["settings.button.studyGuide"]}{" "}
+                </Button>
+                &nbsp;&nbsp; &nbsp;&nbsp;
+                <Button
+                  background="white"
+                  variant={"outline"}
+                  onMouseDown={handleNextClick}
+                  mb={4}
+                  boxShadow={"0px 0.5px 0.5px 1px black"}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      handleNextClick();
+                    }
+                  }}
+                >
+                  {translation[userLanguage]["app.button.nextQuestion"]}{" "}
+                </Button>
+              </div>
+            )}
 
-          {step.isSingleLineText && (
-            <VoiceInput
-              handleModalCheck={handleModalCheck}
-              value={inputValue}
-              onChange={setInputValue}
-              isCodeEditor={false}
-              isTextInput={false}
-              isSingleLineText={true}
-              resetVoiceState={resetVoiceState}
-              useVoice={true}
-              stopListening={stopListening}
-              setFeedback={setFeedback}
-              resetFeedbackMessages={resetMessages}
-              step={step}
-              userLanguage={userLanguage}
-            />
-          )}
-          {step.isText && (
-            <VoiceInput
-              handleModalCheck={handleModalCheck}
-              value={inputValue}
-              onChange={setInputValue}
-              isCodeEditor={false}
-              isTextInput={true}
-              resetVoiceState={resetVoiceState}
-              useVoice={true}
-              stopListening={stopListening}
-              setFeedback={setFeedback}
-              resetFeedbackMessages={resetMessages}
-              step={step}
-              userLanguage={userLanguage}
-            />
-          )}
-          {step.isCodeCompletion && (
-            <CodeCompletionQuestion
-              step={step}
-              question={step.question}
-              selectedOption={selectedOption}
-              setSelectedOption={setSelectedOption}
-              onLearnClick={handleLearnClick}
-              userLanguage={userLanguage}
-              handleModalCheck={handleModalCheck}
-            />
-          )}
-          {step.isCode && !step.isTerminal && (
-            <VoiceInput
-              handleModalCheck={handleModalCheck}
-              value={inputValue}
-              onChange={setInputValue}
-              isCodeEditor={true}
-              resetVoiceState={resetVoiceState}
-              useVoice={true}
-              stopListening={stopListening}
-              setFeedback={setFeedback}
-              resetFeedbackMessages={resetMessages}
-              step={step}
-              userLanguage={userLanguage}
-              currentStep={currentStep}
-            />
-          )}
-          {step.isCode && step.isTerminal && (
-            <Box
-              width="100%"
-              justifyContent="center"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <TerminalComponent
-                inputValue={inputValue}
-                setInputValue={setInputValue}
-                isSending={isSending}
-                isTerminal={true}
-                stopListening={stopListening}
+            {step.isSingleLineText && (
+              <VoiceInput
+                handleModalCheck={handleModalCheck}
+                value={inputValue}
+                onChange={setInputValue}
+                isCodeEditor={false}
+                isTextInput={false}
+                isSingleLineText={true}
                 resetVoiceState={resetVoiceState}
+                useVoice={true}
+                stopListening={stopListening}
                 setFeedback={setFeedback}
                 resetFeedbackMessages={resetMessages}
                 step={step}
                 userLanguage={userLanguage}
+              />
+            )}
+            {step.isText && (
+              <VoiceInput
+                handleModalCheck={handleModalCheck}
+                value={inputValue}
+                onChange={setInputValue}
+                isCodeEditor={false}
+                isTextInput={true}
+                resetVoiceState={resetVoiceState}
+                useVoice={true}
+                stopListening={stopListening}
+                setFeedback={setFeedback}
+                resetFeedbackMessages={resetMessages}
+                step={step}
+                userLanguage={userLanguage}
+              />
+            )}
+            {step.isCodeCompletion && (
+              <CodeCompletionQuestion
+                step={step}
+                question={step.question}
+                selectedOption={selectedOption}
+                setSelectedOption={setSelectedOption}
+                onLearnClick={handleLearnClick}
+                userLanguage={userLanguage}
                 handleModalCheck={handleModalCheck}
               />
-            </Box>
-          )}
-          {step.isMultipleChoice && (
-            <MultipleChoiceQuestion
-              question={step.question}
-              selectedOption={selectedOption}
-              setSelectedOption={setSelectedOption}
-              userLanguage={userLanguage}
-              onLearnClick={handleLearnClick}
-              handleModalCheck={handleModalCheck}
-            />
-          )}
-          {step.isMultipleAnswerChoice && (
-            <MultipleAnswerQuestion
-              question={step.question}
-              selectedOptions={selectedOptions}
-              setSelectedOptions={setSelectedOptions}
-              onLearnClick={handleLearnClick}
-              userLanguage={userLanguage}
-              handleModalCheck={handleModalCheck}
-            />
-          )}
-          {step.isSelectOrder && (
-            <SelectOrderQuestion
-              items={items}
-              setItems={setItems}
-              onLearnClick={handleLearnClick}
-              userLanguage={userLanguage}
-              step={step}
-              handleModalCheck={handleModalCheck}
-            />
-          )}
-          {step.isConversationReview && (
-            <ConversationReview
-              question={step.question}
-              userLanguage={userLanguage}
-              steps={steps}
-              step={step}
-              onSubmit={handleAnswerClick} // Or any other relevant logic
-              setFinalConversation={setFinalConversation}
-              finalConversation={finalConversation}
-              handleModalCheck={handleModalCheck}
-            />
-          )}
-          {isPostingWithNostr ? (
-            <SunsetCanvas />
-          ) : (
-            <>
-              {localStorage.getItem("incorrectAttempts") &&
-              parseInt(localStorage.getItem("incorrectAttempts")) > 0 ? (
-                <Text
-                  fontSize={"smaller"}
-                  background={"#ececec"}
-                  borderRadius={12}
-                  padding={4}
-                >
-                  {translation[userLanguage]["lockout.attempts"]} &nbsp;
-                  {localStorage.getItem("incorrectAttempts")} / 5{" "}
-                  {
-                    emojiMap[
-                      parseInt(localStorage.getItem("incorrectAttempts")) - 1
-                    ]
-                  }
-                </Text>
-              ) : null}
-              {parseInt(localStorage.getItem("incorrectAttempts")) >= 5 &&
-              !isTimerExpired ? (
-                <>
-                  <div style={{ maxWidth: 600 }}>
-                    <Text
-                      fontSize="smaller"
-                      background={"white"}
-                      borderRadius={12}
-                      padding={4}
-                    >
-                      {translation[userLanguage]["lockout.message"]} <br />
-                      <br />
-                      <CountdownTimer
-                        onTimerExpire={handleTimerExpire}
-                        userLanguage={userLanguage}
-                      />
-                    </Text>
-                  </div>
-                  <RandomCharacter />
-                </>
-              ) : null}
-              {messages.length > 0 && !feedback && (
-                <Box
-                  mt={0}
-                  p={4}
-                  borderRadius="lg"
-                  width="100%"
-                  maxWidth={"600px"}
-                >
-                  <Text textAlign={"left"}>
-                    {messages[messages.length - 1]?.content}
+            )}
+            {step.isCode && !step.isTerminal && (
+              <VoiceInput
+                handleModalCheck={handleModalCheck}
+                value={inputValue}
+                onChange={setInputValue}
+                isCodeEditor={true}
+                resetVoiceState={resetVoiceState}
+                useVoice={true}
+                stopListening={stopListening}
+                setFeedback={setFeedback}
+                resetFeedbackMessages={resetMessages}
+                step={step}
+                userLanguage={userLanguage}
+                currentStep={currentStep}
+              />
+            )}
+            {step.isCode && step.isTerminal && (
+              <Box
+                width="100%"
+                justifyContent="center"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <TerminalComponent
+                  inputValue={inputValue}
+                  setInputValue={setInputValue}
+                  isSending={isSending}
+                  isTerminal={true}
+                  stopListening={stopListening}
+                  resetVoiceState={resetVoiceState}
+                  setFeedback={setFeedback}
+                  resetFeedbackMessages={resetMessages}
+                  step={step}
+                  userLanguage={userLanguage}
+                  handleModalCheck={handleModalCheck}
+                />
+              </Box>
+            )}
+            {step.isMultipleChoice && (
+              <MultipleChoiceQuestion
+                question={step.question}
+                selectedOption={selectedOption}
+                setSelectedOption={setSelectedOption}
+                userLanguage={userLanguage}
+                onLearnClick={handleLearnClick}
+                handleModalCheck={handleModalCheck}
+              />
+            )}
+            {step.isMultipleAnswerChoice && (
+              <MultipleAnswerQuestion
+                question={step.question}
+                selectedOptions={selectedOptions}
+                setSelectedOptions={setSelectedOptions}
+                onLearnClick={handleLearnClick}
+                userLanguage={userLanguage}
+                handleModalCheck={handleModalCheck}
+              />
+            )}
+            {step.isSelectOrder && (
+              <SelectOrderQuestion
+                items={items}
+                setItems={setItems}
+                onLearnClick={handleLearnClick}
+                userLanguage={userLanguage}
+                step={step}
+                handleModalCheck={handleModalCheck}
+              />
+            )}
+            {step.isConversationReview && (
+              <ConversationReview
+                question={step.question}
+                userLanguage={userLanguage}
+                steps={steps}
+                step={step}
+                onSubmit={handleAnswerClick} // Or any other relevant logic
+                setFinalConversation={setFinalConversation}
+                finalConversation={finalConversation}
+                handleModalCheck={handleModalCheck}
+              />
+            )}
+            {isPostingWithNostr ? (
+              <SunsetCanvas />
+            ) : (
+              <>
+                {localStorage.getItem("incorrectAttempts") &&
+                parseInt(localStorage.getItem("incorrectAttempts")) > 0 ? (
+                  <Text
+                    fontSize={"smaller"}
+                    background={"#ececec"}
+                    borderRadius={12}
+                    padding={4}
+                  >
+                    {translation[userLanguage]["lockout.attempts"]} &nbsp;
+                    {localStorage.getItem("incorrectAttempts")} / 5{" "}
+                    {
+                      emojiMap[
+                        parseInt(localStorage.getItem("incorrectAttempts")) - 1
+                      ]
+                    }
                   </Text>
-                </Box>
-              )}
-              {feedback && (
-                <FadeInComponent>
+                ) : null}
+                {parseInt(localStorage.getItem("incorrectAttempts")) >= 5 &&
+                !isTimerExpired ? (
+                  <>
+                    <div style={{ maxWidth: 600 }}>
+                      <Text
+                        fontSize="smaller"
+                        background={"white"}
+                        borderRadius={12}
+                        padding={4}
+                      >
+                        {translation[userLanguage]["lockout.message"]} <br />
+                        <br />
+                        <CountdownTimer
+                          onTimerExpire={handleTimerExpire}
+                          userLanguage={userLanguage}
+                        />
+                      </Text>
+                    </div>
+                    <RandomCharacter />
+                  </>
+                ) : null}
+                {messages.length > 0 && !feedback && (
                   <Box
                     mt={0}
                     p={4}
-                    borderRadius="3xl"
+                    borderRadius="lg"
                     width="100%"
-                    maxWidth="600px"
-                    background={isCorrect ? "orange.100" : "#fcdcdc"}
-                    transition="0.2s all ease-in-out"
-                    borderBottomRightRadius={"0px"}
+                    maxWidth={"600px"}
                   >
-                    <Text
-                      textAlign={"left"}
-                      color={isCorrect ? "orange.500" : "red.500"}
-                    >
-                      {feedback}{" "}
-                      {grade ? (
-                        <DataTags
-                          userLanguage={userLanguage}
-                          grade={
-                            translation[userLanguage]["tags.grade"] + grade
-                          }
-                        />
-                      ) : null}
-                    </Text>{" "}
+                    <Text textAlign={"left"}>
+                      {messages[messages.length - 1]?.content}
+                    </Text>
                   </Box>
-                </FadeInComponent>
-              )}{" "}
-              {feedback && (
-                <div
-                  style={{
-                    width: "100%",
-                    maxWidth: "600px",
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    padding: 0,
-                    marginTop: "-36px",
-                  }}
-                >
-                  <RiseUpAnimation speed="0.1s">
-                    <RandomCharacter />
-                  </RiseUpAnimation>
-                </div>
-              )}
-              <HStack spacing={4} width="100%" justifyContent={"center"}>
-                {step.question &&
-                currentStep > 0 &&
-                !isCorrect &&
-                !isSending &&
-                !(parseInt(localStorage.getItem("incorrectAttempts")) >= "5") &&
-                isTimerExpired ? (
-                  <Button
-                    fontSize="sm"
-                    onMouseDown={handleAnswerClick}
-                    isLoading={isSending}
-                    mb={4}
-                    boxShadow={"0px 0.5px 0.5px 1px black"}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        handleAnswerClick();
-                      }
-                    }}
-                  >
-                    {translation[userLanguage]["app.button.answer"]}
-                  </Button>
-                ) : null}
-
-                {isSending ? (
+                )}
+                {feedback && (
+                  <FadeInComponent>
+                    <Box
+                      mt={0}
+                      p={4}
+                      borderRadius="3xl"
+                      width="100%"
+                      maxWidth="600px"
+                      background={isCorrect ? "orange.100" : "#fcdcdc"}
+                      transition="0.2s all ease-in-out"
+                      borderBottomRightRadius={"0px"}
+                    >
+                      <Text
+                        textAlign={"left"}
+                        color={isCorrect ? "orange.500" : "red.500"}
+                      >
+                        {feedback}{" "}
+                        {grade ? (
+                          <DataTags
+                            userLanguage={userLanguage}
+                            grade={
+                              translation[userLanguage]["tags.grade"] + grade
+                            }
+                          />
+                        ) : null}
+                      </Text>{" "}
+                    </Box>
+                  </FadeInComponent>
+                )}{" "}
+                {feedback && (
                   <div
                     style={{
                       width: "100%",
                       maxWidth: "600px",
-                      textAlign: "left",
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      padding: 0,
+                      marginTop: "-36px",
                     }}
                   >
-                    <SunsetCanvas
-                      speed={"0.25"}
-                      isLoader={true}
-                      regulateWidth={false}
-                    />
+                    <RiseUpAnimation speed="0.1s">
+                      <RandomCharacter />
+                    </RiseUpAnimation>
                   </div>
-                ) : null}
-                {isCorrect && (
-                  <>
+                )}
+                <HStack spacing={4} width="100%" justifyContent={"center"}>
+                  {step.question &&
+                  currentStep > 0 &&
+                  !isCorrect &&
+                  !isSending &&
+                  !(
+                    parseInt(localStorage.getItem("incorrectAttempts")) >= "5"
+                  ) &&
+                  isTimerExpired ? (
                     <Button
-                      background="white"
-                      variant={"outline"}
-                      onMouseDown={handleNextClick}
+                      fontSize="sm"
+                      onMouseDown={handleAnswerClick}
+                      isLoading={isSending}
                       mb={4}
                       boxShadow={"0px 0.5px 0.5px 1px black"}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
-                          handleNextClick();
+                          handleAnswerClick();
                         }
                       }}
                     >
-                      {translation[userLanguage]["app.button.nextQuestion"]}{" "}
+                      {translation[userLanguage]["app.button.answer"]}
                     </Button>
-                  </>
-                )}
-              </HStack>
-            </>
-          )}
+                  ) : null}
+
+                  {isSending ? (
+                    <div
+                      style={{
+                        width: "100%",
+                        maxWidth: "600px",
+                        textAlign: "left",
+                      }}
+                    >
+                      <SunsetCanvas
+                        speed={"0.25"}
+                        isLoader={true}
+                        regulateWidth={false}
+                      />
+                    </div>
+                  ) : null}
+                  {isCorrect && (
+                    <>
+                      <Button
+                        background="white"
+                        variant={"outline"}
+                        onMouseDown={handleNextClick}
+                        mb={4}
+                        boxShadow={"0px 0.5px 0.5px 1px black"}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            handleNextClick();
+                          }
+                        }}
+                      >
+                        {translation[userLanguage]["app.button.nextQuestion"]}{" "}
+                      </Button>
+                    </>
+                  )}
+                </HStack>
+              </>
+            )}
+          </>
+
           <Box
             display="flex"
             alignItems="center"
@@ -2865,6 +2985,17 @@ const Step = ({
               onClose={onLectureModalClose}
             />
           ) : null}
+
+          {/* newmodal */}
+          {/* <ExternalLinkModal
+            isOpen={isExternalLinkModalOpen}
+            onClose={handleModalClose}
+            dontShowAgain={dontShowAgain}
+            setDontShowAgain={setDontShowAgain}
+            onConfirm={handleModalConfirm}
+            translation={translation}
+            userLanguage={userLanguage}
+          /> */}
 
           <>
             <AwardModal
@@ -3333,12 +3464,12 @@ const Home = ({
                 {isCheckboxChecked ? (
                   <a
                     target="_blank"
-                    href="https://embedded-rox.app"
+                    href="https://otherstuff.app"
                     color="teal.500"
                     style={{ textDecoration: "underline", color: "teal" }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
-                        window.open("https://embedded-rox.app");
+                        window.open("https://otherstuff.app");
                       }
                     }}
                   >
@@ -3346,8 +3477,8 @@ const Home = ({
                   </a>
                 ) : (
                   translation[userLanguage]["createAccount.roxLink"]
-                )}{" "}
-                {translation[userLanguage]["or"] + " "}
+                )}
+                {/* {translation[userLanguage]["or"] + " "}
                 {isCheckboxChecked ? (
                   <a
                     target="_blank"
@@ -3364,7 +3495,7 @@ const Home = ({
                   </a>
                 ) : (
                   translation[userLanguage]["createAccount.primalLink"]
-                )}
+                )} */}
                 .
               </Text>
               <Accordion allowToggle>
@@ -3633,7 +3764,7 @@ function App({ isShutDown }) {
               setUserLanguage("en");
             }
 
-            if (location.pathname === "/wallet") {
+            if (location.pathname === "/experiment") {
             } else if (location.pathname === "/about") {
               // Do nothing if on /about
             } else if (
@@ -3644,7 +3775,7 @@ function App({ isShutDown }) {
             ) {
               navigate("/subscription");
             } else if (step === "award") {
-              navigate("/award");
+              navigate("/awad");
             } else {
               // if (step !== 0) {
               topRef.current?.scrollIntoView();
@@ -3732,6 +3863,7 @@ function App({ isShutDown }) {
           />
         </Alert>
       )}
+
       {isSignedIn && (
         <SettingsMenu
           isSignedIn={isSignedIn}
@@ -3747,8 +3879,7 @@ function App({ isShutDown }) {
       )}
 
       <Routes>
-        <Route path="/test" element={<Tester />} />
-        <Route path="/wallet" element={<TestNostrWallet />} />
+        <Route path="/experiment" element={<TestCoinbaseUI />} />
         <Route
           path="/"
           element={
@@ -3934,7 +4065,7 @@ export const AppWrapper = () => {
 
       {/* <OrbCanvas width={200} height={200} /> */}
 
-      {/* <iframe src="https://wallet.cashu.me"></iframe> */}
+      {/* <iframe src="https://claude.ai"></iframe> */}
 
       <App isShutDown={isShutDown} />
     </Router>

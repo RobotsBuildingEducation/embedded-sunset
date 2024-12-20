@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { database } from "../database/firebaseResources";
 import { CashuMint, CashuWallet, getEncodedToken } from "@cashu/cashu-ts";
 
+//legacy implementation. no logner in use
 export const useProofStorage = () => {
   const [proofs, setProofs] = useState(null);
   const [balance, setBalance] = useState(0);

@@ -3,6 +3,19 @@ import { DataTags } from "../elements/DataTag";
 
 export let translation = {
   en: {
+    "modal.externalLinkTitle": "Leaving The App",
+    "modal.externalLinkBody":
+      "You are about to be redirected to the free version of ChatGPT where no login is required. Paste the question data that we've copied to generate help. Create an account with ChatGPT to acces the custom chat version of this app instead.",
+    "modal.dontShowAgain": "Don't tell me this again",
+    "modal.cancel": "Cancel",
+    "modal.continue": "Continue to ChatGPT",
+
+    installAppInstructions1: `Open this page in your browser with the More Options button`,
+    installAppInstructions2: `Press the Share button`,
+    installAppInstructions3: `Press the Add To Homescreen button`,
+    installAppInstructions4: `That's it! You don't need to download the app through an app store because we're using open-source standards for Progressive Web Apps.`,
+
+    installApp: "Install App",
     "select.recipient": "Select your scholarship recipient",
     "disabled.select.soon": "More schools, teachers and students soon!",
     transcriptBadges: "Transcript Badges",
@@ -11,7 +24,7 @@ export let translation = {
       "These videos are from the connected tutoring platform on ",
     "tutorModal.instructions.1.33": "Rox the tutor",
     "tutorModal.instructions.1.66":
-      "Access the tutor by logging in with your key. Fun fact: The questions found on this app are based on the lessons learned in these videos!",
+      "Fun fact: The questions found on this app are based on the lessons learned in these hand-written videos!",
     "tutorModal.instructions.2": "To earn badges:",
     "tutorModal.instructions.3":
       "Watch 80% of the video, read the summary and complete the practice exercise for each chapter in this tutoring modal.",
@@ -678,8 +691,8 @@ reverse(head) {
 
     "createAccount.successMessage": "That's it!",
     "createAccount.awareness":
-      "Your account now works on a number of decentralized apps. Use your key to sign into apps like ",
-    "createAccount.roxLink": "Rox the learning assistant",
+      "Your account now works on a number of decentralized apps. Use your key to sign into apps in the ",
+    "createAccount.roxLink": "decentralized app store",
     or: "or",
     "createAccount.primalLink": "with Primal, the social wallet",
     "button.copyKey": "Copy Key",
@@ -923,7 +936,12 @@ reverse(head) {
     "about.title.aiLectureNotes": "AI Lecture Notes",
     "about.title.aiFeedback": "AI Feedback",
     "about.title.adaptiveLearning": "Adaptive Learning",
-    "about.title.bitcoinWallet": "Bitcoin Wallet",
+    "about.title.bitcoinWallet": (
+      <div>
+        <DataTags isNew />
+        Bitcoin Wallet
+      </div>
+    ),
     "about.title.customerService": "Customer Service",
     "about.title.lectures": "Hand Crafted Lectures",
     "about.title.conversationQuiz": "Conversation Quiz",
@@ -936,11 +954,7 @@ reverse(head) {
     "about.title.insights": "Insights",
     "about.title.ofi": "Old-fashioned Intelligence",
 
-    "about.title.smartCards": (
-      <div>
-        <DataTags isNew /> Smart Cards
-      </div>
-    ),
+    "about.title.smartCards": <div>Smart Cards</div>,
     "about.feature.decentralizedIdentity": (
       <div>
         <DataTags isRox isProgramAI />
@@ -1019,28 +1033,28 @@ reverse(head) {
     ),
     "about.feature.bitcoinWallet": (
       <div>
-        <DataTags isProgramAI isRox />
-        An experimental feature that lets mee easily monetize interactions with
-        the apps rather than bundling it behind subscriptions. Right now you can
-        only deposit $0.02 so that each interaction costs about $0.0008 USD per
-        interaction. All you need is a Cash App and youll be easily able to
-        deposit for use!
+        <DataTags isProgramAI />
+        An experimental feature that lets me easily monetize interactions with
+        the apps rather than bundling it behind subscriptions to be able to
+        create scholarships with learning. Right now you can only deposit $0.02
+        so that each interaction costs about $0.0008 USD per interaction. All
+        you need is a Cash App and youll be easily able to deposit for use! Now
+        works cross-platform with other apps like https://civico.app.
       </div>
     ),
     "about.feature.customerService": (
       <div>
         <DataTags isPatreon />
         With enough support, I'm able to run more personal service with remote
-        calls, tutoring and other direct-to-student effort. Currently this
-        feature is turned off until further notice and handled with discretion.
+        calls, tutoring and other direct-to-student effort.
       </div>
     ),
     "about.feature.lectures": (
       <div>
-        <DataTags isRox />A collection of lectures that I believe are high value
-        created with high quality animation and effort. The experience is an
-        introduction to advanced concepts done in a way to inspire confidence
-        into a journey of learning.
+        <DataTags isRox isProgramAI />A collection of lectures that I believe
+        are high value created with high quality animation and effort. The
+        experience is an introduction to advanced concepts done in a way to
+        inspire confidence into a journey of learning.
       </div>
     ),
     "about.feature.conversationQuiz": (
@@ -1218,6 +1232,19 @@ reverse(head) {
     analyzer: "Analyzing your progress & creating new question card",
   },
   es: {
+    "modal.externalLinkTitle": "Saliendo de la Aplicación",
+    "modal.externalLinkBody":
+      "Estás a punto de ser redirigido a la versión gratuita de ChatGPT donde no se requiere inicio de sesión. Pega los datos de la pregunta que hemos copiado para generar ayuda. Crea una cuenta con ChatGPT para acceder a la versión personalizada de chat de esta aplicación.",
+
+    "modal.dontShowAgain": "No volver a mostrar este mensaje",
+    "modal.cancel": "Cancelar",
+    "modal.continue": "Continuar",
+    installAppInstructions1: `Abre esta página en tu navegador con el botón de Más Opciones`,
+    installAppInstructions2: `Presiona el botón Compartir`,
+    installAppInstructions3: `Presiona el botón Agregar a la pantalla de inicio`,
+    installAppInstructions4: `¡Eso es todo! No necesitas descargar la aplicación desde una tienda de aplicaciones porque estamos utilizando estándares de código abierto para Aplicaciones Web Progresivas.`,
+
+    installApp: "Instalar aplicación",
     "modal.bitcoinMode.instructions.createWallet.1":
       "1. ¡El objetivo es crear becas con aprendizaje!",
 
@@ -2001,8 +2028,8 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "createAccount.isLoading": "Creando...",
     "createAccount.successMessage": "¡Eso es todo!",
     "createAccount.awareness":
-      "Tu cuenta ahora funciona en varias aplicaciones descentralizadas. Usa tu clave para iniciar sesión en aplicaciones como ",
-    "createAccount.roxLink": "ROX, el asistente de aprendizaje",
+      "Tu cuenta ahora funciona en varias aplicaciones descentralizadas. Usa tu clave para iniciar sesión de aplicaciones en la ",
+    "createAccount.roxLink": "tienda de aplicaciones descentralizada",
     or: "o",
     "createAccount.primalLink": "Primal, la billetera social",
     "button.copyKey": "Copiar Clave",
@@ -2223,7 +2250,12 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "about.title.aiLectureNotes": "Notas de Lección de IA",
     "about.title.aiFeedback": "Retroalimentación de IA",
     "about.title.adaptiveLearning": "Aprendizaje Adaptativo",
-    "about.title.bitcoinWallet": "Billetera Bitcoin",
+    "about.title.bitcoinWallet": (
+      <div>
+        <DataTags isNew />
+        Billetera Bitcoin
+      </div>
+    ),
     "about.title.customerService": "Atención al Cliente",
     "about.title.lectures": "Conferencias Hechas a Mano",
     "about.title.conversationQuiz": "Cuestionario de Conversación",
@@ -2246,11 +2278,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
       </div>
     ),
 
-    "about.title.smartCards": (
-      <div style={{}}>
-        <DataTags isNew /> Tarjetas Inteligentes
-      </div>
-    ),
+    "about.title.smartCards": <div>Tarjetas Inteligentes</div>,
     "about.feature.decentralizedTranscripts": (
       <div>
         <DataTags isRox isProgramAI />
@@ -2325,13 +2353,14 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     ),
     "about.feature.bitcoinWallet": (
       <div>
-        <DataTags isProgramAI isRox />
+        <DataTags isProgramAI />
         Una función experimental que me permite monetizar fácilmente las
-        interacciones con las aplicaciones en lugar de agruparlas detrás de
-        suscripciones. Ahora mismo solo puedes depositar $0.02 para que cada
-        interacción cueste alrededor de $0.0008 USD por interacción. ¡Todo lo
-        que necesitas es una aplicación de efectivo y podrás depositar
-        fácilmente para su uso!
+        interacciones con las aplicaciones en lugar de incluirlas en
+        suscripciones, para poder crear becas de aprendizaje. Actualmente, solo
+        puedes depositar $0.02, lo que hace que cada interacción cueste
+        aproximadamente $0.0008 USD. ¡Todo lo que necesitas es una cuenta de
+        Cash App y podrás depositar fácilmente para usarla! Ahora funciona de
+        manera multiplataforma con otras aplicaciones como https://civico.app.
       </div>
     ),
     "about.feature.customerService": (
@@ -2339,13 +2368,11 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
         <DataTags isPatreon />
         Con suficiente apoyo, puedo ofrecer un servicio más personal con
         llamadas remotas, tutoría y otros esfuerzos directos al estudiante.
-        Actualmente, esta función está desactivada hasta nuevo aviso y se maneja
-        con discreción.
       </div>
     ),
     "about.feature.lectures": (
       <div>
-        <DataTags isRox />
+        <DataTags isRox isProgramAI />
         Una colección de conferencias que considero de alto valor, creadas con
         animación de alta calidad y esfuerzo. La experiencia es una introducción
         a conceptos avanzados realizados de una manera que inspira confianza en

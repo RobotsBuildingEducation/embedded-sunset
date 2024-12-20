@@ -24,7 +24,7 @@ export const DataTags = ({
       ) : null}
       {isProgramAI ? (
         <Tag size="sm" variant="solid" colorScheme="pink" m={1}>
-          Sunset
+          Robots Building Education
         </Tag>
       ) : null}
       {isNew ? (

@@ -84,7 +84,7 @@ export const About = ({ userLanguage, handleToggle }) => {
       <br />
       <Accordion allowToggle>
         {[
-          "smartCards",
+          "bitcoinWallet",
           "programAiApp",
           "rox",
           "roxGPT",
@@ -92,13 +92,14 @@ export const About = ({ userLanguage, handleToggle }) => {
           "decentralizedIdentity",
           "decentralizedTranscripts",
           "spanishMode",
+          "smartCards",
           "streaks",
           "quizSeries",
           "vocalCoding",
           "aiLectureNotes",
           "aiFeedback",
           "adaptiveLearning",
-          "bitcoinWallet",
+
           "customerService",
           "lectures",
           "conversationQuiz",

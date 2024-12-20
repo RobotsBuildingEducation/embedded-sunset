@@ -428,7 +428,7 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader style={{ display: "flex", alignItems: "center" }}>
-          {translation[userLanguage]["settings.button.yourTutor"]} (beta 0.9)
+          {translation[userLanguage]["settings.button.yourTutor"]}
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
@@ -443,21 +443,20 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
                 </AccordionButton>
               </h2>
               <AccordionPanel pb={4}>
-                <Button onClick={handleCopyKeys}>
+                {/* <Button onClick={handleCopyKeys}>
                   🔑 {translation[userLanguage]["button.copyKey"]}
                 </Button>
-                <br />
-                <br />
+                <br /> */}
+                {/* <br /> */}
                 <Box>
-                  {translation[userLanguage]["tutorModal.instructions.1"]}
+                  {/* {translation[userLanguage]["tutorModal.instructions.1"]}
                   <Link
                     href="https://embedded-rox.app"
                     target="_blank"
                     style={{ textDecoration: "underline" }}
                   >
                     {translation[userLanguage]["tutorModal.instructions.1.33"]}
-                  </Link>
-                  {". "}
+                  </Link> */}
                   {translation[userLanguage]["tutorModal.instructions.1.66"]}
                 </Box>
                 <br />
