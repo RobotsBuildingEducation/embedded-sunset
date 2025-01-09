@@ -184,8 +184,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       nostrPubKey ||
       defaultNpub;
 
-    console.log("nsec", nsec);
-    console.log("npub", npub);
     try {
       // Decode the nsec from Bech32
       const { words: nsecWords } = bech32.decode(nsec);
@@ -570,7 +568,97 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
   //   }
   // };
 
-  const getLastNotesByNpub = async (npub) => {
+  const getGlobalNotesByHashtag = async (hashtag = "LearnWithNostr") => {
+    try {
+      const connection = await connectToNostr();
+      if (!connection) return [];
+
+      const { ndkInstance } = connection;
+
+      // Create a filter for kind: 1 (text notes) that contain the specified hashtag
+      const filter = {
+        kinds: [NDKKind.Text], // Kind 1 is for text notes
+        "#t": [hashtag], // Filter for tags where the first element is "t" and matches the hashtag
+        limit: 100, // Adjust the limit as needed
+      };
+
+      // Create a subscription to fetch the events
+      const subscription = ndkInstance.subscribe(filter, { closeOnEose: true });
+
+      const notes = [];
+
+      subscription.on("event", (event) => {
+        const npub = bech32.encode(
+          "npub",
+          bech32.toWords(Buffer.from(event.pubkey, "hex"))
+        );
+        notes.push({
+          content: event.content,
+          createdAt: event.created_at,
+          tags: event.tags,
+          id: event.id,
+          npub,
+        });
+      });
+
+      // Wait for the subscription to finish
+      await new Promise((resolve) => subscription.on("eose", resolve));
+
+      // Return the retrieved notes
+      // console.log("global notes...", notes);
+
+      // const encodedNpub = bech32.encode(
+      //   "npub",
+      //   bech32.toWords(Buffer.from(publicKey, "hex"))
+      // );
+
+      // console.log('npub', encodedNpub)
+
+      return notes;
+    } catch (error) {
+      console.error("Error retrieving global notes by hashtag:", error);
+      setErrorMessage(error.message);
+      return [];
+    }
+  };
+
+  const getUserProfile = async (npub) => {
+    try {
+      const connection = await connectToNostr();
+      if (!connection) return null;
+
+      const { ndkInstance } = connection;
+      const hexNpub = getHexNPub(npub); // Convert npub to hex
+
+      // Create a filter for kind: 0 (profile metadata) by the author
+      const filter = {
+        kinds: [NDKKind.Metadata],
+        authors: [hexNpub],
+        limit: 1,
+      };
+
+      // Create a subscription to fetch the metadata
+      const subscription = ndkInstance.subscribe(filter, { closeOnEose: true });
+
+      let profile = null;
+
+      subscription.on("event", (event) => {
+        profile = JSON.parse(event.content); // Parse the profile metadata
+      });
+
+      // Wait for the subscription to finish
+      await new Promise((resolve) => subscription.on("eose", resolve));
+
+      return profile;
+    } catch (error) {
+      console.error("Error retrieving user profile:", error);
+      setErrorMessage(error.message);
+      return null;
+    }
+  };
+  const getLastNotesByNpub = async (
+    npub = localStorage.getItem("local_npub")
+  ) => {
     console.log("running npub operation");
     try {
       const connection = await connectToNostr();
@@ -612,6 +700,86 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       return [];
     }
   };
+  const getGlobalNotesWithProfilesByHashtag = async (
+    hashtag = "LearnWithNostr"
+  ) => {
+    try {
+      const connection = await connectToNostr();
+      if (!connection) return [];
+
+      const { ndkInstance } = connection;
+
+      // Step 1: Fetch notes with the hashtag
+      const notesFilter = {
+        kinds: [NDKKind.Text], // Kind 1 for text notes
+        "#t": [hashtag], // Filter for the hashtag
+        limit: 50, // Adjust the limit as needed
+      };
+
+      const notesSubscription = ndkInstance.subscribe(notesFilter, {
+        closeOnEose: true,
+      });
+
+      const notes = [];
+      const pubkeys = new Set(); // To store unique pubkeys
+
+      notesSubscription.on("event", (event) => {
+        notes.push({
+          content: event.content,
+          createdAt: event.created_at,
+          tags: event.tags,
+          id: event.id,
+          pubkey: event.pubkey, // Store the pubkey for later use
+          npub: bech32.encode(
+            "npub",
+            bech32.toWords(Buffer.from(event.pubkey, "hex"))
+          ),
+          profile: null, // Placeholder for profile data
+        });
+        pubkeys.add(event.pubkey); // Add the author's pubkey to the set
+      });
+
+      await new Promise((resolve) => notesSubscription.on("eose", resolve));
+
+      // Step 2: Fetch profiles for all unique pubkeys
+      const profilesFilter = {
+        kinds: [NDKKind.Metadata], // Kind 0 for metadata
+        authors: Array.from(pubkeys), // Batch query for all pubkeys
+      };
+
+      const profilesSubscription = ndkInstance.subscribe(profilesFilter, {
+        closeOnEose: true,
+      });
+
+      const profilesMap = new Map(); // Map to store profiles by pubkey
+
+      profilesSubscription.on("event", (event) => {
+        const metadata = JSON.parse(event.content);
+        profilesMap.set(event.pubkey, {
+          name: metadata.name || "Unknown",
+          about: metadata.about || "",
+          picture: metadata.picture || "",
+        });
+      });
+
+      await new Promise((resolve) => profilesSubscription.on("eose", resolve));
+
+      // Step 3: Merge notes with profiles
+      const notesWithProfiles = notes.map((note) => {
+        note.profile = profilesMap.get(note.pubkey) || {
+          name: "Unknown",
+          about: "",
+          picture: "",
+        };
+        return note;
+      });
+
+      return notesWithProfiles;
+    } catch (error) {
+      console.error("Error fetching notes with profiles:", error);
+      return [];
+    }
+  };
 
   return {
     isConnected,
@@ -624,5 +792,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     assignExistingBadgeToNpub,
     getUserBadges,
     getLastNotesByNpub,
+    getGlobalNotesWithProfilesByHashtag,
   };
 };

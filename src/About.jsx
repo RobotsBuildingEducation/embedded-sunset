@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { translation } from "./utility/translation";
 import { useNavigate } from "react-router-dom";
+import { DataTags } from "./elements/DataTag";
 
 const Content = ({ children }) => {
   return <Text fontSize="sm">{children}</Text>;
@@ -84,13 +85,15 @@ export const About = ({ userLanguage, handleToggle }) => {
       <br />
       <Accordion allowToggle>
         {[
-          "bitcoinWallet",
+          "buildYourApp",
+          "socialProgress",
           "programAiApp",
           "rox",
           "roxGPT",
           "Patreon",
           "decentralizedIdentity",
           "decentralizedTranscripts",
+          "bitcoinWallet",
           "spanishMode",
           "smartCards",
           "streaks",
@@ -111,10 +114,11 @@ export const About = ({ userLanguage, handleToggle }) => {
           "guides",
           "insights",
           "ofi",
-        ].map((feature) => (
+        ].map((feature, index) => (
           <AccordionItem key={feature}>
             <AccordionButton p={6}>
               <Box flex="1" textAlign="left">
+                {index === 0 || index === 1 ? <DataTags isNew /> : null}
                 {translation[userLanguage][`about.title.${feature}`] || feature}
               </Box>
               <AccordionIcon />

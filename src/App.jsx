@@ -26,6 +26,7 @@ import {
   AccordionPanel,
   AccordionIcon,
   Spinner,
+  Code,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
@@ -66,7 +67,7 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { database } from "./database/firebaseResources";
+import { database, model } from "./database/firebaseResources";
 
 import { translation } from "./utility/translation";
 
@@ -77,6 +78,8 @@ import { IoShareOutline } from "react-icons/io5";
 import { IoIosMore } from "react-icons/io";
 import { RiAiGenerate, RiRobot2Fill } from "react-icons/ri";
 import { IoPlay } from "react-icons/io5";
+import { IoConstruct } from "react-icons/io5";
+import { IoAppsOutline } from "react-icons/io5";
 
 import MultipleChoiceQuestion from "./components/MultipleChoice/MultipleChoice";
 import SelectOrderQuestion from "./components/SelectOrder/SelectOrder";
@@ -117,12 +120,76 @@ import { useSharedNostr } from "./hooks/useNOSTR";
 
 import Markdown from "react-markdown";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
-import { TestCoinbaseUI } from "./experiments/TestCoinbaseUI";
+// import { TestCoinbaseUI } from "./experiments/TestCoinbaseUI";
 import ExternalLinkModal from "./components/ExternalLinkModal/ExternalLinkModal";
+
+import { Schema } from "firebase/vertexai";
+import { useGeminiChat } from "./hooks/useGeminiChat";
+import { TestFeed } from "./experiments/TestCoinbaseUI";
+
+import { FaHeartCircleBolt } from "react-icons/fa6";
+import SocialFeedModal from "./components/SocialFeedModal/SocialFeedModal";
+import { KnowledgeLedgerModal } from "./components/SettingsMenu/KnowledgeLedgerModal/KnowledgeLedgerModal";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
 // });
+
+const newTheme = {
+  h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  h4: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  h5: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  h6: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  code: ({ node, inline, className, children, ...props }) => {
+    // Detect if it's a single word or short phrase
+    const content = Array.isArray(children)
+      ? children.join("")
+      : String(children);
+
+    // Check if the content is a single word
+    const isSingleWord = content.trim().split(/\s+/).length === 1;
+
+    // Inline code styling
+    if (isSingleWord) {
+      return (
+        <Code
+          p={1}
+          borderRadius={8}
+          display="inline" // Prevent block display
+          fontFamily={"Fira code, Fira Mono, monospace"}
+          fontSize="xs"
+          {...props}
+        >
+          {children}
+        </Code>
+      );
+    }
+
+    // Multi-line or multi-word code block styling
+    return (
+      <Box
+        as="pre"
+        fontFamily={"Fira code, Fira Mono, monospace"}
+        fontSize="xs"
+        p={3}
+        borderRadius={8}
+        {...props}
+      >
+        <Code
+          p={6}
+          display="block"
+          wordBreak="break-word"
+          fontSize="sm"
+          overflowX="scroll"
+        >
+          {children}
+        </Code>
+      </Box>
+    );
+  },
+};
 
 const phraseToSymbolMap = {
   equals: "=",
@@ -296,13 +363,20 @@ export const VoiceInput = ({
   const [isWarningNotDismissed, setIsWarningNotDismissed] = useState(true);
 
   // New variables for educational material
+  // const {
+  //   resetMessages: resetEducationalMessages,
+  //   messages: educationalMessages,
+  //   submitPrompt: submitEducationalPrompt,
+  // } = useChatCompletion({
+  //   response_format: { type: "json_object" },
+  // });
+
   const {
     resetMessages: resetEducationalMessages,
     messages: educationalMessages,
     submitPrompt: submitEducationalPrompt,
-  } = useChatCompletion({
-    response_format: { type: "json_object" },
-  });
+    loading,
+  } = useGeminiChat();
 
   const [educationalContent, setEducationalContent] = useState([]);
 
@@ -514,54 +588,38 @@ export const VoiceInput = ({
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
     // Retrieve the current count from localStorage
-    let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
+    // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
 
-    // Check if the user has already generated 3 questions
-    if (lrnctrl >= 3) {
-      // Silently skip the function
-      return;
-    }
+    // // Check if the user has already generated 3 questions
+    // if (lrnctrl >= 3) {
+    //   // Silently skip the function
+    //   return;
+    // }
 
     // Increment the counter and store it back in localStorage
-    lrnctrl += 1;
-    localStorage.setItem("lrnctrl", lrnctrl);
+    // lrnctrl += 1;
+    // localStorage.setItem("lrnctrl", lrnctrl);
     onOpen();
 
     if (!step?.isConversationReview) {
       await submitEducationalPrompt(
-        [
-          {
-            content: `Generate educational material about ${JSON.stringify(
-              step
-            )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { output: [{ code: "code_example", explanation: "explanation" }] }. Additionally the code should consider line breaks, whitespace and formatting in the JSON because it will be formatted and rendered after completion. Lastly the user is speaking in ${
-              userLanguage === "en" ? "english" : "spanish"
-            }`,
-            role: "user",
-          },
-        ],
-        false,
-        false,
-        false
+        `Generate educational material about ${JSON.stringify(
+          step
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { output: [{ code: "code_example", explanation: "explanation" }] }. Additionally the code should consider line breaks, whitespace and formatting in the JSON because it will be formatted and rendered after completion. Lastly the user is speaking in ${
+          userLanguage === "en" ? "english" : "spanish"
+        }`
       );
     } else {
       const relevantSteps = getObjectsByGroup(step?.group, steps[userLanguage]);
 
       await submitEducationalPrompt(
-        [
-          {
-            content: `Generate educational material about ${JSON.stringify(
-              relevantSteps
-            )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { "input": "${JSON.stringify(
-              step
-            )}", output: [{ "code": "code_example", "explanation": "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
-              userLanguage === "en" ? "english" : "spanish"
-            }`,
-            role: "user",
-          },
-        ],
-        false,
-        false,
-        false
+        `Generate educational material about ${JSON.stringify(
+          relevantSteps
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { "input": "${JSON.stringify(
+          step
+        )}", output: [{ "code": "code_example", "explanation": "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
+          userLanguage === "en" ? "english" : "spanish"
+        }`
       );
     }
   };
@@ -1325,6 +1383,18 @@ const Step = ({
   } = useDisclosure();
 
   const {
+    isOpen: isSocialFeedModalOpen,
+    onOpen: onSocialFeedModalOpen,
+    onClose: onSocialFeedModalClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isKnowledgeLedgerOpen,
+    onOpen: onKnowledgeLedgerOpen,
+    onClose: onKnowledgeLedgerClose,
+  } = useDisclosure();
+
+  const {
     resetMessages: resetNewQuestionMessages,
     messages: newQuestionMessages,
     submitPrompt: submitNewQuestionMessages,
@@ -1359,7 +1429,7 @@ const Step = ({
         await submitSuggestionMessages([
           {
             content: `
-            The user is on question ${currentStep}. If the question number is 0 offer some words of encouragement when it comes to learning journeys and do not proceed with further instruction. If the question is 1, suggest learning the very basics of coding in two sentences and ignore the rest of this instruction. Otherwise, for any other question, the user has completed the following subjects: ${JSON.stringify(subjectsCompleted)}. Based on their progress, suggest the next best topic to learn and explain why.             
+            The user is on question ${currentStep}. If the question number is 0 offer some words of encouragement when it comes to learning journeys and do not proceed with further instruction. If the question is 1, suggest learning the very basics of coding in two sentences and ignore the rest of this instruction. Otherwise, for any other question, the user has completed the following subjects: ${JSON.stringify(subjectsCompleted)}. Based on their progress, suggest the next best topic to learn and explain why. Based on their progress, suggest the next best topic to learn and explain why while also providing a brief example of code too to expose the individual to the concept.           
             
             This applies to any question: Respond in minimalist markdown without any headers, only bold facing is allowed to indicate headers for new paragraphs. Never reference the user's subjects, that's for your eyes only. Never reference other businesses or organizations.
               The user is speaking ${
@@ -1389,18 +1459,18 @@ const Step = ({
     // const stepContent = steps[userLanguage][currentStep];
     // setStep(stepContent);
     const fetchUserData = async () => {
-      await init();
-      await initWalletService();
       const userId = localStorage.getItem("local_npub");
       const userData = await getUserData(userId);
 
+      setIsAdaptiveLearning(userData?.isAdaptiveLearning);
       setStreak(userData.streak || 0);
       setStartTime(new Date(userData.startTime));
       setEndTime(new Date(userData.endTime));
       setInterval(userData.timer || 0);
-      setIsAdaptiveLearning(userData?.isAdaptiveLearning || false);
 
       setSkipExternalWarning(userData?.skipExternalWarning);
+      await init();
+      await initWalletService();
 
       const currentTime = new Date();
       if (currentTime > new Date(userData.endTime)) {
@@ -1482,7 +1552,7 @@ const Step = ({
         await submitSuggestionMessages([
           {
             content: `
-            The user is on question ${currentStep}. If the question number is 0 offer some words of encouragement when it comes to learning journeys and do not proceed with further instruction. If the question is 1, suggest learning the very basics of coding in two sentences and ignore the rest of this instruction. Otherwise, for any other question, the user has completed the following subjects: ${JSON.stringify(subjectsCompleted)}. Based on their progress, suggest the next best topic to learn and explain why. 
+            The user is on question ${currentStep}. If the question number is 0 offer some words of encouragement when it comes to learning journeys and do not proceed with further instruction. If the question is 1, suggest learning the very basics of coding in two sentences and ignore the rest of this instruction. Otherwise, for any other question, the user has completed the following subjects: ${JSON.stringify(subjectsCompleted)}. Based on their progress, suggest the next best topic to learn and explain why.  Based on their progress, suggest the next best topic to learn and explain why while also providing a brief example of code too to expose the individual to the concept.
 
             This applies to any question: Respond in minimalist markdown without any headers, only bold facing is allowed to indicate headers for new paragraphs. Never reference the user's subjects, that's for your eyes only. Never reference other businesses or organizations.
               The user is speaking ${
@@ -1524,10 +1594,14 @@ const Step = ({
           .slice(1, currentStep) // All completed steps
           .map((step) => step.title);
 
+        console.log(
+          "json completed",
+          JSON.stringify(subjectsCompleted, null, 2)
+        );
         await submitSuggestionMessages([
           {
             content: `
-            The user is on question ${currentStep}. If the question number is 0 offer some words of encouragement when it comes to learning journeys and do not proceed with further instruction. If the question is 1, suggest learning the very basics of coding in two sentences and ignore the rest of this instruction. Otherwise, for any other question, the user has completed the following subjects: ${JSON.stringify(subjectsCompleted)}. Based on their progress, suggest the next best topic to learn and explain why. 
+            The user is on question ${currentStep}. If the question number is 0 offer some words of encouragement when it comes to learning journeys and do not proceed with further instruction. If the question is 1, suggest learning the very basics of coding in two sentences and ignore the rest of this instruction. Otherwise, for any other question, the user has completed the following subjects: ${JSON.stringify(subjectsCompleted)}. Based on their progress, suggest the next best topic to learn and explain why while also providing a brief example of code too to expose the individual to the concept.
             
             This applies to any question: Respond in minimalist markdown without any headers, only bold facing is allowed to indicate headers for new paragraphs. Never reference the user's subjects, that's for your eyes only. Never reference other businesses or organizations.
               The user is speaking ${
@@ -1589,7 +1663,7 @@ const Step = ({
       getRecipient();
 
       postNostrContent(
-        `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://embedded-sunset.app \n\n${step.question?.questionText} #LearnWithNostr`
+        `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://robotsbuildingeducation.com \n\n${step.question?.questionText} #LearnWithNostr`
       );
       if (step.isConversationReview) {
         console.log(
@@ -1924,6 +1998,8 @@ const Step = ({
     setGeneratedQuestion([]);
     resetNewQuestionMessages();
     resetSuggestionMessages();
+    resetEducationalMessages();
+    setEducationalContent([]);
     //
     if (currentStep === 9) {
       const npub = localStorage.getItem("local_npub");
@@ -1981,13 +2057,20 @@ const Step = ({
     }
   };
 
+  // const {
+  //   resetMessages: resetEducationalMessages,
+  //   messages: educationalMessages,
+  //   submitPrompt: submitEducationalPrompt,
+  // } = useChatCompletion({
+  //   response_format: { type: "json_object" },
+  // });
+
   const {
     resetMessages: resetEducationalMessages,
     messages: educationalMessages,
     submitPrompt: submitEducationalPrompt,
-  } = useChatCompletion({
-    response_format: { type: "json_object" },
-  });
+    loading,
+  } = useGeminiChat();
 
   const [educationalContent, setEducationalContent] = useState([]);
 
@@ -2008,23 +2091,30 @@ const Step = ({
     lrnctrl += 1;
     localStorage.setItem("lrnctrl", lrnctrl);
     onOpen();
-    await submitEducationalPrompt(
-      [
-        {
-          content: `Generate educational Javascript material about ${JSON.stringify(
-            step
-          )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { "input": "${JSON.stringify(
-            step
-          )}", output: [{ "code": "code_example", "explanation": "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
-            userLanguage === "en" ? "english" : "spanish"
-          }`,
-          role: "user",
-        },
-      ],
-      false,
-      false,
-      true
-    );
+
+    // fetchGoogleAI();
+    if (educationalContent.length > 0) {
+    } else {
+      await submitEducationalPrompt(
+        // [
+        //   {
+        //     content:
+        `Generate educational Javascript material about ${JSON.stringify(
+          step
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { "input": "${JSON.stringify(
+          step
+        )}", output: [{ "code": "code_example", "explanation": "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
+          userLanguage === "en" ? "english" : "spanish"
+        }`
+        //     ,
+        //     role: "user",
+        //   },
+        // ],
+        // false,
+        // false,
+        // true
+      );
+    }
   };
 
   useEffect(() => {
@@ -2059,6 +2149,53 @@ const Step = ({
     }
   }, [educationalMessages]);
 
+  // const fetchGoogleAI = async () => {
+  //   console.log("running google");
+  //   // Provide a prompt that contains text
+  //   // const prompt = "Write a story about a magic backpack.";
+
+  //   let newModel = model;
+
+  //   // Define the JSON schema for structured output
+  //   const jsonSchema = Schema.object({
+  //     properties: {
+  //       input: Schema.string(),
+  //       output: Schema.array({
+  //         items: Schema.object({
+  //           properties: {
+  //             code: Schema.string(),
+  //             explanation: Schema.string(),
+  //           },
+  //         }),
+  //       }),
+  //     },
+  //   });
+
+  //   // Set the proper generation config with responseSchema
+  //   newModel.generationConfig = {
+  //     responseMimeType: "application/json",
+  //     responseSchema: jsonSchema,
+  //   };
+  //   const prompt = `Generate educational Javascript material about ${JSON.stringify(
+  //     step
+  //   )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { "input": "${JSON.stringify(
+  //     step
+  //   )}", output: [{ "code": "code_example", "explanation": "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
+  //     userLanguage === "en" ? "english" : "spanish"
+  //   }`;
+
+  //   // To stream generated text output, call generateContentStream with the text input
+  //   const result = await newModel.generateContentStream(prompt);
+  //   console.log("result", result);
+
+  //   for await (const chunk of result.stream) {
+  //     const chunkText = chunk.text();
+  //     console.log(chunkText);
+  //     // setFireScholarshipResponse((prevText) => prevText + chunkText);
+  //   }
+
+  //   console.log("aggregated response: ", await result.response);
+  // };
   const getColorScheme = (group) => {
     const colorMap = {
       tutorial: "gray",
@@ -2291,8 +2428,8 @@ const Step = ({
               <Box mb={"-1"}>
                 {userLanguage === "en" ? (
                   <IconButton
-                    width="12px"
-                    height="18px"
+                    width="18px"
+                    height="24px"
                     boxShadow="0px 0px 0.25px 0.5px #ececec"
                     // border="1px solid #ececec"
                     background="pink.100"
@@ -2314,14 +2451,61 @@ const Step = ({
                     }}
                   />
                 ) : null}
+
                 <IconButton
-                  width="12px"
-                  height="18px"
-                  boxShadow="0px 0px 0.25px 0.5px #ececec"
-                  // border="1px solid #ececec"
+                  width="18px"
+                  height="24px"
+                  boxShadow="0px 0px 0.5px 1px #ececec"
                   background="pink.100"
                   opacity="0.75"
                   color="pink.600"
+                  icon={<FaHeartCircleBolt padding="4px" fontSize="12px" />}
+                  mr={3}
+                  onMouseDown={() => {
+                    //open modal
+                    onSocialFeedModalOpen();
+                    return;
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      onSocialFeedModalOpen();
+                      //open modal
+                      return;
+                    }
+                  }}
+                />
+
+                <IconButton
+                  width="18px"
+                  height="24px"
+                  boxShadow="0px 0px 0.5px 1px #ececec"
+                  background="pink.100"
+                  opacity="0.75"
+                  color="pink.600"
+                  icon={<IoConstruct padding="4px" fontSize="12px" />}
+                  mr={3}
+                  onMouseDown={() => {
+                    //open modal
+                    onKnowledgeLedgerOpen();
+                    return;
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      onKnowledgeLedgerOpen();
+                      //open modal
+                      return;
+                    }
+                  }}
+                />
+
+                <IconButton
+                  width="18px"
+                  height="24px"
+                  boxShadow="0px 0px 0.25px 0.5px lightgray"
+                  // border="1px solid #ececec"
+                  background="whiteAlpha.100"
+                  opacity="0.75"
+                  // color="pink.600"
                   icon={<EmailIcon padding="4px" fontSize="18px" />}
                   mr={3}
                   onMouseDown={() =>
@@ -2334,160 +2518,13 @@ const Step = ({
                   }}
                 />
 
-                {/* <IconButton
-                  width="12px"
-                  height="18px"
-                  boxShadow="0px 0px 0.25px 0.5px #ececec"
-                  background="pink.100"
-                  opacity="0.75"
-                  color="pink.600"
-                  icon={<RiRobot2Fill padding="4px" fontSize="12px" />}
-                  mr={3}
-                  onClick={() => {
-                    const keysToCopy = JSON.stringify(step);
-
-                    // Clipboard writing with fallback for compatibility
-                    if (navigator.clipboard && navigator.clipboard.writeText) {
-                      navigator.clipboard.writeText(
-                        `${translation[userLanguage]["chatcom.instructions.1"]} ${userLanguage === "en" ? "English" : "Spanish"} ${translation[userLanguage]["chatcom.instructions.2"]}` +
-                          keysToCopy
-                      );
-                    } else {
-                      // Fallback for unsupported browsers
-                      const textArea = document.createElement("textarea");
-                      textArea.value =
-                        `${translation[userLanguage]["chatcom.instructions.1"]} ${userLanguage === "en" ? "English" : "Spanish"} ${translation[userLanguage]["chatcom.instructions.2"]}` +
-                        keysToCopy;
-                      document.body.appendChild(textArea);
-                      textArea.select();
-                      document.execCommand("copy");
-                      document.body.removeChild(textArea);
-                    }
-
-                    // Show the toast
-                    toast({
-                      title:
-                        translation[userLanguage]["toast.title.chatDataCopied"],
-                      description:
-                        translation[userLanguage][
-                          "toast.description.chatDataCopied"
-                        ],
-                      status: "info",
-                      duration: 1350, // Show the toast for 1 second
-                      isClosable: true,
-                      position: "top",
-                      render: () => (
-                        <Box
-                          color="black"
-                          p={3}
-                          bg="#FEEBC8"
-                          borderRadius="md"
-                          boxShadow="lg"
-                        >
-                          <Text fontWeight="bold">
-                            {
-                              translation[userLanguage][
-                                "toast.title.chatDataCopied"
-                              ]
-                            }
-                          </Text>
-                          <Text>
-                            {
-                              translation[userLanguage][
-                                "toast.description.chatDataCopied"
-                              ]
-                            }
-                          </Text>
-                        </Box>
-                      ),
-                    });
-
-                    // Redirect after 1 second in the same tab for mobile compatibility
-                    setTimeout(() => {
-                      window.location.href = "https://chat.com";
-                    }, 1500);
-                  }}
-                /> */}
-
-                {/* <IconButton
-                  width="12px"
-                  height="18px"
-                  boxShadow="0px 0px 0.25px 0.5px #ececec"
-                  background="pink.100"
-                  opacity="0.75"
-                  color="pink.600"
-                  icon={<RiRobot2Fill padding="4px" fontSize="12px" />}
-                  mr={3}
-                  onClick={() => {
-                    const keysToCopy = JSON.stringify(step);
-
-                    // Clipboard writing
-                    if (navigator.clipboard && navigator.clipboard.writeText) {
-                      navigator.clipboard.writeText(
-                        `${translation[userLanguage]["chatcom.instructions.1"]} ${userLanguage === "en" ? "English" : "Spanish"} ${translation[userLanguage]["chatcom.instructions.2"]}` +
-                          keysToCopy
-                      );
-                    } else {
-                      // Fallback for unsupported browsers
-                      const textArea = document.createElement("textarea");
-                      textArea.value =
-                        `${translation[userLanguage]["chatcom.instructions.1"]} ${userLanguage === "en" ? "English" : "Spanish"} ${translation[userLanguage]["chatcom.instructions.2"]}` +
-                        keysToCopy;
-                      document.body.appendChild(textArea);
-                      textArea.select();
-                      document.execCommand("copy");
-                      document.body.removeChild(textArea);
-                    }
-
-                    // Show the toast
-                    // toast({
-                    //   title:
-                    //     translation[userLanguage]["toast.title.chatDataCopied"],
-                    //   description:
-                    //     translation[userLanguage][
-                    //       "toast.description.chatDataCopied"
-                    //     ],
-                    //   status: "info",
-                    //   duration: 1350,
-                    //   isClosable: true,
-                    //   position: "top",
-                    //   render: () => (
-                    //     <Box
-                    //       color="black"
-                    //       p={3}
-                    //       bg="#FEEBC8"
-                    //       borderRadius="md"
-                    //       boxShadow="lg"
-                    //     >
-                    //       <Text fontWeight="bold">
-                    //         {
-                    //           translation[userLanguage][
-                    //             "toast.title.chatDataCopied"
-                    //           ]
-                    //         }
-                    //       </Text>
-                    //       <Text>
-                    //         {
-                    //           translation[userLanguage][
-                    //             "toast.description.chatDataCopied"
-                    //           ]
-                    //         }
-                    //       </Text>
-                    //     </Box>
-                    //   ),
-                    // });
-
-                    // Show modal before redirecting
-                    handleExternalLinkClick();
-                  }}
-                /> */}
                 <IconButton
-                  width="12px"
-                  height="18px"
-                  boxShadow="0px 0px 0.5px 1px #ececec"
-                  background="pink.100"
+                  width="18px"
+                  height="24px"
+                  boxShadow="0px 0px 0.25px 0.5px lightgray"
+                  background="whiteAlpha.100"
                   opacity="0.75"
-                  color="pink.600"
+                  // color="pink.600"
                   icon={<RiRobot2Fill padding="4px" fontSize="12px" />}
                   mr={0}
                   onClick={() => {
@@ -2522,8 +2559,8 @@ const Step = ({
               <b>
                 {currentStep === 0 ? null : (
                   <IconButton
-                    width="12px"
-                    height="18px"
+                    width="18px"
+                    height="24px"
                     boxShadow="0px 0px 0.25px 0.5px #ececec"
                     background="pink.100"
                     opacity="0.75"
@@ -2962,9 +2999,10 @@ const Step = ({
               background="gray.100"
               maxWidth="600px"
               textAlign={"left"}
+              width="100%"
             >
               <Markdown
-                components={ChakraUIRenderer()}
+                components={ChakraUIRenderer(newTheme)}
                 children={suggestionMessage}
               />
             </Box>
@@ -2983,6 +3021,25 @@ const Step = ({
               currentStep={currentStep}
               isOpen={isLectureModalOpen}
               onClose={onLectureModalClose}
+            />
+          ) : null}
+
+          {isSocialFeedModalOpen ? (
+            <SocialFeedModal
+              userLanguage={userLanguage}
+              currentStep={currentStep}
+              isOpen={isSocialFeedModalOpen}
+              onClose={onSocialFeedModalClose}
+            />
+          ) : null}
+
+          {isKnowledgeLedgerOpen ? (
+            <KnowledgeLedgerModal
+              userLanguage={userLanguage}
+              isOpen={isKnowledgeLedgerOpen}
+              onClose={onKnowledgeLedgerClose}
+              steps={steps}
+              currentStep={currentStep}
             />
           ) : null}
 
@@ -3545,7 +3602,7 @@ const Home = ({
               width="95%"
               maxWidth="350px"
             >
-              <Text fontSize="x-small" fontWeight={"bolder"}>
+              <Text fontSize="sm" fontWeight={"bolder"}>
                 {translation[userLanguage]["createAccount.checkbox.disclaimer"]}
               </Text>
             </Checkbox>
@@ -3879,7 +3936,7 @@ function App({ isShutDown }) {
       )}
 
       <Routes>
-        <Route path="/experiment" element={<TestCoinbaseUI />} />
+        {/* <Route path="/experiment" element={<TestFeed />} /> */}
         <Route
           path="/"
           element={

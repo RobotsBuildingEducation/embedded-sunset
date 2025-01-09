@@ -11,16 +11,17 @@ export default defineConfig({
     react(),
     VitePWA({
       workbox: {
-        maximumFileSizeToCacheInBytes: 3000000, // Set to 4MB or any higher value
+        maximumFileSizeToCacheInBytes: 4000000, // Set to 4MB or any higher value
       },
       manifest: {
-        name: "Sunset",
-        short_name: "Sunset",
+        name: "Robots Building Education",
+        short_name: "Robots Building Education",
         start_url: "./",
         display: "standalone",
         theme_color: "#000000",
         background_color: "#ffffff",
-        description: "PWA install handler package for Sunset",
+        description:
+          "PWA install handler package for Robots Building Education",
         icons: [
           {
             src: "https://res.cloudinary.com/dtkeyccga/image/upload/v1728270558/zre4dehmebfdikzeasoh.png",

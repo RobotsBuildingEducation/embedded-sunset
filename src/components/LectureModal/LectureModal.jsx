@@ -38,31 +38,53 @@ import { PracticeModule } from "../PracticeModule/PracticeModule";
 import { CheckCircleIcon, TimeIcon } from "@chakra-ui/icons";
 
 const newTheme = {
-  h1: (props) => <Heading as="h4" size="md" {...props} />,
-  h2: (props) => <Heading as="h4" size="md" {...props} />,
-  h3: (props) => <Heading as="h4" size="md" {...props} />,
-  h4: (props) => <Heading as="h4" size="md" {...props} />,
-  h5: (props) => <Heading as="h4" size="md" {...props} />,
-  h6: (props) => <Heading as="h4" size="md" {...props} />,
+  h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  h4: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  h5: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  h6: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   code: ({ node, inline, className, children, ...props }) => {
-    return inline ? (
-      <Code fontSize="inherit" {...props}>
-        {children}
-      </Code>
-    ) : (
+    // Detect if it's a single word or short phrase
+    const content = Array.isArray(children)
+      ? children.join("")
+      : String(children);
+
+    // Check if the content is a single word
+    const isSingleWord = content.trim().split(/\s+/).length === 1;
+
+    // Inline code styling
+    if (isSingleWord) {
+      return (
+        <Code
+          p={1}
+          borderRadius={8}
+          display="inline" // Prevent block display
+          fontFamily={"Fira code, Fira Mono, monospace"}
+          fontSize="xs"
+          {...props}
+        >
+          {children}
+        </Code>
+      );
+    }
+
+    // Multi-line or multi-word code block styling
+    return (
       <Box
         as="pre"
-        overflowX="auto"
-        padding="2"
-        backgroundColor="gray.800"
-        borderRadius="md"
+        fontFamily={"Fira code, Fira Mono, monospace"}
+        fontSize="xs"
+        p={3}
+        borderRadius={8}
         {...props}
       >
         <Code
+          p={6}
           display="block"
-          whiteSpace="pre-wrap"
           wordBreak="break-word"
           fontSize="sm"
+          overflowX="scroll"
         >
           {children}
         </Code>
@@ -419,9 +441,9 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
   //   ]
   // );
 
-  useEffect(() => {
-    assignExistingBadgeToNpub(transcriptObject.name.replace(/ /g, "-"));
-  }, []);
+  // useEffect(() => {
+  //   assignExistingBadgeToNpub(transcriptObject.name.replace(/ /g, "-"));
+  // }, []);
   console.log("name", transcriptObject.name.replace(/ /g, "-"));
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="3xl" isCentered>
@@ -575,13 +597,6 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
                     currentTranscript={transcriptObject}
                     userLanguage={userLanguage}
                     onPracticeComplete={(moduleName) => {
-                      // toast({
-                      //   title: "Practice complete",
-                      //   status: "success",
-                      //   duration: 3000,
-                      //   isClosable: true,
-                      // });
-
                       handlePracticeComplete();
                     }}
                   />

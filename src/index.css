@@ -1,5 +1,5 @@
 html {
-  scrollbar-color: #f6ad54 #e0e0e0;
+  scrollbar-color: #ececec #e0e0e0;
   /* font-family: */
   /* system-ui, */
   /* "Noto Serif Japanese",
@@ -19,7 +19,7 @@ body {
   overflow: auto;
   overscroll-behavior: none;
   scrollbar-gutter: stable both-edges;
-  scrollbar-color: #f6ad54 #e0e0e0;
+  scrollbar-color: #ececec #e0e0e0;
 }
 p,
 button,

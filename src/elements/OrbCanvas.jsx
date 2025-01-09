@@ -1,7 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import StreamLoader from "./StreamLoader";
 
-export function OrbCanvas({ isAbsolute = true, instructions }) {
+export function OrbCanvas({
+  isAbsolute = true,
+  instructions,
+  hasStreamedText = true,
+}) {
   const canvasRef = useRef(null);
   const offscreenCanvas = useRef(null);
   const particles = useRef([]);
@@ -140,7 +144,11 @@ export function OrbCanvas({ isAbsolute = true, instructions }) {
   return (
     <>
       {isAbsolute ? (
-        <StreamLoader isAbsolute={isAbsolute} instructions={instructions} />
+        <StreamLoader
+          isAbsolute={isAbsolute}
+          instructions={instructions}
+          hasStreamedText={hasStreamedText}
+        />
       ) : null}
 
       <canvas
@@ -154,7 +162,11 @@ export function OrbCanvas({ isAbsolute = true, instructions }) {
         }}
       ></canvas>
       {!isAbsolute ? (
-        <StreamLoader isAbsolute={isAbsolute} instructions={instructions} />
+        <StreamLoader
+          isAbsolute={isAbsolute}
+          instructions={instructions}
+          hasStreamedText={hasStreamedText}
+        />
       ) : null}
     </>
   );

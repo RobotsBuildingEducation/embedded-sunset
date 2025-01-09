@@ -22,7 +22,11 @@ const transformBinarySet = (binarySet) => {
   return transformed;
 };
 
-export const StreamLoader = ({ isAbsolute, instructions }) => {
+export const StreamLoader = ({
+  isAbsolute,
+  instructions,
+  hasStreamedText = true,
+}) => {
   const [displayedText, setDisplayedText] = useState(""); // Holds the streamed out JSON structure and binary sets
   const [thinkingValue, setThinkingValue] = useState([]); // Holds the array of binary sets as the value of "thinking"
   const [isJsonStructureDisplayed, setIsJsonStructureDisplayed] =
@@ -35,40 +39,42 @@ export const StreamLoader = ({ isAbsolute, instructions }) => {
     let intervalId;
     let jsonIndex = 0; // Index to track the current position in the JSON structure
 
-    // Function to stream the JSON structure one character at a time
-    const streamJsonStructure = () => {
-      if (jsonIndex < completeJsonStructure.length - 1) {
-        setDisplayedText((prev) => prev + completeJsonStructure[jsonIndex]);
-        jsonIndex++;
-      } else {
-        // Once the entire JSON structure is displayed, start streaming binary sets
-        clearInterval(intervalId);
-        setIsJsonStructureDisplayed(true);
-        startBinaryStreaming();
-      }
-    };
+    if (hasStreamedText) {
+      // Function to stream the JSON structure one character at a time
+      const streamJsonStructure = () => {
+        if (jsonIndex < completeJsonStructure.length - 1) {
+          setDisplayedText((prev) => prev + completeJsonStructure[jsonIndex]);
+          jsonIndex++;
+        } else {
+          // Once the entire JSON structure is displayed, start streaming binary sets
+          clearInterval(intervalId);
+          setIsJsonStructureDisplayed(true);
+          startBinaryStreaming();
+        }
+      };
 
-    // Function to start streaming binary sets and transforming them after JSON structure is displayed
-    const startBinaryStreaming = () => {
-      intervalId = setInterval(() => {
-        setThinkingValue((prevSets) => {
-          // Generate a new random binary set and add it to the value of "thinking"
-          const newBinarySet = generateRandomBinarySet(8); // Each binary set is 8 characters long
-          const transformedSets = prevSets.map(transformBinarySet); // Transform existing sets
-          const updatedSets = [...transformedSets, newBinarySet]; // Add the new binary set
+      // Function to start streaming binary sets and transforming them after JSON structure is displayed
+      const startBinaryStreaming = () => {
+        intervalId = setInterval(() => {
+          setThinkingValue((prevSets) => {
+            // Generate a new random binary set and add it to the value of "thinking"
+            const newBinarySet = generateRandomBinarySet(8); // Each binary set is 8 characters long
+            const transformedSets = prevSets.map(transformBinarySet); // Transform existing sets
+            const updatedSets = [...transformedSets, newBinarySet]; // Add the new binary set
 
-          // Update the displayed text with the new value for "thinking"
-          const updatedJson = `{"${translation[localStorage.getItem("userLanguage")]["thinking"]}": "${updatedSets.join(" ")}"}`;
-          setDisplayedText(updatedJson);
-          return updatedSets;
-        });
-      }, 120); // Update the "thinking" value every second
-    };
+            // Update the displayed text with the new value for "thinking"
+            const updatedJson = `{"${translation[localStorage.getItem("userLanguage")]["thinking"]}": "${updatedSets.join(" ")}"}`;
+            setDisplayedText(updatedJson);
+            return updatedSets;
+          });
+        }, 120); // Update the "thinking" value every second
+      };
 
-    // Start streaming the JSON structure first
-    intervalId = setInterval(streamJsonStructure, 25); // Stream one character every 100ms
+      // Start streaming the JSON structure first
+      intervalId = setInterval(streamJsonStructure, 25); // Stream one character every 100ms
 
-    return () => clearInterval(intervalId); // Cleanup interval on component unmount
+      return () => clearInterval(intervalId); // Cleanup interval on component unmount
+    }
   }, []);
 
   return (
@@ -84,7 +90,7 @@ export const StreamLoader = ({ isAbsolute, instructions }) => {
         maxWidth="600px"
         fontFamily="monospace"
         width="100%"
-        position={isAbsolute ? "absolute" : ""}
+        // position={isAbsolute ? "absolute" : ""}
       >
         {/* Display the single JSON object with the "thinking" key */}
         <Text

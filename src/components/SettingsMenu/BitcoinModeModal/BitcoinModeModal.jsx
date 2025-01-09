@@ -214,12 +214,45 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
                 {translation[userLanguage]["select.recipient"]}
               </option>
               <option value="npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt">
-                sheilfer@primal.net
+                robotsbuildingeducation.com
+              </option>
+              <option value="npub166md04uzz4ksy4zv2c8maz4lprrezmtfkwq6yfevtqel3tchkthsemwtwm">
+                ladderly.io
+              </option>
+              <option value="npub1ae02dvwewx8w0z2sftpcg2ta4xyu6hc00mxuq03x2aclta6et76q90esq2">
+                girlsoncampus.org
               </option>
               <option value="more-schools" disabled>
                 {translation[userLanguage]["disabled.select.soon"]}
               </option>
             </Select>
+
+            <Link
+              target="_blank"
+              href={
+                selectedIdentity ===
+                "npub1ae02dvwewx8w0z2sftpcg2ta4xyu6hc00mxuq03x2aclta6et76q90esq2"
+                  ? "https://www.girlsoncampus.org/"
+                  : selectedIdentity ===
+                      "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt"
+                    ? "https://robotsbuildingeducation.com"
+                    : selectedIdentity ===
+                        "npub166md04uzz4ksy4zv2c8maz4lprrezmtfkwq6yfevtqel3tchkthsemwtwm"
+                      ? "https://ladderly.io"
+                      : null
+              }
+            >
+              {selectedIdentity ===
+              "npub1ae02dvwewx8w0z2sftpcg2ta4xyu6hc00mxuq03x2aclta6et76q90esq2"
+                ? "https://girlsoncampus.org"
+                : selectedIdentity ===
+                    "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt"
+                  ? "https://robotsbuildingeducation.com"
+                  : selectedIdentity ===
+                      "npub166md04uzz4ksy4zv2c8maz4lprrezmtfkwq6yfevtqel3tchkthsemwtwm"
+                    ? "https://ladderly.io"
+                    : null}
+            </Link>
             <Button
               onClick={createNewWallet}
               isLoading={initializingWallet}

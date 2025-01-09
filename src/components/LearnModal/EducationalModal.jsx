@@ -17,6 +17,10 @@ import {
   extendTheme,
   useStyleConfig,
   useToast,
+  Code,
+  Heading,
+  UnorderedList,
+  ListItem,
 } from "@chakra-ui/react";
 import { BigSunset, SunsetCanvas } from "../../elements/SunsetCanvas";
 import Editor from "react-simple-code-editor";
@@ -29,6 +33,66 @@ import RandomCharacter from "../../elements/RandomCharacter";
 import { CopyButtonIcon } from "../../elements/CopyButtonIcon";
 import { animateBorderLoading } from "../../utility/animations";
 import { OrbCanvas } from "../../elements/OrbCanvas";
+import Markdown from "react-markdown";
+import ChakraUIRenderer from "chakra-ui-markdown-renderer";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+
+const newTheme = {
+  p: (props) => <Text size="sm" color="white" {...props} />,
+  h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  h4: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  h5: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  h6: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  code: ({ node, inline, className, children, ...props }) => {
+    // Detect if it's a single word or short phrase
+    const content = Array.isArray(children)
+      ? children.join("")
+      : String(children);
+
+    // Check if the content is a single word
+    const isSingleWord = content.trim().split(/\s+/).length === 1;
+
+    // Inline code styling
+    if (isSingleWord) {
+      return (
+        <Code
+          p={1}
+          borderRadius={8}
+          display="inline" // Prevent block display
+          fontFamily={"Fira code, Fira Mono, monospace"}
+          fontSize="xs"
+          {...props}
+        >
+          {children}
+        </Code>
+      );
+    }
+
+    // Multi-line or multi-word code block styling
+    return (
+      <Box
+        as="pre"
+        fontFamily={"Fira code, Fira Mono, monospace"}
+        fontSize="xs"
+        p={3}
+        borderRadius={8}
+        {...props}
+      >
+        <Code
+          p={6}
+          display="block"
+          wordBreak="break-word"
+          fontSize="sm"
+          overflowX="scroll"
+        >
+          {children}
+        </Code>
+      </Box>
+    );
+  },
+};
 
 const EducationalModal = ({
   isOpen,
@@ -129,7 +193,7 @@ const EducationalModal = ({
       <ModalOverlay />
       {/* Add OrbCanvas as a background */}
 
-      {educationalMessages.length > 0 && !educationalContent.length > 0 ? (
+      {educationalMessages.length > -1 && !educationalContent.length > 0 ? (
         // <ModalOverlay>
         //   <OrbCanvas
         //     instructions={
@@ -158,7 +222,7 @@ const EducationalModal = ({
             <ModalCloseButton color="white" size="lg" />
             <HStack>
               <div style={{ width: "fit-content" }}>
-                {educationalMessages.length > 0 &&
+                {educationalMessages.length > -1 &&
                 !educationalContent.length > 0 ? (
                   <BigSunset />
                 ) : (
@@ -173,9 +237,9 @@ const EducationalModal = ({
           </ModalHeader>
 
           <ModalBody p={2} style={{ width: "100%" }}>
-            {educationalMessages.length === 0 && <Spinner size="xl" />}
+            {/* {educationalMessages.length === 0 && <Spinner size="xl" />} */}
 
-            {educationalMessages.length > 0 &&
+            {educationalMessages.length > -1 &&
             !educationalContent.length > 0 ? (
               <div
                 style={{
@@ -184,19 +248,24 @@ const EducationalModal = ({
                   width: "100%",
                 }}
               >
-                {educationalMessages[educationalMessages.length - 1]?.content
-                  .length < 1 ? (
-                  <OrbCanvas
-                    instructions={
-                      <b>
-                        {" "}
-                        {translation[userLanguage]["modal.learn.instructions"]}
-                      </b>
-                    }
-                  />
-                ) : (
-                  educationalMessages[educationalMessages.length - 1]?.content
-                )}{" "}
+                {/* {educationalMessages[educationalMessages.length - 1]?.content
+                  .length < 1 ? ( */}
+                <OrbCanvas
+                  hasStreamedText={false}
+                  instructions={
+                    <b>
+                      {" "}
+                      {translation[userLanguage]["modal.learn.instructions"]}
+                      <br />
+                      <br />
+                      {
+                        educationalMessages[educationalMessages.length - 1]
+                          ?.content
+                      }
+                    </b>
+                  }
+                />
+                {/* // ) : ( // )}  */}
                 <Box ref={bottomRef}></Box>
               </div>
             ) : null}
@@ -277,9 +346,11 @@ const EducationalModal = ({
                   Explanation:
                 </Text> */}
                     <br />
-                    <Text style={{ color: "white" }} fontSize="sm">
-                      {content.explanation}
-                    </Text>
+
+                    <Markdown
+                      theme={ChakraUIRenderer(newTheme)}
+                      children={content.explanation}
+                    />
                   </Box>
                 ))}
             </VStack>
@@ -297,7 +368,7 @@ const EducationalModal = ({
         </ModalContent>
       ) : (
         <ModalContent
-          style={{ backgroundColor: "#FFA500" }}
+          style={{ backgroundColor: "#F8F5F0" }}
           // color="white"
           borderRadius="lg"
           boxShadow="2xl"
@@ -312,8 +383,13 @@ const EducationalModal = ({
             fontWeight="bold"
             marginTop={0}
             paddingTop={0}
+            pb={0}
+
+            // height="100%"
           >
-            <HStack>
+            <ModalCloseButton size="lg" />
+
+            <HStack mb={0}>
               <div style={{ width: "fit-content" }}>
                 {educationalMessages.length > 0 &&
                 !educationalContent.length > 0 ? (
@@ -323,16 +399,14 @@ const EducationalModal = ({
                 )}
               </div>
               &nbsp;
-              <div style={{ color: "white" }}>
-                {translation[userLanguage]["modal.learn.title"]}
-              </div>
+              <div>{translation[userLanguage]["modal.learn.title"]}</div>
             </HStack>
           </ModalHeader>
 
           <ModalBody p={2} style={{ width: "100%" }}>
-            {educationalMessages.length === 0 && <Spinner size="xl" />}
+            {/* {educationalMessages.length === 0 && <Spinner size="xl" />} */}
 
-            {educationalMessages.length > 0 &&
+            {educationalMessages.length > -1 &&
             !educationalContent.length > 0 ? (
               <div
                 style={{
@@ -368,41 +442,59 @@ const EducationalModal = ({
                 <Box ref={bottomRef}></Box>
               </div>
             ) : null}
-            <VStack spacing={6} alignItems="flex-start">
+            <VStack spacing={6} alignItems="flex-start" maxWidth="600px">
               {educationalContent.length > 0 &&
                 educationalContent.map((content, index) => (
                   <Box
                     fontFamily={"Avenir"}
                     key={index}
                     p={4}
-                    bg="#170029"
+                    // bg="#170029"
                     borderRadius="md"
                     borderWidth={1}
                     borderColor="rgba(255, 255, 255, 0.2)"
                     width="100%"
-                    boxShadow="md"
+                    // boxShadow="md"
+                    // boxShadow="0px 0.5px 0.5px 1px black"
                   >
                     {/* <Text fontSize="xl" fontWeight="bold">
                     Code Example:
                   </Text> */}
-                    <div
-                      style={{
-                        //   color: "#696969",
-                        backgroundColor: "#faf3e0",
-                        // width: "100%",
-                        padding: 20,
-                        // wordBreak: "break-word",
-                        display: "flex",
-                        flexDirection: "column",
-                        borderRadius: 30,
-                        boxShadow: "4px 4px 5px 0px rgba(0,0,0,0.75)",
-                        zoom: "0.8",
-                      }}
-                    >
-                      <pre
-                      // style={{ whiteSpace: "pre-wrap" }}
+                    {content.code ? (
+                      <div
+                        style={{
+                          //   color: "#696969",
+                          backgroundColor: "#faf3e0",
+                          // width: "100%",
+                          padding: 20,
+                          // wordBreak: "break-word",
+                          display: "flex",
+                          flexDirection: "column",
+                          borderRadius: 30,
+                          boxShadow: "0px 0.5px 0.5px 1px rgba(0,0,0,0.75)",
+                          zoom: "0.8",
+                          // border: "5px solid green",
+
+                          width: "100%",
+                          overflowX: "auto",
+                        }}
                       >
-                        <Editor
+                        {/* <div
+                          style={{
+                            overflowX: "auto", // Enable horizontal scrolling
+                            border: "1px solid pink",
+                          }}
+                        > */}
+                        {/* <pre
+                            style={{
+                              // whiteSpace: "pre", // Prevents breaking lines
+                              margin: 0,
+
+                              border: "1px solid red",
+                            }}
+                            // style={{ whiteSpace: "pre-wrap" }}
+                          > */}
+                        {/* <Editor
                           value={content.code}
                           highlight={(input) => highlight(input, languages.js)}
                           padding={10}
@@ -410,44 +502,60 @@ const EducationalModal = ({
                             fontFamily: '"Fira code", "Fira Mono", monospace',
                             fontSize: 14,
                             borderRadius: "8px",
+                            border: "1px solid orange",
+                            // overflow: "scroll",
+                            display: "block",
+                            whiteSpace: "pre", // Override pre-wrap for strict formatting
+                            wordBreak: "keep-all", // Avoid breaking words
+                            overflowWrap: "normal", // Prevent word wrapping
+                            position: "relative",
                           }}
                           disabled
-                        />
-                      </pre>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "flex-end",
-                        }}
-                      >
-                        <Button
+                        /> */}
+                        <Markdown
+                          theme={ChakraUIRenderer(newTheme)}
+                          children={`\`\`\`${content.code}`}
+                          // inline={false}
+                        ></Markdown>
+                        {/* </pre> */}
+                        {/* </div> */}
+                        <div
                           style={{
                             display: "flex",
-                            border: borderState,
+                            justifyContent: "flex-end",
                           }}
-                          tabIndex={0}
-                          onClick={() => handleCopyKeys(content.code)}
-                          width={24}
                         >
-                          <div style={{ width: "min-content" }}>
-                            <CopyButtonIcon color="black" />
-                          </div>
-                          &nbsp;
-                          {/* <div> */}
-                          {/* <b>{translation[userLanguage]["yourID"]}</b> */}
-                          {/* {localStorage?.getItem("local_npub")?.substr(0, 16) ||
+                          <Button
+                            style={{
+                              display: "flex",
+                              border: borderState,
+                            }}
+                            tabIndex={0}
+                            onClick={() => handleCopyKeys(content.code)}
+                            width={24}
+                          >
+                            <div style={{ width: "min-content" }}>
+                              <CopyButtonIcon color="black" />
+                            </div>
+                            &nbsp;
+                            {/* <div> */}
+                            {/* <b>{translation[userLanguage]["yourID"]}</b> */}
+                            {/* {localStorage?.getItem("local_npub")?.substr(0, 16) ||
                           ""} */}
-                          {/* </div> */}
-                        </Button>
+                            {/* </div> */}
+                          </Button>
+                        </div>
                       </div>
-                    </div>
+                    ) : null}
                     {/* <Text fontSize="xl" fontWeight="bold" mt={3}>
                     Explanation:
                   </Text> */}
                     <br />
-                    <Text style={{ color: "white" }} fontSize="sm">
-                      {content.explanation}
-                    </Text>
+
+                    <Markdown
+                      theme={ChakraUIRenderer(newTheme)}
+                      children={content.explanation}
+                    />
                   </Box>
                 ))}
             </VStack>
@@ -456,7 +564,7 @@ const EducationalModal = ({
             <Button
               onMouseDown={onClose}
               variant="solid"
-              size="lg"
+              size="sm"
               boxShadow={"0px 0.5px 0.5px 1px black"}
             >
               {translation[userLanguage]["button.close"]}

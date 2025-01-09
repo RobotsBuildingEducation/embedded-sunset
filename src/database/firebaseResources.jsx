@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
+import { getVertexAI, getGenerativeModel } from "@firebase/vertexai";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -23,8 +24,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
-const database = getFirestore(app);
-const analytics = getAnalytics(app);
 
 if (window.location.hostname === "localhost") {
   self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
@@ -34,5 +33,17 @@ export const appCheck = initializeAppCheck(app, {
   provider: new ReCaptchaV3Provider("6LdzBVwqAAAAABT9kfIUQjeLb0nWjqZ3WzbhZIjh"),
   isTokenAutoRefreshEnabled: true,
 });
+const database = getFirestore(app);
+const analytics = getAnalytics(app);
+const vertexAI = getVertexAI(app);
+const model = getGenerativeModel(vertexAI, {
+  // model: "gemini-1.5-flash",
+  model: "gemini-2.0-flash-exp",
+});
 
-export { database, analytics };
+const simplemodel = getGenerativeModel(vertexAI, {
+  // model: "gemini-1.5-flash",
+  model: "gemini-2.0-flash-exp",
+});
+
+export { database, analytics, model, simplemodel };

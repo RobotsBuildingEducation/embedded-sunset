@@ -1,4 +1,3 @@
-import { Tag } from "@chakra-ui/react";
 import { DataTags } from "../elements/DataTag";
 
 export let translation = {
@@ -362,123 +361,124 @@ Backend software engineering often appears mysterious and complex, but this less
 **Note**: This lesson demystifies backend software engineering by drawing parallels with real-world systems and highlighting the importance of operating systems, command lines, databases, and user creation in building complex applications.
 
     `,
-    "video.summary.5": `In this lesson, we're going step-by-step to piece together everything we've learned so that we can build an application by connecting systems together, culminating in having real users. Tools like Google, YouTube, ChatGPT, and Stack Overflow will be your best friends here if you come across something you want to learn more about.
+    "video.summary.5": `
+In this lesson, we're going step-by-step to piece together everything we've learned so that we can build an application by connecting systems together, culminating in having real users. Tools like Google, YouTube, ChatGPT, and Stack Overflow will be your best friends here if you come across something you want to learn more about.
+    
+## Setting Up The Backend
 
-    ## Setting Up The Backend
-    
-    1. **Install Necessary Tools**:
-       - Download and install **VSCode** (code editor).
-       - Download and install **Node.js** (allows you to build JavaScript apps).
-    
-    2. **Install npm**:
-       - Open your command line terminal.
-       - Install npm (Node Package Manager) to use packages shared by other developers.
-       - *Note*: Use \`sudo\` cautiously on Unix systems; on Windows, adjust permissions if you encounter errors.
-    
-    3. **Create a Project Folder**:
-       - Create a folder named after your project (e.g., *The Digital Border*).
-    
-    4. **Initialize the Project**:
-       - Open VSCode and open your project folder.
-       - Open the integrated terminal in VSCode.
-       - Run \`npm create vite@latest\` to start a React project with Vite.
-       - Follow the prompts to configure the project (choose React and JavaScript).
-       - The configuration might look like this:
-         - Framework: React
-         - Variant: JavaScript
-    
-    5. **Install Dependencies**:
-       - Run \`npm install\` to install project dependencies listed in \`package.json\`.
-    
-    6. **Run the Application**:
-       - Build the app with \`npm run build\`.
-       - Start the development server with \`npm run dev\`.
-    
-    7. **Set Up Firebase (Backend Services)**:
-       - Install Firebase CLI: \`npm install -g firebase-tools\`.
-       - Log in to Firebase: \`firebase login\` (authenticate via Google account).
-       - Go to [Firebase Console](https://console.firebase.google.com) and create a new project.
-       - Activate **Authentication**, **Firestore**, and **Hosting** services.
-    
-    8. **Initialize Firebase in Your Project**:
-       - Run \`firebase init\` and select options to configure Firestore and Hosting.
-       - Choose your existing project when prompted.
-       - Accept defaults for creating rules and indexes files.
-       - Configuration steps:
-         - Activate Firestore and Hosting.
-         - Select "Use an existing project" and choose your project.
-         - Allow Firebase to create rules and indexes files.
-    
-    9. **Deploy the App**:
-       - Build your app again with \`npm run build\`.
-       - Deploy to Firebase Hosting with \`firebase deploy\`.
-       - Access your app via the provided Firebase Hosting URL.
-    
-    ## Creating Users
-    
-    1. **Install Firebase and React Firebase UI**:
-       - Run \`npm install --save firebase react-firebaseui --legacy-peer-deps\`.
-    
-    2. **Enable Authentication in Firebase**:
-       - In the Firebase Console, go to **Authentication** > **Sign-in method**.
-       - Enable **Google** sign-in.
-    
-    3. **Obtain Firebase Configuration**:
-       - Go to your project settings in Firebase Console.
-       - Select the web app icon to register your app.
-       - Retrieve your app's configuration keys.
-    
-    4. **Set Up Firebase in Your Code**:
-       - Create a folder \`database\` inside \`src\` and add \`firebaseResources.js\`.
-       - Initialize Firebase with your configuration keys in this file.
-    
-    5. **Implement Authentication UI**:
-       - In \`App.jsx\`, import the sign-in button component from \`react-firebaseui\`.
-       - Render the sign-in button in your app.
-    
-    6. **Manage User State**:
-       - Import necessary Firebase authentication functions.
-       - Define state to track the user's authentication status.
-       - Use the \`useEffect\` hook to handle authentication state changes.
-       - Create a header component to display user information based on authentication state.
-    
-    7. **Update and Deploy**:
-       - Insert the header component into your app's render method.
-       - Build your app with \`npm run build\`.
-       - Deploy the updated app with \`firebase deploy\`.
-    
-    ## Summary
-    
-    - **Set Up Application**: Used the command line to set up a React application with Firebase.
-    - **Configured Code**: Connected frontend and backend using identities and keys.
-    - **Created Users**: Implemented authentication to create user accounts.
-    - **Designed User Experiences**: Built UI components to enhance user interaction.
-    - **Frontend vs. Backend**:
-      - *Frontend*: Manages user experiences, visual elements, and events.
-      - *Backend*: Designs pipelines to communicate and move data across networks.
-    
-    ## Working with Other Engineers: GitHub
-    
-    - **GitHub**: A platform to collaborate with other engineers, similar to Google Drive but optimized for code with version control.
-    - **Key Concepts**:
-      1. **Cloning**: Copying code from GitHub to your computer.
-      2. **Adding**: Preparing your code's changes to be shipped to GitHub.
-      3. **Commit**: Adding a label, identity, and description to your container of changes.
-      4. **Pushing**: Deploying or sending your code changes to your GitHub repository.
-      5. **Pulling**: Bringing in any updates from other people to the code.
-      6. **Branches**: Copies of the codebase within the repository itself.
-      7. **Forks**: Copies of the codebase within your profile.
-      8. **Pull Requests**: Comparing changes between branches/forks and merging them.
-      9. **Merging**: Updating code once and for all; completes a lifecycle of updates.
-    
-    - **Challenge**: Learn GitHub workflows independently to simulate real-world engineering tasks and enhance your problem-solving skills.
-    
-    ## Conclusion
-    
-    - **Mindset**: Engage your imagination and embrace challenges to build your confidence.
-    - **Support**: Private tutoring is available if you need assistance with the material or next steps.
-    - **Continuous Learning**: Expect these lessons to upgrade over time.
-    - **Gratitude**: Thank you for supporting Robots Building Education. Looking forward to creating more awesome stuff for you!`,
+1. **Install Necessary Tools**:
+    - Download and install **VSCode** (code editor).
+    - Download and install **Node.js** (allows you to build JavaScript apps).
+
+2. **Install npm**:
+    - Open your command line terminal.
+    - Install npm (Node Package Manager) to use packages shared by other developers.
+    - *Note*: Use \`sudo\` cautiously on Unix systems; on Windows, adjust permissions if you encounter errors.
+
+3. **Create a Project Folder**:
+    - Create a folder named after your project (e.g., *The Digital Border*).
+
+4. **Initialize the Project**:
+    - Open VSCode and open your project folder.
+    - Open the integrated terminal in VSCode.
+    - Run \`npm create vite@latest\` to start a React project with Vite.
+    - Follow the prompts to configure the project (choose React and JavaScript).
+    - The configuration might look like this:
+      - Framework: React
+      - Variant: JavaScript
+
+5. **Install Dependencies**:
+    - Run \`npm install\` to install project dependencies listed in \`package.json\`
+
+6. **Run the Application**:
+    - Build the app with \`npm run build\`
+    - Start the development server with \`npm run dev\`
+
+7. **Set Up Firebase (Backend Services)**:
+    - Install Firebase CLI: \`npm install -g firebase-tools\`
+    - Log in to Firebase: \`firebase login\` (authenticate via Google account).
+    - Go to [Firebase Console](https://console.firebase.google.com) and create a new project.
+    - Activate **Authentication**, **Firestore**, and **Hosting** services.
+
+8. **Initialize Firebase in Your Project**:
+    - Run \`firebase init\` and select options to configure Firestore and Hosting.
+    - Choose your existing project when prompted.
+    - Accept defaults for creating rules and indexes files.
+    - Configuration steps:
+      - Activate Firestore and Hosting.
+      - Select "Use an existing project" and choose your project.
+      - Allow Firebase to create rules and indexes files.
+
+9. **Deploy the App**:
+    - Build your app again with \`npm run build\`
+    - Deploy to Firebase Hosting with \`firebase deploy\`
+    - Access your app via the provided Firebase Hosting URL.
+
+## Creating Users
+
+1. **Install Firebase and React Firebase UI**:
+    - Run \`npm install --save firebase react-firebaseui --legacy-peer-deps\`
+
+2. **Enable Authentication in Firebase**:
+    - In the Firebase Console, go to **Authentication** > **Sign-in method**.
+    - Enable **Google** sign-in.
+
+3. **Obtain Firebase Configuration**:
+    - Go to your project settings in Firebase Console.
+    - Select the web app icon to register your app.
+    - Retrieve your app's configuration keys.
+
+4. **Set Up Firebase in Your Code**:
+    - Create a folder \`database\` inside \`src\` and add \`firebaseResources.js\`
+    - Initialize Firebase with your configuration keys in this file.
+
+5. **Implement Authentication UI**:
+    - In \`App.jsx\`, import the sign-in button component from \`react-firebaseui\`
+    - Render the sign-in button in your app.
+
+6. **Manage User State**:
+    - Import necessary Firebase authentication functions.
+    - Define state to track the user's authentication status.
+    - Use the \`useEffect\` hook to handle authentication state changes.
+    - Create a header component to display user information based on authentication state.
+
+7. **Update and Deploy**:
+    - Insert the header component into your app's render method.
+    - Build your app with \`npm run build\`
+    - Deploy the updated app with \`firebase deploy\`
+
+## Summary
+
+- **Set Up Application**: Used the command line to set up a React application with Firebase.
+- **Configured Code**: Connected frontend and backend using identities and keys.
+- **Created Users**: Implemented authentication to create user accounts.
+- **Designed User Experiences**: Built UI components to enhance user interaction.
+- **Frontend vs. Backend**:
+  - *Frontend*: Manages user experiences, visual elements, and events.
+  - *Backend*: Designs pipelines to communicate and move data across networks.
+
+## Working with Other Engineers: GitHub
+
+- **GitHub**: A platform to collaborate with other engineers, similar to Google Drive but optimized for code with version control.
+- **Key Concepts**:
+  1. **Cloning**: Copying code from GitHub to your computer.
+  2. **Adding**: Preparing your code's changes to be shipped to GitHub.
+  3. **Commit**: Adding a label, identity, and description to your container of changes.
+  4. **Pushing**: Deploying or sending your code changes to your GitHub repository.
+  5. **Pulling**: Bringing in any updates from other people to the code.
+  6. **Branches**: Copies of the codebase within the repository itself.
+  7. **Forks**: Copies of the codebase within your profile.
+  8. **Pull Requests**: Comparing changes between branches/forks and merging them.
+  9. **Merging**: Updating code once and for all; completes a lifecycle of updates.
+
+- **Challenge**: Learn GitHub workflows independently to simulate real-world engineering tasks and enhance your problem-solving skills.
+
+## Conclusion
+
+- **Mindset**: Engage your imagination and embrace challenges to build your confidence.
+- **Support**: Private tutoring is available if you need assistance with the material or next steps.
+- **Continuous Learning**: Expect these lessons to upgrade over time.
+- **Gratitude**: Thank you for supporting Robots Building Education. Looking forward to creating more awesome stuff for you!`,
     "video.summary.6": `
 Data Structures and Algorithms is a subject that often intimidates students due to its complexity and its use in challenging interviews. While it is indeed challenging and requires practice, with proper guidance, the concepts can become more approachable.
 
@@ -489,6 +489,7 @@ Data Structures and Algorithms is a subject that often intimidates students due 
 - Example:
   \`\`\`javascript
   let musician = new Musician("Drake");
+  
   let top_song = musician.getTopSong();
   \`\`\`
 - Tokens in the code include keywords (let, new), identifiers (musician, top_song, Musician), operators (=), and literals ("Drake").
@@ -589,7 +590,9 @@ class LinkedList {
 }
 
 let company = new LinkedList(meta);
-console.log(company.getLastItem()); // Outputs the last item in the list
+
+// Outputs the last item in the list
+console.log(company.getLastItem()); 
 \`\`\`
 
 - **Reversing a Linked List**:
@@ -660,7 +663,7 @@ reverse(head) {
     "landing.welcome": "Sunset",
     "landing.introduction": (
       <div>
-        It's time to overcome the challenge.
+        Create scholarships with learning.
         <br />
         Use intelligent assistance to work through 100+ coding questions.
       </div>
@@ -681,26 +684,26 @@ reverse(head) {
     "createAccount.isCreatingProfilePicture": "Creating profile picture...3/4",
     "createAccount.isCreatingIntroPost":
       "Creating community #introductions post... 3/3",
-    "nostrContent.answeredQuestion.1": "I just completed question",
+    "nostrContent.answeredQuestion.1": "Completed question",
     "nostrContent.answeredQuestion.2": "with a grade of",
     "nostrContent.answeredQuestion.3": "on",
     "nostrContent.onboardedProfileAbout":
       "A student onboarded with Robots Building Education",
     "nostrContent.introductionPost":
-      "gm nostr! I'm here from Tiktok by creating an account through https://embedded-sunset.app so I can learn how to code with AI. Looking forward to meeting folks in the cypherpunk community! #introductions #LearnWithNostr",
+      "gm nostr! I'm here from Tiktok by creating an account through https://robotsbuildingeducation.com so I can learn how to code with AI. Looking forward to meeting folks in the cypherpunk community! #LearnWithNostr",
 
     "createAccount.successMessage": "That's it!",
     "createAccount.awareness":
-      "Your account now works on a number of decentralized apps. Use your key to sign into apps in the ",
+      "Your account now works on a number of decentralized apps. Your account works exactly like mailbox. Use your secret key to sign into apps in the ",
     "createAccount.roxLink": "decentralized app store",
     or: "or",
     "createAccount.primalLink": "with Primal, the social wallet",
-    "button.copyKey": "Copy Key",
+    "button.copyKey": "Copy Secret Key",
     "createAccount.checkbox.disclaimer":
-      "I understand that my key allows me to sign into different apps that may contain important and private data like Bitcoin. I have safely stored my keys.",
+      "I understand that my key allows me to sign into different apps that may contain important and private data like Bitcoin. I have safely saved my keys somewhere else.",
     "createAccount.button.launchApp": "Launch App",
     "signIn.instructions": "Enter your nostr secret key",
-    "signIn.input.placeholder": "Enter your secret key",
+    "signIn.input.placeholder": "Enter your secret key (nsec...)",
     "button.dismiss": "Dimiss",
     "app.progress": "progress",
     "app.streak": "streak",
@@ -737,9 +740,9 @@ reverse(head) {
     "modal.selfPace.mode.casual": "casual",
     "modal.selfPace.mode.grind": "grind",
     "modal.selfPace.mode.motivated": "motivated",
-    "modal.adaptiveLearning.title": "Adaptive Learning",
-    "modal.adaptiveLearning.recommendButton": "Recommend what to study next",
-    "modal.adaptiveLearning.stepsTaken": "Steps taken",
+    "modal.adaptiveLearning.title": "Build your app",
+    "modal.adaptiveLearning.recommendButton": "Build your app",
+    "modal.adaptiveLearning.stepsTaken": "Your Progress",
     //create wallet
     "modal.bitcoinMode.title": "Bitcoin Wallet",
     "modal.bitcoinMode.instructions.createWallet.1":
@@ -938,7 +941,7 @@ reverse(head) {
     "about.title.adaptiveLearning": "Adaptive Learning",
     "about.title.bitcoinWallet": (
       <div>
-        <DataTags isNew />
+        {/* <Datatags isNew /> */}
         Bitcoin Wallet
       </div>
     ),
@@ -955,9 +958,25 @@ reverse(head) {
     "about.title.ofi": "Old-fashioned Intelligence",
 
     "about.title.smartCards": <div>Smart Cards</div>,
+    "about.title.socialProgress": <div>Social Progress</div>,
+    "about.feature.socialProgress": (
+      <div>
+        {/* <DataTags isNew /> */}
+        See the progress of other folks learning using our decentralized
+        technology!
+      </div>
+    ),
+    "about.title.buildYourApp": <div>Build Your App</div>,
+    "about.feature.buildYourApp": (
+      <div>
+        {/* <DataTags isNew /> */}A feature that lets you materialize your
+        learning by creating an app or an idea as you progress.
+      </div>
+    ),
+
     "about.feature.decentralizedIdentity": (
       <div>
-        <DataTags isRox isProgramAI />
+        {/* <Datatags isRox isProgramAI /> */}
         Robots Building Education leverages decentralized identities to allow
         for cross-platform accounts and data ownership. This allows us to
         integrate our apps directly inside of social media. All we need is a
@@ -968,7 +987,7 @@ reverse(head) {
     "about.title.decentralizedTranscripts": "Cross-platform Transcripts",
     "about.feature.smartCards": (
       <div>
-        <DataTags isProgramAI />
+        {/* <DataTags isProgramAI /> */}
         Smart card is an intelligent flashcard feature that creates new practice
         questions based on your progress. You can keep practicing problems at
         the same difficulty and knowledge level before continuing to the next
@@ -985,34 +1004,34 @@ reverse(head) {
     ),
     "about.feature.spanishMode": (
       <div>
-        <DataTags isProgramAI />
+        {/* <DataTags isProgramAI /> */}
         Robots Building Education is available in Spanish. You're welcome to
         learning in Spanish to practice your human language skills too!
       </div>
     ),
     "about.feature.streaks": (
       <div>
-        <DataTags isProgramAI />A self-pacing feature to help you stay
+        {/* <DataTags isProgramAI /> */}A self-pacing feature to help you stay
         discplined. Set up 30 minute to 3 day timers!
       </div>
     ),
     "about.feature.quizSeries": (
       <div>
-        <DataTags isProgramAI />
+        {/* <DataTags isProgramAI /> */}
         100 questions informed by the rox teaching assistant, paired with a
         number of features to introduce you to new concepts and challenges.
       </div>
     ),
     "about.feature.vocalCoding": (
       <div>
-        <DataTags isProgramAI />
+        {/* <DataTags isProgramAI /> */}
         The ability to record your answer vocally so that AI can transform your
         request into code on mobile devices.
       </div>
     ),
     "about.feature.aiLectureNotes": (
       <div>
-        <DataTags isProgramAI />
+        {/* <DataTags isProgramAI /> */}
         Each question comes with the ability to generate lecture notes so that
         you can learn more about the question as you're introduced to a new
         challeng.
@@ -1020,20 +1039,20 @@ reverse(head) {
     ),
     "about.feature.aiFeedback": (
       <div>
-        <DataTags isProgramAI />
+        {/* <DataTags isProgramAI /> */}
         Each question is graded by AI before allowing you to continue to the
         next question.
       </div>
     ),
     "about.feature.adaptiveLearning": (
       <div>
-        <DataTags isProgramAI isRox />A feature that keeps track of your
+        {/* <DataTags isProgramAI isRox /> */}A feature that keeps track of your
         progress and suggests the next best challenge to learn.
       </div>
     ),
     "about.feature.bitcoinWallet": (
       <div>
-        <DataTags isProgramAI />
+        {/* <DataTags isProgramAI /> */}
         An experimental feature that lets me easily monetize interactions with
         the apps rather than bundling it behind subscriptions to be able to
         create scholarships with learning. Right now you can only deposit $0.02
@@ -1044,59 +1063,60 @@ reverse(head) {
     ),
     "about.feature.customerService": (
       <div>
-        <DataTags isPatreon />
+        {/* <DataTags isPatreon /> */}
         With enough support, I'm able to run more personal service with remote
         calls, tutoring and other direct-to-student effort.
       </div>
     ),
     "about.feature.lectures": (
       <div>
-        <DataTags isRox isProgramAI />A collection of lectures that I believe
-        are high value created with high quality animation and effort. The
-        experience is an introduction to advanced concepts done in a way to
+        {/* <DataTags isRox isProgramAI /> */}A collection of lectures that I
+        believe are high value created with high quality animation and effort.
+        The experience is an introduction to advanced concepts done in a way to
         inspire confidence into a journey of learning.
       </div>
     ),
     "about.feature.conversationQuiz": (
       <div>
-        <DataTags isRox isProgramAI />A quiz feature where your conversation
-        with AI can be graded.
+        {/* <DataTags isRox isProgramAI /> */}A quiz feature where your
+        conversation with AI can be graded.
       </div>
     ),
     "about.feature.schedulingAssistant": (
       <div>
-        <DataTags isRox isPatreon />A feature to help you schedule your learning
-        on a micro and macro level.
+        {/* <DataTags isRox isPatreon /> */}A feature to help you schedule your
+        learning on a micro and macro level.
       </div>
     ),
     "about.feature.shop": (
       <div>
-        <DataTags isRox isPatreon /> The ability to shop for books to deepen
-        your knowledge across domains.
+        {/* <DataTags isRox isPatreon />  */}
+        The ability to shop for books to deepen your knowledge across domains.
       </div>
     ),
     "about.feature.algorithmHelper": (
       <div>
-        <DataTags isRox />A feature that help you train your understanding of
-        algorithms with decision-making patterns, code assistance and feedback
+        {/* <DataTags isRox /> */}A feature that help you train your
+        understanding of algorithms with decision-making patterns, code
+        assistance and feedback
       </div>
     ),
     "about.feature.emotionalIntelligence": (
       <div>
         {" "}
-        <DataTags isRox isPatreon />
+        {/* <DataTags isRox isPatreon /> */}
         An emotion tracking feature centered around self-esteem.
       </div>
     ),
     "about.feature.syllabus": (
       <div>
-        <DataTags isPatreon />A challenging getting started kit for short term
-        and long term knowledge gains.
+        {/* <DataTags isPatreon /> */}A challenging getting started kit for
+        short term and long term knowledge gains.
       </div>
     ),
     "about.feature.guides": (
       <div>
-        <DataTags isPatreon />
+        {/* <DataTags isPatreon /> */}
         Higher intent essays and software on investments and software
         development{" "}
       </div>
@@ -1104,13 +1124,13 @@ reverse(head) {
     "about.feature.insights": (
       <div>
         {" "}
-        <DataTags isPatreon />
+        {/* <DataTags isPatreon /> */}
         Behind the scenes access to the development of Robots Building Education
       </div>
     ),
     "about.feature.ofi": (
       <div>
-        <DataTags isPatreon />
+        {/* <DataTags isPatreon /> */}
         Paid (but inexpensive) content for post-platform learning. Developed
         with the intention to attempt to produce a significant return on
         investment for supporting the platform.
@@ -1230,8 +1250,36 @@ reverse(head) {
     confirm: "Confirm",
     cancel: "Cancel",
     analyzer: "Analyzing your progress & creating new question card",
+    "settings.button.algorithmHelper": "Algorithm Practice",
+    "modal.title.algorithmHelper": "Algorithm Practice",
+    "algorithmHelper.button.generateProblem": "Generate Algorithm Problem",
+    "learnwithnostr.intructions":
+      "Connect with others using decentralized education technology!",
   },
   es: {
+    "about.title.socialProgress": <div>Progreso Social</div>,
+    "about.feature.socialProgress": (
+      <div>
+        {/* <DataTags isNew /> */}
+        ¡Mira el progreso de otras personas aprendiendo usando nuestra
+        tecnología descentralizada!
+      </div>
+    ),
+    "about.title.buildYourApp": <div>Construye tu Aplicación</div>,
+    "about.feature.buildYourApp": (
+      <div>
+        {/* <DataTags isNew /> */}
+        Una característica que te permite materializar tu aprendizaje creando
+        una aplicación o idea a medida que progresas.
+      </div>
+    ),
+    "learnwithnostr.intructions":
+      "Conéctate con otros utilizando tecnología educativa descentralizada.",
+    "settings.button.algorithmHelper": "Práctica de algoritmos",
+    "modal.title.algorithmHelper": "Práctica de algoritmos",
+
+    "algorithmHelper.button.generateProblem": "Generar problema de algoritmo",
+
     "modal.externalLinkTitle": "Saliendo de la Aplicación",
     "modal.externalLinkBody":
       "Estás a punto de ser redirigido a la versión gratuita de ChatGPT donde no se requiere inicio de sesión. Pega los datos de la pregunta que hemos copiado para generar ayuda. Crea una cuenta con ChatGPT para acceder a la versión personalizada de chat de esta aplicación.",
@@ -1993,7 +2041,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "nostrContent.onboardedProfileAbout":
       "Un estudiante se unió con Robots Building Education",
     "nostrContent.introductionPost":
-      "¡Buenos días, Nostr! Estoy aquí desde Tiktok, creando una cuenta a través de https://embedded-sunset.app para aprender a programar con IA. ¡Espero conocer a personas de la comunidad cypherpunk! #introductions #LearnWithNostr",
+      "¡Buenos días, Nostr! Estoy aquí desde Tiktok, creando una cuenta a través de https://robotsbuildingeducation.com  para aprender a programar con IA. ¡Espero conocer a personas de la comunidad cypherpunk! #LearnWithNostr",
     "createAccount.isCreating": "Creando cuenta... 1/3",
     "createAccount.isCreatingProfile": "Creando perfil... 2/3",
     // "createAccount.isCreatingProfilePicture": "Creando foto de perfil... 3/4",
@@ -2028,16 +2076,16 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "createAccount.isLoading": "Creando...",
     "createAccount.successMessage": "¡Eso es todo!",
     "createAccount.awareness":
-      "Tu cuenta ahora funciona en varias aplicaciones descentralizadas. Usa tu clave para iniciar sesión de aplicaciones en la ",
+      "Tu cuenta ahora funciona en varias aplicaciones descentralizadas. Tu cuenta funciona exactamente como un buzón. Usa tu clave secreta para iniciar sesión en las aplicaciones en el ",
     "createAccount.roxLink": "tienda de aplicaciones descentralizada",
     or: "o",
     "createAccount.primalLink": "Primal, la billetera social",
-    "button.copyKey": "Copiar Clave",
+    "button.copyKey": "Copiar Clave Secreta",
     "createAccount.checkbox.disclaimer":
-      "Entiendo que mi clave me permite iniciar sesión en diferentes aplicaciones que pueden contener datos importantes y privados como Bitcoin. He guardado mis claves de manera segura.",
+      "Entiendo que mi clave me permite iniciar sesión en diferentes aplicaciones que pueden contener datos importantes y privados como Bitcoin. Ya he guardado mis claves de forma segura en otro lugar.",
     "createAccount.button.launchApp": "Lanzar Aplicación",
     "signIn.instructions": "Ingrese su clave secreta de nostr",
-    "signIn.input.placeholder": "Ingrese su clave secreta",
+    "signIn.input.placeholder": "Ingrese su clave secreta (nsec...)",
     "button.dismiss": "Descartar",
     "app.progress": "progreso",
     "app.streak": "racha",
@@ -2252,7 +2300,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "about.title.adaptiveLearning": "Aprendizaje Adaptativo",
     "about.title.bitcoinWallet": (
       <div>
-        <DataTags isNew />
+        {/* <DataTags isNew /> */}
         Billetera Bitcoin
       </div>
     ),
@@ -2270,7 +2318,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "about.title.decentralizedTranscripts": "Transcripciones Cruzadas",
     "about.feature.smartCards": (
       <div>
-        <DataTags isProgramAI />
+        {/* <DataTags isProgramAI /> */}
         La tarjeta inteligente es una función de tarjeta de memoria que crea
         nuevas preguntas de práctica basadas en tu progreso. Puedes seguir
         practicando problemas con el mismo nivel de dificultad y conocimiento
@@ -2281,7 +2329,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "about.title.smartCards": <div>Tarjetas Inteligentes</div>,
     "about.feature.decentralizedTranscripts": (
       <div>
-        <DataTags isRox isProgramAI />
+        {/* <DataTags isRox isProgramAI /> */}
         El progreso en cualquier aplicación te otorgará insignias de
         transcripción que podrás llevar de una plataforma a otra. Esto hace que
         la educación en línea sea más impresionante y representativa del
@@ -2290,7 +2338,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     ),
     "about.feature.decentralizedIdentity": (
       <div>
-        <DataTags isRox isProgramAI />
+        {/* <DataTags isRox isProgramAI /> */}
         Robots Building Education aprovecha las identidades descentralizadas
         para permitir cuentas multiplataforma y la propiedad de datos. Esto nos
         permite integrar nuestras aplicaciones directamente en las redes
@@ -2301,7 +2349,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     ),
     "about.feature.spanishMode": (
       <div>
-        <DataTags isProgramAI />
+        {/* <DataTags isProgramAI /> */}
         Robots Building Education está disponible en español. ¡Bienvenido a
         aprender en español para practicar también tus habilidades de lenguaje
         humano!
@@ -2309,14 +2357,14 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     ),
     "about.feature.streaks": (
       <div>
-        <DataTags isProgramAI />
+        {/* <DataTags isProgramAI /> */}
         Una función de auto ritmo para ayudarte a mantener la disciplina.
         ¡Configura temporizadores de 30 minutos a 3 días!
       </div>
     ),
     "about.feature.quizSeries": (
       <div>
-        <DataTags isProgramAI />
+        {/* <DataTags isProgramAI /> */}
         100 preguntas informadas por el asistente de enseñanza Rox, emparejadas
         con una serie de características para presentarte nuevos conceptos y
         desafíos.
@@ -2324,14 +2372,14 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     ),
     "about.feature.vocalCoding": (
       <div>
-        <DataTags isProgramAI />
+        {/* <DataTags isProgramAI /> */}
         La capacidad de grabar tu respuesta de manera vocal para que la IA
         transforme tu solicitud en código en dispositivos móviles.
       </div>
     ),
     "about.feature.aiLectureNotes": (
       <div>
-        <DataTags isProgramAI />
+        {/* <DataTags isProgramAI /> */}
         Cada pregunta viene con la capacidad de generar notas de lección para
         que puedas aprender más sobre la pregunta mientras te introduces en un
         nuevo desafío.
@@ -2339,21 +2387,21 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     ),
     "about.feature.aiFeedback": (
       <div>
-        <DataTags isProgramAI />
+        {/* <DataTags isProgramAI /> */}
         Cada pregunta es calificada por IA antes de permitirte continuar a la
         siguiente pregunta.
       </div>
     ),
     "about.feature.adaptiveLearning": (
       <div>
-        <DataTags isProgramAI isRox />
+        {/* <DataTags isProgramAI isRox /> */}
         Una función que hace un seguimiento de tu progreso y sugiere el próximo
         mejor desafío para aprender.
       </div>
     ),
     "about.feature.bitcoinWallet": (
       <div>
-        <DataTags isProgramAI />
+        {/* <DataTags isProgramAI /> */}
         Una función experimental que me permite monetizar fácilmente las
         interacciones con las aplicaciones en lugar de incluirlas en
         suscripciones, para poder crear becas de aprendizaje. Actualmente, solo
@@ -2365,14 +2413,14 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     ),
     "about.feature.customerService": (
       <div>
-        <DataTags isPatreon />
+        {/* <DataTags isPatreon /> */}
         Con suficiente apoyo, puedo ofrecer un servicio más personal con
         llamadas remotas, tutoría y otros esfuerzos directos al estudiante.
       </div>
     ),
     "about.feature.lectures": (
       <div>
-        <DataTags isRox isProgramAI />
+        {/* <DataTags isRox isProgramAI /> */}
         Una colección de conferencias que considero de alto valor, creadas con
         animación de alta calidad y esfuerzo. La experiencia es una introducción
         a conceptos avanzados realizados de una manera que inspira confianza en
@@ -2381,27 +2429,28 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     ),
     "about.feature.conversationQuiz": (
       <div>
-        <DataTags isRox isProgramAI />
+        {/* <DataTags isRox isProgramAI /> */}
         Una función de cuestionario donde tu conversación con la IA puede ser
         calificada.
       </div>
     ),
     "about.feature.schedulingAssistant": (
       <div>
-        <DataTags isRox isPatreon />
+        {/* <DataTags isRox isPatreon /> */}
         Una función para ayudarte a programar tu aprendizaje a nivel micro y
         macro.
       </div>
     ),
     "about.feature.shop": (
       <div>
-        <DataTags isRox isPatreon /> La capacidad de comprar libros para
-        profundizar tu conocimiento en diferentes dominios.
+        {/* <DataTags isRox isPatreon />  */}
+        La capacidad de comprar libros para profundizar tu conocimiento en
+        diferentes dominios.
       </div>
     ),
     "about.feature.algorithmHelper": (
       <div>
-        <DataTags isRox />
+        {/* <DataTags isRox /> */}
         Una función que te ayuda a entrenar tu comprensión de algoritmos con
         patrones de toma de decisiones, asistencia de código y
         retroalimentación.
@@ -2409,33 +2458,33 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     ),
     "about.feature.emotionalIntelligence": (
       <div>
-        <DataTags isRox isPatreon />
+        {/* <DataTags isRox isPatreon /> */}
         Una función de seguimiento emocional centrada en la autoestima.
       </div>
     ),
     "about.feature.syllabus": (
       <div>
-        <DataTags isPatreon />
+        {/* <DataTags isPatreon /> */}
         Un kit para empezar con desafíos a corto y largo plazo para ganancias de
         conocimiento.
       </div>
     ),
     "about.feature.guides": (
       <div>
-        <DataTags isPatreon />
+        {/* <DataTags isPatreon /> */}
         Ensayos y software de alta intención sobre inversiones y desarrollo de
         software.
       </div>
     ),
     "about.feature.insights": (
       <div>
-        <DataTags isPatreon />
+        {/* <DataTags isPatreon /> */}
         Acceso entre bastidores al desarrollo de Robots Building Education.
       </div>
     ),
     "about.feature.ofi": (
       <div>
-        <DataTags isPatreon />
+        {/* <DataTags isPatreon /> */}
         Contenido pagado (pero económico) para aprendizaje post-plataforma.
         Desarrollado con la intención de intentar producir un retorno
         significativo de la inversión para apoyar la plataforma.
@@ -2443,6 +2492,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     ),
     "button.addToConversation": "Agregar a la conversación",
     "button.subjectsCovered": "Temas cubiertos",
+
     "settings.button.yourTutor": "Tu Tutor",
     "settings.button.yourProfile": "Tu Perfil",
     "settings.button.nostrApps": "App Store",

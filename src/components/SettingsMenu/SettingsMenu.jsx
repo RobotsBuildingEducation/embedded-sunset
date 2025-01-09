@@ -20,6 +20,7 @@ import {
 } from "@chakra-ui/react";
 import { FiSettings } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { IoAppsOutline } from "react-icons/io5";
 
 import BitcoinModeModal from "./BitcoinModeModal/BitcoinModeModal";
 import RoxModal from "./RoxModal/RoxModal";
@@ -34,6 +35,7 @@ import { FaBitcoin } from "react-icons/fa";
 
 import TranscriptModal from "./TranscriptModal/TranscriptModal";
 import { InstallAppModal } from "../InstallModal/InstallModal";
+import { AlgorithmHelper } from "../AlgorithmHelper/AlgorithmHelper";
 
 const SettingsMenu = ({
   isSignedIn,
@@ -56,6 +58,12 @@ const SettingsMenu = ({
     isOpen: isSelfPacedOpen,
     onOpen: onSelfPacedOpen,
     onClose: onSelfPacedClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isAlgorithmHelperOpen,
+    onOpen: onAlgorithmHelperOpen,
+    onClose: onAlgorithmHelperClose,
   } = useDisclosure();
 
   const {
@@ -144,9 +152,10 @@ const SettingsMenu = ({
       {isSignedIn ? (
         <IconButton
           ref={btnRef}
-          icon={<FiSettings />}
+          icon={<IoAppsOutline />}
           onClick={onOpen}
-          variant="outline"
+          // variant="outline"
+          boxShadow="0px 1px 1px 2px lightgray"
           position="fixed"
           top={4}
           right={4}
@@ -159,9 +168,10 @@ const SettingsMenu = ({
           ref={btnRef}
           icon={<FaBitcoin />}
           onClick={onBitcoinModeOpen}
-          variant="outline"
+          // variant="outline"
+          boxShadow="0px 1px 1px 2px lightgray"
           position="fixed"
-          color="orange"
+          // color="orange"
           top={16}
           right={4}
           style={{ backgroundColor: "white", zIndex: 1000 }}
@@ -214,7 +224,7 @@ const SettingsMenu = ({
               >
                 {translation[userLanguage]["settings.button.selfPace"]}
               </Button>
-              <Button
+              {/* <Button
                 p={6}
                 colorScheme="pink"
                 background="pink.300"
@@ -222,7 +232,7 @@ const SettingsMenu = ({
                 onClick={onKnowledgeLedgerOpen}
               >
                 {translation[userLanguage]["settings.button.adaptiveLearning"]}
-              </Button>
+              </Button> */}
               {/* <Button
                 p={6}
                 colorScheme="pink"
@@ -232,6 +242,17 @@ const SettingsMenu = ({
               >
                 {translation[userLanguage]["settings.button.bitcoinMode"]}
               </Button> */}
+              {userLanguage === "en" ? (
+                <Button
+                  p={6}
+                  colorScheme="pink"
+                  background="pink.300"
+                  style={{ width: "100%" }}
+                  onClick={onAlgorithmHelperOpen}
+                >
+                  {translation[userLanguage]["settings.button.algorithmHelper"]}
+                </Button>
+              ) : null}
               <Button
                 p={6}
                 colorScheme="pink"
@@ -339,14 +360,16 @@ const SettingsMenu = ({
       </Drawer>
 
       {/* Always render modals without conditional rendering */}
-      <SelfPacedModal
-        isOpen={isSelfPacedOpen}
-        onClose={onSelfPacedClose}
-        interval={interval}
-        setInterval={setIntervalState}
-        userId={localStorage.getItem("local_npub")}
-        userLanguage={userLanguage}
-      />
+      {isSelfPacedOpen ? (
+        <SelfPacedModal
+          isOpen={isSelfPacedOpen}
+          onClose={onSelfPacedClose}
+          interval={interval}
+          setInterval={setIntervalState}
+          userId={localStorage.getItem("local_npub")}
+          userLanguage={userLanguage}
+        />
+      ) : null}
 
       {isBitcoinModeOpen ? (
         <BitcoinModeModal
@@ -357,32 +380,49 @@ const SettingsMenu = ({
       ) : null}
 
       {/* I dont think this is in use anymore */}
-      <RoxModal
-        isOpen={isRoxModalOpen}
-        userLanguage={userLanguage}
-        onClose={onRoxModalClose}
-      />
+      {isRoxModalOpen ? (
+        <RoxModal
+          isOpen={isRoxModalOpen}
+          userLanguage={userLanguage}
+          onClose={onRoxModalClose}
+        />
+      ) : null}
 
-      <SocialWalletModal
-        isOpen={isSocialWalletOpen}
-        onClose={onSocialWalletClose}
-        userLanguage={userLanguage}
-      />
+      {isSocialWalletOpen ? (
+        <SocialWalletModal
+          isOpen={isSocialWalletOpen}
+          onClose={onSocialWalletClose}
+          userLanguage={userLanguage}
+        />
+      ) : null}
+      {/* {isKnowledgeLedgerOpen ? (
+        <KnowledgeLedgerModal
+          userLanguage={userLanguage}
+          isOpen={isKnowledgeLedgerOpen}
+          onClose={onKnowledgeLedgerClose}
+          steps={steps}
+          currentStep={currentStep}
+        />
+      ) : null} */}
 
-      <KnowledgeLedgerModal
-        userLanguage={userLanguage}
-        isOpen={isKnowledgeLedgerOpen}
-        onClose={onKnowledgeLedgerClose}
-        steps={steps}
-        currentStep={currentStep}
-      />
+      {isAlgorithmHelperOpen ? (
+        <AlgorithmHelper
+          userLanguage={userLanguage}
+          isOpen={isAlgorithmHelperOpen}
+          onClose={onAlgorithmHelperClose}
+          steps={steps}
+          currentStep={currentStep}
+        />
+      ) : null}
 
       {/* not in use anymore */}
-      <FeedbackModal
-        userLanguage={userLanguage}
-        isOpen={isFeedbackOpen}
-        onClose={onFeedbackClose}
-      />
+      {isFeedbackOpen ? (
+        <FeedbackModal
+          userLanguage={userLanguage}
+          isOpen={isFeedbackOpen}
+          onClose={onFeedbackClose}
+        />
+      ) : null}
 
       {isTranscriptOpen ? (
         <TranscriptModal

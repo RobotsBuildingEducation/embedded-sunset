@@ -42,6 +42,7 @@ export const createUser = async (npub, userName, language) => {
   await setDoc(
     userDoc,
     {
+      isAdaptiveLearning: true,
       name: userName,
       npub: npub,
       step: 0, // Initialize step count to 0
