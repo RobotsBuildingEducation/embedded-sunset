@@ -63,18 +63,22 @@ const getBackgroundScheme = (group) => {
 };
 
 function ReplaceHashtagWithLink({ text }) {
-  const parts = text.split(/(#LearnWithNostr)/g);
+  // const parts = text.split(/(#LearnWithNostr)/g);
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+  const parts = text.split(urlRegex);
 
   return (
     <>
       {parts.map((part, index) => {
-        if (part === "#LearnWithNostr") {
+        if (urlRegex.test(part)) {
           return (
             <Link
               key={index}
-              href="https://primal.net/search/%23learnwithnostr"
+              href={part}
               color="blue.500"
               isExternal
+              textDecoration="underline"
             >
               {part}
             </Link>
@@ -101,9 +105,10 @@ export const TestFeed = ({ userLanguage }) => {
       setLocalLoad(true);
       const data = await getGlobalNotesWithProfilesByHashtag();
 
+      console.log("data list", data);
       const parse = data.filter((item) => {
         const name = item.profile?.name?.toLowerCase();
-        return !["data", "test", "hi", "dafa", "text", "hii"].includes(name);
+        return !["data", "test", "hi", "text", "hii"].includes(name);
       });
       setProfiles(parse);
       setLocalLoad(false);

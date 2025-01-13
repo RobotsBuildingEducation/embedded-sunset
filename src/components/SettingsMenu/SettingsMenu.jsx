@@ -38,6 +38,7 @@ import { InstallAppModal } from "../InstallModal/InstallModal";
 import { AlgorithmHelper } from "../AlgorithmHelper/AlgorithmHelper";
 
 const SettingsMenu = ({
+  testIsMatch,
   isSignedIn,
   setIsSignedIn,
   steps,
@@ -163,7 +164,7 @@ const SettingsMenu = ({
           aria-label="Settings"
         />
       ) : null}
-      {isSignedIn ? (
+      {isSignedIn && testIsMatch ? (
         <IconButton
           ref={btnRef}
           icon={<FaBitcoin />}

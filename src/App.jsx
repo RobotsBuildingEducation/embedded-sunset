@@ -49,6 +49,8 @@ import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
 
 import {
   createUser,
+  deleteSpecificDocuments,
+  getTotalUsers,
   getUserData,
   getUserStep,
   incrementToFinalAward,
@@ -67,7 +69,7 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { database, model } from "./database/firebaseResources";
+import { analytics, database, model } from "./database/firebaseResources";
 
 import { translation } from "./utility/translation";
 
@@ -130,6 +132,8 @@ import { TestFeed } from "./experiments/TestCoinbaseUI";
 import { FaHeartCircleBolt } from "react-icons/fa6";
 import SocialFeedModal from "./components/SocialFeedModal/SocialFeedModal";
 import { KnowledgeLedgerModal } from "./components/SettingsMenu/KnowledgeLedgerModal/KnowledgeLedgerModal";
+import { logEvent } from "firebase/analytics";
+import BitcoinOnboarding from "./components/BitcoinOnboarding/BitcoinOnboarding";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -1988,6 +1992,33 @@ const Step = ({
 
   // Navigate to the next step
   const handleNextClick = async () => {
+    const hostname = window.location.hostname;
+    const isValidHost =
+      hostname === "embedded-sunset.app" || "robotsbuildingeducation.com";
+    const username = localStorage.getItem("displayName").toLowerCase();
+    const bannedNames = [
+      "data",
+      "test",
+      "hi",
+      "txt",
+      "testing",
+      "text",
+      "hii",
+      "xx",
+      "xy",
+      "tst",
+      "tester",
+      "testing",
+      "ok",
+    ];
+    if (isValidHost && !bannedNames.includes(username)) {
+      logEvent(analytics, "handleNextClick", {
+        action: "completed_question",
+      });
+    } else {
+      // window.alert("you cant do that buddy");
+    }
+
     // console.log("currentStep...", currentStep);
     // console.log("fSTEPS", steps);
     localStorage.removeItem("lrnctrl");
@@ -3236,6 +3267,14 @@ const Home = ({
 
   const handleLaunchApp = () => {
     if (isCheckboxChecked) {
+      // navigate("/q/0");
+      setView("wallet");
+    }
+  };
+
+  const handleActuallyLaunchApp = () => {
+    if (isCheckboxChecked) {
+      // navigate("/q/0");
       navigate("/q/0");
     }
   };
@@ -3608,7 +3647,7 @@ const Home = ({
             </Checkbox>
           </HStack>
           <HStack>
-            <Button
+            {/* <Button
               variant="outline"
               onMouseDown={() => setView("buttons")}
               onKeyDown={(e) => {
@@ -3619,12 +3658,81 @@ const Home = ({
             >
               {" "}
               {translation[userLanguage]["button.back"]}
-            </Button>
+            </Button> */}
             <Button
               onMouseDown={handleLaunchApp}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   handleLaunchApp();
+                }
+              }}
+              isDisabled={!isCheckboxChecked}
+              colorScheme="pink"
+              backgroundColor="pink.50"
+              variant={"outline"}
+            >
+              {translation[userLanguage]["lastStep.button"]}
+            </Button>
+          </HStack>
+        </VStack>
+      )}
+      {view === "wallet" && keys && (
+        <VStack spacing={4}>
+          <PanRightComponent>
+            <Text
+              p={4}
+              maxWidth="400px"
+              width="100%"
+              textAlign={"left"}
+              border="1px solid black"
+              style={{
+                // backgroundColor: "#dcecfc",
+                display: "flex",
+                flexDirection: "column",
+              }}
+              borderRadius="24px"
+              borderBottomRightRadius={"0px"}
+            >
+              <Text>
+                {translation[userLanguage]["createAccount.lastStepMessage"]}
+              </Text>{" "}
+              <BitcoinOnboarding userLanguage={userLanguage} />
+            </Text>
+          </PanRightComponent>
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "400px",
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: "-36px",
+              marginRight: "-16px",
+            }}
+          >
+            {" "}
+            <RiseUpAnimation>
+              <RandomCharacter />
+            </RiseUpAnimation>
+          </div>
+
+          <HStack>
+            {/* <Button
+              variant="outline"
+              onMouseDown={() => setView("buttons")}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  setView("buttons");
+                }
+              }}
+            >
+              {" "}
+              {translation[userLanguage]["button.back"]}
+            </Button> */}
+            <Button
+              onMouseDown={handleActuallyLaunchApp}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleActuallyLaunchApp();
                 }
               }}
               isDisabled={!isCheckboxChecked}
@@ -3785,6 +3893,8 @@ function App({ isShutDown }) {
     const initializeApp = async () => {
       const npub = localStorage.getItem("local_npub");
 
+      // deleteSpecificDocuments();
+      // let count = await getTotalUsers();
       if (npub && window.location.pathname !== "/dashboard") {
         try {
           const step = await getUserStep(npub); // Fetch the current step
@@ -3832,7 +3942,7 @@ function App({ isShutDown }) {
             ) {
               navigate("/subscription");
             } else if (step === "award") {
-              navigate("/awad");
+              navigate("/award");
             } else {
               // if (step !== 0) {
               topRef.current?.scrollIntoView();
@@ -3890,6 +4000,10 @@ function App({ isShutDown }) {
     JSON.stringify(steps?.["en"]?.[currentStep] || {})
   );
 
+  const testurl = window.location.href;
+
+  const testIsMatch = /\/q\/\d+$/.test(testurl);
+
   return (
     <Box textAlign="center" fontSize="xl" p={4} ref={topRef}>
       {alert.isOpen && (
@@ -3923,6 +4037,7 @@ function App({ isShutDown }) {
 
       {isSignedIn && (
         <SettingsMenu
+          testIsMatch={testIsMatch}
           isSignedIn={isSignedIn}
           setIsSignedIn={setIsSignedIn}
           steps={steps}
@@ -4098,6 +4213,7 @@ export const AppWrapper = () => {
   //       </div>
   //     </div>
   //   );
+
   // }
 
   return (

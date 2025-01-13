@@ -693,6 +693,8 @@ reverse(head) {
       "gm nostr! I'm here from Tiktok by creating an account through https://robotsbuildingeducation.com so I can learn how to code with AI. Looking forward to meeting folks in the cypherpunk community! #LearnWithNostr",
 
     "createAccount.successMessage": "That's it!",
+    "createAccount.lastStepMessage": "Last step (optional)",
+    // "createAccount.lastStepInstructions": "Last step (optional)",
     "createAccount.awareness":
       "Your account now works on a number of decentralized apps. Your account works exactly like mailbox. Use your secret key to sign into apps in the ",
     "createAccount.roxLink": "decentralized app store",
@@ -701,7 +703,7 @@ reverse(head) {
     "button.copyKey": "Copy Secret Key",
     "createAccount.checkbox.disclaimer":
       "I understand that my key allows me to sign into different apps that may contain important and private data like Bitcoin. I have safely saved my keys somewhere else.",
-    "createAccount.button.launchApp": "Launch App",
+    "createAccount.button.launchApp": "Launch app",
     "signIn.instructions": "Enter your nostr secret key",
     "signIn.input.placeholder": "Enter your secret key (nsec...)",
     "button.dismiss": "Dimiss",
@@ -746,17 +748,17 @@ reverse(head) {
     //create wallet
     "modal.bitcoinMode.title": "Bitcoin Wallet",
     "modal.bitcoinMode.instructions.createWallet.1":
-      "1. The goal is to create scholarships with learning!",
+      "The goal is to create scholarships with learning!",
 
     "modal.bitcoinMode.instructions.createWallet.2":
-      "Selecting a recipient and creating a wallet allows you to deposit a maximum of about $0.01 in Bitcoin. When you answer a question, your Bitcoin deposit gets spent and sent to your receipient!",
+      "Selecting a recipient and creating a wallet allows you to deposit a maximum of about $0.01 worth in Bitcoin. When you answer questions and make progress in the app, your Bitcoin deposit gets spent and sent to your receipient!",
 
     "modal.bitcoinMode.instructions.createWallet.3":
-      "We recommend using Cash App to buy Bitcoin and connect your deposit!",
+      "We recommend connecting with Cash App to buy Bitcoin and create your deposit!",
 
     //deposit bitcoin
     "modal.bitcoinMode.instructions.deposit.1":
-      "Press deposit to generate a QR code that you can scan or an address you can send to. This will request about $0.05 in Bitcoin from your Bitcoin wallet.",
+      "Press deposit to generate a QR code that you can scan or an address you can send to. This will request about $0.01 worth in Bitcoin from your Bitcoin wallet.",
 
     "modal.bitcoinMode.instructions.activeWallet.1":
       "You're now using Bitcoin!",
@@ -768,7 +770,10 @@ reverse(head) {
 
     "modal.bitcoinMode.instructions.activeWallet.4": "in the public record",
     "deposit.button": "Deposit",
-    "createWallet.button": "Create wallet",
+    "createWallet.button": "Create Wallet",
+    "lastStep.button": "Go To Last Step",
+    "deposit.ps":
+      "(P.S. After sending Bitcon to your address, you may need to wait a few seconds before your balance updates.)",
 
     "modal.bitcoinMode.copyAddressButton": "Copy Address",
     "modal.bitcoinMode.rechargeButton": "Generate Address",
@@ -1257,6 +1262,10 @@ reverse(head) {
       "Connect with others using decentralized education technology!",
   },
   es: {
+    "deposit.ps":
+      "(P.D. Después de enviar Bitcoin a tu dirección, es posible que debas esperar unos segundos antes de que tu saldo se actualice.)",
+    "createAccount.lastStepMessage": "Último paso (opcional)",
+    "lastStep.button": "Ir al último paso",
     "about.title.socialProgress": <div>Progreso Social</div>,
     "about.feature.socialProgress": (
       <div>
@@ -1294,17 +1303,17 @@ reverse(head) {
 
     installApp: "Instalar aplicación",
     "modal.bitcoinMode.instructions.createWallet.1":
-      "1. ¡El objetivo es crear becas con aprendizaje!",
+      "¡El objetivo es crear becas con aprendizaje!",
 
     "modal.bitcoinMode.instructions.createWallet.2":
-      "Seleccionar un destinatario y crear una billetera te permite depositar un máximo de aproximadamente $0.01 en Bitcoin. ¡Cuando respondes una pregunta, tu depósito en Bitcoin se gasta y se envía a tu destinatario!",
+      "Seleccionar un destinatario y crear una billetera te permite depositar un máximo de equivalente a $0.01 en Bitcoin. ¡Cuando respondes preguntas y avanzas en la aplicación, tu depósito en Bitcoin se gasta y se envía a tu destinatario!",
 
     "modal.bitcoinMode.instructions.createWallet.3":
-      "¡Recomendamos usar Cash App para comprar Bitcoin y conectar tu depósito!",
+      "¡Recomendamos conectarte con Cash App para comprar Bitcoin y crear tu depósito!",
 
     //depositar bitcoin
     "modal.bitcoinMode.instructions.deposit.1":
-      "Presiona depositar para generar un código QR que puedes escanear o una dirección a la que puedes enviar. Esto solicitará aproximadamente $0.05 en Bitcoin desde tu billetera de Bitcoin.",
+      "Presiona depositar para generar un código QR que puedes escanear o una dirección a la que puedes enviar. Esto solicitará equivalente a $0.01 en Bitcoin desde tu billetera de Bitcoin.",
 
     "modal.bitcoinMode.instructions.activeWallet.1":
       "¡Ahora estás usando Bitcoin!",
@@ -2083,7 +2092,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "button.copyKey": "Copiar Clave Secreta",
     "createAccount.checkbox.disclaimer":
       "Entiendo que mi clave me permite iniciar sesión en diferentes aplicaciones que pueden contener datos importantes y privados como Bitcoin. Ya he guardado mis claves de forma segura en otro lugar.",
-    "createAccount.button.launchApp": "Lanzar Aplicación",
+    "createAccount.button.launchApp": "Iniciar aplicación",
     "signIn.instructions": "Ingrese su clave secreta de nostr",
     "signIn.input.placeholder": "Ingrese su clave secreta (nsec...)",
     "button.dismiss": "Descartar",
