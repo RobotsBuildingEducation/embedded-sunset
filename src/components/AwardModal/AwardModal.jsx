@@ -19,7 +19,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { SunsetCanvas } from "../../elements/SunsetCanvas";
-import Editor from "react-simple-code-editor";
+
 import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
@@ -147,7 +147,15 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
           </a>
           <br />
           <br />
-          <Button onClick={handleCopyKeys} mb={2}>
+          <Button
+            onMouseDown={handleCopyKeys}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                handleCopyKeys();
+              }
+            }}
+            mb={2}
+          >
             🔑 {translation[userLanguage]["button.copyKey"]}
           </Button>
 

@@ -27,6 +27,7 @@ import {
   AccordionIcon,
   Spinner,
   Code,
+  UnorderedList,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
@@ -126,7 +127,7 @@ import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import ExternalLinkModal from "./components/ExternalLinkModal/ExternalLinkModal";
 
 import { Schema } from "firebase/vertexai";
-import { useGeminiChat } from "./hooks/useGeminiChat";
+import { useGeminiChat, useSimpleGeminiChat } from "./hooks/useGeminiChat";
 import { TestFeed } from "./experiments/TestCoinbaseUI";
 
 import { FaHeartCircleBolt } from "react-icons/fa6";
@@ -134,62 +135,51 @@ import SocialFeedModal from "./components/SocialFeedModal/SocialFeedModal";
 import { KnowledgeLedgerModal } from "./components/SettingsMenu/KnowledgeLedgerModal/KnowledgeLedgerModal";
 import { logEvent } from "firebase/analytics";
 import BitcoinOnboarding from "./components/BitcoinOnboarding/BitcoinOnboarding";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import LiveReactEditorModal from "./components/LiveCodeEditor/LiveCodeEditor";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
 // });
 
-const newTheme = {
+export const newTheme = {
+  p: (props) => <Text mb={2} lineHeight="1.6" {...props} />,
+  ul: (props) => <UnorderedList pl={6} spacing={2} {...props} />,
+  ol: (props) => <UnorderedList as="ol" pl={6} spacing={2} {...props} />,
+  li: (props) => <ListItem mb={1} {...props} />,
   h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  h4: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  h5: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  h6: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  code: ({ node, inline, className, children, ...props }) => {
-    // Detect if it's a single word or short phrase
-    const content = Array.isArray(children)
-      ? children.join("")
-      : String(children);
-
-    // Check if the content is a single word
-    const isSingleWord = content.trim().split(/\s+/).length === 1;
-
-    // Inline code styling
-    if (isSingleWord) {
-      return (
-        <Code
-          p={1}
-          borderRadius={8}
-          display="inline" // Prevent block display
-          fontFamily={"Fira code, Fira Mono, monospace"}
-          fontSize="xs"
-          {...props}
-        >
-          {children}
-        </Code>
-      );
-    }
-
-    // Multi-line or multi-word code block styling
-    return (
-      <Box
-        as="pre"
-        fontFamily={"Fira code, Fira Mono, monospace"}
-        fontSize="xs"
-        p={3}
-        borderRadius={8}
+  code: ({ inline, className, children, ...props }) => {
+    const match = /language-(\w+)/.exec(className || "");
+    console.log("match...", match);
+    return !inline && match ? (
+      <SyntaxHighlighter
+        // backgroundColor="white"
+        // style={"light"}
+        language={match[1]}
+        PreTag="div"
+        customStyle={{
+          backgroundColor: "white", // Match this with the desired color
+          color: "black", // Ensure the text matches the background
+          padding: "1rem",
+          borderRadius: "8px",
+          fontSize: 12,
+        }}
         {...props}
       >
-        <Code
-          p={6}
-          display="block"
-          wordBreak="break-word"
-          fontSize="sm"
-          overflowX="scroll"
-        >
-          {children}
-        </Code>
+        {String(children).replace(/\n$/, "")}
+      </SyntaxHighlighter>
+    ) : (
+      <Box
+        as="code"
+        backgroundColor="gray.100"
+        p={1}
+        borderRadius="md"
+        fontSize="sm"
+        {...props}
+      >
+        {children}
       </Box>
     );
   },
@@ -229,46 +219,46 @@ const AwardScreen = (userLanguage) => {
     navigate("/q/0"); // Navigate to the first step to restart the quiz
   };
 
-  useEffect(() => {
-    // Retrieve user ID from local storage
-    const userID = localStorage.getItem("local_npub");
+  // useEffect(() => {
+  //   // Retrieve user ID from local storage
+  //   const userID = localStorage.getItem("local_npub");
 
-    // Push to Firestore "completed" collection
-    const saveCompletionData = async () => {
-      if (userID) {
-        try {
-          // Create a reference to the document using the userID
-          const docRef = doc(database, "completed", userID);
+  //   // Push to Firestore "completed" collection
+  //   const saveCompletionData = async () => {
+  //     if (userID) {
+  //       try {
+  //         // Create a reference to the document using the userID
+  //         const docRef = doc(database, "completed", userID);
 
-          // Set the document with the current timestamp
-          await setDoc(docRef, {
-            completedAt: new Date().toISOString(),
-          });
+  //         // Set the document with the current timestamp
+  //         await setDoc(docRef, {
+  //           completedAt: new Date().toISOString(),
+  //         });
 
-          console.log("Completion data saved to Firestore!");
-        } catch (error) {
-          console.error("Error saving completion data: ", error);
-        }
-      }
-    };
+  //         console.log("Completion data saved to Firestore!");
+  //       } catch (error) {
+  //         console.error("Error saving completion data: ", error);
+  //       }
+  //     }
+  //   };
 
-    const fetchCompletedDocuments = async () => {
-      try {
-        const completedCollection = collection(database, "completed");
-        const querySnapshot = await getDocs(completedCollection);
+  //   const fetchCompletedDocuments = async () => {
+  //     try {
+  //       const completedCollection = collection(database, "completed");
+  //       const querySnapshot = await getDocs(completedCollection);
 
-        // Extract document IDs
-        const ids = querySnapshot.docs.map((doc) => doc.id);
-        setDocumentIds(ids); // Set document IDs in state
-      } catch (error) {
-        console.error("Error fetching document IDs: ", error);
-      }
-    };
+  //       // Extract document IDs
+  //       const ids = querySnapshot.docs.map((doc) => doc.id);
+  //       setDocumentIds(ids); // Set document IDs in state
+  //     } catch (error) {
+  //       console.error("Error fetching document IDs: ", error);
+  //     }
+  //   };
 
-    fetchCompletedDocuments();
+  //   fetchCompletedDocuments();
 
-    saveCompletionData();
-  }, []);
+  //   saveCompletionData();
+  // }, []);
 
   return (
     <Box
@@ -309,11 +299,11 @@ const AwardScreen = (userLanguage) => {
           {translation[userLanguage.userLanguage]["congrats.message"]}
         </Text>
         <br />
-        <Text fontSize={"sm"}>
+        {/* <Text fontSize={"sm"}>
           {translation[userLanguage.userLanguage]["congrats.connect"]}
-        </Text>
+        </Text> */}
         <br />
-        <ul style={{ listStyleType: "none", padding: 0 }}>
+        {/* <ul style={{ listStyleType: "none", padding: 0 }}>
           {documentIds.length > 0 ? (
             documentIds.map((id) => (
               <li key={id}>
@@ -327,7 +317,7 @@ const AwardScreen = (userLanguage) => {
               {translation[userLanguage.userLanguage]["loading"]}
             </Text>
           )}
-        </ul>
+        </ul> */}
       </div>
     </Box>
   );
@@ -361,9 +351,11 @@ export const VoiceInput = ({
   const [aiListening, setAiListening] = useState(false);
   const [aiTranscript, setAiTranscript] = useState("");
   const [generateResponse, setGenerateResponse] = useState(false);
-  const { resetMessages, messages, submitPrompt } = useChatCompletion({
-    response_format: { type: "json_object" },
-  });
+  // const { resetMessages, messages, submitPrompt } = useChatCompletion({
+  //   response_format: { type: "json_object" },
+  // });
+
+  const { resetMessages, messages, submitPrompt } = useSimpleGeminiChat();
   const [isWarningNotDismissed, setIsWarningNotDismissed] = useState(true);
 
   // New variables for educational material
@@ -380,7 +372,7 @@ export const VoiceInput = ({
     messages: educationalMessages,
     submitPrompt: submitEducationalPrompt,
     loading,
-  } = useGeminiChat();
+  } = useSimpleGeminiChat();
 
   const [educationalContent, setEducationalContent] = useState([]);
 
@@ -515,6 +507,29 @@ export const VoiceInput = ({
     setGenerateResponse(true); // Set flag to generate response
   };
 
+  function extractJavaScriptCode(markdown) {
+    // Regex for ```javascript code blocks
+    const jsCodeBlockRegex = /```javascript\s*([\s\S]*?)\s*```/g;
+    // Regex for any ``` code blocks
+    const genericCodeBlockRegex = /```\s*([\s\S]*?)\s*```/g;
+
+    // Attempt to extract JavaScript code blocks
+    const jsMatches = [...markdown.matchAll(jsCodeBlockRegex)];
+
+    if (jsMatches.length > 0) {
+      return jsMatches.map((match) => match[1].trim()).join("\n\n");
+    }
+
+    // If no JavaScript blocks, check for generic code blocks
+    const genericMatches = [...markdown.matchAll(genericCodeBlockRegex)];
+
+    if (genericMatches.length > 0) {
+      return genericMatches.map((match) => match[1].trim()).join("\n\n");
+    }
+
+    // If no code blocks, return the original text
+    return markdown.trim();
+  }
   const handleGenerateResponse = async () => {
     try {
       if (step.isConversationReview) {
@@ -523,27 +538,21 @@ export const VoiceInput = ({
           steps[userLanguage]
         );
 
-        await submitPrompt([
-          {
-            content:
-              aiTranscript +
-              `The JSON format should be minified as { "input": "${aiTranscript}", "output": "your_answer" }. Do not include any line breaks and make certain the JSON is valid and parsable. The user is working on a review of the subjects studied: ${JSON.stringify(relevantSteps)}. The output should strictly answer what is requested in javascript and should include newline characters and white space for formatting because it will be parsed and rendered for display. Absolutely no other text or data should be included or communicated. Lastly the user is speaking in ${
-                userLanguage === "en" ? "english" : "spanish"
-              }`,
-            role: "user",
-          },
-        ]);
+        submitPrompt(
+          "The user has requested" +
+            aiTranscript +
+            `The user is working on a review of the subjects studied: ${JSON.stringify(relevantSteps)} while learning with javascript - so provide assistance writing material based on the user's input. Keep it short. Absolutely no other text or data should be included or communicated, including these instructions. Lastly the user is speaking in ${
+              userLanguage === "en" ? "english" : "spanish"
+            }`
+        );
       } else {
-        await submitPrompt([
-          {
-            content:
-              aiTranscript +
-              ` The JSON format should be minified as { "input": "${aiTranscript}", "output": "your_answer" }. Do not include any line breaks and make certain the JSON is valid and parsable. The output should strictly answer what is requested in javascript and should include newline characters and white space for formatting because it will be parsed and rendered for display. Absolutely no other text or data should be included or communicated. Lastly the user is speaking in ${
-                userLanguage === "en" ? "english" : "spanish"
-              }`,
-            role: "user",
-          },
-        ]);
+        let prompt =
+          aiTranscript +
+          "If the request is a coding problem, the output should strictly answer what is requested in javascript with a maximum print of 80 characters, otherwise continue as normal with answering the request. Absolutely no other text or data should be included or communicated." +
+          `Lastly the user is speaking in ${
+            userLanguage === "en" ? "english" : "spanish"
+          }`;
+        submitPrompt(prompt);
       }
     } catch (error) {
       console.error("Error fetching answer:", error);
@@ -571,21 +580,21 @@ export const VoiceInput = ({
     if (messages?.length > 0) {
       const lastMessage = messages[messages.length - 1];
 
-      const isLastMessage =
-        lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
+      // const isLastMessage =
+      //   lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
 
-      if (isLastMessage) {
-        let jsonResponse = {};
-        try {
-          jsonResponse = JSON.parse(lastMessage.content);
-          console.log("JSON", jsonResponse);
-        } catch (error) {
-          jsonResponse = lastMessage.content;
-        }
-        onChange(jsonResponse.output); // Replace the input with the final output
-      } else {
-        onChange(lastMessage.content); // Stream the response as it comes in
-      }
+      // if (isLastMessage) {
+      //   let jsonResponse = {};
+      //   try {
+      //     jsonResponse = JSON.parse(lastMessage.content);
+      //     console.log("JSON", jsonResponse);
+      //   } catch (error) {
+      //     jsonResponse = lastMessage.content;
+      //   }
+      //   onChange(jsonResponse.output); // Replace the input with the final output
+      // } else {
+      onChange(extractJavaScriptCode(lastMessage.content)); // Stream the response as it comes in
+      // }
     }
   }, [messages, onChange]);
 
@@ -606,22 +615,20 @@ export const VoiceInput = ({
     onOpen();
 
     if (!step?.isConversationReview) {
-      await submitEducationalPrompt(
+      submitEducationalPrompt(
         `Generate educational material about ${JSON.stringify(
           step
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { output: [{ code: "code_example", explanation: "explanation" }] }. Additionally the code should consider line breaks, whitespace and formatting in the JSON because it will be formatted and rendered after completion. Lastly the user is speaking in ${
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning.  Additionally the code should consider line breaks, whitespace and have a maximum print width of 80 characters. Lastly the user is speaking in ${
           userLanguage === "en" ? "english" : "spanish"
         }`
       );
     } else {
       const relevantSteps = getObjectsByGroup(step?.group, steps[userLanguage]);
 
-      await submitEducationalPrompt(
+      submitEducationalPrompt(
         `Generate educational material about ${JSON.stringify(
           relevantSteps
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { "input": "${JSON.stringify(
-          step
-        )}", output: [{ "code": "code_example", "explanation": "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally the code should consider line breaks and formatting and have a maximum print width of 80 characters. Lastly the user is speaking in ${
           userLanguage === "en" ? "english" : "spanish"
         }`
       );
@@ -637,36 +644,36 @@ export const VoiceInput = ({
     }
   }, [value]); // Re-run effect every time the value changes
 
-  useEffect(() => {
-    if (educationalMessages?.length > 0) {
-      try {
-        const lastMessage = educationalMessages[educationalMessages.length - 1];
-        const isLastMessage =
-          lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
+  // useEffect(() => {
+  //   if (educationalMessages?.length > 0) {
+  //     try {
+  //       const lastMessage = educationalMessages[educationalMessages.length - 1];
+  //       const isLastMessage =
+  //         lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
 
-        if (isLastMessage) {
-          const jsonResponse = JSON.parse(lastMessage.content);
-          if (Array.isArray(jsonResponse.output)) {
-            setEducationalContent(jsonResponse.output);
-          } else {
-            setEducationalContent([]);
-          }
-        } else {
-          setEducationalContent([]);
-        }
-      } catch (error) {
-        resetEducationalMessages();
-        onClose();
+  //       if (isLastMessage) {
+  //         const jsonResponse = JSON.parse(lastMessage.content);
+  //         if (Array.isArray(jsonResponse.output)) {
+  //           setEducationalContent(jsonResponse.output);
+  //         } else {
+  //           setEducationalContent([]);
+  //         }
+  //       } else {
+  //         setEducationalContent([]);
+  //       }
+  //     } catch (error) {
+  //       resetEducationalMessages();
+  //       onClose();
 
-        showAlert("warning", translation[userLanguage]["ai.error"]);
-        const delay = (ms) =>
-          new Promise((resolve) => setTimeout(resolve, 4000));
-        delay().then(() => {
-          hideAlert();
-        });
-      }
-    }
-  }, [educationalMessages]);
+  //       showAlert("warning", translation[userLanguage]["ai.error"]);
+  //       const delay = (ms) =>
+  //         new Promise((resolve) => setTimeout(resolve, 4000));
+  //       delay().then(() => {
+  //         hideAlert();
+  //       });
+  //     }
+  //   }
+  // }, [educationalMessages]);
 
   const textareaRef = useRef(null);
 
@@ -790,7 +797,6 @@ export const VoiceInput = ({
           </VStack>
         </>
       ) : null}
-
       {isListening && (
         <HStack spacing={2} alignItems="center">
           <SunsetCanvas />
@@ -827,7 +833,6 @@ export const VoiceInput = ({
           </FadeInComponent>
         </HStack>
       )}
-
       {isCodeEditor ? (
         <Box
           width="99%"
@@ -882,70 +887,37 @@ export const VoiceInput = ({
           )}
         </Box>
       ) : isSingleLineText ? (
-        generateResponse ? (
-          <div
-            style={{
-              width: "100%",
-            }}
-          >
-            <SunsetCanvas isLoader={true} regulateWidth={false} />
-          </div>
-        ) : (
-          <Input
-            type="text"
-            value={
-              generateResponse ? (
-                <div
-                  style={{
-                    width: "100%",
-                  }}
-                >
-                  <SunsetCanvas isLoader={true} regulateWidth={false} />
-                </div>
-              ) : (
-                value
-              )
-            }
-            onChange={(e) => onChange(e.target.value)}
-            placeholder={translation[userLanguage]["app.input.placeholder"]}
-            maxWidth="600px"
-            width="100%"
-            style={{ boxShadow: "0px 0px 0px 1px rgba(0,0,0,0.35)" }}
-          />
-        )
+        <Input
+          type="text"
+          value={
+            generateResponse ? translation[userLanguage]["thinking"] : value
+          }
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={translation[userLanguage]["app.input.placeholder"]}
+          maxWidth="400px"
+          width="100%"
+          style={{ boxShadow: "0px 0px 0px 1px rgba(0,0,0,0.35)" }}
+        />
       ) : (
-        <>
-          {generateResponse ? (
-            <div
-              style={{
-                width: "100%",
-                textAlign: "left",
-              }}
-            >
-              <SunsetCanvas isLoader={true} regulateWidth={false} />
-            </div>
-          ) : (
-            <Textarea
-              ref={textareaRef}
-              style={{ boxShadow: "0px 0px 24px -20px rgba(0,0,0,0.75)" }}
-              type="textarea"
-              maxWidth={"100%"}
-              minHeight={isTerminal ? "100px" : "400px"}
-              value={
-                generateResponse
-                  ? translation[userLanguage]["thinking"]
-                  : aiListening
-                    ? aiTranscript
-                    : value
-              }
-              onChange={(e) => {
-                onChange(e.target.value);
-              }}
-              placeholder={translation[userLanguage]["app.input.placeholder"]}
-              width="100%"
-            />
-          )}
-        </>
+        <Textarea
+          ref={textareaRef}
+          style={{ boxShadow: "0px 0px 24px -20px rgba(0,0,0,0.75)" }}
+          type="textarea"
+          maxWidth={"100%"}
+          minHeight={isTerminal ? "100px" : "400px"}
+          value={
+            generateResponse
+              ? translation[userLanguage]["thinking"]
+              : aiListening
+                ? aiTranscript
+                : value
+          }
+          onChange={(e) => {
+            onChange(e.target.value);
+          }}
+          placeholder={translation[userLanguage]["app.input.placeholder"]}
+          width="100%"
+        />
       )}
 
       <EducationalModal
@@ -1425,7 +1397,7 @@ const Step = ({
           return answers;
         };
 
-        const userAnswers = await fetchUserAnswers();
+        // const userAnswers = await fetchUserAnswers();
         const subjectsCompleted = steps[userLanguage]
           .slice(1, currentStep) // All completed steps
           .map((step) => step.title);
@@ -1995,23 +1967,26 @@ const Step = ({
     const hostname = window.location.hostname;
     const isValidHost =
       hostname === "embedded-sunset.app" || "robotsbuildingeducation.com";
-    const username = localStorage.getItem("displayName").toLowerCase();
-    const bannedNames = [
-      "data",
-      "test",
-      "hi",
-      "txt",
-      "testing",
-      "text",
-      "hii",
-      "xx",
-      "xy",
-      "tst",
-      "tester",
-      "testing",
-      "ok",
-    ];
-    if (isValidHost && !bannedNames.includes(username)) {
+    // const username = localStorage.getItem("displayName").toLowerCase() || '';
+    // const bannedNames = [
+    //   "data",
+    //   "test",
+    //   "hi",
+    //   "txt",
+    //   "testing",
+    //   "text",
+    //   "hii",
+    //   "xx",
+    //   "xy",
+    //   "tst",
+    //   "tester",
+    //   "testing",
+    //   "ok",
+    // ];
+    if (
+      isValidHost
+      // && !bannedNames.includes(username)
+    ) {
       logEvent(analytics, "handleNextClick", {
         action: "completed_question",
       });
@@ -2045,8 +2020,8 @@ const Step = ({
         setIsPostingWithNostr(true);
 
         try {
-          await incrementUserStep(npub);
-          await storeCorrectAnswer(step, feedback);
+          incrementUserStep(npub);
+          storeCorrectAnswer(step, feedback);
 
           setIsPostingWithNostr(false);
 
@@ -2064,9 +2039,9 @@ const Step = ({
 
       try {
         const npub = localStorage.getItem("local_npub");
-        await incrementUserStep(npub);
+        incrementUserStep(npub);
         if (currentStep > 0) {
-          await storeCorrectAnswer(step, feedback);
+          storeCorrectAnswer(step, feedback);
         }
 
         setIsPostingWithNostr(false);
@@ -2101,7 +2076,7 @@ const Step = ({
     messages: educationalMessages,
     submitPrompt: submitEducationalPrompt,
     loading,
-  } = useGeminiChat();
+  } = useSimpleGeminiChat();
 
   const [educationalContent, setEducationalContent] = useState([]);
 
@@ -2124,17 +2099,17 @@ const Step = ({
     onOpen();
 
     // fetchGoogleAI();
-    if (educationalContent.length > 0) {
+    // if (educationalContent.length > 0) {
+    // }
+    if (educationalMessages.length > 0) {
     } else {
-      await submitEducationalPrompt(
+      submitEducationalPrompt(
         // [
         //   {
         //     content:
         `Generate educational Javascript material about ${JSON.stringify(
           step
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { "input": "${JSON.stringify(
-          step
-        )}", output: [{ "code": "code_example", "explanation": "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally any code should have a maximum print width of 80 characters. Lastly the user is speaking in ${
           userLanguage === "en" ? "english" : "spanish"
         }`
         //     ,
@@ -2148,37 +2123,37 @@ const Step = ({
     }
   };
 
-  useEffect(() => {
-    if (educationalMessages?.length > 0) {
-      try {
-        const lastMessage = educationalMessages[educationalMessages.length - 1];
-        const isLastMessage =
-          lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
+  // useEffect(() => {
+  //   if (educationalMessages?.length > 0) {
+  //     try {
+  //       const lastMessage = educationalMessages[educationalMessages.length - 1];
+  //       const isLastMessage =
+  //         lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
 
-        if (!lastMessage.meta.loading) {
-          // if (isLastMessage) {
-          const jsonResponse = JSON.parse(lastMessage.content);
-          if (Array.isArray(jsonResponse.output)) {
-            setEducationalContent(jsonResponse.output);
-          } else {
-            setEducationalContent([]);
-          }
-        } else {
-          setEducationalContent([]);
-        }
-      } catch (error) {
-        resetEducationalMessages();
-        onClose();
+  //       if (!lastMessage.meta.loading) {
+  //         // if (isLastMessage) {
+  //         const jsonResponse = JSON.parse(lastMessage.content);
+  //         if (Array.isArray(jsonResponse.output)) {
+  //           setEducationalContent(jsonResponse.output);
+  //         } else {
+  //           setEducationalContent([]);
+  //         }
+  //       } else {
+  //         setEducationalContent([]);
+  //       }
+  //     } catch (error) {
+  //       resetEducationalMessages();
+  //       onClose();
 
-        showAlert("warning", translation[userLanguage]["ai.error"]);
-        const delay = (ms) =>
-          new Promise((resolve) => setTimeout(resolve, 4000));
-        delay().then(() => {
-          hideAlert();
-        });
-      }
-    }
-  }, [educationalMessages]);
+  //       showAlert("warning", translation[userLanguage]["ai.error"]);
+  //       const delay = (ms) =>
+  //         new Promise((resolve) => setTimeout(resolve, 4000));
+  //       delay().then(() => {
+  //         hideAlert();
+  //       });
+  //     }
+  //   }
+  // }, [educationalMessages]);
 
   // const fetchGoogleAI = async () => {
   //   console.log("running google");
@@ -2558,9 +2533,15 @@ const Step = ({
                   // color="pink.600"
                   icon={<RiRobot2Fill padding="4px" fontSize="12px" />}
                   mr={0}
-                  onClick={() => {
+                  onMouseDown={() => {
                     window.location.href =
                       "https://chatgpt.com/g/g-LPoMAiBoa-robots-building-education";
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      window.location.href =
+                        "https://chatgpt.com/g/g-LPoMAiBoa-robots-building-education";
+                    }
                   }}
                 />
               </Box>
@@ -3009,8 +2990,8 @@ const Step = ({
             &nbsp;
             <Text fontSize="md">
               {!isAdaptiveLearning
-                ? "Adaptive learning is off."
-                : "Adaptive learning is on."}
+                ? translation[userLanguage]["adaptive_learning_off"]
+                : translation[userLanguage]["adaptive_learning_on"]}
             </Text>
           </Box>
 
@@ -3022,20 +3003,26 @@ const Step = ({
               </Text>
             </Box>
           ) : !isAdaptiveLearning ? null : suggestionMessage.length > 0 ? (
-            <Box
-              mt={4}
-              mb={4}
-              p={4}
-              borderRadius="lg"
-              background="gray.100"
-              maxWidth="600px"
-              textAlign={"left"}
-              width="100%"
-            >
-              <Markdown
-                components={ChakraUIRenderer(newTheme)}
-                children={suggestionMessage}
-              />
+            <Box maxWidth="600px" width="100%">
+              <Box
+                mt={4}
+                mb={0}
+                p={4}
+                borderRadius="24px"
+                borderBottomLeftRadius={"0px"}
+                // background="gray.100"
+                border="1px solid black"
+                textAlign={"left"}
+                width="100%"
+              >
+                <Markdown
+                  components={ChakraUIRenderer(newTheme)}
+                  children={suggestionMessage}
+                />
+              </Box>
+              <Box mt="-4">
+                <RandomCharacter />
+              </Box>
             </Box>
           ) : null}
           <EducationalModal
@@ -3391,18 +3378,21 @@ const Home = ({
                 {/* {translation[userLanguage]["landing.welcome"]} */}
                 {renderContentBasedOnURL()}
               </Text>
-              <Text fontSize="sm">
+              <Text fontSize="sm" mt={"-5"}>
                 {translation[userLanguage]["landing.introduction"]}
               </Text>
             </VStack>
 
             {/* 
               <div>{isCreatingAccount ? <SunsetCanvas /> : null}</div> */}
-            <Text fontSize="sm" maxWidth={"600px"}>
+            <Text fontSize="md" maxWidth={"600px"} c pt={0} mb={0}>
               {" "}
               <b>{translation[userLanguage]["createAccount.instructions"]} </b>
             </Text>
+
             <Input
+              mt={"-3"}
+              pt={0}
               style={{ maxWidth: 300 }}
               placeholder={
                 translation[userLanguage]["createAccount.input.placeholder"]
@@ -3425,7 +3415,7 @@ const Home = ({
               >
                 {translation[userLanguage]["landing.button.telemetry"]}
               </Button>
-              {/* <div>{translation[userLanguage]["or"]}</div> */}
+              <Text fontSize="xs">{translation[userLanguage]["or"]}</Text>
               <Button
                 colorScheme="pink"
                 backgroundColor="pink.50"
@@ -3627,7 +3617,14 @@ const Home = ({
             </RiseUpAnimation>
           </div>
 
-          <Button onClick={handleCopyKeys}>
+          <Button
+            onMouseDown={handleCopyKeys}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                handleCopyKeys();
+              }
+            }}
+          >
             🔑 {translation[userLanguage]["button.copyKey"]}
           </Button>
 
@@ -3637,6 +3634,7 @@ const Home = ({
               direction="row"
               isChecked={isCheckboxChecked}
               onChange={handleCheckboxChange}
+              // onMouseDown={handleCheckboxChange}
               style={{ textAlign: "left" }}
               width="95%"
               maxWidth="350px"
@@ -3897,7 +3895,16 @@ function App({ isShutDown }) {
       // let count = await getTotalUsers();
       if (npub && window.location.pathname !== "/dashboard") {
         try {
-          const step = await getUserStep(npub); // Fetch the current step
+          const windowurl = window.location.href;
+
+          // Regex to match and capture the number after "/q/"
+          const matchnumber = windowurl.match(/\/q\/(\d+)$/);
+
+          let step = matchnumber ? matchnumber[1] : null;
+
+          if (!step) {
+            step = await getUserStep(npub); // Fetch the current step
+          }
 
           // if (step == 0) {
           //   localStorage.clear();
@@ -3946,6 +3953,7 @@ function App({ isShutDown }) {
             } else {
               // if (step !== 0) {
               topRef.current?.scrollIntoView();
+
               navigate(`/q/${step}`);
               // }
             }
@@ -4002,6 +4010,8 @@ function App({ isShutDown }) {
 
   const testurl = window.location.href;
 
+  console.log("testurl", testurl);
+
   const testIsMatch = /\/q\/\d+$/.test(testurl);
 
   return (
@@ -4030,7 +4040,12 @@ function App({ isShutDown }) {
             // position="absolute"
             right="8px"
             top="8px"
-            onClick={hideAlert}
+            onMouseDown={hideAlert}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                hideAlert();
+              }
+            }}
           />
         </Alert>
       )}

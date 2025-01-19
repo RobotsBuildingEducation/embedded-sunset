@@ -236,7 +236,12 @@ export const AlgorithmHelper = ({ isOpen, onClose, userLanguage }) => {
           <div>
             <Button
               variant="solid"
-              onClick={handleGenerateProblem}
+              onMouseDown={handleGenerateProblem}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleGenerateProblem();
+                }
+              }}
               isDisabled={isGeneratingProblem}
             >
               {
@@ -354,7 +359,14 @@ export const AlgorithmHelper = ({ isOpen, onClose, userLanguage }) => {
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button onClick={onClose}>
+          <Button
+            onMouseDown={onClose}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                onClose();
+              }
+            }}
+          >
             {translation[userLanguage]["button.close"]}
           </Button>
         </ModalFooter>

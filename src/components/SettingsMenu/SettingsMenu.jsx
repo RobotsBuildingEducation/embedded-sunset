@@ -36,6 +36,7 @@ import { FaBitcoin } from "react-icons/fa";
 import TranscriptModal from "./TranscriptModal/TranscriptModal";
 import { InstallAppModal } from "../InstallModal/InstallModal";
 import { AlgorithmHelper } from "../AlgorithmHelper/AlgorithmHelper";
+import LiveCodeEditorModal from "../LiveCodeEditor/LiveCodeEditor";
 
 const SettingsMenu = ({
   testIsMatch,
@@ -109,6 +110,12 @@ const SettingsMenu = ({
     onClose: onTranscriptClose,
   } = useDisclosure();
 
+  const {
+    isOpen: isCodeEditorOpen,
+    onOpen: onCodeEditorOpen,
+    onClose: onCodeEditorClose,
+  } = useDisclosure();
+
   const [interval, setIntervalState] = useState(120);
 
   const handleToggle = async () => {
@@ -154,7 +161,12 @@ const SettingsMenu = ({
         <IconButton
           ref={btnRef}
           icon={<IoAppsOutline />}
-          onClick={onOpen}
+          onMouseDown={onOpen}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              onOpen();
+            }
+          }}
           // variant="outline"
           boxShadow="0px 1px 1px 2px lightgray"
           position="fixed"
@@ -164,7 +176,7 @@ const SettingsMenu = ({
           aria-label="Settings"
         />
       ) : null}
-      {isSignedIn && testIsMatch ? (
+      {/* {isSignedIn && testIsMatch ? (
         <IconButton
           ref={btnRef}
           icon={<FaBitcoin />}
@@ -178,8 +190,9 @@ const SettingsMenu = ({
           style={{ backgroundColor: "white", zIndex: 1000 }}
           aria-label="Bitcoin"
         />
-      ) : null}
+      ) : null} */}
       <Drawer
+        position="absolute"
         isOpen={isOpen}
         placement="right"
         onClose={onClose}
@@ -215,12 +228,47 @@ const SettingsMenu = ({
                   }}
                 />
               </FormControl>
+              {/* <Button
+                p={6}
+                colorScheme="pink"
+                background="pink.300"
+                style={{ width: "100%" }}
+                onMouseDown={onCodeEditorOpen}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    onCodeEditorOpen();
+                  }
+                }}
+              >
+                Experiments
+              </Button> */}
+              <Button
+                p={6}
+                colorScheme="pink"
+                background="pink.300"
+                style={{ width: "100%" }}
+                onMouseDown={onBitcoinModeOpen}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleCopyKeys();
+                  }
+                }}
+              >
+                <FaBitcoin />
+                &nbsp;
+                {translation[userLanguage]["settings.button.bitcoinMode"]}
+              </Button>
               <Button
                 ref={firstButtonRef} // Assign the ref to the first button
                 colorScheme="pink"
                 background="pink.300"
                 style={{ width: "100%" }}
-                onClick={onSelfPacedOpen}
+                onMouseDown={onSelfPacedOpen}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    onSelfPacedOpen();
+                  }
+                }}
                 p={6}
               >
                 {translation[userLanguage]["settings.button.selfPace"]}
@@ -234,22 +282,19 @@ const SettingsMenu = ({
               >
                 {translation[userLanguage]["settings.button.adaptiveLearning"]}
               </Button> */}
-              {/* <Button
-                p={6}
-                colorScheme="pink"
-                background="pink.300"
-                style={{ width: "100%" }}
-                onClick={onBitcoinModeOpen}
-              >
-                {translation[userLanguage]["settings.button.bitcoinMode"]}
-              </Button> */}
+
               {userLanguage === "en" ? (
                 <Button
                   p={6}
                   colorScheme="pink"
                   background="pink.300"
                   style={{ width: "100%" }}
-                  onClick={onAlgorithmHelperOpen}
+                  onMouseDown={onAlgorithmHelperOpen}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      onAlgorithmHelperOpen();
+                    }
+                  }}
                 >
                   {translation[userLanguage]["settings.button.algorithmHelper"]}
                 </Button>
@@ -259,7 +304,12 @@ const SettingsMenu = ({
                 colorScheme="pink"
                 background="pink.300"
                 style={{ width: "100%" }}
-                onClick={onTranscriptOpen}
+                onMouseDown={onTranscriptOpen}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    onTranscriptOpen();
+                  }
+                }}
               >
                 {translation[userLanguage]["settings.button.transcript"]}
               </Button>
@@ -268,14 +318,24 @@ const SettingsMenu = ({
                 colorScheme="pink"
                 background="pink.300"
                 style={{ width: "100%" }}
-                onClick={onInstallModalOpen}
+                onMouseDown={onInstallModalOpen}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    onInstallModalOpen();
+                  }
+                }}
               >
                 {translation[userLanguage]["installApp"]}
               </Button>
               <Button
                 p={6}
                 style={{ width: "100%" }}
-                onClick={onSocialWalletOpen}
+                onMouseDown={onSocialWalletOpen}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    onSocialWalletOpen();
+                  }
+                }}
                 variant={"outline"}
                 boxShadow={"0px 0.5px 0.5px 1px black"}
               >
@@ -300,11 +360,17 @@ const SettingsMenu = ({
                 p={6}
                 style={{ width: "100%" }}
                 // as="a"
-
-                onClick={() => {
+                onMouseDown={() => {
                   window.open(
                     "https://github.com/RobotsBuildingEducation/RobotsBuildingEducation/blob/main/README.md"
                   );
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    window.open(
+                      "https://github.com/RobotsBuildingEducation/RobotsBuildingEducation/blob/main/README.md"
+                    );
+                  }
                 }}
                 variant={"outline"}
                 boxShadow={"0px 0.5px 0.5px 1px black"}
@@ -316,8 +382,13 @@ const SettingsMenu = ({
                 style={{ width: "100%" }}
                 // as="a"
 
-                onClick={() => {
+                onMouseDown={() => {
                   window.open("https://patreon.com/notesandotherstuff");
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    window.open("https://patreon.com/notesandotherstuff");
+                  }
                 }}
                 variant={"outline"}
                 boxShadow={"0px 0.5px 0.5px 1px black"}
@@ -328,9 +399,15 @@ const SettingsMenu = ({
 
               <Button
                 style={{ width: "100%" }}
-                onClick={() => {
+                onMouseDown={() => {
                   onClose();
                   navigate("/about");
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    onClose();
+                    navigate("/about");
+                  }
                 }}
                 p={6}
                 variant={"transparent"}
@@ -339,7 +416,7 @@ const SettingsMenu = ({
               </Button>
               <Button
                 style={{ width: "100%" }}
-                onClick={() => {
+                onMouseDown={() => {
                   const translateValue = localStorage.getItem("userLanguage");
                   localStorage.removeItem("local_nsec");
                   localStorage.removeItem("local_npub");
@@ -349,6 +426,19 @@ const SettingsMenu = ({
                   onClose();
                   setView("buttons");
                   navigate("/");
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    const translateValue = localStorage.getItem("userLanguage");
+                    localStorage.removeItem("local_nsec");
+                    localStorage.removeItem("local_npub");
+                    if (translateValue) {
+                      localStorage.setItem("userLanguage", translateValue);
+                    }
+                    onClose();
+                    setView("buttons");
+                    navigate("/");
+                  }
                 }}
                 p={6}
                 variant={"transparent"}
@@ -450,6 +540,14 @@ const SettingsMenu = ({
           onClose={onInstallModalClose}
         />
       ) : null}
+
+      {/* {isCodeEditorOpen ? (
+        <LiveCodeEditorModal
+          userLanguage={userLanguage}
+          isOpen={isCodeEditorOpen}
+          onClose={onCodeEditorClose}
+        />
+      ) : null} */}
     </>
   );
 };

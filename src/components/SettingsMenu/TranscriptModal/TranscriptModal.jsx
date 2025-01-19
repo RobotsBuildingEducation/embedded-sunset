@@ -149,9 +149,14 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
               display: "flex",
             }}
             tabIndex={0}
-            onClick={() =>
-              handleCopyKeys(localStorage.getItem("local_npub") || "")
-            }
+            onMouseDown={() => {
+              handleCopyKeys(localStorage.getItem("local_npub") || "");
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                handleCopyKeys(localStorage.getItem("local_npub") || "");
+              }
+            }}
           >
             <div style={{ width: "min-content" }}>
               <CopyButtonIcon color="black" />
@@ -193,7 +198,14 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
             </span>
             <Button
               width="fit-content"
-              onClick={() => handleCopyKeys(localStorage.getItem("local_nsec"))}
+              onMouseDown={() =>
+                handleCopyKeys(localStorage.getItem("local_nsec"))
+              }
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleCopyKeys(localStorage.getItem("local_nsec"));
+                }
+              }}
               fontSize={"smaller"}
             >
               🔑 {translation[userLanguage]["button.copyKey"]}

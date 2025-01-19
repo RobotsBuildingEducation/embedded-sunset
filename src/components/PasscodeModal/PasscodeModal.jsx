@@ -80,10 +80,27 @@ export const PasscodeModal = ({ userLanguage }) => {
           />
         </ModalBody>
         <ModalFooter>
-          <Button variant="ghost" onClick={closePasscodeModal}>
+          <Button
+            variant="ghost"
+            onMouseDown={closePasscodeModal}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                closePasscodeModal();
+              }
+            }}
+          >
             {translation[userLanguage]["cancel"]}
           </Button>
-          <Button colorScheme="pink" onClick={handleConfirm} ml={3}>
+          <Button
+            colorScheme="pink"
+            onMouseDown={handleConfirm}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                handleConfirm();
+              }
+            }}
+            ml={3}
+          >
             {translation[userLanguage]["confirm"]}
           </Button>
         </ModalFooter>

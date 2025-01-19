@@ -279,7 +279,14 @@ export const NodeComponent = ({ node, onNodeSelect, isSelected }) => {
 
   return (
     <StyledTreeNode>
-      <TreeNodeButton onClick={() => onNodeSelect(node, isLeafNode)}>
+      <TreeNodeButton
+        onMouseDown={() => onNodeSelect(node, isLeafNode)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            onNodeSelect(node, isLeafNode);
+          }
+        }}
+      >
         {node.name}
       </TreeNodeButton>
       {isSelected && node.children && (
@@ -372,7 +379,12 @@ export const TreeNode = ({ node, onSelect }) => {
         return (
           <Button
             key={childKey}
-            onClick={() => onSelect(childKey)}
+            onMouseDown={() => onSelect(childKey)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                onSelect(childKey);
+              }
+            }}
             mr={2}
             mt={2}
             // style={{
@@ -456,7 +468,12 @@ export const SelectedPath = ({
                     <div>
                       <Button
                         variant={"outline"}
-                        onClick={() => toggleCollapse(index)}
+                        onMouseDown={() => toggleCollapse(index)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            toggleCollapse(index);
+                          }
+                        }}
                         style={{ marginTop: 10 }}
                       >
                         {collapsed[index] ? "Show Code" : "Hide Code"}
@@ -491,17 +508,33 @@ export const SelectedPath = ({
       </ul>
       <br />
       <br />
-      <Button variant="ghost" onClick={onUndo}>
+      <Button
+        variant="ghost"
+        onMouseDown={() => onUndo()}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            onUndo();
+          }
+        }}
+      >
         Undo
       </Button>
       &nbsp;&nbsp;
-      <Button variant="ghost" onClick={onReset}>
+      <Button
+        variant="ghost"
+        onMouseDown={onReset}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            onReset();
+          }
+        }}
+      >
         Reset
       </Button>
       <br />
       <br />
       <Button
-        onClick={() =>
+        onMouseDown={() =>
           requestFeedback(
             problem,
             path,
@@ -511,6 +544,18 @@ export const SelectedPath = ({
             // feedbackRequest
           )
         }
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            requestFeedback(
+              problem,
+              path,
+              contentStack,
+              codeStack,
+              setGeneratedFeedback
+              // feedbackRequest
+            );
+          }
+        }}
       >
         Request Feedback
       </Button>
@@ -561,7 +606,13 @@ export const CopyableMarkdown = ({ content }) => {
       >
         <Button
           //   variant="secondary"
-          onClick={handleCopy}
+
+          onMouseDown={handleCopy}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              handleCopy();
+            }
+          }}
           style={{ position: "absolute", top: 0, right: 0 }}
         >
           {copied ? "Copied" : "Copy"}

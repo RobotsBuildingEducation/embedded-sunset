@@ -110,7 +110,12 @@ const CodeCompletionQuestion = ({
       {/* Learn Button */}
       <Button
         ref={learnButtonRef}
-        onClick={() => handleModalCheck(onLearnClick)}
+        onMouseDown={() => handleModalCheck(onLearnClick)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            handleModalCheck(onLearnClick);
+          }
+        }}
         colorScheme="pink"
         // Removed tabIndex={0} as Button is focusable by default
         background="pink.400"

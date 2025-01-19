@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
+import { visualizer } from "rollup-plugin-visualizer";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -8,10 +9,11 @@ export default defineConfig({
     port: parseInt(process.env.npm_config_port),
   },
   plugins: [
+    visualizer({ open: true }),
     react(),
     VitePWA({
       workbox: {
-        maximumFileSizeToCacheInBytes: 4000000, // Set to 4MB or any higher value
+        maximumFileSizeToCacheInBytes: 5500000, // Set to 4MB or any higher value
       },
       manifest: {
         name: "Robots Building Education",

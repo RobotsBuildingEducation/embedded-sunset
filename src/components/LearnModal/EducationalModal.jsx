@@ -23,7 +23,7 @@ import {
   ListItem,
 } from "@chakra-ui/react";
 import { BigSunset, SunsetCanvas } from "../../elements/SunsetCanvas";
-import Editor from "react-simple-code-editor";
+
 import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
@@ -37,58 +37,44 @@ import Markdown from "react-markdown";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 
-const newTheme = {
-  p: (props) => <Text size="sm" color="white" {...props} />,
+export const newTheme = {
+  p: (props) => <Text mb={2} lineHeight="1.6" {...props} />,
+  ul: (props) => <UnorderedList pl={6} spacing={2} {...props} />,
+  ol: (props) => <UnorderedList as="ol" pl={6} spacing={2} {...props} />,
+  li: (props) => <ListItem mb={1} {...props} />,
   h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  h4: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  h5: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  h6: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  code: ({ node, inline, className, children, ...props }) => {
-    // Detect if it's a single word or short phrase
-    const content = Array.isArray(children)
-      ? children.join("")
-      : String(children);
-
-    // Check if the content is a single word
-    const isSingleWord = content.trim().split(/\s+/).length === 1;
-
-    // Inline code styling
-    if (isSingleWord) {
-      return (
-        <Code
-          p={1}
-          borderRadius={8}
-          display="inline" // Prevent block display
-          fontFamily={"Fira code, Fira Mono, monospace"}
-          fontSize="xs"
-          {...props}
-        >
-          {children}
-        </Code>
-      );
-    }
-
-    // Multi-line or multi-word code block styling
-    return (
-      <Box
-        as="pre"
-        fontFamily={"Fira code, Fira Mono, monospace"}
-        fontSize="xs"
-        p={3}
-        borderRadius={8}
+  code: ({ inline, className, children, ...props }) => {
+    const match = /language-(\w+)/.exec(className || "");
+    console.log("match...", match);
+    return !inline && match ? (
+      <SyntaxHighlighter
+        // backgroundColor="white"
+        // style={"light"}
+        language={match[1]}
+        PreTag="div"
+        customStyle={{
+          backgroundColor: "white", // Match this with the desired color
+          color: "black", // Ensure the text matches the background
+          padding: "1rem",
+          borderRadius: "8px",
+          fontSize: 12,
+        }}
         {...props}
       >
-        <Code
-          p={6}
-          display="block"
-          wordBreak="break-word"
-          fontSize="sm"
-          overflowX="scroll"
-        >
-          {children}
-        </Code>
+        {String(children).replace(/\n$/, "")}
+      </SyntaxHighlighter>
+    ) : (
+      <Box
+        as="code"
+        backgroundColor="gray.100"
+        p={1}
+        borderRadius="md"
+        fontSize="sm"
+        {...props}
+      >
+        {children}
       </Box>
     );
   },
@@ -193,7 +179,8 @@ const EducationalModal = ({
       <ModalOverlay />
       {/* Add OrbCanvas as a background */}
 
-      {educationalMessages.length > -1 && !educationalContent.length > 0 ? (
+      {educationalMessages.length < 1 ? (
+        // && !educationalContent.length > 0
         // <ModalOverlay>
         //   <OrbCanvas
         //     instructions={
@@ -253,7 +240,7 @@ const EducationalModal = ({
                 <OrbCanvas
                   hasStreamedText={false}
                   instructions={
-                    <b>
+                    <Text fontWeight={"bold"} fontSize="xl">
                       {" "}
                       {translation[userLanguage]["modal.learn.instructions"]}
                       <br />
@@ -262,98 +249,13 @@ const EducationalModal = ({
                         educationalMessages[educationalMessages.length - 1]
                           ?.content
                       }
-                    </b>
+                    </Text>
                   }
                 />
                 {/* // ) : ( // )}  */}
                 <Box ref={bottomRef}></Box>
               </div>
             ) : null}
-            <VStack spacing={6} alignItems="flex-start">
-              {educationalContent.length > 0 &&
-                educationalContent.map((content, index) => (
-                  <Box
-                    fontFamily={"Avenir"}
-                    key={index}
-                    p={4}
-                    bg="#170029"
-                    borderRadius="md"
-                    borderWidth={1}
-                    borderColor="rgba(255, 255, 255, 0.2)"
-                    width="100%"
-                    boxShadow="md"
-                  >
-                    {/* <Text fontSize="xl" fontWeight="bold">
-                  Code Example:
-                </Text> */}
-                    <div
-                      style={{
-                        //   color: "#696969",
-                        backgroundColor: "#faf3e0",
-                        // width: "100%",
-                        padding: 20,
-                        // wordBreak: "break-word",
-                        display: "flex",
-                        flexDirection: "column",
-                        borderRadius: 30,
-                        boxShadow: "4px 4px 5px 0px rgba(0,0,0,0.75)",
-                        zoom: "0.8",
-                      }}
-                    >
-                      <pre
-                      // style={{ whiteSpace: "pre-wrap" }}
-                      >
-                        <Editor
-                          value={content.code}
-                          highlight={(input) => highlight(input, languages.js)}
-                          padding={10}
-                          style={{
-                            fontFamily: '"Fira code", "Fira Mono", monospace',
-                            fontSize: 14,
-                            borderRadius: "8px",
-                          }}
-                          disabled
-                        />
-                      </pre>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "flex-end",
-                        }}
-                      >
-                        <Button
-                          style={{
-                            display: "flex",
-                            border: borderState,
-                          }}
-                          tabIndex={0}
-                          onClick={() => handleCopyKeys(content.code)}
-                          width={24}
-                        >
-                          <div style={{ width: "min-content" }}>
-                            <CopyButtonIcon color="black" />
-                          </div>
-                          &nbsp;
-                          {/* <div> */}
-                          {/* <b>{translation[userLanguage]["yourID"]}</b> */}
-                          {/* {localStorage?.getItem("local_npub")?.substr(0, 16) ||
-                        ""} */}
-                          {/* </div> */}
-                        </Button>
-                      </div>
-                    </div>
-                    {/* <Text fontSize="xl" fontWeight="bold" mt={3}>
-                  Explanation:
-                </Text> */}
-                    <br />
-
-                    <Markdown
-                      theme={ChakraUIRenderer(newTheme)}
-                      children={content.explanation}
-                    />
-                  </Box>
-                ))}
-            </VStack>
           </ModalBody>
           {/* <ModalFooter margin={0} padding={3}>
             <Button
@@ -391,21 +293,31 @@ const EducationalModal = ({
 
             <HStack mb={0}>
               <div style={{ width: "fit-content" }}>
-                {educationalMessages.length > 0 &&
-                !educationalContent.length > 0 ? (
+                {/* {educationalMessages.length > 0 
+                &&
+                !educationalContent.length > 0 ? 
+                (
                   <BigSunset />
-                ) : (
-                  <RandomCharacter />
-                )}
+                ) : ( */}
+                <RandomCharacter />
+                {/* // )} */}
               </div>
               &nbsp;
               <div>{translation[userLanguage]["modal.learn.title"]}</div>
             </HStack>
           </ModalHeader>
 
-          <ModalBody p={2} style={{ width: "100%" }}>
-            {/* {educationalMessages.length === 0 && <Spinner size="xl" />} */}
+          <ModalBody
+            p={2}
+            style={{
+              width: "100%",
 
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            {/* {educationalMessages.length === 0 && <Spinner size="xl" />} */}
+            {/* 
             {educationalMessages.length > -1 &&
             !educationalContent.length > 0 ? (
               <div
@@ -441,10 +353,16 @@ const EducationalModal = ({
                 )}{" "}
                 <Box ref={bottomRef}></Box>
               </div>
-            ) : null}
-            <VStack spacing={6} alignItems="flex-start" maxWidth="600px">
-              {educationalContent.length > 0 &&
-                educationalContent.map((content, index) => (
+            ) : null} */}
+            <VStack
+              spacing={6}
+              alignItems="flex-start"
+              maxWidth="600px"
+              minWidth="300px"
+              width="100%"
+            >
+              {educationalMessages.length > 0 &&
+                educationalMessages.map((content, index) => (
                   <Box
                     fontFamily={"Avenir"}
                     key={index}
@@ -452,15 +370,17 @@ const EducationalModal = ({
                     // bg="#170029"
                     borderRadius="md"
                     borderWidth={1}
-                    borderColor="rgba(255, 255, 255, 0.2)"
+                    // borderColor="rgba(255, 255, 255, 0.0)"
+                    textAlign={"left"}
                     width="100%"
+
                     // boxShadow="md"
                     // boxShadow="0px 0.5px 0.5px 1px black"
                   >
                     {/* <Text fontSize="xl" fontWeight="bold">
                     Code Example:
                   </Text> */}
-                    {content.code ? (
+                    {/* {content.code ? (
                       <div
                         style={{
                           //   color: "#696969",
@@ -479,46 +399,12 @@ const EducationalModal = ({
                           overflowX: "auto",
                         }}
                       >
-                        {/* <div
-                          style={{
-                            overflowX: "auto", // Enable horizontal scrolling
-                            border: "1px solid pink",
-                          }}
-                        > */}
-                        {/* <pre
-                            style={{
-                              // whiteSpace: "pre", // Prevents breaking lines
-                              margin: 0,
-
-                              border: "1px solid red",
-                            }}
-                            // style={{ whiteSpace: "pre-wrap" }}
-                          > */}
-                        {/* <Editor
-                          value={content.code}
-                          highlight={(input) => highlight(input, languages.js)}
-                          padding={10}
-                          style={{
-                            fontFamily: '"Fira code", "Fira Mono", monospace',
-                            fontSize: 14,
-                            borderRadius: "8px",
-                            border: "1px solid orange",
-                            // overflow: "scroll",
-                            display: "block",
-                            whiteSpace: "pre", // Override pre-wrap for strict formatting
-                            wordBreak: "keep-all", // Avoid breaking words
-                            overflowWrap: "normal", // Prevent word wrapping
-                            position: "relative",
-                          }}
-                          disabled
-                        /> */}
                         <Markdown
                           theme={ChakraUIRenderer(newTheme)}
                           children={`\`\`\`${content.code}`}
                           // inline={false}
                         ></Markdown>
-                        {/* </pre> */}
-                        {/* </div> */}
+
                         <div
                           style={{
                             display: "flex",
@@ -531,30 +417,29 @@ const EducationalModal = ({
                               border: borderState,
                             }}
                             tabIndex={0}
-                            onClick={() => handleCopyKeys(content.code)}
+                            onMouseDown={() => handleCopyKeys(content.code)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                handleCopyKeys(content.code);
+                              }
+                            }}
                             width={24}
                           >
                             <div style={{ width: "min-content" }}>
                               <CopyButtonIcon color="black" />
                             </div>
                             &nbsp;
-                            {/* <div> */}
-                            {/* <b>{translation[userLanguage]["yourID"]}</b> */}
-                            {/* {localStorage?.getItem("local_npub")?.substr(0, 16) ||
-                          ""} */}
-                            {/* </div> */}
                           </Button>
                         </div>
                       </div>
-                    ) : null}
+                    ) : null} */}
                     {/* <Text fontSize="xl" fontWeight="bold" mt={3}>
                     Explanation:
                   </Text> */}
-                    <br />
 
                     <Markdown
-                      theme={ChakraUIRenderer(newTheme)}
-                      children={content.explanation}
+                      components={ChakraUIRenderer(newTheme)}
+                      children={content.content}
                     />
                   </Box>
                 ))}

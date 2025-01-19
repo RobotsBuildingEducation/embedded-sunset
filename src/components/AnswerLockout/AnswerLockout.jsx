@@ -114,10 +114,26 @@ export const AnswerLockout = ({ userId }) => {
       ) : (
         <Box p={4} bg="green.100" borderRadius="md" textAlign="center">
           <Text fontSize="lg">You can attempt to answer questions.</Text>
-          <Button colorScheme="blue" onClick={() => handleNewAttempt(false)}>
+          <Button
+            colorScheme="blue"
+            onMouseDown={() => handleNewAttempt(false)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                handleNewAttempt(false);
+              }
+            }}
+          >
             Simulate Incorrect Answer
           </Button>
-          <Button colorScheme="green" onClick={() => handleNewAttempt(true)}>
+          <Button
+            colorScheme="green"
+            onMouseDown={() => handleNewAttempt(true)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                handleNewAttempt(true);
+              }
+            }}
+          >
             Simulate Correct Answer
           </Button>
         </Box>

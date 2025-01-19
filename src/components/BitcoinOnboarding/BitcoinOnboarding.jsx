@@ -7,8 +7,16 @@ import {
   Select,
   Link,
   Box,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionIcon,
+  AccordionPanel,
+  RadioGroup,
+  Radio,
 } from "@chakra-ui/react";
 import QRCode from "qrcode.react";
+import { SiCashapp } from "react-icons/si";
 
 import { translation } from "../../utility/translation";
 
@@ -69,12 +77,11 @@ const BitcoinOnboarding = ({ userLanguage }) => {
     }
   }, [totalBalance]);
 
-  const handleIdentityChange = async (e) => {
-    const value = e.target.value;
+  const handleIdentityChange = async (value) => {
     setSelectedIdentity(value);
 
     try {
-      setLoading(true);
+      //   setLoading(true);
 
       // Save the selected identity to Firestore under the user's document
       const userDocRef = doc(
@@ -88,7 +95,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
     } catch (error) {
       console.error("Error saving identity to Firestore:", error);
     } finally {
-      setLoading(false);
+      //   setLoading(false);
     }
   };
 
@@ -164,6 +171,55 @@ const BitcoinOnboarding = ({ userLanguage }) => {
     }
   }, [cashuWallet]);
 
+  const renderButtonText = (buttonText) => {
+    const parts = buttonText.split(/(Cash App)/); // Split by "Cash App"
+
+    console.log("prts", parts);
+
+    return (
+      <Text as="span">
+        {buttonText.split("Cash App").map((part, index, array) => (
+          <span key={index} style={{ textAlign: "center" }}>
+            {part}
+            {index !== array.length - 1 && (
+              <Link
+                href="https://click.cash.app/ui6m/home2022"
+                isExternal
+                color="blue.500"
+                display="inline-flex" // Ensures icon and text stay inline
+                alignItems="center" // Aligns icon and text vertically
+                gap="4px" // Optional: small space between icon and text
+                lineHeight={"0px"}
+                ml="-1.5"
+              >
+                &nbsp;
+                <SiCashapp color="#00C852" />
+                <Text>Cash App</Text>
+              </Link>
+            )}
+          </span>
+        ))}
+      </Text>
+    );
+
+    // return parts.map((part, index) =>
+    //   part === "Cash App" ? (
+    //     <Link
+    //       key={index}
+    //       href="https://click.cash.app/ui6m/home2022"
+    //       isExternal
+    //       color="blue.500"
+    //       fontWeight="bold"
+    //       display="flex"
+    //     >
+    //       <SiCashapp color="00C852" /> {part}
+    //     </Link>
+    //   ) : (
+    //     part
+    //   )
+    // );
+  };
+
   console.log("running cashu", cashuWallet);
   const renderContent = () => {
     if (!cashuWallet) {
@@ -181,7 +237,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
               </b>
             </Text>
 
-            <Text mb={2}>
+            <Text size="sm" mb={2}>
               {
                 translation[userLanguage][
                   "modal.bitcoinMode.instructions.createWallet.2"
@@ -191,7 +247,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
           </Text>
 
           <VStack>
-            <Select
+            {/* <Select
               mb={4}
               onChange={handleIdentityChange}
               value={selectedIdentity} // Bind to state
@@ -213,12 +269,55 @@ const BitcoinOnboarding = ({ userLanguage }) => {
               <option value="more-schools" disabled>
                 {translation[userLanguage]["disabled.select.soon"]}
               </option>
-            </Select>
+            </Select> */}
+
+            {/* <Accorrdion toggmb={4} reduceMotion={true}>
+              <AccordionItem>
+                <AccordionButton
+                  display="flex"
+                  justifyContent={"space-between"}
+                >
+                  {/* <AccordionIcon mr={2} p={0} ml={0} /> */}
+            <Text flex="1" textAlign="left" fontSize="sm">
+              {translation[userLanguage]["select.recipient"]}
+            </Text>
+            {/* </AccordionButton>
+                <AccordionPanel> */}
+            <RadioGroup
+              onChange={handleIdentityChange}
+              value={selectedIdentity}
+            >
+              <VStack align="start">
+                <Radio
+                  colorScheme="pink"
+                  value="npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt"
+                >
+                  robotsbuildingeducation.com
+                </Radio>
+                <Radio
+                  colorScheme="pink"
+                  value="npub166md04uzz4ksy4zv2c8maz4lprrezmtfkwq6yfevtqel3tchkthsemwtwm"
+                >
+                  ladderly.io
+                </Radio>
+                <Radio
+                  colorScheme="pink"
+                  value="npub1ae02dvwewx8w0z2sftpcg2ta4xyu6hc00mxuq03x2aclta6et76q90esq2"
+                >
+                  girlsoncampus.org
+                </Radio>
+              </VStack>
+            </RadioGroup>
+            {/* </AccordionPanel>
+              </AccordionItem>
+            </Accordion> */}
 
             <Link
+              mb={4}
               fontSize="sm"
               target="_blank"
               textDecoration={"underline"}
+              textAlign={"center"}
               href={
                 selectedIdentity ===
                 "npub1ae02dvwewx8w0z2sftpcg2ta4xyu6hc00mxuq03x2aclta6et76q90esq2"
@@ -244,9 +343,16 @@ const BitcoinOnboarding = ({ userLanguage }) => {
                     : null}
             </Link>
             <Button
-              onClick={createNewWallet}
+              onMouseDown={() => createNewWallet()}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  createNewWallet();
+                }
+              }}
+              m={6}
               isLoading={initializingWallet}
-              loadingText={translation[userLanguage]["loading"]}
+              loadingText={translation[userLanguage]["loading.wallet"]}
+              isDisabled={!selectedIdentity.length > 0}
             >
               {translation[userLanguage]["createWallet.button"]}
               {/* {
@@ -255,14 +361,6 @@ const BitcoinOnboarding = ({ userLanguage }) => {
                 ]
               } */}
             </Button>
-
-            <Text mt={2} fontSize="xs">
-              {
-                translation[userLanguage][
-                  "modal.bitcoinMode.instructions.createWallet.3"
-                ]
-              }
-            </Text>
           </VStack>
         </>
       );
@@ -358,10 +456,17 @@ const BitcoinOnboarding = ({ userLanguage }) => {
               </b>
             </Text>
             <VStack>
-              <QRCode value={invoice} size={256} style={{ zIndex: 1000000 }} />
+              <QRCode value={invoice} size={256} style={{ zIndex: 10 }} />
               <div style={{ marginTop: "8px" }}>
                 {translation[userLanguage]["or"]} &nbsp;
-                <Button onClick={handleCopyInvoice}>
+                <Button
+                  onMouseDown={() => handleCopyInvoice()}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      handleCopyInvoice();
+                    }
+                  }}
+                >
                   🔑{" "}
                   {
                     translation[userLanguage][
@@ -372,6 +477,14 @@ const BitcoinOnboarding = ({ userLanguage }) => {
               </div>
               <Text fontSize={"sm"}>
                 {translation[userLanguage]["deposit.ps"]}
+              </Text>
+
+              <Text mt={2} fontSize="xs">
+                {renderButtonText(
+                  translation[userLanguage][
+                    "modal.bitcoinMode.instructions.createWallet.3"
+                  ]
+                )}
               </Text>
             </VStack>
           </>
@@ -415,9 +528,16 @@ const BitcoinOnboarding = ({ userLanguage }) => {
             <VStack>
               {/* <SunsetCanvas /> */}
               <Button
-                onClick={handleInitiateDeposit}
+                onMouseDown={() => handleInitiateDeposit()}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleInitiateDeposit();
+                  }
+                }}
                 isLoading={depositing}
-                loadingText={translation[userLanguage]["loading"]}
+                loadingText={
+                  translation[userLanguage]["loading.wallet.address"]
+                }
               >
                 {/* {
                   translation[userLanguage][

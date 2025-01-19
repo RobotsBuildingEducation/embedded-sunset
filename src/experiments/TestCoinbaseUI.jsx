@@ -160,7 +160,15 @@ export const TestFeed = ({ userLanguage }) => {
         {translation[userLanguage]["learnwithnostr.intructions"]}
       </Text>
 
-      <Button onClick={handleCopyKeys} fontSize={"sm"}>
+      <Button
+        onMouseDown={handleCopyKeys}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            handleCopyKeys();
+          }
+        }}
+        fontSize={"sm"}
+      >
         🔑 {translation[userLanguage]["button.copyKey"]}
       </Button>
       {profiles.map((profile, index) => {

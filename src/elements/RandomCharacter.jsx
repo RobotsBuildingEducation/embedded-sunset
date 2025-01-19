@@ -14,6 +14,11 @@ import character11 from "../assets/11.png";
 import character12 from "../assets/12.png";
 import character13 from "../assets/13.png";
 import character14 from "../assets/14.png";
+import character15 from "../assets/15.png";
+import character16 from "../assets/16.png";
+import character17 from "../assets/17.png";
+import character18 from "../assets/18.png";
+
 import { keyframes } from "@emotion/react";
 import { Box } from "@chakra-ui/react";
 
@@ -122,6 +127,10 @@ const characterImages = [
   character12,
   character13,
   character14,
+  character15,
+  character16,
+  character17,
+  character18,
 ];
 
 const characterImagesMap = {
@@ -138,6 +147,10 @@ const characterImagesMap = {
   11: character12,
   12: character13,
   13: character14,
+  14: character15,
+  15: character16,
+  16: character17,
+  17: character18,
 };
 
 const RandomCharacter = ({

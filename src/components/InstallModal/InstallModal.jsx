@@ -65,7 +65,15 @@ export const InstallAppModal = ({
         </ModalBody>
 
         <ModalFooter>
-          <Button variant="ghost" onClick={onClose}>
+          <Button
+            variant="ghost"
+            onMouseDown={onClose}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                onClose();
+              }
+            }}
+          >
             {translation[userLanguage].close}
           </Button>
         </ModalFooter>

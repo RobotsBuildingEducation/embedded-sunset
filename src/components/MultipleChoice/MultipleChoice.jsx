@@ -84,6 +84,11 @@ const MultipleChoiceQuestion = ({
             variant={"outline"}
             key={index}
             onMouseDown={() => handleOptionClick(option, index)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                handleOptionClick(option, index);
+              }
+            }}
             colorScheme={selectedOption === option ? "pink" : "gray"}
             justifyContent="start"
             whiteSpace="normal"

@@ -181,7 +181,12 @@ export const PracticeModule = ({ currentTranscript, onPracticeComplete }) => {
       </VStack>
 
       <Button
-        onClick={handleAutoComplete}
+        onMouseDown={handleAutoComplete}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            handleAutoComplete();
+          }
+        }}
         variant="outline"
         colorScheme="blue"
         mb={4}
@@ -200,7 +205,12 @@ export const PracticeModule = ({ currentTranscript, onPracticeComplete }) => {
 
       {!isComplete ? (
         <Button
-          onClick={handleSubmit}
+          onMouseDown={handleSubmit}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              handleSubmit();
+            }
+          }}
           colorScheme={isValid ? "teal" : "pink"}
           isDisabled={!isValid || isComplete}
         >

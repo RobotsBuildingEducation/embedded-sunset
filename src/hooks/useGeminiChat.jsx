@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { model } from "../database/firebaseResources";
+import { model, simplemodel } from "../database/firebaseResources";
 import { Schema } from "firebase/vertexai";
 
 export const useGeminiChat = () => {
-  console.log("running not simple chat");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -96,7 +95,6 @@ export const useGeminiChat = () => {
 };
 
 export const useSimpleGeminiChat = () => {
-  console.log("running...... simple chat");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -108,7 +106,7 @@ export const useSimpleGeminiChat = () => {
 
     try {
       // 1) Make the streaming request
-      const result = await model.generateContentStream(prompt);
+      const result = await simplemodel.generateContentStream(prompt);
 
       // 2) Create a new message object to store partial text
       const newMessage = {
@@ -124,6 +122,7 @@ export const useSimpleGeminiChat = () => {
 
       // 4) Accumulate partial text in a local variable, updating state after each chunk
       let fullResponse = "";
+
       for await (const chunk of result.stream) {
         const chunkText = chunk.text();
         fullResponse += chunkText;
@@ -170,8 +169,6 @@ export const useSimpleGeminiChat = () => {
   const resetMessages = () => {
     setMessages([]);
   };
-
-  console.log(messages);
 
   return {
     messages,

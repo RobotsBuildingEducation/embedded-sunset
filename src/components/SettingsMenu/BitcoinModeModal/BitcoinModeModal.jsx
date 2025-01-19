@@ -22,6 +22,7 @@ import { useSharedNostr } from "../../../hooks/useNOSTR";
 import { useNostrWalletStore } from "../../../hooks/useNostrWalletStore";
 import { database } from "../../../database/firebaseResources";
 import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { SiCashapp } from "react-icons/si";
 
 const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
   const toast = useToast();
@@ -119,6 +120,55 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
       });
     }
     setInitializingWallet(false);
+  };
+
+  const renderButtonText = (buttonText) => {
+    const parts = buttonText.split(/(Cash App)/); // Split by "Cash App"
+
+    console.log("prts", parts);
+
+    return (
+      <Text as="span">
+        {buttonText.split("Cash App").map((part, index, array) => (
+          <span key={index} style={{ textAlign: "center" }}>
+            {part}
+            {index !== array.length - 1 && (
+              <Link
+                href="https://click.cash.app/ui6m/home2022"
+                isExternal
+                color="blue.500"
+                display="inline-flex" // Ensures icon and text stay inline
+                alignItems="center" // Aligns icon and text vertically
+                gap="4px" // Optional: small space between icon and text
+                lineHeight={"0px"}
+                ml="-1.5"
+              >
+                &nbsp;
+                <SiCashapp color="#00C852" />
+                <Text>Cash App</Text>
+              </Link>
+            )}
+          </span>
+        ))}
+      </Text>
+    );
+
+    // return parts.map((part, index) =>
+    //   part === "Cash App" ? (
+    //     <Link
+    //       key={index}
+    //       href="https://click.cash.app/ui6m/home2022"
+    //       isExternal
+    //       color="blue.500"
+    //       fontWeight="bold"
+    //       display="flex"
+    //     >
+    //       <SiCashapp color="00C852" /> {part}
+    //     </Link>
+    //   ) : (
+    //     part
+    //   )
+    // );
   };
 
   const handleInitiateDeposit = async () => {
@@ -254,9 +304,15 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
                     : null}
             </Link>
             <Button
-              onClick={createNewWallet}
+              onMouseDown={createNewWallet}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  createNewWallet();
+                }
+              }}
               isLoading={initializingWallet}
               loadingText={translation[userLanguage]["loading"]}
+              isDisabled={!selectedIdentity?.length > 0}
             >
               {translation[userLanguage]["createWallet.button"]}
               {/* {
@@ -265,14 +321,6 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
                 ]
               } */}
             </Button>
-
-            <Text mt={2} fontSize="xs">
-              {
-                translation[userLanguage][
-                  "modal.bitcoinMode.instructions.createWallet.3"
-                ]
-              }
-            </Text>
           </VStack>
         </>
       );
@@ -379,7 +427,14 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
               <QRCode value={invoice} size={256} style={{ zIndex: 1000000 }} />
               <div style={{ marginTop: "8px" }}>
                 {translation[userLanguage]["or"]} &nbsp;
-                <Button onClick={handleCopyInvoice}>
+                <Button
+                  onMouseDown={handleCopyInvoice}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      handleCopyInvoice();
+                    }
+                  }}
+                >
                   🔑{" "}
                   {
                     translation[userLanguage][
@@ -388,6 +443,14 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
                   }
                 </Button>
               </div>
+
+              <Text mt={2} fontSize="xs">
+                {renderButtonText(
+                  translation[userLanguage][
+                    "modal.bitcoinMode.instructions.createWallet.3"
+                  ]
+                )}
+              </Text>
             </VStack>
           </>
         );
@@ -437,7 +500,12 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
             <VStack>
               {/* <SunsetCanvas /> */}
               <Button
-                onClick={handleInitiateDeposit}
+                onMouseDown={handleInitiateDeposit}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleInitiateDeposit();
+                  }
+                }}
                 isLoading={depositing}
                 loadingText={translation[userLanguage]["loading"]}
               >

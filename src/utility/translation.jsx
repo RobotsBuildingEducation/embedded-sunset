@@ -663,9 +663,11 @@ reverse(head) {
     "landing.welcome": "Sunset",
     "landing.introduction": (
       <div>
-        Create scholarships with learning.
+        Create scholarships with learning
         <br />
-        Use intelligent assistance to work through 100+ coding questions.
+        <br />
+        Use intelligent assistance to learn how to code and build your ideas in
+        100 questions.
       </div>
     ),
     "landing.button.telemetry": "Create Account",
@@ -703,7 +705,7 @@ reverse(head) {
     "button.copyKey": "Copy Secret Key",
     "createAccount.checkbox.disclaimer":
       "I understand that my key allows me to sign into different apps that may contain important and private data like Bitcoin. I have safely saved my keys somewhere else.",
-    "createAccount.button.launchApp": "Launch app",
+    "createAccount.button.launchApp": "Launch App",
     "signIn.instructions": "Enter your nostr secret key",
     "signIn.input.placeholder": "Enter your secret key (nsec...)",
     "button.dismiss": "Dimiss",
@@ -721,6 +723,7 @@ reverse(head) {
     "settings.button.selfPace": "Self-pace",
     "settings.button.adaptiveLearning": "Adaptive Learning",
     "settings.button.bitcoinMode": "Wallet",
+
     "settings.button.tutor": "Open Tutor",
     "settings.button.tutorGPT": "Open Tutor (GPT)",
     "settings.button.socialWallet": "Decentralize",
@@ -742,8 +745,7 @@ reverse(head) {
     "modal.selfPace.mode.casual": "casual",
     "modal.selfPace.mode.grind": "grind",
     "modal.selfPace.mode.motivated": "motivated",
-    "modal.adaptiveLearning.title": "Build your app",
-    "modal.adaptiveLearning.recommendButton": "Build your app",
+
     "modal.adaptiveLearning.stepsTaken": "Your Progress",
     //create wallet
     "modal.bitcoinMode.title": "Bitcoin Wallet",
@@ -771,7 +773,7 @@ reverse(head) {
     "modal.bitcoinMode.instructions.activeWallet.4": "in the public record",
     "deposit.button": "Deposit",
     "createWallet.button": "Create Wallet",
-    "lastStep.button": "Go To Last Step",
+    "lastStep.button": "Next",
     "deposit.ps":
       "(P.S. After sending Bitcon to your address, you may need to wait a few seconds before your balance updates.)",
 
@@ -1169,6 +1171,9 @@ reverse(head) {
       "These awards can be transferred to other platforms like",
     "modal.decentralizedTranscript.awardsEarned": "Awards Earned",
     loading: "Loading...",
+    "loading.wallet": "Generating Wallet...",
+    "loading.wallet.address": "Creating Address...",
+
     "settings.button.transcript": "Transcript",
     "modal.transcript.instructions": "",
     yourID: "Your ID",
@@ -1260,12 +1265,51 @@ reverse(head) {
     "algorithmHelper.button.generateProblem": "Generate Algorithm Problem",
     "learnwithnostr.intructions":
       "Connect with others using decentralized education technology!",
+    adaptive_learning_off: "Adaptive learning is off.",
+    adaptive_learning_on: "Adaptive learning is on.",
+    "buildYourApp.how_to_use_feature": "How to use this feature:",
+    "buildYourApp.step_1": "Define the idea or app you want to build.",
+    "buildYourApp.step_2": "Generate code based on your progress.",
+    "buildYourApp.step_3": "Copy the code & prompt after generating it.",
+    "buildYourApp.step_4": "Submit the code to the app you get redirected to.",
+    "buildYourApp.step_5": "Congrats! You're building your app using AI!",
+    "buildYourApp.input.label": "Your idea",
+    "buildYourApp.button.label.1": "Create your idea",
+    "buildYourApp.button.label.2": "Update your idea",
+    "buildYourApp.idea.label": "Idea you're building:",
+    "modal.adaptiveLearning.title": "Build your app",
+    "modal.adaptiveLearning.recommendButton": "Build your app",
+    copied: "Copied!",
+    copy_code_launch_builder: "Copy, build and ship with v0",
   },
   es: {
+    copied: "¡Copiado!",
+    copy_code_launch_builder: "Copiar código y lanzar el creador de IA",
+    "buildYourApp.input.label": "Tu idea",
+    "buildYourApp.button.label.1": "Crear tu idea",
+    "buildYourApp.button.label.2": "Actualizar tu idea",
+    "buildYourApp.idea.label": "Idea que estás desarrollando:",
+    "modal.adaptiveLearning.title": "Crea tu aplicación",
+    "modal.adaptiveLearning.recommendButton": "Crea tu aplicación",
+
+    "buildYourApp.how_to_use_feature": "Cómo usar esta función:",
+    "buildYourApp.step_1": "Define la idea o aplicación que deseas crear.",
+    "buildYourApp.step_2": "Genera código según tu progreso.",
+    "buildYourApp.step_3": "Copia el código y el mensaje después de generarlo.",
+    "buildYourApp.step_4":
+      "Envía el código a la aplicación a la que se te redirige.",
+    "buildYourApp.step_5":
+      "¡Felicidades! ¡Estás construyendo tu aplicación con IA!",
+    adaptive_learning_off: "Aprendizaje adaptativo está desactivado.",
+    adaptive_learning_on: "Aprendizaje adaptativo está activado.",
+
+    "loading.wallet.address": "Creando dirección...",
+
+    "loading.wallet": "Generando billetera...",
     "deposit.ps":
       "(P.D. Después de enviar Bitcoin a tu dirección, es posible que debas esperar unos segundos antes de que tu saldo se actualice.)",
     "createAccount.lastStepMessage": "Último paso (opcional)",
-    "lastStep.button": "Ir al último paso",
+    "lastStep.button": "Siguiente",
     "about.title.socialProgress": <div>Progreso Social</div>,
     "about.feature.socialProgress": (
       <div>
@@ -2068,9 +2112,11 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "landing.welcome": "Sunset",
     "landing.introduction": (
       <div>
-        Es hora de superar el desafío.
+        Crea becas a con el aprendizaje.
         <br />
-        Usa asistencia inteligente para resolver 100+ preguntas de codificación.
+        <br />
+        Usa asistencia inteligente para aprender a programar y construir tus
+        ideas en 100 preguntas.
       </div>
     ),
     "landing.button.telemetry": "Crear Cuenta",
@@ -2129,8 +2175,6 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "modal.selfPace.mode.casual": "casual",
     "modal.selfPace.mode.grind": "esfuerzo",
     "modal.selfPace.mode.motivated": "motivado",
-    "modal.adaptiveLearning.title": "Aprendizaje adaptativo",
-    "modal.adaptiveLearning.recommendButton": "Recomendar qué estudiar después",
     "modal.adaptiveLearning.stepsTaken": "Pasos dados",
     "modal.bitcoinMode.title": "Billetera Bitcoin",
     "modal.bitcoinMode.instructions":

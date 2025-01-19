@@ -565,7 +565,14 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
             <Accordion allowToggle mb={4} mt={6}>
               <AccordionItem>
                 <h2>
-                  <AccordionButton onClick={handleSummaryView}>
+                  <AccordionButton
+                    onMouseDown={handleSummaryView}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        handleSummaryView();
+                      }
+                    }}
+                  >
                     <Box flex="1" textAlign="left">
                       Summary
                     </Box>
@@ -617,7 +624,12 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
           />
           <Button
             mt={4}
-            onClick={onClose}
+            onMouseDown={onClose}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                onClose();
+              }
+            }}
             variant="solid"
             size="lg"
             boxShadow={"0px 0.5px 0.5px 1px black"}

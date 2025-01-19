@@ -42,13 +42,29 @@ const ExternalLinkModal = ({
           </Checkbox>
           <br />
           <br />
-          <Link onClick={onConfirm} textDecoration={"underline"}>
+          <Link
+            onMouseDown={onConfirm}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                onConfirm();
+              }
+            }}
+            textDecoration={"underline"}
+          >
             {translation[userLanguage]["modal.continue"]}
           </Link>
         </ModalBody>
 
         <ModalFooter>
-          <Button onClick={onClose} mr={3}>
+          <Button
+            onMouseDown={onClose}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                onClose();
+              }
+            }}
+            mr={3}
+          >
             {translation[userLanguage]["modal.cancel"]}
           </Button>
         </ModalFooter>

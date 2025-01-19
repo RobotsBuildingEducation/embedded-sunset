@@ -78,7 +78,14 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
           {translation[userLanguage]["modal.openSocialWallet.instructions"]}
           <br />
           <br />
-          <Button onClick={handleCopyKeys}>
+          <Button
+            onMouseDown={handleCopyKeys}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                handleCopyKeys();
+              }
+            }}
+          >
             🔑 {translation[userLanguage]["button.copyKey"]}
           </Button>
           <br />
