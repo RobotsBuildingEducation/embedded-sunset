@@ -229,7 +229,7 @@ const SettingsMenu = ({
                   }}
                 />
               </FormControl>
-              <Button
+              {/* <Button
                 p={6}
                 colorScheme="pink"
                 background="pink.300"
@@ -242,7 +242,7 @@ const SettingsMenu = ({
                 }}
               >
                 Career Agent
-              </Button>
+              </Button> */}
               <Button
                 p={6}
                 colorScheme="pink"
