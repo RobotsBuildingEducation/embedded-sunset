@@ -37,6 +37,7 @@ import TranscriptModal from "./TranscriptModal/TranscriptModal";
 import { InstallAppModal } from "../InstallModal/InstallModal";
 import { AlgorithmHelper } from "../AlgorithmHelper/AlgorithmHelper";
 import LiveCodeEditorModal from "../LiveCodeEditor/LiveCodeEditor";
+import { CareerAgent } from "../CareerAgent/CareerAgent";
 
 const SettingsMenu = ({
   testIsMatch,
@@ -111,9 +112,9 @@ const SettingsMenu = ({
   } = useDisclosure();
 
   const {
-    isOpen: isCodeEditorOpen,
-    onOpen: onCodeEditorOpen,
-    onClose: onCodeEditorClose,
+    isOpen: isCareerAgentOpen,
+    onOpen: onCareerAgentOpen,
+    onClose: onCareerAgentClose,
   } = useDisclosure();
 
   const [interval, setIntervalState] = useState(120);
@@ -228,20 +229,20 @@ const SettingsMenu = ({
                   }}
                 />
               </FormControl>
-              {/* <Button
+              <Button
                 p={6}
                 colorScheme="pink"
                 background="pink.300"
                 style={{ width: "100%" }}
-                onMouseDown={onCodeEditorOpen}
+                onMouseDown={onCareerAgentOpen}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
-                    onCodeEditorOpen();
+                    onCareerAgentOpen();
                   }
                 }}
               >
-                Experiments
-              </Button> */}
+                Career Agent
+              </Button>
               <Button
                 p={6}
                 colorScheme="pink"
@@ -541,13 +542,13 @@ const SettingsMenu = ({
         />
       ) : null}
 
-      {/* {isCodeEditorOpen ? (
-        <LiveCodeEditorModal
+      {isCareerAgentOpen ? (
+        <CareerAgent
           userLanguage={userLanguage}
-          isOpen={isCodeEditorOpen}
-          onClose={onCodeEditorClose}
+          isOpen={isCareerAgentOpen}
+          onClose={onCareerAgentClose}
         />
-      ) : null} */}
+      ) : null}
     </>
   );
 };

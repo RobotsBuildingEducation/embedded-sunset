@@ -2085,17 +2085,17 @@ const Step = ({
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
     // Retrieve the current count from localStorage
-    let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
+    // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
 
-    // Check if the user has already generated 3 questions
-    // if (lrnctrl >= 6) {
-    //   // Silently skip the function
-    //   return;
-    // }
+    // // Check if the user has already generated 3 questions
+    // // if (lrnctrl >= 6) {
+    // //   // Silently skip the function
+    // //   return;
+    // // }
 
-    // Increment the counter and store it back in localStorage
-    lrnctrl += 1;
-    localStorage.setItem("lrnctrl", lrnctrl);
+    // // Increment the counter and store it back in localStorage
+    // lrnctrl += 1;
+    // localStorage.setItem("lrnctrl", lrnctrl);
     onOpen();
 
     // fetchGoogleAI();
@@ -2927,7 +2927,6 @@ const Step = ({
                       onMouseDown={handleAnswerClick}
                       isLoading={isSending}
                       mb={4}
-                      boxShadow={"0px 0.5px 0.5px 1px black"}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
                           handleAnswerClick();
