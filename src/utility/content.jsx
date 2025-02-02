@@ -11,8 +11,62 @@ export const steps = {
       description:
         "Expose yourself to fundamentals to improve the quality of your learning before making progress.",
       question: {
-        questionText:
-          "One of the best predictors for student success is exposure to course material before studying it. You're encouraged to read about the fundamentals of software before starting.",
+        questionText: (
+          <div>
+            <p style={{ marginBottom: 12 }}>
+              {" "}
+              One of the best predictors for student success is exposure to
+              course material before studying it. You're encouraged to read
+              about the fundamentals of software in the study guide before
+              starting. You can reference this study guide in the menu
+              throughout your progress too.
+            </p>
+
+            <p style={{ marginBottom: 12 }}>
+              Now did you know that education apps compete with video games and
+              social media? The average user (so far) spends about 2 minutes
+              here before being pulled back to other attention-pulling forms of
+              media 😱!
+            </p>
+            <div style={{ marginBottom: 12 }}>
+              <img src="https://res.cloudinary.com/dtkeyccga/image/upload/v1724208228/Screenshot_2024-08-20_at_7.43.28_PM_fioetr.png" />
+            </div>
+            <p style={{ marginBottom: 12 }}>
+              An even harsher reality is that most who attempt to learn for 100
+              days will drop off within the first 2 weeks. In a typical Tiktok
+              video, most users will drop off in the first 20 seconds. And the
+              truth is, you may drop off before the first 20 questions 😔!
+            </p>
+
+            <div
+              style={{
+                marginBottom: 12,
+                textAlign: "center",
+                width: "100%",
+
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <img
+                style={{
+                  marginBottom: 8,
+                  textAlign: "center",
+                  width: "60px",
+                }}
+                src="https://res.cloudinary.com/dtkeyccga/image/upload/v1737544415/character_stickers_4_miarcs.png"
+              />
+            </div>
+
+            <p style={{ marginBottom: 8 }}>
+              But perhaps being aware of this and making a conscience effort to
+              resist certain temptations may keep you in the loop to find
+              success with the program. What do you say? Are you up for the
+              challenge?
+            </p>
+          </div>
+        ),
         metaData: `### Welcome to Github!
 Github is a platform that let's software developers collaborate with code. Think of it like Google Docs but for software engineers. We'll learn more about using Git and Github another time but for now this serves as a warm welcome to the world of software construction.
 
@@ -2879,8 +2933,61 @@ list.add('reels');`,
       description:
         "Expóngase a los fundamentos para mejorar la calidad de su aprendizaje antes de avanzar.",
       question: {
-        questionText:
-          "Uno de los mejores predictores del éxito estudiantil es la exposición al material del curso antes de estudiarlo. Se le anima a leer sobre los fundamentos del software antes de comenzar.",
+        questionText: (
+          <div>
+            <p style={{ marginBottom: 12 }}>
+              {" "}
+              Uno de los mejores indicadores de éxito académico para un
+              estudiante es su exposición al material del curso antes de
+              estudiarlo. Se te anima a leer sobre los fundamentos del software
+              antes de comenzar.
+            </p>
+
+            <p style={{ marginBottom: 12 }}>
+              ¿Sabías que las aplicaciones educativas compiten con los
+              videojuegos y las redes sociales? En promedio, el usuario (hasta
+              ahora) pasa alrededor de 2 minutos aquí antes de ser atraído
+              nuevamente por otras formas de medios que reclaman su atención 😱.
+            </p>
+            <div style={{ marginBottom: 12 }}>
+              <img src="https://res.cloudinary.com/dtkeyccga/image/upload/v1724208228/Screenshot_2024-08-20_at_7.43.28_PM_fioetr.png" />
+            </div>
+            <p style={{ marginBottom: 12 }}>
+              Una realidad aún más dura es que la mayoría de quienes intentan
+              aprender durante 100 días abandonará en las primeras 2 semanas. En
+              un video típico de TikTok, la mayoría de los usuarios se
+              desconecta en los primeros 20 segundos. Y la verdad es que podrías
+              abandonar antes de las primeras 20 preguntas 😔.
+            </p>
+
+            <div
+              style={{
+                marginBottom: 12,
+                textAlign: "center",
+                width: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <img
+                style={{
+                  marginBottom: 8,
+                  textAlign: "center",
+                  width: "60px",
+                }}
+                src="https://res.cloudinary.com/dtkeyccga/image/upload/v1737544415/character_stickers_4_miarcs.png"
+              />
+            </div>
+
+            <p style={{ marginBottom: 8 }}>
+              Pero tal vez, al ser consciente de esto y al hacer un esfuerzo
+              deliberado para resistir ciertas tentaciones, puedas mantenerte en
+              el programa y encontrar el éxito. ¿Qué dices? ¿Estás listo para el
+              desafío?
+            </p>
+          </div>
+        ),
         metaData: `### ¡Bienvenido a Github!
     Github es una plataforma que permite a los desarrolladores de software colaborar con código. Piénsalo como Google Docs pero para ingenieros de software. Aprenderemos más sobre el uso de Git y Github en otra ocasión, pero por ahora esto sirve como una cálida bienvenida al mundo de la construcción de software.
     

@@ -2927,6 +2927,7 @@ const Step = ({
                       onMouseDown={handleAnswerClick}
                       isLoading={isSending}
                       mb={4}
+                      boxShadow="0px 0.5px 0.5px 1px black"
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
                           handleAnswerClick();
@@ -4232,28 +4233,6 @@ export const AppWrapper = () => {
 
   return (
     <Router>
-      {/* <div
-        style={{
-          backgroundColor: "black",
-          color: "white",
-          padding: 6,
-          borderRadius: 8,
-        }}
-      >
-        If you see this message, it means you're using an unstable release of
-        the app. Check back later for a better user experience.
-      </div> */}
-      {/* <div>
-        <b>Test Version 0.9.1</b>
-      </div> */}
-      {/* <b>Test Version 0.9.5</b> */}
-
-      {/* <StreamLoader /> */}
-
-      {/* <OrbCanvas width={200} height={200} /> */}
-
-      {/* <iframe src="https://claude.ai"></iframe> */}
-
       <App isShutDown={isShutDown} />
     </Router>
   );

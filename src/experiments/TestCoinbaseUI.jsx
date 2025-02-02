@@ -12,7 +12,6 @@ import { useSharedNostr } from "../hooks/useNOSTR";
 import { steps } from "../utility/content";
 import { SunsetCanvas } from "../elements/SunsetCanvas";
 import { translation } from "../utility/translation";
-
 let totalSteps = steps["en"].length;
 
 const getColorScheme = (group) => {
@@ -174,8 +173,14 @@ export const TestFeed = ({ userLanguage }) => {
       {profiles.map((profile, index) => {
         const questionNumber = extractQuestionNumber(profile.content);
 
+        const hasScholarship =
+          profile.content.toLowerCase().includes("a new scholarship") ||
+          profile.content.toLowerCase().includes("https://girlsoncampus.app") ||
+          profile.content.toLowerCase().includes("gm nostr!") ||
+          profile.content.toLowerCase().includes("¡Buenos días, Nostr!");
+
         return (
-          questionNumber && (
+          (questionNumber || hasScholarship) && (
             <Box
               key={index}
               style={{ textAlign: "left" }}

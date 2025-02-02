@@ -692,13 +692,13 @@ reverse(head) {
     "nostrContent.onboardedProfileAbout":
       "A student onboarded with Robots Building Education",
     "nostrContent.introductionPost":
-      "gm nostr! I'm here from Tiktok by creating an account through https://robotsbuildingeducation.com so I can learn how to code with AI. Looking forward to meeting folks in the cypherpunk community! #LearnWithNostr",
+      "gm nostr! I've joined #LearnWithNostr from Tiktok by creating an account with https://robotsbuildingeducation.com so I can learn how to code with AI.",
 
     "createAccount.successMessage": "That's it!",
     "createAccount.lastStepMessage": "Last step (optional)",
     // "createAccount.lastStepInstructions": "Last step (optional)",
     "createAccount.awareness":
-      "Your account now works on a number of decentralized apps. Your account works exactly like mailbox. Use your secret key to sign into apps in the ",
+      "Your account now works on a number of decentralized apps and account works exactly like mailbox. Use your secret key to sign into apps in the ",
     "createAccount.roxLink": "decentralized app store",
     or: "or",
     "createAccount.primalLink": "with Primal, the social wallet",
@@ -2131,7 +2131,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "createAccount.isLoading": "Creando...",
     "createAccount.successMessage": "¡Eso es todo!",
     "createAccount.awareness":
-      "Tu cuenta ahora funciona en varias aplicaciones descentralizadas. Tu cuenta funciona exactamente como un buzón. Usa tu clave secreta para iniciar sesión en las aplicaciones en el ",
+      "Tu cuenta ahora funciona en varias aplicaciones descentralizadas y funciona exactamente como un buzón. Usa tu clave secreta para iniciar sesión en las aplicaciones en el ",
     "createAccount.roxLink": "tienda de aplicaciones descentralizada",
     or: "o",
     "createAccount.primalLink": "Primal, la billetera social",

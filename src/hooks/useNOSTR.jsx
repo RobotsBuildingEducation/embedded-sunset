@@ -757,7 +757,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       profilesSubscription.on("event", (event) => {
         const metadata = JSON.parse(event.content);
         profilesMap.set(event.pubkey, {
-          name: metadata.name || "Unknown",
+          name: metadata.name || "New Private User",
           about: metadata.about || "",
           picture: metadata.picture || "",
         });
@@ -768,7 +768,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       // Step 3: Merge notes with profiles
       const notesWithProfiles = notes.map((note) => {
         note.profile = profilesMap.get(note.pubkey) || {
-          name: "Unknown",
+          name: "New Private User",
           about: "",
           picture: "",
         };
