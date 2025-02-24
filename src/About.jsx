@@ -14,6 +14,8 @@ import {
 import { translation } from "./utility/translation";
 import { useNavigate } from "react-router-dom";
 import { DataTags } from "./elements/DataTag";
+import { IoReturnUpBack } from "react-icons/io5";
+import { IoMdReturnRight } from "react-icons/io";
 
 const Content = ({ children }) => {
   return <Text fontSize="sm">{children}</Text>;
@@ -24,18 +26,28 @@ export const About = ({ userLanguage, handleToggle }) => {
 
   return (
     <Box p={4}>
-      <Button
-        onMouseDown={() => navigate(-1)}
-        m={6}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            navigate(-1);
-          }
-        }}
-      >
-        {translation[userLanguage]["button.back"] || "Go back"}
-      </Button>
-
+      <Box display="flex" justifyContent={"left"} position={"fixed"} top="0">
+        <Button
+          boxShadow={"0.5px 0.5px 1px 0px black"}
+          onMouseDown={() => navigate(-1)}
+          m={6}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              navigate(-1);
+            }
+          }}
+        >
+          <Box
+            transform="rotate(-180deg)"
+            display={"flex"}
+            alignItems={"center"}
+          >
+            <IoMdReturnRight />{" "}
+          </Box>
+          &nbsp;
+          {/* {translation[userLanguage]["button.back"] || "Go back"} */}
+        </Button>
+      </Box>
       <FormControl
         display="flex"
         alignItems="center"

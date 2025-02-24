@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { Box, Button, Progress, Text, VStack, Code } from "@chakra-ui/react";
-import Editor from "react-simple-code-editor";
+
 import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
 import RandomCharacter from "../../elements/RandomCharacter";
+import Editor from "react-simple-code-editor";
 
 export const PracticeModule = ({ currentTranscript, onPracticeComplete }) => {
   const editorRef = useRef(null);
@@ -213,6 +214,7 @@ export const PracticeModule = ({ currentTranscript, onPracticeComplete }) => {
           }}
           colorScheme={isValid ? "teal" : "pink"}
           isDisabled={!isValid || isComplete}
+          boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
         >
           Submit
         </Button>

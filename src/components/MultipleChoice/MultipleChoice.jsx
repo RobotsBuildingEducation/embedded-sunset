@@ -72,6 +72,7 @@ const MultipleChoiceQuestion = ({
           }
         }}
         background="pink.300"
+        boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
       >
         {translation[userLanguage]["app.button.learn"]}
       </Button>

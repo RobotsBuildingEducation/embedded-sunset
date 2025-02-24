@@ -27,7 +27,7 @@ const ActionButton = ({ href, text, userLanguage }) => (
     width="45%"
     margin={2}
     height={100}
-    boxShadow={"0px 0.5px 0.5px 1px black"}
+    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
     fontSize={"small"}
   >
     {text}
@@ -137,7 +137,11 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
           </a>
         </ModalBody>
         <ModalFooter>
-          <Button mr={3} onMouseDown={onClose}>
+          <Button
+            mr={3}
+            onMouseDown={onClose}
+            boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+          >
             {translation[userLanguage]["button.close"]}
           </Button>
         </ModalFooter>

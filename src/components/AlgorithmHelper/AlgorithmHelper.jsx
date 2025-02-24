@@ -235,6 +235,7 @@ export const AlgorithmHelper = ({ isOpen, onClose, userLanguage }) => {
           </Box>
           <div>
             <Button
+              boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
               variant="solid"
               onMouseDown={handleGenerateProblem}
               onKeyDown={(e) => {
@@ -366,6 +367,7 @@ export const AlgorithmHelper = ({ isOpen, onClose, userLanguage }) => {
                 onClose();
               }
             }}
+            boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
           >
             {translation[userLanguage]["button.close"]}
           </Button>

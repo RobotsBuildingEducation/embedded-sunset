@@ -20,7 +20,7 @@ export default defineConfig({
         short_name: "Robots Building Education",
         start_url: "./",
         display: "standalone",
-        theme_color: "#000000",
+        theme_color: "#FDDEE6",
         background_color: "#ffffff",
         description:
           "PWA install handler package for Robots Building Education",

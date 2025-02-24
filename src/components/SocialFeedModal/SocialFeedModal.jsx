@@ -20,7 +20,14 @@ import {
 import { translation } from "../../utility/translation";
 import { TestFeed } from "../../experiments/TestCoinbaseUI";
 
-const SocialFeedModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
+const SocialFeedModal = ({
+  isOpen,
+  onClose,
+  currentStep,
+  userLanguage,
+  allowPosts,
+  setAllowPosts,
+}) => {
   return (
     <Drawer
       isOpen={isOpen}
@@ -37,7 +44,11 @@ const SocialFeedModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
         </DrawerHeader>
         <DrawerCloseButton />
         <DrawerBody>
-          <TestFeed userLanguage={userLanguage} />
+          <TestFeed
+            userLanguage={userLanguage}
+            allowPosts={allowPosts}
+            setAllowPosts={setAllowPosts}
+          />
         </DrawerBody>
         {/* <DrawerFooter
           display="flex"

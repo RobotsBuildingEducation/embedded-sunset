@@ -16,6 +16,8 @@ export let translation = {
 
     installApp: "Install App",
     "select.recipient": "Select your scholarship recipient",
+    "change.recipient": "Change your scholarship recipient",
+
     "disabled.select.soon": "More schools, teachers and students soon!",
     transcriptBadges: "Transcript Badges",
     instructions: "Instructions",
@@ -656,10 +658,13 @@ reverse(head) {
     "toast.description.chatDataCopied":
       "Paste the data in the following chat to learn more.",
     "toast.description.keysCopied":
-      "Your keys have been copied to the clipboard.",
+      "Your secret key has been copied to the clipboard.",
     "toast.title.addressCopied": "Lightning address copied.",
     "toast.description.addressCopied":
       "Your lightning address has been copied.",
+    "toast.title.idCopied": "ID copied.",
+
+    "toast.description.idCopied": "Your ID has been copied.",
     "landing.welcome": "Sunset",
     "landing.introduction": (
       <div>
@@ -717,7 +722,8 @@ reverse(head) {
     "app.button.voiceToAI": "Request Intelligent Assistance",
     "app.button.learn": "Learn",
     "app.listening": "Listening...",
-    "app.input.placeholder": "Type your response or use voice",
+    "app.input.placeholder":
+      "Type your response or request intelligent assistance to use voice",
     "settings.title": "Settings",
     "settings.selfPace": "Self-pace",
     "settings.button.selfPace": "Self-pace",
@@ -753,10 +759,12 @@ reverse(head) {
       "The goal is to create scholarships with learning!",
 
     "modal.bitcoinMode.instructions.createWallet.2":
-      "Selecting a recipient and creating a wallet allows you to deposit a maximum of about $0.01 worth in Bitcoin. When you answer questions and make progress in the app, your Bitcoin deposit gets spent and sent to your receipient!",
+      "Selecting a recipient creates a wallet allows you to optionally deposit a maximum of about $0.01 worth in Bitcoin. When you answer questions and make progress in the app, your Bitcoin deposit gets spent and sent to your receipient!",
 
+    "modal.bitcoinMode.instructions.createWallet.2.5":
+      "This feature is experimental.",
     "modal.bitcoinMode.instructions.createWallet.3":
-      "We recommend connecting with Cash App to buy Bitcoin and create your deposit!",
+      "We recommend scanning with Cash App to buy Bitcoin and create your deposit!",
 
     //deposit bitcoin
     "modal.bitcoinMode.instructions.deposit.1":
@@ -834,68 +842,99 @@ reverse(head) {
       "That's it! You don't need to download the app through an app store because we're using open-source standards for Progressive Web Apps.",
     "about.about": (
       <div>
-        The point of AI is to save you time and energy. At the same time, real
-        education is about challenging yourself so that you can create real
-        knowledge. In short, you'll work through 100+ questions and it will
-        introduce you to building your ideas with software, learning computer
-        science and creating opportunities for yourself with good technology.
+        Think about how communities fund schools. People work, create income and
+        have that incomed taxed in a number of ways to provide the budgets and
+        funds for schools. This eventually creates walled gardens and
+        inequities.
         <br />
         <br />
-        I also want to teach you quickly, effectively and in a similar fashion
-        to you having to pick up the skills on the job. At the end of the day, a
-        software entrepeneur needs to learn about business, engineering,
-        investing, marketing, sales, design and a number of other well-rounded
-        skills in order to be successful, which is what we try to prepare you
-        here with.
+        Robots Building Education is a platform using protocols that introduces
+        new ways to provide funds for education by connecting participants
+        beyond neighborhood lines. When students learn, real economic value is
+        created. We believe this should be represented by creating material and
+        resilient outcomes for communities.
         <br />
         <br />
-        There are many things beyond coding taught on RO.B.E, ranging from the
-        psychology of self-esteem, to the development of startups distributed
-        globally. You are encouraged to imagine, think big and work hard in
-        order to find success here.
-        <br />
-        <br /> The app is a service created by Robots Building Education, a
-        platform founded on researching technology the following three
-        priorities:
-        <br /> <br />
-        1. Every student should have access to many good teachers.
-        <br />
-        2. Online education should be the best education.
-        <br />
-        3. Learning creates scholarships.
+        You might notice that this app is a little different than others. Things
+        seem to work faster with less rules. Robots Building Education uses open
+        source protocols to allow for seamless decentralized, cross-platform and
+        permissionless experiences.
         <br />
         <br />
-        This is accomplished with the human-computer interaction discipline,
-        which researches how to make technology more useful and meaningful. I
-        personally revise anything done with AI to add human touch to it as to
-        not offer cheap generated material but a genuine delivery of good
-        quality education.
+        This means depositing Bitcoin and sending it is as easy as easy as
+        scanning a QR code with a popular app like Cash App and answering a
+        question. That's it! No more and no less is needed.
         <br />
         <br />
-        The following are all the features and benefits you'll find across the
-        platform which are typically free. As of now I just ask folks to
-        optionally sign up for $10 to access more content around
-        entrepreneurship, finance, and engineering to the work and to create a
-        stronger network.
-        <br />
-        <br />
-        Why so low for so much? I love education technology and I want to work
-        on this platform until you feel it's worth supporting. I also believe
-        that social media helps me reach so many people that keeping it low
-        price is only fair. I would eventually like to explore teaching folks so
-        we can create a pipeline to access more capital from folks eager to
-        invest in diverse technology businesses.
-        <br />
-        <br />
-        <a
-          style={{ textDecoration: "underline" }}
-          href="https://patreon.com/notesandotherstuff"
-          target="_blank"
-        >
-          https://patreon.com/notesandotherstuff
-        </a>
+        This is a new way that the internet. It can be used and afford new
+        experiences like the ability to publish progress across different apps,
+        create scholarships with learning or even take your Bitcoin deposits to
+        other places!
       </div>
+      // <div>
+      //   The point of AI is to save you time and energy. At the same time, real
+      //   education is about challenging yourself so that you can create real
+      //   knowledge. In short, you'll work through 100+ questions and it will
+      //   introduce you to building your ideas with software, learning computer
+      //   science and creating opportunities for yourself with good technology.
+      //   <br />
+      //   <br />
+      //   I also want to teach you quickly, effectively and in a similar fashion
+      //   to you having to pick up the skills on the job. At the end of the day, a
+      //   software entrepeneur needs to learn about business, engineering,
+      //   investing, marketing, sales, design and a number of other well-rounded
+      //   skills in order to be successful, which is what we try to prepare you
+      //   here with.
+      //   <br />
+      //   <br />
+      //   There are many things beyond coding taught on RO.B.E, ranging from the
+      //   psychology of self-esteem, to the development of startups distributed
+      //   globally. You are encouraged to imagine, think big and work hard in
+      //   order to find success here.
+      //   <br />
+      //   <br /> The app is a service created by Robots Building Education, a
+      //   platform founded on researching technology the following three
+      //   priorities:
+      //   <br /> <br />
+      //   1. Every student should have access to many good teachers.
+      //   <br />
+      //   2. Online education should be the best education.
+      //   <br />
+      //   3. Learning creates scholarships.
+      //   <br />
+      //   <br />
+      //   This is accomplished with the human-computer interaction discipline,
+      //   which researches how to make technology more useful and meaningful. I
+      //   personally revise anything done with AI to add human touch to it as to
+      //   not offer cheap generated material but a genuine delivery of good
+      //   quality education.
+      //   <br />
+      //   <br />
+      //   The following are all the features and benefits you'll find across the
+      //   platform which are typically free. As of now I just ask folks to
+      //   optionally sign up for $10 to access more content around
+      //   entrepreneurship, finance, and engineering to the work and to create a
+      //   stronger network.
+      //   <br />
+      //   <br />
+      //   Why so low for so much? I love education technology and I want to work
+      //   on this platform until you feel it's worth supporting. I also believe
+      //   that social media helps me reach so many people that keeping it low
+      //   price is only fair. I would eventually like to explore teaching folks so
+      //   we can create a pipeline to access more capital from folks eager to
+      //   invest in diverse technology businesses.
+      //   <br />
+      //   <br />
+      //   {/* <a
+      //     style={{ textDecoration: "underline" }}
+      //     href="https://patreon.com/notesandotherstuff"
+      //     target="_blank"
+      //   >
+      //     https://patreon.com/notesandotherstuff
+      //   </a> */}
+      // </div>
     ),
+    "button.secretKey": "Secret Key",
     "button.about": "About",
     "about.featuresHeader": "Features",
 
@@ -935,8 +974,8 @@ reverse(head) {
       </div>
     ),
     "about.title.rox": "App: Rox",
-    "about.title.roxGPT": "App: Rox GPT",
-    "about.title.Patreon": "App: Patreon",
+    "about.title.roxGPT": "Custom GPT",
+    // "about.title.Patreon": "App: Patreon",
 
     "about.title.decentralizedIdentity": "Decentralized Identity",
     "about.title.spanishMode": "Spanish Mode",
@@ -1168,7 +1207,7 @@ reverse(head) {
     "Introduction to Finance": "Introduction to Finance",
     "modal.decentralizedTranscript.youEarned": "You earned",
     "modal.decentralizedTranscript.awareness":
-      "These awards can be transferred to other platforms like",
+      "These awards are cross-platform and can be transferred to other platforms.",
     "modal.decentralizedTranscript.awardsEarned": "Awards Earned",
     loading: "Loading...",
     "loading.wallet": "Generating Wallet...",
@@ -1281,8 +1320,39 @@ reverse(head) {
     "modal.adaptiveLearning.recommendButton": "Build your app",
     copied: "Copied!",
     copy_code_launch_builder: "Copy, build and ship with v0",
+    "subscription.nudge": (
+      <>
+        <b>Are you enjoying the experience?</b>
+        <p style={{ maxWidth: "600px" }}>
+          Subscriptions help us pay for the cost of creating scholarships, AI
+          and improving the technology as a small creator business. It costs
+          less than $6 with discounts and you get much more content on
+          investing, engineering and business!
+        </p>
+        <br />
+      </>
+    ),
+    "tag.allowPosting": "Do not post my progress",
   },
   es: {
+    "toast.title.idCopied": "ID copiada.",
+    "toast.description.idCopied": "Tu ID ha sido copiada.",
+    "tag.allowPosting": "No publicar mi progreso",
+    "subscription.nudge": (
+      <>
+        <b>¿Estás disfrutando la experiencia?</b>
+        <p style={{ maxWidth: "600px" }}>
+          Las suscripciones nos ayudan a cubrir los costos de crear becas,
+          desarrollar inteligencia artificial y mejorar la tecnología como un
+          pequeño negocio de creadores. ¡Cuesta menos de $6 con descuentos y
+          obtienes mucho más contenido sobre inversiones, ingeniería y negocios!
+        </p>
+        <br />
+      </>
+    ),
+    "modal.bitcoinMode.instructions.createWallet.2.5":
+      "Esta característica es experimental.",
+
     copied: "¡Copiado!",
     copy_code_launch_builder: "Copiar código y lanzar el creador de IA",
     "buildYourApp.input.label": "Tu idea",
@@ -1371,6 +1441,7 @@ reverse(head) {
     "deposit.button": "Depositar",
     "createWallet.button": "Crear billetera",
     "select.recipient": "Selecciona el destinatario de tu beca",
+    "change.recipient": "Cambiar tu beneficiario de la beca",
     "disabled.select.soon": "¡Pronto más escuelas, profesores y estudiantes!",
 
     transcriptBadges: "Insignias de Transcripción",
@@ -2105,7 +2176,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "tags.grade": "Calificación: ",
     "toast.title.keysCopied": "Claves copiadas.",
     "toast.description.keysCopied":
-      "Tus claves se han copiado al portapapeles.",
+      "Tu clave secreto se ha copiado al portapapeles.",
     "toast.title.addressCopied": "Dirección de Lightning copiada.",
     "toast.description.addressCopied":
       "Tu dirección de Lightning ha sido copiada.",
@@ -2136,6 +2207,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     or: "o",
     "createAccount.primalLink": "Primal, la billetera social",
     "button.copyKey": "Copiar Clave Secreta",
+    "button.secretKey": "Clave Secreta",
     "createAccount.checkbox.disclaimer":
       "Entiendo que mi clave me permite iniciar sesión en diferentes aplicaciones que pueden contener datos importantes y privados como Bitcoin. Ya he guardado mis claves de forma segura en otro lugar.",
     "createAccount.button.launchApp": "Iniciar aplicación",
@@ -2292,13 +2364,13 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
         negocios tecnológicos diversos.
         <br />
         <br />
-        <a
+        {/* <a
           style={{ textDecoration: "underline" }}
           href="https://patreon.com/notesandotherstuff"
           target="_blank"
         >
           https://patreon.com/notesandotherstuff
-        </a>
+        </a> */}
       </div>
     ),
     "button.about": "Acerca",
@@ -2572,12 +2644,12 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "modal.title.decentralizedTranscript": "Transcripción Descentralizada",
     "modal.decentralizedTranscript.youEarned": "Has ganado",
     "modal.decentralizedTranscript.awareness":
-      "Estos premios se pueden transferir a otras plataformas como",
+      "Estos premios se pueden transferir a otras plataformas.",
     "modal.decentralizedTranscript.awardsEarned": "Premios Ganados",
     loading: "Cargando...",
     "settings.button.transcript": "Transcripción",
     "modal.transcript.instructions": "",
-    yourID: "Tu ID público: ",
+    yourID: "ID público",
     noTranscriptFound:
       "No se encontraron premios de transcripciones anteriores.",
     congratulations: "¡Felicidades!",

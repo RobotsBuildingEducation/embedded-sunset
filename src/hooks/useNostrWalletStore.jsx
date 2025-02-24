@@ -8,11 +8,20 @@ import NDKWalletService, { NDKCashuWallet } from "@nostr-dev-kit/ndk-wallet";
 
 const defaultMint = "https://mint.minibits.cash/Bitcoin";
 const defaultRelays = ["wss://relay.damus.io", "wss://relay.primal.net"];
+const defaultReceiver =
+  "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt";
 
+// using a global state with zustand.
+// Basically, when this state updates, the app refreshes.
+
+/**
+ *  I don't recommend using stores because it can get developers in the habit of injecting data,
+ *  eventually resulting in poor design of data.
+ * */
 export const useNostrWalletStore = create((set, get) => ({
-  // State
-  isConnected: false,
-  errorMessage: null,
+  // State, not all is used
+  isConnected: false, //not used: needed to create less connections to nostr
+  errorMessage: null, //not used: needed to improve user experience if stuff goes wrong
   nostrPubKey: "",
   nostrPrivKey: "",
   ndkInstance: null,
@@ -20,40 +29,59 @@ export const useNostrWalletStore = create((set, get) => ({
   walletService: null,
   cashuWallet: null,
   walletBalance: 0,
-  invoice: "",
+  invoice: "", //not used: needs to add ability to generate new QR/address (invoice) in case things expire
 
-  // Utility methods
+  // functions to define state when the data gets created
   setError: (msg) => set({ errorMessage: msg }),
   setInvoice: (data) => set({ invoice: data }),
 
+  // Converts your public identity into a public key.
+  // think of your "npub key" as something identifiable for humans
+  // think of a public key as something identifiable for machines
+  // Kinda like using a visa card to pay
   getHexNPub: (npub) => {
     const { words: npubWords } = bech32.decode(npub);
+    console.log(
+      "hi hihihihihihi",
+      Buffer.from(bech32.fromWords(npubWords)).toString("hex")
+    );
     return Buffer.from(bech32.fromWords(npubWords)).toString("hex");
   },
 
+  //Connect the user to the servers/transmitters
   connectToNostr: async (npubRef = null, nsecRef = null) => {
+    //grab some state
     const { setError, nostrPrivKey, nostrPubKey } = get();
+
+    //slop because I was testing blindly
     const defaultNsec = import.meta?.env?.VITE_GLOBAL_NOSTR_NSEC;
     const defaultNpub =
       "npub1mgt5c7qh6dm9rg57mrp89rqtzn64958nj5w9g2d2h9dng27hmp0sww7u2v";
 
+    //grab nostr keypair we choose, or the one in state, or the default
+    //pray to God it works
     const nsec = nsecRef || nostrPrivKey || defaultNsec;
     const npub = npubRef || nostrPubKey || defaultNpub;
 
     try {
+      //convert human keypair into machine keypair
       const { words: nsecWords } = bech32.decode(nsec);
       const hexNsec = Buffer.from(bech32.fromWords(nsecWords)).toString("hex");
 
       const { words: npubWords } = bech32.decode(npub);
       const hexNpub = Buffer.from(bech32.fromWords(npubWords)).toString("hex");
 
+      //define an object that gives you nostr's interface/abilities
       const ndkInstance = new NDK({
         explicitRelayUrls: defaultRelays,
       });
 
+      // run the connection function
       await ndkInstance.connect();
 
       set({ isConnected: true });
+
+      // return the object, the machine key, and the ability to sign/verify your actions/behvior
       return { ndkInstance, hexNpub, signer: new NDKPrivateKeySigner(hexNsec) };
     } catch (err) {
       console.error("Error connecting to Nostr:", err);
@@ -62,6 +90,8 @@ export const useNostrWalletStore = create((set, get) => ({
     }
   },
 
+  //the library has refactored this away, so this is technically legacy code
+  //sets up listeners that detect changes/updates to wallets
   initWalletService: async (providedNdk, providedSigner) => {
     const {
       setError,
@@ -70,23 +100,21 @@ export const useNostrWalletStore = create((set, get) => ({
       nostrPubKey,
       nostrPrivKey,
       connectToNostr,
+      setupWalletListeners,
     } = get();
 
     try {
+      // *another sanity check or ineffeciency
+      // just make sure this data is defined before running the function
       let ndk = providedNdk || ndkInstance;
       let s = providedSigner || signer;
 
-      // If we don't have ndk or signer, let's try to establish them
-      // This covers the scenario where the user is already logged in
-      // and the app loads up but we have not explicitly connected yet.
       if (!ndk || !s) {
-        // Check if we have keys
         if (nostrPubKey && nostrPrivKey) {
           const connection = await connectToNostr(nostrPubKey, nostrPrivKey);
           if (connection) {
             ndk = connection.ndkInstance;
             s = connection.signer;
-            // Store them for future use
             set({ ndkInstance: ndk, signer: s });
           } else {
             throw new Error(
@@ -97,23 +125,22 @@ export const useNostrWalletStore = create((set, get) => ({
           throw new Error("NDK or signer not found and no keys to reconnect.");
         }
       }
-
-      // At this point, we must have ndk and signer
       ndk.signer = s;
       const user = await s.user();
-      console.log("USER????????!!!", user.profile);
       user.signer = s;
 
+      // get our wallet service capabilities
       const wService = new NDKWalletService(ndk);
+
+      // Start the wallet service, listen for changes
+      wService.start();
+
+      // the valid and default wallet has been detected, a wallet exists
       wService.on("wallet:default", (w) => {
-        get().setupWalletListeners(w);
-      });
-      wService.on("wallet", (w) => {
-        // Could handle multiple wallets here if needed
-        console.log("on wallet", w);
+        // listen for balance changes
+        setupWalletListeners(w);
       });
 
-      wService.start();
       set({ walletService: wService });
     } catch (error) {
       console.error("Error initializing wallet service:", error);
@@ -121,14 +148,21 @@ export const useNostrWalletStore = create((set, get) => ({
     }
   },
 
+  //detects balance changes
   setupWalletListeners: async (wallet) => {
+    //*inefficiency, sanity check, make sure a wallet is defined
     if (!wallet || !(wallet instanceof NDKCashuWallet)) return;
 
-    wallet.on("balance_updated", async () => {
+    // listen for updates to the balance, when a user answers a question, the balance should update
+    wallet.on("balance_updated", async (balance) => {
       const bal = (await wallet.balance()) || [];
+
       set({ walletBalance: bal });
     });
 
+    // potentially writing a bug here
+    // essentially checking the balance redundantly, resulting in outdated balance
+    //woudn't be surprised if this runs first actually, we'll see
     const initialBal = (await wallet.balance()) || [];
     set({
       walletBalance: initialBal,
@@ -136,7 +170,10 @@ export const useNostrWalletStore = create((set, get) => ({
     });
   },
 
-  // Initialization method to be called once (in App.jsx or similar)
+  // The starting function,
+  // Gets invoked when a real session is active & the user has created a wallet
+  // - Define our identity in state
+  // - Define our connection to nostr
   init: async () => {
     const storedNpub = localStorage.getItem("local_npub");
     const storedNsec = localStorage.getItem("local_nsec");
@@ -150,59 +187,61 @@ export const useNostrWalletStore = create((set, get) => ({
       if (connection) {
         const { ndkInstance: ndk, signer: s } = connection;
         set({ ndkInstance: ndk, signer: s });
-        await initWalletService(ndk, s);
+
+        // await initWalletService(ndk, s);
       }
     }
   },
 
-  createNewWallet: async (
-    mintUrls = [],
-    relayUrls = defaultRelays,
-    walletName = "Robots Building Education Wallet"
-  ) => {
+  createNewWallet: async () => {
+    //grab state
     const {
       ndkInstance,
       signer,
       setError,
       initWalletService,
       setupWalletListeners,
-      connectToNostr,
+      init,
+      createNewWallet,
     } = get();
+
     if (!ndkInstance || !signer) {
       setError("NDK or signer not initialized. Cannot create wallet yet.");
+      await init();
+      await initWalletService();
+      createNewWallet();
       return null;
     }
 
     try {
       const newWallet = new NDKCashuWallet(ndkInstance);
-      newWallet.name = "Robots Building Education Wallet";
-      newWallet.relays = relayUrls;
+      newWallet.relays = defaultRelays;
       newWallet.setPublicTag("relay", "wss://relay.damus.io");
       newWallet.setPublicTag("relay", "wss://relay.primal.net");
 
-      newWallet.mints = mintUrls.length > 0 ? mintUrls : [defaultMint];
+      //define our wallet's ID
       newWallet.walletId = "Robots Building Education Wallet";
+
+      //define our wallet's token issuer/bank
+      newWallet.mints = [defaultMint];
+
+      //define the unit of Bitcoin we're working with
       newWallet.unit = "sat";
       newWallet.setPublicTag("unit", "sat");
+      newWallet.setPublicTag("d", "Robots Building Education Wallet");
 
+      //define our wallet's signer
       const pk = signer.privateKey;
       if (pk) {
         newWallet.privkey = pk;
       }
 
+      //publish the wallet to the transmitter so it knows what you've created for future reference
       await newWallet.publish();
-      console.log("Published wallet event:", newWallet.event.rawEvent());
 
-      const connection = await connectToNostr(
-        localStorage.getItem("local_npub"),
-        localStorage.getItem("local_nsec")
-      );
-      if (!connection) return null;
+      await init();
+      await initWalletService();
 
-      const { ndkInstance: ndk, signer: s } = connection;
-      set({ ndkInstance: ndk, signer: s });
-      console.log("Initializing wallet service.");
-      await initWalletService(ndk, s);
       await setupWalletListeners(newWallet);
 
       return newWallet;
@@ -213,64 +252,26 @@ export const useNostrWalletStore = create((set, get) => ({
     }
   },
 
-  fetchProfile: async (npubRef = null) => {
-    const { nostrPubKey, ndkInstance, connectToNostr, setError, getHexNPub } =
-      get();
-
-    // Use the provided npubRef or fall back to the current user's public key
-    const npub = npubRef || nostrPubKey;
-
-    if (!npub) {
-      console.error("Public key is required to fetch the profile.");
-      setError("Public key is required to fetch the profile.");
-      return null;
-    }
-
-    try {
-      // Convert npub to hex format
-      const hexNpub = getHexNPub(npub);
-
-      // Ensure NDK instance is available and connected
-      let ndk = ndkInstance;
-      if (!ndk) {
-        console.warn("NDK instance not found. Reconnecting...");
-        const connection = await connectToNostr();
-        if (!connection) throw new Error("Failed to reconnect to Nostr.");
-        ndk = connection.ndkInstance;
-      }
-
-      // Fetch user metadata
-      const user = ndk.getUser({ hexpubkey: hexNpub });
-      const profileEvent = await user.fetchProfile();
-
-      if (profileEvent) {
-        console.log("Fetched profile:", profileEvent);
-        return profileEvent; // Contains profile fields like name, about, picture, etc.
-      } else {
-        console.warn("No profile metadata found for this user.");
-        return null;
-      }
-    } catch (err) {
-      console.error("Error fetching profile:", err);
-      setError(err.message);
-      return null;
-    }
-  },
-
+  // gets payment data for the receiver
   fetchUserPaymentInfo: async (recipientNpub) => {
+    //check if youre connected, if not define an invalid set of dat
     const { ndkInstance, getHexNPub } = get();
     if (!ndkInstance) {
       console.error("NDK instance not ready");
       return { mints: [defaultMint], p2pkPubkey: null, relays: [] };
     }
 
+    // get receiver machine data
     const hexNpub = getHexNPub(recipientNpub);
+
+    //sets up a call to receive user's wallet data with Kind/code 10019
     const filter = {
       kinds: [10019],
       authors: [hexNpub],
       limit: 1,
     };
 
+    // listen for valid data
     const subscription = ndkInstance.subscribe(filter, { closeOnEose: true });
     let userEvent = null;
 
@@ -280,10 +281,13 @@ export const useNostrWalletStore = create((set, get) => ({
 
     await new Promise((resolve) => subscription.on("eose", resolve));
 
+    // if the valid data doesnt exist, define it for them
     if (!userEvent) {
       return { mints: [defaultMint], p2pkPubkey: hexNpub, relays: [] };
     }
 
+    // basically we dont use any of this dat other than the p2pkpubkey
+    // or the pay-to-publickey public key, basically a public way for receivers to receive money that we sent
     let mints = [];
     let relays = [];
     let p2pkPubkey = null;
@@ -301,9 +305,8 @@ export const useNostrWalletStore = create((set, get) => ({
     return { mints, p2pkPubkey, relays };
   },
 
-  sendOneSatToNpub: async (
-    recipientNpub = "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt"
-  ) => {
+  // handles sending money to the receiver.
+  sendOneSatToNpub: async (recipientNpub = defaultReceiver) => {
     const {
       cashuWallet,
       getHexNPub,
@@ -312,6 +315,8 @@ export const useNostrWalletStore = create((set, get) => ({
       fetchUserPaymentInfo,
       setError,
     } = get();
+
+    //safety check, if a wallet is never defined, just exit the function
     if (!cashuWallet) {
       console.error("Wallet not initialized or no balance.");
       return;
@@ -320,11 +325,15 @@ export const useNostrWalletStore = create((set, get) => ({
     try {
       const amount = 1000;
       const unit = "msat";
+
+      // define user's issuer/bank or our default
       const mints =
         cashuWallet.mints.length > 0 ? cashuWallet.mints : [defaultMint];
 
+      // get receiver's payment daata
       const { p2pkPubkey } = await fetchUserPaymentInfo(recipientNpub);
 
+      //pass the information into a pay function
       const confirmation = await cashuWallet.cashuPay({
         amount,
         unit,
@@ -332,13 +341,17 @@ export const useNostrWalletStore = create((set, get) => ({
         p2pk: p2pkPubkey,
       });
 
+      // if expected payment success data isnt returned, throw an error
       const { proofs, mint } = confirmation;
       if (!proofs || !mint) {
         throw new Error("No proofs returned from cashuPay.");
       }
 
+      //set up receiver's data
       const hexRecipient = getHexNPub(recipientNpub);
       const proofData = JSON.stringify({ proofs, mint });
+
+      // set up call to the relays with payment information
       const tags = [
         ["amount", amount.toString()],
         ["unit", unit],
@@ -346,8 +359,9 @@ export const useNostrWalletStore = create((set, get) => ({
         ["u", mint],
         ["p", hexRecipient],
       ];
-
       const content = "testing int";
+
+      // setup to store payment information to nostr using a nutzap event
       const nutzapEvent = new NDKEvent(ndkInstance, {
         kind: 9321,
         tags,
@@ -355,37 +369,52 @@ export const useNostrWalletStore = create((set, get) => ({
         created_at: Math.floor(Date.now() / 1000),
       });
 
+      //sign it/confirm it and publish it to be stored
       await nutzapEvent.sign(signer);
       await nutzapEvent.publish();
 
+      //sanity check
       await cashuWallet.checkProofs();
+
+      //update the balance after the spend event occurs, deducting 1 sat from your deposits
       const updatedBalance = await cashuWallet.balance();
       set({ walletBalance: updatedBalance || [] });
-
-      console.log(`Successfully sent nutzap (1 sat) to ${recipientNpub}!`);
     } catch (e) {
       console.error("Error sending nutzap:", e);
       setError(e.message);
     }
   },
 
+  //handles the deposit... gotta love self describing code
   initiateDeposit: async (amountInSats = 10) => {
-    const { cashuWallet, setError, setInvoice } = get();
+    //get state
+    const { cashuWallet, setError, setInvoice, init, initWalletService } =
+      get();
+
+    //safety check, if a wallet is never defined, just exit the function
     if (!cashuWallet) {
       console.error("Wallet not initialized.");
       return;
     }
 
+    //run the deposit function with the cashu object
     const deposit = cashuWallet.deposit(amountInSats, defaultMint, "sat");
-    const pr = await deposit.start(); // pr is the LN invoice (bolt11)
+
+    // create the address/QR and start listening for changes
+    const pr = await deposit.start();
     setInvoice(pr); // Store the invoice in Zustand
 
+    // detect a successful deposit from a wallet like cash app
     deposit.on("success", async (token) => {
-      console.log("Deposit successful!", token);
-      await cashuWallet.checkProofs();
+      await cashuWallet.checkProofs(); //sanity check, probably not needed
+
+      // get new balance
       const updatedBalance = await cashuWallet.balance();
+
+      //updates balance state, probably triggers wallet listeners too
       set({ walletBalance: updatedBalance || [] });
-      setInvoice(""); // Clear invoice after success if desired
+
+      setInvoice("");
     });
 
     deposit.on("error", (e) => {
@@ -395,4 +424,19 @@ export const useNostrWalletStore = create((set, get) => ({
 
     return pr;
   },
+
+  // just resets state for log outs
+  resetState: () =>
+    set({
+      isConnected: false,
+      errorMessage: null,
+      nostrPubKey: "",
+      nostrPrivKey: "",
+      ndkInstance: null,
+      signer: null,
+      walletService: null,
+      cashuWallet: null,
+      walletBalance: 0,
+      invoice: "",
+    }),
 }));

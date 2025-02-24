@@ -334,6 +334,7 @@ export const KnowledgeLedgerModal = ({
                   }
                 }}
                 isDisabled={!userInput.trim()}
+                boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
               >
                 {userIdea
                   ? translation[userLanguage]["buildYourApp.button.label.2"]
@@ -435,6 +436,7 @@ export const KnowledgeLedgerModal = ({
                   onClose();
                 }
               }}
+              boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
             >
               {translation[userLanguage]["button.close"]}
             </Button>

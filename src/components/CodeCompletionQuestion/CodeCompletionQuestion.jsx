@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { VStack, Box, Button } from "@chakra-ui/react";
-import Editor from "react-simple-code-editor";
+
 import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
 import { translation } from "../../utility/translation";
+import Editor from "react-simple-code-editor";
 
 const CodeCompletionQuestion = ({
   step,
@@ -119,6 +120,7 @@ const CodeCompletionQuestion = ({
         colorScheme="pink"
         // Removed tabIndex={0} as Button is focusable by default
         background="pink.400"
+        boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
       >
         {translation[userLanguage]["app.button.learn"]}
       </Button>
@@ -139,7 +141,7 @@ const CodeCompletionQuestion = ({
           width="100%"
           p={4}
           borderRadius="lg" // Rounded corners
-          boxShadow="0px 0.5px 0.5px 1px black"
+          boxShadow="0.5px 0.5px 1px 0px black"
           tabIndex={0} // Make each option focusable with Tab
           ref={(el) => (optionRefs.current[index] = el)} // Store reference to each code block
           onKeyDown={(e) => {

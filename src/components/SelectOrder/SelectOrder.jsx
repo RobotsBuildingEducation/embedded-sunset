@@ -106,6 +106,7 @@ const SelectOrderQuestion = ({
           }
         }}
         background="pink.400"
+        boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
       >
         {translation[userLanguage]["app.button.learn"]}
       </Button>
@@ -128,7 +129,7 @@ const SelectOrderQuestion = ({
                         marginBottom: "8px",
                         padding: "16px",
                         border: `${borderSwitches[index] ? "3" : "1"}px solid ${
-                          borderSwitches[index] ? "#5ad5ac" : "gray"
+                          borderSwitches[index] ? "#5ad5ac" : "transparent"
                         }`,
                         borderRadius: "4px",
                         backgroundColor:
@@ -140,7 +141,7 @@ const SelectOrderQuestion = ({
                         boxShadow:
                           focusedIndex === index
                             ? "0 0 0 2px #3182ce"
-                            : "0 1px 1px rgba(0, 0, 0, 0.1)",
+                            : "0.5px 0.5px 1px 0px rgba(0, 0, 0, 0.75)",
                         textAlign: "left",
                         cursor: "pointer",
                       }}

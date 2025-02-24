@@ -38,12 +38,12 @@ const analytics = getAnalytics(app);
 const vertexAI = getVertexAI(app);
 const model = getGenerativeModel(vertexAI, {
   // model: "gemini-1.5-flash",
-  model: "gemini-2.0-flash-exp",
+  model: "gemini-2.0-flash-001",
 });
 
 const simplemodel = getGenerativeModel(vertexAI, {
   // model: "gemini-1.5-flash",
-  model: "gemini-2.0-flash-exp",
+  model: "gemini-2.0-flash-001",
 });
 
 export { database, analytics, model, simplemodel };

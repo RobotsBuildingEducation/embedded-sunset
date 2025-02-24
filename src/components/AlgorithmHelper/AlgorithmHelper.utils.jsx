@@ -378,6 +378,7 @@ export const TreeNode = ({ node, onSelect }) => {
           return null;
         return (
           <Button
+            boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
             key={childKey}
             onMouseDown={() => onSelect(childKey)}
             onKeyDown={(e) => {
@@ -467,6 +468,7 @@ export const SelectedPath = ({
                   {codeStack[index] && (
                     <div>
                       <Button
+                        boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                         variant={"outline"}
                         onMouseDown={() => toggleCollapse(index)}
                         onKeyDown={(e) => {
@@ -509,6 +511,7 @@ export const SelectedPath = ({
       <br />
       <br />
       <Button
+        boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
         variant="ghost"
         onMouseDown={() => onUndo()}
         onKeyDown={(e) => {
@@ -521,6 +524,7 @@ export const SelectedPath = ({
       </Button>
       &nbsp;&nbsp;
       <Button
+        boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
         variant="ghost"
         onMouseDown={onReset}
         onKeyDown={(e) => {
@@ -534,6 +538,7 @@ export const SelectedPath = ({
       <br />
       <br />
       <Button
+        boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
         onMouseDown={() =>
           requestFeedback(
             problem,
@@ -605,6 +610,7 @@ export const CopyableMarkdown = ({ content }) => {
         }}
       >
         <Button
+          boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
           //   variant="secondary"
 
           onMouseDown={handleCopy}

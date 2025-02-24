@@ -17,6 +17,7 @@ import {
   Switch,
   FormLabel,
   Input,
+  HStack,
 } from "@chakra-ui/react";
 import { FiSettings } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
@@ -31,13 +32,15 @@ import FeedbackModal from "./FeedbackModal/FeedbackModal";
 import { translation } from "../../utility/translation";
 import { database } from "../../database/firebaseResources";
 import { doc, updateDoc } from "firebase/firestore";
-import { FaBitcoin } from "react-icons/fa";
+import { FaBitcoin, FaRegUser } from "react-icons/fa";
 
 import TranscriptModal from "./TranscriptModal/TranscriptModal";
 import { InstallAppModal } from "../InstallModal/InstallModal";
 import { AlgorithmHelper } from "../AlgorithmHelper/AlgorithmHelper";
 import LiveCodeEditorModal from "../LiveCodeEditor/LiveCodeEditor";
 import { CareerAgent } from "../CareerAgent/CareerAgent";
+import { CopyButtonIcon } from "../../elements/CopyButtonIcon";
+import { useNostrWalletStore } from "../../hooks/useNostrWalletStore";
 
 const SettingsMenu = ({
   testIsMatch,
@@ -50,12 +53,19 @@ const SettingsMenu = ({
   view,
   setView,
   step,
+  allowPosts,
+  setAllowPosts,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
   const btnRef = useRef(); // Reference to the settings icon button
   const firstButtonRef = useRef(); // Reference to the first button in the drawer
   const toast = useToast();
+
+  const { resetState, walletService } = useNostrWalletStore((state) => ({
+    resetState: state.resetState, // renamed from cashTap
+    walletService: state.walletService,
+  }));
 
   const {
     isOpen: isSelfPacedOpen,
@@ -156,6 +166,64 @@ const SettingsMenu = ({
     }
   }, [isOpen]);
 
+  const handleCopyKeys = (id) => {
+    if (id) {
+      const keys = id; // replace with actual keys
+      navigator.clipboard.writeText(keys);
+      toast({
+        title: translation[userLanguage]["toast.title.idCopied"],
+        description: translation[userLanguage]["toast.description.idCopied"],
+        status: "info",
+        duration: 1000,
+        isClosable: true,
+        position: "top",
+        render: () => (
+          <Box
+            color="black"
+            p={3}
+            bg="#FEEBC8" // Custom background color here!
+            borderRadius="md"
+            boxShadow="lg"
+          >
+            <Text fontWeight="bold">
+              {translation[userLanguage]["toast.title.idCopied"]}
+            </Text>
+            <Text>
+              {translation[userLanguage]["toast.description.idCopied"]}
+            </Text>
+          </Box>
+        ),
+      });
+    } else {
+      const keys = localStorage.getItem("local_nsec"); // replace with actual keys
+      navigator.clipboard.writeText(keys);
+      toast({
+        title: translation[userLanguage]["toast.title.keysCopied"],
+        description: translation[userLanguage]["toast.description.keysCopied"],
+        status: "info",
+        duration: 1500,
+        isClosable: true,
+        position: "top",
+        render: () => (
+          <Box
+            color="black"
+            p={3}
+            bg="#FEEBC8" // Custom background color here!
+            borderRadius="md"
+            boxShadow="lg"
+          >
+            <Text fontWeight="bold">
+              {translation[userLanguage]["toast.title.keysCopied"]}
+            </Text>
+            <Text>
+              {translation[userLanguage]["toast.description.keysCopied"]}
+            </Text>
+          </Box>
+        ),
+      });
+    }
+  };
+
   return (
     <>
       {isSignedIn ? (
@@ -169,7 +237,7 @@ const SettingsMenu = ({
             }
           }}
           // variant="outline"
-          boxShadow="0px 1px 1px 2px lightgray"
+          boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
           position="fixed"
           top={4}
           right={4}
@@ -229,6 +297,57 @@ const SettingsMenu = ({
                   }}
                 />
               </FormControl>
+              <HStack>
+                <Button
+                  style={{
+                    display: "flex",
+                  }}
+                  tabIndex={0}
+                  onMouseDown={() => {
+                    handleCopyKeys(localStorage.getItem("local_npub") || "");
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      handleCopyKeys(localStorage.getItem("local_npub") || "");
+                    }
+                  }}
+                >
+                  {/* <div style={{ width: "min-content" }}>
+                    <CopyButtonIcon color="black" />
+                  </div>
+                  &nbsp; */}
+                  <HStack>
+                    <FaRegUser />
+                    <span>{translation[userLanguage]["yourID"]}</span>
+                  </HStack>
+                </Button>
+
+                <Button
+                  style={{
+                    display: "flex",
+                  }}
+                  tabIndex={0}
+                  onMouseDown={() => {
+                    handleCopyKeys();
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      handleCopyKeys();
+                    }
+                  }}
+                >
+                  {/* <div style={{ width: "min-content" }}>
+                    <CopyButtonIcon color="black" />
+                  </div>
+                  &nbsp; */}
+                  <div>
+                    🔑 {translation[userLanguage]["button.secretKey"]}
+                    {/* <b>{translation[userLanguage]["yourID"]}</b> */}
+                    {/* &nbsp;
+                  {localStorage?.getItem("local_npub")?.substr(0, 16) || ""} */}
+                  </div>
+                </Button>
+              </HStack>
               {/* <Button
                 p={6}
                 colorScheme="pink"
@@ -247,6 +366,7 @@ const SettingsMenu = ({
                 p={6}
                 colorScheme="pink"
                 background="pink.300"
+                boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
                 style={{ width: "100%" }}
                 onMouseDown={onBitcoinModeOpen}
                 onKeyDown={(e) => {
@@ -263,6 +383,7 @@ const SettingsMenu = ({
                 ref={firstButtonRef} // Assign the ref to the first button
                 colorScheme="pink"
                 background="pink.300"
+                boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
                 style={{ width: "100%" }}
                 onMouseDown={onSelfPacedOpen}
                 onKeyDown={(e) => {
@@ -289,6 +410,7 @@ const SettingsMenu = ({
                   p={6}
                   colorScheme="pink"
                   background="pink.300"
+                  boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
                   style={{ width: "100%" }}
                   onMouseDown={onAlgorithmHelperOpen}
                   onKeyDown={(e) => {
@@ -304,6 +426,7 @@ const SettingsMenu = ({
                 p={6}
                 colorScheme="pink"
                 background="pink.300"
+                boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
                 style={{ width: "100%" }}
                 onMouseDown={onTranscriptOpen}
                 onKeyDown={(e) => {
@@ -318,6 +441,7 @@ const SettingsMenu = ({
                 p={6}
                 colorScheme="pink"
                 background="pink.300"
+                boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
                 style={{ width: "100%" }}
                 onMouseDown={onInstallModalOpen}
                 onKeyDown={(e) => {
@@ -338,7 +462,7 @@ const SettingsMenu = ({
                   }
                 }}
                 variant={"outline"}
-                boxShadow={"0px 0.5px 0.5px 1px black"}
+                boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
               >
                 {translation[userLanguage]["settings.button.socialWallet"]}
               </Button>
@@ -374,21 +498,25 @@ const SettingsMenu = ({
                   }
                 }}
                 variant={"outline"}
-                boxShadow={"0px 0.5px 0.5px 1px black"}
+                boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
               >
                 <b>{translation[userLanguage]["settings.button.studyGuide"]}</b>
               </Button>
-              <Button
+              {/* <Button
                 p={6}
                 style={{ width: "100%" }}
                 // as="a"
 
                 onMouseDown={() => {
-                  window.open("https://patreon.com/notesandotherstuff");
+                  window.open(
+                    "https://patreon.com/notesandotherstuff/membership"
+                  );
                 }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
-                    window.open("https://patreon.com/notesandotherstuff");
+                    window.open(
+                      "https://patreon.com/notesandotherstuff/membership"
+                    );
                   }
                 }}
                 variant={"outline"}
@@ -396,7 +524,7 @@ const SettingsMenu = ({
                 border="2px solid gold"
               >
                 <b> {translation[userLanguage]["settings.button.patreon"]}</b>
-              </Button>
+              </Button> */}
 
               <Button
                 style={{ width: "100%" }}
@@ -418,6 +546,8 @@ const SettingsMenu = ({
               <Button
                 style={{ width: "100%" }}
                 onMouseDown={() => {
+                  // walletService.stop();
+                  resetState();
                   const translateValue = localStorage.getItem("userLanguage");
                   localStorage.removeItem("local_nsec");
                   localStorage.removeItem("local_npub");
@@ -429,6 +559,9 @@ const SettingsMenu = ({
                   navigate("/");
                 }}
                 onKeyDown={(e) => {
+                  // walletService.stop();
+                  resetState();
+
                   if (e.key === "Enter" || e.key === " ") {
                     const translateValue = localStorage.getItem("userLanguage");
                     localStorage.removeItem("local_nsec");

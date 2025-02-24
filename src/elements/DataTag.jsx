@@ -35,7 +35,8 @@ export const DataTags = ({
           m={1}
           height="fit-content"
         >
-          {translation[localStorage.getItem("userLanguage")]["label.new"]}
+          {translation[localStorage.getItem("userLanguage")]?.["label.new"] ||
+            "New!"}
         </Tag>
       ) : null}
       {grade ? (

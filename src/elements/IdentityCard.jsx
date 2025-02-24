@@ -161,6 +161,7 @@ export const IdentityCard = ({
   theme = "default",
   animateOnChange = false,
   realValue = null,
+  totalBalance,
 }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -332,7 +333,7 @@ export const IdentityCard = ({
                     theme === "web5"
                       ? "black"
                       : theme === "nostr"
-                        ? "#ff42b7"
+                        ? "#DB80F4"
                         : theme === "cashu"
                           ? "#004e92"
                           : theme === "BTC"
@@ -344,13 +345,18 @@ export const IdentityCard = ({
                   justifyContent: "center",
 
                   fontFamily: "Avenir",
-                  color: theme === "web5" ? "cyan" : "black",
+                  color:
+                    theme === "web5"
+                      ? "cyan"
+                      : theme === "nostr"
+                        ? "white"
+                        : "black",
                   padding: 24,
                   cursor: "inherit",
                 }}
                 // onMouseDown={() => setIsFlipped(true)}
               >
-                <b>{theme}</b>
+                <b>{"BTC"}</b>
               </div>
             </div>
           </div>

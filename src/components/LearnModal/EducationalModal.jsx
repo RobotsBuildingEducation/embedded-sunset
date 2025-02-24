@@ -445,12 +445,12 @@ const EducationalModal = ({
                 ))}
             </VStack>
           </ModalBody>
-          <ModalFooter margin={0} padding={3}>
+          <ModalFooter mr={4} mb={1} padding={3}>
             <Button
               onMouseDown={onClose}
               variant="solid"
               size="sm"
-              boxShadow={"0px 0.5px 0.5px 1px black"}
+              boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
             >
               {translation[userLanguage]["button.close"]}
             </Button>

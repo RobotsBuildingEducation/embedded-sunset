@@ -58,6 +58,9 @@ export const createUser = async (npub, userName, language) => {
       step: 0, // Initialize step count to 0
       previousStep: 0,
       language: language,
+      allowPosts: false,
+      identity:
+        "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt",
     },
     { merge: true }
   ); // Merge true ensures it doesn't overwrite existing data
@@ -115,7 +118,7 @@ export const getUserStep = async (npub) => {
 export const deleteSpecificDocuments = () => {
   const usersCollectionRef = collection(database, "users");
 
-  const q = query(usersCollectionRef, where("name", "==", "data"));
+  const q = query(usersCollectionRef, where("name", "==", "test"));
 
   getDocs(q)
     .then((snapshot) => {

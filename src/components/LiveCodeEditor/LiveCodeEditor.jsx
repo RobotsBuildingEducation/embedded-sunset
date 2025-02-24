@@ -191,7 +191,13 @@ const LiveReactEditorModal = ({ code }) => {
   console.log("isreact", isReactCode(editorCode));
   return (
     <>
-      <Button variant="outline" mt={4} onClick={runCode} mb={4}>
+      <Button
+        variant="outline"
+        mt={4}
+        onClick={runCode}
+        mb={4}
+        boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+      >
         Run Code
       </Button>
       &nbsp;
@@ -228,7 +234,7 @@ const LiveReactEditorModal = ({ code }) => {
         <Box
           width={editorWidth}
           mb={{ base: 4, md: 0 }}
-          boxShadow="0px 0.5px 2.5px 0px rgb(189, 189, 189)"
+          boxShadow="0.5px 0.5px 1px 0px rgba(0, 0, 0, 0.75)"
         >
           <Editor
             height="400px"

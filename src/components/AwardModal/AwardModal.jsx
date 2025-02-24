@@ -85,7 +85,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
     >
       <ModalOverlay></ModalOverlay>
       <ModalContent
-        background={"orange.400"}
+        background={"#38628D"}
         // color="white"
         borderRadius="lg"
         boxShadow="2xl"
@@ -147,7 +147,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
           </a>
           <br />
           <br />
-          <Button
+          {/* <Button
             onMouseDown={handleCopyKeys}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
@@ -157,7 +157,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
             mb={2}
           >
             🔑 {translation[userLanguage]["button.copyKey"]}
-          </Button>
+          </Button> */}
 
           <div>
             {
@@ -165,7 +165,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
                 "modal.decentralizedTranscript.awareness"
               ]
             }{" "}
-            <a
+            {/* <a
               target="_blank"
               href="https://embedded-rox.app"
               style={{ textDecoration: "underline", fontWeight: "bold" }}
@@ -178,7 +178,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
               {translation[userLanguage][
                 "settings.button.yourTutor"
               ].toLowerCase()}
-            </a>
+            </a> */}
           </div>
 
           <br />
@@ -298,13 +298,36 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
               ))}
             </Box>
           )}
+          <br />
+
+          {/* {translation[userLanguage]["subscription.nudge"]}
+
+          <br />
+          <Button
+            p={6}
+            // as="a"
+
+            onMouseDown={() => {
+              window.open("https://patreon.com/notesandotherstuff/membership");
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                window.open(
+                  "https://patreon.com/notesandotherstuff/membership"
+                );
+              }
+            }}
+            boxShadow={"0px 0.5px 0.5px 1px black"}
+          >
+            <b>Subscribe</b>
+          </Button> */}
         </ModalBody>
         <ModalFooter margin={0} padding={3}>
           <Button
             onMouseDown={onClose}
             variant="solid"
-            size="lg"
-            boxShadow={"0px 0.5px 0.5px 1px black"}
+            size="md"
+            boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 onClose();

@@ -23,11 +23,7 @@ export const useProofStorage = () => {
   }, []);
 
   useEffect(() => {
-    console.log("========================================================");
-    console.log("the proofs have changed", proofs);
     if (!proofs) {
-      console.log("no proofs....");
-      console.log("========================================================");
       return;
     }
     localStorage.setItem("proofs", JSON.stringify(proofs));
@@ -94,6 +90,7 @@ export const useCashuWallet = (isUnactivated, isModalOpen = null) => {
 
   useEffect(() => {
     if (isUnactivated && !localStorage.getItem("address") && balance < 1) {
+      window.alert("a bunch of ands");
     } else {
       const storedMintData = JSON.parse(localStorage.getItem("mint"));
 

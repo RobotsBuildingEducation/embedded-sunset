@@ -119,7 +119,8 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
     >
       <ModalOverlay></ModalOverlay>
       <ModalContent
-        background={"orange.400"}
+        // background={"gray.500"}
+        background={"#38628D"}
         // color="white"
         borderRadius="lg"
         boxShadow="2xl"
@@ -144,7 +145,7 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
         </ModalHeader>
 
         <ModalBody p={8} style={{ width: "100%", color: "white" }}>
-          <Button
+          {/* <Button
             style={{
               display: "flex",
             }}
@@ -170,7 +171,7 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
           </Button>
 
           <br />
-          <br />
+          <br /> */}
 
           <div>
             {
@@ -178,7 +179,7 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
                 "modal.decentralizedTranscript.awareness"
               ]
             }
-            &nbsp;
+            {/* &nbsp;
             <span>
               <a
                 target="_blank"
@@ -209,9 +210,8 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
               fontSize={"smaller"}
             >
               🔑 {translation[userLanguage]["button.copyKey"]}
-            </Button>
+            </Button> */}
           </div>
-          <br />
           <br />
           <b>
             {
@@ -338,8 +338,8 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
           <Button
             onMouseDown={onClose}
             variant="solid"
-            size="lg"
-            boxShadow={"0px 0.5px 0.5px 1px black"}
+            size="md"
+            boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 onClose();

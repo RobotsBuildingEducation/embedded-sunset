@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
+  FormControl,
+  FormLabel,
   Image,
   Link,
   Progress,
+  Switch,
   Text,
   useToast,
 } from "@chakra-ui/react";
@@ -12,6 +15,8 @@ import { useSharedNostr } from "../hooks/useNOSTR";
 import { steps } from "../utility/content";
 import { SunsetCanvas } from "../elements/SunsetCanvas";
 import { translation } from "../utility/translation";
+import { doc, updateDoc } from "firebase/firestore";
+import { database } from "../database/firebaseResources";
 let totalSteps = steps["en"].length;
 
 const getColorScheme = (group) => {
@@ -89,7 +94,7 @@ function ReplaceHashtagWithLink({ text }) {
   );
 }
 
-export const TestFeed = ({ userLanguage }) => {
+export const TestFeed = ({ userLanguage, allowPosts, setAllowPosts }) => {
   const toast = useToast();
   const [localLoad, setLocalLoad] = useState(false);
   const [profiles, setProfiles] = useState([]);
@@ -120,6 +125,17 @@ export const TestFeed = ({ userLanguage }) => {
     // Match "question <number>"
     const match = text.match(/question (\d+)/i);
     return match ? parseInt(match[1], 10) : null;
+  };
+
+  const handleToggleAllowPosts = async (e) => {
+    const newValue = e.target.checked;
+    setAllowPosts(newValue);
+    const userDocRef = doc(
+      database,
+      "users",
+      localStorage.getItem("local_npub")
+    );
+    await updateDoc(userDocRef, { allowPosts: newValue });
   };
 
   const handleCopyKeys = () => {
@@ -170,14 +186,28 @@ export const TestFeed = ({ userLanguage }) => {
       >
         🔑 {translation[userLanguage]["button.copyKey"]}
       </Button>
+      <br />
+      <br />
+      <FormControl display="flex" alignItems="center" mb={4}>
+        <FormLabel htmlFor="allow-posts-switch" mb="0">
+          {translation[userLanguage]["tag.allowPosting"]}
+        </FormLabel>
+        <Switch
+          id="allow-posts-switch"
+          isChecked={allowPosts}
+          onChange={handleToggleAllowPosts}
+        />
+      </FormControl>
       {profiles.map((profile, index) => {
         const questionNumber = extractQuestionNumber(profile.content);
 
-        const hasScholarship =
-          profile.content.toLowerCase().includes("a new scholarship") ||
-          profile.content.toLowerCase().includes("https://girlsoncampus.app") ||
-          profile.content.toLowerCase().includes("gm nostr!") ||
-          profile.content.toLowerCase().includes("¡Buenos días, Nostr!");
+        const hasScholarship = profile.content
+          .toLowerCase()
+          .includes("a new scholarship");
+        // ||
+        // profile.content.toLowerCase().includes("https://girlsoncampus.app") ||
+        // profile.content.toLowerCase().includes("gm nostr!") ||
+        // profile.content.toLowerCase().includes("¡Buenos días, Nostr!");
 
         return (
           (questionNumber || hasScholarship) && (

@@ -25,8 +25,6 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
-  Spinner,
-  Code,
   UnorderedList,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
@@ -50,8 +48,6 @@ import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
 
 import {
   createUser,
-  deleteSpecificDocuments,
-  getTotalUsers,
   getUserData,
   getUserStep,
   incrementToFinalAward,
@@ -67,10 +63,9 @@ import {
   doc,
   getDoc,
   getDocs,
-  setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { analytics, database, model } from "./database/firebaseResources";
+import { analytics, database } from "./database/firebaseResources";
 
 import { translation } from "./utility/translation";
 
@@ -82,7 +77,6 @@ import { IoIosMore } from "react-icons/io";
 import { RiAiGenerate, RiRobot2Fill } from "react-icons/ri";
 import { IoPlay } from "react-icons/io5";
 import { IoConstruct } from "react-icons/io5";
-import { IoAppsOutline } from "react-icons/io5";
 
 import MultipleChoiceQuestion from "./components/MultipleChoice/MultipleChoice";
 import SelectOrderQuestion from "./components/SelectOrder/SelectOrder";
@@ -100,7 +94,7 @@ import { DataTags } from "./elements/DataTag";
 import { transcript } from "./utility/transcript";
 import AwardModal from "./components/AwardModal/AwardModal";
 import CodeCompletionQuestion from "./components/CodeCompletionQuestion/CodeCompletionQuestion";
-import useCashuStore from "./useCashuStore";
+
 import isEmpty from "lodash/isEmpty";
 import {
   Alert,
@@ -113,7 +107,7 @@ import CountdownTimer from "./elements/CountdownTimer";
 
 import { PasscodeModal } from "./components/PasscodeModal/PasscodeModal";
 import { usePasscodeModalStore } from "./usePasscodeModalStore";
-import { StreamLoader } from "./elements/StreamLoader";
+
 import { OrbCanvas } from "./elements/OrbCanvas";
 import LectureModal from "./components/LectureModal/LectureModal";
 
@@ -123,12 +117,8 @@ import { useSharedNostr } from "./hooks/useNOSTR";
 
 import Markdown from "react-markdown";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
-// import { TestCoinbaseUI } from "./experiments/TestCoinbaseUI";
-import ExternalLinkModal from "./components/ExternalLinkModal/ExternalLinkModal";
 
-import { Schema } from "firebase/vertexai";
-import { useGeminiChat, useSimpleGeminiChat } from "./hooks/useGeminiChat";
-import { TestFeed } from "./experiments/TestCoinbaseUI";
+import { useSimpleGeminiChat } from "./hooks/useGeminiChat";
 
 import { FaHeartCircleBolt } from "react-icons/fa6";
 import SocialFeedModal from "./components/SocialFeedModal/SocialFeedModal";
@@ -136,7 +126,8 @@ import { KnowledgeLedgerModal } from "./components/SettingsMenu/KnowledgeLedgerM
 import { logEvent } from "firebase/analytics";
 import BitcoinOnboarding from "./components/BitcoinOnboarding/BitcoinOnboarding";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import LiveReactEditorModal from "./components/LiveCodeEditor/LiveCodeEditor";
+import { FaBitcoin } from "react-icons/fa";
+import BitcoinModeModal from "./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -160,7 +151,7 @@ export const newTheme = {
         language={match[1]}
         PreTag="div"
         customStyle={{
-          backgroundColor: "white", // Match this with the desired color
+          backgroundColor: "#F4F2F0", // Match this with the desired color
           color: "black", // Ensure the text matches the background
           padding: "1rem",
           borderRadius: "8px",
@@ -618,7 +609,7 @@ export const VoiceInput = ({
       submitEducationalPrompt(
         `Generate educational material about ${JSON.stringify(
           step
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning.  Additionally the code should consider line breaks, whitespace and have a maximum print width of 80 characters. Lastly the user is speaking in ${
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning.  Additionally the code should consider line breaks, whitespace and have a maximum print width of 80 characters. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Lastly the user is speaking in ${
           userLanguage === "en" ? "english" : "spanish"
         }`
       );
@@ -628,7 +619,7 @@ export const VoiceInput = ({
       submitEducationalPrompt(
         `Generate educational material about ${JSON.stringify(
           relevantSteps
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally the code should consider line breaks and formatting and have a maximum print width of 80 characters. Lastly the user is speaking in ${
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally the code should consider line breaks and formatting and have a maximum print width of 80 characters. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Lastly the user is speaking in ${
           userLanguage === "en" ? "english" : "spanish"
         }`
       );
@@ -735,6 +726,7 @@ export const VoiceInput = ({
               }
             }}
             background="pink.400"
+            boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
           >
             {translation[userLanguage]["app.button.learn"]}
           </Button>
@@ -841,9 +833,10 @@ export const VoiceInput = ({
           style={{
             padding: 15,
             borderRadius: "8px",
-            border: "1px solid black",
+            // border: "1px solid black",
             textAlign: "left",
           }}
+          boxShadow="0.5px 0.5px 1px 0px rgba(0, 0, 0,0.75)"
         >
           {generateResponse ? (
             <div
@@ -896,15 +889,19 @@ export const VoiceInput = ({
           placeholder={translation[userLanguage]["app.input.placeholder"]}
           maxWidth="400px"
           width="100%"
-          style={{ boxShadow: "0px 0px 0px 1px rgba(0,0,0,0.35)" }}
+          style={{ boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)" }}
+          backgroundColor="white"
+
+          // border="1px solid black"
         />
       ) : (
         <Textarea
           ref={textareaRef}
-          style={{ boxShadow: "0px 0px 24px -20px rgba(0,0,0,0.75)" }}
+          style={{ boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)" }}
           type="textarea"
           maxWidth={"100%"}
           minHeight={isTerminal ? "100px" : "400px"}
+          backgroundColor="white"
           value={
             generateResponse
               ? translation[userLanguage]["thinking"]
@@ -1241,7 +1238,8 @@ function TerminalComponent({
         step={step}
         userLanguage={userLanguage}
       />
-      <div
+      <Box
+        boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
         style={{ width: "100%", maxWidth: "600px", marginTop: 12, height: 300 }}
         ref={bashRef}
       >
@@ -1251,7 +1249,7 @@ function TerminalComponent({
           history={history}
           prefix={`${translation[userLanguage]["mockTerminal.userName"]}${cwd}$`}
         />
-      </div>
+      </Box>
     </>
   );
 }
@@ -1263,6 +1261,8 @@ const Step = ({
   postNostrContent,
   assignExistingBadgeToNpub,
   emailStep,
+  allowPosts,
+  setAllowPosts,
 }) => {
   const { stepIndex } = useParams();
   const currentStepIndex = parseInt(stepIndex, 10);
@@ -1280,13 +1280,19 @@ const Step = ({
   const [endTime, setEndTime] = useState(null);
   const [interval, setInterval] = useState(0);
   // const { cashTap, loadWallet } = useCashuStore();
-  const { sendOneSatToNpub, initWalletService, init } = useNostrWalletStore(
-    (state) => ({
-      sendOneSatToNpub: state.sendOneSatToNpub, // renamed from cashTap
-      initWalletService: state.initWalletService, // renamed from loadWallet
-      init: state.init,
-    })
-  );
+  const {
+    sendOneSatToNpub,
+    initWalletService,
+    init,
+    walletBalance,
+    cashuWallet,
+  } = useNostrWalletStore((state) => ({
+    sendOneSatToNpub: state.sendOneSatToNpub, // renamed from cashTap
+    initWalletService: state.initWalletService, // renamed from loadWallet
+    init: state.init,
+    walletBalance: state.walletBalance,
+    cashuWallet: state.cashuWallet,
+  }));
   const [grade, setGrade] = useState("");
   const [isTimerExpired, setIsTimerExpired] = useState(true);
 
@@ -1371,6 +1377,12 @@ const Step = ({
   } = useDisclosure();
 
   const {
+    isOpen: isBitcoinModeOpen,
+    onOpen: onBitcoinModeOpen,
+    onClose: onBitcoinModeClose,
+  } = useDisclosure();
+
+  const {
     resetMessages: resetNewQuestionMessages,
     messages: newQuestionMessages,
     submitPrompt: submitNewQuestionMessages,
@@ -1445,8 +1457,11 @@ const Step = ({
       setInterval(userData.timer || 0);
 
       setSkipExternalWarning(userData?.skipExternalWarning);
+
+      // if (userData.identity) {
       await init();
       await initWalletService();
+      // }
 
       const currentTime = new Date();
       if (currentTime > new Date(userData.endTime)) {
@@ -1606,7 +1621,6 @@ const Step = ({
         const isLastMessage =
           lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
 
-        console.log("LAST MESS", lastMessage);
         if (isLastMessage) {
           setSuggestionMessage(lastMessage.content); // Store suggestion
         } else {
@@ -1629,6 +1643,7 @@ const Step = ({
       localStorage.setItem("incorrectAttempts", 0);
       let getRecipient = async () => {
         const userData = await getUserData(localStorage.getItem("local_npub"));
+        console.log("USER DATA", userData);
         if (userData?.identity) {
           console.log("we have the recipient", userData?.identity);
           sendOneSatToNpub(userData?.identity);
@@ -1638,9 +1653,11 @@ const Step = ({
 
       getRecipient();
 
-      postNostrContent(
-        `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://robotsbuildingeducation.com \n\n${step.question?.questionText} #LearnWithNostr`
-      );
+      if (!allowPosts) {
+        postNostrContent(
+          `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://robotsbuildingeducation.com \n\n${step.question?.questionText} #LearnWithNostr`
+        );
+      }
       if (step.isConversationReview) {
         console.log(
           "name???",
@@ -1654,6 +1671,15 @@ const Step = ({
       }
     }
   }, [isCorrect]);
+
+  const calculateBalance = () => {
+    const totalBalance =
+      (walletBalance || [])?.reduce((sum, b) => sum + (b.amount || 0), 0) ||
+      null;
+    if (totalBalance < 0) return 0;
+
+    return (totalBalance / 10) * 100;
+  };
 
   // Calculate progress through the steps
   const calculateProgress = () => {
@@ -2109,7 +2135,7 @@ const Step = ({
         //     content:
         `Generate educational Javascript material about ${JSON.stringify(
           step
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally any code should have a maximum print width of 80 characters. Lastly the user is speaking in ${
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally any code should have a maximum print width of 80 characters. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Lastly the user is speaking in ${
           userLanguage === "en" ? "english" : "spanish"
         }`
         //     ,
@@ -2204,12 +2230,12 @@ const Step = ({
   // };
   const getColorScheme = (group) => {
     const colorMap = {
-      tutorial: "gray",
-      1: "pink",
-      2: "pink",
-      3: "cyan",
-      4: "blue",
-      5: "teal",
+      tutorial: "green",
+      1: "green",
+      2: "green",
+      3: "green",
+      4: "green",
+      5: "green",
       6: "green",
     };
 
@@ -2432,11 +2458,35 @@ const Step = ({
           >
             <span style={{ fontSize: "50%" }}>
               <Box mb={"-1"}>
+                <IconButton
+                  width="18px"
+                  height="24px"
+                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                  // border="1px solid #ececec"
+                  background="pink.100"
+                  color="pink.600"
+                  opacity="0.75"
+                  // color="pink.600"
+                  icon={<FaBitcoin padding="4px" fontSize="12px" />}
+                  mr={3}
+                  onMouseDown={() => {
+                    //open modal
+                    onBitcoinModeOpen();
+                    return;
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      onBitcoinModeOpen();
+                      //open modal
+                      return;
+                    }
+                  }}
+                />
                 {userLanguage === "en" ? (
                   <IconButton
                     width="18px"
                     height="24px"
-                    boxShadow="0px 0px 0.25px 0.5px #ececec"
+                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                     // border="1px solid #ececec"
                     background="pink.100"
                     opacity="0.75"
@@ -2461,7 +2511,7 @@ const Step = ({
                 <IconButton
                   width="18px"
                   height="24px"
-                  boxShadow="0px 0px 0.5px 1px #ececec"
+                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                   background="pink.100"
                   opacity="0.75"
                   color="pink.600"
@@ -2484,7 +2534,7 @@ const Step = ({
                 <IconButton
                   width="18px"
                   height="24px"
-                  boxShadow="0px 0px 0.5px 1px #ececec"
+                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                   background="pink.100"
                   opacity="0.75"
                   color="pink.600"
@@ -2504,10 +2554,10 @@ const Step = ({
                   }}
                 />
 
-                <IconButton
+                {/* <IconButton
                   width="18px"
                   height="24px"
-                  boxShadow="0px 0px 0.25px 0.5px lightgray"
+                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                   // border="1px solid #ececec"
                   background="whiteAlpha.100"
                   opacity="0.75"
@@ -2522,12 +2572,12 @@ const Step = ({
                       window.location.href = `mailto:sheilfer@robotsbuildingeducation.com?subject=Robots Building Education ${translation[userLanguage]["email.question"]} ${currentStep}: ${step.question.questionText} | ${step.description}&body=${translation[userLanguage]["email.donotdelete"]}       \n\n ${JSON.stringify(emailText)}  `;
                     }
                   }}
-                />
+                /> */}
 
                 <IconButton
                   width="18px"
                   height="24px"
-                  boxShadow="0px 0px 0.25px 0.5px lightgray"
+                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                   background="whiteAlpha.100"
                   opacity="0.75"
                   // color="pink.600"
@@ -2546,6 +2596,8 @@ const Step = ({
                 />
               </Box>
               <br />
+            </span>
+            <span style={{ fontSize: "50%" }}>
               {translation[userLanguage]["app.progress"]}:{" "}
               {calculateProgress().toFixed(2)}% |{" "}
               {translation[userLanguage]["chapter"]}: {step.group}&nbsp;|&nbsp;
@@ -2555,7 +2607,8 @@ const Step = ({
             <Progress
               opacity="0.8"
               border="1px solid #ececec"
-              boxShadow="0px 0px 0.5px 2px #ececec"
+              // boxShadow="0px 0px 0.5px 2px #ececec"
+              boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
               value={calculateProgress()}
               size="md"
               colorScheme={getColorScheme(step.group)}
@@ -2564,22 +2617,47 @@ const Step = ({
               borderRadius="4px"
               background={getBackgroundScheme(step.group)}
             />
+
+            {/* {calculateBalance() > 0 ? (
+              <HStack
+                style={{ marginTop: "-12px", width: "100%" }}
+                display="flex"
+                justifyContent={"flex-start"}
+                alignItems={"flex-start"}
+              >
+                <Progress
+                  opacity="0.8"
+                  border="1px solid #ececec"
+                  // boxShadow="0px 0px 0.5px 2px #ececec"
+                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                  value={calculateBalance()}
+                  size="md"
+                  colorScheme={"yellow"}
+                  width="80%"
+                  mb={4}
+                  borderRadius="4px"
+                  background={getBackgroundScheme(step.group)}
+                >
+                  <span style={{ fontSize: "50%" }}>₿</span>
+                </Progress>
+              </HStack>
+            ) : null} */}
           </VStack>
 
           <div style={{ zoom: 0.8, textAlign: "left" }}>
-            <Text fontSize="xl">
+            <Text fontSize="xl" textAlign={step.isStudyGuide ? "center" : null}>
               <b>
                 {currentStep === 0 ? null : (
                   <IconButton
                     width="18px"
                     height="24px"
-                    boxShadow="0px 0px 0.25px 0.5px #ececec"
                     background="pink.100"
                     opacity="0.75"
                     color="pink.600"
                     icon={<RiAiGenerate padding="4px" fontSize="14px" />}
                     mr={2}
                     mt="-2"
+                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                     onMouseDown={() =>
                       handleModalCheck(handleGenerateNewQuestion)
                     }
@@ -2617,13 +2695,14 @@ const Step = ({
                 // mt={"-2"}
                 style={{
                   width: "100%",
-                  maxWidth: 400,
+                  maxWidth: step.isStudyGuide ? 600 : 400,
                   width: "fit-content",
                   color: "gray",
                 }}
                 fontSize="sm"
                 mb={3}
-                textAlign="left"
+                textAlign={step.isStudyGuide ? "left" : "left"}
+
                 // textAlign={"left"}
               >
                 <span style={{ textDecoration: "none" }}>
@@ -2634,7 +2713,12 @@ const Step = ({
 
             {step.question && (
               <Text
-                style={{ width: "100%", maxWidth: 400, width: "fit-content" }}
+                style={{
+                  width: "100%",
+                  maxWidth: step.isStudyGuide ? 600 : 400,
+
+                  width: "fit-content",
+                }}
                 fontSize="medium"
                 textAlign={"left"}
               >
@@ -2647,6 +2731,7 @@ const Step = ({
             {step.isStudyGuide && (
               <div>
                 <Button
+                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                   onMouseDown={() => {
                     window.open(
                       userLanguage === "en"
@@ -2655,7 +2740,6 @@ const Step = ({
                     );
                   }}
                   mb={4}
-                  boxShadow={"0px 0.5px 0.5px 1px black"}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
                       window.open(
@@ -2674,7 +2758,7 @@ const Step = ({
                   variant={"outline"}
                   onMouseDown={handleNextClick}
                   mb={4}
-                  boxShadow={"0px 0.5px 0.5px 1px black"}
+                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
                       handleNextClick();
@@ -2927,7 +3011,7 @@ const Step = ({
                       onMouseDown={handleAnswerClick}
                       isLoading={isSending}
                       mb={4}
-                      boxShadow="0px 0.5px 0.5px 1px black"
+                      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
                           handleAnswerClick();
@@ -2960,7 +3044,7 @@ const Step = ({
                         variant={"outline"}
                         onMouseDown={handleNextClick}
                         mb={4}
-                        boxShadow={"0px 0.5px 0.5px 1px black"}
+                        boxShadow={"0.5px 0.5px 1px 0px black"}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
                             handleNextClick();
@@ -3033,6 +3117,15 @@ const Step = ({
             userLanguage={userLanguage}
           />
 
+          {isBitcoinModeOpen ? (
+            <BitcoinModeModal
+              isOpen={isBitcoinModeOpen}
+              onClose={onBitcoinModeClose}
+              userLanguage={userLanguage}
+              from="app"
+            />
+          ) : null}
+
           {isLectureModalOpen ? (
             <LectureModal
               userLanguage={userLanguage}
@@ -3048,6 +3141,8 @@ const Step = ({
               currentStep={currentStep}
               isOpen={isSocialFeedModalOpen}
               onClose={onSocialFeedModalClose}
+              allowPosts={allowPosts}
+              setAllowPosts={setAllowPosts}
             />
           ) : null}
 
@@ -3105,6 +3200,7 @@ const Home = ({
   const [loadingMessage, setLoadingMessage] = useState(
     "createAccount.isCreating"
   );
+
   const [userName, setUserName] = useState("");
   const [secretKey, setSecretKey] = useState("");
   const [keys, setKeys] = useState(null);
@@ -3393,12 +3489,16 @@ const Home = ({
             <Input
               mt={"-3"}
               pt={0}
-              style={{ maxWidth: 300 }}
+              style={{
+                maxWidth: 300,
+                boxShadow: "0.5px 0.5px 1px rgba(0,0,0,0.75)",
+              }}
               placeholder={
                 translation[userLanguage]["createAccount.input.placeholder"]
               }
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
+              backgroundColor="white"
             />
             <VStack>
               <Button
@@ -3481,10 +3581,14 @@ const Home = ({
             {translation[userLanguage]["signIn.instructions"]}
           </Text>
           <Input
+            backgroundColor="white"
             placeholder={translation[userLanguage]["signIn.input.placeholder"]}
             value={secretKey}
             onChange={(e) => setSecretKey(e.target.value)}
-            style={{ maxWidth: 300 }}
+            style={{
+              maxWidth: 300,
+              boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+            }}
           />
           <HStack>
             <Button
@@ -3694,7 +3798,10 @@ const Home = ({
               <Text>
                 {translation[userLanguage]["createAccount.lastStepMessage"]}
               </Text>{" "}
-              <BitcoinOnboarding userLanguage={userLanguage} />
+              <BitcoinOnboarding
+                userLanguage={userLanguage}
+                from="onboarding"
+              />
             </Text>
           </PanRightComponent>
           <div
@@ -3827,8 +3934,11 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
             {" "}
             {translation[userLanguage]["passcode.label"]}
           </Text>
-          <input
-            style={{ border: "1px solid #cecece" }}
+          <Input
+            backgroundColor="white"
+            style={{
+              boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+            }}
             type="password"
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -3849,6 +3959,8 @@ function App({ isShutDown }) {
   const location = useLocation();
   const topRef = useRef();
   const { alert, hideAlert, showAlert } = useAlertStore();
+
+  const [allowPosts, setAllowPosts] = useState(false);
 
   // const {
   //   generateNostrKeys,
@@ -3927,12 +4039,33 @@ function App({ isShutDown }) {
                   localStorage.getItem("userLanguage") ||
                   "en"
               );
+
               localStorage.setItem(
                 "userLanguage",
                 userData.language ||
                   localStorage.getItem("userLanguage") ||
                   "en"
               );
+
+              if (userData.hasOwnProperty("allowPosts")) {
+                // Use the value from Firestore (even if it's false)
+                setAllowPosts(userData.allowPosts);
+              } else {
+                // If the field doesn't exist, update the document to set allowPosts to true
+                setAllowPosts(false);
+                const userDocRef = doc(
+                  database,
+                  "users",
+                  localStorage.getItem("local_npub")
+                );
+                updateDoc(userDocRef, { allowPosts: false })
+                  .then(() =>
+                    console.log("allowPosts field added with value true")
+                  )
+                  .catch((error) =>
+                    console.error("Error updating allowPosts:", error)
+                  );
+              }
             } else {
               localStorage.setItem("userLanguage", "en");
               setUserLanguage("en");
@@ -4062,6 +4195,8 @@ function App({ isShutDown }) {
           view={view}
           setView={setView}
           step={steps?.[userLanguage]?.[currentStep]}
+          allowPosts={allowPosts}
+          setAllowPosts={setAllowPosts}
         />
       )}
 
@@ -4103,6 +4238,8 @@ function App({ isShutDown }) {
               element={
                 <PrivateRoute>
                   <Step
+                    allowPosts={allowPosts}
+                    setAllowPosts={setAllowPosts}
                     currentStep={index}
                     userLanguage={userLanguage}
                     setUserLanguage={setUserLanguage}
