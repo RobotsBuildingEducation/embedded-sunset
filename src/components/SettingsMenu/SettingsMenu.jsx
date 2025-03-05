@@ -362,7 +362,7 @@ const SettingsMenu = ({
               >
                 Career Agent
               </Button> */}
-              <Button
+              {/* <Button
                 p={6}
                 colorScheme="pink"
                 background="pink.300"
@@ -378,7 +378,7 @@ const SettingsMenu = ({
                 <FaBitcoin />
                 &nbsp;
                 {translation[userLanguage]["settings.button.bitcoinMode"]}
-              </Button>
+              </Button> */}
               <Button
                 ref={firstButtonRef} // Assign the ref to the first button
                 colorScheme="pink"
@@ -502,7 +502,7 @@ const SettingsMenu = ({
               >
                 <b>{translation[userLanguage]["settings.button.studyGuide"]}</b>
               </Button>
-              {/* <Button
+              <Button
                 p={6}
                 style={{ width: "100%" }}
                 // as="a"
@@ -524,7 +524,7 @@ const SettingsMenu = ({
                 border="2px solid gold"
               >
                 <b> {translation[userLanguage]["settings.button.patreon"]}</b>
-              </Button> */}
+              </Button>
 
               <Button
                 style={{ width: "100%" }}

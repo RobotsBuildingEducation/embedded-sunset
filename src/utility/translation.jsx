@@ -699,11 +699,11 @@ reverse(head) {
     "nostrContent.introductionPost":
       "gm nostr! I've joined #LearnWithNostr from Tiktok by creating an account with https://robotsbuildingeducation.com so I can learn how to code with AI.",
 
-    "createAccount.successMessage": "That's it!",
+    "createAccount.successMessage": "That's it! ✨",
     "createAccount.lastStepMessage": "Last step (optional)",
     // "createAccount.lastStepInstructions": "Last step (optional)",
     "createAccount.awareness":
-      "Your account now works on a number of decentralized apps and account works exactly like mailbox. Use your secret key to sign into apps in the ",
+      "Your account now works on a number of decentralized apps and works exactly like a mailbox. Use your secret key to sign into apps in the ",
     "createAccount.roxLink": "decentralized app store",
     or: "or",
     "createAccount.primalLink": "with Primal, the social wallet",
@@ -1269,11 +1269,29 @@ reverse(head) {
             color: "#63b3ed",
             fontWeight: "bold",
           }}
+          href="https://www.patreon.com/NotesAndOtherStuff/membership"
+          target="_blank"
+        >
+          Register and subscribe as a member
+        </a>
+        <br />
+        <br />
+        <a
+          style={{
+            fontSize: "0.95rem",
+            textDecoration: "underline",
+            color: "#63b3ed",
+            fontWeight: "bold",
+          }}
           href="https://www.patreon.com/posts/syllabus-getting-86153437?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link"
           target="_blank"
         >
-          Subscribe &amp; get the passcode
-        </a>
+          Get the passcode
+        </a>{" "}
+        <span style={{ fontSize: "0.95rem" }}>
+          or find it by going to the Start Learning collection after
+          subscribing.
+        </span>
       </div>
     ),
     "passcode.label": "Enter passcode",
@@ -2200,7 +2218,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "button.save": "Guardar",
     "button.close": "Cerrar",
     "createAccount.isLoading": "Creando...",
-    "createAccount.successMessage": "¡Eso es todo!",
+    "createAccount.successMessage": "¡Eso es todo! ✨",
     "createAccount.awareness":
       "Tu cuenta ahora funciona en varias aplicaciones descentralizadas y funciona exactamente como un buzón. Usa tu clave secreta para iniciar sesión en las aplicaciones en el ",
     "createAccount.roxLink": "tienda de aplicaciones descentralizada",

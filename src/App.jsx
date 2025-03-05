@@ -627,7 +627,10 @@ export const VoiceInput = ({
   };
   // Dynamically adjust the height of the textarea as the content changes
   useEffect(() => {
+    console.log("changing.....", value);
     if (isTextInput) {
+      // window.alert("x");
+      console.log("is text input...");
       if (textareaRef.current) {
         textareaRef.current.style.height = "auto"; // Reset height
         textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Adjust height based on content
@@ -1203,6 +1206,7 @@ function TerminalComponent({
   const bashRef = useRef(null);
 
   useEffect(() => {
+    console.log("tst");
     if (bashRef.current) {
       // Find the input element within ReactBash
       const inputElement = bashRef.current.querySelector("input");
@@ -2040,6 +2044,7 @@ const Step = ({
         localStorage.getItem("passcode") !==
         import.meta.env.VITE_PATREON_PASSCODE
       ) {
+        console.log("moving to subscription...");
         await incrementToSubscription(npub, currentStep);
         navigate("/subscription");
       } else {
@@ -2412,6 +2417,8 @@ const Step = ({
   };
   const emojiMap = ["😖", "😩", "😅", "😱", "🪦"];
 
+  console.log("step.isTerminal", step.isTerminal);
+  console.log("step", step);
   return (
     <VStack spacing={4} width="100%" mt={6}>
       {/* <OrbCanvas width={500} height={500} /> */}
@@ -3060,33 +3067,38 @@ const Step = ({
             )}
           </>
 
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            width="100%"
-          >
-            <Switch
-              isChecked={isAdaptiveLearning}
-              onChange={handleToggleChange}
-              colorScheme="yellow"
-            />
-            &nbsp;
-            <Text fontSize="md">
-              {!isAdaptiveLearning
-                ? translation[userLanguage]["adaptive_learning_off"]
-                : translation[userLanguage]["adaptive_learning_on"]}
-            </Text>
-          </Box>
+          {!step.isTerminal && (
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              width="100%"
+            >
+              <Switch
+                isChecked={isAdaptiveLearning}
+                onChange={handleToggleChange}
+                colorScheme="yellow"
+              />
+              &nbsp;
+              <Text fontSize="md">
+                {!isAdaptiveLearning
+                  ? translation[userLanguage]["adaptive_learning_off"]
+                  : translation[userLanguage]["adaptive_learning_on"]}
+              </Text>
+            </Box>
+          )}
 
-          {suggestionMessages.length > 0 && isEmpty(suggestionMessage) ? (
+          {suggestionMessages.length > 0 &&
+          isEmpty(suggestionMessage) &&
+          !step?.isTerminal ? (
             <Box mt={4} p={4} textAlign="center">
               <SunsetCanvas isLoader={true} />
               <Text mt={2}>
                 {translation[userLanguage]["loading.suggestion"]}
               </Text>
             </Box>
-          ) : !isAdaptiveLearning ? null : suggestionMessage.length > 0 ? (
+          ) : !isAdaptiveLearning ||
+            step.isTerminal ? null : suggestionMessage.length > 0 ? (
             <Box maxWidth="600px" width="100%">
               <Box
                 mt={4}
@@ -3865,6 +3877,7 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
     if (input === correctPasscode) {
       // console.log("we did it");
       localStorage.setItem("passcode", input);
+      localStorage.setItem("features_passcode", input);
 
       // Assuming you have the user's unique identifier stored in local storage
       const userId = localStorage.getItem("local_npub"); // Replace with actual user ID if needed
@@ -3939,9 +3952,8 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
             style={{
               boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
             }}
-            type="password"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => setInput(e.target.value.toUpperCase())}
           />
         </div>
       </Text>

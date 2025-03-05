@@ -25,6 +25,7 @@ export const PasscodeModal = ({ userLanguage }) => {
   const handleConfirm = () => {
     if (enteredPasscode === import.meta.env.VITE_PATREON_FEATURES_PASSCODE) {
       localStorage.setItem("features_passcode", enteredPasscode);
+      localStorage.setItem("passcode", enteredPasscode);
       //convert to spanish if we ever use this again
       toast({
         title: "Features unlocked!",
