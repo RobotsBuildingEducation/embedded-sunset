@@ -41,6 +41,7 @@ import LiveCodeEditorModal from "../LiveCodeEditor/LiveCodeEditor";
 import { CareerAgent } from "../CareerAgent/CareerAgent";
 import { CopyButtonIcon } from "../../elements/CopyButtonIcon";
 import { useNostrWalletStore } from "../../hooks/useNostrWalletStore";
+import SocialFeedModal from "../SocialFeedModal/SocialFeedModal";
 
 const SettingsMenu = ({
   testIsMatch,
@@ -68,9 +69,9 @@ const SettingsMenu = ({
   }));
 
   const {
-    isOpen: isSelfPacedOpen,
-    onOpen: onSelfPacedOpen,
-    onClose: onSelfPacedClose,
+    isOpen: isSocialFeedModalOpen,
+    onOpen: onSocialFeedModalOpen,
+    onClose: onSocialFeedModalClose,
   } = useDisclosure();
 
   const {
@@ -127,7 +128,7 @@ const SettingsMenu = ({
     onClose: onCareerAgentClose,
   } = useDisclosure();
 
-  const [interval, setIntervalState] = useState(120);
+  // const [interval, setIntervalState] = useState(2880);
 
   const handleToggle = async () => {
     const newLanguage = userLanguage === "en" ? "es" : "en";
@@ -226,7 +227,7 @@ const SettingsMenu = ({
 
   return (
     <>
-      {isSignedIn ? (
+      {isSignedIn && localStorage.getItem("local_npub") ? (
         <IconButton
           ref={btnRef}
           icon={<IoAppsOutline />}
@@ -385,15 +386,15 @@ const SettingsMenu = ({
                 background="pink.300"
                 boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
                 style={{ width: "100%" }}
-                onMouseDown={onSelfPacedOpen}
+                onMouseDown={onSocialFeedModalOpen}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
-                    onSelfPacedOpen();
+                    onSocialFeedModalOpen();
                   }
                 }}
                 p={6}
               >
-                {translation[userLanguage]["settings.button.selfPace"]}
+                {translation[userLanguage]["settings.button.socialProgress"]}
               </Button>
               {/* <Button
                 p={6}
@@ -561,7 +562,7 @@ const SettingsMenu = ({
                 onKeyDown={(e) => {
                   // walletService.stop();
                   resetState();
-
+                  setIsSignedIn(false);
                   if (e.key === "Enter" || e.key === " ") {
                     const translateValue = localStorage.getItem("userLanguage");
                     localStorage.removeItem("local_nsec");
@@ -571,6 +572,7 @@ const SettingsMenu = ({
                     }
                     onClose();
                     setView("buttons");
+
                     navigate("/");
                   }
                 }}
@@ -584,15 +586,14 @@ const SettingsMenu = ({
         </DrawerContent>
       </Drawer>
 
-      {/* Always render modals without conditional rendering */}
-      {isSelfPacedOpen ? (
-        <SelfPacedModal
-          isOpen={isSelfPacedOpen}
-          onClose={onSelfPacedClose}
-          interval={interval}
-          setInterval={setIntervalState}
-          userId={localStorage.getItem("local_npub")}
+      {isSocialFeedModalOpen ? (
+        <SocialFeedModal
           userLanguage={userLanguage}
+          currentStep={currentStep}
+          isOpen={isSocialFeedModalOpen}
+          onClose={onSocialFeedModalClose}
+          allowPosts={allowPosts}
+          setAllowPosts={setAllowPosts}
         />
       ) : null}
 

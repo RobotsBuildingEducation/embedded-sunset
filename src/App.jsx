@@ -26,6 +26,7 @@ import {
   AccordionPanel,
   AccordionIcon,
   UnorderedList,
+  CircularProgress,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
@@ -48,6 +49,7 @@ import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
 
 import {
   createUser,
+  getOnboardingStep,
   getUserData,
   getUserStep,
   incrementToFinalAward,
@@ -55,7 +57,11 @@ import {
   incrementUserStep,
   updateUserData,
 } from "./utility/nosql";
-import { getObjectsByGroup, steps } from "./utility/content";
+import {
+  getObjectsByGroup,
+  getRandomCelebrationMessage,
+  steps,
+} from "./utility/content";
 import { PrivateRoute } from "./PrivateRoute";
 import {
   addDoc,
@@ -73,8 +79,16 @@ import { Dashboard } from "./components/Dashboard/Dashboard";
 import { isUnsupportedBrowser } from "./utility/browser";
 import { EmailIcon, PlusSquareIcon } from "@chakra-ui/icons";
 import { IoShareOutline } from "react-icons/io5";
+import { PiClockCountdownDuotone, PiClockCountdownFill } from "react-icons/pi";
+
 import { IoIosMore } from "react-icons/io";
-import { RiAiGenerate, RiRobot2Fill } from "react-icons/ri";
+import {
+  RiAiGenerate,
+  RiCalendarScheduleFill,
+  RiRobot2Fill,
+} from "react-icons/ri";
+import { MdOutlineSchedule } from "react-icons/md";
+
 import { IoPlay } from "react-icons/io5";
 import { IoConstruct } from "react-icons/io5";
 
@@ -126,8 +140,11 @@ import { KnowledgeLedgerModal } from "./components/SettingsMenu/KnowledgeLedgerM
 import { logEvent } from "firebase/analytics";
 import BitcoinOnboarding from "./components/BitcoinOnboarding/BitcoinOnboarding";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import { FaBitcoin } from "react-icons/fa";
+import { FaBitcoin, FaMagic } from "react-icons/fa";
 import BitcoinModeModal from "./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal";
+import SelfPacedModal from "./components/SettingsMenu/SelfPacedModal/SelfPacedModal";
+import { Onboarding } from "./Onboarding";
+import { BsWatch } from "react-icons/bs";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -1270,6 +1287,7 @@ const Step = ({
 }) => {
   const { stepIndex } = useParams();
   const currentStepIndex = parseInt(stepIndex, 10);
+
   const [inputValue, setInputValue] = useState("");
   const [selectedOption, setSelectedOption] = useState(""); // For Multiple Choice
   const [selectedOptions, setSelectedOptions] = useState([]);
@@ -1327,6 +1345,11 @@ const Step = ({
   const [dontShowAgain, setDontShowAgain] = useState(false);
   const [skipExternalWarning, setSkipExternalWarning] = useState(false);
 
+  const [dailyProgress, setDailyProgress] = useState(0);
+  const [dailyGoals, setDailyGoals] = useState(3);
+  const [nextGoalExpiration, setNextGoalExpiration] = useState(null);
+  const [goalCount, setGoalCount] = useState(0);
+
   const externalUrl = "https://chat.com";
 
   const handleExternalLinkClick = async () => {
@@ -1369,9 +1392,9 @@ const Step = ({
   } = useDisclosure();
 
   const {
-    isOpen: isSocialFeedModalOpen,
-    onOpen: onSocialFeedModalOpen,
-    onClose: onSocialFeedModalClose,
+    isOpen: isSelfPacedOpen,
+    onOpen: onSelfPacedOpen,
+    onClose: onSelfPacedClose,
   } = useDisclosure();
 
   const {
@@ -1450,10 +1473,11 @@ const Step = ({
     // alert("running..");
     // const stepContent = steps[userLanguage][currentStep];
     // setStep(stepContent);
+
     const fetchUserData = async () => {
       const userId = localStorage.getItem("local_npub");
       const userData = await getUserData(userId);
-
+      console.log("user data........d.........", userData);
       setIsAdaptiveLearning(userData?.isAdaptiveLearning);
       setStreak(userData.streak || 0);
       setStartTime(new Date(userData.startTime));
@@ -1462,13 +1486,37 @@ const Step = ({
 
       setSkipExternalWarning(userData?.skipExternalWarning);
 
+      setDailyGoals(userData.dailyGoals || 3);
+      setGoalCount(userData.goalCount);
+      const currentTime = new Date();
+      let newExpiration = new Date(currentTime.getTime() + 86400000);
+
+      if (userData.nextGoalExpiration) {
+        newExpiration = new Date(userData.nextGoalExpiration);
+        // Advance the expiration in 24-hour increments until it's in the future.
+        while (currentTime > newExpiration) {
+          newExpiration = new Date(newExpiration.getTime() + 86400000);
+        }
+        setNextGoalExpiration(newExpiration);
+        // Reset daily progress since the user missed prior cycles.
+        if (userData.dailyProgress) {
+          setDailyProgress(userData.dailyProgress);
+        } else setDailyProgress(0);
+      } else {
+        setNextGoalExpiration(newExpiration);
+
+        if (userData.dailyProgress) {
+          setDailyProgress(userData.dailyProgress);
+        } else {
+          setDailyProgress(0);
+        }
+      }
+
       // if (userData.identity) {
-      await init();
-      await initWalletService();
+
       // }
 
-      const currentTime = new Date();
-      if (currentTime > new Date(userData.endTime)) {
+      if (currentTime > new Date(userData?.nextGoalExpiration)) {
         setStreak(0);
         const newEndTime = new Date(
           currentTime.getTime() + (userData.timer || 0) * 60000
@@ -1480,9 +1528,28 @@ const Step = ({
           userData.timer,
           0,
           currentTime,
-          newEndTime
+          newEndTime,
+          dailyGoals || 3,
+          newExpiration,
+          0, // Reset dailyProgress to 0 when cycle is over
+          userData.goalCount || 0
+        );
+      } else {
+        await updateUserData(
+          userId,
+          userData.timer,
+          userData.streak, // keep current streak
+          new Date(userData.startTime),
+          new Date(userData.endTime),
+          dailyGoals || 3,
+          newExpiration,
+          userData.dailyProgress || 0, // use existing progress
+          userData.goalCount || 0
         );
       }
+
+      await init();
+      await initWalletService();
     };
 
     fetchUserData();
@@ -1497,6 +1564,7 @@ const Step = ({
         localStorage.setItem("incorrectAttempts", 0);
       }
     }
+
     // onAwardModalOpen();
   }, []);
 
@@ -1927,7 +1995,38 @@ const Step = ({
     setEndTime(newEndTime);
     setStreak(newStreak);
 
-    await updateUserData(userId, interval, newStreak, currentTime, newEndTime);
+    console.log("DAILY PROGRESS", dailyProgress);
+    let newDailyProgress = dailyProgress + 1;
+    let newNextGoalExpiration = nextGoalExpiration;
+    if (newDailyProgress > dailyGoals) {
+      // newDailyProgress = 0;
+      newDailyProgress = newDailyProgress - 1;
+      // newNextGoalExpiration = new Date(currentTime.getTime() + 86400000);
+      // setNextGoalExpiration(newNextGoalExpiration);
+    }
+    setDailyProgress(newDailyProgress);
+
+    // await updateUserGoalCount(userId);
+
+    let gc = goalCount;
+    console.log("dailyGoals", dailyGoals);
+    if (dailyProgress + 1 === dailyGoals) {
+      gc = gc + 1;
+    }
+
+    setGoalCount(gc);
+
+    await updateUserData(
+      userId,
+      interval,
+      newStreak,
+      currentTime,
+      newEndTime,
+      dailyGoals || 3,
+      newNextGoalExpiration,
+      newDailyProgress,
+      gc
+    );
   };
 
   // Stream messages and handle feedback
@@ -2417,8 +2516,7 @@ const Step = ({
   };
   const emojiMap = ["😖", "😩", "😅", "😱", "🪦"];
 
-  console.log("step.isTerminal", step.isTerminal);
-  console.log("step", step);
+  console.log("daily progress renders...", dailyProgress);
   return (
     <VStack spacing={4} width="100%" mt={6}>
       {/* <OrbCanvas width={500} height={500} /> */}
@@ -2463,19 +2561,19 @@ const Step = ({
             textAlign={"left"}
             style={{ width: "100%", maxWidth: 400, alignItems: "flex-start" }}
           >
-            <span style={{ fontSize: "50%" }}>
+            <span style={{ fontSize: "50%", marginBottom: 8 }}>
               <Box mb={"-1"}>
                 <IconButton
-                  width="18px"
-                  height="24px"
+                  width="24px"
+                  height="30px"
                   boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                   // border="1px solid #ececec"
                   background="pink.100"
                   color="pink.600"
                   opacity="0.75"
                   // color="pink.600"
-                  icon={<FaBitcoin padding="4px" fontSize="12px" />}
-                  mr={3}
+                  icon={<FaBitcoin padding="4px" fontSize="14px" />}
+                  mr={5}
                   onMouseDown={() => {
                     //open modal
                     onBitcoinModeOpen();
@@ -2491,15 +2589,15 @@ const Step = ({
                 />
                 {userLanguage === "en" ? (
                   <IconButton
-                    width="18px"
-                    height="24px"
+                    width="24px"
+                    height="30px"
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                     // border="1px solid #ececec"
                     background="pink.100"
                     opacity="0.75"
                     color="pink.600"
-                    icon={<IoPlay padding="4px" fontSize="12px" />}
-                    mr={3}
+                    icon={<IoPlay padding="4px" fontSize="14px" />}
+                    mr={5}
                     onMouseDown={() => {
                       //open modal
                       onLectureModalOpen();
@@ -2516,22 +2614,22 @@ const Step = ({
                 ) : null}
 
                 <IconButton
-                  width="18px"
-                  height="24px"
+                  width="24px"
+                  height="30px"
                   boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                   background="pink.100"
                   opacity="0.75"
                   color="pink.600"
-                  icon={<FaHeartCircleBolt padding="4px" fontSize="12px" />}
-                  mr={3}
+                  icon={<PiClockCountdownFill padding="4px" fontSize="18px" />}
+                  mr={5}
                   onMouseDown={() => {
                     //open modal
-                    onSocialFeedModalOpen();
+                    onSelfPacedOpen();
                     return;
                   }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
-                      onSocialFeedModalOpen();
+                      onSelfPacedOpen();
                       //open modal
                       return;
                     }
@@ -2539,14 +2637,14 @@ const Step = ({
                 />
 
                 <IconButton
-                  width="18px"
-                  height="24px"
+                  width="24px"
+                  height="30px"
                   boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                   background="pink.100"
                   opacity="0.75"
                   color="pink.600"
-                  icon={<IoConstruct padding="4px" fontSize="12px" />}
-                  mr={3}
+                  icon={<FaMagic padding="4px" fontSize="14px" />}
+                  mr={5}
                   onMouseDown={() => {
                     //open modal
                     onKnowledgeLedgerOpen();
@@ -2582,13 +2680,13 @@ const Step = ({
                 /> */}
 
                 <IconButton
-                  width="18px"
-                  height="24px"
+                  width="24px"
+                  height="30px"
                   boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                   background="whiteAlpha.100"
                   opacity="0.75"
                   // color="pink.600"
-                  icon={<RiRobot2Fill padding="4px" fontSize="12px" />}
+                  icon={<RiRobot2Fill padding="4px" fontSize="14px" />}
                   mr={0}
                   onMouseDown={() => {
                     window.location.href =
@@ -2609,6 +2707,8 @@ const Step = ({
               {calculateProgress().toFixed(2)}% |{" "}
               {translation[userLanguage]["chapter"]}: {step.group}&nbsp;|&nbsp;
               {translation[userLanguage]["app.streak"]}: {streak}
+              &nbsp;|&nbsp;{translation[userLanguage]["goal"] + "s"}:{" "}
+              {String(goalCount) || "0"}
               &nbsp;
             </span>
             <Progress
@@ -2971,6 +3071,44 @@ const Step = ({
                       transition="0.2s all ease-in-out"
                       borderBottomRightRadius={"0px"}
                     >
+                      {isCorrect ? (
+                        <VStack spacing={1} align="center" mb={2}>
+                          <Text
+                            fontSize="md"
+                            color="orange.500"
+                            fontWeight="bold"
+                          >
+                            {translation[userLanguage]["dailyGoal"]}:{" "}
+                            {dailyProgress + 1 > dailyGoals
+                              ? dailyGoals
+                              : dailyProgress + 1}{" "}
+                            / {dailyGoals || 3}{" "}
+                            {translation[userLanguage]["questions"]}
+                          </Text>
+
+                          <CircularProgress
+                            trackColor="#bfb49b"
+                            color="#82EBAC"
+                            value={
+                              ((dailyProgress + 1) / (dailyGoals || 3)) * 100
+                            }
+                            size={8}
+                          />
+
+                          {dailyProgress + 1 > dailyGoals ||
+                          dailyProgress + 1 === dailyGoals ? (
+                            <Text
+                              fontSize="md"
+                              color="orange.500"
+                              fontWeight="bold"
+                              mb={2}
+                            >
+                              {/* {translation[userLanguage]["celebrateMessage"]} */}
+                              {getRandomCelebrationMessage(userLanguage)}
+                            </Text>
+                          ) : null}
+                        </VStack>
+                      ) : null}
                       <Text
                         textAlign={"left"}
                         color={isCorrect ? "orange.500" : "red.500"}
@@ -3121,6 +3259,7 @@ const Step = ({
               </Box>
             </Box>
           ) : null}
+
           <EducationalModal
             isOpen={isOpen}
             onClose={onClose}
@@ -3128,6 +3267,17 @@ const Step = ({
             educationalContent={educationalContent}
             userLanguage={userLanguage}
           />
+
+          {isSelfPacedOpen ? (
+            <SelfPacedModal
+              isOpen={isSelfPacedOpen}
+              onClose={onSelfPacedClose}
+              interval={interval}
+              setInterval={setInterval}
+              userId={localStorage.getItem("local_npub")}
+              userLanguage={userLanguage}
+            />
+          ) : null}
 
           {isBitcoinModeOpen ? (
             <BitcoinModeModal
@@ -3144,17 +3294,6 @@ const Step = ({
               currentStep={currentStep}
               isOpen={isLectureModalOpen}
               onClose={onLectureModalClose}
-            />
-          ) : null}
-
-          {isSocialFeedModalOpen ? (
-            <SocialFeedModal
-              userLanguage={userLanguage}
-              currentStep={currentStep}
-              isOpen={isSocialFeedModalOpen}
-              onClose={onSocialFeedModalClose}
-              allowPosts={allowPosts}
-              setAllowPosts={setAllowPosts}
             />
           ) : null}
 
@@ -3212,6 +3351,8 @@ const Home = ({
   const [loadingMessage, setLoadingMessage] = useState(
     "createAccount.isCreating"
   );
+
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [userName, setUserName] = useState("");
   const [secretKey, setSecretKey] = useState("");
@@ -3288,7 +3429,7 @@ const Home = ({
 
     localStorage.setItem("displayName", userName);
 
-    const defaultInterval = 2880;
+    const defaultInterval = 1440;
     const currentTime = new Date();
     const endTime = new Date(currentTime.getTime() + defaultInterval * 60000);
 
@@ -3299,7 +3440,11 @@ const Home = ({
       defaultInterval, // Set the default interval for the streak
       0, // Initial streak count is 0
       currentTime, // Start time
-      endTime // End time, 48 hours from start time
+      endTime,
+      3,
+      new Date(currentTime.getTime() + 86400000),
+      0,
+      0 // End time, 48 hours from start time
     );
     // console.log("run analytics");
     // logEvent(analytics, "select_content", {
@@ -3314,46 +3459,69 @@ const Home = ({
   };
 
   const handleSignIn = async () => {
-    setIsSigningIn(true);
-    await auth(secretKey);
-    const npub = localStorage.getItem("local_npub");
-    const userName = localStorage.getItem("displayName");
-
-    // Check if user exists in Firestore and create if necessary
-    const userDoc = doc(database, "users", npub);
-
-    const userSnapshot = await getDoc(userDoc).catch((error) =>
-      console.log("ERRX", error)
-    );
-
-    if (!userSnapshot) {
+    try {
+      setIsSigningIn(true);
       try {
-        await createUser(npub, userName, userLanguage);
+        await auth(secretKey);
       } catch (error) {
-        console.log("error creaitn ug", error);
+        setIsSigningIn(false);
+        console.log("ERROR", error);
+        setErrorMessage(JSON.stringify(error) || "An unknown error occurred");
       }
-      const defaultInterval = 2880;
 
-      const currentTime = new Date();
-      const endTime = new Date(currentTime.getTime() + defaultInterval * 60000);
-      try {
-        await updateUserData(
-          npub,
-          defaultInterval, // Set the default interval for the streak
-          0, // Initial streak count is 0
-          currentTime, // Start time
-          endTime // End time, 48 hours from start time
+      const npub = localStorage.getItem("local_npub");
+      const userName = localStorage.getItem("displayName");
+
+      // Check if user exists in Firestore and create if necessary
+      const userDoc = doc(database, "users", npub);
+
+      const userSnapshot = await getDoc(userDoc).catch((error) => {
+        setIsSigningIn(false);
+        setErrorMessage(JSON.stringify(error));
+      });
+
+      if (!userSnapshot) {
+        try {
+          await createUser(npub, userName, userLanguage);
+        } catch (error) {
+          console.log("error creating user", error);
+        }
+        const defaultInterval = 1440;
+
+        const currentTime = new Date();
+        const endTime = new Date(
+          currentTime.getTime() + defaultInterval * 60000
         );
-      } catch (error) {
-        console.log("error creaitn ug x2", error);
+        try {
+          await updateUserData(
+            npub,
+            defaultInterval, // Set the default interval for the streak
+            0, // Initial streak count is 0
+            currentTime, // Start time
+            endTime, // End time, 48 hours from start time
+            3, // default dailyGoals
+            new Date(currentTime.getTime() + 86400000), // 24-hour expiration
+            0, // initial dailyProgress
+            0
+          );
+        } catch (error) {
+          console.log("error creaitn ug x2", error);
+        }
       }
+
+      const currentStep = await getUserStep(npub).catch((error) => {
+        setIsSigningIn(false);
+        setErrorMessage(JSON.stringify(error));
+      }); // Retrieve the current step
+      setIsSigningIn(false);
+      setIsSignedIn(true);
+
+      navigate(`/q/${currentStep}`); // Navigate to the user's current step
+    } catch (error) {
+      // const err = error.error;
+      setIsSigningIn(false);
+      setErrorMessage({ error });
     }
-
-    const currentStep = await getUserStep(npub); // Retrieve the current step
-    setIsSigningIn(false);
-    setIsSignedIn(true);
-
-    navigate(`/q/${currentStep}`); // Navigate to the user's current step
   };
 
   const handleCheckboxChange = (event) => {
@@ -3363,7 +3531,8 @@ const Home = ({
   const handleLaunchApp = () => {
     if (isCheckboxChecked) {
       // navigate("/q/0");
-      setView("wallet");
+      // setView("wallet");
+      navigate("/onboarding/1");
     }
   };
 
@@ -3376,7 +3545,7 @@ const Home = ({
 
   useEffect(() => {
     if (view === "buttons" || view === "createAccount") {
-      setIsSignedIn(false);
+      // setIsSignedIn(false);
       const translateValue = localStorage.getItem("userLanguage");
       localStorage.removeItem("local_npub");
       localStorage.removeItem("local_nsec");
@@ -3444,6 +3613,7 @@ const Home = ({
     }
   };
 
+  console.log("ERROR MESSAGE", errorMessage);
   return (
     <Box
       textAlign="center"
@@ -3628,11 +3798,14 @@ const Home = ({
             >
               {translation[userLanguage]["landing.button.signIn"]}
             </Button>
+          </HStack>
 
-            {/* <Button onMouseDown={authWithSigner} colorScheme="pink">
+          <Text color="red" fontSize="sm">
+            {errorMessage ? errorMessage.error.message : null}
+          </Text>
+          {/* <Button onMouseDown={authWithSigner} colorScheme="pink">
                 signin with extension
               </Button> */}
-          </HStack>
         </VStack>
       )}
       {view === "created" && keys && (
@@ -3649,7 +3822,8 @@ const Home = ({
               maxWidth="600px"
               width="100%"
               textAlign={"left"}
-              background="orange.100"
+              // background="orange.100"
+              backgroundColor="white"
               style={{
                 // backgroundColor: "#dcecfc",
                 display: "flex",
@@ -3657,6 +3831,7 @@ const Home = ({
               }}
               borderRadius="24px"
               borderBottomRightRadius={"0px"}
+              boxShadow={"0.5px 0.5px 1px 0px black"}
             >
               <Text>
                 {translation[userLanguage]["createAccount.successMessage"]}
@@ -3700,7 +3875,7 @@ const Home = ({
                 )} */}
                 .
               </Text>
-              <Accordion allowToggle>
+              {/* <Accordion allowToggle>
                 <AccordionItem>
                   <AccordionButton p={4}>
                     <Box flex="1" textAlign="left">
@@ -3714,7 +3889,7 @@ const Home = ({
                     </Text>
                   </AccordionPanel>
                 </AccordionItem>
-              </Accordion>
+              </Accordion> */}
             </Text>
           </PanRightComponent>
           <div
@@ -4034,6 +4209,9 @@ function App({ isShutDown }) {
           //   localStorage.clear();
           //   navigate("/");
           // } else {
+
+          console.log("step", step);
+
           if (step > -1) {
             console.log("nope");
             auth(localStorage.getItem("local_nsec"));
@@ -4046,6 +4224,7 @@ function App({ isShutDown }) {
             // Wrap Firestore getDoc in try...catch to handle potential errors
             if (userSnapshot.exists()) {
               const userData = userSnapshot.data();
+              console.log("userdata", userData);
               setUserLanguage(
                 userData.userLanguage ||
                   localStorage.getItem("userLanguage") ||
@@ -4101,6 +4280,25 @@ function App({ isShutDown }) {
 
               navigate(`/q/${step}`);
               // }
+            }
+          } else {
+            //step is probably onboarding?
+            if (step === "subscription") {
+              navigate("/subscription");
+            } else if (step === "onboarding") {
+              const matchnumber = windowurl.match(/\/onboarding\/(\d+)$/);
+
+              let step = matchnumber ? matchnumber[1] : null;
+
+              if (!step) {
+                step = await getOnboardingStep(npub); // Fetch the current step
+              }
+
+              console.log("running....");
+
+              console.log("step...", step);
+              setIsSignedIn(true);
+              navigate(`/onboarding/${step}`);
             }
           }
         } catch (error) {
@@ -4159,6 +4357,7 @@ function App({ isShutDown }) {
 
   const testIsMatch = /\/q\/\d+$/.test(testurl);
 
+  console.log("isSignedIn", isSignedIn);
   return (
     <Box textAlign="center" fontSize="xl" p={4} ref={topRef}>
       {alert.isOpen && (
@@ -4218,6 +4417,21 @@ function App({ isShutDown }) {
           path="/"
           element={
             <Home
+              isSignedIn={isSignedIn}
+              setIsSignedIn={setIsSignedIn}
+              userLanguage={userLanguage}
+              setUserLanguage={setUserLanguage}
+              generateNostrKeys={generateNostrKeys}
+              auth={auth}
+              view={view}
+              setView={setView}
+            />
+          }
+        />
+        <Route
+          path="/onboarding/:step"
+          element={
+            <Onboarding
               isSignedIn={isSignedIn}
               setIsSignedIn={setIsSignedIn}
               userLanguage={userLanguage}

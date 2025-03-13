@@ -18,14 +18,27 @@ export const updateUserData = async (
   timer,
   streak,
   startTime,
-  endTime
+  endTime,
+  dailyGoals = 3,
+  nextGoalExpiration,
+  dailyProgress = 0,
+  goalCount = 0
 ) => {
+  const nextGoalDate =
+    nextGoalExpiration instanceof Date
+      ? nextGoalExpiration
+      : new Date(nextGoalExpiration);
   const userDocRef = doc(database, "users", userId);
+
   await updateDoc(userDocRef, {
     timer,
     streak,
     startTime: startTime.toISOString(), // Store dates as ISO strings
     endTime: endTime.toISOString(),
+    dailyGoals,
+    nextGoalExpiration: nextGoalDate.toISOString(),
+    dailyProgress: dailyProgress,
+    goalCount: goalCount,
   });
 };
 
@@ -55,7 +68,9 @@ export const createUser = async (npub, userName, language) => {
       isAdaptiveLearning: true,
       name: userName,
       npub: npub,
-      step: 0, // Initialize step count to 0
+      // step: 0, // Initialize step count to 0
+      step: "onboarding",
+      onboardingStep: 1,
       previousStep: 0,
       language: language,
       allowPosts: false,
@@ -76,6 +91,31 @@ export const incrementUserStep = async (npub) => {
     await updateDoc(userDoc, {
       previousStep: currentStep + 1,
       step: currentStep + 1,
+    });
+  }
+};
+
+export const incrementUserOnboardingStep = async (npub) => {
+  const userDoc = doc(database, "users", npub);
+  const userSnapshot = await getDoc(userDoc);
+
+  if (userSnapshot.exists()) {
+    const currentStep = userSnapshot.data().onboardingStep || 0;
+
+    await updateDoc(userDoc, {
+      onboardingStep: currentStep + 1,
+    });
+  }
+};
+
+export const setOnboardingToDone = async (npub) => {
+  const userDoc = doc(database, "users", npub);
+  const userSnapshot = await getDoc(userDoc);
+
+  if (userSnapshot.exists()) {
+    await updateDoc(userDoc, {
+      onboardingStep: "done",
+      step: 0,
     });
   }
 };
@@ -110,6 +150,17 @@ export const getUserStep = async (npub) => {
 
   if (userSnapshot.exists()) {
     return userSnapshot.data().step || 0;
+  } else {
+    return 0; // Default to step 0 if user document does not exist
+  }
+};
+
+export const getOnboardingStep = async (npub) => {
+  const userDoc = doc(database, "users", npub);
+  const userSnapshot = await getDoc(userDoc);
+
+  if (userSnapshot.exists()) {
+    return userSnapshot.data().onboardingStep || 1;
   } else {
     return 0; // Default to step 0 if user document does not exist
   }

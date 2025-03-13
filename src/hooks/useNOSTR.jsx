@@ -724,7 +724,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       const pubkeys = new Set(); // To store unique pubkeys
 
       notesSubscription.on("event", (event) => {
-        console.log("event...", event);
         notes.push({
           content: event.content,
           createdAt: event.created_at,

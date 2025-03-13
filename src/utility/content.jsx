@@ -23,47 +23,11 @@ export const steps = {
             </p>
 
             <p style={{ marginBottom: 12 }}>
-              Now did you know that education apps compete with video games and
-              social media? The average user (so far) spends about 2 minutes
-              here before being pulled back to other attention-pulling forms of
-              media 😱!
-            </p>
-            <div style={{ marginBottom: 12 }}>
-              <img src="https://res.cloudinary.com/dtkeyccga/image/upload/v1724208228/Screenshot_2024-08-20_at_7.43.28_PM_fioetr.png" />
-            </div>
-            <p style={{ marginBottom: 12 }}>
-              An even harsher reality is that most who attempt to learn for 100
-              days will drop off within the first 2 weeks. In a typical Tiktok
-              video, most users will drop off in the first 20 seconds. And the
-              truth is, you may drop off before the first 20 questions 😔!
-            </p>
-
-            <div
-              style={{
-                marginBottom: 12,
-                textAlign: "center",
-                width: "100%",
-
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <img
-                style={{
-                  marginBottom: 8,
-                  textAlign: "center",
-                  width: "60px",
-                }}
-                src="https://res.cloudinary.com/dtkeyccga/image/upload/v1737544415/character_stickers_4_miarcs.png"
-              />
-            </div>
-
-            <p style={{ marginBottom: 8 }}>
-              But perhaps being aware of this and making a conscience effort to
-              resist certain temptations may keep you in the loop to find
-              success with the program. What do you say? Are you up for the
-              challenge?
+              Remember to fail faster and fail forward! The real education
+              happens when you push through a challenge. We'll start off nice
+              and easy at first, but then we'll start to level up the difficulty
+              as you collect more progress. Make sure to use the tools at your
+              disposal! You're going to need it.
             </p>
           </div>
         ),
@@ -2944,47 +2908,11 @@ list.add('reels');`,
             </p>
 
             <p style={{ marginBottom: 12 }}>
-              ¿Sabías que las aplicaciones educativas compiten con los
-              videojuegos y las redes sociales? En promedio, el usuario (hasta
-              ahora) pasa alrededor de 2 minutos aquí antes de ser atraído
-              nuevamente por otras formas de medios que reclaman su atención 😱.
-            </p>
-            <div style={{ marginBottom: 12 }}>
-              <img src="https://res.cloudinary.com/dtkeyccga/image/upload/v1724208228/Screenshot_2024-08-20_at_7.43.28_PM_fioetr.png" />
-            </div>
-            <p style={{ marginBottom: 12 }}>
-              Una realidad aún más dura es que la mayoría de quienes intentan
-              aprender durante 100 días abandonará en las primeras 2 semanas. En
-              un video típico de TikTok, la mayoría de los usuarios se
-              desconecta en los primeros 20 segundos. Y la verdad es que podrías
-              abandonar antes de las primeras 20 preguntas 😔.
-            </p>
-
-            <div
-              style={{
-                marginBottom: 12,
-                textAlign: "center",
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <img
-                style={{
-                  marginBottom: 8,
-                  textAlign: "center",
-                  width: "60px",
-                }}
-                src="https://res.cloudinary.com/dtkeyccga/image/upload/v1737544415/character_stickers_4_miarcs.png"
-              />
-            </div>
-
-            <p style={{ marginBottom: 8 }}>
-              Pero tal vez, al ser consciente de esto y al hacer un esfuerzo
-              deliberado para resistir ciertas tentaciones, puedas mantenerte en
-              el programa y encontrar el éxito. ¿Qué dices? ¿Estás listo para el
-              desafío?
+              ¡Recuerda fracasar rápido y aprender de cada error! La verdadera
+              educación ocurre cuando superas un desafío. Empezaremos de forma
+              suave y sencilla al principio, pero luego iremos aumentando la
+              dificultad a medida que avances. ¡Asegúrate de utilizar las
+              herramientas a tu disposición! Las vas a necesitar.
             </p>
           </div>
         ),
@@ -5726,3 +5654,296 @@ export const tutorial_interface = [
     },
   },
 ];
+
+export const celebrationMessages = {
+  en: [
+    "You're doing amazing! 🎉✨",
+    "Fantastic job! Keep it up! 🚀🎈",
+    "You're crushing it! 💪😄",
+    "Awesome work! 👏🥳",
+    "Impressive progress! 🌠🙌",
+    "Way to go! 🥳🔥",
+    "Outstanding performance! 🥇👏",
+    "You're incredible! 🤩✨",
+    "Keep up the fantastic work! 🎈🙌",
+    "You've got this! 💪🎉",
+    "Bravo! 👏🎊",
+    "So proud of you! 🌟😊",
+    "Keep up the amazing effort! 🙌🔥",
+    "You're a total champion! 🏆😄",
+    "Great job, keep rocking! 🤘🎉",
+    "You're unstoppable today! 🚀💥",
+    "Absolutely fantastic! 🌟🎉",
+    "You're making waves! 🌊😄",
+    "Keep being awesome! 😎✨",
+    "Epic job! 🚀🥳",
+    "You're flying high! ✈️😊",
+    "Outstanding job! 🌟🎈",
+    "You nailed it! 🎯😄",
+    "Keep soaring! 🦅✨",
+    "You're incredible! 🤩🙌",
+    "You're on fire! 🔥🥳",
+    "Amazing job, keep it up! 🚀😄",
+    "You're thriving! 🌱😊",
+    "Extraordinary effort! 🎖️👏",
+    "Keep shining bright! ✨😄",
+    "Magnificent performance! 🌟🙌",
+    "You're unstoppable! 🚀💪",
+    "You're a powerhouse! 💥🥳",
+    "You're a true superstar! 🤩🌟",
+    "Epic performance! 🚀🎉",
+    "You're doing wonderfully! 😊👏",
+    "Great momentum! Keep it going! 🌟🚀",
+    "Keep dazzling! ✨😄",
+    "You're making magic happen! ✨🪄",
+    "You're unstoppable! 🚀🔥",
+    "Incredible progress! 🙌😄",
+    "You're phenomenal! 🌟🥳",
+    "Keep shining bright! ✨🌞",
+    "You're slaying! 🔥👏",
+    "You're positively radiant! 😊✨",
+    "You're unstoppable today! 🚀🎊",
+    "Outstanding performance! 👏😊",
+    "Keep being fabulous! 🌟🎈",
+    "You're rocking this! 🎸🥳",
+    "You're amazing! Keep going! 🌟✨",
+    "You're absolutely brilliant! 💡🎉",
+    "Keep conquering! 🏅🚀",
+    "Fantastic work! Keep soaring! ✈️🌟",
+    "You're truly impressive! 👏✨",
+    "You're extraordinary! 🌟😊",
+    "Great job! Keep thriving! 🌱🎉",
+    "You're exceptional! 🎉🌟",
+    "Keep up the awesome work! 🙌🥳",
+    "You're fantastic! ✨😄",
+    "You're truly inspirational! 🌈👏",
+    "You're absolutely smashing it! 🚀💥",
+    "You're outstanding! 🌟🎉",
+    "Keep making us proud! 😊🙌",
+    "You're truly unstoppable! 🚀🎈",
+    "You're amazing! Keep pushing! 💪🥳",
+    "You're a legend! 🏅😄",
+    "Keep lighting it up! 🔥✨",
+    "You're doing incredible! 🎉👏",
+    "You're truly spectacular! 🌠😊",
+    "Keep it going! You're doing great! 💪✨",
+    "You're wonderful! 🌟😄",
+    "You're unstoppable brilliance! 🚀✨",
+    "You're absolutely rocking it! 🎸😊",
+    "Keep reaching new heights! 🏔️🎉",
+    "You're superb! ✨🙌",
+    "You're on a fantastic roll! 🎲🥳",
+    "Keep crushing those goals! 🎯😄",
+    "You're brilliant! 💡✨",
+    "You're fantastic beyond words! 🎉👏",
+    "You're totally rocking it! 🤘😎",
+    "Keep it up, superstar! 🌟😊",
+    "You're shining bright today! ✨😄",
+    "Keep smashing it! 🚀💥",
+    "You're truly unstoppable! 🚀🎊",
+    "Outstanding effort! 🎖️✨",
+    "You're awesome, keep it going! 🎉😄",
+    "Keep breaking barriers! 🚧💪",
+    "You're extraordinary every day! 🎉😊",
+    "Keep achieving greatness! 🏆✨",
+    "You're a shining example! ✨😊",
+    "You're a total winner! 🏅😄",
+    "Keep shining, you're amazing! ✨🌞",
+    "You're absolutely crushing it! 💪🔥",
+    "You're fantastic today! 🎉😄",
+    "Keep the greatness coming! 🚀✨",
+    "You're inspirational! 🌈😊",
+    "You're lighting it up! 🔥🎈",
+    "Keep soaring high! 🦅✨",
+    "You're doing an awesome job! 🎉😊",
+    "You're unstoppable greatness! 🚀🌟",
+    "Keep going strong! 💪😄",
+    "You're absolutely remarkable! 🎖️✨",
+    "Keep being amazing! 🌟😊",
+    "You're thriving wonderfully! 🌱🎉",
+    "You're absolutely incredible! 🌠😄",
+    "Keep shining! ✨🎈",
+    "You're exceptional! 🌟👏",
+    "You're unstoppable brilliance today! 🚀😄",
+    "Keep up the excellent work! 🎉🙌",
+    "You're extraordinary! Keep going! 🌟😊",
+    "Keep pushing forward! 🚀🎉",
+    "You're making fantastic progress! 🎈😊",
+    "You're an absolute champion! 🏆😄",
+    "Keep slaying your goals! 🔥👏",
+    "You're fantastic! Keep going strong! 🎉💪",
+    "You're totally impressive! 🌟😄",
+    "Keep rocking! 🎸✨",
+    "You're absolutely magnificent! 🎉🌟",
+    "You're on a roll! Keep it up! 🎲😄",
+    "You're exceptional today! 🎉👏",
+    "Keep shining brightly! ✨😊",
+    "You're totally unstoppable! 🚀🥳",
+    "You're thriving and inspiring! 🌱😊",
+    "Keep excelling! 🎖️😄",
+    "You're doing wonderfully today! 🌟🎉",
+    "You're making it happen! 🚀✨",
+    "Keep being unstoppable! 🔥💪",
+    "You're spectacular! 🎉🌠",
+    "Keep achieving greatness! 🏆✨",
+    "You're positively radiant today! 😊✨",
+    "Keep being fantastic! 🌟😄",
+    "You're crushing everything! 💥💪",
+    "Keep up the amazing work! 🎉🙌",
+    "You're totally epic! 🚀😄",
+    "You're remarkable! 🌟👏",
+    "Keep shining, you're a star! ✨😊",
+    "You're truly magnificent! 🎉😄",
+    "You're on fire! 🔥🚀",
+    "Keep being incredible! 🌟😄",
+    "You're unstoppable today! 🚀✨",
+  ],
+  es: [
+    "¡Lo estás haciendo increíble! 🎉✨",
+    "¡Trabajo fantástico! ¡Sigue así! 🚀🎈",
+    "¡Lo estás arrasando! 💪😄",
+    "¡Excelente trabajo! 👏🥳",
+    "¡Progreso impresionante! 🌠🙌",
+    "¡Así se hace! 🥳🔥",
+    "¡Actuación sobresaliente! 🥇👏",
+    "¡Eres increíble! 🤩✨",
+    "¡Sigue con el fantástico trabajo! 🎈🙌",
+    "¡Tú puedes hacerlo! 💪🎉",
+    "¡Bravo! 👏🎊",
+    "¡Muy orgulloso de ti! 🌟😊",
+    "¡Continúa con ese esfuerzo increíble! 🙌🔥",
+    "¡Eres todo un campeón! 🏆😄",
+    "¡Gran trabajo, sigue así! 🤘🎉",
+    "¡Hoy eres imparable! 🚀💥",
+    "¡Absolutamente fantástico! 🌟🎉",
+    "¡Estás causando sensación! 🌊😄",
+    "¡Sigue siendo increíble! 😎✨",
+    "¡Trabajo épico! 🚀🥳",
+    "¡Estás volando alto! ✈️😊",
+    "¡Trabajo sobresaliente! 🌟🎈",
+    "¡Lo clavaste! 🎯😄",
+    "¡Sigue volando alto! 🦅✨",
+    "¡Eres increíble! 🤩🙌",
+    "¡Estás que ardes! 🔥🥳",
+    "¡Trabajo increíble, sigue así! 🚀😄",
+    "¡Estás floreciendo! 🌱😊",
+    "¡Esfuerzo extraordinario! 🎖️👏",
+    "¡Sigue brillando fuerte! ✨😄",
+    "¡Actuación magnífica! 🌟🙌",
+    "¡Eres imparable! 🚀💪",
+    "¡Eres una fuerza imparable! 💥🥳",
+    "¡Eres una verdadera estrella! 🤩🌟",
+    "¡Actuación épica! 🚀🎉",
+    "¡Lo estás haciendo maravillosamente! 😊👏",
+    "¡Gran impulso! ¡Sigue adelante! 🌟🚀",
+    "¡Sigue deslumbrando! ✨😄",
+    "¡Estás haciendo magia! ✨🪄",
+    "¡Eres imparable! 🚀🔥",
+    "¡Progreso increíble! 🙌😄",
+    "¡Eres fenomenal! 🌟🥳",
+    "¡Sigue brillando! ✨🌞",
+    "¡Estás arrasando! 🔥👏",
+    "¡Estás radiante! 😊✨",
+    "¡Hoy eres imparable! 🚀🎊",
+    "¡Actuación excepcional! 👏😊",
+    "¡Sigue siendo fabuloso! 🌟🎈",
+    "¡Lo estás rockeando! 🎸🥳",
+    "¡Eres increíble! ¡Sigue adelante! 🌟✨",
+    "¡Eres absolutamente brillante! 💡🎉",
+    "¡Sigue conquistando! 🏅🚀",
+    "¡Trabajo fantástico! ¡Sigue volando alto! ✈️🌟",
+    "¡Eres realmente impresionante! 👏✨",
+    "¡Eres extraordinario! 🌟😊",
+    "¡Gran trabajo! ¡Sigue floreciendo! 🌱🎉",
+    "¡Eres excepcional! 🎉🌟",
+    "¡Continúa con el excelente trabajo! 🙌🥳",
+    "¡Eres fantástico! ✨😄",
+    "¡Eres verdaderamente inspirador! 🌈👏",
+    "¡Lo estás destrozando absolutamente! 🚀💥",
+    "¡Eres sobresaliente! 🌟🎉",
+    "¡Sigue haciéndonos sentir orgullosos! 😊🙌",
+    "¡Eres verdaderamente imparable! 🚀🎈",
+    "¡Eres increíble! ¡Sigue empujando! 💪🥳",
+    "¡Eres una leyenda! 🏅😄",
+    "¡Sigue encendiéndolo todo! 🔥✨",
+    "¡Estás increíble! 🎉👏",
+    "¡Eres realmente espectacular! 🌠😊",
+    "¡Sigue así! ¡Lo estás haciendo genial! 💪✨",
+    "¡Eres maravilloso! 🌟😄",
+    "¡Tu brillantez es imparable! 🚀✨",
+    "¡Lo estás haciendo genial! 🎸😊",
+    "¡Sigue alcanzando nuevas alturas! 🏔️🎉",
+    "¡Eres magnífico! ✨🙌",
+    "¡Estás en una racha fantástica! 🎲🥳",
+    "¡Sigue alcanzando esas metas! 🎯😄",
+    "¡Eres brillante! 💡✨",
+    "¡Eres fantástico más allá de las palabras! 🎉👏",
+    "¡Lo estás rockeando totalmente! 🤘😎",
+    "¡Sigue así, superestrella! 🌟😊",
+    "¡Estás brillando hoy! ✨😄",
+    "¡Sigue rompiéndola! 🚀💥",
+    "¡Eres realmente imparable! 🚀🎊",
+    "¡Esfuerzo sobresaliente! 🎖️✨",
+    "¡Eres increíble, sigue así! 🎉😄",
+    "¡Sigue rompiendo barreras! 🚧💪",
+    "¡Eres extraordinario cada día! 🎉😊",
+    "¡Sigue alcanzando grandeza! 🏆✨",
+    "¡Eres un ejemplo brillante! ✨😊",
+    "¡Eres un verdadero ganador! 🏅😄",
+    "¡Sigue brillando, eres increíble! ✨🌞",
+    "¡Lo estás haciendo genial! 💪🔥",
+    "¡Hoy estás fantástico! 🎉😄",
+    "¡Continúa con tu grandeza! 🚀✨",
+    "¡Eres una inspiración! 🌈😊",
+    "¡Estás encendiéndolo todo! 🔥🎈",
+    "¡Sigue volando alto! 🦅✨",
+    "¡Estás haciendo un trabajo increíble! 🎉😊",
+    "¡Tu grandeza es imparable! 🚀🌟",
+    "¡Sigue fuerte! 💪😄",
+    "¡Eres absolutamente notable! 🎖️✨",
+    "¡Sigue siendo increíble! 🌟😊",
+    "¡Estás floreciendo maravillosamente! 🌱🎉",
+    "¡Eres absolutamente increíble! 🌠😄",
+    "¡Sigue brillando! ✨🎈",
+    "¡Eres excepcional! 🌟👏",
+    "¡Tu brillantez hoy es imparable! 🚀😄",
+    "¡Continúa con el excelente trabajo! 🎉🙌",
+    "¡Eres extraordinario! ¡Sigue adelante! 🌟😊",
+    "¡Sigue avanzando! 🚀🎉",
+    "¡Estás progresando fantásticamente! 🎈😊",
+    "¡Eres un campeón absoluto! 🏆😄",
+    "¡Sigue logrando tus objetivos! 🔥👏",
+    "¡Eres fantástico! ¡Sigue fuerte! 🎉💪",
+    "¡Eres totalmente impresionante! 🌟😄",
+    "¡Sigue rockeando! 🎸✨",
+    "¡Eres absolutamente magnífico! 🎉🌟",
+    "¡Estás en racha! ¡Sigue así! 🎲😄",
+    "¡Eres excepcional hoy! 🎉👏",
+    "¡Sigue brillando intensamente! ✨😊",
+    "¡Eres totalmente imparable! 🚀🥳",
+    "¡Estás floreciendo e inspirando! 🌱😊",
+    "¡Sigue sobresaliendo! 🎖️😄",
+    "¡Hoy lo estás haciendo maravillosamente! 🌟🎉",
+    "¡Estás haciéndolo realidad! 🚀✨",
+    "¡Sigue siendo imparable! 🔥💪",
+    "¡Eres espectacular! 🎉🌠",
+    "¡Sigue alcanzando grandeza! 🏆✨",
+    "¡Hoy estás radiante! 😊✨",
+    "¡Sigue siendo fantástico! 🌟😄",
+    "¡Estás arrasando con todo! 💥💪",
+    "¡Continúa con el increíble trabajo! 🎉🙌",
+    "¡Eres totalmente épico! 🚀😄",
+    "¡Eres notable! 🌟👏",
+    "¡Sigue brillando, eres una estrella! ✨😊",
+    "¡Eres realmente magnífico! 🎉😄",
+    "¡Estás que ardes! 🔥🚀",
+    "¡Sigue siendo increíble! 🌟😄",
+    "¡Hoy eres imparable! 🚀✨",
+  ],
+};
+
+export const getRandomCelebrationMessage = (userLanguage = "en") => {
+  const messages = celebrationMessages[userLanguage] || celebrationMessages.en;
+  const randomIndex = Math.floor(Math.random() * messages.length);
+  return messages[randomIndex];
+};

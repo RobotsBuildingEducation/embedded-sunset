@@ -266,30 +266,38 @@ const BitcoinOnboarding = ({ userLanguage }) => {
       return (
         <>
           <Text mb={4} textAlign={"left"} p={6} fontSize="sm">
-            <Text mb={2}>
+            <Text mb={4}>
               <b>
                 {
                   translation[userLanguage][
                     "modal.bitcoinMode.instructions.createWallet.1"
                   ]
                 }
-              </b>
+              </b>{" "}
+              <Text size="sm" mb={2}>
+                <b>
+                  {
+                    translation[userLanguage][
+                      "modal.bitcoinMode.instructions.createWallet.2.5"
+                    ]
+                  }
+                </b>
+              </Text>
             </Text>
 
-            <Text size="sm" mb={2}>
+            <Text size="sm" mb={4}>
               {
                 translation[userLanguage][
                   "modal.bitcoinMode.instructions.createWallet.2"
                 ]
               }
-              &nbsp;
-              <b>
-                {
-                  translation[userLanguage][
-                    "modal.bitcoinMode.instructions.createWallet.2.5"
-                  ]
-                }
-              </b>
+            </Text>
+            <Text size="sm" mb={2}>
+              {
+                translation[userLanguage][
+                  "modal.bitcoinMode.instructions.createWallet.2.25"
+                ]
+              }
             </Text>
           </Text>
 

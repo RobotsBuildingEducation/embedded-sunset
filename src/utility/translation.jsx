@@ -2,6 +2,75 @@ import { DataTags } from "../elements/DataTag";
 
 export let translation = {
   en: {
+    celebrateMessage: ". You're doing a great job! 🙌 🥳",
+    Progress: "Progress",
+
+    dailyGoal: "Daily goal",
+    questions: "questions",
+    goal: "goal",
+    completed: "completed",
+    "onboarding.chapter0.questions": "Questions 0-9",
+    "onboarding.chapter1.questions": "Questions 10-30",
+    "onboarding.chapter2.questions": "Questions 31-48",
+    "onboarding.chapter3.questions": "Questions 49-68",
+    "onboarding.chapter4.questions": "Questions 69-90",
+    "onboarding.chapter5.questions": "Questions 91-111",
+    "onboarding.chapter6.questions": "Questions 112-133",
+    "onboarding.chapter0.title": "Tutorial Chapter: Platform Introduction",
+
+    "onboarding.chapter0.content":
+      "Discover all the features the platform has to offer to help you create success.",
+    "onboarding.chapter1.title": "Chapter 1: Coding Basics",
+    "onboarding.chapter1.content":
+      "Learn about the basic building blocks used to write programs.",
+    "onboarding.chapter2.title": "Chapter 2: Object-Oriented Programming",
+    "onboarding.chapter2.content": "Understand how software data is designed.",
+    "onboarding.chapter3.title": "Chapter 3: Frontend Development",
+    "onboarding.chapter3.content": "Create components and user interfaces.",
+    "onboarding.chapter4.title": "Chapter 4: Backend Engineering Fundamentals",
+    "onboarding.chapter4.content":
+      "Comprehend what backend engineering means in the world of software",
+    "onboarding.chapter5.title": "Chapter 5: Building Apps",
+    "onboarding.chapter5.content":
+      "Tie your knowledge together to create real apps and users.",
+    "onboarding.chapter6.title": "Chapter 6: Computer Science",
+    "onboarding.chapter6.content":
+      "Deep-dive into foundations of algorithms and data structures.",
+
+    "onboarding.step1.accordionTitle": "What to expect",
+    "countdown.streakTimeLeft": "Streak time left - ",
+    "countdown.dailyGoalsTimeLeft": "Daily goals time left - ",
+    "modal.selfPace.instruction":
+      "Choose the duration of your streak. Your streak timer renews when this time elapses.",
+    "modal.selfPace.day": "day",
+    "modal.selfPace.oneDay": "1 Day",
+    "modal.selfPace.twoDays": "2 Days",
+    "modal.selfPace.threeDays": "3 Days",
+    "modal.selfPace.signal.grind": "Grind",
+    "modal.selfPace.signal.motivated": "Motivated",
+    "modal.selfPace.signal.casual": "Casual",
+    "modal.dailyGoal.instruction":
+      "Choose how many questions to complete to reach your daily goal. The goal timer resets every 24 hours.",
+    "modal.dailyGoal.dailyGoalLabel": "Daily goal:",
+    "button.save": "Save",
+    "button.back": "Back",
+    "onboarding.step1.challengeTitle": "The Challenge Ahead",
+    "onboarding.step1.challengeText1":
+      "The harsh reality is that most who attempt to learn for 100 days will drop off within the first 20 days. The same is also true for most videos and courses – most folks drop off in the first 20 seconds and the first 20 questions!",
+    "onboarding.step1.challengeText2":
+      "But perhaps being aware of this and making a conscious effort to resist certain temptations may keep you in the loop to find success with the program. And perhaps the real challenge is actually a lot easier than we thought.",
+    "onboarding.step1.challengeText3":
+      "What do you say? Are you up for the challenge? Let's get passed 20 questions in a more manageable way!",
+    "onboarding.step1.buttonLabel": "Yes! Let's do it!",
+
+    "onboarding.step2.dailyGoalsTitle": "Setup your daily goals",
+    "onboarding.step2.dailyGoalsDescription":
+      "We recommend doing three questions per day. By the end of the month, you'll get to the point where you can start putting together what you've learned to build and ship apps.",
+
+    "onboarding.step3.lastStepMessage":
+      "Your account is almost ready. Just one last step to complete your setup!",
+    "onboarding.step3.launchAppButton": "Launch App",
+
     "modal.externalLinkTitle": "Leaving The App",
     "modal.externalLinkBody":
       "You are about to be redirected to the free version of ChatGPT where no login is required. Paste the question data that we've copied to generate help. Create an account with ChatGPT to acces the custom chat version of this app instead.",
@@ -672,7 +741,7 @@ reverse(head) {
         <br />
         <br />
         Use intelligent assistance to learn how to code and build your ideas in
-        100 questions.
+        under 30 days.
       </div>
     ),
     "landing.button.telemetry": "Create Account",
@@ -727,6 +796,7 @@ reverse(head) {
     "settings.title": "Settings",
     "settings.selfPace": "Self-pace",
     "settings.button.selfPace": "Self-pace",
+    "settings.button.socialProgress": "Social Progress",
     "settings.button.adaptiveLearning": "Adaptive Learning",
     "settings.button.bitcoinMode": "Wallet",
 
@@ -743,7 +813,10 @@ reverse(head) {
     "modal.title.decentralizedTranscript": "Decentralized Transcript",
     "modal.title.selfPace": "Self-pace",
     "modal.selfPace.instruction":
-      "Choose how much time can elapse to grow your streak.",
+      "Choose how much time can elapse to grow your streak. Your streak timer renews every time you make progress.",
+
+    "modal.dailyGoal.instruction":
+      "Choose how many questions to complete to accomplish your daily goal. The goal timer resets every 24 hours.",
     "modal.selfPace.day": "day",
     "modal.selfPace.hour": "hour",
     "modal.selfPace.minute": "minute",
@@ -759,8 +832,10 @@ reverse(head) {
       "The goal is to create scholarships with learning!",
 
     "modal.bitcoinMode.instructions.createWallet.2":
-      "Selecting a recipient creates a wallet allows you to optionally deposit a maximum of about $0.01 worth in Bitcoin. When you answer questions and make progress in the app, your Bitcoin deposit gets spent and sent to your receipient!",
+      "Selecting a recipient creates a wallet allows you to optionally deposit a maximum of about $0.01 worth in Bitcoin.",
 
+    "modal.bitcoinMode.instructions.createWallet.2.25":
+      "When you answer questions and make progress in the app, your Bitcoin deposit gets spent and sent to your receipient!",
     "modal.bitcoinMode.instructions.createWallet.2.5":
       "This feature is experimental.",
     "modal.bitcoinMode.instructions.createWallet.3":
@@ -1353,6 +1428,78 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   es: {
+    celebrateMessage: ". ¡Estás haciendo un gran trabajo! 🙌 🥳",
+    "onboarding.chapter0.questions": "Preguntas 0-9",
+    "onboarding.chapter1.questions": "Preguntas 10-30",
+    "onboarding.chapter2.questions": "Preguntas 31-48",
+    "onboarding.chapter3.questions": "Preguntas 49-68",
+    "onboarding.chapter4.questions": "Preguntas 69-90",
+    "onboarding.chapter5.questions": "Preguntas 91-111",
+    "onboarding.chapter6.questions": "Preguntas 112-133",
+    Progress: "Progreso",
+    dailyGoal: "Meta diaria",
+    questions: "preguntas",
+    goal: "meta",
+    completed: "completado",
+    "onboarding.chapter0.title":
+      "Capítulo Tutorial: Introducción a la Plataforma",
+    "onboarding.chapter0.content":
+      "Descubre todas las características que la plataforma ofrece para ayudarte a crear éxito.",
+    "onboarding.chapter1.title": "Capítulo 1: Fundamentos de la Programación",
+    "onboarding.chapter1.content":
+      "Aprende sobre los conceptos básicos que se utilizan para escribir programas.",
+    "onboarding.chapter2.title": "Capítulo 2: Programación Orientada a Objetos",
+    "onboarding.chapter2.content":
+      "Comprende cómo se diseñan los datos del software.",
+    "onboarding.chapter3.title": "Capítulo 3: Desarrollo Frontend",
+    "onboarding.chapter3.content": "Crea componentes e interfaces de usuario.",
+    "onboarding.chapter4.title":
+      "Capítulo 4: Fundamentos de la Ingeniería de Backend",
+    "onboarding.chapter4.content":
+      "Comprende lo que significa la ingeniería de backend en el mundo del software.",
+    "onboarding.chapter5.title": "Capítulo 5: Construcción de Aplicaciones",
+    "onboarding.chapter5.content":
+      "Une tus conocimientos para crear aplicaciones reales y atraer usuarios.",
+    "onboarding.chapter6.title": "Capítulo 6: Ciencias de la Computación",
+    "onboarding.chapter6.content":
+      "Profundiza en los fundamentos de algoritmos y estructuras de datos.",
+    "onboarding.step1.accordionTitle": "Qué esperar",
+    "countdown.streakTimeLeft": "Tiempo restante de la racha - ",
+    "countdown.dailyGoalsTimeLeft":
+      "Tiempo restante para el objetivo diario - ",
+    "modal.selfPace.instruction":
+      "Elige la duración de tu temporizador de racha. Tu racha se reinicia cuando transcurre este tiempo.",
+    "modal.selfPace.day": "día",
+    "modal.selfPace.oneDay": "1 Día",
+    "modal.selfPace.twoDays": "2 Días",
+    "modal.selfPace.threeDays": "3 Días",
+    "modal.selfPace.signal.grind": "Esfuerzo",
+    "modal.selfPace.signal.motivated": "Motivado",
+    "modal.selfPace.signal.casual": "Casual",
+    "modal.dailyGoal.instruction":
+      "Elige cuántas preguntas completar para alcanzar tu objetivo diario. El temporizador se reinicia cada 24 horas.",
+    "modal.dailyGoal.dailyGoalLabel": "Objetivo diario:",
+
+    "button.back": "Atrás",
+    "onboarding.step1.challengeTitle": "El Desafío que te Espera",
+    "onboarding.step1.challengeText1":
+      "La cruda realidad es que la mayoría de quienes intentan aprender durante 100 días abandonan en los primeros 20 días. Lo mismo sucede con la mayoría de los videos y cursos: la mayoría se desconecta en los primeros 20 segundos y con las primeras 20 preguntas.",
+    "onboarding.step1.challengeText2":
+      "Pero quizá, siendo consciente de esto y esforzándote por resistir ciertas tentaciones, puedas mantenerte en el camino y tener éxito en el programa. Y tal vez el verdadero desafío sea en realidad mucho más fácil de lo que pensamos.",
+    "onboarding.step1.challengeText3":
+      "¿Qué dices? ¿Aceptas el reto? ¡Lleguemos primero a 20 preguntas!",
+    "onboarding.step1.buttonLabel": "¡Sí! ¡Hagámoslo!",
+
+    "onboarding.step2.dailyGoalsTitle": "Configura tus objetivos diarios",
+    "onboarding.step2.dailyGoalsDescription":
+      "Recomendamos hacer tres preguntas al día. Al final del mes, llegarás al punto en el que podrás empezar a unir lo aprendido para construir y lanzar aplicaciones.",
+
+    "onboarding.step3.lastStepMessage":
+      "Tu cuenta casi está lista. ¡Solo falta un último paso para completar tu configuración!",
+    "onboarding.step3.launchAppButton": "Iniciar aplicación",
+    "settings.button.socialProgress": "Progreso Social",
+    "modal.dailyGoal.instruction":
+      "Elige cuántas preguntas completar para alcanzar tu meta diaria. El temporizador de la meta se reinicia cada 24 horas.",
     "toast.title.idCopied": "ID copiada.",
     "toast.description.idCopied": "Tu ID ha sido copiada.",
     "tag.allowPosting": "No publicar mi progreso",
@@ -1438,7 +1585,9 @@ reverse(head) {
       "¡El objetivo es crear becas con aprendizaje!",
 
     "modal.bitcoinMode.instructions.createWallet.2":
-      "Seleccionar un destinatario y crear una billetera te permite depositar un máximo de equivalente a $0.01 en Bitcoin. ¡Cuando respondes preguntas y avanzas en la aplicación, tu depósito en Bitcoin se gasta y se envía a tu destinatario!",
+      "Seleccionar un destinatario y crear una billetera te permite depositar un máximo de equivalente a $0.01 en Bitcoin.",
+    "modal.bitcoinMode.instructions.createWallet.2.25":
+      "Cuando respondes preguntas y avanzas en la aplicación, tu depósito de Bitcoin se gasta y se envía a tu destinatario!",
 
     "modal.bitcoinMode.instructions.createWallet.3":
       "¡Recomendamos conectarte con Cash App para comprar Bitcoin y crear tu depósito!",
@@ -2213,7 +2362,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "createAccount.instructions":
       "¡Solo necesitamos un nombre de usuario y haremos el resto!",
     "createAccount.input.placeholder": "Ingrese un nombre de usuario",
-    "button.back": "Atrás",
+
     "button.create": "Crear",
     "button.save": "Guardar",
     "button.close": "Cerrar",
@@ -2257,7 +2406,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
 
     "modal.title.selfPace": "Auto ritmo",
     "modal.selfPace.instruction":
-      "Elija cuánto tiempo puede transcurrir para aumentar su racha.",
+      "Elige cuánto tiempo puede transcurrir para aumentar tu racha. Tu temporizador de racha se reinicia cada vez que haces progreso.",
     "modal.selfPace.day": "día",
     "modal.selfPace.hour": "hora",
     "modal.selfPace.minute": "minuto",
