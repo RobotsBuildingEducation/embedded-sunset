@@ -43,6 +43,37 @@ import { SunsetCanvas } from "../../../elements/SunsetCanvas";
 import { useSimpleGeminiChat } from "../../../hooks/useGeminiChat";
 import LiveReactEditorModal from "../../LiveCodeEditor/LiveCodeEditor";
 
+export let transcriptDisplay = {
+  tutorial: {
+    en: "Tutorial",
+    es: "Tutorial",
+  },
+  1: {
+    en: "Basics of Coding",
+    es: "Fundamentos de la Programación",
+  },
+  2: {
+    en: "Object-Oriented Programming",
+    es: "Programación Orientada a Objetos",
+  },
+  3: {
+    en: "Frontend Development",
+    es: "Desarrollo Frontend",
+  },
+  4: {
+    en: "Backend Engineering Fundamentals",
+    es: "Fundamentos de Ingeniería de Backend",
+  },
+  5: {
+    en: "Creating Apps & Experiences",
+    es: "Creando Aplicaciones y Experiencias",
+  },
+  6: {
+    en: "Computer Science",
+    es: "Ciencias de la Computación",
+  },
+};
+
 const newTheme = {
   p: (props) => <Text mb={2} lineHeight="1.6" {...props} />,
   ul: (props) => <UnorderedList pl={6} spacing={2} {...props} />,
@@ -277,6 +308,38 @@ export const KnowledgeLedgerModal = ({
     }
   };
 
+  const renderGroupedSteps = () => {
+    const stepElements = [];
+    let lastGroup = null;
+    steps[userLanguage].forEach((step, index) => {
+      if (step.group !== lastGroup) {
+        stepElements.push(
+          step.group === "introduction" ? null : (
+            <Heading
+              as="h5"
+              size="sm"
+              mt={4}
+              key={`group-${index}`}
+              color="green.400"
+            >
+              {transcriptDisplay[step.group]?.[userLanguage] || ""}
+            </Heading>
+          )
+        );
+        lastGroup = step.group;
+      }
+      stepElements.push(
+        <Text
+          key={`step-${index}`}
+          color={index <= currentStep - 1 ? "green.500" : "gray.500"}
+        >
+          {index !== 0 ? index + ". " + step.title : ""}
+        </Text>
+      );
+    });
+    return stepElements;
+  };
+
   console.log("messages", messages);
   return (
     <>
@@ -409,22 +472,16 @@ export const KnowledgeLedgerModal = ({
               </Box>
               <br />
               <VStack align="stretch">
-                <b>
+                <Text fontSize="lg">
                   {" "}
                   {
                     translation[userLanguage][
                       "modal.adaptiveLearning.stepsTaken"
                     ]
                   }
-                </b>
-                {steps[userLanguage].map((step, index) => (
-                  <Text
-                    key={index}
-                    color={index <= currentStep - 1 ? "green.500" : "gray.500"}
-                  >
-                    {index !== 0 ? index + ". " + step.title : ""}
-                  </Text>
-                ))}
+                </Text>
+                <hr />
+                {renderGroupedSteps()}
               </VStack>
             </Box>
           </ModalBody>
