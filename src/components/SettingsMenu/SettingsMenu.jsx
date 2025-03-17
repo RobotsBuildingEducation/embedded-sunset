@@ -19,27 +19,26 @@ import {
   Input,
   HStack,
 } from "@chakra-ui/react";
-import { FiSettings } from "react-icons/fi";
+
 import { useNavigate } from "react-router-dom";
 import { IoAppsOutline } from "react-icons/io5";
 
 import BitcoinModeModal from "./BitcoinModeModal/BitcoinModeModal";
 import RoxModal from "./RoxModal/RoxModal";
 import SocialWalletModal from "./SocialWalletModal/SocialWalletModal";
-import SelfPacedModal from "./SelfPacedModal/SelfPacedModal";
-import { KnowledgeLedgerModal } from "./KnowledgeLedgerModal/KnowledgeLedgerModal";
+
 import FeedbackModal from "./FeedbackModal/FeedbackModal";
 import { translation } from "../../utility/translation";
 import { database } from "../../database/firebaseResources";
 import { doc, updateDoc } from "firebase/firestore";
-import { FaBitcoin, FaRegUser } from "react-icons/fa";
+import { FaRegUser } from "react-icons/fa";
 
 import TranscriptModal from "./TranscriptModal/TranscriptModal";
 import { InstallAppModal } from "../InstallModal/InstallModal";
 import { AlgorithmHelper } from "../AlgorithmHelper/AlgorithmHelper";
-import LiveCodeEditorModal from "../LiveCodeEditor/LiveCodeEditor";
+
 import { CareerAgent } from "../CareerAgent/CareerAgent";
-import { CopyButtonIcon } from "../../elements/CopyButtonIcon";
+
 import { useNostrWalletStore } from "../../hooks/useNostrWalletStore";
 import SocialFeedModal from "../SocialFeedModal/SocialFeedModal";
 
@@ -148,14 +147,16 @@ const SettingsMenu = ({
   };
 
   useEffect(() => {
-    const userDocRef = doc(
-      database,
-      "users",
-      localStorage.getItem("local_npub")
-    );
-    updateDoc(userDocRef, {
-      language: userLanguage,
-    });
+    if (isSignedIn && localStorage.getItem("local_npub")?.length > 0) {
+      const userDocRef = doc(
+        database,
+        "users",
+        localStorage.getItem("local_npub")
+      );
+      updateDoc(userDocRef, {
+        language: userLanguage,
+      });
+    }
   }, [userLanguage]);
 
   // Manually focus the first button when the drawer opens

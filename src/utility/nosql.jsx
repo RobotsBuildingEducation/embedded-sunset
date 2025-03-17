@@ -169,12 +169,15 @@ export const getOnboardingStep = async (npub) => {
 export const deleteSpecificDocuments = () => {
   const usersCollectionRef = collection(database, "users");
 
-  const q = query(usersCollectionRef, where("name", "==", "test"));
+  // const q = query(usersCollectionRef, where("name", "==", "test"));
+  // console.log("test");
 
   getDocs(q)
     .then((snapshot) => {
+      console.log("snapshot...", snapshot);
       // Step 2: Iterate through documents
       snapshot.forEach((doc) => {
+        console.log("doc...", doc);
         // Step 3: Delete documents
         deleteDoc(doc.ref)
           .then(() => {
@@ -205,4 +208,21 @@ export const getTotalUsers = async () => {
     console.error("Error getting documents:", error);
     throw error;
   }
+};
+
+export const fetchUsersWithToken = async () => {
+  console.log("running token query...");
+  // Create a query for users where the "fcmToken" field is not null
+  const usersQuery = query(
+    collection(database, "users"),
+    where("fcmToken", "!=", null)
+  );
+
+  // Execute the query
+  const querySnapshot = await getDocs(usersQuery);
+
+  // Loop through the results and log each user's data
+  querySnapshot.forEach((doc) => {
+    console.log(`User ID: ${doc.id}`, doc.data());
+  });
 };

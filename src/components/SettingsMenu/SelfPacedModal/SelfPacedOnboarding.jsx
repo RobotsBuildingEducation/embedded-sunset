@@ -17,6 +17,7 @@ import {
   CircularProgress,
   Box,
   Spinner,
+  Switch,
 } from "@chakra-ui/react";
 import {
   getUserData,
@@ -25,6 +26,12 @@ import {
 } from "../../../utility/nosql";
 import { translation } from "../../../utility/translation";
 import { useNavigate } from "react-router-dom";
+import {
+  database,
+  // messaging
+} from "../../../database/firebaseResources";
+// import { deleteToken, getToken } from "firebase/messaging";
+import { doc, updateDoc } from "firebase/firestore";
 
 // CountdownTimer now supports days along with hours:minutes:seconds and shows a progress bar.
 const CountdownTimer = ({ targetTime, initialTime, label, userLanguage }) => {
@@ -81,6 +88,7 @@ const SelfPacedOnboarding = ({
   userLanguage,
 }) => {
   const navigate = useNavigate();
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const [goalCount, setGoalCount] = useState(0);
   const [inputValue, setInputValue] = useState(interval);
@@ -187,6 +195,54 @@ const SelfPacedOnboarding = ({
     return "gray.500";
   };
 
+  //   const handleToggleNotifications = async () => {
+  //     const userDocRef = doc(database, "users", userId);
+
+  //     if (!notificationsEnabled) {
+  //       // Enable notifications: request permission and get token
+  //       const permission = await Notification.requestPermission();
+  //       if (permission === "granted") {
+  //         try {
+  //           const token = await getToken(messaging, {
+  //             vapidKey:
+  //               "BPLqRrVM3iUvh90ENNZJbJA3FoRkvMql6iWtC4MJaHzhyz9uRTEitwEax9ot05_b6TPoCVnD-tlQtbeZFn1Z_Bg",
+  //           });
+  //           console.log("FCM token retrieved:", token);
+  //           // Save the token in Firestore
+  //           await updateDoc(userDocRef, { fcmToken: token });
+  //           setNotificationsEnabled(true);
+  //         } catch (error) {
+  //           console.error("Error retrieving FCM token:", error);
+  //           setNotificationsEnabled(false);
+  //         }
+  //       } else {
+  //         console.log("Notification permission not granted.");
+  //         setNotificationsEnabled(false);
+  //       }
+  //     } else {
+  //       // Disable notifications: delete the token and update Firestore
+  //       try {
+  //         const currentToken = await getToken(messaging, {
+  //           vapidKey:
+  //             "BPLqRrVM3iUvh90ENNZJbJA3FoRkvMql6iWtC4MJaHzhyz9uRTEitwEax9ot05_b6TPoCVnD-tlQtbeZFn1Z_Bg",
+  //         });
+  //         if (currentToken) {
+  //           const success = await deleteToken(messaging, currentToken);
+  //           if (success) {
+  //             console.log("FCM token deleted successfully.");
+  //           } else {
+  //             console.error("Failed to delete token.");
+  //           }
+  //         }
+  //         // Remove token from Firestore
+  //         await updateDoc(userDocRef, { fcmToken: null });
+  //         setNotificationsEnabled(false);
+  //       } catch (error) {
+  //         console.error("Error deleting FCM token:", error);
+  //       }
+  //     }
+  //   };
+
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
       <Text fontSize="xs" width="70%" mb={2}>
@@ -262,6 +318,21 @@ const SelfPacedOnboarding = ({
       ) : (
         <Spinner />
       )}
+      {/* <br />
+      <br />
+      <Box mt={4} display="flex" flexDirection="column" alignItems="center">
+        <Text fontSize="sm" mb={2}>
+          {notificationsEnabled
+            ? "Notifications Enabled"
+            : "Notifications Disabled"}
+        </Text>
+        <Switch
+          isChecked={notificationsEnabled}
+          onChange={handleToggleNotifications}
+          size="lg"
+          colorScheme="green"
+        />
+      </Box> */}
 
       <br />
       <br />

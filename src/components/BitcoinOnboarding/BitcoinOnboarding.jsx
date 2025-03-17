@@ -275,13 +275,11 @@ const BitcoinOnboarding = ({ userLanguage }) => {
                 }
               </b>{" "}
               <Text size="sm" mb={2}>
-                <b>
-                  {
-                    translation[userLanguage][
-                      "modal.bitcoinMode.instructions.createWallet.2.5"
-                    ]
-                  }
-                </b>
+                {
+                  translation[userLanguage][
+                    "modal.bitcoinMode.instructions.createWallet.2.25"
+                  ]
+                }
               </Text>
             </Text>
 
@@ -292,12 +290,15 @@ const BitcoinOnboarding = ({ userLanguage }) => {
                 ]
               }
             </Text>
+
             <Text size="sm" mb={2}>
-              {
-                translation[userLanguage][
-                  "modal.bitcoinMode.instructions.createWallet.2.25"
-                ]
-              }
+              <b>
+                {
+                  translation[userLanguage][
+                    "modal.bitcoinMode.instructions.createWallet.2.5"
+                  ]
+                }
+              </b>
             </Text>
           </Text>
 

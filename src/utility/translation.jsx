@@ -2,6 +2,29 @@ import { DataTags } from "../elements/DataTag";
 
 export let translation = {
   en: {
+    "modal.selfPace.notificationsUnavailable":
+      "Notifications aren't supported on this browser. Follow installation instructions in the menu to access all features",
+    "modal.selfPace.notificationDescription":
+      "Send a positive and encouraging notification daily",
+    notificationsEnabled: "Notifications Enabled",
+    notificationsDisabled: "Notifications Disabled",
+
+    notificationsHeader: "Notifications",
+    gotItButton: "Got it!",
+    notifications_available_line1:
+      "Notifications let me send a positive and encouraging message once a day.",
+    notifications_available_line2:
+      "I believe education is in the challenge rather than the reminders or the material, so courage and encouragement play a crucial role in finding success.",
+    notifications_status_enabled: "Notifications Enabled",
+    notifications_status_disabled: "Notifications Disabled",
+    notifications_unavailable_line1:
+      "You're using {browser} that does not allow me to set up device notifications 😔",
+    notifications_unavailable_line2:
+      "Installing the app grants you full access to features like being able to speak to write code or receive notifications meant to send positive and encouraging messages once per day.",
+    notifications_unavailable_line3:
+      "I believe education is in the challenge rather than the reminders or the material, so courage and encouragement play a crucial role in finding success.",
+    notifications_installation_directions:
+      "Installation directions can be found in menu.",
     celebrateMessage: ". You're doing a great job! 🙌 🥳",
     Progress: "Progress",
 
@@ -61,11 +84,11 @@ export let translation = {
       "But perhaps being aware of this and making a conscious effort to resist certain temptations may keep you in the loop to find success with the program. And perhaps the real challenge is actually a lot easier than we thought.",
     "onboarding.step1.challengeText3":
       "What do you say? Are you up for the challenge? Let's get passed 20 questions in a more manageable way!",
-    "onboarding.step1.buttonLabel": "Yes! Let's do it!",
+    "onboarding.step1.buttonLabel": "Let's do it!",
 
-    "onboarding.step2.dailyGoalsTitle": "Setup your daily goals",
+    "onboarding.step2.dailyGoalsTitle": "Set up your daily goals",
     "onboarding.step2.dailyGoalsDescription":
-      "We recommend doing three questions per day. By the end of the month, you'll get to the point where you can start putting together what you've learned to build and ship apps.",
+      "I recommend doing three questions per day. By the end of the month, you'll get to the point where you can start putting together what you've learned to build and ship apps.",
 
     "onboarding.step3.lastStepMessage":
       "Your account is almost ready. Just one last step to complete your setup!",
@@ -1428,6 +1451,28 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   es: {
+    "modal.selfPace.notificationsUnavailable":
+      "Las notificaciones no son compatibles con este navegador. Sigue las instrucciones de instalación en el menú para acceder a todas las funciones",
+    "modal.selfPace.notificationDescription":
+      "Envía una notificación positiva y alentadora cada día",
+    notificationsEnabled: "Notificaciones activadas",
+    notificationsDisabled: "Notificaciones desactivadas",
+    notificationsHeader: "Notificaciones",
+    gotItButton: "¡Entendido!",
+    notifications_available_line1:
+      "Las notificaciones me permiten enviar un mensaje positivo y alentador una vez al día.",
+    notifications_available_line2:
+      "Creo que la educación radica en el desafío más que en los recordatorios o el material, por lo que el coraje y el ánimo juegan un papel crucial en alcanzar el éxito.",
+    notifications_status_enabled: "Notificaciones activadas",
+    notifications_status_disabled: "Notificaciones desactivadas",
+    notifications_unavailable_line1:
+      "Estás usando {browser} que no permite configurar notificaciones en el dispositivo 😔",
+    notifications_unavailable_line2:
+      "Instalar la aplicación te otorga acceso completo a funciones como poder hablar para escribir código o recibir notificaciones diseñadas para enviar mensajes positivos y alentadores una vez al día.",
+    notifications_unavailable_line3:
+      "Creo que la educación radica en el desafío más que en los recordatorios o el material, por lo que el coraje y el ánimo juegan un papel crucial en alcanzar el éxito.",
+    notifications_installation_directions:
+      "Las instrucciones de instalación se pueden encontrar en el menú.",
     celebrateMessage: ". ¡Estás haciendo un gran trabajo! 🙌 🥳",
     "onboarding.chapter0.questions": "Preguntas 0-9",
     "onboarding.chapter1.questions": "Preguntas 10-30",

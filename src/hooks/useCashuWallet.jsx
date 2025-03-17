@@ -90,7 +90,6 @@ export const useCashuWallet = (isUnactivated, isModalOpen = null) => {
 
   useEffect(() => {
     if (isUnactivated && !localStorage.getItem("address") && balance < 1) {
-      window.alert("a bunch of ands");
     } else {
       const storedMintData = JSON.parse(localStorage.getItem("mint"));
 

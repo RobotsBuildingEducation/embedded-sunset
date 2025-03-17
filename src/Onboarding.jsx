@@ -13,25 +13,18 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
+  Switch,
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
-
-import { SunsetCanvas } from "./elements/SunsetCanvas";
+import { GiBullseye } from "react-icons/gi";
+import { TbBellHeart } from "react-icons/tb";
 
 import {
-  createUser,
-  getUserStep,
   incrementUserOnboardingStep,
   setOnboardingToDone,
-  updateUserData,
 } from "./utility/nosql";
 
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { database } from "./database/firebaseResources";
-
 import { translation } from "./utility/translation";
-
-import Confetti from "react-confetti";
 
 import RandomCharacter, {
   FadeInComponent,
@@ -41,21 +34,21 @@ import RandomCharacter, {
 
 import BitcoinOnboarding from "./components/BitcoinOnboarding/BitcoinOnboarding";
 import SelfPacedOnboarding from "./components/SettingsMenu/SelfPacedModal/SelfPacedOnboarding";
+import { database, messaging } from "./database/firebaseResources";
+import { isUnsupportedBrowser } from "./utility/browser";
+import { IoAppsOutline } from "react-icons/io5";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { getToken } from "firebase/messaging";
+import { RiPuzzle2Line } from "react-icons/ri";
+import { LuPuzzle } from "react-icons/lu";
+import { FaBitcoin } from "react-icons/fa";
 
-export const Onboarding = ({
-  isSignedIn,
-  setIsSignedIn,
-  userLanguage,
-  setUserLanguage,
-  generateNostrKeys,
-  auth,
-  view,
-  setView,
-}) => {
+export const Onboarding = ({ userLanguage }) => {
   const { step } = useParams();
   const [interval, setInterval] = useState(1440);
   const navigate = useNavigate();
   const toast = useToast();
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   // Function to launch the main app after onboarding
   const handleActuallyLaunchApp = () => {
@@ -68,6 +61,160 @@ export const Onboarding = ({
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [step]);
+
+  useEffect(() => {
+    console.log("RUNNING @!@@@@@@@@@@@@");
+    async function fetchNotificationStatus() {
+      const userDocRef = doc(
+        database,
+        "users",
+        localStorage.getItem("local_npub")
+      );
+      try {
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+          // If the user has an FCM token, consider notifications enabled.
+          if (userData.fcmToken) {
+            setNotificationsEnabled(true);
+          } else {
+            setNotificationsEnabled(false);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    }
+    fetchNotificationStatus();
+  }, []);
+
+  console.log("messaging", messaging);
+
+  const handleToggleNotifications = async () => {
+    const userDocRef = doc(
+      database,
+      "users",
+      localStorage.getItem("local_npub")
+    );
+
+    if (!notificationsEnabled) {
+      // Enable notifications: request permission and get token
+      const permission = await Notification.requestPermission();
+      setNotificationsEnabled(true);
+      if (permission === "granted") {
+        try {
+          const token = await getToken(messaging, {
+            vapidKey:
+              "BPLqRrVM3iUvh90ENNZJbJA3FoRkvMql6iWtC4MJaHzhyz9uRTEitwEax9ot05_b6TPoCVnD-tlQtbeZFn1Z_Bg",
+          });
+          console.log("FCM token retrieved:", token);
+          // Save the token in Firestore
+          updateDoc(userDocRef, { fcmToken: token });
+        } catch (error) {
+          console.error("Error retrieving FCM token:", error);
+          setNotificationsEnabled(false);
+        }
+      } else {
+        console.log("Notification permission not granted.");
+        setNotificationsEnabled(false);
+      }
+    } else {
+      // Disable notifications: delete the token and update Firestore
+      try {
+        const currentToken = await getToken(messaging, {
+          vapidKey:
+            "BPLqRrVM3iUvh90ENNZJbJA3FoRkvMql6iWtC4MJaHzhyz9uRTEitwEax9ot05_b6TPoCVnD-tlQtbeZFn1Z_Bg",
+        });
+        if (currentToken) {
+          const success = await deleteToken(messaging, currentToken);
+          if (success) {
+            console.log("FCM token deleted successfully.");
+          } else {
+            console.error("Failed to delete token.");
+          }
+        }
+        // Remove token from Firestore
+        await updateDoc(userDocRef, { fcmToken: null });
+        setNotificationsEnabled(false);
+      } catch (error) {
+        console.error("Error deleting FCM token:", error);
+      }
+    }
+  };
+
+  const renderNotifications = () => {
+    if (messaging) {
+      console.log("isUnsupportedBrowser", isUnsupportedBrowser());
+      // the app has been installed
+      return (
+        <VStack>
+          <Box textAlign="left" fontSize="md" mb={2} width="100%">
+            {translation[userLanguage].notifications_available_line1}
+          </Box>
+
+          <Box textAlign="left" fontSize="md" mb={4}>
+            {translation[userLanguage].notifications_available_line2}
+          </Box>
+
+          <Text fontSize="sm" mb={1}>
+            {notificationsEnabled
+              ? translation[userLanguage].notifications_status_enabled
+              : translation[userLanguage].notifications_status_disabled}
+          </Text>
+          <Switch
+            isChecked={notificationsEnabled}
+            onChange={() => {
+              if (messaging) {
+                handleToggleNotifications();
+              } else {
+              }
+            }}
+            size="lg"
+            colorScheme="green"
+          />
+
+          <br />
+        </VStack>
+      );
+    } else {
+      console.log("no feature available");
+      // can't use this
+      return (
+        <VStack textAlign="left" fontSize="md" mb={10}>
+          <Text mb={1}>
+            {translation[userLanguage].notifications_unavailable_line1.replace(
+              "{browser}",
+              isUnsupportedBrowser()
+            )}
+          </Text>
+
+          <Text mb={1}>
+            {translation[userLanguage].notifications_unavailable_line2}
+          </Text>
+
+          <Text mb={1}>
+            {translation[userLanguage].notifications_unavailable_line3}
+          </Text>
+
+          <Text width="100%" mb={3}>
+            <b>
+              {translation[userLanguage].notifications_installation_directions}
+            </b>
+          </Text>
+          <Text fontSize="sm" mb={1}>
+            {translation[userLanguage].notificationsDisabled}
+          </Text>
+          <Switch
+            isChecked={notificationsEnabled}
+            onChange={handleToggleNotifications}
+            size="lg"
+            colorScheme="green"
+            disabled={true}
+          />
+        </VStack>
+      );
+    }
+  };
 
   return (
     <Box display="flex" justifyContent="center" mt={16}>
@@ -97,7 +244,14 @@ export const Onboarding = ({
                 boxShadow="0.5px 0.5px 1px 0px black"
                 marginTop="12px"
               >
-                <Text mb={2}>
+                <Text
+                  mb={2}
+                  display={"flex"}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                >
+                  <LuPuzzle color="#53bd91" />
+                  &nbsp;
                   {translation[userLanguage]["onboarding.step1.challengeTitle"]}
                 </Text>
                 <div
@@ -341,6 +495,20 @@ export const Onboarding = ({
                     </AccordionPanel>
                   </AccordionItem>
                 </Accordion>
+                <br />
+                <br />
+                <Button
+                  onClick={() => {
+                    incrementUserOnboardingStep(
+                      localStorage.getItem("local_npub")
+                    );
+                    navigate("/onboarding/2");
+                  }}
+                  boxShadow="0.5px 0.5px 1px 0px black"
+                  mb={18}
+                >
+                  {translation[userLanguage]["onboarding.step1.buttonLabel"]}
+                </Button>
               </Box>
             </RiseUpAnimation>
 
@@ -363,17 +531,6 @@ export const Onboarding = ({
                 </div>
               </FadeInComponent>
             </div>
-
-            <Button
-              onClick={() => {
-                incrementUserOnboardingStep(localStorage.getItem("local_npub"));
-                navigate("/onboarding/2");
-              }}
-              boxShadow="0.5px 0.5px 1px 0px black"
-              mb={18}
-            >
-              {translation[userLanguage]["onboarding.step1.buttonLabel"]}
-            </Button>
           </VStack>
         )}
 
@@ -389,13 +546,21 @@ export const Onboarding = ({
                 backgroundColor="white"
                 boxShadow="0.5px 0.5px 1px 0px black"
               >
-                <Text mb={2}>
+                <Text
+                  mb={2}
+                  display="flex"
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                >
+                  <GiBullseye color="#fa6b83" />
+                  &nbsp;
                   {
                     translation[userLanguage][
                       "onboarding.step2.dailyGoalsTitle"
                     ]
                   }
                 </Text>
+
                 <Text fontSize="sm" textAlign="left">
                   {
                     translation[userLanguage][
@@ -430,8 +595,62 @@ export const Onboarding = ({
           </VStack>
         )}
 
-        {/* Step 3: Final Step with Bitcoin Onboarding */}
         {step === "3" && (
+          <VStack spacing={4} textAlign="left">
+            <RiseUpAnimation>
+              <Box
+                borderRadius="24px"
+                borderBottomRightRadius="0px"
+                p={4}
+                textAlign="center"
+                backgroundColor="white"
+                boxShadow="0.5px 0.5px 1px 0px black"
+                marginTop="12px"
+              >
+                <Text
+                  mb={2}
+                  display="flex"
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                >
+                  <TbBellHeart color="#537dbd" />
+                  &nbsp;
+                  {translation[userLanguage].notificationsHeader}
+                </Text>
+                {renderNotifications()}
+                <Button
+                  onClick={() => {
+                    incrementUserOnboardingStep(
+                      localStorage.getItem("local_npub")
+                    );
+                    navigate("/onboarding/4");
+                  }}
+                  boxShadow="0.5px 0.5px 1px 0px black"
+                  mb={18}
+                >
+                  {translation[userLanguage].gotItButton}
+                </Button>
+              </Box>
+            </RiseUpAnimation>
+            <div style={{ width: "100%" }}>
+              <RiseUpAnimation>
+                <div
+                  style={{
+                    textAlign: "center",
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    marginTop: "-36px",
+                    width: "100%",
+                  }}
+                >
+                  <RandomCharacter />
+                </div>
+              </RiseUpAnimation>
+            </div>
+          </VStack>
+        )}
+        {/* Step 3: Final Step with Bitcoin Onboarding */}
+        {step === "4" && (
           <VStack spacing={4}>
             <PanRightComponent>
               <Text
@@ -445,7 +664,13 @@ export const Onboarding = ({
                 backgroundColor="white"
                 boxShadow="0.5px 0.5px 1px 0px black"
               >
-                <Text>
+                <Text
+                  display="flex"
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                >
+                  <FaBitcoin color="#f7931a" />
+                  &nbsp;
                   {translation[userLanguage]["createAccount.lastStepMessage"]}
                 </Text>
                 <BitcoinOnboarding

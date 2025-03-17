@@ -15,9 +15,20 @@ import {
   SliderThumb,
   Progress,
   CircularProgress,
+  Box,
+  Switch,
+  Spinner,
 } from "@chakra-ui/react";
 import { getUserData, updateUserData } from "../../../utility/nosql";
 import { translation } from "../../../utility/translation";
+import {
+  appCheck,
+  database,
+  messaging,
+} from "../../../database/firebaseResources";
+import { deleteToken, getToken } from "firebase/messaging";
+import { doc, updateDoc } from "firebase/firestore";
+import { getToken as getAppCheckToken } from "firebase/app-check";
 
 // CountdownTimer now supports days along with hours:minutes:seconds and shows a progress bar.
 const CountdownTimer = ({ targetTime, initialTime, label, userLanguage }) => {
@@ -77,6 +88,9 @@ const SelfPacedModal = ({
   userId,
   userLanguage,
 }) => {
+  const [isDataLoading, setIsDataLoading] = useState(true);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+
   const [goalCount, setGoalCount] = useState(0);
   const [inputValue, setInputValue] = useState(interval);
   const [streak, setStreak] = useState(0);
@@ -106,10 +120,14 @@ const SelfPacedModal = ({
       if (userData.nextGoalExpiration) {
         setNextGoalExpiration(new Date(userData.nextGoalExpiration));
       }
+
+      setNotificationsEnabled(!!userData.fcmToken);
     };
 
     if (userId || isOpen) {
-      fetchUserData();
+      fetchUserData().then(() => {
+        setIsDataLoading(false);
+      });
     }
   }, [userId, isOpen, setInterval]);
 
@@ -183,6 +201,96 @@ const SelfPacedModal = ({
     return "gray.500";
   };
 
+  const handleToggleNotifications = async () => {
+    const userDocRef = doc(database, "users", userId);
+
+    if (!notificationsEnabled) {
+      // Enable notifications: request permission and get token
+
+      const permission = await Notification.requestPermission();
+
+      if (permission === "granted") {
+        try {
+          setNotificationsEnabled(true);
+          const token = await getToken(messaging, {
+            vapidKey:
+              "BPLqRrVM3iUvh90ENNZJbJA3FoRkvMql6iWtC4MJaHzhyz9uRTEitwEax9ot05_b6TPoCVnD-tlQtbeZFn1Z_Bg",
+          });
+          console.log("FCM token retrieved:", token);
+          // Save the token in Firestore
+          await updateDoc(userDocRef, { fcmToken: token });
+        } catch (error) {
+          console.error("Error retrieving FCM token:", error);
+          setNotificationsEnabled(false);
+        }
+      } else {
+        console.log("Notification permission not granted.");
+        setNotificationsEnabled(false);
+      }
+    } else {
+      // Disable notifications: delete the token and update Firestore
+      try {
+        const currentToken = await getToken(messaging, {
+          vapidKey:
+            "BPLqRrVM3iUvh90ENNZJbJA3FoRkvMql6iWtC4MJaHzhyz9uRTEitwEax9ot05_b6TPoCVnD-tlQtbeZFn1Z_Bg",
+        });
+        if (currentToken) {
+          const success = await deleteToken(messaging, currentToken);
+          if (success) {
+            console.log("FCM token deleted successfully.");
+          } else {
+            console.error("Failed to delete token.");
+          }
+        }
+        // Remove token from Firestore
+        await updateDoc(userDocRef, { fcmToken: null });
+        setNotificationsEnabled(false);
+      } catch (error) {
+        console.error("Error deleting FCM token:", error);
+      }
+    }
+  };
+
+  const handlePushNotification = async () => {
+    try {
+      // Retrieve the device FCM token (ensure notifications are enabled)
+      const token = await getToken(messaging, {
+        vapidKey:
+          "BPLqRrVM3iUvh90ENNZJbJA3FoRkvMql6iWtC4MJaHzhyz9uRTEitwEax9ot05_b6TPoCVnD-tlQtbeZFn1Z_Bg",
+      });
+      if (!token) {
+        console.error(
+          "No FCM token available. Make sure notifications are enabled."
+        );
+        return;
+      }
+      console.log("FCM token:", token);
+      const appCheckTokenResult = await getAppCheckToken(appCheck);
+      const appCheckToken = appCheckTokenResult.token;
+
+      // Call your backend endpoint to schedule the push notification
+      const response = await fetch(
+        "https://us-central1-test-data-895e2.cloudfunctions.net/app/sendTestPush",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Optionally include the App Check token if required
+            "X-Firebase-AppCheck": appCheckToken,
+          },
+          body: JSON.stringify({ token }),
+        }
+      );
+
+      const data = await response.json();
+      console.log("Server response:", data);
+    } catch (error) {
+      console.error("Error scheduling push notification:", error);
+    }
+  };
+
+  console.log("messaging from modal", messaging);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
@@ -192,102 +300,150 @@ const SelfPacedModal = ({
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Text fontSize="xs">
-            {translation[userLanguage]["modal.selfPace.instruction"]}
-          </Text>
-
-          <Slider
-            colorScheme="blackAlpha"
-            aria-label="slider-days"
-            value={interval}
-            min={1440}
-            max={4320}
-            step={1440}
-            onChange={handleSliderChange}
-          >
-            <SliderTrack>
-              <SliderFilledTrack />
-            </SliderTrack>
-            <SliderThumb />
-          </Slider>
-          <Text mt={2} color={getMarkColor(interval)}>
-            <b>{getMarkLabel(interval)}</b>
-          </Text>
-          {/* Render the streak timer countdown only if endTime is defined */}
-          {endTime && (
-            <Text mt={2} fontSize="sm">
-              <CountdownTimer
-                userLanguage={userLanguage}
-                targetTime={endTime}
-                initialTime={startTime}
-                label={translation[userLanguage]["countdown.streakTimeLeft"]}
-              />
-            </Text>
-          )}
-
-          <br />
-          <br />
-          <Text fontSize="xs">
-            {" "}
-            {translation[userLanguage]["modal.dailyGoal.instruction"]}
-          </Text>
-
-          <Slider
-            colorScheme="blackAlpha"
-            aria-label="slider-daily-goals"
-            value={dailyGoals}
-            min={1}
-            max={20}
-            step={1}
-            onChange={setDailyGoals}
-            mt={2}
-          >
-            <SliderTrack>
-              <SliderFilledTrack />
-            </SliderTrack>
-            <SliderThumb />
-          </Slider>
-          <Text mt={2} fontSize="sm" color={"green.500"} fontWeight="bold">
-            {translation[userLanguage]["modal.dailyGoal.dailyGoalLabel"]}{" "}
-            {dailyGoals}
-          </Text>
-          {/* Render the daily progress tracking */}
-
-          {/* Render the daily goals timer countdown only if nextGoalExpiration is defined */}
-          {nextGoalExpiration && (
-            <Text mt={2} fontSize="sm">
-              <CountdownTimer
-                userLanguage={userLanguage}
-                label={
-                  translation[userLanguage]["countdown.dailyGoalsTimeLeft"]
+          <>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              textAlign="left"
+            >
+              <Text width="100%" mb={3}>
+                {
+                  translation[userLanguage][
+                    "modal.selfPace.notificationDescription"
+                  ]
                 }
-                capIsRound
-                targetTime={nextGoalExpiration}
-                initialTime={new Date(nextGoalExpiration.getTime() - 86400000)}
-              />
+              </Text>
+
+              <Text>
+                {!messaging
+                  ? translation[userLanguage][
+                      "modal.selfPace.notificationsUnavailable"
+                    ]
+                  : null}
+              </Text>
+              <Text fontSize="sm" mb={2}>
+                {notificationsEnabled
+                  ? translation[userLanguage].notificationsEnabled
+                  : translation[userLanguage].notificationsDisabled}
+              </Text>
+
+              {isDataLoading ? (
+                <Spinner />
+              ) : (
+                <Switch
+                  isChecked={notificationsEnabled}
+                  onChange={handleToggleNotifications}
+                  size="lg"
+                  colorScheme="green"
+                  disabled={!messaging}
+                />
+              )}
+            </Box>{" "}
+            <br />
+            {localStorage.getItem("local_nsec") ===
+            "nsec1scxshk3tw8svuqmt676mnjqn4zsuskgmjzgy9j5kcc94jdj072jsud8gnz" ? (
+              <>
+                <Button onClick={handlePushNotification} colorScheme="blue">
+                  Demo phone notification
+                </Button>
+                <br />
+                <br />
+              </>
+            ) : null}
+            <Text fontSize="xs">
+              {translation[userLanguage]["modal.selfPace.instruction"]}
             </Text>
-          )}
-
-          <br />
-
-          <Progress
-            value={(dailyProgress / dailyGoals) * 100}
-            size="sm"
-            mt={2}
-            borderRadius="md"
-            colorScheme="green"
-          />
-          <Text mt={1} fontSize="sm">
-            {/* {translation[userLanguage]["Progress"]}:  */}
-            {dailyProgress}/{dailyGoals}{" "}
-            {translation[userLanguage]["questions"]}{" "}
-            {translation[userLanguage]["completed"]}
-          </Text>
-          {/* <Text mt={1} fontSize="sm">
+            <Slider
+              colorScheme="blackAlpha"
+              aria-label="slider-days"
+              value={interval}
+              min={1440}
+              max={4320}
+              step={1440}
+              onChange={handleSliderChange}
+            >
+              <SliderTrack>
+                <SliderFilledTrack />
+              </SliderTrack>
+              <SliderThumb />
+            </Slider>
+            <Text mt={2} color={getMarkColor(interval)}>
+              <b>{getMarkLabel(interval)}</b>
+            </Text>
+            {/* Render the streak timer countdown only if endTime is defined */}
+            {endTime && (
+              <Text mt={2} fontSize="sm">
+                <CountdownTimer
+                  userLanguage={userLanguage}
+                  targetTime={endTime}
+                  initialTime={startTime}
+                  label={translation[userLanguage]["countdown.streakTimeLeft"]}
+                />
+              </Text>
+            )}
+            <br />
+            <br />
+            <Text fontSize="xs">
+              {" "}
+              {translation[userLanguage]["modal.dailyGoal.instruction"]}
+            </Text>
+            <Slider
+              colorScheme="blackAlpha"
+              aria-label="slider-daily-goals"
+              value={dailyGoals}
+              min={1}
+              max={20}
+              step={1}
+              onChange={setDailyGoals}
+              mt={2}
+            >
+              <SliderTrack>
+                <SliderFilledTrack />
+              </SliderTrack>
+              <SliderThumb />
+            </Slider>
+            <Text mt={2} fontSize="sm" color={"green.500"} fontWeight="bold">
+              {translation[userLanguage]["modal.dailyGoal.dailyGoalLabel"]}{" "}
+              {dailyGoals}
+            </Text>
+            {/* Render the daily progress tracking */}
+            {/* Render the daily goals timer countdown only if nextGoalExpiration is defined */}
+            {nextGoalExpiration && (
+              <Text mt={2} fontSize="sm">
+                <CountdownTimer
+                  userLanguage={userLanguage}
+                  label={
+                    translation[userLanguage]["countdown.dailyGoalsTimeLeft"]
+                  }
+                  capIsRound
+                  targetTime={nextGoalExpiration}
+                  initialTime={
+                    new Date(nextGoalExpiration.getTime() - 86400000)
+                  }
+                />
+              </Text>
+            )}
+            <br />
+            <Progress
+              value={(dailyProgress / dailyGoals) * 100}
+              size="sm"
+              mt={2}
+              borderRadius="md"
+              colorScheme="green"
+            />
+            <Text mt={1} fontSize="sm">
+              {/* {translation[userLanguage]["Progress"]}:  */}
+              {dailyProgress}/{dailyGoals}{" "}
+              {translation[userLanguage]["questions"]}{" "}
+              {translation[userLanguage]["completed"]}
+            </Text>
+            {/* <Text mt={1} fontSize="sm">
             {goalCount} {translation[userLanguage]["goal"]}
             {goalCount > 1 || goalCount === 0 ? "s" : ""}{" "}
             {translation[userLanguage]["completed"]}!
           </Text> */}
+          </>
         </ModalBody>
         <ModalFooter>
           <Button

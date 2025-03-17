@@ -4,6 +4,7 @@ import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 import { getVertexAI, getGenerativeModel } from "@firebase/vertexai";
+import { getMessaging, isSupported } from "firebase/messaging";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -35,7 +36,23 @@ export const appCheck = initializeAppCheck(app, {
 });
 const database = getFirestore(app);
 const analytics = getAnalytics(app);
+let messaging = null;
+// getMessaging(app);
+
+async function initMessaging() {
+  if (await isSupported()) {
+    messaging = getMessaging(app);
+    // Proceed with messaging-related logic
+    console.log("messaging...", messaging);
+  } else {
+    console.warn("Firebase Messaging is not supported in this environment.");
+    // Optionally, set up a fallback or skip messaging entirely
+  }
+}
+
+initMessaging();
 const vertexAI = getVertexAI(app);
+
 const model = getGenerativeModel(vertexAI, {
   // model: "gemini-1.5-flash",
   model: "gemini-2.0-flash-001",
@@ -46,4 +63,5 @@ const simplemodel = getGenerativeModel(vertexAI, {
   model: "gemini-2.0-flash-001",
 });
 
-export { database, analytics, model, simplemodel };
+console.log("messaging", messaging);
+export { database, analytics, model, simplemodel, messaging };
