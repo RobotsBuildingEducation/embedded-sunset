@@ -39,7 +39,7 @@ import { translation } from "../../../utility/translation";
 import { useAlertStore } from "../../../useAlertStore";
 import { usePasscodeModalStore } from "../../../usePasscodeModalStore";
 import { PasscodeModal } from "../../PasscodeModal/PasscodeModal";
-import { SunsetCanvas } from "../../../elements/SunsetCanvas";
+import { CloudCanvas, SunsetCanvas } from "../../../elements/SunsetCanvas";
 import { useSimpleGeminiChat } from "../../../hooks/useGeminiChat";
 import LiveReactEditorModal from "../../LiveCodeEditor/LiveCodeEditor";
 
@@ -439,7 +439,7 @@ export const KnowledgeLedgerModal = ({
                   <>
                     <br />
                     <br />
-                    <SunsetCanvas isLoader={true} regulateWidth={false} />
+                    <CloudCanvas isLoader={true} regulateWidth={false} />
                   </>
                 ) : null}
 

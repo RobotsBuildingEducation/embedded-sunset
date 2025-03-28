@@ -26,34 +26,41 @@ export const About = ({ userLanguage, handleToggle }) => {
 
   return (
     <Box p={4}>
-      <Box display="flex" justifyContent={"left"} position={"fixed"} top="0">
-        <Button
-          boxShadow={"0.5px 0.5px 1px 0px black"}
-          onMouseDown={() => navigate(-1)}
-          m={6}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              navigate(-1);
-            }
-          }}
-        >
-          <Box
-            transform="rotate(-180deg)"
-            display={"flex"}
-            alignItems={"center"}
-          >
-            <IoMdReturnRight />{" "}
-          </Box>
-          &nbsp;
-          {/* {translation[userLanguage]["button.back"] || "Go back"} */}
-        </Button>
-      </Box>
       <FormControl
         display="flex"
         alignItems="center"
         style={{ justifyContent: "center" }}
         m={2}
       >
+        <Box
+          display="flex"
+          justifyContent={"left"}
+          position={"fixed"}
+          top="0"
+          left="0"
+          marginTop="-8px"
+        >
+          <Button
+            boxShadow={"0.5px 0.5px 1px 0px black"}
+            onMouseDown={() => navigate(-1)}
+            m={6}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                navigate(-1);
+              }
+            }}
+          >
+            <Box
+              transform="rotate(-180deg)"
+              display={"flex"}
+              alignItems={"center"}
+            >
+              <IoMdReturnRight />{" "}
+            </Box>
+            &nbsp;
+            {/* {translation[userLanguage]["button.back"] || "Go back"} */}
+          </Button>
+        </Box>
         <FormLabel htmlFor="language-toggle" mb="0">
           {userLanguage === "en" ? "English" : "Español"}
         </FormLabel>
@@ -86,6 +93,139 @@ export const About = ({ userLanguage, handleToggle }) => {
                 {translation[userLanguage]["about.about"]}
               </Text>
             </Content>
+          </AccordionPanel>
+        </AccordionItem>
+        <AccordionItem>
+          <AccordionButton padding={6}>
+            <Box flex="1" textAlign="left">
+              FAQs
+            </Box>
+            <AccordionIcon />
+          </AccordionButton>
+          <AccordionPanel pb={4}>
+            <Text
+              textAlign="left"
+              fontSize="sm"
+              style={{ marginBottom: "20px" }}
+            >
+              <Text fontWeight="bold">
+                {translation[userLanguage]["faq_1_question"]}
+              </Text>
+              <p>
+                {translation[userLanguage]["faq_1_item_1"]}
+                <br />
+                <br />
+                {translation[userLanguage]["faq_1_item_2"]}
+                <br />
+                <br />
+                {translation[userLanguage]["faq_1_item_3"]}
+              </p>
+            </Text>
+            <Text
+              textAlign="left"
+              fontSize="sm"
+              style={{ marginBottom: "20px" }}
+            >
+              <Text fontWeight="bold">
+                {translation[userLanguage]["faq_2_question"]}
+              </Text>
+              <p>
+                {translation[userLanguage]["faq_2_item_1"]}
+                <br />
+                <br />
+                {translation[userLanguage]["faq_2_item_2"]}
+                <br />
+                <br />
+                {translation[userLanguage]["faq_2_item_3"]}
+              </p>
+            </Text>
+            <Text
+              textAlign="left"
+              fontSize="sm"
+              style={{ marginBottom: "20px" }}
+            >
+              <Text fontWeight="bold">
+                {translation[userLanguage]["faq_3_question"]}
+              </Text>
+              <p>
+                {translation[userLanguage]["faq_3_item_1"]}
+                <br />
+                <br />
+                {translation[userLanguage]["faq_3_item_2"]}
+                <br />
+                <br />
+                {translation[userLanguage]["faq_3_item_3"]}
+                <br />
+                <br />
+                {translation[userLanguage]["faq_3_item_4"]}
+              </p>
+            </Text>
+            <Text
+              textAlign="left"
+              fontSize="sm"
+              style={{ marginBottom: "20px" }}
+            >
+              <Text fontWeight="bold">
+                {translation[userLanguage]["faq_4_question"]}
+              </Text>
+              <p>
+                {translation[userLanguage]["faq_4_item_1"]}
+                <br />
+                <br />
+                {translation[userLanguage]["faq_4_item_2"]}
+                <br />
+                <br />
+                {translation[userLanguage]["faq_4_item_3"]}
+              </p>
+            </Text>
+            <Text
+              textAlign="left"
+              fontSize="sm"
+              style={{ marginBottom: "20px" }}
+            >
+              <Text fontWeight="bold">
+                {translation[userLanguage]["faq_5_question"]}
+              </Text>
+              <p>
+                {translation[userLanguage]["faq_5_item_1"]}
+                <br />
+                <br />
+                {translation[userLanguage]["faq_5_item_2"]}
+                <br />
+                <br />
+                {translation[userLanguage]["faq_5_item_3"]}
+              </p>
+            </Text>
+            <Text
+              textAlign="left"
+              fontSize="sm"
+              style={{ marginBottom: "20px" }}
+            >
+              <Text fontWeight="bold">
+                {translation[userLanguage]["faq_6_question"]}
+              </Text>
+              <p>
+                {translation[userLanguage]["faq_6_item_1"]}
+                <br />
+                <br />
+                {translation[userLanguage]["faq_6_item_2"]}
+              </p>
+            </Text>
+            <Text
+              textAlign="left"
+              fontSize="sm"
+              style={{ marginBottom: "20px" }}
+            >
+              <Text fontWeight="bold">
+                {translation[userLanguage]["faq_7_question"]}
+              </Text>
+              <p>
+                {translation[userLanguage]["faq_7_item_1"]}
+                <br />
+                <br />
+                {translation[userLanguage]["faq_7_item_2"]}
+              </p>
+            </Text>
           </AccordionPanel>
         </AccordionItem>
       </Accordion>

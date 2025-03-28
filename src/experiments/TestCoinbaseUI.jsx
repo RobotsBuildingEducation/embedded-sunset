@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { useSharedNostr } from "../hooks/useNOSTR";
 import { steps } from "../utility/content";
-import { SunsetCanvas } from "../elements/SunsetCanvas";
+import { CloudCanvas, SunsetCanvas } from "../elements/SunsetCanvas";
 import { translation } from "../utility/translation";
 import { doc, updateDoc } from "firebase/firestore";
 import { database } from "../database/firebaseResources";
@@ -167,7 +167,7 @@ export const TestFeed = ({ userLanguage, allowPosts, setAllowPosts }) => {
     });
   };
 
-  if (localLoad) return <SunsetCanvas />;
+  if (localLoad) return <CloudCanvas />;
 
   return (
     <div>

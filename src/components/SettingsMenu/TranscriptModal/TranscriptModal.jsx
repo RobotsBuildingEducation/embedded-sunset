@@ -23,7 +23,7 @@ import ReactConfetti from "react-confetti";
 import { transcript, videoTranscript } from "../../../utility/transcript";
 
 import { useSharedNostr } from "../../../hooks/useNOSTR";
-import { SunsetCanvas } from "../../../elements/SunsetCanvas";
+import { CloudCanvas, SunsetCanvas } from "../../../elements/SunsetCanvas";
 import { translation } from "../../../utility/translation";
 import { CopyButtonIcon } from "../../../elements/CopyButtonIcon";
 
@@ -223,7 +223,7 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
           {areBadgesLoading ? (
             <div style={{ width: "fit-content" }}>
               <br />
-              <SunsetCanvas /> {translation[userLanguage]["loading"]}
+              <CloudCanvas /> {translation[userLanguage]["loading"]}
             </div>
           ) : badges.length < 1 ? (
             <div>{translation[userLanguage]["noTranscriptFound"]}</div>

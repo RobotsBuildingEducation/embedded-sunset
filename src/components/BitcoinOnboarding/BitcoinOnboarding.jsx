@@ -83,11 +83,8 @@ const BitcoinOnboarding = ({ userLanguage }) => {
   // }, []);
   // Helper: sum up wallet balance
 
-  console.log("wallet balance..x...", walletBalance);
   const totalBalance =
     (walletBalance || [])?.reduce((sum, b) => sum + (b.amount || 0), 0) || null;
-
-  console.log("TOTAL BALANCE", totalBalance);
 
   useEffect(() => {
     // If we have a deposit in progress and the user pays it, after proofs update
@@ -112,8 +109,6 @@ const BitcoinOnboarding = ({ userLanguage }) => {
         localStorage.getItem("local_npub")
       ); // Replace "users" with your Firestore collection
       await updateDoc(userDocRef, { identity: value });
-
-      console.log("Identity saved successfully:", value);
     } catch (error) {
       console.error("Error saving identity to Firestore:", error);
     } finally {
@@ -418,7 +413,6 @@ const BitcoinOnboarding = ({ userLanguage }) => {
       );
     }
 
-    console.log("cashuWalletcashuWalletcashuWallet", cashuWallet);
     // We have a wallet now
     if (totalBalance > 0) {
       // Step 4: Balance > 0, show Identity Card

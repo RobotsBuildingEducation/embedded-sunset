@@ -83,8 +83,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       // Sign and publish the metadata event
       await metadataEvent.sign(signer);
       await metadataEvent.publish();
-
-      console.log("Profile picture updated successfully.");
     } catch (err) {
       console.error("Error setting profile picture on Nostr:", err);
     }
@@ -119,10 +117,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     if (!localStorage.getItem("local_nsec")) {
       //Creating profile... 2/4
       setLoadingMessage("createAccount.isCreatingProfile");
-      console.log("USER DISPLAY", userDisplayName);
-      console.log("USER profileAbout", profileAbout);
-      console.log(publicKey);
-      console.log(encodedNsec);
+
       await postNostrContent(
         JSON.stringify({
           name: userDisplayName,
@@ -335,12 +330,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       // Your public key as the issuer
     });
 
-    console.log(
-      "my pubkey",
-      getHexNPub(
-        "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt"
-      )
-    );
     // Sign the badge event
     try {
       await badgeAwardEvent.sign(signer);
@@ -348,18 +337,15 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       console.error("Error signing badge event:", error);
     }
 
-    console.log("Badge award event", badgeAwardEvent);
     // Publish the badge event
     try {
       await badgeAwardEvent.publish();
-      console.log("Badge awarded successfully to:", awardeeNpub);
     } catch (error) {
       console.error("Error publishing badge event:", error);
     }
   };
 
   const getAddressPointer = (naddr) => {
-    console.log("naddr", naddr);
     return nip19.decode(naddr).data;
   };
 
@@ -373,7 +359,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
 
       // const addressPointer = await getAddressPointer(addy);
       let addressPointer = addy.split(":");
-      console.log("addressPointer", addressPointer);
 
       // Create a filter for badge events (kind 30008) for the given user
       const filter = {
@@ -419,7 +404,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
 
       const { ndkInstance } = connection;
       const hexNpub = getHexNPub(npub); // Convert npub to hex
-      console.log("hx", hexNpub);
 
       // Create a filter for badge award events (kind 30009) where the user is the recipient
       const filter = {
@@ -453,7 +437,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
           )
         ),
       ];
-      console.log("badge data", uniqueNAddresses);
 
       let badgeData = uniqueNAddresses.map((naddress) =>
         getBadgeData(naddress)
@@ -659,7 +642,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
   const getLastNotesByNpub = async (
     npub = localStorage.getItem("local_npub")
   ) => {
-    console.log("running npub operation");
     try {
       const connection = await connectToNostr();
       if (!connection) return [];
@@ -692,7 +674,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       await new Promise((resolve) => subscription.on("eose", resolve));
 
       // Return the retrieved notes
-      console.log("final notes", notes);
+
       return notes;
     } catch (error) {
       console.error("Error retrieving notes:", error);

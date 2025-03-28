@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { useChatCompletion } from "../../hooks/useChatCompletion";
 import { VoiceInput } from "../../App";
-import { SunsetCanvas } from "../../elements/SunsetCanvas";
+import { CloudCanvas, SunsetCanvas } from "../../elements/SunsetCanvas";
 import Markdown from "react-markdown";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import "./ConversationReview.css";
@@ -293,7 +293,7 @@ const ConversationReview = ({
                   </Box>
                 </Flex>
               ) : (
-                <SunsetCanvas isLoader={true} regulateWidth={false} />
+                <CloudCanvas isLoader={true} regulateWidth={false} />
               )}
             </React.Fragment>
           ))}

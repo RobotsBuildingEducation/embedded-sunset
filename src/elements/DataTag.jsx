@@ -9,7 +9,6 @@ export const DataTags = ({
   grade = null,
   userLanguage,
 }) => {
-  console.log("grade typeof", typeof grade);
   return (
     <>
       {isRox ? (

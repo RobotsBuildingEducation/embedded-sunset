@@ -2,6 +2,52 @@ import { DataTags } from "../elements/DataTag";
 
 export let translation = {
   en: {
+    faq_1_question: "What about AI?",
+    faq_1_item_1:
+      "If AI can program themselves, it's likely that all work as we know it will fundamentally change. But for now, it's going to change the supply and demand of things in a relevant way.",
+    faq_1_item_2:
+      "In my view, AI makes software engineering more realistic for more people. Before AI, it was clear that there was an unmanageable amount of work being generated in a way where a software engineer would create more work than they could complete. So I personally find it more enjoyable to write code with AI than without it and I believe that it makes more things like entrepreneurship more accessible. Things can actually get done now.",
+    faq_1_item_3:
+      "Thinking critically, AI is mostly concerned with making good decisions. So roles that depend more on decisions will be impacted. In my view, that's more executive roles, thus the sweetspot these days is being a junior or senior engineer so you could start to build lean businesses on your own. So that's what we try to do here - we arm you with new skills and hope that it influences your decisions or opportunities in a good way.",
+    faq_2_question: "What kind of computer do I need?",
+    faq_2_item_1:
+      "When it comes to learning, I recommend paper and pencil. RO.B.E is not a software intensive program. It can be used on your mobile device or any laptop. I like it on mobile phones.",
+    faq_2_item_2:
+      "If you're wondering what kind of computer you need to code, I recommend a macbook pro. The next best answer is whatever you can afford. People usually overthink this and the truth is you don't need anything fancy. There's no wrong answer.",
+    faq_2_item_3:
+      "Macbook pros are good general solution. If you need something specialized and you're certain about your investment, then in a similar spirit, invest in the best computing power you can get.",
+    faq_3_question: "Is coding hard? Do I need to be good at math?",
+    faq_3_item_1: "This is a loaded question.",
+    faq_3_item_2:
+      "No. You don't have to be good at math. And programming isn't hard, it's challenging. Education IS overcoming the challenge. You should recognize that you can accomplish the things you want to accomplish.",
+    faq_3_item_3:
+      "Coding is about organizing information. So if you can write instructions, you can write code.",
+    faq_3_item_4:
+      "So maybe you ask that question because there's a part of you that wishes someone would tell you that it can be made easy. People can make it easier. It's going to be a challenge, but that's part of the fun too.",
+    faq_4_question: "What programming language should I pick?",
+    faq_4_item_1:
+      "So if you've done any research already, you've probably come across Python and Javascript. They're very popular for a reason, but before explaining why, I strongly recommend to think about what kind of machines you want to work on and what kind of problems you want to solve.",
+    faq_4_item_2:
+      "The reason Javascript and Python are so widespread is because of the internet. They're mostly used to do a lot of the service work of the internet.",
+    faq_4_item_3:
+      "But what if you need an iOS app, an android one, a video game, or some kind of robot? Ultimately you'll find that when you learn one language, you kinda learn them all. There's a reason for that, but ultimately it's like worrying whether you should learn how to use a hammer or drill when building a home - you're likely going to use many languages eventually and it'll all feel pretty familiar. There's no wrong answer.",
+    faq_5_question: "Is a bootcamp worth it?",
+    faq_5_item_1:
+      "As usual, the best answer is going to be 'it depends'. What you really pay a lot of money for is an employment network, and as you've seen in recent years, that kind of business can experience hard times.",
+    faq_5_item_2:
+      "I don't recommend going to a bootcamp as a shortcut into the industry. A bootcamp is no different than being self-taught or going to college. You will still need to learn relevant skills, find early-stage employment, create business-savvy projects and pass technical interviews.",
+    faq_5_item_3:
+      "How you approach each will be wildly different. A self-taught developer in San Francisco is different than a computer science student in Nebraska. A dropout from Stanford will have a different environment than someone at a community college. The key thing here is that your environment plays an important role in your opportunities.",
+    faq_6_question: "What is coding and what can I do with it?",
+    faq_6_item_1:
+      "Coding is a way to organize information. So it exists everywhere. Think of it this way. Coding is written by software engineers to organize information. Software engineers study computer science. Computer science is the science of computation. Computation is problem solving. So coding expresses the science of solving problems.",
+    faq_6_item_2:
+      "That means you can do just about anything. You can code for media, medicine research, sports, robots, energy systems, financial systems or just about anything you can think of. It's certainly a preferred game for entrepreneurs, but many people also take the well-balanced life approach with it too. So sometimes people code because they want a more relaxed life too.",
+    faq_7_question: "Am I too old to learn?",
+    faq_7_item_1:
+      "No. Simply put, your brain doesn't work that way. You may experience some 'rustyness' if you haven't done deep learning of a subject in some time, but that's not too different than a college student realizing that they need to learn how to learn. Maybe you already know how to learn or you understand what works for you. Now suddenly you have an advantage.",
+    faq_7_item_2:
+      "As one of my directors say, slow is smooth and smooth is fast. This isn't to create any sense of superiority or inferiority - you're just in a competitive market and it's usually better to take the productive outlook.",
     "modal.selfPace.notificationsUnavailable":
       "Notifications aren't supported on this browser. Follow installation instructions in the menu to access all features",
     "modal.selfPace.notificationDescription":
@@ -1451,6 +1497,53 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   es: {
+    faq_1_question: "¿Qué pasa con la IA?",
+    faq_1_item_1:
+      "Si la IA puede programarse a sí misma, es probable que todo el trabajo tal como lo conocemos cambie fundamentalmente. Pero por ahora, va a cambiar la oferta y la demanda de las cosas de manera relevante.",
+    faq_1_item_2:
+      "En mi opinión, la IA hace que la ingeniería de software sea más realista para más personas. Antes de la IA, estaba claro que se generaba una cantidad incontrolable de trabajo de tal manera que un ingeniero de software creaba más trabajo del que podía completar. Personalmente, encuentro más agradable escribir código con IA que sin ella y creo que hace que cosas como el emprendimiento sean más accesibles. Ahora, de verdad se pueden hacer las cosas.",
+    faq_1_item_3:
+      "Pensando críticamente, la IA se preocupa principalmente por tomar buenas decisiones. Así que los roles que dependen más de las decisiones se verán afectados. En mi opinión, esos son roles más ejecutivos, por lo que el punto óptimo hoy en día es ser un ingeniero junior o senior, de modo que puedas comenzar a construir negocios esbeltos por tu cuenta. Eso es lo que intentamos hacer aquí: te armamos con nuevas habilidades y esperamos que eso influya positivamente en tus decisiones u oportunidades.",
+    faq_2_question: "¿Qué tipo de computadora necesito?",
+    faq_2_item_1:
+      "En cuanto al aprendizaje, recomiendo papel y lápiz. RO.B.E no es un programa intensivo en software. Se puede usar en tu dispositivo móvil o en cualquier portátil. A mí me gusta en los teléfonos móviles.",
+    faq_2_item_2:
+      "Si te preguntas qué tipo de computadora necesitas para programar, recomiendo un MacBook Pro. La siguiente mejor opción es la que puedas permitirte. Las personas suelen sobreanalizar esto y la verdad es que no necesitas nada lujoso. No hay respuesta incorrecta.",
+    faq_2_item_3:
+      "Los MacBook Pro son una buena solución general. Si necesitas algo especializado y estás seguro de tu inversión, entonces, en el mismo espíritu, invierte en la mejor potencia de cómputo que puedas conseguir.",
+    faq_3_question:
+      "¿Es difícil programar? ¿Necesito ser bueno en matemáticas?",
+    faq_3_item_1: "Esta es una pregunta compleja.",
+    faq_3_item_2:
+      "No. No tienes que ser bueno en matemáticas. Y programar no es difícil, es un desafío. La educación es superar el desafío. Debes reconocer que puedes lograr las cosas que te propones.",
+    faq_3_item_3:
+      "Programar se trata de organizar información. Así que si puedes escribir instrucciones, puedes escribir código.",
+    faq_3_item_4:
+      "Tal vez hagas esa pregunta porque hay una parte de ti que desearía que alguien te dijera que se puede facilitar. La gente puede hacerlo más fácil. Va a ser un desafío, pero esa es también parte de la diversión.",
+    faq_4_question: "¿Qué lenguaje de programación debo elegir?",
+    faq_4_item_1:
+      "Si ya has investigado un poco, probablemente te hayas topado con Python y JavaScript. Son muy populares por una razón, pero antes de explicar por qué, te recomiendo encarecidamente que pienses en qué tipo de máquinas quieres trabajar y qué tipo de problemas quieres resolver.",
+    faq_4_item_2:
+      "La razón por la que JavaScript y Python están tan extendidos es por internet. Se utilizan principalmente para realizar gran parte del trabajo de servicio de internet.",
+    faq_4_item_3:
+      "Pero, ¿qué pasa si necesitas una aplicación para iOS, una para Android, un videojuego o algún tipo de robot? Al final, descubrirás que cuando aprendes un lenguaje, en cierto modo aprendes todos. Hay una razón para eso, pero al final es como preocuparse por si deberías aprender a usar un martillo o un taladro al construir una casa: es probable que uses muchos lenguajes eventualmente y todo te resultará bastante familiar. No hay respuesta incorrecta.",
+    faq_5_question: "¿Vale la pena un bootcamp?",
+    faq_5_item_1:
+      "Como de costumbre, la mejor respuesta es 'depende'. Lo que realmente pagas mucho dinero es por una red de empleo, y como has visto en los últimos años, ese tipo de negocio puede pasar por momentos difíciles.",
+    faq_5_item_2:
+      "No recomiendo asistir a un bootcamp como un atajo hacia la industria. Un bootcamp no es diferente a ser autodidacta o ir a la universidad. Aún tendrás que aprender habilidades relevantes, encontrar empleo en etapas tempranas, crear proyectos con sentido comercial y pasar entrevistas técnicas.",
+    faq_5_item_3:
+      "La forma en que abordes cada uno será muy diferente. Un desarrollador autodidacta en San Francisco es diferente a un estudiante de informática en Nebraska. Un desertor de Stanford tendrá un entorno distinto al de alguien en un colegio comunitario. Lo clave aquí es que tu entorno juega un papel importante en tus oportunidades.",
+    faq_6_question: "¿Qué es programar y qué puedo hacer con ello?",
+    faq_6_item_1:
+      "Programar es una forma de organizar información. Por lo tanto, existe en todas partes. Piénsalo de esta manera: la programación la escriben los ingenieros de software para organizar información. Los ingenieros de software estudian ciencias de la computación. La computación es la ciencia de la resolución de problemas. Así que programar expresa la ciencia de resolver problemas.",
+    faq_6_item_2:
+      "Eso significa que puedes hacer prácticamente cualquier cosa. Puedes programar para medios, investigación médica, deportes, robots, sistemas energéticos, sistemas financieros o prácticamente cualquier cosa que se te ocurra. Sin duda, es una opción preferida para los emprendedores, pero muchas personas también adoptan un enfoque de vida equilibrado con ello. Así que, a veces, la gente programa porque quiere una vida más relajada también.",
+    faq_7_question: "¿Soy demasiado mayor para aprender?",
+    faq_7_item_1:
+      "No. Simplemente, tu cerebro no funciona así. Es posible que experimentes algo de 'oxidación' si no has profundizado en el estudio de un tema en algún tiempo, pero eso no es muy diferente a un estudiante universitario que se da cuenta de que necesita aprender a aprender. Tal vez ya sepas cómo aprender o entiendas qué es lo que te funciona. Ahora, de repente, tienes una ventaja.",
+    faq_7_item_2:
+      "Como dice uno de mis directores, lento es suave y suave es rápido. Esto no es para crear un sentido de superioridad o inferioridad, simplemente estás en un mercado competitivo y generalmente es mejor adoptar una perspectiva productiva.",
     "modal.selfPace.notificationsUnavailable":
       "Las notificaciones no son compatibles con este navegador. Sigue las instrucciones de instalación en el menú para acceder a todas las funciones",
     "modal.selfPace.notificationDescription":

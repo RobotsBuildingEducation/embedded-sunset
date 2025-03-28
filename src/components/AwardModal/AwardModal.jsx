@@ -18,7 +18,7 @@ import {
   useStyleConfig,
   useToast,
 } from "@chakra-ui/react";
-import { SunsetCanvas } from "../../elements/SunsetCanvas";
+import { CloudCanvas, SunsetCanvas } from "../../elements/SunsetCanvas";
 
 import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
@@ -192,7 +192,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
           </b>
           {areBadgesLoading ? (
             <div style={{ width: "fit-content" }}>
-              <SunsetCanvas /> {translation[userLanguage]["loading"]}
+              <CloudCanvas /> {translation[userLanguage]["loading"]}
             </div>
           ) : badges.length < 1 ? (
             <div>{translation[userLanguage]["noTranscriptFound"]}</div>

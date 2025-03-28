@@ -43,7 +43,12 @@ import {
 } from "react-router-dom";
 
 import { useChatCompletion } from "./hooks/useChatCompletion";
-import { SunsetCanvas, BigSunset } from "./elements/SunsetCanvas";
+import {
+  // CloudCanvas,
+  SunsetCanvas,
+  BigSunset,
+  CloudCanvas,
+} from "./elements/SunsetCanvas";
 import EducationalModal from "./components/LearnModal/EducationalModal";
 import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
 
@@ -57,6 +62,7 @@ import {
   incrementToFinalAward,
   incrementToSubscription,
   incrementUserStep,
+  setOnboardingToDone,
   updateUserData,
 } from "./utility/nosql";
 import {
@@ -601,10 +607,9 @@ export const VoiceInput = ({
   };
   // Dynamically adjust the height of the textarea as the content changes
   useEffect(() => {
-    console.log("changing.....", value);
     if (isTextInput) {
       // window.alert("x");
-      console.log("is text input...");
+
       if (textareaRef.current) {
         textareaRef.current.style.height = "auto"; // Reset height
         textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Adjust height based on content
@@ -768,7 +773,7 @@ export const VoiceInput = ({
       ) : null}
       {isListening && (
         <HStack spacing={2} alignItems="center">
-          <SunsetCanvas />
+          <CloudCanvas />
           <FadeInComponent speed="0.25s">
             <Text
               fontSize={"smaller"}
@@ -786,7 +791,7 @@ export const VoiceInput = ({
       )}
       {aiListening && (
         <HStack spacing={2} alignItems="center">
-          <SunsetCanvas />
+          <CloudCanvas />
           <FadeInComponent speed="0.25s">
             <Text
               fontSize={"smaller"}
@@ -821,7 +826,7 @@ export const VoiceInput = ({
                 width: "100%",
               }}
             >
-              <SunsetCanvas isLoader={true} regulateWidth={false} />
+              <CloudCanvas isLoader={true} regulateWidth={false} />
             </div>
           ) : (
             <MonacoEditor
@@ -1180,7 +1185,6 @@ function TerminalComponent({
   const bashRef = useRef(null);
 
   useEffect(() => {
-    console.log("tst");
     if (bashRef.current) {
       // Find the input element within ReactBash
       const inputElement = bashRef.current.querySelector("input");
@@ -1426,7 +1430,6 @@ const Step = ({
 
   // Fetch user data and manage streaks and timers
   useEffect(() => {
-    console.log("init has run");
     // alert("running..");
     // const stepContent = steps[userLanguage][currentStep];
     // setStep(stepContent);
@@ -1434,7 +1437,7 @@ const Step = ({
     const fetchUserData = async () => {
       const userId = localStorage.getItem("local_npub");
       const userData = await getUserData(userId);
-      console.log("user data........d.........", userData);
+
       setIsAdaptiveLearning(userData?.isAdaptiveLearning);
       setStreak(userData.streak || 0);
       setStartTime(new Date(userData.startTime));
@@ -1534,7 +1537,6 @@ const Step = ({
       const userId = localStorage.getItem("local_npub");
       const userDocRef = doc(database, "users", userId);
       await updateDoc(userDocRef, { isAdaptiveLearning: newValue });
-      console.log("Adaptive learning updated:", newValue);
     } catch (error) {
       console.error("Error updating adaptive learning:", error);
     }
@@ -1591,8 +1593,6 @@ const Step = ({
     };
 
     if (isAdaptiveLearning && !suggestionLoading) {
-      console.log("it runs....", currentStep);
-      console.log("it runs", step);
       generateSuggestionForNewStep();
     }
   }, [currentStep, step]);
@@ -1614,10 +1614,6 @@ const Step = ({
           .slice(1, currentStep) // All completed steps
           .map((step) => step.title);
 
-        console.log(
-          "json completed",
-          JSON.stringify(subjectsCompleted, null, 2)
-        );
         await submitSuggestionMessages([
           {
             content: `
@@ -1672,9 +1668,8 @@ const Step = ({
       localStorage.setItem("incorrectAttempts", 0);
       let getRecipient = async () => {
         const userData = await getUserData(localStorage.getItem("local_npub"));
-        console.log("USER DATA", userData);
+
         if (userData?.identity) {
-          console.log("we have the recipient", userData?.identity);
           sendOneSatToNpub(userData?.identity);
         }
         return userData?.identity || "";
@@ -1688,10 +1683,6 @@ const Step = ({
         );
       }
       if (step.isConversationReview) {
-        console.log(
-          "name???",
-          transcript[step.group]["name"].replace(/ /g, "-")
-        );
         assignExistingBadgeToNpub(
           transcript[step.group]["name"].replace(/ /g, "-")
         );
@@ -1831,8 +1822,6 @@ const Step = ({
         true
       );
     } else if (step.isMultipleAnswerChoice) {
-      console.log("answer", answer);
-      console.log("stepanswer,", step.question.answer);
       await submitPrompt(
         [
           {
@@ -1952,7 +1941,6 @@ const Step = ({
     setEndTime(newEndTime);
     setStreak(newStreak);
 
-    console.log("DAILY PROGRESS", dailyProgress);
     let newDailyProgress = dailyProgress + 1;
     let newNextGoalExpiration = nextGoalExpiration;
     if (newDailyProgress > dailyGoals) {
@@ -1966,7 +1954,7 @@ const Step = ({
     // await updateUserGoalCount(userId);
 
     let gc = goalCount;
-    console.log("dailyGoals", dailyGoals);
+
     if (dailyProgress + 1 === dailyGoals) {
       gc = gc + 1;
     }
@@ -1989,8 +1977,6 @@ const Step = ({
   // Stream messages and handle feedback
   useEffect(() => {
     if (messages?.length > 0) {
-      // console.log("messages", messages);
-      // console.log("messages", messages);
       try {
         const lastMessage = messages[messages.length - 1];
 
@@ -2100,7 +2086,6 @@ const Step = ({
         localStorage.getItem("passcode") !==
         import.meta.env.VITE_PATREON_PASSCODE
       ) {
-        console.log("moving to subscription...");
         await incrementToSubscription(npub, currentStep);
         navigate("/subscription");
       } else {
@@ -2132,8 +2117,7 @@ const Step = ({
         }
 
         setIsPostingWithNostr(false);
-        console.log("CurrentStep", currentStep);
-        console.log("CurrentStep/q/", `/q/${currentStep + 1}`);
+
         navigate(`/q/${currentStep + 1}`);
       } catch (error) {
         setIsPostingWithNostr(false);
@@ -2457,7 +2441,6 @@ const Step = ({
   };
 
   const handleTimerExpire = () => {
-    console.log("Timer expired!");
     localStorage.removeItem("incorrectAttempts");
     localStorage.removeItem("incorrectExpiry");
     setIsTimerExpired(true); // Update state or perform any action
@@ -2473,7 +2456,6 @@ const Step = ({
   };
   const emojiMap = ["😖", "😩", "😅", "😱", "🪦"];
 
-  console.log("daily progress renders...", dailyProgress);
   return (
     <VStack spacing={4} width="100%" mt={6}>
       {/* <OrbCanvas width={500} height={500} /> */}
@@ -2962,7 +2944,7 @@ const Step = ({
               />
             )}
             {isPostingWithNostr ? (
-              <SunsetCanvas />
+              <CloudCanvas />
             ) : (
               <>
                 {localStorage.getItem("incorrectAttempts") &&
@@ -3132,7 +3114,7 @@ const Step = ({
                         textAlign: "left",
                       }}
                     >
-                      <SunsetCanvas
+                      <CloudCanvas
                         speed={"0.25"}
                         isLoader={true}
                         regulateWidth={false}
@@ -3153,7 +3135,9 @@ const Step = ({
                           }
                         }}
                       >
-                        {translation[userLanguage]["app.button.nextQuestion"]}{" "}
+                        {
+                          translation[userLanguage]["app.button.nextQuestion"]
+                        }{" "}
                       </Button>
                     </>
                   )}
@@ -3187,7 +3171,7 @@ const Step = ({
           isEmpty(suggestionMessage) &&
           !step?.isTerminal ? (
             <Box mt={4} p={4} textAlign="center">
-              <SunsetCanvas isLoader={true} />
+              <CloudCanvas isLoader={true} />
               <Text mt={2}>
                 {translation[userLanguage]["loading.suggestion"]}
               </Text>
@@ -3422,7 +3406,7 @@ const Home = ({
         await auth(secretKey);
       } catch (error) {
         setIsSigningIn(false);
-        console.log("ERROR", error);
+
         setErrorMessage(JSON.stringify(error) || "An unknown error occurred");
       }
 
@@ -3440,6 +3424,8 @@ const Home = ({
       if (!userSnapshot) {
         try {
           await createUser(npub, userName, userLanguage);
+
+          //direct to onboarding, otherwise go to their current location
         } catch (error) {
           console.log("error creating user", error);
         }
@@ -3570,7 +3556,6 @@ const Home = ({
     }
   };
 
-  console.log("ERROR MESSAGE", errorMessage);
   return (
     <Box
       textAlign="center"
@@ -3588,7 +3573,7 @@ const Home = ({
           <VStack spacing={4}>
             <VStack spacing={4} width="95%" maxWidth="600px" mb={4}>
               <HStack spacing={2} alignItems="center">
-                <SunsetCanvas />{" "}
+                <CloudCanvas />{" "}
                 {isCreatingAccount ? (
                   <Text
                     fontSize={"smaller"}
@@ -3714,7 +3699,7 @@ const Home = ({
 
       {view === "signIn" && (
         <VStack spacing={4}>
-          <div>{isSigningIn ? <SunsetCanvas /> : null}</div>
+          <div>{isSigningIn ? <CloudCanvas /> : null}</div>
 
           <Text fontSize="sm">
             {translation[userLanguage]["signIn.instructions"]}
@@ -3758,7 +3743,7 @@ const Home = ({
           </HStack>
 
           <Text color="red" fontSize="sm">
-            {errorMessage ? errorMessage.error.message : null}
+            {errorMessage ? errorMessage?.error?.message : null}
           </Text>
           {/* <Button onMouseDown={authWithSigner} colorScheme="pink">
                 signin with extension
@@ -4142,6 +4127,7 @@ function App({ isShutDown }) {
       });
     }
   };
+
   let memory = () => {
     console.log("get");
   };
@@ -4152,7 +4138,7 @@ function App({ isShutDown }) {
 
       // deleteSpecificDocuments();
       // let count = await getTotalUsers();
-      window.alert("wtf");
+      // window.alert("wtf");
       fetchUsersWithToken();
       if (npub && window.location.pathname !== "/dashboard") {
         try {
@@ -4172,10 +4158,9 @@ function App({ isShutDown }) {
           //   navigate("/");
           // } else {
 
-          console.log("step", step);
-
-          if (step > -1) {
-            console.log("nope");
+          if (location.pathname === "/about") {
+            // Do nothing if on /about
+          } else if (step > -1) {
             auth(localStorage.getItem("local_nsec"));
             setIsSignedIn(true);
             setCurrentStep(step);
@@ -4186,7 +4171,7 @@ function App({ isShutDown }) {
             // Wrap Firestore getDoc in try...catch to handle potential errors
             if (userSnapshot.exists()) {
               const userData = userSnapshot.data();
-              console.log("userdata", userData);
+
               setUserLanguage(
                 userData.userLanguage ||
                   localStorage.getItem("userLanguage") ||
@@ -4252,15 +4237,19 @@ function App({ isShutDown }) {
 
               let step = matchnumber ? matchnumber[1] : null;
 
-              if (!step) {
-                step = await getOnboardingStep(npub); // Fetch the current step
+              if (step > 4) {
+                setOnboardingToDone(localStorage.getItem("local_npub"));
+
+                navigate("/q/0");
+              } else {
+                // navigate("q/0");
+                if (!step) {
+                  step = await getOnboardingStep(npub); // Fetch the current step
+                }
+
+                setIsSignedIn(true);
+                navigate(`/onboarding/${step}`);
               }
-
-              console.log("running....");
-
-              console.log("step...", step);
-              setIsSignedIn(true);
-              navigate(`/onboarding/${step}`);
             }
           }
         } catch (error) {
@@ -4293,7 +4282,7 @@ function App({ isShutDown }) {
         fontSize="xl"
         p={4}
       >
-        <SunsetCanvas />
+        <CloudCanvas />
       </Box>
     );
   }
@@ -4315,11 +4304,8 @@ function App({ isShutDown }) {
 
   const testurl = window.location.href;
 
-  console.log("testurl", testurl);
-
   const testIsMatch = /\/q\/\d+$/.test(testurl);
 
-  console.log("isSignedIn", isSignedIn);
   return (
     <Box textAlign="center" fontSize="xl" p={4} ref={topRef}>
       {alert.isOpen && (

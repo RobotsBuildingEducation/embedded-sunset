@@ -174,10 +174,8 @@ export const deleteSpecificDocuments = () => {
 
   getDocs(q)
     .then((snapshot) => {
-      console.log("snapshot...", snapshot);
       // Step 2: Iterate through documents
       snapshot.forEach((doc) => {
-        console.log("doc...", doc);
         // Step 3: Delete documents
         deleteDoc(doc.ref)
           .then(() => {
@@ -211,7 +209,6 @@ export const getTotalUsers = async () => {
 };
 
 export const fetchUsersWithToken = async () => {
-  console.log("running token query...");
   // Create a query for users where the "fcmToken" field is not null
   const usersQuery = query(
     collection(database, "users"),

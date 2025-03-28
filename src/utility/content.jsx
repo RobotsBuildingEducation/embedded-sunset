@@ -551,6 +551,7 @@ const items = new Items();`,
         questionText: "Write a `for` loop that prints numbers from 1 to 5.",
       },
     },
+    //next lecture
     {
       group: "1",
       title: "Applications of Loops",
@@ -612,6 +613,7 @@ const items = new Items();`,
           "let fruits = ['apple', 'banana']; \nfruits.push('pink'); \nfruits.pop(); \nconsole.log(fruits[0]);",
       },
     },
+    //next lecture
     {
       group: "1",
       title: "Manipulating Arrays",
@@ -644,6 +646,7 @@ const items = new Items();`,
           "In a bash terminal environment, create a directory called app using the make directory command",
       },
     },
+    //next lecture
     {
       group: "1",
       title: "Advanced Coding Output",
@@ -775,6 +778,7 @@ const myCar = new Car('Toyota');`,
 const myCar = new Car('Toyota');`, // The correct answer
       },
     },
+    //next lecture
     {
       group: "2",
       title: "Understanding the Constructor Method",
@@ -829,6 +833,8 @@ const myCar = new Car('Toyota');`, // The correct answer
           "Declare a method named `updateModel` in the `Car` class that updates the `model` property.",
       },
     },
+
+    //next lecture
     {
       group: "2",
       title: "Using the `this` Keyword",
@@ -945,6 +951,8 @@ myCar.showBrand();`,
         ],
       },
     },
+
+    //next lecture
     {
       group: "2",
       title: "Modifying Object Properties",
@@ -979,6 +987,8 @@ myCar.showBrand();`,
           "Extend the `Car` class to create an `ElectricCar` class with an additional property `batteryLife`.",
       },
     },
+
+    //next lecture
     {
       group: "2",
       title: "Overriding Methods",
@@ -1020,6 +1030,8 @@ myCar.showBrand();`,
           "Add getter and setter methods for the `batteryLife` property in the `ElectricCar` class.",
       },
     },
+
+    //next lecture
     {
       group: "2",
       title: "Understanding Encapsulation",
@@ -1056,6 +1068,7 @@ myCar.showBrand();`,
           "Type a command to print the message: 'I'm talking to the inside of a computer!'",
       },
     },
+    //next lecture
     {
       group: "2",
       title: "Review With AI Conversation",
@@ -1119,6 +1132,8 @@ myCar.showBrand();`,
           "What happens to a React component when its state changes?",
       },
     },
+
+    //next lecture
     {
       group: "3",
       title: "Creating a Simple React Component",
@@ -1268,6 +1283,8 @@ return (
         questionText: `Modify the Tweet component to include a like button that toggles the liked state using the useState hook.`,
       },
     },
+
+    //next lecture
     {
       group: "3",
       title: "Component Properties",
@@ -1311,6 +1328,8 @@ return (
         answer: "Props are immutable while state is mutable",
       },
     },
+
+    //next lecture
     {
       group: "3",
       title: "Terminal Practice: Listing Files",
@@ -1357,6 +1376,8 @@ return (
         ],
       },
     },
+
+    //next lecture
     {
       group: "3",
       title: "Lifting State Up",
@@ -1392,6 +1413,8 @@ return (
           "What is the component lifecycle in React and what is the purpose of the useEffect hook?",
       },
     },
+
+    //x
     {
       group: "3",
       title: "Fetching Data with useEffect",

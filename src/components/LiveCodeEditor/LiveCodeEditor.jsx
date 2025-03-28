@@ -19,6 +19,7 @@ import {
   VStack,
   HStack,
   Textarea,
+  Select,
 } from "@chakra-ui/react";
 
 import Editor from "@monaco-editor/react";
@@ -34,6 +35,7 @@ import {
   setDoc,
   getDoc,
   doc,
+  getDocs,
 } from "firebase/firestore";
 import { translation } from "../../utility/translation";
 
@@ -282,6 +284,7 @@ const LiveReactEditorModal = ({ code }) => {
                   VStack,
                   HStack,
                   Textarea,
+                  Select,
 
                   Center,
                   database,
@@ -292,6 +295,7 @@ const LiveReactEditorModal = ({ code }) => {
                   addDoc,
                   updateDoc,
                   setDoc,
+                  getDocs,
                 }}
               >
                 <LivePreview />

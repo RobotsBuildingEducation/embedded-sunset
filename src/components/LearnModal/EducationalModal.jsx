@@ -47,7 +47,7 @@ export const newTheme = {
   h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   code: ({ inline, className, children, ...props }) => {
     const match = /language-(\w+)/.exec(className || "");
-    console.log("match...", match);
+
     return !inline && match ? (
       <SyntaxHighlighter
         // backgroundColor="white"

@@ -63,7 +63,6 @@ export const Onboarding = ({ userLanguage }) => {
   }, [step]);
 
   useEffect(() => {
-    console.log("RUNNING @!@@@@@@@@@@@@");
     async function fetchNotificationStatus() {
       const userDocRef = doc(
         database,
@@ -88,8 +87,6 @@ export const Onboarding = ({ userLanguage }) => {
     fetchNotificationStatus();
   }, []);
 
-  console.log("messaging", messaging);
-
   const handleToggleNotifications = async () => {
     const userDocRef = doc(
       database,
@@ -107,7 +104,7 @@ export const Onboarding = ({ userLanguage }) => {
             vapidKey:
               "BPLqRrVM3iUvh90ENNZJbJA3FoRkvMql6iWtC4MJaHzhyz9uRTEitwEax9ot05_b6TPoCVnD-tlQtbeZFn1Z_Bg",
           });
-          console.log("FCM token retrieved:", token);
+
           // Save the token in Firestore
           updateDoc(userDocRef, { fcmToken: token });
         } catch (error) {
@@ -144,7 +141,6 @@ export const Onboarding = ({ userLanguage }) => {
 
   const renderNotifications = () => {
     if (messaging) {
-      console.log("isUnsupportedBrowser", isUnsupportedBrowser());
       // the app has been installed
       return (
         <VStack>
@@ -177,7 +173,6 @@ export const Onboarding = ({ userLanguage }) => {
         </VStack>
       );
     } else {
-      console.log("no feature available");
       // can't use this
       return (
         <VStack textAlign="left" fontSize="md" mb={10}>
@@ -490,6 +485,140 @@ export const Onboarding = ({ userLanguage }) => {
                               "onboarding.chapter6.content"
                             ]
                           }
+                        </p>
+                      </Text>
+                    </AccordionPanel>
+                  </AccordionItem>
+
+                  <AccordionItem>
+                    <AccordionButton padding={6}>
+                      <Box flex="1" textAlign="left">
+                        FAQs
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel pb={4}>
+                      <Text
+                        textAlign="left"
+                        fontSize="sm"
+                        style={{ marginBottom: "20px" }}
+                      >
+                        <Text fontWeight="bold">
+                          {translation[userLanguage]["faq_1_question"]}
+                        </Text>
+                        <p>
+                          {translation[userLanguage]["faq_1_item_1"]}
+                          <br />
+                          <br />
+                          {translation[userLanguage]["faq_1_item_2"]}
+                          <br />
+                          <br />
+                          {translation[userLanguage]["faq_1_item_3"]}
+                        </p>
+                      </Text>
+                      <Text
+                        textAlign="left"
+                        fontSize="sm"
+                        style={{ marginBottom: "20px" }}
+                      >
+                        <Text fontWeight="bold">
+                          {translation[userLanguage]["faq_2_question"]}
+                        </Text>
+                        <p>
+                          {translation[userLanguage]["faq_2_item_1"]}
+                          <br />
+                          <br />
+                          {translation[userLanguage]["faq_2_item_2"]}
+                          <br />
+                          <br />
+                          {translation[userLanguage]["faq_2_item_3"]}
+                        </p>
+                      </Text>
+                      <Text
+                        textAlign="left"
+                        fontSize="sm"
+                        style={{ marginBottom: "20px" }}
+                      >
+                        <Text fontWeight="bold">
+                          {translation[userLanguage]["faq_3_question"]}
+                        </Text>
+                        <p>
+                          {translation[userLanguage]["faq_3_item_1"]}
+                          <br />
+                          <br />
+                          {translation[userLanguage]["faq_3_item_2"]}
+                          <br />
+                          <br />
+                          {translation[userLanguage]["faq_3_item_3"]}
+                          <br />
+                          <br />
+                          {translation[userLanguage]["faq_3_item_4"]}
+                        </p>
+                      </Text>
+                      <Text
+                        textAlign="left"
+                        fontSize="sm"
+                        style={{ marginBottom: "20px" }}
+                      >
+                        <Text fontWeight="bold">
+                          {translation[userLanguage]["faq_4_question"]}
+                        </Text>
+                        <p>
+                          {translation[userLanguage]["faq_4_item_1"]}
+                          <br />
+                          <br />
+                          {translation[userLanguage]["faq_4_item_2"]}
+                          <br />
+                          <br />
+                          {translation[userLanguage]["faq_4_item_3"]}
+                        </p>
+                      </Text>
+                      <Text
+                        textAlign="left"
+                        fontSize="sm"
+                        style={{ marginBottom: "20px" }}
+                      >
+                        <Text fontWeight="bold">
+                          {translation[userLanguage]["faq_5_question"]}
+                        </Text>
+                        <p>
+                          {translation[userLanguage]["faq_5_item_1"]}
+                          <br />
+                          <br />
+                          {translation[userLanguage]["faq_5_item_2"]}
+                          <br />
+                          <br />
+                          {translation[userLanguage]["faq_5_item_3"]}
+                        </p>
+                      </Text>
+                      <Text
+                        textAlign="left"
+                        fontSize="sm"
+                        style={{ marginBottom: "20px" }}
+                      >
+                        <Text fontWeight="bold">
+                          {translation[userLanguage]["faq_6_question"]}
+                        </Text>
+                        <p>
+                          {translation[userLanguage]["faq_6_item_1"]}
+                          <br />
+                          <br />
+                          {translation[userLanguage]["faq_6_item_2"]}
+                        </p>
+                      </Text>
+                      <Text
+                        textAlign="left"
+                        fontSize="sm"
+                        style={{ marginBottom: "20px" }}
+                      >
+                        <Text fontWeight="bold">
+                          {translation[userLanguage]["faq_7_question"]}
+                        </Text>
+                        <p>
+                          {translation[userLanguage]["faq_7_item_1"]}
+                          <br />
+                          <br />
+                          {translation[userLanguage]["faq_7_item_2"]}
                         </p>
                       </Text>
                     </AccordionPanel>
