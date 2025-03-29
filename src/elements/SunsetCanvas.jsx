@@ -277,6 +277,8 @@ export const BigSunset = () => {
   );
 };
 
+// THIS IS THE COOL ANIMATION
+
 function hexToRGB(hex) {
   let cleaned = hex.replace(/^#/, "");
   if (cleaned.length === 3) {
