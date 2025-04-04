@@ -821,16 +821,17 @@ reverse(head) {
     "landing.welcome": "Sunset",
     "landing.introduction": (
       <div>
-        Create scholarships with learning
+        {/* Create scholarships with learning */}
+        A better alternative to Codecademy.
         <br />
-        <br />
-        Use intelligent assistance to learn how to code quickly and efficiently.
+        <br /> Work smart and learn what you need to know to code and build your
+        ideas with AI quickly.
+        {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
       </div>
     ),
     "landing.button.telemetry": "Create Account",
     "landing.button.signIn": "Sign In",
-    "createAccount.instructions":
-      "All we need is a user name & we'll do the rest!",
+    "createAccount.instructions": "All we need to start is a user name.",
     "createAccount.input.placeholder": "Enter a user name",
     "button.back": "Back",
     "button.create": "Create",
@@ -2536,7 +2537,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
         <br />
         <br />
         Usa asistencia inteligente para aprender a programar y construir tus
-        ideas en 100 preguntas.
+        ideas.
       </div>
     ),
     "landing.button.telemetry": "Crear Cuenta",

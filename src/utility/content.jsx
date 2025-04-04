@@ -31,10 +31,11 @@ export const steps = {
             </p>
           </div>
         ),
-        metaData: `### Welcome to Github!
-Github is a platform that let's software developers collaborate with code. Think of it like Google Docs but for software engineers. We'll learn more about using Git and Github another time but for now this serves as a warm welcome to the world of software construction.
+        metaData: `### Advice
+I know this looks like ChatGPT content... 
 
-### Advice
+but it's not -_-"!
+
 It's important to remember this as a beginner:
 
 1. Building things with software is mostly about organizing information rather than being good at math. Programming languages use logic and computation to express ideas instead of equations and algebra.
@@ -2956,10 +2957,11 @@ list.add('reels');`,
             </p>
           </div>
         ),
-        metaData: `### ¡Bienvenido a Github!
-Github es una plataforma que permite a los desarrolladores de software colaborar con código. Piénsalo como Google Docs pero para ingenieros de software. Aprenderemos más sobre el uso de Git y Github en otra ocasión, pero por ahora esto sirve como una cálida bienvenida al mundo de la construcción de software.
+        metaData: `### Consejos
+Sé que esto parece contenido de ChatGPT... 
 
-### Consejos
+pero no lo es -_-"!
+
 Es importante recordar esto como principiante:
 
 1. Construir cosas con software se trata principalmente de organizar información en lugar de ser bueno en matemáticas. Los lenguajes de programación usan lógica y computación para expresar ideas en lugar de ecuaciones y álgebra.
