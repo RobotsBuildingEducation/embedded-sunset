@@ -32,6 +32,11 @@ import {
 } from "../../../database/firebaseResources";
 // import { deleteToken, getToken } from "firebase/messaging";
 import { doc, updateDoc } from "firebase/firestore";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import "./CalendarStyles.css";
+import { FaFireAlt } from "react-icons/fa";
+import { RiSlowDownLine, RiSpeedUpLine } from "react-icons/ri";
 
 // CountdownTimer now supports days along with hours:minutes:seconds and shows a progress bar.
 const CountdownTimer = ({ targetTime, initialTime, label, userLanguage }) => {
@@ -96,7 +101,7 @@ const SelfPacedOnboarding = ({
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   // dailyGoals: number of questions the user wants to complete per day.
-  const [dailyGoals, setDailyGoals] = useState(3);
+  const [dailyGoals, setDailyGoals] = useState(5);
   // dailyProgress: tracks the number of questions completed today.
   const [dailyProgress, setDailyProgress] = useState(0);
   // nextGoalExpiration: when the current 24-hour period expires.
@@ -110,7 +115,7 @@ const SelfPacedOnboarding = ({
       setStartTime(userData.startTime ? new Date(userData.startTime) : null);
       setEndTime(userData.endTime ? new Date(userData.endTime) : null);
       setInterval(userData.timer);
-      setDailyGoals(userData.dailyGoals || 3);
+      setDailyGoals(userData.dailyGoals || 5);
       setGoalCount(userData.goalCount || 0);
       setDailyProgress(userData.dailyProgress || 0);
 
@@ -243,9 +248,61 @@ const SelfPacedOnboarding = ({
   //     }
   //   };
 
+  // window.alert(interval);
+
+  const setPresetGoal = (event, goalType) => {
+    if (goalType === "week") {
+      setDailyGoals(12);
+      setInterval(1440);
+    } else {
+      //month
+      setDailyGoals(3);
+      setInterval(1440);
+    }
+  };
+
+  const estimatedDays = Math.floor(90 / dailyGoals);
+  const estimatedDate = new Date();
+  estimatedDate.setDate(estimatedDate.getDate() + estimatedDays);
   return (
     <Box display="flex" flexDirection="column" alignItems="center">
-      <Text fontSize="xs" width="70%" mb={2}>
+      <Button
+        fontSize="sm"
+        textAlign="left"
+        mb={4}
+        onMouseDown={(event) => setPresetGoal(event, "week")}
+        colorScheme="orange"
+        variant={"outline"}
+        width="100%"
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            setPresetGoal(event, "week"); // Select the option on Enter or Space key
+          }
+        }}
+      >
+        <FaFireAlt color="Tomato" /> &nbsp;{" "}
+        {translation[userLanguage]["modal.selfPace.weekPlan"]}&nbsp;&nbsp;&nbsp;
+      </Button>
+
+      <Button
+        fontSize="sm"
+        textAlign="left"
+        mb={10}
+        onMouseDown={(event) => setPresetGoal(event, "month")}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            setPresetGoal(event, "month"); // Select the option on Enter or Space key
+          }
+        }}
+        colorScheme="yellow"
+        variant={"outline"}
+        width="100%"
+      >
+        <RiSpeedUpLine />
+        &nbsp; {translation[userLanguage]["modal.selfPace.monthPlan"]}
+      </Button>
+
+      <Text fontSize="xs" width="70%" mb={2} color="gray.600">
         {translation[userLanguage]["modal.selfPace.instruction"]}
       </Text>
 
@@ -268,22 +325,10 @@ const SelfPacedOnboarding = ({
           {getMarkLabel(interval)}
         </Text>
       </Text>
-      {endTime ? (
-        <Text mt={2} fontSize="sm">
-          <CountdownTimer
-            userLanguage={userLanguage}
-            targetTime={endTime}
-            initialTime={startTime}
-            label={translation[userLanguage]["countdown.streakTimeLeft"]}
-          />
-        </Text>
-      ) : (
-        <Spinner />
-      )}
 
       <br />
       <br />
-      <Text fontSize="xs" width="70%" mb={2}>
+      <Text fontSize="xs" width="70%" mb={2} color="gray.600">
         {translation[userLanguage]["modal.dailyGoal.instruction"]}
       </Text>
 
@@ -306,18 +351,66 @@ const SelfPacedOnboarding = ({
         {translation[userLanguage]["modal.dailyGoal.dailyGoalLabel"]}{" "}
         {dailyGoals}
       </Text>
-      {nextGoalExpiration ? (
-        <Text mt={2} fontSize="sm">
-          <CountdownTimer
-            userLanguage={userLanguage}
-            label={translation[userLanguage]["countdown.dailyGoalsTimeLeft"]}
-            targetTime={nextGoalExpiration}
-            initialTime={new Date(nextGoalExpiration.getTime() - 86400000)}
-          />
+
+      <br />
+      {dailyGoals > 0 && (
+        <Text mt={1} fontSize="sm" color="gray.600" mb={2}>
+          {translation[userLanguage]["modal.dailyGoal.estimate"]
+            .replace("{days}", estimatedDays)
+            .replace("{plural}", estimatedDays > 1 ? "s" : "")}
         </Text>
-      ) : (
-        <Spinner />
       )}
+
+      <Box mt={2} borderRadius="md" overflow="hidden" width="100%">
+        <Calendar
+          border="1px solid red"
+          locale={userLanguage}
+          value={estimatedDate}
+          tileDisabled={({ date }) =>
+            date.toDateString() !== estimatedDate.toDateString()
+          }
+          formatShortWeekday={(locale, date) =>
+            date.toLocaleDateString(userLanguage, { weekday: "narrow" })
+          }
+          nextLabel={null}
+          prevLabel={null}
+          next2Label={null}
+          prev2Label={null}
+          // view="month"
+          // view="month"
+          navigationLabel={null}
+          onViewChange={() => {}}
+        />
+      </Box>
+
+      {/* <Box width="100%" textAlign={"left"} mb={2}>
+        {endTime ? (
+          <Text mt={2} fontSize="sm">
+            <CountdownTimer
+              userLanguage={userLanguage}
+              targetTime={endTime}
+              initialTime={startTime}
+              label={translation[userLanguage]["countdown.streakTimeLeft"]}
+            />
+          </Text>
+        ) : (
+          <Spinner />
+        )}
+      </Box>
+      <Box width="100%" textAlign={"left"}>
+        {nextGoalExpiration ? (
+          <Text mt={2} fontSize="sm">
+            <CountdownTimer
+              userLanguage={userLanguage}
+              label={translation[userLanguage]["countdown.dailyGoalsTimeLeft"]}
+              targetTime={nextGoalExpiration}
+              initialTime={new Date(nextGoalExpiration.getTime() - 86400000)}
+            />
+          </Text>
+        ) : (
+          <Spinner />
+        )}
+      </Box> */}
       {/* <br />
       <br />
       <Box mt={4} display="flex" flexDirection="column" alignItems="center">

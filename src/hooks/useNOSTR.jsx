@@ -118,7 +118,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       //Creating profile... 2/4
       setLoadingMessage("createAccount.isCreatingProfile");
 
-      await postNostrContent(
+      postNostrContent(
         JSON.stringify({
           name: userDisplayName,
           about: profileAbout,

@@ -51,6 +51,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
     initiateDeposit,
     invoice,
     init,
+    isCreatingWallet,
   } = useNostrWalletStore((state) => ({
     cashuWallet: state.cashuWallet,
     walletBalance: state.walletBalance,
@@ -58,6 +59,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
     initiateDeposit: state.initiateDeposit,
     invoice: state.invoice,
     init: state.init,
+    isCreatingWallet: state.isCreatingWallet,
   }));
 
   // useEffect(() => {
@@ -393,6 +395,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
                     ? "https://ladderly.io"
                     : null}
             </Link>
+
             <Button
               onMouseDown={() => createNewWallet()}
               onKeyDown={(e) => {
@@ -401,7 +404,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
                 }
               }}
               m={6}
-              isLoading={initializingWallet}
+              isLoading={isCreatingWallet}
               loadingText={translation[userLanguage]["loading.wallet"]}
               isDisabled={!selectedIdentity.length > 0}
               boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"

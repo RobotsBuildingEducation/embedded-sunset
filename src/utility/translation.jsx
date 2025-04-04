@@ -1,7 +1,19 @@
+import { ListItem, OrderedList } from "@chakra-ui/react";
 import { DataTags } from "../elements/DataTag";
 
 export let translation = {
   en: {
+    "modal.selfPace.weekPlan": "Set up 1 week plan",
+    "modal.selfPace.monthPlan": "Set up 1 month plan",
+    "modal.dailyGoal.estimate":
+      "At this pace, you’ll finish all 90 questions in about {days} day{plural}.",
+    "modal.dailyGoal.estimatedDateLabel": "Estimated completion date:",
+
+    "app.terminal.placeholder": "Enter your answer here",
+    "badBrowser.install":
+      "This browser doesn't support speech recognition. Privately install the app on your phone to access this feature.",
+    "app.button.complete": "Complete chapter",
+    optional: "(optional)",
     faq_1_question: "What about AI?",
     faq_1_item_1:
       "If AI can program themselves, it's likely that all work as we know it will fundamentally change. But for now, it's going to change the supply and demand of things in a relevant way.",
@@ -135,6 +147,9 @@ export let translation = {
     "onboarding.step2.dailyGoalsTitle": "Set up your daily goals",
     "onboarding.step2.dailyGoalsDescription":
       "I recommend doing three questions per day. By the end of the month, you'll get to the point where you can start putting together what you've learned to build and ship apps.",
+
+    "onboarding.step2.dailyGoalsDescription.faster":
+      "If you want to go fast and finish within a week, try doing 12 questions a day.",
 
     "onboarding.step3.lastStepMessage":
       "Your account is almost ready. Just one last step to complete your setup!",
@@ -809,8 +824,7 @@ reverse(head) {
         Create scholarships with learning
         <br />
         <br />
-        Use intelligent assistance to learn how to code and build your ideas in
-        under 30 days.
+        Use intelligent assistance to learn how to code quickly and efficiently.
       </div>
     ),
     "landing.button.telemetry": "Create Account",
@@ -841,7 +855,7 @@ reverse(head) {
     "createAccount.lastStepMessage": "Last step (optional)",
     // "createAccount.lastStepInstructions": "Last step (optional)",
     "createAccount.awareness":
-      "Your account now works on a number of decentralized apps and works exactly like a mailbox. Use your secret key to sign into apps in the ",
+      "Your account now works on a number of decentralized apps and works exactly like a mailbox. Use your secret key to sign into apps in our ",
     "createAccount.roxLink": "decentralized app store",
     or: "or",
     "createAccount.primalLink": "with Primal, the social wallet",
@@ -857,11 +871,10 @@ reverse(head) {
     "app.button.answer": "Answer",
     "app.button.nextQuestion": "Next Question",
     "app.button.voiceToText": "Voice To Text",
-    "app.button.voiceToAI": "Request Intelligent Assistance",
+    "app.button.voiceToAI": "Voice Request",
     "app.button.learn": "Learn",
     "app.listening": "Listening...",
-    "app.input.placeholder":
-      "Type your response or request intelligent assistance to use voice",
+    "app.input.placeholder": "Type your response or use vocal requests",
     "settings.title": "Settings",
     "settings.selfPace": "Self-pace",
     "settings.button.selfPace": "Self-pace",
@@ -958,7 +971,7 @@ reverse(head) {
     "toast.feedbackErrorDescription":
       "An error occurred while submitting your feedback. Please try again.",
     "mockTerminal.welcomeMessage":
-      "Welcome to the mock terminal. Use basic commands to navigate the file system.",
+      "Welcome to the mock terminal. Use basic commands to navigate the file system. Submit your answer in the text input above the terminal.",
     "mockTerminal.userName": "user@mock-terminal",
     "mockTerminal.bashCommand": "bash:",
     "mockTerminal.commandNotFound": "command not found",
@@ -1390,20 +1403,37 @@ reverse(head) {
     ),
     "passcode.instructions": (
       <div>
-        Hey! You'll need to subscribe to the Robots Building Education Patreon
-        in order to access the rest of the experience.
+        You'll need to subscribe to the Robots Building Education Patreon in
+        order to access the rest of the experience.
         <br />
         <br />
         <div style={{ fontSize: "0.95rem" }}>
-          Don't worry, it's super affordable, packed with{" "}
-          <b>
-            <i>tons</i>
-          </b>{" "}
-          of value and refund friendly. Feel welcome to share the passcode with
-          your friends or family! I made sure that it's worth every penny and
-          you'll get a great return on investment for your time, energy and
-          money. Subscribing helps us keep the lights on and generate
-          scholarships with learning.
+          It's packed with value and refund friendly. I made sure that it's
+          worth every penny so you can get a great return on investment for your
+          time, energy and money.
+        </div>
+        <br />
+        <div style={{ fontSize: "0.95rem" }}>
+          <b>Your subscription will get you:</b>
+          <OrderedList>
+            <ListItem>Full access to this app.</ListItem>
+
+            <ListItem>Personal assistance from me and a group chat.</ListItem>
+            <ListItem>
+              Competitive coding projects &amp; advanced software engineering
+              material.
+            </ListItem>
+            <ListItem>
+              Access to crash courses, startup development content &amp; finance
+              content.
+            </ListItem>
+
+            <ListItem>
+              Love, appreciation &amp; respect from me for helping me build
+              education technology, create scholarships and succeed as a small
+              business owner.{" "}
+            </ListItem>
+          </OrderedList>
         </div>
         <br />
         <a
@@ -1413,7 +1443,7 @@ reverse(head) {
             color: "#63b3ed",
             fontWeight: "bold",
           }}
-          href="https://www.patreon.com/NotesAndOtherStuff/membership"
+          href="https://www.patreon.com/NotesAndOtherStuff/about"
           target="_blank"
         >
           Register and subscribe as a member
@@ -1497,6 +1527,17 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   es: {
+    "modal.selfPace.weekPlan": "Configurar plan de 1 semana",
+    "modal.selfPace.monthPlan": "Configurar plan de 1 mes",
+    "app.terminal.placeholder": "Escribe tu respuesta aquí",
+    "modal.dailyGoal.estimate":
+      "A este ritmo, terminarás las 90 preguntas en aproximadamente {days} día{plural}.",
+    "modal.dailyGoal.estimatedDateLabel": "Fecha estimada de finalización:",
+
+    "badBrowser.install":
+      "Este navegador no admite el reconocimiento de voz. Instala la app en tu teléfono para acceder a esta función de forma privada.",
+    "app.button.complete": "Completar capítulo",
+    optional: "(opcional)",
     faq_1_question: "¿Qué pasa con la IA?",
     faq_1_item_1:
       "Si la IA puede programarse a sí misma, es probable que todo el trabajo tal como lo conocemos cambie fundamentalmente. Pero por ahora, va a cambiar la oferta y la demanda de las cosas de manera relevante.",
@@ -1631,6 +1672,9 @@ reverse(head) {
     "onboarding.step2.dailyGoalsTitle": "Configura tus objetivos diarios",
     "onboarding.step2.dailyGoalsDescription":
       "Recomendamos hacer tres preguntas al día. Al final del mes, llegarás al punto en el que podrás empezar a unir lo aprendido para construir y lanzar aplicaciones.",
+
+    "onboarding.step2.dailyGoalsDescription.faster":
+      "Si quieres avanzar más rápido y terminar en una semana, intenta hacer 12 preguntas al día.",
 
     "onboarding.step3.lastStepMessage":
       "Tu cuenta casi está lista. ¡Solo falta un último paso para completar tu configuración!",

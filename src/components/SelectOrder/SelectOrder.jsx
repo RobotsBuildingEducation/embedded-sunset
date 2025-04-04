@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { VStack, Button, Text } from "@chakra-ui/react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { translation } from "../../utility/translation";
+import { IoChatbubblesOutline } from "react-icons/io5";
 
 const SelectOrderQuestion = ({
   step,
@@ -108,6 +109,8 @@ const SelectOrderQuestion = ({
         background="pink.400"
         boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
       >
+        <IoChatbubblesOutline />
+        &nbsp;
         {translation[userLanguage]["app.button.learn"]}
       </Button>
       <DragDropContext onDragEnd={handleDragEnd}>

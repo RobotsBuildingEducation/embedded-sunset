@@ -41,6 +41,7 @@ import { CareerAgent } from "../CareerAgent/CareerAgent";
 
 import { useNostrWalletStore } from "../../hooks/useNostrWalletStore";
 import SocialFeedModal from "../SocialFeedModal/SocialFeedModal";
+import StudyGuideModal from "../StudyGuideModal/StudyGuideModal";
 
 const SettingsMenu = ({
   testIsMatch,
@@ -125,6 +126,12 @@ const SettingsMenu = ({
     isOpen: isCareerAgentOpen,
     onOpen: onCareerAgentOpen,
     onClose: onCareerAgentClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isStudyGuideModalOpen,
+    onOpen: onStudyGuideModalOpen,
+    onClose: onStudyGuideModalClose,
   } = useDisclosure();
 
   // const [interval, setIntervalState] = useState(2880);
@@ -397,6 +404,22 @@ const SettingsMenu = ({
               >
                 {translation[userLanguage]["settings.button.socialProgress"]}
               </Button>
+
+              <Button
+                onMouseDown={onStudyGuideModalOpen}
+                p={6}
+                colorScheme="pink"
+                background="pink.300"
+                boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
+                style={{ width: "100%" }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    onStudyGuideModalOpen();
+                  }
+                }}
+              >
+                {translation[userLanguage]["settings.button.studyGuide"]}
+              </Button>
               {/* <Button
                 p={6}
                 colorScheme="pink"
@@ -439,6 +462,7 @@ const SettingsMenu = ({
               >
                 {translation[userLanguage]["settings.button.transcript"]}
               </Button>
+
               <Button
                 p={6}
                 colorScheme="pink"
@@ -483,42 +507,18 @@ const SettingsMenu = ({
               >
                 <b>{translation[userLanguage]["settings.button.tutorGPT"]}</b>
               </Button> */}
-              <Button
-                p={6}
-                style={{ width: "100%" }}
-                // as="a"
-                onMouseDown={() => {
-                  window.open(
-                    "https://github.com/RobotsBuildingEducation/RobotsBuildingEducation/blob/main/README.md"
-                  );
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    window.open(
-                      "https://github.com/RobotsBuildingEducation/RobotsBuildingEducation/blob/main/README.md"
-                    );
-                  }
-                }}
-                variant={"outline"}
-                boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-              >
-                <b>{translation[userLanguage]["settings.button.studyGuide"]}</b>
-              </Button>
+
               <Button
                 p={6}
                 style={{ width: "100%" }}
                 // as="a"
 
                 onMouseDown={() => {
-                  window.open(
-                    "https://patreon.com/notesandotherstuff/membership"
-                  );
+                  window.open("https://patreon.com/notesandotherstuff/about");
                 }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
-                    window.open(
-                      "https://patreon.com/notesandotherstuff/membership"
-                    );
+                    window.open("https://patreon.com/notesandotherstuff/about");
                   }
                 }}
                 variant={"outline"}
@@ -682,6 +682,15 @@ const SettingsMenu = ({
           userLanguage={userLanguage}
           isOpen={isCareerAgentOpen}
           onClose={onCareerAgentClose}
+        />
+      ) : null}
+
+      {isStudyGuideModalOpen ? (
+        <StudyGuideModal
+          isOpen={isStudyGuideModalOpen}
+          onClose={onStudyGuideModalClose}
+          content={steps[userLanguage][0].question.metaData}
+          userLanguage={userLanguage}
         />
       ) : null}
     </>

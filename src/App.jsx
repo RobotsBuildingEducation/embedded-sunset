@@ -1,6 +1,6 @@
 import "regenerator-runtime/runtime";
 import "@babel/polyfill";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -86,7 +86,7 @@ import { translation } from "./utility/translation";
 import { Dashboard } from "./components/Dashboard/Dashboard";
 import { isUnsupportedBrowser } from "./utility/browser";
 import { EmailIcon, PlusSquareIcon } from "@chakra-ui/icons";
-import { IoShareOutline } from "react-icons/io5";
+import { IoChatbubblesOutline, IoShareOutline } from "react-icons/io5";
 import { PiClockCountdownDuotone, PiClockCountdownFill } from "react-icons/pi";
 
 import { IoIosMore } from "react-icons/io";
@@ -151,6 +151,11 @@ import BitcoinModeModal from "./components/SettingsMenu/BitcoinModeModal/Bitcoin
 import SelfPacedModal from "./components/SettingsMenu/SelfPacedModal/SelfPacedModal";
 import { Onboarding } from "./Onboarding";
 import { newTheme } from "./App.theme";
+import { InstallAppModal } from "./components/InstallModal/InstallModal";
+
+import { motion } from "framer-motion";
+import { Delaunay } from "d3-delaunay";
+import StudyGuideModal from "./components/StudyGuideModal/StudyGuideModal";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -322,6 +327,12 @@ export const VoiceInput = ({
   const [aiListening, setAiListening] = useState(false);
   const [aiTranscript, setAiTranscript] = useState("");
   const [generateResponse, setGenerateResponse] = useState(false);
+
+  const {
+    isOpen: isInstallModalOpen,
+    onOpen: onInstallModalOpen,
+    onClose: onInstallModalClose,
+  } = useDisclosure();
   // const { resetMessages, messages, submitPrompt } = useChatCompletion({
   //   response_format: { type: "json_object" },
   // });
@@ -458,6 +469,10 @@ export const VoiceInput = ({
   };
 
   const handleAiStart = () => {
+    if (isUnsupportedBrowser()) {
+      onInstallModalOpen();
+      return;
+    }
     resetFeedbackMessages();
     setFeedback("");
     // setGrade("");
@@ -585,11 +600,12 @@ export const VoiceInput = ({
     // localStorage.setItem("lrnctrl", lrnctrl);
     onOpen();
 
-    if (!step?.isConversationReview) {
+    if (educationalMessages.length > 0) {
+    } else if (!step?.isConversationReview) {
       submitEducationalPrompt(
         `Generate educational material about ${JSON.stringify(
           step
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning.  Additionally the code should consider line breaks, whitespace and have a maximum print width of 80 characters. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Lastly the user is speaking in ${
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning.  Additionally the Javascript or relevant code should consider line breaks, whitespace and have a maximum print width of 80 characters in well formatted markdown. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
           userLanguage === "en" ? "english" : "spanish"
         }`
       );
@@ -599,7 +615,7 @@ export const VoiceInput = ({
       submitEducationalPrompt(
         `Generate educational material about ${JSON.stringify(
           relevantSteps
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally the code should consider line breaks and formatting and have a maximum print width of 80 characters. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Lastly the user is speaking in ${
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally the Javascript or relevant code should consider line breaks and formatting and have a maximum print width of 80 characters in well formatted markdown. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets.  Never specify the answer. Lastly the user is speaking in ${
           userLanguage === "en" ? "english" : "spanish"
         }`
       );
@@ -710,11 +726,13 @@ export const VoiceInput = ({
             background="pink.400"
             boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
           >
+            <IoChatbubblesOutline />
+            &nbsp;
             {translation[userLanguage]["app.button.learn"]}
           </Button>
         </HStack>
       ) : null}
-      {isWarningNotDismissed && isUnsupportedBrowser() ? (
+      {/* {isWarningNotDismissed && isUnsupportedBrowser() ? (
         <>
           <br />
           <VStack
@@ -770,7 +788,7 @@ export const VoiceInput = ({
             </Text>
           </VStack>
         </>
-      ) : null}
+      ) : null} */}
       {isListening && (
         <HStack spacing={2} alignItems="center">
           <CloudCanvas />
@@ -882,7 +900,7 @@ export const VoiceInput = ({
           style={{ boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)" }}
           type="textarea"
           maxWidth={"100%"}
-          minHeight={isTerminal ? "100px" : "400px"}
+          minHeight={isTerminal ? "100px" : "100px"}
           backgroundColor="white"
           value={
             generateResponse
@@ -894,7 +912,11 @@ export const VoiceInput = ({
           onChange={(e) => {
             onChange(e.target.value);
           }}
-          placeholder={translation[userLanguage]["app.input.placeholder"]}
+          placeholder={
+            isTerminal
+              ? translation[userLanguage]["app.terminal.placeholder"]
+              : translation[userLanguage]["app.input.placeholder"]
+          }
           width="100%"
         />
       )}
@@ -906,6 +928,15 @@ export const VoiceInput = ({
         educationalContent={educationalContent}
         userLanguage={userLanguage}
       />
+
+      {isInstallModalOpen ? (
+        <InstallAppModal
+          userLanguage={userLanguage}
+          isOpen={isInstallModalOpen}
+          onClose={onInstallModalClose}
+          vocalRequest={true}
+        />
+      ) : null}
     </VStack>
   );
 };
@@ -1307,9 +1338,11 @@ const Step = ({
   const [skipExternalWarning, setSkipExternalWarning] = useState(false);
 
   const [dailyProgress, setDailyProgress] = useState(0);
-  const [dailyGoals, setDailyGoals] = useState(3);
+  const [dailyGoals, setDailyGoals] = useState(5);
   const [nextGoalExpiration, setNextGoalExpiration] = useState(null);
   const [goalCount, setGoalCount] = useState(0);
+
+  const [celebrationMessage, setCelebrationMessage] = useState("");
 
   const externalUrl = "https://chat.com";
 
@@ -1344,6 +1377,12 @@ const Step = ({
     isOpen: isAwardModalOpen,
     onOpen: onAwardModalOpen,
     onClose: onAwardModalClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isStudyGuideModalOpen,
+    onOpen: onStudyGuideModalOpen,
+    onClose: onStudyGuideModalClose,
   } = useDisclosure();
 
   const {
@@ -1446,7 +1485,7 @@ const Step = ({
 
       setSkipExternalWarning(userData?.skipExternalWarning);
 
-      setDailyGoals(userData.dailyGoals || 3);
+      setDailyGoals(userData.dailyGoals || 5);
       setGoalCount(userData.goalCount);
       const currentTime = new Date();
       let newExpiration = new Date(currentTime.getTime() + 86400000);
@@ -1483,25 +1522,30 @@ const Step = ({
         );
         setStartTime(currentTime);
         setEndTime(newEndTime);
+
+        console.log(".... step init", dailyGoals);
         await updateUserData(
           userId,
           userData.timer,
           0,
           currentTime,
           newEndTime,
-          dailyGoals || 3,
+          dailyGoals || 5,
           newExpiration,
           0, // Reset dailyProgress to 0 when cycle is over
           userData.goalCount || 0
         );
       } else {
+        console.log(".... step init 2?", dailyGoals);
+        console.log("check..", userData.dailyGoals);
+
         await updateUserData(
           userId,
           userData.timer,
           userData.streak, // keep current streak
           new Date(userData.startTime),
           new Date(userData.endTime),
-          dailyGoals || 3,
+          userData?.dailyGoals,
           newExpiration,
           userData.dailyProgress || 0, // use existing progress
           userData.goalCount || 0
@@ -1967,7 +2011,7 @@ const Step = ({
       newStreak,
       currentTime,
       newEndTime,
-      dailyGoals || 3,
+      dailyGoals || 5,
       newNextGoalExpiration,
       newDailyProgress,
       gc
@@ -1991,6 +2035,8 @@ const Step = ({
           // const jsonResponse = newQuestionMessages;
           // console.log("JSONxyz", jsonResponse);
           setIsCorrect(jsonResponse.isCorrect);
+          setCelebrationMessage(getRandomCelebrationMessage(userLanguage));
+
           setFeedback(jsonResponse.feedback);
 
           if (jsonResponse.isCorrect) {
@@ -2180,7 +2226,7 @@ const Step = ({
         //     content:
         `Generate educational Javascript material about ${JSON.stringify(
           step
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally any code should have a maximum print width of 80 characters. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Lastly the user is speaking in ${
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally any Javascript or relevant code should have a maximum print width of 80 characters in well formatted markdown. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
           userLanguage === "en" ? "english" : "spanish"
         }`
         //     ,
@@ -2778,25 +2824,15 @@ const Step = ({
               <div>
                 <Button
                   boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                  onMouseDown={() => {
-                    window.open(
-                      userLanguage === "en"
-                        ? "https://github.com/RobotsBuildingEducation/RobotsBuildingEducation/blob/main/README.md"
-                        : "https://github.com/RobotsBuildingEducation/RobotsBuildingEducation/blob/main/README.spanish.md"
-                    );
-                  }}
+                  onMouseDown={onStudyGuideModalOpen}
                   mb={4}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
-                      window.open(
-                        userLanguage === "en"
-                          ? "https://github.com/RobotsBuildingEducation/RobotsBuildingEducation/blob/main/README.md"
-                          : "https://github.com/RobotsBuildingEducation/RobotsBuildingEducation/blob/main/README.spanish.md"
-                      );
+                      onStudyGuideModalOpen();
                     }
                   }}
                 >
-                  {translation[userLanguage]["settings.button.studyGuide"]}{" "}
+                  {translation[userLanguage]["settings.button.studyGuide"]}
                 </Button>
                 &nbsp;&nbsp; &nbsp;&nbsp;
                 <Button
@@ -2813,6 +2849,12 @@ const Step = ({
                 >
                   {translation[userLanguage]["app.button.nextQuestion"]}{" "}
                 </Button>
+                <StudyGuideModal
+                  isOpen={isStudyGuideModalOpen}
+                  onClose={onStudyGuideModalClose}
+                  content={step.question.metaData}
+                  userLanguage={userLanguage}
+                />
               </div>
             )}
 
@@ -3021,7 +3063,7 @@ const Step = ({
                             {dailyProgress + 1 > dailyGoals
                               ? dailyGoals
                               : dailyProgress + 1}{" "}
-                            / {dailyGoals || 3}{" "}
+                            / {dailyGoals || 5}{" "}
                             {translation[userLanguage]["questions"]}
                           </Text>
 
@@ -3029,7 +3071,7 @@ const Step = ({
                             trackColor="#bfb49b"
                             color="#82EBAC"
                             value={
-                              ((dailyProgress + 1) / (dailyGoals || 3)) * 100
+                              ((dailyProgress + 1) / (dailyGoals || 5)) * 100
                             }
                             size={8}
                           />
@@ -3043,7 +3085,7 @@ const Step = ({
                               mb={2}
                             >
                               {/* {translation[userLanguage]["celebrateMessage"]} */}
-                              {getRandomCelebrationMessage(userLanguage)}
+                              {celebrationMessage}
                             </Text>
                           ) : null}
                         </VStack>
@@ -3102,7 +3144,9 @@ const Step = ({
                         }
                       }}
                     >
-                      {translation[userLanguage]["app.button.answer"]}
+                      {step.isConversationReview
+                        ? translation[userLanguage]["app.button.complete"]
+                        : translation[userLanguage]["app.button.answer"]}
                     </Button>
                   ) : null}
 
@@ -3271,10 +3315,170 @@ const Step = ({
             />
 
             <PasscodeModal userLanguage={userLanguage} />
+            {/* 
+            {isInstallModalOpen ? (
+              <InstallAppModal
+                userLanguage={userLanguage}
+                isOpen={isInstallModalOpen}
+                onClose={onInstallModalClose}
+              />
+            ) : null} */}
           </>
         </>
       )}
     </VStack>
+  );
+};
+
+const SplashScreen = ({ numPoints = 50 }) => {
+  const screenWidth = window.innerWidth;
+  const screenHeight = window.innerHeight;
+
+  // Your gradient color palette.
+  const gradientColors = [
+    "#f2dcfa",
+    "#f9d4fa",
+    "#fca4b3",
+    "#fcb7a4",
+    "#fcd4a4",
+  ];
+
+  // 1. Generate random seed points across the screen.
+  const points = useMemo(() => {
+    const pts = [];
+    for (let i = 0; i < numPoints; i++) {
+      pts.push([Math.random() * screenWidth, Math.random() * screenHeight]);
+    }
+    return pts;
+  }, [numPoints, screenWidth, screenHeight]);
+
+  // 2. Create a Delaunay triangulation and corresponding Voronoi diagram.
+  const delaunay = useMemo(() => Delaunay.from(points), [points]);
+  const voronoi = useMemo(
+    () => delaunay.voronoi([0, 0, screenWidth, screenHeight]),
+    [delaunay, screenWidth, screenHeight]
+  );
+
+  // Calculate screen center for explosion effect.
+  const centerX = screenWidth / 2;
+  const centerY = screenHeight / 2;
+
+  // 3. Generate fragments from each Voronoi cell.
+  const fragments = useMemo(() => {
+    return points
+      .map((point, i) => {
+        const cell = voronoi.cellPolygon(i);
+        if (!cell) return null;
+
+        // Calculate the centroid of the cell.
+        let cx = 0,
+          cy = 0;
+        cell.forEach(([x, y]) => {
+          cx += x;
+          cy += y;
+        });
+        cx /= cell.length;
+        cy /= cell.length;
+
+        // Compute a vector from the screen center to the cell's centroid.
+        const dx = cx - centerX;
+        const dy = cy - centerY;
+        const dist = Math.hypot(dx, dy) || 1; // avoid division by zero
+
+        // Scale the vector for an explosive effect.
+        const explosionFactor = Math.random() * 100 + 50; // between 50 and 150 pixels
+        const targetX = (dx / dist) * explosionFactor;
+        const targetY = (dy / dist) * explosionFactor;
+
+        // Random rotation between -40 and 40 degrees.
+        const randomRotation = Math.random() * 80 - 40;
+        // Random delay so the pieces shatter at slightly different times.
+        const delay = Math.random() * 0.3;
+
+        // Build the polygon points string.
+        const pointsString = cell.map(([x, y]) => `${x},${y}`).join(" ");
+
+        return {
+          pointsString,
+          targetX,
+          targetY,
+          rotation: randomRotation,
+          delay,
+        };
+      })
+      .filter(Boolean);
+  }, [points, voronoi, centerX, centerY]);
+
+  // Pre-calculate gradient settings for each fragment.
+  const gradients = useMemo(() => {
+    return fragments.map((_, i) => {
+      // Cycle through the palette.
+      const startColor = gradientColors[i % gradientColors.length];
+      const endColor = gradientColors[(i + 1) % gradientColors.length];
+      // Set an initial random angle for the gradient.
+      const angle = Math.random() * 360;
+      return { startColor, endColor, angle };
+    });
+  }, [fragments, gradientColors]);
+
+  return (
+    <motion.svg
+      width={screenWidth}
+      height={screenHeight}
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        zIndex: 1000,
+        overflow: "visible",
+      }}
+    >
+      <defs>
+        {gradients.map((grad, i) => (
+          <linearGradient
+            key={i}
+            id={`gradient-${i}`}
+            x1="0%"
+            y1="0%"
+            x2="100%"
+            y2="0%"
+          >
+            <stop offset="0%" stopColor={grad.startColor} />
+            <stop offset="100%" stopColor={grad.endColor} />
+            {/* Animate the gradient rotation to create a swirling effect */}
+            <animateTransform
+              attributeName="gradientTransform"
+              type="rotate"
+              from={`${grad.angle} 0.5 0.5`}
+              to={`${grad.angle + 360} 0.5 0.5`}
+              dur="10s"
+              repeatCount="indefinite"
+            />
+          </linearGradient>
+        ))}
+      </defs>
+      {fragments.map((frag, i) => (
+        <motion.polygon
+          key={i}
+          points={frag.pointsString}
+          initial={{ opacity: 1, x: 0, y: 0, rotate: 0 }}
+          animate={{
+            opacity: 0,
+            x: frag.targetX,
+            y: frag.targetY,
+            rotate: frag.rotation,
+          }}
+          transition={{
+            delay: frag.delay,
+            duration: 1.5,
+            ease: "easeOut",
+          }}
+          fill={`url(#gradient-${i})`}
+          stroke="rgba(0,0,0,0.8)"
+          strokeWidth="2"
+        />
+      ))}
+    </motion.svg>
   );
 };
 
@@ -3288,6 +3492,7 @@ const Home = ({
   view,
   setView,
 }) => {
+  const [showSplash, setShowSplash] = useState(false);
   // const [view, setView] = useState("buttons");
   const [loadingMessage, setLoadingMessage] = useState(
     "createAccount.isCreating"
@@ -3347,6 +3552,9 @@ const Home = ({
     //   return; // Exit the function and prevent further actions
     // }
 
+    const startTime = Date.now();
+
+    setShowSplash(true);
     let accs = parseInt(localStorage.getItem("accs") || "0", 10);
 
     // Check if the user has already generated 3 questions
@@ -3370,7 +3578,7 @@ const Home = ({
 
     localStorage.setItem("displayName", userName);
 
-    const defaultInterval = 1440;
+    const defaultInterval = 2880;
     const currentTime = new Date();
     const endTime = new Date(currentTime.getTime() + defaultInterval * 60000);
 
@@ -3382,7 +3590,7 @@ const Home = ({
       0, // Initial streak count is 0
       currentTime, // Start time
       endTime,
-      3,
+      5,
       new Date(currentTime.getTime() + 86400000),
       0,
       0 // End time, 48 hours from start time
@@ -3395,8 +3603,17 @@ const Home = ({
     // console.log("end analytics");
     setIsSignedIn(true);
 
-    setView("created");
+    const minSplashDuration = 1000; // Minimum splash time in ms (2 seconds)
+    const elapsed = Date.now() - startTime;
+    if (elapsed < minSplashDuration) {
+      await new Promise((resolve) =>
+        setTimeout(resolve, minSplashDuration - elapsed)
+      );
+    }
+
     setIsCreatingAccount(false);
+    setShowSplash(false);
+    setView("created");
   };
 
   const handleSignIn = async () => {
@@ -3429,7 +3646,7 @@ const Home = ({
         } catch (error) {
           console.log("error creating user", error);
         }
-        const defaultInterval = 1440;
+        const defaultInterval = 2880;
 
         const currentTime = new Date();
         const endTime = new Date(
@@ -3442,7 +3659,7 @@ const Home = ({
             0, // Initial streak count is 0
             currentTime, // Start time
             endTime, // End time, 48 hours from start time
-            3, // default dailyGoals
+            5, // default dailyGoals
             new Date(currentTime.getTime() + 86400000), // 24-hour expiration
             0, // initial dailyProgress
             0
@@ -3556,6 +3773,16 @@ const Home = ({
     }
   };
 
+  const handleSplashComplete = () => {
+    // For example, change view to "signIn" or any other route/state
+    setView("created");
+    setShowSplash(false);
+  };
+
+  if (showSplash) {
+    return <>{showSplash && <SplashScreen />}</>;
+  }
+
   return (
     <Box
       textAlign="center"
@@ -3645,8 +3872,8 @@ const Home = ({
                 backgroundColor="pink.50"
                 variant={"outline"}
                 border="1px solid rgb(254,224,232)"
-                onMouseDown={() => setView("signIn")}
                 style={{ width: "150px" }}
+                onMouseDown={() => setView("signIn")}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
                     setView("signIn");
@@ -3752,12 +3979,12 @@ const Home = ({
       )}
       {view === "created" && keys && (
         <VStack spacing={4}>
-          <Confetti
+          {/* <Confetti
             // gravity={0.75}
             numberOfPieces={100}
             recycle={false}
             colors={["#f2dcfa", "#f9d4fa", "#fca4b3", "#fcb7a4", "#fcd4a4"]} // Array of colors matching the logo
-          />
+          /> */}
           <PanRightComponent>
             <Text
               p={4}
@@ -3780,42 +4007,7 @@ const Home = ({
               </Text>{" "}
               <Text fontSize="sm" maxWidth={"300px"}>
                 {translation[userLanguage]["createAccount.awareness"]}
-                {isCheckboxChecked ? (
-                  <a
-                    target="_blank"
-                    href="https://otherstuff.app"
-                    color="teal.500"
-                    style={{ textDecoration: "underline", color: "teal" }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        window.open("https://otherstuff.app");
-                      }
-                    }}
-                  >
-                    {translation[userLanguage]["createAccount.roxLink"]}
-                  </a>
-                ) : (
-                  translation[userLanguage]["createAccount.roxLink"]
-                )}
-                {/* {translation[userLanguage]["or"] + " "}
-                {isCheckboxChecked ? (
-                  <a
-                    target="_blank"
-                    href="https://primal.net/home"
-                    color="teal.500"
-                    style={{ textDecoration: "underline", color: "teal" }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        window.open("https://primal.net/home");
-                      }
-                    }}
-                  >
-                    {translation[userLanguage]["createAccount.primalLink"]}
-                  </a>
-                ) : (
-                  translation[userLanguage]["createAccount.primalLink"]
-                )} */}
-                .
+                {translation[userLanguage]["createAccount.roxLink"]}.
               </Text>
               {/* <Accordion allowToggle>
                 <AccordionItem>
@@ -4048,7 +4240,7 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
           justifyContent: "center",
         }}
       >
-        <BigSunset />
+        <CloudCanvas />
       </div>{" "}
       <div style={{ marginTop: "-32px" }}>
         <RandomCharacter />

@@ -45,7 +45,7 @@ import { FaBitcoin } from "react-icons/fa";
 
 export const Onboarding = ({ userLanguage }) => {
   const { step } = useParams();
-  const [interval, setInterval] = useState(1440);
+  const [interval, setInterval] = useState(2880);
   const navigate = useNavigate();
   const toast = useToast();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
@@ -676,7 +676,7 @@ export const Onboarding = ({ userLanguage }) => {
                 boxShadow="0.5px 0.5px 1px 0px black"
               >
                 <Text
-                  mb={2}
+                  mb={6}
                   display="flex"
                   alignItems={"center"}
                   justifyContent={"center"}
@@ -690,14 +690,6 @@ export const Onboarding = ({ userLanguage }) => {
                   }
                 </Text>
 
-                <Text fontSize="sm" textAlign="left">
-                  {
-                    translation[userLanguage][
-                      "onboarding.step2.dailyGoalsDescription"
-                    ]
-                  }
-                </Text>
-                <br />
                 <SelfPacedOnboarding
                   interval={interval}
                   setInterval={setInterval}

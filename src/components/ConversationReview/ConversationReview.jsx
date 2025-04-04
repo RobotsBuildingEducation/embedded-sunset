@@ -91,6 +91,7 @@ const ConversationReview = ({
   const { resetMessages, messages, submitPrompt } = useSimpleGeminiChat();
   const [storedRequest, setStoredRequest] = useState("");
   const chatboxRef = useRef(null);
+  const chatContainerRef = useRef(null);
 
   // Gather the steps within the range
   //   const relevantSteps = steps[userLanguage].slice(
@@ -114,10 +115,6 @@ const ConversationReview = ({
     setStoredRequest(response);
     setStreamingResponse("");
 
-    if (chatboxRef.current) {
-      chatboxRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-
     // Construct the prompt and submit it
     const prompt = `The user is reviewing the following steps: ${JSON.stringify(
       {
@@ -133,6 +130,10 @@ const ConversationReview = ({
     submitPrompt(prompt);
 
     setResponse("");
+
+    // if (chatboxRef.current) {
+    //   chatboxRef.current.scrollIntoView({ behavior: "auto" });
+    // }
   };
 
   useEffect(() => {
@@ -173,7 +174,14 @@ const ConversationReview = ({
     }
   }, [messages]);
 
-  console.log("conversation", conversation);
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: "auto",
+      });
+    }
+  }, [conversation]);
 
   return (
     <VStack spacing={4} align="center" width="100%" maxWidth="600px">
@@ -198,10 +206,10 @@ const ConversationReview = ({
           </AccordionPanel>
         </AccordionItem>
       </Accordion>
-      <Box ref={chatboxRef}></Box>
 
       {conversation.length > 0 ? (
         <Box
+          ref={chatContainerRef} // Attach ref to the container
           borderRadius="48px"
           width="100%"
           height={600}
@@ -232,6 +240,7 @@ const ConversationReview = ({
                   />
                 </Box>
               </Flex>
+
               {item.response.content?.length > 0 ? (
                 <Flex justify="flex-start" mb={2}>
                   <Box
@@ -295,6 +304,7 @@ const ConversationReview = ({
               ) : (
                 <CloudCanvas isLoader={true} regulateWidth={false} />
               )}
+              {/* <Box ref={chatboxRef}></Box> */}
             </React.Fragment>
           ))}
         </Box>

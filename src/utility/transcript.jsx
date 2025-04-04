@@ -9,7 +9,7 @@ export let transcript = {
       "naddr1qq84xatwwdjhgt25w46x7unfv9kqyg9ty9kqftakjrsw5p55z5nnsqwxld6xns5darqsrey7kqcuqrlz6upsgqqqw5usc665uz",
     name: "Sunset Tutorial",
     imgSrc:
-      "https://res.cloudinary.com/dtkeyccga/image/upload/v1728270558/zre4dehmebfdikzeasoh.png",
+      "https://res.cloudinary.com/dtkeyccga/image/upload/v1743209424/FFFEF5_d4weow.png",
   },
   1: {
     address:

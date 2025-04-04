@@ -97,7 +97,7 @@ const SelfPacedModal = ({
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   // dailyGoals: number of questions the user wants to complete per day.
-  const [dailyGoals, setDailyGoals] = useState(3);
+  const [dailyGoals, setDailyGoals] = useState(5);
   // dailyProgress: tracks the number of questions completed today.
   const [dailyProgress, setDailyProgress] = useState(0);
   // nextGoalExpiration: when the current 24-hour period expires.
@@ -107,11 +107,12 @@ const SelfPacedModal = ({
   useEffect(() => {
     const fetchUserData = async () => {
       const userData = await getUserData(userId);
+      console.log("USER DATA....", userData);
       setStreak(userData.streak || 0);
       setStartTime(userData.startTime ? new Date(userData.startTime) : null);
       setEndTime(userData.endTime ? new Date(userData.endTime) : null);
       setInterval(userData.timer);
-      setDailyGoals(userData.dailyGoals || 3);
+      setDailyGoals(userData.dailyGoals || 5);
       setGoalCount(userData.goalCount || 0);
       // Initialize dailyProgress from stored data (or default to 0).
       setDailyProgress(userData.dailyProgress || 0);
@@ -168,7 +169,7 @@ const SelfPacedModal = ({
       dailyProgress, // include dailyProgress in the update
       goalCount
     );
-    // onClose();
+    onClose();
   };
 
   // Build the label for the streak timer slider.

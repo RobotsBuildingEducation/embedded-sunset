@@ -19,7 +19,7 @@ export const updateUserData = async (
   streak,
   startTime,
   endTime,
-  dailyGoals = 3,
+  dailyGoals = 5,
   nextGoalExpiration,
   dailyProgress = 0,
   goalCount = 0
@@ -30,6 +30,7 @@ export const updateUserData = async (
       : new Date(nextGoalExpiration);
   const userDocRef = doc(database, "users", userId);
 
+  console.log("daily goals...", dailyGoals);
   await updateDoc(userDocRef, {
     timer,
     streak,

@@ -19,11 +19,13 @@ import { BsPlusSquare } from "react-icons/bs";
 import { LuBadgeCheck } from "react-icons/lu";
 
 import { translation } from "../../utility/translation";
+import { FaHeartBroken } from "react-icons/fa";
 
 export const InstallAppModal = ({
   isOpen,
   onClose,
   userLanguage = localStorage.getItem("userLanguage"),
+  vocalRequest = false,
 }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -32,6 +34,18 @@ export const InstallAppModal = ({
         <ModalHeader>{translation[userLanguage].installApp}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
+          {vocalRequest ? (
+            <>
+              {" "}
+              <Flex direction="column" pb={6}>
+                <FaHeartBroken color="red" fontSize="16px" />
+                <Text mt={3}>
+                  {translation[userLanguage]["badBrowser.install"]}
+                </Text>
+              </Flex>
+              <Divider mb={6} />
+            </>
+          ) : null}
           <Flex direction="column" pb={6}>
             <IoIosMore size={32} />
             <Text mt={2}>

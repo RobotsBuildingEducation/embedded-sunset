@@ -31,6 +31,7 @@ export const useNostrWalletStore = create((set, get) => ({
   walletBalance: 0,
   invoice: "", //not used: needs to add ability to generate new QR/address (invoice) in case things expire
 
+  isCreatingWallet: false,
   // functions to define state when the data gets created
   setError: (msg) => set({ errorMessage: msg }),
   setInvoice: (data) => set({ invoice: data }),
@@ -41,10 +42,7 @@ export const useNostrWalletStore = create((set, get) => ({
   // Kinda like using a visa card to pay
   getHexNPub: (npub) => {
     const { words: npubWords } = bech32.decode(npub);
-    console.log(
-      "hi hihihihihihi",
-      Buffer.from(bech32.fromWords(npubWords)).toString("hex")
-    );
+
     return Buffer.from(bech32.fromWords(npubWords)).toString("hex");
   },
 
@@ -205,6 +203,8 @@ export const useNostrWalletStore = create((set, get) => ({
       createNewWallet,
     } = get();
 
+    set({ isCreatingWallet: true });
+
     if (!ndkInstance || !signer) {
       setError("NDK or signer not initialized. Cannot create wallet yet.");
       await init();
@@ -244,6 +244,7 @@ export const useNostrWalletStore = create((set, get) => ({
 
       await setupWalletListeners(newWallet);
 
+      set({ isCreatingWallet: false });
       return newWallet;
     } catch (error) {
       console.error("Error creating new wallet:", error);
@@ -254,24 +255,20 @@ export const useNostrWalletStore = create((set, get) => ({
 
   // gets payment data for the receiver
   fetchUserPaymentInfo: async (recipientNpub) => {
-    //check if youre connected, if not define an invalid set of dat
     const { ndkInstance, getHexNPub } = get();
     if (!ndkInstance) {
       console.error("NDK instance not ready");
       return { mints: [defaultMint], p2pkPubkey: null, relays: [] };
     }
 
-    // get receiver machine data
     const hexNpub = getHexNPub(recipientNpub);
 
-    //sets up a call to receive user's wallet data with Kind/code 10019
     const filter = {
       kinds: [10019],
       authors: [hexNpub],
       limit: 1,
     };
 
-    // listen for valid data
     const subscription = ndkInstance.subscribe(filter, { closeOnEose: true });
     let userEvent = null;
 
@@ -281,13 +278,10 @@ export const useNostrWalletStore = create((set, get) => ({
 
     await new Promise((resolve) => subscription.on("eose", resolve));
 
-    // if the valid data doesnt exist, define it for them
     if (!userEvent) {
       return { mints: [defaultMint], p2pkPubkey: hexNpub, relays: [] };
     }
 
-    // basically we dont use any of this dat other than the p2pkpubkey
-    // or the pay-to-publickey public key, basically a public way for receivers to receive money that we sent
     let mints = [];
     let relays = [];
     let p2pkPubkey = null;
@@ -361,7 +355,6 @@ export const useNostrWalletStore = create((set, get) => ({
       ];
       const content = "testing int";
 
-      // setup to store payment information to nostr using a nutzap event
       const nutzapEvent = new NDKEvent(ndkInstance, {
         kind: 9321,
         tags,

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Button, VStack, HStack, Box, Text } from "@chakra-ui/react";
 import { translation } from "../../utility/translation";
+import { IoChatbubblesOutline } from "react-icons/io5";
 
 const MultipleAnswerQuestion = ({
   question,
@@ -108,6 +109,8 @@ const MultipleAnswerQuestion = ({
         background="pink.400"
         boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
       >
+        <IoChatbubblesOutline />
+        &nbsp;
         {translation[userLanguage]["app.button.learn"]}
       </Button>
 

@@ -331,7 +331,7 @@ const items = new Items();`,
     },
     {
       group: "tutorial",
-      title: "Review With AI Conversation",
+      title: "Review With AI Conversation (optional)",
       isConversationReview: true,
       description: "Review the subjects you've answered",
       question: {
@@ -373,6 +373,7 @@ const items = new Items();`,
         ],
       },
     },
+
     {
       group: "1",
       title: "Steps to Create a Function",
@@ -472,6 +473,7 @@ const items = new Items();`,
           "Write an `if-else` statement that checks if a number `num` is positive, negative, or zero, and logs an appropriate message.",
       },
     },
+
     {
       group: "1",
       title: "Understanding Conditional Logic in Programming",
@@ -681,7 +683,7 @@ console.log(arr);
     },
     {
       group: "1",
-      title: "Review With AI Conversation",
+      title: "Review With AI Conversation (optional)",
       isConversationReview: true,
       description: "Review the subjects you've answered",
       question: {
@@ -1071,7 +1073,7 @@ myCar.showBrand();`,
     //next lecture
     {
       group: "2",
-      title: "Review With AI Conversation",
+      title: "Review With AI Conversation (optional)",
       isConversationReview: true,
       description: "Review the subjects you've answered",
       question: {
@@ -1414,7 +1416,7 @@ return (
       },
     },
 
-    //x
+    //next
     {
       group: "3",
       title: "Fetching Data with useEffect",
@@ -1471,6 +1473,8 @@ return (
           "Enter the command to install the latest version of a react project with vite.",
       },
     },
+
+    //next
     {
       group: "3",
       title: "Creating a New React Project with Vite",
@@ -1500,7 +1504,7 @@ return (
     },
     {
       group: "3",
-      title: "Review With AI Conversation",
+      title: "Review With AI Conversation (optional)",
       isConversationReview: true,
       description: "Review the subjects you've answered",
       question: {
@@ -1519,6 +1523,7 @@ return (
           "What is backend software engineering and why is it important in building applications?",
       },
     },
+
     {
       group: "4",
       title: "Main Lessons Overview",
@@ -1538,6 +1543,8 @@ return (
         answer: "Optimizing database queries and ensuring data consistency",
       },
     },
+
+    // next
     {
       group: "4",
       title: "Key Responsibilities of Backend Engineering",
@@ -1589,6 +1596,8 @@ return (
           "Write the command to install the node package manager (npm) globally onto your computer",
       },
     },
+
+    //  next
     {
       group: "4",
       title: "Installing An NPM Package",
@@ -1623,6 +1632,8 @@ return (
           "What are the main types of databases used in backend engineering?",
       },
     },
+
+    //  next
     {
       group: "4",
       title: "Connecting Systems",
@@ -1666,6 +1677,8 @@ return (
         ],
       },
     },
+
+    //next
     {
       group: "4",
       title: "Initializing Firebase and Working with Firestore v9",
@@ -1841,6 +1854,8 @@ await addDoc(doc(db, 'users'), {
           "Write code to retrieve a user document from the `users` collection in Firestore using the authenticated user's ID.",
       },
     },
+
+    //next
     {
       group: "4",
       title: "Understanding the Authentication Flow",
@@ -1889,6 +1904,8 @@ await addDoc(doc(db, 'users'), {
         questionText: "What role do environment variables have in a codebase?",
       },
     },
+
+    //next
     {
       group: "4",
       title: "Database Relationships",
@@ -1977,7 +1994,7 @@ await addDoc(doc(db, 'users'), {
     },
     {
       group: "4",
-      title: "Review With AI Conversation",
+      title: "Review With AI Conversation (optional)",
       isConversationReview: true,
       description: "Review the subjects you've answered",
       question: {
@@ -2308,7 +2325,7 @@ await addDoc(doc(db, 'users'), {
     },
     {
       group: "5",
-      title: "Review With AI Conversation",
+      title: "Review With AI Conversation (optional)",
       isConversationReview: true,
       description: "Review the subjects you've answered",
       question: {
@@ -2903,7 +2920,7 @@ list.add('reels');`,
     },
     {
       group: "6",
-      title: "Review With AI Conversation",
+      title: "Review With AI Conversation (optional)",
       isConversationReview: true,
       description: "Review the subjects you've answered",
       question: {
@@ -2940,149 +2957,149 @@ list.add('reels');`,
           </div>
         ),
         metaData: `### ¡Bienvenido a Github!
-    Github es una plataforma que permite a los desarrolladores de software colaborar con código. Piénsalo como Google Docs pero para ingenieros de software. Aprenderemos más sobre el uso de Git y Github en otra ocasión, pero por ahora esto sirve como una cálida bienvenida al mundo de la construcción de software.
+Github es una plataforma que permite a los desarrolladores de software colaborar con código. Piénsalo como Google Docs pero para ingenieros de software. Aprenderemos más sobre el uso de Git y Github en otra ocasión, pero por ahora esto sirve como una cálida bienvenida al mundo de la construcción de software.
+
+### Consejos
+Es importante recordar esto como principiante:
+
+1. Construir cosas con software se trata principalmente de organizar información en lugar de ser bueno en matemáticas. Los lenguajes de programación usan lógica y computación para expresar ideas en lugar de ecuaciones y álgebra.
+
+2. Al igual que el idioma inglés, puedes expresar las cosas de muchas maneras diferentes.
+
+3. Cuando algo te desafíe, falla más rápido y divide el problema en pasos más comprensibles.
+
+### Exposición
+La idea aquí es exponerte a conceptos antes de que empieces a responder preguntas al respecto en la aplicación para que no te intimide más tarde. No te preocupes por no entender todo. De hecho, haz tu mejor esfuerzo para darle sentido de un vistazo o usa la IA a tu favor para crear una comprensión.
+
+### Código
+
+Observemos estas listas. Podemos ver que:
+- \`mis_datos_personalizados && mi_lista_personalizada\` son equivalentes.
+- \`conjunto_de_datos && objeto_de_datos\` también son fundamentalmente equivalentes.
+
+\`\`\`js
+let mis_datos_personalizados = [1, 2, 3, 'a', 'b', 'c', null, false]
+const mi_lista_personalizada = new Array(1, 2, 3, 'a', 'b', 'c', null, false)
+mis_datos_personalizados.push('nuevos datos')
+mi_lista_personalizada.push('nuevos datos')
+
+let conjunto_de_datos = {
+introduccion: "Bienvenido",
+titulo: "Capítulo 1",
+esta_en_vivo: true
+}
+conjunto_de_datos.pagina = 4
+conjunto_de_datos['libro'] = 'Conceptos Básicos de Programación'
+
+let objeto_de_datos = new Object()
+objeto_de_datos.introduccion = 'Bienvenido'
+objeto_de_datos.titulo = 'Capítulo 1'
+objeto_de_datos.esta_en_vivo = true
+objeto_de_datos.pagina = 4
+objeto_de_datos['libro'] = 'Conceptos Básicos de Programación'
+
+\`\`\`
+
+Además, en el ejemplo anterior, estamos expuestos a definiciones de variables, tipos de datos, arrays, funciones y objetos. Gran parte del software que probablemente utilizas opera con esos conceptos bajo el capó. Es por eso que \`[]\` y \`new Array\` pueden crear los mismos datos: se traduce de la misma manera cuando se trata de convertir tu código en señales que pueden enviarse a través de Internet.
+
+Ahora, en el ejemplo a continuación, echamos un vistazo a crear nuestros propios objetos personalizados. Creamos nuestro propio objeto personalizado, junto con una interfaz de funciones. Generalmente, cuando se trata de datos, puedes crearlos, recuperarlos, actualizarlos o eliminarlos de una forma u otra.
+
+\`\`\`js
+class Casa {
+pintura_casa = null
+
+constructor(pintura){
+  this.pintura_casa = pintura
+}
+
+obtenerPintura(){
+  return this.pintura_casa
+}
+
+establecerPintura(pintura){
+  this.pintura_casa = pintura
+}
+
+eliminarPintura(){
+  this.pintura_casa = null
+}
+}
+
+let primera_casa = new Casa("rosa")
+let siguiente_casa = new Casa("azul")
+
+let primera_pintura = primera_casa.obtenerPintura() // devuelve el valor "rosa"
+let siguiente_pintura = siguiente_casa.pintura_casa // devuelve el valor "azul"
+siguiente_pintura = siguiente_casa['pintura_casa'] // aún devuelve el valor 'azul'
+
+\`\`\`
+
+Entonces, eso es crear datos y trabajar con datos. Descubrirás que generalmente puedes combinar ideas dependiendo de lo que necesites crear. Por ejemplo, el componente anterior también puede escribirse de la siguiente manera:
+
+\`\`\`js
+function crearCasa(pintura = null) {
+return {
+  pintura_casa: pintura,
+
+  obtenerPintura() {
+    return this.pintura_casa;
+  },
+
+  establecerPintura(pintura) {
+    this.pintura_casa = pintura;
+  },
+
+  eliminarPintura() {
+    this.pintura_casa = null;
+  },
+};
+}
+
+//¿cuál es el valor del resultado al final del programa?
+const miCasa = crearCasa('azul');
+let pintura = miCasa.pintura_casa;
+
+miCasa.pintura_casa = 'rojo'; 
+pintura = miCasa.obtenerPintura();
+
+miCasa.establecerPintura('verde'); 
+pintura = miCasa.pintura_casa;
+
+miCasa.eliminarPintura(); 
+
+let resultado = miCasa['pintura_casa'];
+\`\`\`
+
+Finalmente, combinamos esto para trabajar con algún código que renderiza la siguiente pantalla:
+
+\`\`\`jsx
+const MensajeDeCelebracion = ({ nombre }) => {
+const datos_de_estilo = {
+  textAlign: 'center'
+}
+
+return <div style={datos_de_estilo}>{nombre}</div>
+}
+
+const Aplicacion = () => {
+return (
+  <section style={{ border: '3px solid black' }}>
+    <header>
+      <h2>¡Buen trabajo!</h2>
+    </header>
     
-    ### Consejos
-    Es importante recordar esto como principiante:
-    
-    1. Construir cosas con software se trata principalmente de organizar información en lugar de ser bueno en matemáticas. Los lenguajes de programación usan lógica y computación para expresar ideas en lugar de ecuaciones y álgebra.
-    
-    2. Al igual que el idioma inglés, puedes expresar las cosas de muchas maneras diferentes.
-    
-    3. Cuando algo te desafíe, falla más rápido y divide el problema en pasos más comprensibles.
-    
-    ### Exposición
-    La idea aquí es exponerte a conceptos antes de que empieces a responder preguntas al respecto en la aplicación para que no te intimide más tarde. No te preocupes por no entender todo. De hecho, haz tu mejor esfuerzo para darle sentido de un vistazo o usa la IA a tu favor para crear una comprensión.
-    
-    ### Código
-    
-    Observemos estas listas. Podemos ver que:
-    - \`mis_datos_personalizados && mi_lista_personalizada\` son equivalentes.
-    - \`conjunto_de_datos && objeto_de_datos\` también son fundamentalmente equivalentes.
-    
-    \`\`\`js
-    let mis_datos_personalizados = [1, 2, 3, 'a', 'b', 'c', null, false]
-    const mi_lista_personalizada = new Array(1, 2, 3, 'a', 'b', 'c', null, false)
-    mis_datos_personalizados.push('nuevos datos')
-    mi_lista_personalizada.push('nuevos datos')
-    
-    let conjunto_de_datos = {
-      introduccion: "Bienvenido",
-      titulo: "Capítulo 1",
-      esta_en_vivo: true
-    }
-    conjunto_de_datos.pagina = 4
-    conjunto_de_datos['libro'] = 'Conceptos Básicos de Programación'
-    
-    let objeto_de_datos = new Object()
-    objeto_de_datos.introduccion = 'Bienvenido'
-    objeto_de_datos.titulo = 'Capítulo 1'
-    objeto_de_datos.esta_en_vivo = true
-    objeto_de_datos.pagina = 4
-    objeto_de_datos['libro'] = 'Conceptos Básicos de Programación'
-    
-    \`\`\`
-    
-    Además, en el ejemplo anterior, estamos expuestos a definiciones de variables, tipos de datos, arrays, funciones y objetos. Gran parte del software que probablemente utilizas opera con esos conceptos bajo el capó. Es por eso que \`[]\` y \`new Array\` pueden crear los mismos datos: se traduce de la misma manera cuando se trata de convertir tu código en señales que pueden enviarse a través de Internet.
-    
-    Ahora, en el ejemplo a continuación, echamos un vistazo a crear nuestros propios objetos personalizados. Creamos nuestro propio objeto personalizado, junto con una interfaz de funciones. Generalmente, cuando se trata de datos, puedes crearlos, recuperarlos, actualizarlos o eliminarlos de una forma u otra.
-    
-    \`\`\`js
-    class Casa {
-      pintura_casa = null
-    
-      constructor(pintura){
-        this.pintura_casa = pintura
-      }
-    
-      obtenerPintura(){
-        return this.pintura_casa
-      }
-    
-      establecerPintura(pintura){
-        this.pintura_casa = pintura
-      }
-    
-      eliminarPintura(){
-        this.pintura_casa = null
-      }
-    }
-    
-    let primera_casa = new Casa("rosa")
-    let siguiente_casa = new Casa("azul")
-    
-    let primera_pintura = primera_casa.obtenerPintura() // devuelve el valor "rosa"
-    let siguiente_pintura = siguiente_casa.pintura_casa // devuelve el valor "azul"
-    siguiente_pintura = siguiente_casa['pintura_casa'] // aún devuelve el valor 'azul'
-    
-    \`\`\`
-    
-    Entonces, eso es crear datos y trabajar con datos. Descubrirás que generalmente puedes combinar ideas dependiendo de lo que necesites crear. Por ejemplo, el componente anterior también puede escribirse de la siguiente manera:
-    
-    \`\`\`js
-    function crearCasa(pintura = null) {
-      return {
-        pintura_casa: pintura,
-    
-        obtenerPintura() {
-          return this.pintura_casa;
-        },
-    
-        establecerPintura(pintura) {
-          this.pintura_casa = pintura;
-        },
-    
-        eliminarPintura() {
-          this.pintura_casa = null;
-        },
-      };
-    }
-    
-    //¿cuál es el valor del resultado al final del programa?
-    const miCasa = crearCasa('azul');
-    let pintura = miCasa.pintura_casa;
-    
-    miCasa.pintura_casa = 'rojo'; 
-    pintura = miCasa.obtenerPintura();
-    
-    miCasa.establecerPintura('verde'); 
-    pintura = miCasa.pintura_casa;
-    
-    miCasa.eliminarPintura(); 
-    
-    let resultado = miCasa['pintura_casa'];
-    \`\`\`
-    
-    Finalmente, combinamos esto para trabajar con algún código que renderiza la siguiente pantalla:
-    
-    \`\`\`jsx
-    const MensajeDeCelebracion = ({ nombre }) => {
-      const datos_de_estilo = {
-        textAlign: 'center'
-      }
-      
-      return <div style={datos_de_estilo}>{nombre}</div>
-    }
-    
-    const Aplicacion = () => {
-      return (
-        <section style={{ border: '3px solid black' }}>
-          <header>
-            <h2>¡Buen trabajo!</h2>
-          </header>
-          
-          <MensajeDeCelebracion nombre="¡Creaste una pequeña aplicación!" />
-         </section>
-      )
-    }
-    \`\`\`
-    
-    Y eso es todo. En el último ejemplo, hemos utilizado una biblioteca llamada React, que nos da acceso a funciones especiales especializadas para renderizar elementos en una pantalla. Pero sigue el mismo proceso de pensamiento que lo anterior.
-    
-    ### Conclusión
-    Recuerda que fallar más rápido está en tu mejor interés cuando aprendes nuevas habilidades con software. Este documento de una página estará disponible dentro de la aplicación. También hay muchas otras características para ayudar en tu viaje, pero dejaré eso a tu exploración de la plataforma y todo lo que tiene para ofrecer.
-    
-    Mantente enfocado y ¡mucha suerte con el resto!
+    <MensajeDeCelebracion nombre="¡Creaste una pequeña aplicación!" />
+    </section>
+)
+}
+\`\`\`
+
+Y eso es todo. En el último ejemplo, hemos utilizado una biblioteca llamada React, que nos da acceso a funciones especiales especializadas para renderizar elementos en una pantalla. Pero sigue el mismo proceso de pensamiento que lo anterior.
+
+### Conclusión
+Recuerda que fallar más rápido está en tu mejor interés cuando aprendes nuevas habilidades con software. Este documento de una página estará disponible dentro de la aplicación. También hay muchas otras características para ayudar en tu viaje, pero dejaré eso a tu exploración de la plataforma y todo lo que tiene para ofrecer.
+
+Mantente enfocado y ¡mucha suerte con el resto!
     
                 `,
       },
@@ -3217,7 +3234,7 @@ list.add('reels');`,
     },
     {
       group: "tutorial",
-      title: "Revisión con Conversación AI",
+      title: "Revisión con Conversación AI (opcional)",
       isConversationReview: true,
       description: "Revisa los temas que has respondido.",
       question: {
@@ -3548,7 +3565,7 @@ console.log(arr);
     },
     {
       group: "1",
-      title: "Revisión con Conversación AI",
+      title: "Revisión con Conversación AI (opcional)",
       isConversationReview: true,
       description: "Revisa los temas que has respondido.",
       question: {
@@ -3916,7 +3933,7 @@ console.log(arr);
     },
     {
       group: "2",
-      title: "Revisión con Conversación AI",
+      title: "Revisión con Conversación AI (opcional)",
       isConversationReview: true,
       description: "Revisa los temas que has respondido",
       question: {
@@ -4325,7 +4342,7 @@ console.log(arr);
     },
     {
       group: "3",
-      title: "Revisión con Conversación AI",
+      title: "Revisión con Conversación AI (opcional)",
       isConversationReview: true,
       description: "Revisa los temas que has respondido",
       question: {
@@ -5138,7 +5155,7 @@ console.log(arr);
     },
     {
       group: "5",
-      title: "Revisión con Conversación AI",
+      title: "Revisión con Conversación AI (opcional)",
       isConversationReview: true,
       description: "Revisa los temas que has respondido",
       question: {

@@ -7,6 +7,7 @@ import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
 import { translation } from "../../utility/translation";
 import Editor from "react-simple-code-editor";
+import { IoChatbubblesOutline } from "react-icons/io5";
 
 const CodeCompletionQuestion = ({
   step,
@@ -122,6 +123,8 @@ const CodeCompletionQuestion = ({
         background="pink.400"
         boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
       >
+        <IoChatbubblesOutline />
+        &nbsp;
         {translation[userLanguage]["app.button.learn"]}
       </Button>
 
