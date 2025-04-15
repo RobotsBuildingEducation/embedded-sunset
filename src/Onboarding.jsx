@@ -42,6 +42,8 @@ import { getToken } from "firebase/messaging";
 import { RiPuzzle2Line } from "react-icons/ri";
 import { LuPuzzle } from "react-icons/lu";
 import { FaBitcoin } from "react-icons/fa";
+import { steps } from "./utility/content";
+import KnowledgeLedgerOnboarding from "./components/KnowledgeLedgerOnboarding/KnowledgeLedgerOnboarding";
 
 export const Onboarding = ({ userLanguage }) => {
   const { step } = useParams();
@@ -226,8 +228,14 @@ export const Onboarding = ({ userLanguage }) => {
           width: "100%",
         }}
       >
-        {/* Step 1: Introduction to the Challenge */}
         {step === "1" && (
+          <KnowledgeLedgerOnboarding
+            userLanguage={userLanguage}
+            steps={steps}
+          />
+        )}
+        {/* Step 1: Introduction to the Challenge */}
+        {step === "2" && (
           <VStack spacing={4} textAlign="left">
             <RiseUpAnimation>
               <Box
@@ -664,7 +672,7 @@ export const Onboarding = ({ userLanguage }) => {
         )}
 
         {/* Step 2: Setting up Daily Goals */}
-        {step === "2" && (
+        {step === "3" && (
           <VStack spacing={4}>
             <FadeInComponent>
               <Box
@@ -716,7 +724,7 @@ export const Onboarding = ({ userLanguage }) => {
           </VStack>
         )}
 
-        {step === "3" && (
+        {step === "4" && (
           <VStack spacing={4} textAlign="left">
             <RiseUpAnimation>
               <Box
@@ -771,7 +779,7 @@ export const Onboarding = ({ userLanguage }) => {
           </VStack>
         )}
         {/* Step 3: Final Step with Bitcoin Onboarding */}
-        {step === "4" && (
+        {step === "5" && (
           <VStack spacing={4}>
             <PanRightComponent>
               <Text
