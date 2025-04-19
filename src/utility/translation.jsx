@@ -1,8 +1,17 @@
 import { ListItem, OrderedList } from "@chakra-ui/react";
 import { DataTags } from "../elements/DataTag";
+import { IoAppsOutline } from "react-icons/io5";
 
 export let translation = {
   en: {
+    goodJob: "Good job!",
+    nextStep: "Next step",
+    generatingCode: "Generating code...",
+    "buildYourApp.onboarding.instruction":
+      "This app will grow and adapts with you when you learn and make progress. For now, we'll start with a light app to show you some things you'll learn. You can change your idea later.",
+    skip: "Skip",
+
+    runCode: "Run code",
     "modal.selfPace.weekPlan": "Set up 1 week plan",
     "modal.selfPace.monthPlan": "Set up 1 month plan",
     "modal.dailyGoal.estimate":
@@ -1528,6 +1537,13 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   es: {
+    goodJob: "¡Buen trabajo!",
+    nextStep: "Siguiente paso",
+    generatingCode: "Generando código...",
+    "buildYourApp.onboarding.instruction":
+      "Esta aplicación crecerá y se adaptará contigo a medida que aprendes y avanzas. Por ahora, comenzaremos con una aplicación sencilla para mostrarte algunas cosas que vas a aprender. Más adelante podrás cambiar tu idea.",
+    skip: "Saltar",
+    runCode: "Ejecutar programa",
     "modal.selfPace.weekPlan": "Configurar plan de 1 semana",
     "modal.selfPace.monthPlan": "Configurar plan de 1 mes",
     "app.terminal.placeholder": "Escribe tu respuesta aquí",

@@ -60,7 +60,13 @@ const model = getGenerativeModel(vertexAI, {
 
 const simplemodel = getGenerativeModel(vertexAI, {
   // model: "gemini-1.5-flash",
-  model: "gemini-2.0-flash-001",
+  // model: "gemini-2.0-flash-001",
+  model: "gemini-2.0-flash",
 });
 
-export { database, analytics, model, simplemodel, messaging };
+const promodel = getGenerativeModel(vertexAI, {
+  // model: "gemini-1.5-flash",
+  model: "gemini-2.5-pro-preview-03-25",
+});
+
+export { database, analytics, model, simplemodel, messaging, promodel };

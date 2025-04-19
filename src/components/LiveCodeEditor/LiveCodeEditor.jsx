@@ -85,7 +85,7 @@ import { translation } from "../../utility/translation";
 // ;
 // `;
 
-const LiveReactEditorModal = ({ code }) => {
+const LiveReactEditorModal = ({ code, isOnboarding = false }) => {
   const [editorCode, setEditorCode] = useState(code);
   const { hasCopied, onCopy } = useClipboard(
     editorCode +
@@ -186,9 +186,18 @@ const LiveReactEditorModal = ({ code }) => {
     return () => window.removeEventListener("message", handleConsoleMessage);
   }, []);
 
-  const flexDirection = useBreakpointValue({ base: "column", md: "row" });
-  const editorWidth = useBreakpointValue({ base: "100%", md: "50%" });
-  const previewWidth = useBreakpointValue({ base: "100%", md: "50%" });
+  // const flexDirection = useBreakpointValue({
+  //   base: "column",
+  //   md: isOnboarding ? "100%" : "100%",
+  // });
+  // const editorWidth = useBreakpointValue({
+  //   base: "100%",
+  //   md: isOnboarding ? "100%" : "100%",
+  // });
+  // const previewWidth = useBreakpointValue({
+  //   base: "100%",
+  //   md: isOnboarding ? "100%" : "100%",
+  // });
 
   console.log("isreact", isReactCode(editorCode));
   return (
@@ -202,39 +211,40 @@ const LiveReactEditorModal = ({ code }) => {
       >
         Run Code
       </Button>
-      &nbsp;
-      {translation[localStorage.getItem("userLanguage") || "en"]["or"]}
-      &nbsp;
-      <Link
-        textDecoration={"underline"}
-        as="button"
-        onMouseDown={() => {
-          onCopy();
-          window.location.href = "https://v0.dev/";
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            onCopy();
-            window.location.href = "https://v0.dev/";
-          }
-        }}
-        mb={4}
-      >
-        {hasCopied
-          ? translation[localStorage.getItem("userLanguage") || "en"]["copied"]
-          : translation[localStorage.getItem("userLanguage") || "en"][
-              "copy_code_launch_builder"
-            ]}
-      </Link>
-      <Box
-        display="flex"
-        flexDirection={flexDirection}
-        width="100%"
-        flexWrap="wrap"
-        mt={4}
-      >
+      {!isOnboarding && (
+        <>
+          {" "}
+          &nbsp;
+          {translation[localStorage.getItem("userLanguage") || "en"]["or"]}
+          &nbsp;
+          <Link
+            textDecoration={"underline"}
+            as="button"
+            onMouseDown={() => {
+              onCopy();
+              window.location.href = "https://v0.dev/";
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                onCopy();
+                window.location.href = "https://v0.dev/";
+              }
+            }}
+            mb={4}
+          >
+            {hasCopied
+              ? translation[localStorage.getItem("userLanguage") || "en"][
+                  "copied"
+                ]
+              : translation[localStorage.getItem("userLanguage") || "en"][
+                  "copy_code_launch_builder"
+                ]}
+          </Link>
+        </>
+      )}
+      <Box display="flex" flexDirection={"column"} width="100%" mt={4}>
         <Box
-          width={editorWidth}
+          width={"100%"}
           mb={{ base: 4, md: 0 }}
           boxShadow="0.5px 0.5px 1px 0px rgba(0, 0, 0, 0.75)"
         >
@@ -246,7 +256,7 @@ const LiveReactEditorModal = ({ code }) => {
             onChange={(value) => setEditorCode(value)}
             // theme="vs-dark"
             theme="light"
-            maxWidth="100%"
+            // maxWidth="100%"
             width="100%"
             options={{
               minimap: { enabled: false },
@@ -259,7 +269,7 @@ const LiveReactEditorModal = ({ code }) => {
           />
         </Box>
 
-        <Box width={previewWidth} borderRadius="md">
+        <Box width={"100%"} borderRadius="md">
           {isReactCode(editorCode) && isPreviewing ? (
             <ChakraProvider>
               <LiveProvider

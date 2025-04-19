@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { model, simplemodel } from "../database/firebaseResources";
+import { model, simplemodel, promodel } from "../database/firebaseResources";
 import { Schema } from "firebase/vertexai";
 
 export const useGeminiChat = () => {
@@ -176,4 +176,84 @@ export const useSimpleGeminiChat = () => {
     submitPrompt,
     resetMessages,
   };
+};
+
+export const useProGeminiChat = () => {
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  /**
+   * submitPrompt: Streams text from a given prompt (string),
+   * first showing “thinking” chunks, then the final answer.
+   */
+  const submitPrompt = async (prompt) => {
+    setLoading(true);
+
+    // 1) Immediately show a thinking placeholder
+    const thinkingMessage = {
+      content: "",
+      type: "thinking",
+      meta: { loading: true, chunks: [] },
+    };
+    setMessages((prev) => [...prev, thinkingMessage]);
+    const thinkingIndex = messages.length;
+
+    try {
+      // 2) Kick off a single combined stream that includes reasoning & answer
+      //    (your SDK may require a flag like includeReasoning:true)
+      const result = await promodel.generateContentStream(prompt, {
+        stream: true,
+      });
+
+      // 3) Prepare a second message for the final answer
+      const answerMessage = {
+        content: "",
+        type: "answer",
+        meta: { loading: true, chunks: [] },
+      };
+      setMessages((prev) => [...prev, answerMessage]);
+      const answerIndex = thinkingIndex + 1;
+
+      // 4) Consume chunks and route them based on chunk.tag (or however your SDK labels them)
+      for await (const chunk of result.stream) {
+        const text = chunk.text();
+        if (chunk.tag === "thought") {
+          // update thinking message
+          setMessages((prev) => {
+            const msgs = [...prev];
+            const msg = msgs[thinkingIndex];
+            msg.content += text;
+            msg.meta.chunks.push({ content: text });
+            return msgs;
+          });
+        } else {
+          // update answer message
+          setMessages((prev) => {
+            const msgs = [...prev];
+            const msg = msgs[answerIndex];
+            msg.content += text;
+            msg.meta.chunks.push({ content: text });
+            return msgs;
+          });
+        }
+      }
+
+      // 5) Mark both as done
+      setMessages((prev) => {
+        const msgs = [...prev];
+        msgs[thinkingIndex].meta.loading = false;
+        msgs[answerIndex].meta.loading = false;
+        return msgs;
+      });
+    } catch (error) {
+      console.error("Error streaming from Gemini:", error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetMessages = () => setMessages([]);
+
+  return { messages, loading, submitPrompt, resetMessages };
 };

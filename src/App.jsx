@@ -1444,7 +1444,7 @@ const Step = ({
         await submitSuggestionMessages([
           {
             content: `
-            The user is on question ${currentStep}. If the question number is 0 offer some words of encouragement when it comes to learning journeys and do not proceed with further instruction. If the question is 1, suggest learning the very basics of coding in two sentences and ignore the rest of this instruction. Otherwise, for any other question, the user has completed the following subjects: ${JSON.stringify(subjectsCompleted)}. Based on their progress, suggest the next best topic to learn and explain why. Based on their progress, suggest the next best topic to learn and explain why while also providing a brief example of code too to expose the individual to the concept.           
+            The user is on question ${currentStep}. If the question number is 0 offer some words of encouragement when it comes to learning journeys and do not proceed with further instruction. If the question is 1, suggest learning the very basics of coding in two sentences and ignore the rest of this instruction. Otherwise, for any other question, the user has completed the following subjects: ${JSON.stringify(subjectsCompleted)}. Based on their progress, suggest the next best topic to learn and explain why. Based on their progress, suggest the next best topic to learn and explain why while also providing a brief example of code too to expose the individual to the concept. This must always be in Javascript when code is being expressed.           
             
             This applies to any question: Respond in minimalist markdown without any headers, only bold facing is allowed to indicate headers for new paragraphs. Never reference the user's subjects, that's for your eyes only. Never reference other businesses or organizations.
               The user is speaking ${
@@ -1824,7 +1824,7 @@ const Step = ({
             content: `The user is answering the following question "${
               step.question.questionText
             }". The answer to the question is an array [${step.question.answer}]
-          and the user provided the following answer array [${answer}]. Is this answer correct?Determine by comparing the two arrays rather than observing your opinion over the correctness of an answer. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string  }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction.  Your feedback will include a grade ranging from 0-100 based on the quality of the answer -  however if the answer is correct just reward a 100. The user is speaking ${
+          and the user provided the following answer array [${answer}] - this array is the source of truth that must be followed. Is this answer correct? Determine by comparing the two arrays rather than observing your opinion over the correctness of an answer. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string  }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction.  Your feedback will include a grade ranging from 0-100 based on the quality of the answer -  however if the answer is correct just reward a 100. The user is speaking ${
             userLanguage === "es" ? "spanish" : "english"
           }.`,
             role: "user",
@@ -3331,8 +3331,13 @@ const Step = ({
 };
 
 const SplashScreen = ({ numPoints = 50 }) => {
-  const screenWidth = window.innerWidth;
-  const screenHeight = window.innerHeight;
+  const initialDims = useRef({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  const screenWidth = initialDims.current.width;
+  const screenHeight = initialDims.current.height;
 
   // Your gradient color palette.
   const gradientColors = [
@@ -3345,11 +3350,10 @@ const SplashScreen = ({ numPoints = 50 }) => {
 
   // 1. Generate random seed points across the screen.
   const points = useMemo(() => {
-    const pts = [];
-    for (let i = 0; i < numPoints; i++) {
-      pts.push([Math.random() * screenWidth, Math.random() * screenHeight]);
-    }
-    return pts;
+    return Array.from({ length: numPoints }, () => [
+      Math.random() * screenWidth,
+      Math.random() * screenHeight,
+    ]);
   }, [numPoints, screenWidth, screenHeight]);
 
   // 2. Create a Delaunay triangulation and corresponding Voronoi diagram.
@@ -4429,7 +4433,7 @@ function App({ isShutDown }) {
 
               let step = matchnumber ? matchnumber[1] : null;
 
-              if (step > 4) {
+              if (step > 5) {
                 setOnboardingToDone(localStorage.getItem("local_npub"));
 
                 navigate("/q/0");

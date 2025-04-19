@@ -4,6 +4,7 @@ import { createNoise2D } from "simplex-noise";
 import { FadeInComponent } from "./RandomCharacter";
 import { StreamLoader } from "./StreamLoader";
 import { Noise } from "noisejs";
+import { Box } from "@chakra-ui/react";
 
 function hexToHSL(H) {
   let hex = H.replace(/^#/, "");
@@ -317,6 +318,7 @@ export const CloudCanvas = ({
   // Outline customization:
   outlineColor = "#000",
   outlineWidth = 0,
+  printStatement = "",
 }) => {
   const canvasRef = useRef(null);
   let requestId;

@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
-import Markdown from "react-markdown";
-import ChakraUIRenderer from "chakra-ui-markdown-renderer";
+// src/components/KnowledgeLedgerOnboarding.jsx
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Button,
@@ -8,26 +7,30 @@ import {
   Text,
   Input,
   Heading,
-  UnorderedList,
-  ListItem,
+  useClipboard,
+  Link,
+  ChakraProvider,
+  HStack,
 } from "@chakra-ui/react";
-import { useClipboard } from "@chakra-ui/react";
-
-import { usePasscodeModalStore } from "../../usePasscodeModalStore";
-import { translation } from "../../utility/translation";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { database } from "../../database/firebaseResources";
-import LiveReactEditorModal from "../LiveCodeEditor/LiveCodeEditor";
-import { CloudCanvas } from "../../elements/SunsetCanvas";
+import Editor from "@monaco-editor/react";
+import { LiveProvider, LivePreview, LiveError } from "react-live";
+import { FaMagic } from "react-icons/fa";
 import { useSimpleGeminiChat } from "../../hooks/useGeminiChat";
 import { useAlertStore } from "../../useAlertStore";
+import { usePasscodeModalStore } from "../../usePasscodeModalStore";
+import RandomCharacter, {
+  PanRightComponent,
+} from "../../elements/RandomCharacter";
+import { CloudCanvas } from "../../elements/SunsetCanvas";
+import { translation } from "../../utility/translation";
+import { doc, updateDoc } from "firebase/firestore";
+import { database } from "../../database/firebaseResources";
 
-// Transcript display text for grouped steps.
 export const transcriptDisplay = {
   tutorial: { en: "Tutorial", es: "Tutorial" },
   1: { en: "Basics of Coding", es: "Fundamentos de la Programación" },
   2: {
-    en: "Object-Oriented Programming",
+    en: "Object‑Oriented Programming",
     es: "Programación Orientada a Objetos",
   },
   3: { en: "Frontend Development", es: "Desarrollo Frontend" },
@@ -42,212 +45,307 @@ export const transcriptDisplay = {
   6: { en: "Computer Science", es: "Ciencias de la Computación" },
 };
 
-// Customized Markdown theme for Chakra UI elements.
-const newTheme = {
-  p: (props) => <Text mb={2} lineHeight="1.6" {...props} />,
-  ul: (props) => <UnorderedList pl={6} spacing={2} {...props} />,
-  ol: (props) => <UnorderedList as="ol" pl={6} spacing={2} {...props} />,
-  li: (props) => <ListItem mb={1} {...props} />,
-  h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  code: ({ inline, className, children, ...props }) => {
-    const match = /language-(\w+)/.exec(className || "");
-    return !inline && match ? (
-      <LiveReactEditorModal code={String(children).replace(/\n$/, "")} />
-    ) : (
-      <Box
-        as="code"
-        backgroundColor="gray.100"
-        p={1}
-        borderRadius="md"
-        fontSize="sm"
-        {...props}
-      >
-        {children}
-      </Box>
-    );
-  },
-};
-
-// Standalone onboarding step component for KnowledgeLedger.
-const KnowledgeLedgerOnboarding = ({ userLanguage, steps }) => {
+export default function KnowledgeLedgerOnboarding({
+  userLanguage,
+  moveToNext,
+}) {
+  // -- Onboarding state & hooks --
   const [isLoading, setIsLoading] = useState(false);
-  const [suggestion, setSuggestion] = useState("");
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [hasRunCode, setHasRunCode] = useState(false);
   const [userInput, setUserInput] = useState("");
   const [userIdea, setUserIdea] = useState("");
-
   const { submitPrompt, messages, resetMessages } = useSimpleGeminiChat();
   const { showAlert } = useAlertStore();
   const { openPasscodeModal } = usePasscodeModalStore();
   const { hasCopied, onCopy } = useClipboard(
-    suggestion + " using mock data rather than real config data if necessary."
+    userIdea + " (using mock data if necessary)"
   );
 
-  // Fetch user input on mount.
+  // -- Editor state arrays, one slot per message --
+  const [editorCodes, setEditorCodes] = useState([]);
+  const [isPreviewings, setIsPreviewings] = useState([]);
+  const [errors, setErrors] = useState([]);
+  const [consoleLogs, setConsoleLogs] = useState([]);
+  const iframeRefs = useRef([]);
+
+  // load saved idea
   useEffect(() => {
-    fetchUserInput();
+    const saved = localStorage.getItem("userBuild");
+    if (saved) setUserIdea(saved);
   }, []);
 
-  const fetchUserInput = async () => {
-    try {
-      const userId = localStorage.getItem("local_npub");
-      if (!userId) throw new Error("User ID not found");
-      const userDocRef = doc(database, "users", userId);
-      const userDoc = await getDoc(userDocRef);
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        setUserIdea(userData.userBuild || "");
+  // whenever AI messages change, init arrays
+  useEffect(() => {
+    setEditorCodes(messages.map((m) => stripCodeFences(m.content)));
+    setIsPreviewings(messages.map(() => false));
+    setErrors(messages.map(() => ""));
+    setConsoleLogs(messages.map(() => []));
+  }, [messages]);
+
+  // handle console messages from iframes
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.data?.type === "log" && typeof e.data.idx === "number") {
+        setConsoleLogs((prev) => {
+          const copy = [...prev];
+          copy[e.data.idx] = [...copy[e.data.idx], e.data.msg];
+          return copy;
+        });
       }
-    } catch (error) {
-      console.error("Error fetching user input from Firestore:", error);
-      showAlert("error", translation[userLanguage]["input.fetch.error"]);
-    }
-  };
+    };
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, []);
 
   const saveUserInput = async () => {
     try {
+      setIsLoading(true);
       const userId = localStorage.getItem("local_npub");
-      const userDocRef = doc(database, "users", userId);
-      await updateDoc(userDocRef, { userBuild: userInput });
+      const userDoc = doc(database, "users", userId);
+      await updateDoc(userDoc, { userBuild: userInput });
+      localStorage.setItem("userBuild", userInput);
       setUserIdea(userInput);
-    } catch (error) {
-      console.error("Error saving input to Firestore:", error);
-    }
-  };
-
-  const handleSuggestNext = async () => {
-    resetMessages();
-    setIsAnimating(true);
-    setIsLoading(true);
-    setSuggestion("");
-
-    try {
-      // Collect completed step titles from the provided steps data.
-      const subjectsCompleted = steps[userLanguage]
-        .slice(1)
-        .map((step) => step.title);
-
-      let prompt = `Context (Do not reveal to the user): 
-1. The user is learning computer science through a 130-step curriculum.
-2. They have completed these steps: ${JSON.stringify(subjectsCompleted)}.
-3. Write a copy-and-paste app demo in HTML, React, or JavaScript (whichever is best for the student’s level).
-4. Format the response with a prompt followed by a code block in minimalist Markdown.
-
-${userIdea ? `5. Build the app around the user's idea: ${userIdea}.` : ""}`;
-
-      submitPrompt(prompt).then(() => {
-        setIsLoading(false);
-      });
-    } catch (error) {
-      console.error("Error fetching suggestion:", error);
-      setSuggestion("Error fetching suggestion");
+      triggerSuggestion(userInput);
+    } catch (e) {
+      console.error(e);
+      showAlert("error", translation[userLanguage]["input.fetch.error"]);
       setIsLoading(false);
     }
   };
 
-  const renderGroupedSteps = () => {
-    const stepElements = [];
-    let lastGroup = null;
-    steps[userLanguage].forEach((step, index) => {
-      if (step.group !== lastGroup) {
-        stepElements.push(
-          step.group === "introduction" ? null : (
-            <Heading
-              as="h5"
-              size="sm"
-              mt={4}
-              key={`group-${index}`}
-              color="green.400"
-            >
-              {transcriptDisplay[step.group]?.[userLanguage] || ""}
-            </Heading>
-          )
-        );
-        lastGroup = step.group;
-      }
-      stepElements.push(
-        <Text
-          key={`step-${index}`}
-          color={index === 0 ? "green.500" : "gray.500"}
-        >
-          {index !== 0 ? `${index}. ${step.title}` : ""}
-        </Text>
-      );
-    });
-    return stepElements;
+  const triggerSuggestion = async (idea) => {
+    resetMessages();
+
+    try {
+      let prompt = `The user wants to build an app with a great UI/UX with React. Build the app around the user's idea: ${userInput}. The user is speaking in ${userLanguage === "en" ? "English" : "Spanish"}.
+
+        When generating your response, you must format your software in this manner:
+        
+        1. Never use imports. When writing React, do NOT include any import statements or define dependencies.
+        
+        2. Your code should conclude with the line: render(<TheComponentYouCreated />)
+        
+        3. Use the React object for useState and useEffect. Do not use it for createElement, just use the jsx notation instead.
+        
+        4. Print width of 80.
+        
+        5. The component should be aesthetically pleasing and beautiful minimist theme with interactivity and thoughtful spacing. This means that buttons, elements and all other visuals should make sense using proper color theory and responsive design. The background should be white and do not use green or green tones for any elements or buttons.
+
+        6. Your code will be rendered inside of an already existing container on both mobile and desktop web browsers, so make certain that your outcome works responsively using margins and max widths and sensible wrapping. Never use table elements, since they create unresponsive designs.
+        
+        7. Do not return anything other code. Do not include markdown template with triple backticks for jsx or javascript either. This is a strict and absolute rule. Only return code that can be executed because it will be executed, anything else is unnecessary and unwanted and will break the feature. 
+        `;
+      await submitPrompt(prompt);
+
+      setIsLoading(false);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // helpers
+  const isReactCode = (txt) => /render\s*\(\s*<\w/.test(txt);
+  const isHTML = (txt) => /<[^>]+>/.test(txt);
+
+  const runJavaScript = (idx, sanitized) => {
+    const html = `
+      <script>
+        window.console = {
+          log: (...args) => parent.postMessage({ type:'log', idx: ${idx}, msg: args.join(' ') }, '*'),
+          error: (...args) => parent.postMessage({ type:'log', idx: ${idx}, msg: 'Error: '+args.join(' ') }, '*')
+        };
+        try { ${sanitized} } catch(e) { console.error(e) }
+      </script>`;
+    iframeRefs.current[idx].srcdoc = html;
+  };
+
+  const runCode = (idx) => {
+    setIsPreviewings((p) => p.map((v, i) => (i === idx ? true : v)));
+    setErrors((e) => e.map((v, i) => (i === idx ? "" : v)));
+    setConsoleLogs((l) => l.map((v, i) => (i === idx ? [] : v)));
+
+    const code = editorCodes[idx];
+    const clean = code.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, "");
+    if (isReactCode(clean)) {
+      // react-live will handle preview
+    } else if (isHTML(clean)) {
+      iframeRefs.current[idx].srcdoc = clean;
+    } else {
+      runJavaScript(idx, clean);
+    }
+
+    setHasRunCode(true);
+  };
+
+  console.log("messages", messages);
+  const stripCodeFences = (input) => {
+    // This regex looks for:
+    //  - ``` then (jsx|javascript)
+    //  - optional whitespace/newline
+    //  - (capture) anything (including newlines) lazily
+    //  - optional whitespace/newline then closing ```
+    return input.replace(/```(?:jsx|javascript)\s*\n?([\s\S]*?)\n?```/g, "$1");
   };
 
   return (
-    <Box
-      bg="white"
-      p={6}
-      borderRadius="md"
-      boxShadow="md"
-      maxWidth="800px"
-      mx="auto"
-      my={8}
-    >
-      <Heading mb={4}>
-        {translation[userLanguage]["modal.adaptiveLearning.title"]} (beta)
-      </Heading>
-      <Box mb={4}>
+    <>
+      {/* Onboarding UI */}
+      <Box
+        bg="white"
+        p={6}
+        borderRadius="24px"
+        boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+        mb={8}
+        textAlign="center"
+        width="100%"
+      >
+        <Text mb={4} display="flex" alignItems="center" justifyContent="center">
+          <FaMagic />
+          &nbsp;{translation[userLanguage]["about.title.buildYourApp"]}
+        </Text>
+        <Text mb={4} maxW="400px" mx="auto" fontSize={"sm"} textAlign={"left"}>
+          {/* {translation[userLanguage]["about.subtitle.buildYourApp"]} */}
+          {translation[userLanguage]["buildYourApp.onboarding.instruction"]}
+        </Text>
         <Input
           placeholder={translation[userLanguage]["buildYourApp.input.label"]}
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
-          maxWidth="400px"
+          mb={2}
+          maxW="400px"
         />
-        <Button mt={2} onClick={saveUserInput} isDisabled={!userInput.trim()}>
-          {userIdea
-            ? translation[userLanguage]["buildYourApp.button.label.2"]
-            : translation[userLanguage]["buildYourApp.button.label.1"]}
-        </Button>
-      </Box>
-      {userIdea && (
-        <Box mb={4}>
-          {translation[userLanguage]["buildYourApp.idea.label"]} {userIdea}
-        </Box>
-      )}
-      <Box mb={4}>
-        <Button
-          colorScheme="purple"
-          onClick={handleSuggestNext}
-          isDisabled={isLoading}
-          variant="outline"
-        >
-          {translation[userLanguage]["modal.adaptiveLearning.recommendButton"]}
-        </Button>
-        {isAnimating && (
-          <Box mt={4}>
-            <CloudCanvas isLoader={true} regulateWidth={false} />
-          </Box>
-        )}
-      </Box>
-      <Box mt={4}>
-        {messages.length > 0 && (
-          <Box mt={4} w="100%">
-            {messages.map((msg, index) => (
-              <Markdown key={index} components={ChakraUIRenderer(newTheme)}>
-                {msg.content}
-              </Markdown>
-            ))}
-          </Box>
-        )}
-      </Box>
-      <VStack align="stretch" mt={6}>
-        <Text fontSize="lg">
-          {translation[userLanguage]["modal.adaptiveLearning.stepsTaken"]}
-        </Text>
-        <Box as="hr" />
-        {renderGroupedSteps()}
-      </VStack>
-      <Button mt={4} onClick={() => console.log("Proceed to next step")}>
-        {translation[userLanguage]["button.close"]}
-      </Button>
-    </Box>
-  );
-};
+        <br />
+        <HStack justifyContent={"center"}>
+          <Button
+            onClick={saveUserInput}
+            isDisabled={!userInput.trim()}
+            colorScheme="purple"
+            variant={"outline"}
+          >
+            {userIdea
+              ? translation[userLanguage]["buildYourApp.button.label.2"]
+              : translation[userLanguage]["buildYourApp.button.label.1"]}
+          </Button>
+          <Button onClick={moveToNext}>
+            {" "}
+            {translation[userLanguage]["skip"]}
+          </Button>
+        </HStack>
+        <br />
+        <br />
+        {isLoading && (
+          <>
+            <CloudCanvas />
+            {translation[userLanguage]["generatingCode"]}
 
-export default KnowledgeLedgerOnboarding;
+            <br />
+            <br />
+          </>
+        )}
+
+        {/* Render each AI suggestion with inline editor + preview */}
+        <VStack spacing={6} align="stretch">
+          {messages.map((msg, idx) => (
+            <Box key={idx}>
+              {isLoading ? null : (
+                <>
+                  <br />
+                  <Button
+                    onClick={() => runCode(idx)}
+                    variant="outline"
+                    mb={2}
+                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                  >
+                    {translation[userLanguage]["runCode"]}
+                  </Button>
+                </>
+              )}{" "}
+              <Editor
+                height="300px"
+                language={"javascript"}
+                value={editorCodes[idx]}
+                onChange={(v) => {
+                  const all = [...editorCodes];
+                  all[idx] = v || "";
+                  setEditorCodes(all);
+                }}
+                options={{ minimap: { enabled: false }, automaticLayout: true }}
+              />
+              {hasRunCode ? (
+                <>
+                  <br />
+                  <br />
+                  <Text> {translation[userLanguage]["goodJob"]}</Text>
+                  <Button
+                    onClick={moveToNext}
+                    mb={2}
+                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                  >
+                    {translation[userLanguage]["nextStep"]}
+                  </Button>
+                </>
+              ) : null}
+              <br />
+              <br />
+              {/* React preview */}
+              {isReactCode(editorCodes[idx]) && isPreviewings[idx] && (
+                <ChakraProvider>
+                  <LiveProvider
+                    code={editorCodes[idx]}
+                    noInline
+                    scope={{
+                      React,
+                      useState: React.useState,
+                      useEffect: React.useEffect,
+                      Button,
+                      Input,
+                      Text,
+                      Box,
+                      Link,
+                      Heading,
+                      UnorderedList: React.Fragment,
+                      FormControl: React.Fragment,
+                      FormLabel: React.Fragment,
+                      List: React.Fragment,
+                      ListItem: React.Fragment,
+                      Flex: React.Fragment,
+                      VStack,
+                      HStack: React.Fragment,
+                      Textarea: React.Fragment,
+                      Select: React.Fragment,
+                    }}
+                  >
+                    <LivePreview />
+                    <LiveError />
+                  </LiveProvider>
+                </ChakraProvider>
+              )}
+              {/* HTML preview */}
+              {isHTML(editorCodes[idx]) && !isReactCode(editorCodes[idx]) && (
+                <iframe
+                  ref={(el) => (iframeRefs.current[idx] = el)}
+                  style={{ width: "100%", height: "300px", border: 0 }}
+                />
+              )}
+              {/* JS console */}
+              {!isReactCode(editorCodes[idx]) &&
+                !isHTML(editorCodes[idx]) &&
+                isPreviewings[idx] && (
+                  <Box as="pre" bg="gray.800" color="white" p={2} mt={2}>
+                    {consoleLogs[idx].join("\n")}
+                  </Box>
+                )}
+              {errors[idx] && <Text color="red.500">{errors[idx]}</Text>}
+            </Box>
+          ))}
+        </VStack>
+      </Box>
+
+      <Box display="flex" justifyContent="flex-end" mt="-36px" width="100%">
+        <PanRightComponent>
+          <RandomCharacter />
+        </PanRightComponent>
+      </Box>
+    </>
+  );
+}
