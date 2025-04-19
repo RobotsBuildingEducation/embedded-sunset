@@ -514,7 +514,7 @@ app.post("/obsessed-stalker", verifyAppCheckToken, async (req, res) => {
 
     // Construct the payload for OpenAI API
     const constructor = {
-      model: "gpt-4o-mini",
+      model: "gpt-4.1-mini",
       messages: messages || [],
       stream: false, // Disable streaming
       ...restOfApiParams,

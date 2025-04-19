@@ -26,19 +26,19 @@ export default defineConfig({
           "PWA install handler package for Robots Building Education",
         icons: [
           {
-            src: "https://res.cloudinary.com/dtkeyccga/image/upload/v1728270558/zre4dehmebfdikzeasoh.png",
+            src: "https://res.cloudinary.com/dtkeyccga/image/upload/v1743209424/FFFEF5_d4weow.png",
             sizes: "192x192",
             type: "image/png",
             purpose: "any",
           },
           {
-            src: "https://res.cloudinary.com/dtkeyccga/image/upload/v1728270558/zre4dehmebfdikzeasoh.png",
+            src: "https://res.cloudinary.com/dtkeyccga/image/upload/v1743209424/FFFEF5_d4weow.png",
             sizes: "256x256",
             type: "image/png",
             purpose: "any",
           },
           {
-            src: "https://res.cloudinary.com/dtkeyccga/image/upload/v1728270558/zre4dehmebfdikzeasoh.png",
+            src: "https://res.cloudinary.com/dtkeyccga/image/upload/v1743209424/FFFEF5_d4weow.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "any",
