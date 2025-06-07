@@ -1,5 +1,10 @@
 import { create } from "zustand";
-import NDK, { NDKPrivateKeySigner, NDKEvent } from "@nostr-dev-kit/ndk";
+import NDK, {
+  NDKPrivateKeySigner,
+  NDKEvent,
+  NDKUser,
+  NDKZapper,
+} from "@nostr-dev-kit/ndk";
 
 import { Buffer } from "buffer";
 import { bech32 } from "bech32";
@@ -79,6 +84,7 @@ export const useNostrWalletStore = create((set, get) => ({
 
       set({ isConnected: true });
 
+      console.log("HEXNSEC", hexNsec);
       // return the object, the machine key, and the ability to sign/verify your actions/behvior
       return { ndkInstance, hexNpub, signer: new NDKPrivateKeySigner(hexNsec) };
     } catch (err) {
@@ -135,6 +141,7 @@ export const useNostrWalletStore = create((set, get) => ({
 
       // the valid and default wallet has been detected, a wallet exists
       wService.on("wallet:default", (w) => {
+        `     `;
         // listen for balance changes
         setupWalletListeners(w);
       });
@@ -151,6 +158,8 @@ export const useNostrWalletStore = create((set, get) => ({
     //*inefficiency, sanity check, make sure a wallet is defined
     if (!wallet || !(wallet instanceof NDKCashuWallet)) return;
 
+    let testdata = await wallet.getP2pk();
+    console.log("WALLET P2pk", testdata);
     // listen for updates to the balance, when a user answers a question, the balance should update
     wallet.on("balance_updated", async (balance) => {
       const bal = (await wallet.balance()) || [];
@@ -378,7 +387,40 @@ export const useNostrWalletStore = create((set, get) => ({
     }
   },
 
+  sendOneSatToNpubX: async (recipientNpub = defaultReceiver) => {
+    const { ndkInstance, setError, set } = get();
+    // set({ isSendingMoney: true });
+
+    try {
+      // 1) resolve the recipient to an NDKUser via NIP-05
+      const user = await NDKUser.fromNip05(
+        // recipientNpub,
+        "sheilfer@primal.net",
+        ndkInstance
+      );
+
+      // 2) create a zapper for 1 satoshi
+      const zapper = new NDKZapper(user, 1, "sat", {
+        comment: "testing from RO.B.E",
+      });
+
+      // 3) when it completes, flip the loading flag off
+      zapper.on("complete", () => {
+        console.log(`${recipientNpub} received your sat!`);
+        // set({ isSendingMoney: false });
+      });
+
+      // 4) fire the zap
+      await zapper.zap();
+    } catch (err) {
+      console.error("Error sending zap:", err);
+      setError(err.message);
+      // set({ isSendingMoney: false });
+    }
+  },
+
   //handles the deposit... gotta love self describing code
+
   initiateDeposit: async (amountInSats = 10) => {
     //get state
     const { cashuWallet, setError, setInvoice, init, initWalletService } =

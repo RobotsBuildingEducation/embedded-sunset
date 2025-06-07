@@ -260,7 +260,11 @@ const EducationalModal = ({
 
     console.log("filteredData", filteredData);
 
-    const prompt = `You're tutoring a student learn about lecture notes you've generated. Be helpful but not too helpful and keep your responses relatively short - you want students to arrive at the answer or conclusion rather than being informed of it. If the student arrives at a reasonable answer or conclusion, reward them for doing a good job and make them aware that they get it, then follow up with "Any other questions" to conclude the conversation. The student said ${inputValue}.
+    const prompt = `You're tutoring a student learn about lecture notes you've generated. Be helpful and keep your responses relatively short. Additionally, when asking users a question or providing context, repeat the lecture notes you're using exactly and any respective examples so users dont have to scroll up, formatted in markdown.
+    
+    This is the most important part: Do NOT ask follow up questions IF AND ONLY IF the user has provided a reasonable, fair or acceptable answer to a question you've asked, instead specifically say they've done a "great job!" so they're aware that they succeeded and so the conversation can naturally conclude and flow appropriately, otherwise you'll endlessly ask follow-ups which can be frustrating.
+    
+    Afterward, you can follow up with "Any other questions?" to conclude. The student said ${inputValue}.
 
     Lastly, the user is speaking in ${userLanguage === "en" ? "English" : "Spanish"}.
     
@@ -583,7 +587,7 @@ const EducationalModal = ({
                   />
                   <Input
                     as="textarea"
-                    placeholder="Ask for help"
+                    placeholder={translation[userLanguage]["askForHelp"]}
                     value={inputValue}
                     onChange={(e) => {
                       setInputValue(e.target.value);

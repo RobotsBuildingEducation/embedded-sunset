@@ -2,35 +2,33 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
-  VStack,
   Text,
-  Spinner,
   Modal,
   ModalOverlay,
   ModalContent,
   ModalHeader,
   ModalFooter,
   ModalBody,
-  ModalCloseButton,
-  useDisclosure,
   HStack,
-  extendTheme,
-  useStyleConfig,
   useToast,
   Image,
 } from "@chakra-ui/react";
-import { CloudCanvas, SunsetCanvas } from "../../elements/SunsetCanvas";
+import { CloudCanvas } from "../../elements/SunsetCanvas";
 
-import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
 import { translation } from "../../utility/translation";
-import { transcript, videoTranscript } from "../../utility/transcript";
+import { onboardingTranscript } from "../../utility/transcript";
 import ReactConfetti from "react-confetti";
 import { useSharedNostr } from "../../hooks/useNOSTR";
 
-const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
+const AwardModalOnboarding = ({
+  isOpen,
+  onClose,
+  userLanguage,
+  handleActuallyReallySeriouslyLaunchApp,
+}) => {
   const [badges, setBadges] = useState([]);
   const [areBadgesLoading, setAreBadgesLoading] = useState(true);
   const { getUserBadges } = useSharedNostr(
@@ -45,37 +43,8 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
       setAreBadgesLoading(false);
     }
 
-    if (step.isConversationReview && isCorrect) getBadges();
-  }, [step, isCorrect]);
-
-  const handleCopyKeys = () => {
-    const keys = localStorage.getItem("local_nsec"); // replace with actual keys
-    navigator.clipboard.writeText(keys);
-    toast({
-      title: translation[userLanguage]["toast.title.keysCopied"],
-      description: translation[userLanguage]["toast.description.keysCopied"],
-      status: "info",
-      duration: 1500,
-      isClosable: true,
-      position: "top",
-      render: () => (
-        <Box
-          color="black"
-          p={3}
-          bg="#FEEBC8" // Custom background color here!
-          borderRadius="md"
-          boxShadow="lg"
-        >
-          <Text fontWeight="bold">
-            {translation[userLanguage]["toast.title.keysCopied"]}
-          </Text>
-          <Text>
-            {translation[userLanguage]["toast.description.keysCopied"]}
-          </Text>
-        </Box>
-      ),
-    });
-  };
+    getBadges();
+  }, []);
 
   return (
     <Modal
@@ -111,27 +80,27 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
         </ModalHeader>
 
         <ModalBody p={8} style={{ width: "100%", color: "white" }}>
-          <ReactConfetti
-            // gravity={0.75}
+          {/* <ReactConfetti
+            gravity={1.35}
             numberOfPieces={100}
             recycle={false}
             colors={["#f2dcfa", "#f9d4fa", "#fca4b3", "#fcb7a4", "#fcd4a4"]} // Array of colors matching the logo
-          />
+          /> */}
           {translation[userLanguage]["modal.decentralizedTranscript.youEarned"]}
           <br />
           <Text fontSize={"large"} fontWeight={"bold"} mb={2}>
-            {translation[userLanguage][transcript[step.group]?.name]}
+            {onboardingTranscript.name[userLanguage]}
           </Text>
           <a
             target="_blank"
             href={`https://badges.page/a/${
-              transcript[step.group]?.["address"] || ""
+              onboardingTranscript["address"] || ""
             }`}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 window.open(
                   `https://badges.page/a/${
-                    transcript[step.group]?.["address"] || ""
+                    onboardingTranscript["address"] || ""
                   }`
                 );
               }
@@ -139,7 +108,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
           >
             <Image
               loading="eager"
-              src={transcript[step.group]?.["imgSrc"]}
+              src={onboardingTranscript["imgSrc"]}
               width={150}
               style={{
                 borderRadius: "33%",
@@ -219,28 +188,15 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
                   <a
                     href={`https://badges.page/a/${(() => {
                       const badgeName = badge.badgeAddress.split(":")[2];
+                      let matchingTranscript =
+                        onboardingTranscript["name"]["en"].replace(
+                          /\s+/g,
+                          "-"
+                        ) === badgeName;
 
-                      const matchingTranscript = Object.values(transcript).find(
-                        (entry) => {
-                          console.log("entry.name", entry.name);
-                          return entry.name.replace(/\s+/g, "-") === badgeName;
-                        }
-                      );
-
-                      const matchingVideoTranscript = Object.values(
-                        videoTranscript
-                      ).find((entry) => {
-                        console.log("entry.name", entry.name);
-                        return entry.name.replace(/\s+/g, "-") === badgeName;
-                      });
-
-                      console.log(
-                        "matchingTranscript",
-                        matchingTranscript || matchingVideoTranscript
-                      );
-                      let result =
-                        matchingTranscript?.address ||
-                        matchingVideoTranscript?.address;
+                      let result = matchingTranscript
+                        ? onboardingTranscript.address
+                        : null;
                       return result;
                     })()}`}
                     target="_blank"
@@ -250,31 +206,15 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
                           `https://badges.page/a/${(() => {
                             const badgeName = badge.badgeAddress.split(":")[2];
 
-                            const matchingTranscript = Object.values(
-                              transcript
-                            ).find((entry) => {
-                              console.log("entry.name", entry.name);
-                              return (
-                                entry.name.replace(/\s+/g, "-") === badgeName
-                              );
-                            });
+                            let matchingTranscript =
+                              onboardingTranscript["name"]["en"].replace(
+                                /\s+/g,
+                                "-"
+                              ) === badgeName;
 
-                            const matchingVideoTranscript = Object.values(
-                              videoTranscript
-                            ).find((entry) => {
-                              console.log("entry.name", entry.name);
-                              return (
-                                entry.name.replace(/\s+/g, "-") === badgeName
-                              );
-                            });
-
-                            console.log(
-                              "matchingTranscript",
-                              matchingTranscript || matchingVideoTranscript
-                            );
-                            let result =
-                              matchingTranscript?.address ||
-                              matchingVideoTranscript?.address;
+                            let result = matchingTranscript
+                              ? onboardingTranscript.address
+                              : null;
                             return result;
                           })()}`
                         );
@@ -327,17 +267,17 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
         </ModalBody>
         <ModalFooter margin={0} padding={3}>
           <Button
-            onMouseDown={onClose}
+            onMouseDown={handleActuallyReallySeriouslyLaunchApp}
             variant="solid"
             size="md"
             boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                onClose();
+                handleActuallyReallySeriouslyLaunchApp();
               }
             }}
           >
-            {translation[userLanguage]["button.close"]}
+            {translation[userLanguage]["onboarding.final.launch"]}
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -345,4 +285,4 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
   );
 };
 
-export default AwardModal;
+export default AwardModalOnboarding;

@@ -86,7 +86,7 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
               }
             }}
           >
-            🔑 {translation[userLanguage]["button.copyKey"]}
+            🔑 `{translation[userLanguage]["button.copyKey"]}`
           </Button>
           <br />
           <br />

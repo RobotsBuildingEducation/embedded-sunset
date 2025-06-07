@@ -25,6 +25,7 @@ const StudyGuideModal = ({ isOpen, onClose, content, userLanguage }) => {
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
+          {/* <Button>Data</Button> */}
           <Markdown components={ChakraUIRenderer(newTheme)}>{content}</Markdown>
         </ModalBody>
         <ModalFooter>

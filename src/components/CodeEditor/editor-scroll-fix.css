@@ -1,0 +1,53 @@
+/* src/components/editor-scroll-fix.css */
+
+.code-editor-shell {
+  position: relative;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  box-shadow: 0.5px 0.5px 1px 0px rgba(0, 0, 0, 0.75);
+  border-radius: 8px;
+}
+
+/* Force the Editor’s root <div> to be at least as wide as its container, but expand to fit longer lines */
+.editor-container {
+  width: max-content;
+  min-width: 100%;
+}
+
+/* 1) No wrapping in both the visible <pre> and the hidden <textarea> */
+.code-editor-shell pre,
+.code-editor-shell textarea {
+  white-space: pre !important;
+  word-wrap: normal !important;
+  overflow-wrap: normal !important;
+  font-family: Menlo, monospace;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* 2) Let the <pre> grow to the width of its longest line */
+.code-editor-shell pre {
+  margin: 0;
+  padding: 16px; /* match Editor’s padding={16} */
+  box-sizing: border-box;
+  display: inline-block; /* width = width of longest line */
+}
+
+/* 3) Position the textarea on top, transparent except the caret */
+.code-editor-shell textarea {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 16px; /* match Editor’s padding */
+  box-sizing: border-box;
+  overflow: hidden;
+  resize: none;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: transparent; /* only the caret shows */
+  caret-color: black;
+}

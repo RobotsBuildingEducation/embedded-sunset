@@ -4,6 +4,11 @@ import { IoAppsOutline } from "react-icons/io5";
 
 export let translation = {
   en: {
+    "search...": "Search…",
+    backToQuestion9: "Go back to question 9",
+    completeTutorialFirst: "You have to finish the tutorial first.",
+    askForHelp: "Ask for help",
+    onboardingProgress: "Account setup progress",
     goodJob: "Good job!",
     nextStep: "Next step",
     generatingCode: "Generating code...",
@@ -162,7 +167,8 @@ export let translation = {
 
     "onboarding.step3.lastStepMessage":
       "Your account is almost ready. Just one last step to complete your setup!",
-    "onboarding.step3.launchAppButton": "Launch App",
+    "onboarding.step3.launchAppButton": "Complete Account Setup",
+    "onboarding.final.launch": "Launch App",
 
     "modal.externalLinkTitle": "Leaving The App",
     "modal.externalLinkBody":
@@ -1019,7 +1025,9 @@ reverse(head) {
         new ways to provide funds for education by connecting participants
         beyond neighborhood lines. When students learn, real economic value is
         created. We believe this should be represented by creating material and
-        resilient outcomes for communities.
+        resilient outcomes for communities so when you answer questions, Bitcoin
+        gets automatically sent to recipients you select in the form of
+        scholarships.
         <br />
         <br />
         You might notice that this app is a little different than others. Things
@@ -1033,10 +1041,10 @@ reverse(head) {
         question. That's it! No more and no less is needed.
         <br />
         <br />
-        This is a new way that the internet. It can be used and afford new
-        experiences like the ability to publish progress across different apps,
-        create scholarships with learning or even take your Bitcoin deposits to
-        other places!
+        This is a new way that the internet can work. It can be used and afford
+        new experiences like the ability to publish progress across different
+        apps, create scholarships with learning or even take your Bitcoin
+        deposits to other places!
       </div>
       // <div>
       //   The point of AI is to save you time and energy. At the same time, real
@@ -1374,7 +1382,7 @@ reverse(head) {
     "Introduction to Finance": "Introduction to Finance",
     "modal.decentralizedTranscript.youEarned": "You earned",
     "modal.decentralizedTranscript.awareness":
-      "These awards are cross-platform and can be transferred to other platforms.",
+      "These badge awards are cross-platform and can be found in other apps in our decentralized app store. That way you own your online education!",
     "modal.decentralizedTranscript.awardsEarned": "Awards Earned",
     loading: "Loading...",
     "loading.wallet": "Generating Wallet...",
@@ -1537,6 +1545,13 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   es: {
+    "search...": "Buscar…",
+    backToQuestion9: "Regresar a la pregunta 9",
+
+    completeTutorialFirst: "Tienes que terminar el tutorial primero.",
+
+    askForHelp: "Pide ayuda",
+    onboardingProgress: "Progreso de configuración",
     goodJob: "¡Buen trabajo!",
     nextStep: "Siguiente paso",
     generatingCode: "Generando código...",
@@ -1695,7 +1710,8 @@ reverse(head) {
 
     "onboarding.step3.lastStepMessage":
       "Tu cuenta casi está lista. ¡Solo falta un último paso para completar tu configuración!",
-    "onboarding.step3.launchAppButton": "Iniciar aplicación",
+    "onboarding.step3.launchAppButton": "Completar configuración de la cuenta",
+    "onboarding.final.launch": "Iniciar aplicación",
     "settings.button.socialProgress": "Progreso Social",
     "modal.dailyGoal.instruction":
       "Elige cuántas preguntas completar para alcanzar tu meta diaria. El temporizador de la meta se reinicia cada 24 horas.",

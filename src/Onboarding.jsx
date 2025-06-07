@@ -14,6 +14,8 @@ import {
   AccordionPanel,
   AccordionIcon,
   Switch,
+  Progress,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { GiBullseye } from "react-icons/gi";
@@ -45,16 +47,38 @@ import { FaBitcoin } from "react-icons/fa";
 
 import KnowledgeLedgerOnboarding from "./components/KnowledgeLedgerOnboarding/KnowledgeLedgerOnboarding";
 import { Image } from "@chakra-ui/image";
+import AwardModalOnboarding from "./components/AwardModalOnboarding/AwardModalOnboarding";
+import { onboardingTranscript } from "./utility/transcript";
+import { useSharedNostr } from "./hooks/useNOSTR";
 
 export const Onboarding = ({ userLanguage }) => {
+  const { assignExistingBadgeToNpub } = useSharedNostr(
+    localStorage.getItem("local_npub"),
+    localStorage.getItem("local_nsec")
+  );
   const { step } = useParams();
   const [interval, setInterval] = useState(2880);
   const navigate = useNavigate();
   const toast = useToast();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
-  // Function to launch the main app after onboarding
+  const {
+    isOpen: isAwardModalOpen,
+    onOpen: onAwardModalOpen,
+    onClose: onAwardModalClose,
+  } = useDisclosure();
+
   const handleActuallyLaunchApp = () => {
+    // setOnboardingToDone(localStorage.getItem("local_npub"));
+    assignExistingBadgeToNpub(
+      onboardingTranscript["name"][userLanguage].replace(/ /g, "-")
+    );
+
+    // navigate("/q/0");
+    onAwardModalOpen();
+  };
+
+  const handleActuallyReallySeriouslyLaunchApp = () => {
     setOnboardingToDone(localStorage.getItem("local_npub"));
 
     navigate("/q/0");
@@ -229,6 +253,7 @@ export const Onboarding = ({ userLanguage }) => {
             // maxWidth: 600,
             width: "100%",
           }}
+          spacing={4}
         >
           <KnowledgeLedgerOnboarding
             userLanguage={userLanguage}
@@ -253,7 +278,26 @@ export const Onboarding = ({ userLanguage }) => {
         >
           {/* Step 1: Introduction to the Challenge */}
           {step === "2" && (
-            <VStack spacing={4} textAlign="left">
+            <VStack spacing={4}>
+              <Box>
+                <Text fontSize={"xs"}>
+                  {" "}
+                  {translation[userLanguage]["onboardingProgress"]}
+                </Text>
+                <Progress
+                  opacity="0.8"
+                  border="1px solid #ececec"
+                  // boxShadow="0px 0px 0.5px 2px #ececec"
+                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                  value={(2 / 6) * 100}
+                  size="md"
+                  colorScheme={"green"}
+                  width="250px"
+                  mb={4}
+                  borderRadius="4px"
+                  background={"#ececec"}
+                />
+              </Box>
               <RiseUpAnimation>
                 <Box
                   borderRadius="24px"
@@ -262,7 +306,6 @@ export const Onboarding = ({ userLanguage }) => {
                   textAlign="center"
                   backgroundColor="white"
                   boxShadow="0.5px 0.5px 1px 0px black"
-                  marginTop="12px"
                 >
                   <Text
                     mb={2}
@@ -708,6 +751,25 @@ export const Onboarding = ({ userLanguage }) => {
           {/* Step 2: Setting up Daily Goals */}
           {step === "3" && (
             <VStack spacing={4}>
+              <Box>
+                <Text fontSize={"sm"}>
+                  {" "}
+                  {translation[userLanguage]["onboardingProgress"]}
+                </Text>
+                <Progress
+                  opacity="0.8"
+                  border="1px solid #ececec"
+                  // boxShadow="0px 0px 0.5px 2px #ececec"
+                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                  value={(3 / 6) * 100}
+                  size="md"
+                  colorScheme={"green"}
+                  width="250px"
+                  mb={4}
+                  borderRadius="4px"
+                  background={"#ececec"}
+                />
+              </Box>
               <FadeInComponent>
                 <Box
                   borderRadius="24px"
@@ -759,7 +821,26 @@ export const Onboarding = ({ userLanguage }) => {
           )}
 
           {step === "4" && (
-            <VStack spacing={4} textAlign="left">
+            <VStack spacing={4}>
+              <Box>
+                <Text fontSize={"sm"}>
+                  {" "}
+                  {translation[userLanguage]["onboardingProgress"]}
+                </Text>
+                <Progress
+                  opacity="0.8"
+                  border="1px solid #ececec"
+                  // boxShadow="0px 0px 0.5px 2px #ececec"
+                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                  value={(4 / 6) * 100}
+                  size="md"
+                  colorScheme={"green"}
+                  width="250px"
+                  mb={4}
+                  borderRadius="4px"
+                  background={"#ececec"}
+                />
+              </Box>
               <RiseUpAnimation>
                 <Box
                   borderRadius="24px"
@@ -768,7 +849,6 @@ export const Onboarding = ({ userLanguage }) => {
                   textAlign="center"
                   backgroundColor="white"
                   boxShadow="0.5px 0.5px 1px 0px black"
-                  marginTop="12px"
                 >
                   <Text
                     mb={2}
@@ -815,6 +895,24 @@ export const Onboarding = ({ userLanguage }) => {
           {/* Step 3: Final Step with Bitcoin Onboarding */}
           {step === "5" && (
             <VStack spacing={4}>
+              <Box>
+                <Text fontSize={"sm"}>
+                  {translation[userLanguage]["onboardingProgress"]}
+                </Text>
+                <Progress
+                  opacity="0.8"
+                  border="1px solid #ececec"
+                  // boxShadow="0px 0px 0.5px 2px #ececec"
+                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                  value={(5 / 6) * 100}
+                  size="md"
+                  colorScheme={"green"}
+                  width="250px"
+                  mb={4}
+                  borderRadius="4px"
+                  background={"#ececec"}
+                />
+              </Box>
               <PanRightComponent>
                 <Text
                   p={4}
@@ -867,7 +965,7 @@ export const Onboarding = ({ userLanguage }) => {
                     }
                   }}
                   colorScheme="pink"
-                  backgroundColor="pink.50"
+                  // backgroundColor="pink.50"
                   variant="outline"
                 >
                   {
@@ -881,6 +979,19 @@ export const Onboarding = ({ userLanguage }) => {
           )}
         </Box>
       )}
+
+      {isAwardModalOpen ? (
+        <AwardModalOnboarding
+          isOpen={isAwardModalOpen}
+          onClose={onAwardModalClose}
+          // educationalMessages={educationalMessages}
+          // educationalContent={educationalContent}
+          userLanguage={userLanguage}
+          handleActuallyReallySeriouslyLaunchApp={
+            handleActuallyReallySeriouslyLaunchApp
+          }
+        />
+      ) : null}
     </Box>
   );
 };

@@ -363,7 +363,6 @@ const SelfPacedOnboarding = ({
 
       <Box mt={2} borderRadius="md" overflow="hidden" width="100%">
         <Calendar
-          border="1px solid red"
           locale={userLanguage}
           value={estimatedDate}
           tileDisabled={({ date }) =>

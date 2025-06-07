@@ -11,6 +11,7 @@ import {
   Link,
   ChakraProvider,
   HStack,
+  Progress,
 } from "@chakra-ui/react";
 import Editor from "@monaco-editor/react";
 import { LiveProvider, LivePreview, LiveError } from "react-live";
@@ -190,6 +191,24 @@ export default function KnowledgeLedgerOnboarding({
   return (
     <>
       {/* Onboarding UI */}
+      <Text fontSize={"xs"}>
+        {" "}
+        {translation[userLanguage]["onboardingProgress"]}
+      </Text>
+
+      <Progress
+        opacity="0.8"
+        border="1px solid #ececec"
+        // boxShadow="0px 0px 0.5px 2px #ececec"
+        boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+        value={(1 / 6) * 100}
+        size="md"
+        colorScheme={"green"}
+        width="250px"
+        mb={6}
+        borderRadius="4px"
+        background={"#ececec"}
+      />
       <Box
         bg="white"
         p={6}
@@ -219,7 +238,7 @@ export default function KnowledgeLedgerOnboarding({
           <Button
             onClick={saveUserInput}
             isDisabled={!userInput.trim()}
-            colorScheme="purple"
+            colorScheme="pink"
             variant={"outline"}
           >
             {userIdea
@@ -260,17 +279,28 @@ export default function KnowledgeLedgerOnboarding({
                   </Button>
                 </>
               )}{" "}
-              <Editor
-                height="300px"
-                language={"javascript"}
-                value={editorCodes[idx]}
-                onChange={(v) => {
-                  const all = [...editorCodes];
-                  all[idx] = v || "";
-                  setEditorCodes(all);
+              <div
+                style={{
+                  border: "1px solid #444",
+                  padding: 12,
+                  borderRadius: 6,
                 }}
-                options={{ minimap: { enabled: false }, automaticLayout: true }}
-              />
+              >
+                <Editor
+                  height="300px"
+                  language={"javascript"}
+                  value={editorCodes[idx]}
+                  onChange={(v) => {
+                    const all = [...editorCodes];
+                    all[idx] = v || "";
+                    setEditorCodes(all);
+                  }}
+                  options={{
+                    minimap: { enabled: false },
+                    automaticLayout: true,
+                  }}
+                />
+              </div>
               {hasRunCode ? (
                 <>
                   <br />

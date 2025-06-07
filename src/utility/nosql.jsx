@@ -83,12 +83,12 @@ export const createUser = async (npub, userName, language) => {
 };
 
 // Function to increment the step count for a user
-export const incrementUserStep = async (npub) => {
+export const incrementUserStep = async (npub, currentStep = 0) => {
   const userDoc = doc(database, "users", npub);
   const userSnapshot = await getDoc(userDoc);
 
   if (userSnapshot.exists()) {
-    const currentStep = userSnapshot.data().step || 0;
+    // const currentStep = userSnapshot.data().step || 0;
     await updateDoc(userDoc, {
       previousStep: currentStep + 1,
       step: currentStep + 1,

@@ -1807,3 +1807,14 @@ console.log(dist);`,
     },
   },
 };
+
+export let onboardingTranscript = {
+  address:
+    "naddr1qq95ueth94fhgatyv4h8gq3q4vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0uttsxpqqqp6njf9p4pl",
+  name: {
+    en: "New Student",
+    es: "Nuevo Estudiante",
+  },
+  imgSrc:
+    "https://res.cloudinary.com/dtkeyccga/image/upload/v1745250135/bevfqeqakogfxrxn3pia.png",
+};

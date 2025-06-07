@@ -183,67 +183,63 @@ export const useProGeminiChat = () => {
   const [loading, setLoading] = useState(false);
 
   /**
-   * submitPrompt: Streams text from a given prompt (string),
-   * first showing “thinking” chunks, then the final answer.
+   * submitPrompt: Streams text from a given prompt (string).
    */
   const submitPrompt = async (prompt) => {
     setLoading(true);
 
-    // 1) Immediately show a thinking placeholder
-    const thinkingMessage = {
-      content: "",
-      type: "thinking",
-      meta: { loading: true, chunks: [] },
-    };
-    setMessages((prev) => [...prev, thinkingMessage]);
-    const thinkingIndex = messages.length;
-
     try {
-      // 2) Kick off a single combined stream that includes reasoning & answer
-      //    (your SDK may require a flag like includeReasoning:true)
-      const result = await promodel.generateContentStream(prompt, {
-        stream: true,
-      });
+      // 1) Make the streaming request
+      const result = await promodel.generateContentStream(prompt);
 
-      // 3) Prepare a second message for the final answer
-      const answerMessage = {
+      console.log("result?", result);
+
+      // 2) Create a new message object to store partial text
+      const newMessage = {
         content: "",
-        type: "answer",
-        meta: { loading: true, chunks: [] },
+        meta: {
+          loading: true, // Whether the streaming is ongoing
+          chunks: [], // We’ll store each chunk of text here
+        },
       };
-      setMessages((prev) => [...prev, answerMessage]);
-      const answerIndex = thinkingIndex + 1;
 
-      // 4) Consume chunks and route them based on chunk.tag (or however your SDK labels them)
+      // 3) Append this new message to the messages array
+      setMessages((prev) => [...prev, newMessage]);
+
+      // 4) Accumulate partial text in a local variable, updating state after each chunk
+      let fullResponse = "";
+
       for await (const chunk of result.stream) {
-        const text = chunk.text();
-        if (chunk.tag === "thought") {
-          // update thinking message
-          setMessages((prev) => {
-            const msgs = [...prev];
-            const msg = msgs[thinkingIndex];
-            msg.content += text;
-            msg.meta.chunks.push({ content: text });
-            return msgs;
+        const chunkText = chunk.text();
+        fullResponse += chunkText;
+
+        // 5) Update the last message with partial text
+        setMessages((prev) => {
+          const updatedMessages = [...prev];
+          const currentMessage = updatedMessages[updatedMessages.length - 1];
+
+          currentMessage.content = fullResponse;
+          currentMessage.meta.chunks.push({
+            content: chunkText,
+            final: false, // We’ll mark it final after the loop ends
           });
-        } else {
-          // update answer message
-          setMessages((prev) => {
-            const msgs = [...prev];
-            const msg = msgs[answerIndex];
-            msg.content += text;
-            msg.meta.chunks.push({ content: text });
-            return msgs;
-          });
-        }
+
+          return updatedMessages;
+        });
       }
 
-      // 5) Mark both as done
+      // 6) Mark the last chunk as final
       setMessages((prev) => {
-        const msgs = [...prev];
-        msgs[thinkingIndex].meta.loading = false;
-        msgs[answerIndex].meta.loading = false;
-        return msgs;
+        const updatedMessages = [...prev];
+        const currentMessage = updatedMessages[updatedMessages.length - 1];
+        currentMessage.meta.loading = false;
+
+        const lastChunkIndex = currentMessage.meta.chunks.length - 1;
+        if (lastChunkIndex >= 0) {
+          currentMessage.meta.chunks[lastChunkIndex].final = true;
+        }
+
+        return updatedMessages;
       });
     } catch (error) {
       console.error("Error streaming from Gemini:", error);
@@ -253,7 +249,17 @@ export const useProGeminiChat = () => {
     }
   };
 
-  const resetMessages = () => setMessages([]);
+  /**
+   * resetMessages: Clears out all existing messages and resets streaming state.
+   */
+  const resetMessages = () => {
+    setMessages([]);
+  };
 
-  return { messages, loading, submitPrompt, resetMessages };
+  return {
+    messages,
+    loading,
+    submitPrompt,
+    resetMessages,
+  };
 };

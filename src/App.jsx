@@ -27,6 +27,12 @@ import {
   AccordionIcon,
   UnorderedList,
   CircularProgress,
+  Select,
+  MenuButton,
+  Menu,
+  MenuList,
+  MenuItem,
+  Tooltip,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
@@ -85,9 +91,13 @@ import { translation } from "./utility/translation";
 
 import { Dashboard } from "./components/Dashboard/Dashboard";
 import { isUnsupportedBrowser } from "./utility/browser";
-import { EmailIcon, PlusSquareIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon, EmailIcon, PlusSquareIcon } from "@chakra-ui/icons";
 import { IoChatbubblesOutline, IoShareOutline } from "react-icons/io5";
-import { PiClockCountdownDuotone, PiClockCountdownFill } from "react-icons/pi";
+import {
+  PiClockCountdownDuotone,
+  PiClockCountdownFill,
+  PiPatreonLogoFill,
+} from "react-icons/pi";
 
 import { IoIosMore } from "react-icons/io";
 import {
@@ -147,6 +157,7 @@ import { logEvent } from "firebase/analytics";
 import BitcoinOnboarding from "./components/BitcoinOnboarding/BitcoinOnboarding";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { FaBitcoin, FaMagic } from "react-icons/fa";
+
 import BitcoinModeModal from "./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal";
 import SelfPacedModal from "./components/SettingsMenu/SelfPacedModal/SelfPacedModal";
 import { Onboarding } from "./Onboarding";
@@ -156,6 +167,7 @@ import { InstallAppModal } from "./components/InstallModal/InstallModal";
 import { motion } from "framer-motion";
 import { Delaunay } from "d3-delaunay";
 import StudyGuideModal from "./components/StudyGuideModal/StudyGuideModal";
+import CodeEditor from "./components/CodeEditor/CodeEditor";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -184,6 +196,26 @@ const applySymbolMappings = (text) => {
     modifiedText = modifiedText.replace(regex, phraseToSymbolMap[phrase]);
   });
   return modifiedText;
+};
+
+const getBoxShadow = (group) => {
+  switch (group) {
+    case "introduction":
+    case "tutorial":
+    case "1":
+    case "2":
+    case "3":
+    case "4":
+      // gray.500 → #A0AEC0 → rgba(160, 174, 192, 1)
+      return "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)";
+    case "5":
+    case "6":
+      // green.500 → #48BB78 → rgba(72, 187, 120, 1)
+      return "0px 0px 0px 2px rgba(221,175,91, 1)";
+    default:
+      // gray.300 → #E2E8F0 → rgba(226, 232, 240, 1)
+      return "rgba(226, 232, 240, 1)";
+  }
 };
 
 const AwardScreen = (userLanguage) => {
@@ -826,59 +858,67 @@ export const VoiceInput = ({
         </HStack>
       )}
       {isCodeEditor ? (
-        <Box
-          width="99%"
-          height="400px"
-          bg="white"
-          style={{
-            padding: 15,
-            borderRadius: "8px",
-            // border: "1px solid black",
-            textAlign: "left",
-          }}
-          boxShadow="0.5px 0.5px 1px 0px rgba(0, 0, 0,0.75)"
-        >
-          {generateResponse ? (
-            <div
-              style={{
-                width: "100%",
-              }}
-            >
-              <CloudCanvas isLoader={true} regulateWidth={false} />
-            </div>
-          ) : (
-            <MonacoEditor
-              height="100%"
-              width="100%"
-              language="javascript"
-              theme="light"
-              value={value}
-              onChange={(value) => onChange(value, resetMessages)}
-              options={{
-                fontFamily: "initial",
-                fontSize: "16px",
-                // wordWrap: "on",
-                automaticLayout: true,
-                tabIndex: 0, // Make the editor focusable
-              }}
-              onMount={(editorInstance) => {
-                // Unbind the Tab key to prevent it from inserting a tab character
-                editorInstance.addCommand(monaco.KeyCode.Tab, () => {
-                  // Move focus to the next focusable element
-                  moveFocus(true);
-                });
-                // Unbind the Shift+Tab key for reverse navigation
-                editorInstance.addCommand(
-                  monaco.KeyMod.Shift | monaco.KeyCode.Tab,
-                  () => {
-                    // Move focus to the previous focusable element
-                    moveFocus(false);
-                  }
-                );
-              }}
-            />
-          )}
-        </Box>
+        <>
+          {" "}
+          <Box
+            width="100%"
+            height="400px"
+            // bg="white"
+            style={{
+              borderRadius: "8px",
+              // border: "1px solid black",
+              textAlign: "left",
+            }}
+            // boxShadow="0.5px 0.5px 1px 0px rgba(0, 0, 0,0.75)"
+          >
+            {generateResponse ? (
+              <div
+                style={{
+                  width: "100%",
+                }}
+              >
+                <CloudCanvas isLoader={true} regulateWidth={false} />
+              </div>
+            ) : (
+              // <MonacoEditor
+              //   height="100%"
+              //   width="100%"
+              //   language="javascript"
+              //   theme="light"
+              //   value={value}
+              //   onChange={(value) => onChange(value, resetMessages)}
+              //   options={{
+              //     fontFamily: "initial",
+              //     fontSize: "16px",
+              //     // wordWrap: "on",
+              //     automaticLayout: true,
+              //     tabIndex: 0, // Make the editor focusable
+              //   }}
+              //   onMount={(editorInstance) => {
+              //     // Unbind the Tab key to prevent it from inserting a tab character
+              //     editorInstance.addCommand(monaco.KeyCode.Tab, () => {
+              //       // Move focus to the next focusable element
+              //       moveFocus(true);
+              //     });
+              //     // Unbind the Shift+Tab key for reverse navigation
+              //     editorInstance.addCommand(
+              //       monaco.KeyMod.Shift | monaco.KeyCode.Tab,
+              //       () => {
+              //         // Move focus to the previous focusable element
+              //         moveFocus(false);
+              //       }
+              //     );
+              //   }}
+              // />
+              <CodeEditor
+                value={value}
+                onChange={(v) => onChange(v, resetMessages)}
+                height={400}
+              />
+            )}
+          </Box>
+          <br />
+        </>
       ) : isSingleLineText ? (
         <Input
           type="text"
@@ -1276,9 +1316,12 @@ const Step = ({
   emailStep,
   allowPosts,
   setAllowPosts,
+  hasSubmittedPasscode,
 }) => {
   const { stepIndex } = useParams();
   const currentStepIndex = parseInt(stepIndex, 10);
+
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [inputValue, setInputValue] = useState("");
   const [selectedOption, setSelectedOption] = useState(""); // For Multiple Choice
@@ -1875,7 +1918,7 @@ const Step = ({
               step.question.answer
             )} and the user submitted the following answer array ${JSON.stringify(
               answer
-            )}. Is this answer correct? Determine by loosely comparing the defined answer and the submitted answer, they must be equivalent in array size and included value  s, but the selected order does NOT matter, so if the correct answer is [x,y,z], then [z,x,y] is also a valid answer. Make an exception for the string "Undefined*" since we process incorrectly, assume 'Undefined*' or any variation has been correctly submitted by the user when expecting that value. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. Your feedback will include a grade ranging from 0-100 based on the quality of the answer  -  however if isCorrect is true just reward a 100. The user is speaking ${
+            )}. Is this answer correct? Determine by loosely comparing the defined answer and the submitted answer, they must be equivalent in array size and included value  s, but the selected order does NOT matter, so if the correct answer is [x,y,z], then [z,x,y] is also a valid answer. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. Your feedback will include a grade ranging from 0-100 based on the quality of the answer  -  however if isCorrect is true just reward a 100. The user is speaking ${
               userLanguage === "es" ? "spanish" : "english"
             }.`,
             role: "user",
@@ -1933,7 +1976,6 @@ const Step = ({
     } else {
     }
 
-    setIsSending(false);
     setResetVoiceState(false);
   };
 
@@ -2028,6 +2070,8 @@ const Step = ({
           lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
         // console.log("last message", lastMessage);
         // if (!lastMessage.meta.loading) {
+
+        console.log("last msg", lastMessage);
         if (isLastMessage) {
           // console.log("LAST MESSAGE", lastMessage);
           const jsonResponse =
@@ -2038,6 +2082,7 @@ const Step = ({
           setCelebrationMessage(getRandomCelebrationMessage(userLanguage));
 
           setFeedback(jsonResponse.feedback);
+          setIsSending(false); // <— only now clear it
 
           if (jsonResponse.isCorrect) {
             setGrade(jsonResponse.grade);
@@ -2138,11 +2183,13 @@ const Step = ({
         setIsPostingWithNostr(true);
 
         try {
-          incrementUserStep(npub);
+          incrementUserStep(npub, currentStep);
           storeCorrectAnswer(step, feedback);
 
           setIsPostingWithNostr(false);
 
+          console.log("step.......", step);
+          console.log("currentStep.......", currentStep);
           navigate(`/q/${currentStep + 1}`);
         } catch (error) {
           setIsPostingWithNostr(false);
@@ -2157,7 +2204,7 @@ const Step = ({
 
       try {
         const npub = localStorage.getItem("local_npub");
-        incrementUserStep(npub);
+        incrementUserStep(npub, currentStep);
         if (currentStep > 0) {
           storeCorrectAnswer(step, feedback);
         }
@@ -2321,13 +2368,13 @@ const Step = ({
   // };
   const getColorScheme = (group) => {
     const colorMap = {
-      tutorial: "green",
-      1: "green",
-      2: "green",
-      3: "green",
-      4: "green",
-      5: "green",
-      6: "green",
+      tutorial: "yellow",
+      1: "yellow",
+      2: "yellow",
+      3: "yellow",
+      4: "yellow",
+      5: "yellow",
+      6: "yellow",
     };
 
     // Default to a medium shade if group doesn't match any key
@@ -2502,6 +2549,10 @@ const Step = ({
   };
   const emojiMap = ["😖", "😩", "😅", "😱", "🪦"];
 
+  const hasPasscode =
+    localStorage.getItem("passcode") ===
+      import.meta.env.VITE_PATREON_PASSCODE || hasSubmittedPasscode;
+
   return (
     <VStack spacing={4} width="100%" mt={6}>
       {/* <OrbCanvas width={500} height={500} /> */}
@@ -2667,20 +2718,21 @@ const Step = ({
                 <IconButton
                   width="24px"
                   height="30px"
-                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                  s
+                  // boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                   background="whiteAlpha.100"
                   opacity="0.75"
-                  // color="pink.600"
-                  icon={<RiRobot2Fill padding="4px" fontSize="14px" />}
+                  boxShadow={`${getBoxShadow(step.group)}`}
+                  icon={<PiPatreonLogoFill padding="4px" fontSize="14px" />}
                   mr={0}
                   onMouseDown={() => {
                     window.location.href =
-                      "https://chatgpt.com/g/g-LPoMAiBoa-robots-building-education";
+                      "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
                   }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
                       window.location.href =
-                        "https://chatgpt.com/g/g-LPoMAiBoa-robots-building-education";
+                        "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
                     }
                   }}
                 />
@@ -2736,20 +2788,49 @@ const Step = ({
             ) : null} */}
           </VStack>
 
-          <div style={{ zoom: 0.8, textAlign: "left" }}>
+          <div
+            style={{
+              zoom: 0.8,
+              textAlign: "left",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
             <Text fontSize="xl" textAlign={step.isStudyGuide ? "center" : null}>
               <b>
-                {currentStep === 0 ? null : (
-                  <IconButton
-                    width="18px"
-                    height="24px"
+                <HStack>
+                  {currentStep === 0 ? null : (
+                    <IconButton
+                      width="18px"
+                      height="24px"
+                      background="pink.100"
+                      opacity="0.75"
+                      color="pink.600"
+                      icon={<RiAiGenerate padding="4px" fontSize="14px" />}
+                      mr={2}
+                      mt="-0.5"
+                      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                      onMouseDown={() =>
+                        handleModalCheck(handleGenerateNewQuestion)
+                      }
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          handleModalCheck(handleGenerateNewQuestion);
+                        }
+                      }}
+                    />
+                  )}
+                  {/* <IconButton
+                    width="12px"
+                    height="18px"
+                    boxShadow="0px 0px 0.25px 0.5px #ececec"
                     background="pink.100"
                     opacity="0.75"
                     color="pink.600"
-                    icon={<RiAiGenerate padding="4px" fontSize="14px" />}
+                    icon={<RepeatIcon padding="4px" fontSize="18px" />}
                     mr={2}
                     mt="-2"
-                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                     onMouseDown={() =>
                       handleModalCheck(handleGenerateNewQuestion)
                     }
@@ -2758,36 +2839,102 @@ const Step = ({
                         handleModalCheck(handleGenerateNewQuestion);
                       }
                     }}
-                  />
-                )}
-                {/* <IconButton
-                  width="12px"
-                  height="18px"
-                  boxShadow="0px 0px 0.25px 0.5px #ececec"
-                  background="pink.100"
-                  opacity="0.75"
-                  color="pink.600"
-                  icon={<RepeatIcon padding="4px" fontSize="18px" />}
-                  mr={2}
-                  mt="-2"
-                  onMouseDown={() =>
-                    handleModalCheck(handleGenerateNewQuestion)
-                  }
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      handleModalCheck(handleGenerateNewQuestion);
-                    }
-                  }}
-                />{" "} */}
-                {currentStep > 0 ? currentStep + "." : null} {step.title}
+                  />{" "} */}
+                  {/* {currentStep > 0 ? currentStep + "." : null} {step.title} */}
+                  <HStack spacing={2} alignItems="center">
+                    {/* dropdown for jumping between questions */}
+
+                    {currentStep > 0 && (
+                      <Menu>
+                        <MenuButton
+                          as={Button}
+                          variant="link"
+                          size="lg"
+                          rightIcon={<ChevronDownIcon marginLeft="-18px" />}
+                          colorScheme="pink"
+                          opacity="0.75"
+                          _hover={{ textDecoration: "none", opacity: 1 }}
+                          mr={1}
+                        >
+                          {currentStep}
+                        </MenuButton>
+                        <MenuList
+                          maxH="450px"
+                          overflowY="auto"
+                          minW="auto"
+                          maxWidth="90vw"
+                          whiteSpace="normal"
+                          marginLeft="48px"
+                          p={2}
+                        >
+                          <Input
+                            placeholder={translation[userLanguage]["search..."]}
+                            size="sm"
+                            mb={2}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                          />
+                          {steps[userLanguage]
+                            .map((s, idx) => ({ s, idx }))
+                            .filter(({ s, idx }) => {
+                              const term = searchTerm.toLowerCase();
+                              return (
+                                String(idx).includes(term) ||
+                                s.title.toLowerCase().includes(term)
+                              );
+                            })
+                            .map(({ s, idx }) => {
+                              const disabled = idx >= 10 && !hasPasscode;
+                              const label = `${idx > 0 ? idx + ". " : ""}${s.title}`;
+                              return disabled ? (
+                                <Tooltip
+                                  key={idx}
+                                  label={
+                                    translation[userLanguage][
+                                      "completeTutorialFirst"
+                                    ]
+                                  }
+                                  placement="bottom"
+                                  hasArrow
+                                >
+                                  <Box w="100%">
+                                    <MenuItem isDisabled whiteSpace="normal">
+                                      {label}
+                                    </MenuItem>
+                                  </Box>
+                                </Tooltip>
+                              ) : (
+                                <MenuItem
+                                  key={idx}
+                                  onClick={() => {
+                                    setSearchTerm("");
+                                    navigate(`/q/${idx}`);
+                                  }}
+                                  whiteSpace="normal"
+                                >
+                                  {label}
+                                </MenuItem>
+                              );
+                            })}
+                        </MenuList>
+                      </Menu>
+                    )}
+
+                    {/* the question title */}
+                    <Text fontSize="xl" fontWeight="bold">
+                      {step.title}
+                    </Text>
+                  </HStack>
+                </HStack>
               </b>
             </Text>
+
             {step.question && (
               <Text
                 // mt={"-2"}
                 style={{
                   width: "100%",
-                  maxWidth: step.isStudyGuide ? 600 : 400,
+                  maxWidth: step.isStudyGuide ? 600 : "600px",
                   width: "fit-content",
                   color: "gray",
                 }}
@@ -2807,7 +2954,7 @@ const Step = ({
               <Text
                 style={{
                   width: "100%",
-                  maxWidth: step.isStudyGuide ? 600 : 400,
+                  maxWidth: step.isStudyGuide ? 600 : 600,
 
                   width: "fit-content",
                 }}
@@ -3027,7 +3174,7 @@ const Step = ({
                     <RandomCharacter />
                   </>
                 ) : null}
-                {messages.length > 0 && !feedback && (
+                {/* {messages.length > 0 && !feedback && (
                   <Box
                     mt={0}
                     p={4}
@@ -3039,9 +3186,9 @@ const Step = ({
                       {messages[messages.length - 1]?.content}
                     </Text>
                   </Box>
-                )}
+                )} */}
                 {feedback && (
-                  <FadeInComponent>
+                  <RiseUpAnimation>
                     <Box
                       mt={0}
                       p={4}
@@ -3105,7 +3252,7 @@ const Step = ({
                         ) : null}
                       </Text>{" "}
                     </Box>
-                  </FadeInComponent>
+                  </RiseUpAnimation>
                 )}{" "}
                 {feedback && (
                   <div
@@ -3989,6 +4136,29 @@ const Home = ({
             recycle={false}
             colors={["#f2dcfa", "#f9d4fa", "#fca4b3", "#fcb7a4", "#fcd4a4"]} // Array of colors matching the logo
           /> */}
+
+          <RiseUpAnimation>
+            {/* add text for onboardnig: ['qaonboardingProgress'] */}
+            <Box>
+              <Text fontSize={"xs"}>
+                {translation[userLanguage]["onboardingProgress"]}
+              </Text>
+              <Progress
+                opacity="0.8"
+                border="1px solid #ececec"
+                // boxShadow="0px 0px 0.5px 2px #ececec"
+                boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                value={(0 / 6) * 100}
+                size="md"
+                colorScheme={"green"}
+                width="250px"
+                mb={4}
+                borderRadius="4px"
+                background={"#ececec"}
+              />
+            </Box>
+          </RiseUpAnimation>
+
           <PanRightComponent>
             <Text
               p={4}
@@ -4180,6 +4350,7 @@ const Home = ({
 };
 
 const PasscodePage = ({ isOldAccount, userLanguage }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [input, setInput] = useState("");
   const [isValid, setIsValid] = useState(null);
   const navigate = useNavigate();
@@ -4209,6 +4380,7 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
         // Update Firestore document with previousStep + 1
         await updateDoc(userDocRef, {
           step: isOldAccount ? userStep : userStep + 1,
+          hasSubmittedPasscode: true,
         });
 
         navigate(`/q/${isOldAccount ? userStep : userStep + 1}`);
@@ -4228,6 +4400,43 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
     }
   }, [input]);
 
+  useEffect(() => {
+    setIsLoading(true);
+    const checkUser = async () => {
+      const userId = localStorage.getItem("local_npub"); // Replace with actual user ID if needed
+      const userDocRef = doc(database, "users", userId);
+      const userSnapshot = await getDoc(userDocRef);
+
+      if (userSnapshot.exists()) {
+        // console.log("User document exists");
+        const userData = userSnapshot.data();
+        const hasSubscribed = userData?.hasSubmittedPasscode;
+
+        if (hasSubscribed) {
+          localStorage.setItem(
+            "passcode",
+            import.meta.env.VITE_PATREON_PASSCODE
+          );
+          localStorage.setItem(
+            "features_passcode",
+            import.meta.env.VITE_PATREON_PASSCODE
+          );
+
+          const userStep = isOldAccount ? userData.step : userData.previousStep;
+          setIsLoading(false);
+          navigate(`/q/${isOldAccount ? userStep : userStep + 1}`);
+        } else {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    checkUser();
+  }, []);
+
+  if (isLoading) {
+    return <CloudCanvas />;
+  }
   return (
     <Box
       minHeight="90vh"
@@ -4270,6 +4479,9 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
           />
         </div>
       </Text>
+      <Button onClick={() => navigate(`/q/9`)} mt={4}>
+        {translation[userLanguage]["backToQuestion9"]}
+      </Button>
     </Box>
   );
 };
@@ -4284,6 +4496,7 @@ function App({ isShutDown }) {
   const location = useLocation();
   const topRef = useRef();
   const { alert, hideAlert, showAlert } = useAlertStore();
+  const [hasSubmittedPasscode, setHasSubmittedPasscode] = useState(false);
 
   const [allowPosts, setAllowPosts] = useState(false);
 
@@ -4368,6 +4581,8 @@ function App({ isShutDown }) {
             if (userSnapshot.exists()) {
               const userData = userSnapshot.data();
 
+              setHasSubmittedPasscode(userData?.hasSubmittedPasscode);
+
               setUserLanguage(
                 userData.userLanguage ||
                   localStorage.getItem("userLanguage") ||
@@ -4417,8 +4632,18 @@ function App({ isShutDown }) {
               navigate("/subscription");
             } else if (step === "award") {
               navigate("/award");
+            } else if (location.pathname === "/subscription" && step < 10) {
+              showAlert(
+                "error",
+                translation[userLanguage]["completeTutorialFirst"]
+              );
+
+              topRef.current?.scrollIntoView();
+
+              navigate(`/q/${step}`);
             } else {
               // if (step !== 0) {
+
               topRef.current?.scrollIntoView();
 
               navigate(`/q/${step}`);
@@ -4503,7 +4728,7 @@ function App({ isShutDown }) {
   const testIsMatch = /\/q\/\d+$/.test(testurl);
 
   return (
-    <Box textAlign="center" fontSize="xl" p={4} ref={topRef}>
+    <>
       {alert.isOpen && (
         <Alert
           status={alert.status}
@@ -4537,103 +4762,105 @@ function App({ isShutDown }) {
           />
         </Alert>
       )}
+      <Box textAlign="center" fontSize="xl" p={4} ref={topRef}>
+        {isSignedIn && (
+          <SettingsMenu
+            testIsMatch={testIsMatch}
+            isSignedIn={isSignedIn}
+            setIsSignedIn={setIsSignedIn}
+            steps={steps}
+            userLanguage={userLanguage}
+            setUserLanguage={setUserLanguage}
+            currentStep={currentStep} // Pass current step to SettingsMenu
+            view={view}
+            setView={setView}
+            step={steps?.[userLanguage]?.[currentStep]}
+            allowPosts={allowPosts}
+            setAllowPosts={setAllowPosts}
+          />
+        )}
 
-      {isSignedIn && (
-        <SettingsMenu
-          testIsMatch={testIsMatch}
-          isSignedIn={isSignedIn}
-          setIsSignedIn={setIsSignedIn}
-          steps={steps}
-          userLanguage={userLanguage}
-          setUserLanguage={setUserLanguage}
-          currentStep={currentStep} // Pass current step to SettingsMenu
-          view={view}
-          setView={setView}
-          step={steps?.[userLanguage]?.[currentStep]}
-          allowPosts={allowPosts}
-          setAllowPosts={setAllowPosts}
-        />
-      )}
-
-      <Routes>
-        {/* <Route path="/experiment" element={<TestFeed />} /> */}
-        <Route
-          path="/"
-          element={
-            <Home
-              isSignedIn={isSignedIn}
-              setIsSignedIn={setIsSignedIn}
-              userLanguage={userLanguage}
-              setUserLanguage={setUserLanguage}
-              generateNostrKeys={generateNostrKeys}
-              auth={auth}
-              view={view}
-              setView={setView}
-            />
-          }
-        />
-        <Route
-          path="/onboarding/:step"
-          element={
-            <Onboarding
-              isSignedIn={isSignedIn}
-              setIsSignedIn={setIsSignedIn}
-              userLanguage={userLanguage}
-              setUserLanguage={setUserLanguage}
-              generateNostrKeys={generateNostrKeys}
-              auth={auth}
-              view={view}
-              setView={setView}
-            />
-          }
-        />
-        <Route
-          path="/subscription"
-          element={
-            <PasscodePage
-              userLanguage={userLanguage}
-              isOldAccount={
-                currentStep > 9 &&
-                localStorage.getItem("passcode") !==
-                  import.meta.env.VITE_PATREON_PASSCODE
-              }
-            />
-          }
-        />
-        {location.pathname !== "/about" &&
-          steps?.[userLanguage]?.map((_, index) => (
-            <Route
-              key={index}
-              path={`/q/${index}`}
-              element={
-                <PrivateRoute>
-                  <Step
-                    allowPosts={allowPosts}
-                    setAllowPosts={setAllowPosts}
-                    currentStep={index}
-                    userLanguage={userLanguage}
-                    setUserLanguage={setUserLanguage}
-                    postNostrContent={postNostrContent}
-                    assignExistingBadgeToNpub={assignExistingBadgeToNpub}
-                    emailStep={clonedStep}
-                  />
-                </PrivateRoute>
-              }
-            />
-          ))}
-        <Route
-          path="/award"
-          element={<AwardScreen userLanguage={userLanguage} />}
-        />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route
-          path="/about"
-          element={
-            <About userLanguage={userLanguage} handleToggle={handleToggle} />
-          }
-        />
-      </Routes>
-    </Box>
+        <Routes>
+          {/* <Route path="/experiment" element={<TestFeed />} /> */}
+          <Route
+            path="/"
+            element={
+              <Home
+                isSignedIn={isSignedIn}
+                setIsSignedIn={setIsSignedIn}
+                userLanguage={userLanguage}
+                setUserLanguage={setUserLanguage}
+                generateNostrKeys={generateNostrKeys}
+                auth={auth}
+                view={view}
+                setView={setView}
+              />
+            }
+          />
+          <Route
+            path="/onboarding/:step"
+            element={
+              <Onboarding
+                isSignedIn={isSignedIn}
+                setIsSignedIn={setIsSignedIn}
+                userLanguage={userLanguage}
+                setUserLanguage={setUserLanguage}
+                generateNostrKeys={generateNostrKeys}
+                auth={auth}
+                view={view}
+                setView={setView}
+              />
+            }
+          />
+          <Route
+            path="/subscription"
+            element={
+              <PasscodePage
+                userLanguage={userLanguage}
+                isOldAccount={
+                  currentStep > 9 &&
+                  localStorage.getItem("passcode") !==
+                    import.meta.env.VITE_PATREON_PASSCODE
+                }
+              />
+            }
+          />
+          {location.pathname !== "/about" &&
+            steps?.[userLanguage]?.map((_, index) => (
+              <Route
+                key={index}
+                path={`/q/${index}`}
+                element={
+                  <PrivateRoute>
+                    <Step
+                      allowPosts={allowPosts}
+                      setAllowPosts={setAllowPosts}
+                      currentStep={index}
+                      userLanguage={userLanguage}
+                      setUserLanguage={setUserLanguage}
+                      postNostrContent={postNostrContent}
+                      assignExistingBadgeToNpub={assignExistingBadgeToNpub}
+                      emailStep={clonedStep}
+                      hasSubmittedPasscode={hasSubmittedPasscode}
+                    />
+                  </PrivateRoute>
+                }
+              />
+            ))}
+          <Route
+            path="/award"
+            element={<AwardScreen userLanguage={userLanguage} />}
+          />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route
+            path="/about"
+            element={
+              <About userLanguage={userLanguage} handleToggle={handleToggle} />
+            }
+          />
+        </Routes>
+      </Box>
+    </>
   );
 }
 

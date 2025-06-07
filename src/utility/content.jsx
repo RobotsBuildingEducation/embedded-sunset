@@ -34,7 +34,7 @@ export const steps = {
         metaData: `### Advice
 I know this looks like ChatGPT content... 
 
-but it's not -_-"!
+but it's not -_-" It's me!
 
 It's important to remember this as a beginner:
 
@@ -360,7 +360,7 @@ const items = new Items();`,
           "Null",
           "Array",
           "BigInt",
-          "Undefined*",
+          "Undefined",
           "Symbol",
         ],
         answer: [
@@ -368,7 +368,7 @@ const items = new Items();`,
           "Number",
           "Boolean",
           "Null",
-          "Undefined*",
+          "Undefined",
           "Symbol",
           "BigInt",
         ],
@@ -1152,6 +1152,7 @@ myCar.showBrand();`,
   return (
     <div>
       <h1>Hello, World!</h1>
+      <p>Welcome to the thunderdome</p>
     </div>
   );
 }`,
@@ -1160,6 +1161,7 @@ myCar.showBrand();`,
           `function MyComponent() {
   <div>
     <h1>Hello, World!</h1>
+    <p>Welcome to the thunderdome</p>
   </div>;
 }`,
 
@@ -1169,6 +1171,7 @@ myCar.showBrand();`,
     return (
       <div>
         <h1>Hello, World!</h1>
+        <p>How are we today?</p>
       </div>
     );
   }
@@ -1177,8 +1180,8 @@ myCar.showBrand();`,
           // Option 4: Incorrect - missing JSX inside the return
           `function MyComponent() {
   return (
-    <div>Hello</div>
-    <div>World</div>
+    <div>Hello World</div>
+    <p>How are we today?</p>
   );
 }`,
         ],
@@ -1186,6 +1189,7 @@ myCar.showBrand();`,
   return (
     <div>
       <h1>Hello, World!</h1>
+      <p>Welcome to the thunderdome</p>
     </div>
   );
 }`,
@@ -1753,9 +1757,10 @@ await setDoc(doc(db, 'users'), {
 } from 'firebase/app';
 
 import { 
-  getFirestore, 
+  getFirestore,
+  collection, 
   doc, 
-  setDoc
+  addDoc
 } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -1773,7 +1778,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // Add document
-await addDoc(doc(db, 'users'), {
+await addDoc(collection(db, 'users'), {
   name: 'John Doe',
   email: 'john@example.com'
 });`,
@@ -1807,9 +1812,10 @@ await addDoc(doc(db, 'users', 'user123'), {
 } from 'firebase/app';
 
 import { 
-  getFirestore, 
+  getFirestore,
+  collection, 
   doc, 
-  setDoc 
+  addDoc
 } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -1827,7 +1833,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // Add document
-await addDoc(doc(db, 'users'), {
+await addDoc(collection(db, 'users'), {
   name: 'John Doe',
   email: 'john@example.com'
 });`,
