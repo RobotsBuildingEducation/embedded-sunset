@@ -258,13 +258,13 @@ const EducationalModal = ({
       convo: filteredData,
     };
 
-    console.log("filteredData", filteredData);
+    // console.log("filteredData", filteredData);
 
-    const prompt = `You're tutoring a student learn about lecture notes you've generated. Be helpful and keep your responses relatively short. Additionally, when asking users a question or providing context, repeat the lecture notes you're using exactly and any respective examples so users dont have to scroll up, formatted in markdown.
+    const prompt = `You're tutoring a student learning about lecture notes you've generated. Be helpful and keep your responses relatively short. Additionally, when asking users a question or providing context, repeat the lecture notes you're referencing exactly and any respective examples so users dont have to scroll up, formatted in markdown. The student said ${inputValue}. Never, under any circumstance, repeat the message a student sends you.
     
-    This is the most important part: Do NOT ask follow up questions IF AND ONLY IF the user has provided a reasonable, fair or acceptable answer to a question you've asked, instead specifically say they've done a "great job!" so they're aware that they succeeded and so the conversation can naturally conclude and flow appropriately, otherwise you'll endlessly ask follow-ups which can be frustrating.
+    This is the most important part: Do NOT ask follow up questions IF AND ONLY IF the user has provided a reasonable, fair or acceptable answer to a question you've asked, instead specifically say they've done a "great job!" so they're aware that they succeeded and so the conversation can naturally conclude and flow appropriately, otherwise you'll endlessly ask follow-ups which can be frustrating. Never repeat a response found in your previous_conversation instruction. The conversation and responses must always feel natural. If the user asks the same thing, come up with a better response.
     
-    Afterward, you can follow up with "Any other questions?" to conclude. The student said ${inputValue}.
+    Afterward, you can follow up with "Any other questions?" to conclude. 
 
     Lastly, the user is speaking in ${userLanguage === "en" ? "English" : "Spanish"}.
     

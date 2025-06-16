@@ -307,6 +307,13 @@ const AwardScreen = (userLanguage) => {
           {translation[userLanguage.userLanguage]["congrats.message"]}
         </Text>
         <br />
+
+        <Button
+          boxShadow="0.5px 0.5px 1px black"
+          onClick={() => navigate("/q/0")}
+        >
+          Bye.
+        </Button>
         {/* <Text fontSize={"sm"}>
           {translation[userLanguage.userLanguage]["congrats.connect"]}
         </Text> */}
@@ -2121,6 +2128,8 @@ const Step = ({
     setSuggestionMessage("");
     setFeedback("");
     setFeedback("");
+    resetEducationalMessages();
+    setEducationalContent([]);
     setIsCorrect(null);
     resetMessages();
   }, [step]);
@@ -4354,42 +4363,58 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
   const [input, setInput] = useState("");
   const [isValid, setIsValid] = useState(null);
   const navigate = useNavigate();
+  const { alert, hideAlert, showAlert } = useAlertStore();
 
+  const bannedUserList = [
+    "npub1cfyf77uc459arthry2y6ndj8dr2t7fjn6rl5feakghv884f8s73qe9dayg",
+    "npub1m5kwfzjcn7k7uwadmvqwvkryfcy7rttnjfe3cl4cpm205eehe5fs2sx53h",
+    "npub1xld6g6tsdddtkpmspawl30prf2py9wdqqwk43sxyy92updqvr62qxt53qk",
+  ];
   const correctPasscode = import.meta.env.VITE_PATREON_PASSCODE;
 
   const checkPasscode = async () => {
-    if (input === correctPasscode) {
-      // console.log("we did it");
-      localStorage.setItem("passcode", input);
-      localStorage.setItem("features_passcode", input);
-
-      // Assuming you have the user's unique identifier stored in local storage
-      const userId = localStorage.getItem("local_npub"); // Replace with actual user ID if needed
-      const userDocRef = doc(database, "users", userId);
-      const userSnapshot = await getDoc(userDocRef);
-
-      if (userSnapshot.exists()) {
-        // console.log("User document exists");
-        const userData = userSnapshot.data();
-        const userStep = isOldAccount ? userData.step : userData.previousStep; // Default to 0 if no previousStep
-
-        // console.log("User step:", userStep);
-
-        // Navigate to the next step
-
-        // Update Firestore document with previousStep + 1
-        await updateDoc(userDocRef, {
-          step: isOldAccount ? userStep : userStep + 1,
-          hasSubmittedPasscode: true,
-        });
-
-        navigate(`/q/${isOldAccount ? userStep : userStep + 1}`);
-        // console.log("Updated user step to:", userStep + 1);
-      } else {
-        console.log("User document not found");
-      }
+    if (
+      input === correctPasscode &&
+      bannedUserList.find((item) => item === localStorage.getItem("local_npub"))
+    ) {
+      showAlert(
+        "error",
+        "You have been banned and the passcode has been changed. Contact the application owner on Patreon if this is a mistake."
+      );
     } else {
-      setIsValid(false);
+      if (input === correctPasscode) {
+        // console.log("we did it");
+        localStorage.setItem("passcode", input);
+        localStorage.setItem("features_passcode", input);
+
+        // Assuming you have the user's unique identifier stored in local storage
+        const userId = localStorage.getItem("local_npub"); // Replace with actual user ID if needed
+        const userDocRef = doc(database, "users", userId);
+        const userSnapshot = await getDoc(userDocRef);
+
+        if (userSnapshot.exists()) {
+          // console.log("User document exists");
+          const userData = userSnapshot.data();
+          const userStep = isOldAccount ? userData.step : userData.previousStep; // Default to 0 if no previousStep
+
+          // console.log("User step:", userStep);
+
+          // Navigate to the next step
+
+          // Update Firestore document with previousStep + 1
+          await updateDoc(userDocRef, {
+            step: isOldAccount ? userStep : userStep + 1,
+            hasSubmittedPasscode: true,
+          });
+
+          navigate(`/q/${isOldAccount ? userStep : userStep + 1}`);
+          // console.log("Updated user step to:", userStep + 1);
+        } else {
+          console.log("User document not found");
+        }
+      } else {
+        setIsValid(false);
+      }
     }
   };
 
@@ -4971,6 +4996,27 @@ export const AppWrapper = () => {
   //   return <div>{broke}</div>;
   // }
 
+  const bannedUserList = [
+    "npub1cfyf77uc459arthry2y6ndj8dr2t7fjn6rl5feakghv884f8s73qe9dayg",
+    "npub14sy47q3deak79pnw0snwwe0tevts5matlakn22egfkfs90r2dsdsglp0x6",
+    "npub1gus0xkmpxg3ylkzaem5ytrrnzrjfqztjpysuad44855k8jppj7jsh4xxyp",
+  ];
+
+  if (
+    bannedUserList.find((item) => item === localStorage.getItem("local_npub"))
+  ) {
+    return (
+      <div style={{ padding: 24, maxWidth: 350 }}>
+        This device and user has been banned after detecting misuse of the
+        platform.
+        <br /> <br /> If you believe this is a mistake, please contact the owner
+        through email to unlock your account and receive the updated subscriber
+        passcode:
+        <br />
+        sheilfer@robotsbuildingeducation.com
+      </div>
+    );
+  }
   return (
     <Router>
       <App isShutDown={isShutDown} />
