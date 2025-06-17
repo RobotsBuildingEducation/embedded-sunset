@@ -5577,6 +5577,321 @@ console.log(arr);
       },
     },
   ],
+  "py-en": [
+    {
+      group: "introduction",
+      title: "Introduction To Software Development",
+      isStudyGuide: true,
+      description:
+        "Expose yourself to fundamentals to improve the quality of your learning before making progress.",
+      question: {
+        questionText: (
+          <div>
+            <p style={{ marginBottom: 12 }}>
+              One of the best predictors for student success is exposure to
+              course material before studying it. You're encouraged to read
+              about the fundamentals of software in the study guide before
+              starting. You can reference this study guide in the menu
+              throughout your progress too.
+            </p>
+
+            <p style={{ marginBottom: 12 }}>
+              Remember to fail faster and fail forward! The real education
+              happens when you push through a challenge. We'll start off nice
+              and easy at first, but then we'll start to level up the difficulty
+              as you collect more progress. Make sure to use the tools at your
+              disposal! You're going to need it.
+            </p>
+          </div>
+        ),
+        metaData: `### Advice
+I know this looks like ChatGPT content... 
+
+but it's not -_-" It's me!
+
+It's important to remember this as a beginner:
+
+1. Building things with software is mostly about organizing information rather than being good at math. Programming languages use logic and computation to express ideas instead of equations and algebra.
+
+2. Like the English language, you can express things in many different ways.
+
+3. When something challenges you, fail faster and break the problem into more understandable steps.
+
+
+### Exposure
+The idea here is to expose you to concepts before you start to answer questions about it in the app so you aren't intimidated by it later. Don't worry about not understanding everything. In fact, try your best to make sense out of it at a glance or use AI to your advantage to create an understanding.
+
+### Code
+
+Let's observe these lists. We can see that:
+- \`my_custom_data && my_custom_list\` are equivalent.
+- \`data_set && data_object\` are also fundamentally equivalent.
+
+
+\`\`\`js
+let my_custom_data = [1, 2, 3, 'a', 'b', 'c', null, false]
+const my_custom_list = new Array(1,2,3,'a','b','c', null, false)
+my_custom_data.push('new data')
+my_custom_list.push('new data')
+
+let data_set = {
+  introduction: "Welcome",
+  title: "Chapter 1",
+  is_live: true
+}
+data_set.page = 4
+data_set['book'] = 'Coding Basics'
+
+let data_object = new Object()
+data_object.introduction = 'Welcome'
+data_object.title = 'Chapter 1'
+data_object.is_live = true
+data_object.page = 4
+data_object['book'] = 'Coding Basics'
+
+\`\`\`
+
+Additionally, in the example above, we're exposed to variable definitions, data types, arrays, functions and objects. A lot of the software that you likely operates on those concepts under the hood. This is way \`[]\` and \`new Array\` can create the same data - it translates the same way when it comes to turning your code into signals that can be sent across the internet.
+
+Now in the example below, we take a look at creating our own custom objects. We create our own custom object, along with an interface of functions. Generally when it comes to data, you're able to create, retrieve, update or delete it in some form or another.
+
+\`\`\`js
+class House {
+  house_paint = null
+
+  constructor(paint){
+    this.house_paint = paint
+  }
+
+  getPaint(){
+    return this.house_paint
+  }
+
+  setPaint(paint) = (paint) => {
+    this.house_paint = paint
+  }
+
+  deletePaint = () => {
+    this.house_paint = null
+  }
+}
+
+let first_home = new House("pink")
+let next_home = new House("blue")
+
+let first_paint = first_house.getPaint() // returns the value "pink"
+let next_paint = new_home.house_paint // returns the value "blue"
+next_paint = new_home['house_paint'] // still returns the value 'blue'
+
+\`\`\`
+
+So that's creating data and working with data. You'll find that you can usually combine ideas depending on what you need to create. For example, the above component can also be written the following way:
+
+\`\`\`js
+function createHouse(paint = null) {
+  return {
+    house_paint: paint,
+
+    getPaint() {
+      return this.house_paint;
+    },
+
+    setPaint(paint) {
+      this.house_paint = paint;
+    },
+
+    deletePaint() {
+      this.house_paint = null;
+    },
+  };
+}
+
+//what is the value of the result by the end of the program?
+const myHouse = createHouse('blue');
+let paint = myHouse.house_paint;
+
+myHouse.house_paint = 'red'; 
+paint = myHouse.getPaint()
+
+myHouse.setPaint('green'); 
+paint = myHouse.house_paint
+
+myHouse.deletePaint(); 
+
+let result = myHouse['house_paint']
+\`\`\`
+
+
+Finally, we combine this to work with some code that renders the following screen
+\`\`\`jsx
+const CelebrationMessage = ({ name }) => {
+  const styling_data = {
+    textAlign: 'center'
+  }
+  
+  return <div style={styling_data}>{name}</div>
+}
+
+const App = () => {
+  return (
+    <section style={{ border: '3px solid black' }}>
+      <header>
+        <h2>Good job!</h2>
+      </header>
+      
+      <CelebrationMessage name="You created a small app!" />
+     </section>
+  )
+}
+\`\`\`
+
+
+And that's all! In the last example, we've used a library called React, which gives us access to special functions that are specialized for rendering elements on a screen. But it follows the same thought process as the stuff before it.
+
+### Conclusion
+Remember that failing faster is in your best interest when learning new skills with software. This one pager document will be available inside of the app. There are also many other features to help your journey along the way, but I'll leave that to your exploration of the platform and everything it has to offer.
+
+Stay focused and best of luck with the rest!
+        `,
+      },
+    },
+    // Add these entries to `"py-en": [ … ]` immediately after the “introduction” object:
+
+    {
+      group: "tutorial",
+      title: "Understanding Coding",
+      description: "Grasp the basic concept of coding.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "Which of the following best describes coding?",
+        options: [
+          "Writing instructions for computers to perform tasks",
+          "Creating physical components for computers",
+          "Designing user interfaces",
+          "Managing databases",
+        ],
+        answer: "Writing instructions for computers to perform tasks",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Sequence of Program Execution",
+      description: "Learn the correct order of program execution.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps with drag-and-drop and order how programs execute.",
+        options: [
+          "Writing Code",
+          "Code Compilation",
+          "Debugging",
+          "Executing Program",
+        ],
+        answer: [
+          "Writing Code",
+          "Code Compilation",
+          "Debugging",
+          "Executing Program",
+        ],
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Introduction to Variables",
+      description:
+        "Select all the steps involved in correctly declaring a variable in Python.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Select all the steps involved in correctly declaring a variable in Python:",
+        options: [
+          "Choose a descriptive variable name",
+          "Assign a value using the equals sign (=)",
+          "Ensure the variable name doesn't start with a number",
+          "Use lowercase letters and underscores",
+          "Capitalize the first letter of the variable name",
+          "Begin the variable name with a number",
+        ],
+        answer: [
+          "Choose a descriptive variable name",
+          "Assign a value using the equals sign (=)",
+        ],
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Understanding Variable Declarations for Lists",
+      description:
+        "Complete the code by selecting the correct way to declare a list of items in Python.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which code block correctly declares a list of items in Python?",
+        options: [
+          "items = ['apple', 'banana', 'cherry']",
+          "items = ('apple', 'banana', 'cherry')",
+          "items = {'apple', 'banana', 'cherry'}",
+          "items = 'apple, banana, cherry'",
+          "items = dict(fruit1='apple', fruit2='banana', fruit3='cherry')",
+        ],
+        answer: "items = ['apple', 'banana', 'cherry']",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Variable Declaration in Python",
+      description: "Learn how to declare variables in Python.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Declare a variable named `age` and assign it the value `25` in Python.",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Understanding Data Types",
+      description: "Learn the basics of data types in Python.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What naming convention is used to denote a constant in Python?",
+        placeholder: "Type your answer here...",
+        answer: "Use uppercase letters for the variable name",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Purpose of Variables",
+      description: "Understand why variables are used in programming.",
+      isText: true,
+      question: {
+        questionText:
+          "In your own words, explain the purpose of variables in programming.",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Bash Terminal Practice: Changing Directories",
+      description: "Practice changing directories in a terminal environment.",
+      isCode: true,
+      isTerminal: true,
+      question: {
+        questionText:
+          "Enter the command to change to the new_folder directory using a bash terminal",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [1, 8],
+      },
+    },
+  ],
   // ['py-en']: [
 
   // ],
