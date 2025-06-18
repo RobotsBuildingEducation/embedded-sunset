@@ -1,6 +1,16 @@
 import { ListItem, OrderedList } from "@chakra-ui/react";
 import { DataTags } from "../elements/DataTag";
-import { IoAppsOutline } from "react-icons/io5";
+
+export const pickProgrammingLanguage = (language) => {
+  let languages = {
+    en: "Javascript",
+    es: "Javascript",
+    "py-en": "Python",
+    "swift-en": "Swift",
+    "android-en": "Java",
+  };
+  return languages[language];
+};
 
 export let translation = {
   en: {
@@ -3038,5 +3048,4628 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "congrats.message":
       "Has completado el cuestionario. Deberías estar orgulloso porque la mayoría de las personas no llegan tan lejos. Eres genuinamente excepcional. ¡Bien hecho!",
     "congrats.connect": "Conéctate con todos los que han terminado",
+  },
+  "py-en": {
+    "search...": "Search…",
+    backToQuestion9: "Go back to question 9",
+    completeTutorialFirst: "You have to finish the tutorial first.",
+    askForHelp: "Ask for help",
+    onboardingProgress: "Account setup progress",
+    goodJob: "Good job!",
+    nextStep: "Next step",
+    generatingCode: "Generating code...",
+    "buildYourApp.onboarding.instruction":
+      "This app will grow and adapts with you when you learn and make progress. For now, we'll start with a light app to show you some things you'll learn. You can change your idea later.",
+    skip: "Skip",
+
+    runCode: "Run code",
+    "modal.selfPace.weekPlan": "Set up 1 week plan",
+    "modal.selfPace.monthPlan": "Set up 1 month plan",
+    "modal.dailyGoal.estimate":
+      "At this pace, you’ll finish all 90 questions in about {days} day{plural}.",
+    "modal.dailyGoal.estimatedDateLabel": "Estimated completion date:",
+
+    "app.terminal.placeholder": "Enter your answer here",
+    "badBrowser.install":
+      "This browser doesn't support speech recognition. Privately install the app on your phone to access this feature.",
+    "app.button.complete": "Complete chapter",
+    optional: "(optional)",
+    faq_1_question: "What about AI?",
+    faq_1_item_1:
+      "If AI can program themselves, it's likely that all work as we know it will fundamentally change. But for now, it's going to change the supply and demand of things in a relevant way.",
+    faq_1_item_2:
+      "In my view, AI makes software engineering more realistic for more people. Before AI, it was clear that there was an unmanageable amount of work being generated in a way where a software engineer would create more work than they could complete. So I personally find it more enjoyable to write code with AI than without it and I believe that it makes more things like entrepreneurship more accessible. Things can actually get done now.",
+    faq_1_item_3:
+      "Thinking critically, AI is mostly concerned with making good decisions. So roles that depend more on decisions will be impacted. In my view, that's more executive roles, thus the sweetspot these days is being a junior or senior engineer so you could start to build lean businesses on your own. So that's what we try to do here - we arm you with new skills and hope that it influences your decisions or opportunities in a good way.",
+    faq_2_question: "What kind of computer do I need?",
+    faq_2_item_1:
+      "When it comes to learning, I recommend paper and pencil. RO.B.E is not a software intensive program. It can be used on your mobile device or any laptop. I like it on mobile phones.",
+    faq_2_item_2:
+      "If you're wondering what kind of computer you need to code, I recommend a macbook pro. The next best answer is whatever you can afford. People usually overthink this and the truth is you don't need anything fancy. There's no wrong answer.",
+    faq_2_item_3:
+      "Macbook pros are good general solution. If you need something specialized and you're certain about your investment, then in a similar spirit, invest in the best computing power you can get.",
+    faq_3_question: "Is coding hard? Do I need to be good at math?",
+    faq_3_item_1: "This is a loaded question.",
+    faq_3_item_2:
+      "No. You don't have to be good at math. And programming isn't hard, it's challenging. Education IS overcoming the challenge. You should recognize that you can accomplish the things you want to accomplish.",
+    faq_3_item_3:
+      "Coding is about organizing information. So if you can write instructions, you can write code.",
+    faq_3_item_4:
+      "So maybe you ask that question because there's a part of you that wishes someone would tell you that it can be made easy. People can make it easier. It's going to be a challenge, but that's part of the fun too.",
+    faq_4_question: "What programming language should I pick?",
+    faq_4_item_1:
+      "So if you've done any research already, you've probably come across Python and Javascript. They're very popular for a reason, but before explaining why, I strongly recommend to think about what kind of machines you want to work on and what kind of problems you want to solve.",
+    faq_4_item_2:
+      "The reason Javascript and Python are so widespread is because of the internet. They're mostly used to do a lot of the service work of the internet.",
+    faq_4_item_3:
+      "But what if you need an iOS app, an android one, a video game, or some kind of robot? Ultimately you'll find that when you learn one language, you kinda learn them all. There's a reason for that, but ultimately it's like worrying whether you should learn how to use a hammer or drill when building a home - you're likely going to use many languages eventually and it'll all feel pretty familiar. There's no wrong answer.",
+    faq_5_question: "Is a bootcamp worth it?",
+    faq_5_item_1:
+      "As usual, the best answer is going to be 'it depends'. What you really pay a lot of money for is an employment network, and as you've seen in recent years, that kind of business can experience hard times.",
+    faq_5_item_2:
+      "I don't recommend going to a bootcamp as a shortcut into the industry. A bootcamp is no different than being self-taught or going to college. You will still need to learn relevant skills, find early-stage employment, create business-savvy projects and pass technical interviews.",
+    faq_5_item_3:
+      "How you approach each will be wildly different. A self-taught developer in San Francisco is different than a computer science student in Nebraska. A dropout from Stanford will have a different environment than someone at a community college. The key thing here is that your environment plays an important role in your opportunities.",
+    faq_6_question: "What is coding and what can I do with it?",
+    faq_6_item_1:
+      "Coding is a way to organize information. So it exists everywhere. Think of it this way. Coding is written by software engineers to organize information. Software engineers study computer science. Computer science is the science of computation. Computation is problem solving. So coding expresses the science of solving problems.",
+    faq_6_item_2:
+      "That means you can do just about anything. You can code for media, medicine research, sports, robots, energy systems, financial systems or just about anything you can think of. It's certainly a preferred game for entrepreneurs, but many people also take the well-balanced life approach with it too. So sometimes people code because they want a more relaxed life too.",
+    faq_7_question: "Am I too old to learn?",
+    faq_7_item_1:
+      "No. Simply put, your brain doesn't work that way. You may experience some 'rustyness' if you haven't done deep learning of a subject in some time, but that's not too different than a college student realizing that they need to learn how to learn. Maybe you already know how to learn or you understand what works for you. Now suddenly you have an advantage.",
+    faq_7_item_2:
+      "As one of my directors say, slow is smooth and smooth is fast. This isn't to create any sense of superiority or inferiority - you're just in a competitive market and it's usually better to take the productive outlook.",
+    "modal.selfPace.notificationsUnavailable":
+      "Notifications aren't supported on this browser. Follow installation instructions in the menu to access all features",
+    "modal.selfPace.notificationDescription":
+      "Send a positive and encouraging notification daily",
+    notificationsEnabled: "Notifications Enabled",
+    notificationsDisabled: "Notifications Disabled",
+
+    notificationsHeader: "Notifications",
+    gotItButton: "Got it!",
+    notifications_available_line1:
+      "Notifications let me send a positive and encouraging message once a day.",
+    notifications_available_line2:
+      "I believe education is in the challenge rather than the reminders or the material, so courage and encouragement play a crucial role in finding success.",
+    notifications_status_enabled: "Notifications Enabled",
+    notifications_status_disabled: "Notifications Disabled",
+    notifications_unavailable_line1:
+      "You're using {browser} that does not allow me to set up device notifications 😔",
+    notifications_unavailable_line2:
+      "Installing the app grants you full access to features like being able to speak to write code or receive notifications meant to send positive and encouraging messages once per day.",
+    notifications_unavailable_line3:
+      "I believe education is in the challenge rather than the reminders or the material, so courage and encouragement play a crucial role in finding success.",
+    notifications_installation_directions:
+      "Installation directions can be found in menu.",
+    celebrateMessage: ". You're doing a great job! 🙌 🥳",
+    Progress: "Progress",
+
+    dailyGoal: "Daily goal",
+    questions: "questions",
+    goal: "goal",
+    completed: "completed",
+    "onboarding.chapter0.questions": "Questions 0-9",
+    "onboarding.chapter1.questions": "Questions 10-30",
+    "onboarding.chapter2.questions": "Questions 31-48",
+    "onboarding.chapter3.questions": "Questions 49-68",
+    "onboarding.chapter4.questions": "Questions 69-90",
+    "onboarding.chapter5.questions": "Questions 91-111",
+    "onboarding.chapter6.questions": "Questions 112-133",
+    "onboarding.chapter0.title": "Tutorial Chapter: Platform Introduction",
+
+    "onboarding.chapter0.content":
+      "Discover all the features the platform has to offer to help you create success.",
+    "onboarding.chapter1.title": "Chapter 1: Coding Basics",
+    "onboarding.chapter1.content":
+      "Learn about the basic building blocks used to write programs.",
+    "onboarding.chapter2.title": "Chapter 2: Object-Oriented Programming",
+    "onboarding.chapter2.content": "Understand how software data is designed.",
+    "onboarding.chapter3.title": "Chapter 3: Frontend Development",
+    "onboarding.chapter3.content": "Create components and user interfaces.",
+    "onboarding.chapter4.title": "Chapter 4: Backend Engineering Fundamentals",
+    "onboarding.chapter4.content":
+      "Comprehend what backend engineering means in the world of software",
+    "onboarding.chapter5.title": "Chapter 5: Building Apps",
+    "onboarding.chapter5.content":
+      "Tie your knowledge together to create real apps and users.",
+    "onboarding.chapter6.title": "Chapter 6: Computer Science",
+    "onboarding.chapter6.content":
+      "Deep-dive into foundations of algorithms and data structures.",
+
+    "onboarding.step1.accordionTitle": "What to expect",
+    "countdown.streakTimeLeft": "Streak time left - ",
+    "countdown.dailyGoalsTimeLeft": "Daily goals time left - ",
+    "modal.selfPace.instruction":
+      "Choose the duration of your streak. Your streak timer renews when this time elapses.",
+    "modal.selfPace.day": "day",
+    "modal.selfPace.oneDay": "1 Day",
+    "modal.selfPace.twoDays": "2 Days",
+    "modal.selfPace.threeDays": "3 Days",
+    "modal.selfPace.signal.grind": "Grind",
+    "modal.selfPace.signal.motivated": "Motivated",
+    "modal.selfPace.signal.casual": "Casual",
+    "modal.dailyGoal.instruction":
+      "Choose how many questions to complete to reach your daily goal. The goal timer resets every 24 hours.",
+    "modal.dailyGoal.dailyGoalLabel": "Daily goal:",
+    "button.save": "Save",
+    "button.back": "Back",
+    "onboarding.step1.challengeTitle": "The Challenge Ahead",
+    "onboarding.step1.challengeText1":
+      "The harsh reality is that most who attempt to learn for 100 days will drop off within the first 20 days. The same is also true for most videos and courses – most folks drop off in the first 20 seconds and the first 20 questions!",
+    "onboarding.step1.challengeText2":
+      "But perhaps being aware of this and making a conscious effort to resist certain temptations may keep you in the loop to find success with the program. And perhaps the real challenge is actually a lot easier than we thought.",
+    "onboarding.step1.challengeText3":
+      "What do you say? Are you up for the challenge? Let's get passed 20 questions in a more manageable way!",
+    "onboarding.step1.buttonLabel": "Let's do it!",
+
+    "onboarding.step2.dailyGoalsTitle": "Set up your daily goals",
+    "onboarding.step2.dailyGoalsDescription":
+      "I recommend doing three questions per day. By the end of the month, you'll get to the point where you can start putting together what you've learned to build and ship apps.",
+
+    "onboarding.step2.dailyGoalsDescription.faster":
+      "If you want to go fast and finish within a week, try doing 12 questions a day.",
+
+    "onboarding.step3.lastStepMessage":
+      "Your account is almost ready. Just one last step to complete your setup!",
+    "onboarding.step3.launchAppButton": "Complete Account Setup",
+    "onboarding.final.launch": "Launch App",
+
+    "modal.externalLinkTitle": "Leaving The App",
+    "modal.externalLinkBody":
+      "You are about to be redirected to the free version of ChatGPT where no login is required. Paste the question data that we've copied to generate help. Create an account with ChatGPT to acces the custom chat version of this app instead.",
+    "modal.dontShowAgain": "Don't tell me this again",
+    "modal.cancel": "Cancel",
+    "modal.continue": "Continue to ChatGPT",
+
+    installAppInstructions1: `Open this page in your browser with the More Options button`,
+    installAppInstructions2: `Press the Share button`,
+    installAppInstructions3: `Press the Add To Homescreen button`,
+    installAppInstructions4: `That's it! You don't need to download the app through an app store because we're using open-source standards for Progressive Web Apps.`,
+
+    installApp: "Install App",
+    "select.recipient": "Select your scholarship recipient",
+    "change.recipient": "Change your scholarship recipient",
+
+    "disabled.select.soon": "More schools, teachers and students soon!",
+    transcriptBadges: "Transcript Badges",
+    instructions: "Instructions",
+    "tutorModal.instructions.1":
+      "These videos are from the connected tutoring platform on ",
+    "tutorModal.instructions.1.33": "Rox the tutor",
+    "tutorModal.instructions.1.66":
+      "Fun fact: The questions found on this app are based on the lessons learned in these hand-written videos!",
+    "tutorModal.instructions.2": "To earn badges:",
+    "tutorModal.instructions.3":
+      "Watch 80% of the video, read the summary and complete the practice exercise for each chapter in this tutoring modal.",
+    "tutorModal.instructions.4":
+      "Complete the chapter by answering questions in the main application.",
+    "video.summary.tutorial": `Welcome to **Robots Building Education**! This introductory lecture addresses common concerns and sets the stage for your journey in learning coding and building businesses with AI, specifically using tools like ChatGPT (referred to here as Roxana).
+
+### Overcoming Doubts and Imposter Syndrome
+
+Feeling intimidated or questioning your abilities is normal. Even the instructor experiences imposter syndrome. These feelings indicate you're challenging yourself and aiming for higher standards. Ground yourself and recognize that with the right preparation, you can overcome these challenges.
+
+### FAQs Speed Run
+
+Here are quick answers to common questions:
+
+- **Is programming hard?** No.
+- **What computer do I need?** No specific requirement.
+- **Am I too old?** No.
+- **What kind of jobs can I do?** Numerous opportunities across various fields.
+- **Is a bootcamp worth it?** No.
+
+For more details, visit the FAQs on [embedded-rox.app](https://embedded-rox.app).
+
+#### Learning Approach
+
+The learning process consists of four key steps:
+
+1. **Imagine and Illustrate**: Visualize concepts to enhance understanding.
+2. **Draw Connections and Relationships**: Link new ideas with existing knowledge.
+3. **Observe New Information**: Pay attention to new insights and data.
+4. **Practice**: Apply what you've learned through hands-on activities.
+
+### Embracing the Learning Experience
+
+The aim is to help you experience the sensation of learning, unlocking the potential to learn anything you desire. Coding is not just about programming; it's a means to engineer solutions, communicate ideas, and interact with the world.
+
+### The Versatility of Computer Science
+
+Computer science is the science of solving problems and can be applied to any field—climate technology, psychology, cancer research, art, sports, and more. Technology plays a role wherever information exists.
+
+### Encouragement to Proceed
+
+Take time to internalize these lessons. Allow yourself to become the person who embraces challenges and continues to move forward. With courage and persistence, you'll transform the unknown into familiarity and make a significant impact.
+
+    `,
+    "video.summary.2": `
+## Overview
+
+This lecture introduces the fundamentals of coding, focusing on:
+
+- **Objects**
+- **Functions**
+- **Loops**
+- **Data and Logic**
+- **Network Functions**
+
+The approach is to start with more challenging concepts and work down to the basics, catering to learners from diverse backgrounds.
+
+## Objects
+
+- **Definition**: Objects in code model the digital world using information, data, and logic.
+- **Classes**: Define how objects are created, including their state and functionality.
+- **Key Point**: Objects have a common way to define their state and manage it through functionality.
+- **Examples**:
+  - Creating a \`Robot\` class in JavaScript.
+  - Using objects to structure data in applications like social media posts or crypto transactions.
+- **Takeaway**: Coding is about organizing information, not about math.
+
+## Functions
+
+- **Purpose**: Essential for organizing and handling data.
+- **Types**:
+  - **Synchronous Functions**: Execute tasks sequentially (like cooking in a pan).
+  - **Asynchronous Functions**: Allow other processes to run concurrently (like cooking in an oven).
+- **Importance**: Understanding functions helps manage data flow, especially when handling data across networks.
+
+## Loops
+
+- **Usage**: Perform repeatable actions on groups of data.
+- **Types of Looping Functions**:
+  - Transforming values.
+  - Filtering values.
+  - Reversing values.
+- **Example**: Using \`forEach\` in JavaScript to find an artist with the highest Spotify monthly listeners.
+- **Documentation**: Encouraged to read language documentation to understand built-in methods and functionalities.
+
+## Data and Logic
+
+- **Fundamentals**:
+  - Data types include words, numbers, groups, and logical conclusions.
+  - Logic boils down to true or false values—how computers interpret the world.
+- **Examples**:
+  - Defining objects like \`obama\` and \`elon\` with properties.
+  - Creating functions that use logical conditions to return results.
+- **Key Point**: Individual pieces of data create logic; groups of data create functionality.
+
+## Coding and Logic (Reinforced)
+
+- **Coding**: The organization of information.
+- **Logic**: Determining if statements are true or false.
+- **Real-World Connection**: Observing how everyday items and situations can be represented in code.
+- **Encouragement**: Understand that coding concepts can be grasped without heavy emphasis on math.
+
+## Practice and Learning Strategies
+
+- **Use AI Assistance**: Utilize AI tools like ChatGPT for guidance.
+- **Hands-On Practice**:
+  - Write code by hand on paper.
+  - Draw connections and visualize data structures.
+- **Model Real-World Data**: Practice representing real-world scenarios as data models in code.
+- **Mindset**: Focus on learning and understanding rather than worrying about right or wrong.
+
+## Conclusion
+
+- **Main Takeaways**:
+  - Coding models the digital world with information, data, and logic.
+  - Organizing information is the essence of coding.
+  - Logic in coding is about true or false values.
+- **Next Steps**:
+  - Prepare to build visual applications using HTML, CSS, JavaScript, and React.
+- **Encouragement**:
+  - Slow down and internalize the lessons.
+  - Embrace challenges and trust the learning process.
+  - Practice consistently to strengthen your skills.
+
+---
+
+**Note**: The lecture emphasizes starting with foundational concepts and building upon them to create a solid understanding of coding. It encourages using available resources, practicing regularly, and maintaining a positive mindset towards learning.
+
+    `,
+    "video.summary.1": `
+**UI/UX** stands for User Interfaces and User Experiences. It's a multidisciplinary approach based on the study of human-computer interaction, also known as **Interaction Design** or simply **Design**. This field goes beyond visual design and idea brainstorming; it's a thoughtful practice applicable in many environments.
+
+## Role of an Interaction Designer
+
+Interaction designers:
+
+- Research and design based on human-computer interaction.
+- Conduct surveys, interviews, and observations to gather deeper insights into a product.
+- Focus on improving experiences, such as enhancing a restaurant's experience or determining which movie trailer generates the most anticipation.
+- Combine technical skills and business acumen to amplify impact.
+
+## Accessibility
+
+- **Importance**: Accessibility focuses on enabling more people to use products and services.
+- **Considerations**:
+  - Designing for blind users who rely on screen readers.
+  - Organizing information to make sense for both visual and auditory users.
+- **Benefits**:
+  - Thoughtful accessibility design often benefits all users.
+  - Effective organization can make content more meaningful for people using only audio, such as in podcasts or radio.
+
+## Multidisciplinarity
+
+- Design is fundamentally multidisciplinary and can be applied in fields like chemical engineering, business, architecture, and education.
+- **Impact of Choices**:
+  - The words you choose can influence how search engines and social media algorithms distribute your material.
+  - The intent behind features and the tone you use can affect user retention and success.
+- **Attention to Detail**: Good design is about making the people you're designing for happy, which requires direct communication and research.
+
+## Heuristics
+
+- **Definition**: Heuristics are guidelines used when creating with constraints or limited feedback.
+- **Application**:
+  - Considering how a user can correct a mistake or malfunction.
+  - Using concepts like **affordances**, which are signals or properties of an object that inform a user of its possible uses.
+- **Examples**:
+  - Recognizing that a water pitcher is meant for pouring water, not as a glove.
+  - Understanding that pixels on a screen represent interactive buttons.
+
+## Design Systems
+
+- **Tools and Methods**:
+  - Paper prototypes, surveys, personal interviews, online tools.
+- **Considerations**:
+  - Each tool has trade-offs that affect outcomes.
+  - Resources and budgets can influence the effectiveness of methods.
+  - Different settings (e.g., boardroom vs. TikTok) can yield different results.
+- **Collaboration**:
+  - Over time, you discover what works well with you and different teams.
+  - It's important to think critically and keep an open mind when making design choices.
+
+## Further Reading
+
+- **"The Design of Everyday Things"** by Don Norman: A foundational book in the field of human-computer interaction.
+- **NNGroup.com**: Resources from the Nielsen Norman Group for professionals concerned with usability standards.
+- **Bitcoin.design**: An open-source platform supporting usability research and development for Bitcoin.
+
+## Conclusion
+
+Interaction design is a discipline that combines research, creativity, and empathy to improve user experiences. By integrating principles of accessibility, multidisciplinarity, and heuristics, designers can create meaningful and effective solutions. Members of the Robots Building Education community are encouraged to apply these principles to communicate ideas, improvements, or case studies to gain experience. Collaboration and brainstorming are welcomed to enhance our AI mentoring platform.
+
+---
+
+**Note**: If you're part of the Robots Building Education community, feel free to use design principles to communicate ideas, improvements, or case studies to gain experience here too! I'm happy to sit down with you and brainstorm on things that can improve our little AI mentoring platform.
+`,
+    "video.summary.3": `
+- **Review of Lesson 1**: Fundamentals of organizing data with code using objects, functions, loops, and logic.
+- **Focus of Lesson 2**: Understanding React components and event-driven programming to create user interfaces and experiences.
+
+## React Components
+
+- **Components**: Functions that return UI elements and manage their own state and properties.
+- **Main Parts of a React Component**:
+  1. **Hooks**: Functions that handle and synchronize operations with the component's state (e.g., \`useState\`).
+  2. **State**: Dynamic data within the component that changes over time, triggering re-renders.
+  3. **Properties (Props)**: Data passed into the component that should remain unchanged within it.
+
+- **Event-Based Programming**: React components respond to user interactions (events) that trigger state changes and UI updates.
+
+## Data Flow in React
+
+- React uses a **one-way data flow**, making it intuitive to design relationships and manage data.
+- **Updating State**: Changing a component's state refreshes the display and re-renders the component.
+- **Props vs. State**:
+  - **Props**: Immutable data received from parent components.
+  - **State**: Mutable data managed within the component.
+
+## Practical Example: Tweet Component
+
+- Demonstrated a \`Tweet\` component that displays tweet information and handles user interactions like likes.
+- Showed how to:
+  - Use hooks (\`useState\`) to manage state.
+  - Pass functions and data as props to child components.
+  - Update state in response to events (e.g., \`createLike\` function).
+
+## Overcoming Challenges
+
+- Recognized that combining hooks, state, and props can be complex.
+- Encouraged practice, experimentation, and embracing challenges to understand React's data flow.
+- Emphasized that professional software engineers also navigate these complexities.
+
+## HTML and Structuring the Display
+
+- **HTML (HyperText Markup Language)**: Used to structure content on the web.
+- **Elements and Attributes**:
+  - **Events**: Handle user interactions like clicks and hovers.
+  - **ID**: Unique identifier for elements.
+  - **Class**: Groups elements for styling.
+  - **Style**: Inline styling of elements.
+
+- Recommended thinking of HTML elements as containers organized logically.
+
+## CSS and Styling Elements
+
+- **CSS (Cascading Style Sheets)**: Styles the appearance of HTML elements.
+- **Key Concepts**:
+  - **Box Model**: Shapes elements using properties like \`margin\`, \`padding\`, \`border\`, and \`width\`.
+  - **Flexbox Model**: Positions elements in rows or columns for responsive design.
+  - **Animation Model**: Animates elements using CSS animations or JavaScript.
+
+- Suggested using inline styles or CSS-in-JS libraries like Styled-Components with React for better control.
+
+## Combining Concepts
+
+- Provided examples of combining React components with HTML and CSS to create interactive UI elements.
+- Showed how to use state and event handlers to manage data and user interactions.
+- Emphasized the importance of understanding how these technologies work together.
+
+## Practice and Learning
+
+- Encouraged using resources like W3Schools and documentation to explore HTML and CSS attributes.
+- Recommended leveraging AI tools like ChatGPT for assistance.
+- Highlighted the value of hands-on experimentation and breaking down complex problems.
+
+## Conclusion
+
+- Reinforced that mastering frontend development involves understanding components, data flow, and styling.
+- Encouraged continuous practice and exploration to build proficiency.
+- Previewed building real-world applications using the concepts learned.
+
+---
+
+**Note**: This lecture emphasizes the integration of React components with HTML and CSS to create dynamic and responsive user interfaces. Understanding event-driven programming and data flow in React is crucial for developing efficient frontend applications.
+
+    `,
+    "video.summary.4": `
+Backend software engineering often appears mysterious and complex, but this lesson aims to clarify its concepts and make it accessible.
+
+## Lessons Covered
+
+1. **Creating Users**
+2. **Database Foundations**
+3. **Backend Clouds**
+4. **Operating Systems & Machines**
+
+## Operating Systems
+
+- **Modeling the Real World**: Computer science uses technology to simulate real-world systems.
+- **Analogy with a Restaurant Kitchen**: Just as a kitchen has many moving parts to deliver a meal, operating systems manage numerous processes to deliver user experiences.
+- **Variety of Machines**: Understanding different operating systems helps in working with diverse devices like MacBooks, Bitcoin miners, or Tesla robots.
+
+## Command Line Interface (CLI)
+
+- **Text-Based Interaction**: The CLI allows direct communication with the operating system through text commands.
+- **Usability**: Similar to how ChatGPT differs from Google Search, the CLI offers a different form of usability compared to graphical interfaces.
+- **Efficiency**: Engineers use the CLI for efficient and powerful control over the system.
+
+## Backend Engineering
+
+- **Letting Machines Work**: Emphasizes the importance of automating tasks and utilizing powerful tools.
+- **Building Pipelines**: Involves constructing data pathways and routes for various needs, such as distributing data for machine learning or ensuring smooth user experiences.
+- **Modeling Logic**: Programming uses logic to model real-world operations, making complex systems predictable and manageable.
+
+## Using the Command Line
+
+- **Practical Skills**: Encourages familiarity with basic command-line operations like navigating file systems, downloading, installing, and saving files.
+- **Cheat Sheets**: Recommends using cheat sheets to remember essential commands.
+- **Exploration**: Suggests delving into more advanced techniques as curiosity grows.
+
+## Databases
+
+- **Data Storage**: Databases are where data is stored and managed responsibly.
+- **Types of Databases**:
+  - **Relational Databases**: Use tables and structured query language (SQL) to manage data (e.g., Excel spreadsheets).
+  - **Non-Relational Databases**: Use key-value pairs for more flexible data structures.
+- **Organizing Information**: Focuses on using identities and relationships to organize data.
+- **Real-World Example**: Describing restaurant operations using identities like the restaurant name, city, order number, and order type.
+
+## Creating Users
+
+- **User Accounts**: Created by combining data such as login information, personal details, and financial data to form a unique identity.
+- **Authentication**: Uses secret keys and authorization servers to verify and secure user accounts.
+- **Data Direction**: Unique user identities help direct data appropriately within services and applications.
+
+## Conclusion
+
+- **Internalization**: Encourages taking time to understand and imagine the concepts discussed.
+- **Creativity**: Invites learners to be creative and not fear making mistakes.
+- **Acknowledging Challenges**: Recognizes the difficulty but emphasizes that understanding data structures and algorithms aids in grasping larger systems.
+- **Next Steps**: Preparing to connect systems and create an app with user functionalities in upcoming lessons.
+
+---
+
+**Note**: This lesson demystifies backend software engineering by drawing parallels with real-world systems and highlighting the importance of operating systems, command lines, databases, and user creation in building complex applications.
+
+    `,
+    "video.summary.5": `
+In this lesson, we're going step-by-step to piece together everything we've learned so that we can build an application by connecting systems together, culminating in having real users. Tools like Google, YouTube, ChatGPT, and Stack Overflow will be your best friends here if you come across something you want to learn more about.
+    
+## Setting Up The Backend
+
+1. **Install Necessary Tools**:
+    - Download and install **VSCode** (code editor).
+    - Download and install **Node.js** (allows you to build JavaScript apps).
+
+2. **Install npm**:
+    - Open your command line terminal.
+    - Install npm (Node Package Manager) to use packages shared by other developers.
+    - *Note*: Use \`sudo\` cautiously on Unix systems; on Windows, adjust permissions if you encounter errors.
+
+3. **Create a Project Folder**:
+    - Create a folder named after your project (e.g., *The Digital Border*).
+
+4. **Initialize the Project**:
+    - Open VSCode and open your project folder.
+    - Open the integrated terminal in VSCode.
+    - Run \`npm create vite@latest\` to start a React project with Vite.
+    - Follow the prompts to configure the project (choose React and JavaScript).
+    - The configuration might look like this:
+      - Framework: React
+      - Variant: JavaScript
+
+5. **Install Dependencies**:
+    - Run \`npm install\` to install project dependencies listed in \`package.json\`
+
+6. **Run the Application**:
+    - Build the app with \`npm run build\`
+    - Start the development server with \`npm run dev\`
+
+7. **Set Up Firebase (Backend Services)**:
+    - Install Firebase CLI: \`npm install -g firebase-tools\`
+    - Log in to Firebase: \`firebase login\` (authenticate via Google account).
+    - Go to [Firebase Console](https://console.firebase.google.com) and create a new project.
+    - Activate **Authentication**, **Firestore**, and **Hosting** services.
+
+8. **Initialize Firebase in Your Project**:
+    - Run \`firebase init\` and select options to configure Firestore and Hosting.
+    - Choose your existing project when prompted.
+    - Accept defaults for creating rules and indexes files.
+    - Configuration steps:
+      - Activate Firestore and Hosting.
+      - Select "Use an existing project" and choose your project.
+      - Allow Firebase to create rules and indexes files.
+
+9. **Deploy the App**:
+    - Build your app again with \`npm run build\`
+    - Deploy to Firebase Hosting with \`firebase deploy\`
+    - Access your app via the provided Firebase Hosting URL.
+
+## Creating Users
+
+1. **Install Firebase and React Firebase UI**:
+    - Run \`npm install --save firebase react-firebaseui --legacy-peer-deps\`
+
+2. **Enable Authentication in Firebase**:
+    - In the Firebase Console, go to **Authentication** > **Sign-in method**.
+    - Enable **Google** sign-in.
+
+3. **Obtain Firebase Configuration**:
+    - Go to your project settings in Firebase Console.
+    - Select the web app icon to register your app.
+    - Retrieve your app's configuration keys.
+
+4. **Set Up Firebase in Your Code**:
+    - Create a folder \`database\` inside \`src\` and add \`firebaseResources.js\`
+    - Initialize Firebase with your configuration keys in this file.
+
+5. **Implement Authentication UI**:
+    - In \`App.jsx\`, import the sign-in button component from \`react-firebaseui\`
+    - Render the sign-in button in your app.
+
+6. **Manage User State**:
+    - Import necessary Firebase authentication functions.
+    - Define state to track the user's authentication status.
+    - Use the \`useEffect\` hook to handle authentication state changes.
+    - Create a header component to display user information based on authentication state.
+
+7. **Update and Deploy**:
+    - Insert the header component into your app's render method.
+    - Build your app with \`npm run build\`
+    - Deploy the updated app with \`firebase deploy\`
+
+## Summary
+
+- **Set Up Application**: Used the command line to set up a React application with Firebase.
+- **Configured Code**: Connected frontend and backend using identities and keys.
+- **Created Users**: Implemented authentication to create user accounts.
+- **Designed User Experiences**: Built UI components to enhance user interaction.
+- **Frontend vs. Backend**:
+  - *Frontend*: Manages user experiences, visual elements, and events.
+  - *Backend*: Designs pipelines to communicate and move data across networks.
+
+## Working with Other Engineers: GitHub
+
+- **GitHub**: A platform to collaborate with other engineers, similar to Google Drive but optimized for code with version control.
+- **Key Concepts**:
+  1. **Cloning**: Copying code from GitHub to your computer.
+  2. **Adding**: Preparing your code's changes to be shipped to GitHub.
+  3. **Commit**: Adding a label, identity, and description to your container of changes.
+  4. **Pushing**: Deploying or sending your code changes to your GitHub repository.
+  5. **Pulling**: Bringing in any updates from other people to the code.
+  6. **Branches**: Copies of the codebase within the repository itself.
+  7. **Forks**: Copies of the codebase within your profile.
+  8. **Pull Requests**: Comparing changes between branches/forks and merging them.
+  9. **Merging**: Updating code once and for all; completes a lifecycle of updates.
+
+- **Challenge**: Learn GitHub workflows independently to simulate real-world engineering tasks and enhance your problem-solving skills.
+
+## Conclusion
+
+- **Mindset**: Engage your imagination and embrace challenges to build your confidence.
+- **Support**: Private tutoring is available if you need assistance with the material or next steps.
+- **Continuous Learning**: Expect these lessons to upgrade over time.
+- **Gratitude**: Thank you for supporting Robots Building Education. Looking forward to creating more awesome stuff for you!`,
+    "video.summary.6": `
+Data Structures and Algorithms is a subject that often intimidates students due to its complexity and its use in challenging interviews. While it is indeed challenging and requires practice, with proper guidance, the concepts can become more approachable.
+
+## Programming Languages
+
+- **Understanding Code Interpretation**:
+- Computers interpret code by breaking it down into tokens and translating it into machine code.
+- Example:
+  \`\`\`javascript
+  let musician = new Musician("Drake");
+  
+  let top_song = musician.getTopSong();
+  \`\`\`
+- Tokens in the code include keywords (let, new), identifiers (musician, top_song, Musician), operators (=), and literals ("Drake").
+
+- **String Conversion**:
+- Strings are broken down into arrays of characters.
+  - "Drake" becomes \`['D', 'r', 'a', 'k', 'e']\`.
+- Each character is mapped to numerical codes (e.g., ASCII or Unicode) and then to binary representations.
+
+## Data Structures
+
+- **Memory Management**:
+- Computers reserve space in memory and create addresses to reference information.
+- Understanding how data is stored and referenced is crucial for grasping complex data structures.
+
+- **Linked Lists**:
+- A foundational data structure that helps in understanding more complex structures like trees and graphs.
+- Represents a sequence of nodes where each node points to the next.
+
+## Trees and Algorithms
+
+- **Traversing Trees**:
+- **Depth-First Search (DFS)**:
+  - Explores as far as possible along each branch before backtracking.
+  - Useful for scenarios where you need to explore all possible paths.
+
+- **Breadth-First Search (BFS)**:
+  - Explores all neighbors of a node before moving to the next level.
+  - Ideal for finding the shortest path in unweighted graphs.
+
+- **Example of DFS Counting Null Nodes**:
+\`\`\`javascript
+let countNull = (root) => {
+  let count = 0;
+
+  let depthFirstSearch = (currentRoot) => {
+    if (currentRoot === null) {
+      count++;
+      return;
+    }
+
+    for (let nextLocation in currentRoot) {
+      depthFirstSearch(currentRoot[nextLocation]);
+    }
+  };
+
+  depthFirstSearch(root);
+  return count;
+};
+\`\`\`
+
+- **Understanding Traversal**:
+- Visualizing how algorithms navigate through data structures helps in comprehending their functionality.
+- Breaking down each step and counting operations can clarify complex processes.
+
+## Linked Lists
+
+- **Definition**:
+- A linear data structure where each element (node) contains data and a reference (link) to the next node.
+
+- **Building a Linked List**:
+\`\`\`javascript
+class ListItem {
+  constructor(value) {
+    this.value = value;
+    this.linkedTo = null;
+  }
+
+  setLinkedTo(listItem) {
+    this.linkedTo = listItem;
+  }
+
+  getLinkedTo() {
+    return this.linkedTo;
+  }
+}
+
+let meta = new ListItem("meta");
+let instagram = new ListItem("instagram");
+let reels = new ListItem("reels");
+
+// Linking nodes
+instagram.setLinkedTo(reels);
+meta.setLinkedTo(instagram);
+
+class LinkedList {
+  constructor(head) {
+    this.head = head;
+  }
+
+  getLastItem() {
+    let currentItem = this.head;
+    while (currentItem.getLinkedTo()) {
+      currentItem = currentItem.getLinkedTo();
+    }
+    return currentItem;
+  }
+}
+
+let company = new LinkedList(meta);
+
+// Outputs the last item in the list
+console.log(company.getLastItem()); 
+\`\`\`
+
+- **Reversing a Linked List**:
+\`\`\`javascript
+reverse(head) {
+  let previousItem = null;
+  let currentItem = head;
+
+  while (currentItem) {
+    let nextItem = currentItem.getLinkedTo();
+    currentItem.setLinkedTo(previousItem);
+    previousItem = currentItem;
+    currentItem = nextItem;
+  }
+  return previousItem;
+}
+\`\`\`
+
+## Practice and Perseverance
+
+- **Importance of Repetition**:
+- Repeatedly practicing these concepts helps in making them second nature.
+- Taking time to thoroughly understand foundational structures is crucial for tackling advanced topics.
+
+- **Approach to Learning**:
+- Break down complex problems into smaller, manageable parts.
+- Use visualization and counting techniques to follow algorithm steps.
+
+## Advanced Challenges
+
+- **N-Queens Problem**:
+- A classic algorithmic puzzle that involves placing N queens on an N×N chessboard so that no two queens threaten each other.
+- Demonstrates the concept of backtracking and combinatorial complexity.
+- Encourages thinking about optimization and efficient solution strategies.
+- [Learn more about the Eight Queens Puzzle](https://en.wikipedia.org/wiki/Eight_queens_puzzle)
+
+## Conclusion
+
+- **Continuous Learning**:
+- Mastery of data structures and algorithms requires ongoing practice and dedication.
+- Investing time and resources into learning these concepts pays off in the long run.
+
+- **Positive Mindset**:
+- Avoid self-doubt and recognize that challenges are part of the learning process.
+- Affirm your capability to learn and grow in the field of computer science.
+
+- **Seeking Support**:
+- Engage with tutors, mentors, and communities to enhance your understanding.
+- Collaboration and discussion can provide new insights and reinforce learning.
+
+---
+
+**Note**: This lecture emphasizes the foundational importance of data structures like linked lists and trees, and algorithms such as depth-first search. Understanding these core concepts is essential for advancing in computer science and tackling more complex problems.
+    `,
+    "chatcom.instructions.1":
+      "Generate a useful, friendly and professional lecture with javascript coding examples in",
+    "chatcom.instructions.2": "for beginners on the following question/answer:",
+    "button.pickedup": "Picked up",
+    "toast.title.keysCopied": "Keys copied.",
+    "toast.title.chatDataCopied": "Opening ChatGPT...",
+    "toast.description.chatDataCopied":
+      "Paste the data in the following chat to learn more.",
+    "toast.description.keysCopied":
+      "Your secret key has been copied to the clipboard.",
+    "toast.title.addressCopied": "Lightning address copied.",
+    "toast.description.addressCopied":
+      "Your lightning address has been copied.",
+    "toast.title.idCopied": "ID copied.",
+
+    "toast.description.idCopied": "Your ID has been copied.",
+    "landing.welcome": "Sunset",
+    "landing.introduction": (
+      <div>
+        {/* Create scholarships with learning */}
+        A better alternative to Codecademy.
+        <br />
+        <br /> Work smart and learn what you need to know to code and build your
+        ideas with AI quickly.
+        {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
+      </div>
+    ),
+    "landing.button.telemetry": "Create Account",
+    "landing.button.signIn": "Sign In",
+    "createAccount.instructions": "All we need to start is a user name.",
+    "createAccount.input.placeholder": "Enter a user name",
+    "button.back": "Back",
+    "button.create": "Create",
+    "button.save": "Save",
+    "button.close": "Close",
+    "createAccount.isLoading": "Creating...",
+
+    "createAccount.isCreating": "Creating account... 1/3",
+    "createAccount.isCreatingProfile": "Creating profile... 2/3",
+    "createAccount.isCreatingProfilePicture": "Creating profile picture...3/4",
+    "createAccount.isCreatingIntroPost":
+      "Creating community #introductions post... 3/3",
+    "nostrContent.answeredQuestion.1": "Completed question",
+    "nostrContent.answeredQuestion.2": "with a grade of",
+    "nostrContent.answeredQuestion.3": "on",
+    "nostrContent.onboardedProfileAbout":
+      "A student onboarded with Robots Building Education",
+    "nostrContent.introductionPost":
+      "gm nostr! I've joined #LearnWithNostr from Tiktok by creating an account with https://robotsbuildingeducation.com so I can learn how to code with AI.",
+
+    "createAccount.successMessage": "That's it! ✨",
+    "createAccount.lastStepMessage": "Last step (optional)",
+    // "createAccount.lastStepInstructions": "Last step (optional)",
+    "createAccount.awareness":
+      "Your account now works on a number of decentralized apps and works exactly like a mailbox. Use your secret key to sign into apps in our ",
+    "createAccount.roxLink": "decentralized app store",
+    or: "or",
+    "createAccount.primalLink": "with Primal, the social wallet",
+    "button.copyKey": "Copy Secret Key",
+    "createAccount.checkbox.disclaimer":
+      "I understand that my key allows me to sign into different apps that may contain important and private data like Bitcoin. I have safely saved my keys somewhere else.",
+    "createAccount.button.launchApp": "Launch App",
+    "signIn.instructions": "Enter your nostr secret key",
+    "signIn.input.placeholder": "Enter your secret key (nsec...)",
+    "button.dismiss": "Dimiss",
+    "app.progress": "progress",
+    "app.streak": "streak",
+    "app.button.answer": "Answer",
+    "app.button.nextQuestion": "Next Question",
+    "app.button.voiceToText": "Voice To Text",
+    "app.button.voiceToAI": "Voice Request",
+    "app.button.learn": "Learn",
+    "app.listening": "Listening...",
+    "app.input.placeholder": "Type your response or use vocal requests",
+    "settings.title": "Settings",
+    "settings.selfPace": "Self-pace",
+    "settings.button.selfPace": "Self-pace",
+    "settings.button.socialProgress": "Social Progress",
+    "settings.button.adaptiveLearning": "Adaptive Learning",
+    "settings.button.bitcoinMode": "Wallet",
+
+    "settings.button.tutor": "Open Tutor",
+    "settings.button.tutorGPT": "Open Tutor (GPT)",
+    "settings.button.socialWallet": "Decentralize",
+    "settings.button.yourTutor": "Your Tutor",
+    "settings.button.yourProfile": "Your Profile",
+    "settings.button.nostrApps": "App Store",
+    "settings.button.patreon": "Subscription",
+    "settings.button.studyGuide": "Study Guide",
+    "settings.button.feedback": "Feedback",
+    "settings.button.signOut": "Sign Out",
+    "modal.title.decentralizedTranscript": "Decentralized Transcript",
+    "modal.title.selfPace": "Self-pace",
+    "modal.selfPace.instruction":
+      "Choose how much time can elapse to grow your streak. Your streak timer renews every time you make progress.",
+
+    "modal.dailyGoal.instruction":
+      "Choose how many questions to complete to accomplish your daily goal. The goal timer resets every 24 hours.",
+    "modal.selfPace.day": "day",
+    "modal.selfPace.hour": "hour",
+    "modal.selfPace.minute": "minute",
+    "modal.selfPace.mode": "mode",
+    "modal.selfPace.mode.casual": "casual",
+    "modal.selfPace.mode.grind": "grind",
+    "modal.selfPace.mode.motivated": "motivated",
+
+    "modal.adaptiveLearning.stepsTaken": "Your Progress",
+    //create wallet
+    "modal.bitcoinMode.title": "Bitcoin Wallet",
+    "modal.bitcoinMode.instructions.createWallet.1":
+      "The goal is to create scholarships with learning!",
+
+    "modal.bitcoinMode.instructions.createWallet.2":
+      "Selecting a recipient creates a wallet allows you to optionally deposit a maximum of about $0.01 worth in Bitcoin.",
+
+    "modal.bitcoinMode.instructions.createWallet.2.25":
+      "When you answer questions and make progress in the app, your Bitcoin deposit gets spent and sent to your receipient!",
+    "modal.bitcoinMode.instructions.createWallet.2.5":
+      "This feature is experimental.",
+    "modal.bitcoinMode.instructions.createWallet.3":
+      "We recommend scanning with Cash App to buy Bitcoin and create your deposit!",
+
+    //deposit bitcoin
+    "modal.bitcoinMode.instructions.deposit.1":
+      "Press deposit to generate a QR code that you can scan or an address you can send to. This will request about $0.01 worth in Bitcoin from your Bitcoin wallet.",
+
+    "modal.bitcoinMode.instructions.activeWallet.1":
+      "You're now using Bitcoin!",
+
+    "modal.bitcoinMode.instructions.activeWallet.2":
+      "Answer more questions to create scholarships with learning.",
+    "modal.bitcoinMode.instructions.activeWallet.3":
+      "Verify your transactions ",
+
+    "modal.bitcoinMode.instructions.activeWallet.4": "in the public record",
+    "deposit.button": "Deposit",
+    "createWallet.button": "Create Wallet",
+    "lastStep.button": "Next",
+    "deposit.ps":
+      "(P.S. After sending Bitcon to your address, you may need to wait a few seconds before your balance updates.)",
+
+    "modal.bitcoinMode.copyAddressButton": "Copy Address",
+    "modal.bitcoinMode.rechargeButton": "Generate Address",
+    "modal.bitcoinMode.successMessage": "You're now using Bitcoin!",
+    "modal.bitcoinMode.cardNameLabel": "Bitcoin Deposit Card",
+    "modal.bitcoinMode.balanceLabel": "Balance",
+    "modal.bitcoinMode.testCashTapButton": "Test cash tap",
+    "modal.openTutor.title": "Open Tutor",
+    "modal.openTutor.instructions": "Don't forget your keys before leaving!",
+    "modal.openTutor.startButton": "Start Tutoring App",
+    "modal.openSocialWallet.title": "Decentralize",
+    "modal.openSocialWallet.instructions":
+      "Don't forget your keys before leaving!",
+    "modal.openSocialWallet.startButton": "Go To Social Wallet",
+    "modal.learn.title": "Learn",
+    "modal.learn.instructions":
+      "Give us a few seconds to create quick lesson notes.",
+    "modal.feedback.title": "Submit Feedback",
+    "modal.feedback.contactLabel": "Contact",
+    "modal.feedback.contactPlaceholder": "Enter your contact info",
+    "modal.feedback.messageLabel": "Message",
+    "modal.feedback.messagePlaceholder": "Enter your feedback",
+    "modal.feedback.submitButton": "Submit",
+    "modal.feedback.cancelButton": "Cancel",
+    "toast.feedbackSubmittedTitle": "Feedback submitted.",
+    "toast.feedbackSubmittedDescription": "Thank you for your feedback!",
+    "toast.feedbackErrorTitle": "Error submitting feedback.",
+    "toast.feedbackErrorDescription":
+      "An error occurred while submitting your feedback. Please try again.",
+    "mockTerminal.welcomeMessage":
+      "Welcome to the mock terminal. Use basic commands to navigate the file system. Submit your answer in the text input above the terminal.",
+    "mockTerminal.userName": "user@mock-terminal",
+    "mockTerminal.bashCommand": "bash:",
+    "mockTerminal.commandNotFound": "command not found",
+    "mockTerminal.cdCommand": "cd:",
+    "mockTerminal.noSuchFileOrDirectory": "no such file or directory",
+    "mockTerminal.mkDirCommand": "mkDir:",
+    "mockTerminal.cannotCreatDirectory": "cannot create directory",
+    "mockTerminal.fileExists": "File exists",
+    "mockTerminal.catCommand": "cat:",
+    "mockTerminal.noSuchFile": "No such file",
+    "mockTerminal.help":
+      "Available commands: help, clear, ls, cat, mkdir, cd, pwd, echo, printenv, whoami",
+    "mockTerminal.directory": "Directory",
+    "badBrowser.header": "⚠️ Unsupported Browser",
+    "badBrowser.bodyOne":
+      "This platform makes use out of speech recognition to prompt AI to write code vocally on mobile devices. The",
+    "badBrowser.bodyTwo":
+      "browser does not support these features since they develop non-standard in-app browsers. On the brightside, the alternative allows you to download the page as an app on your phone!",
+    "badBrowser.bodyThree": "Simply",
+    "badBrowser.stepOne":
+      "Open this page in your browser with the More Options button",
+    "badBrowser.stepTwo": "Press the Share button",
+    "badBrowser.stepThree": "Press the Add To Homescreen button",
+    "badBrowser.footer":
+      "That's it! You don't need to download the app through an app store because we're using open-source standards for Progressive Web Apps.",
+    "about.about": (
+      <div>
+        Think about how communities fund schools. People work, create income and
+        have that incomed taxed in a number of ways to provide the budgets and
+        funds for schools. This eventually creates walled gardens and
+        inequities.
+        <br />
+        <br />
+        Robots Building Education is a platform using protocols that introduces
+        new ways to provide funds for education by connecting participants
+        beyond neighborhood lines. When students learn, real economic value is
+        created. We believe this should be represented by creating material and
+        resilient outcomes for communities so when you answer questions, Bitcoin
+        gets automatically sent to recipients you select in the form of
+        scholarships.
+        <br />
+        <br />
+        You might notice that this app is a little different than others. Things
+        seem to work faster with less rules. Robots Building Education uses open
+        source protocols to allow for seamless decentralized, cross-platform and
+        permissionless experiences.
+        <br />
+        <br />
+        This means depositing Bitcoin and sending it is as easy as easy as
+        scanning a QR code with a popular app like Cash App and answering a
+        question. That's it! No more and no less is needed.
+        <br />
+        <br />
+        This is a new way that the internet can work. It can be used and afford
+        new experiences like the ability to publish progress across different
+        apps, create scholarships with learning or even take your Bitcoin
+        deposits to other places!
+      </div>
+      // <div>
+      //   The point of AI is to save you time and energy. At the same time, real
+      //   education is about challenging yourself so that you can create real
+      //   knowledge. In short, you'll work through 100+ questions and it will
+      //   introduce you to building your ideas with software, learning computer
+      //   science and creating opportunities for yourself with good technology.
+      //   <br />
+      //   <br />
+      //   I also want to teach you quickly, effectively and in a similar fashion
+      //   to you having to pick up the skills on the job. At the end of the day, a
+      //   software entrepeneur needs to learn about business, engineering,
+      //   investing, marketing, sales, design and a number of other well-rounded
+      //   skills in order to be successful, which is what we try to prepare you
+      //   here with.
+      //   <br />
+      //   <br />
+      //   There are many things beyond coding taught on RO.B.E, ranging from the
+      //   psychology of self-esteem, to the development of startups distributed
+      //   globally. You are encouraged to imagine, think big and work hard in
+      //   order to find success here.
+      //   <br />
+      //   <br /> The app is a service created by Robots Building Education, a
+      //   platform founded on researching technology the following three
+      //   priorities:
+      //   <br /> <br />
+      //   1. Every student should have access to many good teachers.
+      //   <br />
+      //   2. Online education should be the best education.
+      //   <br />
+      //   3. Learning creates scholarships.
+      //   <br />
+      //   <br />
+      //   This is accomplished with the human-computer interaction discipline,
+      //   which researches how to make technology more useful and meaningful. I
+      //   personally revise anything done with AI to add human touch to it as to
+      //   not offer cheap generated material but a genuine delivery of good
+      //   quality education.
+      //   <br />
+      //   <br />
+      //   The following are all the features and benefits you'll find across the
+      //   platform which are typically free. As of now I just ask folks to
+      //   optionally sign up for $10 to access more content around
+      //   entrepreneurship, finance, and engineering to the work and to create a
+      //   stronger network.
+      //   <br />
+      //   <br />
+      //   Why so low for so much? I love education technology and I want to work
+      //   on this platform until you feel it's worth supporting. I also believe
+      //   that social media helps me reach so many people that keeping it low
+      //   price is only fair. I would eventually like to explore teaching folks so
+      //   we can create a pipeline to access more capital from folks eager to
+      //   invest in diverse technology businesses.
+      //   <br />
+      //   <br />
+      //   {/* <a
+      //     style={{ textDecoration: "underline" }}
+      //     href="https://patreon.com/notesandotherstuff"
+      //     target="_blank"
+      //   >
+      //     https://patreon.com/notesandotherstuff
+      //   </a> */}
+      // </div>
+    ),
+    "button.secretKey": "Secret Key",
+    "button.about": "About",
+    "about.featuresHeader": "Features",
+
+    "about.title": "What is this?",
+    "about.title.programAiApp": "App: Robots Building Education",
+    "about.platform.programAiApp": (
+      <div>
+        The app is a series of 100 questions meant to be easily integrated into
+        social media with AI. The goal is to make access to education easier
+        while also making it possible to learn skills like coding on mobile
+        devices with useful AI features.
+        <br />
+        <br />
+      </div>
+    ),
+
+    "about.platform.rox": (
+      <div>
+        Rox is a hand crafted teaching assistant that delivers lectures or
+        courses on the material that informs the questions inside of Program AI
+        App experience. Although robotic looking, it's mostly me doing the
+        majority of the teaching. Once the main product, now a feature connected
+        to Robots Building Education.
+      </div>
+    ),
+    "about.platform.roxGPT": (
+      <div>
+        The ChatGPT version of the applications - a chat assistant armed by the
+        information and content found on Robots Building Education.
+      </div>
+    ),
+    "about.platform.Patreon": (
+      <div>
+        A content & community platform to help you stay in touch via email over
+        deeper material into technology, education, entrepreneurship, investing
+        and other important skills.
+      </div>
+    ),
+    "about.title.rox": "App: Rox",
+    "about.title.roxGPT": "Custom GPT",
+    // "about.title.Patreon": "App: Patreon",
+
+    "about.title.decentralizedIdentity": "Decentralized Identity",
+    "about.title.spanishMode": "Spanish Mode",
+    "about.title.streaks": "Streaks",
+    "about.title.quizSeries": "Quiz Series",
+    "about.title.vocalCoding": "Vocal Coding",
+    "about.title.aiLectureNotes": "AI Lecture Notes",
+    "about.title.aiFeedback": "AI Feedback",
+    "about.title.adaptiveLearning": "Adaptive Learning",
+    "about.title.bitcoinWallet": (
+      <div>
+        {/* <Datatags isNew /> */}
+        Bitcoin Wallet
+      </div>
+    ),
+    "about.title.customerService": "Customer Service",
+    "about.title.lectures": "Hand Crafted Lectures",
+    "about.title.conversationQuiz": "Conversation Quiz",
+    "about.title.schedulingAssistant": "Scheduling Assistant",
+    "about.title.shop": "Shop",
+    "about.title.algorithmHelper": "Algorithm Helper",
+    "about.title.emotionalIntelligence": "Emotional Intelligence",
+    "about.title.syllabus": "Syllabus",
+    "about.title.guides": "Guides",
+    "about.title.insights": "Insights",
+    "about.title.ofi": "Old-fashioned Intelligence",
+
+    "about.title.smartCards": <div>Smart Cards</div>,
+    "about.title.socialProgress": <div>Social Progress</div>,
+    "about.feature.socialProgress": (
+      <div>
+        {/* <DataTags isNew /> */}
+        See the progress of other folks learning using our decentralized
+        technology!
+      </div>
+    ),
+    "about.title.buildYourApp": <div>Build Your App</div>,
+    "about.feature.buildYourApp": (
+      <div>
+        {/* <DataTags isNew /> */}A feature that lets you materialize your
+        learning by creating an app or an idea as you progress.
+      </div>
+    ),
+
+    "about.feature.decentralizedIdentity": (
+      <div>
+        {/* <Datatags isRox isProgramAI /> */}
+        Robots Building Education leverages decentralized identities to allow
+        for cross-platform accounts and data ownership. This allows us to
+        integrate our apps directly inside of social media. All we need is a
+        simple user name and we'll create keys that let you access the bridge
+        into the decentralized world.
+      </div>
+    ),
+    "about.title.decentralizedTranscripts": "Cross-platform Transcripts",
+    "about.feature.smartCards": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        Smart card is an intelligent flashcard feature that creates new practice
+        questions based on your progress. You can keep practicing problems at
+        the same difficulty and knowledge level before continuing to the next
+        question.
+      </div>
+    ),
+    "about.feature.decentralizedTranscripts": (
+      <div>
+        <DataTags isRox isProgramAI />
+        Making progress on either app will award you transcript badges that you
+        can carry cross-platform to other apps. This makes online education more
+        awesome and representative of effort.
+      </div>
+    ),
+    "about.feature.spanishMode": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        Robots Building Education is available in Spanish. You're welcome to
+        learning in Spanish to practice your human language skills too!
+      </div>
+    ),
+    "about.feature.streaks": (
+      <div>
+        {/* <DataTags isProgramAI /> */}A self-pacing feature to help you stay
+        discplined. Set up 30 minute to 3 day timers!
+      </div>
+    ),
+    "about.feature.quizSeries": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        100 questions informed by the rox teaching assistant, paired with a
+        number of features to introduce you to new concepts and challenges.
+      </div>
+    ),
+    "about.feature.vocalCoding": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        The ability to record your answer vocally so that AI can transform your
+        request into code on mobile devices.
+      </div>
+    ),
+    "about.feature.aiLectureNotes": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        Each question comes with the ability to generate lecture notes so that
+        you can learn more about the question as you're introduced to a new
+        challeng.
+      </div>
+    ),
+    "about.feature.aiFeedback": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        Each question is graded by AI before allowing you to continue to the
+        next question.
+      </div>
+    ),
+    "about.feature.adaptiveLearning": (
+      <div>
+        {/* <DataTags isProgramAI isRox /> */}A feature that keeps track of your
+        progress and suggests the next best challenge to learn.
+      </div>
+    ),
+    "about.feature.bitcoinWallet": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        An experimental feature that lets me easily monetize interactions with
+        the apps rather than bundling it behind subscriptions to be able to
+        create scholarships with learning. Right now you can only deposit $0.02
+        so that each interaction costs about $0.0008 USD per interaction. All
+        you need is a Cash App and youll be easily able to deposit for use! Now
+        works cross-platform with other apps like https://civico.app.
+      </div>
+    ),
+    "about.feature.customerService": (
+      <div>
+        {/* <DataTags isPatreon /> */}
+        With enough support, I'm able to run more personal service with remote
+        calls, tutoring and other direct-to-student effort.
+      </div>
+    ),
+    "about.feature.lectures": (
+      <div>
+        {/* <DataTags isRox isProgramAI /> */}A collection of lectures that I
+        believe are high value created with high quality animation and effort.
+        The experience is an introduction to advanced concepts done in a way to
+        inspire confidence into a journey of learning.
+      </div>
+    ),
+    "about.feature.conversationQuiz": (
+      <div>
+        {/* <DataTags isRox isProgramAI /> */}A quiz feature where your
+        conversation with AI can be graded.
+      </div>
+    ),
+    "about.feature.schedulingAssistant": (
+      <div>
+        {/* <DataTags isRox isPatreon /> */}A feature to help you schedule your
+        learning on a micro and macro level.
+      </div>
+    ),
+    "about.feature.shop": (
+      <div>
+        {/* <DataTags isRox isPatreon />  */}
+        The ability to shop for books to deepen your knowledge across domains.
+      </div>
+    ),
+    "about.feature.algorithmHelper": (
+      <div>
+        {/* <DataTags isRox /> */}A feature that help you train your
+        understanding of algorithms with decision-making patterns, code
+        assistance and feedback
+      </div>
+    ),
+    "about.feature.emotionalIntelligence": (
+      <div>
+        {" "}
+        {/* <DataTags isRox isPatreon /> */}
+        An emotion tracking feature centered around self-esteem.
+      </div>
+    ),
+    "about.feature.syllabus": (
+      <div>
+        {/* <DataTags isPatreon /> */}A challenging getting started kit for
+        short term and long term knowledge gains.
+      </div>
+    ),
+    "about.feature.guides": (
+      <div>
+        {/* <DataTags isPatreon /> */}
+        Higher intent essays and software on investments and software
+        development{" "}
+      </div>
+    ),
+    "about.feature.insights": (
+      <div>
+        {" "}
+        {/* <DataTags isPatreon /> */}
+        Behind the scenes access to the development of Robots Building Education
+      </div>
+    ),
+    "about.feature.ofi": (
+      <div>
+        {/* <DataTags isPatreon /> */}
+        Paid (but inexpensive) content for post-platform learning. Developed
+        with the intention to attempt to produce a significant return on
+        investment for supporting the platform.
+      </div>
+    ),
+    "button.addToConversation": "Add To Conversation",
+    "button.subjectsCovered": "Subjects Covered",
+    "link.connectWithMe": "Connect with me!",
+    "tags.grade": "Grade: ",
+    "Sunset Tutorial": "Sunset Tutorial",
+    "Basics of Coding": "Basics of Coding",
+    "Object-Oriented Programming": "Object-Oriented Programming",
+    "Frontend Development": "Frontend Development",
+    "Backend Engineering Fundamentals": "Backend Engineering Fundamentals",
+    "Creating Apps & Experiences": "Creating Apps & Experiences",
+    "Computer Science": "Computer Science",
+    "Introduction to Engineering": "Introduction to Engineering",
+    "Programming Fundamentals": "Programming Fundamentals",
+    "Frontend Software Engineering": "Frontend Software Engineering",
+    "Backend Software Engineering": "Backend Software Engineering",
+    "Data Structures & Algorithms": "Data Structures & Algorithms",
+    "Full-stack Software Engineering": "Full-stack Software Engineering",
+    "Psychology of Self-esteem": "Psychology of Self-esteem",
+    "Philosophy of Critical Theory & Technology":
+      "Philosophy of Critical Theory & Technology",
+    "Human-Computer Interaction": "Human-Computer Interaction",
+    "Business Writing": "Business Writing",
+    "Introduction to Finance": "Introduction to Finance",
+    "modal.decentralizedTranscript.youEarned": "You earned",
+    "modal.decentralizedTranscript.awareness":
+      "These badge awards are cross-platform and can be found in other apps in our decentralized app store. That way you own your online education!",
+    "modal.decentralizedTranscript.awardsEarned": "Awards Earned",
+    loading: "Loading...",
+    "loading.wallet": "Generating Wallet...",
+    "loading.wallet.address": "Creating Address...",
+
+    "settings.button.transcript": "Transcript",
+    "modal.transcript.instructions": "",
+    yourID: "Your ID",
+    noTranscriptFound: "No older transcripts awards were found.",
+    chapter: "chapter",
+    tutorial: "Tutorial",
+    congratulations: "Congratulations!",
+    "congrats.message":
+      "You have completed the quiz. You should be proud because most people don't get this far. You are genuinely exceptional. Well done!",
+    "congrats.connect": "Connect with everyone that has finished",
+    advice: "My Advice",
+    "advice.content": (
+      <div>
+        This platform will help you learn fast and effectively, but it is also
+        designed to challenge you. Real education can be uncomfortable and you
+        have to embrace failure, mistakes and the improvement process. This
+        platform isn't designed to be like Tiktok or Duolingo, where the
+        material is handed to you in a way to maximize engagement, it's meant
+        for you to learn and grow using the power of AI. In short, doing things
+        the gritty way is often more enjoyable and meaningful. If you come
+        across something confusing or tough, work through it! You'll be grateful
+        you did.
+        <br />
+        <br />
+        This platform comes with a tutor called Rox that will provide
+        introductory video lectures that are handcrafted and animated to arm you
+        with knowledge before or after practicing the questions involved in each
+        chapter. Each lecture starts by working backwards, so that you can get
+        used to appreciating challenge-oriented learning.
+      </div>
+    ),
+    "passcode.instructions": (
+      <div>
+        You'll need to subscribe to the Robots Building Education Patreon in
+        order to access the rest of the experience.
+        <br />
+        <br />
+        <div style={{ fontSize: "0.95rem" }}>
+          It's packed with value and refund friendly. I made sure that it's
+          worth every penny so you can get a great return on investment for your
+          time, energy and money.
+        </div>
+        <br />
+        <div style={{ fontSize: "0.95rem" }}>
+          <b>Your subscription will get you:</b>
+          <OrderedList>
+            <ListItem>Full access to this app.</ListItem>
+
+            <ListItem>Personal assistance from me and a group chat.</ListItem>
+            <ListItem>
+              Competitive coding projects &amp; advanced software engineering
+              material.
+            </ListItem>
+            <ListItem>
+              Access to crash courses, startup development content &amp; finance
+              content.
+            </ListItem>
+
+            <ListItem>
+              Love, appreciation &amp; respect from me for helping me build
+              education technology, create scholarships and succeed as a small
+              business owner.{" "}
+            </ListItem>
+          </OrderedList>
+        </div>
+        <br />
+        <a
+          style={{
+            fontSize: "0.95rem",
+            textDecoration: "underline",
+            color: "#63b3ed",
+            fontWeight: "bold",
+          }}
+          href="https://www.patreon.com/NotesAndOtherStuff/about"
+          target="_blank"
+        >
+          Register and subscribe as a member
+        </a>
+        <br />
+        <br />
+        <a
+          style={{
+            fontSize: "0.95rem",
+            textDecoration: "underline",
+            color: "#63b3ed",
+            fontWeight: "bold",
+          }}
+          href="https://www.patreon.com/posts/syllabus-getting-86153437?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link"
+          target="_blank"
+        >
+          Get the passcode
+        </a>{" "}
+        <span style={{ fontSize: "0.95rem" }}>
+          or find it by going to the Start Learning collection after
+          subscribing.
+        </span>
+      </div>
+    ),
+    "passcode.label": "Enter passcode",
+    "email.donotdelete": "Data about the question, do not delete pls 🙏🙏🙏",
+    "email.question": "Question",
+    thinking: "Thinking...",
+    "prompt.passcode":
+      "Enter the subscriber passcode in order to enable AI features. The subscription platform can be found in the settings menu.",
+    "prompt.invalid_passcode": "Invalid passcode!",
+    "lockout.message": "You've reached the maximum number of attempts.",
+    "lockout.suggestion":
+      "Please take a 15-minute break or study the material before trying again.",
+    "lockout.timer": "Time remaining",
+    "lockout.toastTitle": "Locked Out",
+    "lockout.toastDescription":
+      "You've been locked out for 15 minutes due to multiple incorrect attempts.",
+    "lockout.attempts": "Incorrect attempts",
+    "lockout.outOf": "out of",
+    "lockout.message":
+      "We've gotten the problem wrong 5 times in a row! Let's slow down, take a quick 15 minute break and rethink our strategy.",
+    "ai.error": "Error formatting AI response",
+    "label.new": "New!",
+    confirm: "Confirm",
+    cancel: "Cancel",
+    analyzer: "Analyzing your progress & creating new question card",
+    "settings.button.algorithmHelper": "Algorithm Practice",
+    "modal.title.algorithmHelper": "Algorithm Practice",
+    "algorithmHelper.button.generateProblem": "Generate Algorithm Problem",
+    "learnwithnostr.intructions":
+      "Connect with others using decentralized education technology!",
+    adaptive_learning_off: "Adaptive learning is off.",
+    adaptive_learning_on: "Adaptive learning is on.",
+    "buildYourApp.how_to_use_feature": "How to use this feature:",
+    "buildYourApp.step_1": "Define the idea or app you want to build.",
+    "buildYourApp.step_2": "Generate code based on your progress.",
+    "buildYourApp.step_3": "Copy the code & prompt after generating it.",
+    "buildYourApp.step_4": "Submit the code to the app you get redirected to.",
+    "buildYourApp.step_5": "Congrats! You're building your app using AI!",
+    "buildYourApp.input.label": "Your idea",
+    "buildYourApp.button.label.1": "Create your idea",
+    "buildYourApp.button.label.2": "Update your idea",
+    "buildYourApp.idea.label": "Idea you're building:",
+    "modal.adaptiveLearning.title": "Build your app",
+    "modal.adaptiveLearning.recommendButton": "Build your app",
+    copied: "Copied!",
+    copy_code_launch_builder: "Copy, build and ship with v0",
+    "subscription.nudge": (
+      <>
+        <b>Are you enjoying the experience?</b>
+        <p style={{ maxWidth: "600px" }}>
+          Subscriptions help us pay for the cost of creating scholarships, AI
+          and improving the technology as a small creator business. It costs
+          less than $6 with discounts and you get much more content on
+          investing, engineering and business!
+        </p>
+        <br />
+      </>
+    ),
+    "tag.allowPosting": "Do not post my progress",
+  },
+  "swift-en": {
+    "search...": "Search…",
+    backToQuestion9: "Go back to question 9",
+    completeTutorialFirst: "You have to finish the tutorial first.",
+    askForHelp: "Ask for help",
+    onboardingProgress: "Account setup progress",
+    goodJob: "Good job!",
+    nextStep: "Next step",
+    generatingCode: "Generating code...",
+    "buildYourApp.onboarding.instruction":
+      "This app will grow and adapts with you when you learn and make progress. For now, we'll start with a light app to show you some things you'll learn. You can change your idea later.",
+    skip: "Skip",
+
+    runCode: "Run code",
+    "modal.selfPace.weekPlan": "Set up 1 week plan",
+    "modal.selfPace.monthPlan": "Set up 1 month plan",
+    "modal.dailyGoal.estimate":
+      "At this pace, you’ll finish all 90 questions in about {days} day{plural}.",
+    "modal.dailyGoal.estimatedDateLabel": "Estimated completion date:",
+
+    "app.terminal.placeholder": "Enter your answer here",
+    "badBrowser.install":
+      "This browser doesn't support speech recognition. Privately install the app on your phone to access this feature.",
+    "app.button.complete": "Complete chapter",
+    optional: "(optional)",
+    faq_1_question: "What about AI?",
+    faq_1_item_1:
+      "If AI can program themselves, it's likely that all work as we know it will fundamentally change. But for now, it's going to change the supply and demand of things in a relevant way.",
+    faq_1_item_2:
+      "In my view, AI makes software engineering more realistic for more people. Before AI, it was clear that there was an unmanageable amount of work being generated in a way where a software engineer would create more work than they could complete. So I personally find it more enjoyable to write code with AI than without it and I believe that it makes more things like entrepreneurship more accessible. Things can actually get done now.",
+    faq_1_item_3:
+      "Thinking critically, AI is mostly concerned with making good decisions. So roles that depend more on decisions will be impacted. In my view, that's more executive roles, thus the sweetspot these days is being a junior or senior engineer so you could start to build lean businesses on your own. So that's what we try to do here - we arm you with new skills and hope that it influences your decisions or opportunities in a good way.",
+    faq_2_question: "What kind of computer do I need?",
+    faq_2_item_1:
+      "When it comes to learning, I recommend paper and pencil. RO.B.E is not a software intensive program. It can be used on your mobile device or any laptop. I like it on mobile phones.",
+    faq_2_item_2:
+      "If you're wondering what kind of computer you need to code, I recommend a macbook pro. The next best answer is whatever you can afford. People usually overthink this and the truth is you don't need anything fancy. There's no wrong answer.",
+    faq_2_item_3:
+      "Macbook pros are good general solution. If you need something specialized and you're certain about your investment, then in a similar spirit, invest in the best computing power you can get.",
+    faq_3_question: "Is coding hard? Do I need to be good at math?",
+    faq_3_item_1: "This is a loaded question.",
+    faq_3_item_2:
+      "No. You don't have to be good at math. And programming isn't hard, it's challenging. Education IS overcoming the challenge. You should recognize that you can accomplish the things you want to accomplish.",
+    faq_3_item_3:
+      "Coding is about organizing information. So if you can write instructions, you can write code.",
+    faq_3_item_4:
+      "So maybe you ask that question because there's a part of you that wishes someone would tell you that it can be made easy. People can make it easier. It's going to be a challenge, but that's part of the fun too.",
+    faq_4_question: "What programming language should I pick?",
+    faq_4_item_1:
+      "So if you've done any research already, you've probably come across Python and Javascript. They're very popular for a reason, but before explaining why, I strongly recommend to think about what kind of machines you want to work on and what kind of problems you want to solve.",
+    faq_4_item_2:
+      "The reason Javascript and Python are so widespread is because of the internet. They're mostly used to do a lot of the service work of the internet.",
+    faq_4_item_3:
+      "But what if you need an iOS app, an android one, a video game, or some kind of robot? Ultimately you'll find that when you learn one language, you kinda learn them all. There's a reason for that, but ultimately it's like worrying whether you should learn how to use a hammer or drill when building a home - you're likely going to use many languages eventually and it'll all feel pretty familiar. There's no wrong answer.",
+    faq_5_question: "Is a bootcamp worth it?",
+    faq_5_item_1:
+      "As usual, the best answer is going to be 'it depends'. What you really pay a lot of money for is an employment network, and as you've seen in recent years, that kind of business can experience hard times.",
+    faq_5_item_2:
+      "I don't recommend going to a bootcamp as a shortcut into the industry. A bootcamp is no different than being self-taught or going to college. You will still need to learn relevant skills, find early-stage employment, create business-savvy projects and pass technical interviews.",
+    faq_5_item_3:
+      "How you approach each will be wildly different. A self-taught developer in San Francisco is different than a computer science student in Nebraska. A dropout from Stanford will have a different environment than someone at a community college. The key thing here is that your environment plays an important role in your opportunities.",
+    faq_6_question: "What is coding and what can I do with it?",
+    faq_6_item_1:
+      "Coding is a way to organize information. So it exists everywhere. Think of it this way. Coding is written by software engineers to organize information. Software engineers study computer science. Computer science is the science of computation. Computation is problem solving. So coding expresses the science of solving problems.",
+    faq_6_item_2:
+      "That means you can do just about anything. You can code for media, medicine research, sports, robots, energy systems, financial systems or just about anything you can think of. It's certainly a preferred game for entrepreneurs, but many people also take the well-balanced life approach with it too. So sometimes people code because they want a more relaxed life too.",
+    faq_7_question: "Am I too old to learn?",
+    faq_7_item_1:
+      "No. Simply put, your brain doesn't work that way. You may experience some 'rustyness' if you haven't done deep learning of a subject in some time, but that's not too different than a college student realizing that they need to learn how to learn. Maybe you already know how to learn or you understand what works for you. Now suddenly you have an advantage.",
+    faq_7_item_2:
+      "As one of my directors say, slow is smooth and smooth is fast. This isn't to create any sense of superiority or inferiority - you're just in a competitive market and it's usually better to take the productive outlook.",
+    "modal.selfPace.notificationsUnavailable":
+      "Notifications aren't supported on this browser. Follow installation instructions in the menu to access all features",
+    "modal.selfPace.notificationDescription":
+      "Send a positive and encouraging notification daily",
+    notificationsEnabled: "Notifications Enabled",
+    notificationsDisabled: "Notifications Disabled",
+
+    notificationsHeader: "Notifications",
+    gotItButton: "Got it!",
+    notifications_available_line1:
+      "Notifications let me send a positive and encouraging message once a day.",
+    notifications_available_line2:
+      "I believe education is in the challenge rather than the reminders or the material, so courage and encouragement play a crucial role in finding success.",
+    notifications_status_enabled: "Notifications Enabled",
+    notifications_status_disabled: "Notifications Disabled",
+    notifications_unavailable_line1:
+      "You're using {browser} that does not allow me to set up device notifications 😔",
+    notifications_unavailable_line2:
+      "Installing the app grants you full access to features like being able to speak to write code or receive notifications meant to send positive and encouraging messages once per day.",
+    notifications_unavailable_line3:
+      "I believe education is in the challenge rather than the reminders or the material, so courage and encouragement play a crucial role in finding success.",
+    notifications_installation_directions:
+      "Installation directions can be found in menu.",
+    celebrateMessage: ". You're doing a great job! 🙌 🥳",
+    Progress: "Progress",
+
+    dailyGoal: "Daily goal",
+    questions: "questions",
+    goal: "goal",
+    completed: "completed",
+    "onboarding.chapter0.questions": "Questions 0-9",
+    "onboarding.chapter1.questions": "Questions 10-30",
+    "onboarding.chapter2.questions": "Questions 31-48",
+    "onboarding.chapter3.questions": "Questions 49-68",
+    "onboarding.chapter4.questions": "Questions 69-90",
+    "onboarding.chapter5.questions": "Questions 91-111",
+    "onboarding.chapter6.questions": "Questions 112-133",
+    "onboarding.chapter0.title": "Tutorial Chapter: Platform Introduction",
+
+    "onboarding.chapter0.content":
+      "Discover all the features the platform has to offer to help you create success.",
+    "onboarding.chapter1.title": "Chapter 1: Coding Basics",
+    "onboarding.chapter1.content":
+      "Learn about the basic building blocks used to write programs.",
+    "onboarding.chapter2.title": "Chapter 2: Object-Oriented Programming",
+    "onboarding.chapter2.content": "Understand how software data is designed.",
+    "onboarding.chapter3.title": "Chapter 3: Frontend Development",
+    "onboarding.chapter3.content": "Create components and user interfaces.",
+    "onboarding.chapter4.title": "Chapter 4: Backend Engineering Fundamentals",
+    "onboarding.chapter4.content":
+      "Comprehend what backend engineering means in the world of software",
+    "onboarding.chapter5.title": "Chapter 5: Building Apps",
+    "onboarding.chapter5.content":
+      "Tie your knowledge together to create real apps and users.",
+    "onboarding.chapter6.title": "Chapter 6: Computer Science",
+    "onboarding.chapter6.content":
+      "Deep-dive into foundations of algorithms and data structures.",
+
+    "onboarding.step1.accordionTitle": "What to expect",
+    "countdown.streakTimeLeft": "Streak time left - ",
+    "countdown.dailyGoalsTimeLeft": "Daily goals time left - ",
+    "modal.selfPace.instruction":
+      "Choose the duration of your streak. Your streak timer renews when this time elapses.",
+    "modal.selfPace.day": "day",
+    "modal.selfPace.oneDay": "1 Day",
+    "modal.selfPace.twoDays": "2 Days",
+    "modal.selfPace.threeDays": "3 Days",
+    "modal.selfPace.signal.grind": "Grind",
+    "modal.selfPace.signal.motivated": "Motivated",
+    "modal.selfPace.signal.casual": "Casual",
+    "modal.dailyGoal.instruction":
+      "Choose how many questions to complete to reach your daily goal. The goal timer resets every 24 hours.",
+    "modal.dailyGoal.dailyGoalLabel": "Daily goal:",
+    "button.save": "Save",
+    "button.back": "Back",
+    "onboarding.step1.challengeTitle": "The Challenge Ahead",
+    "onboarding.step1.challengeText1":
+      "The harsh reality is that most who attempt to learn for 100 days will drop off within the first 20 days. The same is also true for most videos and courses – most folks drop off in the first 20 seconds and the first 20 questions!",
+    "onboarding.step1.challengeText2":
+      "But perhaps being aware of this and making a conscious effort to resist certain temptations may keep you in the loop to find success with the program. And perhaps the real challenge is actually a lot easier than we thought.",
+    "onboarding.step1.challengeText3":
+      "What do you say? Are you up for the challenge? Let's get passed 20 questions in a more manageable way!",
+    "onboarding.step1.buttonLabel": "Let's do it!",
+
+    "onboarding.step2.dailyGoalsTitle": "Set up your daily goals",
+    "onboarding.step2.dailyGoalsDescription":
+      "I recommend doing three questions per day. By the end of the month, you'll get to the point where you can start putting together what you've learned to build and ship apps.",
+
+    "onboarding.step2.dailyGoalsDescription.faster":
+      "If you want to go fast and finish within a week, try doing 12 questions a day.",
+
+    "onboarding.step3.lastStepMessage":
+      "Your account is almost ready. Just one last step to complete your setup!",
+    "onboarding.step3.launchAppButton": "Complete Account Setup",
+    "onboarding.final.launch": "Launch App",
+
+    "modal.externalLinkTitle": "Leaving The App",
+    "modal.externalLinkBody":
+      "You are about to be redirected to the free version of ChatGPT where no login is required. Paste the question data that we've copied to generate help. Create an account with ChatGPT to acces the custom chat version of this app instead.",
+    "modal.dontShowAgain": "Don't tell me this again",
+    "modal.cancel": "Cancel",
+    "modal.continue": "Continue to ChatGPT",
+
+    installAppInstructions1: `Open this page in your browser with the More Options button`,
+    installAppInstructions2: `Press the Share button`,
+    installAppInstructions3: `Press the Add To Homescreen button`,
+    installAppInstructions4: `That's it! You don't need to download the app through an app store because we're using open-source standards for Progressive Web Apps.`,
+
+    installApp: "Install App",
+    "select.recipient": "Select your scholarship recipient",
+    "change.recipient": "Change your scholarship recipient",
+
+    "disabled.select.soon": "More schools, teachers and students soon!",
+    transcriptBadges: "Transcript Badges",
+    instructions: "Instructions",
+    "tutorModal.instructions.1":
+      "These videos are from the connected tutoring platform on ",
+    "tutorModal.instructions.1.33": "Rox the tutor",
+    "tutorModal.instructions.1.66":
+      "Fun fact: The questions found on this app are based on the lessons learned in these hand-written videos!",
+    "tutorModal.instructions.2": "To earn badges:",
+    "tutorModal.instructions.3":
+      "Watch 80% of the video, read the summary and complete the practice exercise for each chapter in this tutoring modal.",
+    "tutorModal.instructions.4":
+      "Complete the chapter by answering questions in the main application.",
+    "video.summary.tutorial": `Welcome to **Robots Building Education**! This introductory lecture addresses common concerns and sets the stage for your journey in learning coding and building businesses with AI, specifically using tools like ChatGPT (referred to here as Roxana).
+
+### Overcoming Doubts and Imposter Syndrome
+
+Feeling intimidated or questioning your abilities is normal. Even the instructor experiences imposter syndrome. These feelings indicate you're challenging yourself and aiming for higher standards. Ground yourself and recognize that with the right preparation, you can overcome these challenges.
+
+### FAQs Speed Run
+
+Here are quick answers to common questions:
+
+- **Is programming hard?** No.
+- **What computer do I need?** No specific requirement.
+- **Am I too old?** No.
+- **What kind of jobs can I do?** Numerous opportunities across various fields.
+- **Is a bootcamp worth it?** No.
+
+For more details, visit the FAQs on [embedded-rox.app](https://embedded-rox.app).
+
+#### Learning Approach
+
+The learning process consists of four key steps:
+
+1. **Imagine and Illustrate**: Visualize concepts to enhance understanding.
+2. **Draw Connections and Relationships**: Link new ideas with existing knowledge.
+3. **Observe New Information**: Pay attention to new insights and data.
+4. **Practice**: Apply what you've learned through hands-on activities.
+
+### Embracing the Learning Experience
+
+The aim is to help you experience the sensation of learning, unlocking the potential to learn anything you desire. Coding is not just about programming; it's a means to engineer solutions, communicate ideas, and interact with the world.
+
+### The Versatility of Computer Science
+
+Computer science is the science of solving problems and can be applied to any field—climate technology, psychology, cancer research, art, sports, and more. Technology plays a role wherever information exists.
+
+### Encouragement to Proceed
+
+Take time to internalize these lessons. Allow yourself to become the person who embraces challenges and continues to move forward. With courage and persistence, you'll transform the unknown into familiarity and make a significant impact.
+
+    `,
+    "video.summary.2": `
+## Overview
+
+This lecture introduces the fundamentals of coding, focusing on:
+
+- **Objects**
+- **Functions**
+- **Loops**
+- **Data and Logic**
+- **Network Functions**
+
+The approach is to start with more challenging concepts and work down to the basics, catering to learners from diverse backgrounds.
+
+## Objects
+
+- **Definition**: Objects in code model the digital world using information, data, and logic.
+- **Classes**: Define how objects are created, including their state and functionality.
+- **Key Point**: Objects have a common way to define their state and manage it through functionality.
+- **Examples**:
+  - Creating a \`Robot\` class in JavaScript.
+  - Using objects to structure data in applications like social media posts or crypto transactions.
+- **Takeaway**: Coding is about organizing information, not about math.
+
+## Functions
+
+- **Purpose**: Essential for organizing and handling data.
+- **Types**:
+  - **Synchronous Functions**: Execute tasks sequentially (like cooking in a pan).
+  - **Asynchronous Functions**: Allow other processes to run concurrently (like cooking in an oven).
+- **Importance**: Understanding functions helps manage data flow, especially when handling data across networks.
+
+## Loops
+
+- **Usage**: Perform repeatable actions on groups of data.
+- **Types of Looping Functions**:
+  - Transforming values.
+  - Filtering values.
+  - Reversing values.
+- **Example**: Using \`forEach\` in JavaScript to find an artist with the highest Spotify monthly listeners.
+- **Documentation**: Encouraged to read language documentation to understand built-in methods and functionalities.
+
+## Data and Logic
+
+- **Fundamentals**:
+  - Data types include words, numbers, groups, and logical conclusions.
+  - Logic boils down to true or false values—how computers interpret the world.
+- **Examples**:
+  - Defining objects like \`obama\` and \`elon\` with properties.
+  - Creating functions that use logical conditions to return results.
+- **Key Point**: Individual pieces of data create logic; groups of data create functionality.
+
+## Coding and Logic (Reinforced)
+
+- **Coding**: The organization of information.
+- **Logic**: Determining if statements are true or false.
+- **Real-World Connection**: Observing how everyday items and situations can be represented in code.
+- **Encouragement**: Understand that coding concepts can be grasped without heavy emphasis on math.
+
+## Practice and Learning Strategies
+
+- **Use AI Assistance**: Utilize AI tools like ChatGPT for guidance.
+- **Hands-On Practice**:
+  - Write code by hand on paper.
+  - Draw connections and visualize data structures.
+- **Model Real-World Data**: Practice representing real-world scenarios as data models in code.
+- **Mindset**: Focus on learning and understanding rather than worrying about right or wrong.
+
+## Conclusion
+
+- **Main Takeaways**:
+  - Coding models the digital world with information, data, and logic.
+  - Organizing information is the essence of coding.
+  - Logic in coding is about true or false values.
+- **Next Steps**:
+  - Prepare to build visual applications using HTML, CSS, JavaScript, and React.
+- **Encouragement**:
+  - Slow down and internalize the lessons.
+  - Embrace challenges and trust the learning process.
+  - Practice consistently to strengthen your skills.
+
+---
+
+**Note**: The lecture emphasizes starting with foundational concepts and building upon them to create a solid understanding of coding. It encourages using available resources, practicing regularly, and maintaining a positive mindset towards learning.
+
+    `,
+    "video.summary.1": `
+**UI/UX** stands for User Interfaces and User Experiences. It's a multidisciplinary approach based on the study of human-computer interaction, also known as **Interaction Design** or simply **Design**. This field goes beyond visual design and idea brainstorming; it's a thoughtful practice applicable in many environments.
+
+## Role of an Interaction Designer
+
+Interaction designers:
+
+- Research and design based on human-computer interaction.
+- Conduct surveys, interviews, and observations to gather deeper insights into a product.
+- Focus on improving experiences, such as enhancing a restaurant's experience or determining which movie trailer generates the most anticipation.
+- Combine technical skills and business acumen to amplify impact.
+
+## Accessibility
+
+- **Importance**: Accessibility focuses on enabling more people to use products and services.
+- **Considerations**:
+  - Designing for blind users who rely on screen readers.
+  - Organizing information to make sense for both visual and auditory users.
+- **Benefits**:
+  - Thoughtful accessibility design often benefits all users.
+  - Effective organization can make content more meaningful for people using only audio, such as in podcasts or radio.
+
+## Multidisciplinarity
+
+- Design is fundamentally multidisciplinary and can be applied in fields like chemical engineering, business, architecture, and education.
+- **Impact of Choices**:
+  - The words you choose can influence how search engines and social media algorithms distribute your material.
+  - The intent behind features and the tone you use can affect user retention and success.
+- **Attention to Detail**: Good design is about making the people you're designing for happy, which requires direct communication and research.
+
+## Heuristics
+
+- **Definition**: Heuristics are guidelines used when creating with constraints or limited feedback.
+- **Application**:
+  - Considering how a user can correct a mistake or malfunction.
+  - Using concepts like **affordances**, which are signals or properties of an object that inform a user of its possible uses.
+- **Examples**:
+  - Recognizing that a water pitcher is meant for pouring water, not as a glove.
+  - Understanding that pixels on a screen represent interactive buttons.
+
+## Design Systems
+
+- **Tools and Methods**:
+  - Paper prototypes, surveys, personal interviews, online tools.
+- **Considerations**:
+  - Each tool has trade-offs that affect outcomes.
+  - Resources and budgets can influence the effectiveness of methods.
+  - Different settings (e.g., boardroom vs. TikTok) can yield different results.
+- **Collaboration**:
+  - Over time, you discover what works well with you and different teams.
+  - It's important to think critically and keep an open mind when making design choices.
+
+## Further Reading
+
+- **"The Design of Everyday Things"** by Don Norman: A foundational book in the field of human-computer interaction.
+- **NNGroup.com**: Resources from the Nielsen Norman Group for professionals concerned with usability standards.
+- **Bitcoin.design**: An open-source platform supporting usability research and development for Bitcoin.
+
+## Conclusion
+
+Interaction design is a discipline that combines research, creativity, and empathy to improve user experiences. By integrating principles of accessibility, multidisciplinarity, and heuristics, designers can create meaningful and effective solutions. Members of the Robots Building Education community are encouraged to apply these principles to communicate ideas, improvements, or case studies to gain experience. Collaboration and brainstorming are welcomed to enhance our AI mentoring platform.
+
+---
+
+**Note**: If you're part of the Robots Building Education community, feel free to use design principles to communicate ideas, improvements, or case studies to gain experience here too! I'm happy to sit down with you and brainstorm on things that can improve our little AI mentoring platform.
+`,
+    "video.summary.3": `
+- **Review of Lesson 1**: Fundamentals of organizing data with code using objects, functions, loops, and logic.
+- **Focus of Lesson 2**: Understanding React components and event-driven programming to create user interfaces and experiences.
+
+## React Components
+
+- **Components**: Functions that return UI elements and manage their own state and properties.
+- **Main Parts of a React Component**:
+  1. **Hooks**: Functions that handle and synchronize operations with the component's state (e.g., \`useState\`).
+  2. **State**: Dynamic data within the component that changes over time, triggering re-renders.
+  3. **Properties (Props)**: Data passed into the component that should remain unchanged within it.
+
+- **Event-Based Programming**: React components respond to user interactions (events) that trigger state changes and UI updates.
+
+## Data Flow in React
+
+- React uses a **one-way data flow**, making it intuitive to design relationships and manage data.
+- **Updating State**: Changing a component's state refreshes the display and re-renders the component.
+- **Props vs. State**:
+  - **Props**: Immutable data received from parent components.
+  - **State**: Mutable data managed within the component.
+
+## Practical Example: Tweet Component
+
+- Demonstrated a \`Tweet\` component that displays tweet information and handles user interactions like likes.
+- Showed how to:
+  - Use hooks (\`useState\`) to manage state.
+  - Pass functions and data as props to child components.
+  - Update state in response to events (e.g., \`createLike\` function).
+
+## Overcoming Challenges
+
+- Recognized that combining hooks, state, and props can be complex.
+- Encouraged practice, experimentation, and embracing challenges to understand React's data flow.
+- Emphasized that professional software engineers also navigate these complexities.
+
+## HTML and Structuring the Display
+
+- **HTML (HyperText Markup Language)**: Used to structure content on the web.
+- **Elements and Attributes**:
+  - **Events**: Handle user interactions like clicks and hovers.
+  - **ID**: Unique identifier for elements.
+  - **Class**: Groups elements for styling.
+  - **Style**: Inline styling of elements.
+
+- Recommended thinking of HTML elements as containers organized logically.
+
+## CSS and Styling Elements
+
+- **CSS (Cascading Style Sheets)**: Styles the appearance of HTML elements.
+- **Key Concepts**:
+  - **Box Model**: Shapes elements using properties like \`margin\`, \`padding\`, \`border\`, and \`width\`.
+  - **Flexbox Model**: Positions elements in rows or columns for responsive design.
+  - **Animation Model**: Animates elements using CSS animations or JavaScript.
+
+- Suggested using inline styles or CSS-in-JS libraries like Styled-Components with React for better control.
+
+## Combining Concepts
+
+- Provided examples of combining React components with HTML and CSS to create interactive UI elements.
+- Showed how to use state and event handlers to manage data and user interactions.
+- Emphasized the importance of understanding how these technologies work together.
+
+## Practice and Learning
+
+- Encouraged using resources like W3Schools and documentation to explore HTML and CSS attributes.
+- Recommended leveraging AI tools like ChatGPT for assistance.
+- Highlighted the value of hands-on experimentation and breaking down complex problems.
+
+## Conclusion
+
+- Reinforced that mastering frontend development involves understanding components, data flow, and styling.
+- Encouraged continuous practice and exploration to build proficiency.
+- Previewed building real-world applications using the concepts learned.
+
+---
+
+**Note**: This lecture emphasizes the integration of React components with HTML and CSS to create dynamic and responsive user interfaces. Understanding event-driven programming and data flow in React is crucial for developing efficient frontend applications.
+
+    `,
+    "video.summary.4": `
+Backend software engineering often appears mysterious and complex, but this lesson aims to clarify its concepts and make it accessible.
+
+## Lessons Covered
+
+1. **Creating Users**
+2. **Database Foundations**
+3. **Backend Clouds**
+4. **Operating Systems & Machines**
+
+## Operating Systems
+
+- **Modeling the Real World**: Computer science uses technology to simulate real-world systems.
+- **Analogy with a Restaurant Kitchen**: Just as a kitchen has many moving parts to deliver a meal, operating systems manage numerous processes to deliver user experiences.
+- **Variety of Machines**: Understanding different operating systems helps in working with diverse devices like MacBooks, Bitcoin miners, or Tesla robots.
+
+## Command Line Interface (CLI)
+
+- **Text-Based Interaction**: The CLI allows direct communication with the operating system through text commands.
+- **Usability**: Similar to how ChatGPT differs from Google Search, the CLI offers a different form of usability compared to graphical interfaces.
+- **Efficiency**: Engineers use the CLI for efficient and powerful control over the system.
+
+## Backend Engineering
+
+- **Letting Machines Work**: Emphasizes the importance of automating tasks and utilizing powerful tools.
+- **Building Pipelines**: Involves constructing data pathways and routes for various needs, such as distributing data for machine learning or ensuring smooth user experiences.
+- **Modeling Logic**: Programming uses logic to model real-world operations, making complex systems predictable and manageable.
+
+## Using the Command Line
+
+- **Practical Skills**: Encourages familiarity with basic command-line operations like navigating file systems, downloading, installing, and saving files.
+- **Cheat Sheets**: Recommends using cheat sheets to remember essential commands.
+- **Exploration**: Suggests delving into more advanced techniques as curiosity grows.
+
+## Databases
+
+- **Data Storage**: Databases are where data is stored and managed responsibly.
+- **Types of Databases**:
+  - **Relational Databases**: Use tables and structured query language (SQL) to manage data (e.g., Excel spreadsheets).
+  - **Non-Relational Databases**: Use key-value pairs for more flexible data structures.
+- **Organizing Information**: Focuses on using identities and relationships to organize data.
+- **Real-World Example**: Describing restaurant operations using identities like the restaurant name, city, order number, and order type.
+
+## Creating Users
+
+- **User Accounts**: Created by combining data such as login information, personal details, and financial data to form a unique identity.
+- **Authentication**: Uses secret keys and authorization servers to verify and secure user accounts.
+- **Data Direction**: Unique user identities help direct data appropriately within services and applications.
+
+## Conclusion
+
+- **Internalization**: Encourages taking time to understand and imagine the concepts discussed.
+- **Creativity**: Invites learners to be creative and not fear making mistakes.
+- **Acknowledging Challenges**: Recognizes the difficulty but emphasizes that understanding data structures and algorithms aids in grasping larger systems.
+- **Next Steps**: Preparing to connect systems and create an app with user functionalities in upcoming lessons.
+
+---
+
+**Note**: This lesson demystifies backend software engineering by drawing parallels with real-world systems and highlighting the importance of operating systems, command lines, databases, and user creation in building complex applications.
+
+    `,
+    "video.summary.5": `
+In this lesson, we're going step-by-step to piece together everything we've learned so that we can build an application by connecting systems together, culminating in having real users. Tools like Google, YouTube, ChatGPT, and Stack Overflow will be your best friends here if you come across something you want to learn more about.
+    
+## Setting Up The Backend
+
+1. **Install Necessary Tools**:
+    - Download and install **VSCode** (code editor).
+    - Download and install **Node.js** (allows you to build JavaScript apps).
+
+2. **Install npm**:
+    - Open your command line terminal.
+    - Install npm (Node Package Manager) to use packages shared by other developers.
+    - *Note*: Use \`sudo\` cautiously on Unix systems; on Windows, adjust permissions if you encounter errors.
+
+3. **Create a Project Folder**:
+    - Create a folder named after your project (e.g., *The Digital Border*).
+
+4. **Initialize the Project**:
+    - Open VSCode and open your project folder.
+    - Open the integrated terminal in VSCode.
+    - Run \`npm create vite@latest\` to start a React project with Vite.
+    - Follow the prompts to configure the project (choose React and JavaScript).
+    - The configuration might look like this:
+      - Framework: React
+      - Variant: JavaScript
+
+5. **Install Dependencies**:
+    - Run \`npm install\` to install project dependencies listed in \`package.json\`
+
+6. **Run the Application**:
+    - Build the app with \`npm run build\`
+    - Start the development server with \`npm run dev\`
+
+7. **Set Up Firebase (Backend Services)**:
+    - Install Firebase CLI: \`npm install -g firebase-tools\`
+    - Log in to Firebase: \`firebase login\` (authenticate via Google account).
+    - Go to [Firebase Console](https://console.firebase.google.com) and create a new project.
+    - Activate **Authentication**, **Firestore**, and **Hosting** services.
+
+8. **Initialize Firebase in Your Project**:
+    - Run \`firebase init\` and select options to configure Firestore and Hosting.
+    - Choose your existing project when prompted.
+    - Accept defaults for creating rules and indexes files.
+    - Configuration steps:
+      - Activate Firestore and Hosting.
+      - Select "Use an existing project" and choose your project.
+      - Allow Firebase to create rules and indexes files.
+
+9. **Deploy the App**:
+    - Build your app again with \`npm run build\`
+    - Deploy to Firebase Hosting with \`firebase deploy\`
+    - Access your app via the provided Firebase Hosting URL.
+
+## Creating Users
+
+1. **Install Firebase and React Firebase UI**:
+    - Run \`npm install --save firebase react-firebaseui --legacy-peer-deps\`
+
+2. **Enable Authentication in Firebase**:
+    - In the Firebase Console, go to **Authentication** > **Sign-in method**.
+    - Enable **Google** sign-in.
+
+3. **Obtain Firebase Configuration**:
+    - Go to your project settings in Firebase Console.
+    - Select the web app icon to register your app.
+    - Retrieve your app's configuration keys.
+
+4. **Set Up Firebase in Your Code**:
+    - Create a folder \`database\` inside \`src\` and add \`firebaseResources.js\`
+    - Initialize Firebase with your configuration keys in this file.
+
+5. **Implement Authentication UI**:
+    - In \`App.jsx\`, import the sign-in button component from \`react-firebaseui\`
+    - Render the sign-in button in your app.
+
+6. **Manage User State**:
+    - Import necessary Firebase authentication functions.
+    - Define state to track the user's authentication status.
+    - Use the \`useEffect\` hook to handle authentication state changes.
+    - Create a header component to display user information based on authentication state.
+
+7. **Update and Deploy**:
+    - Insert the header component into your app's render method.
+    - Build your app with \`npm run build\`
+    - Deploy the updated app with \`firebase deploy\`
+
+## Summary
+
+- **Set Up Application**: Used the command line to set up a React application with Firebase.
+- **Configured Code**: Connected frontend and backend using identities and keys.
+- **Created Users**: Implemented authentication to create user accounts.
+- **Designed User Experiences**: Built UI components to enhance user interaction.
+- **Frontend vs. Backend**:
+  - *Frontend*: Manages user experiences, visual elements, and events.
+  - *Backend*: Designs pipelines to communicate and move data across networks.
+
+## Working with Other Engineers: GitHub
+
+- **GitHub**: A platform to collaborate with other engineers, similar to Google Drive but optimized for code with version control.
+- **Key Concepts**:
+  1. **Cloning**: Copying code from GitHub to your computer.
+  2. **Adding**: Preparing your code's changes to be shipped to GitHub.
+  3. **Commit**: Adding a label, identity, and description to your container of changes.
+  4. **Pushing**: Deploying or sending your code changes to your GitHub repository.
+  5. **Pulling**: Bringing in any updates from other people to the code.
+  6. **Branches**: Copies of the codebase within the repository itself.
+  7. **Forks**: Copies of the codebase within your profile.
+  8. **Pull Requests**: Comparing changes between branches/forks and merging them.
+  9. **Merging**: Updating code once and for all; completes a lifecycle of updates.
+
+- **Challenge**: Learn GitHub workflows independently to simulate real-world engineering tasks and enhance your problem-solving skills.
+
+## Conclusion
+
+- **Mindset**: Engage your imagination and embrace challenges to build your confidence.
+- **Support**: Private tutoring is available if you need assistance with the material or next steps.
+- **Continuous Learning**: Expect these lessons to upgrade over time.
+- **Gratitude**: Thank you for supporting Robots Building Education. Looking forward to creating more awesome stuff for you!`,
+    "video.summary.6": `
+Data Structures and Algorithms is a subject that often intimidates students due to its complexity and its use in challenging interviews. While it is indeed challenging and requires practice, with proper guidance, the concepts can become more approachable.
+
+## Programming Languages
+
+- **Understanding Code Interpretation**:
+- Computers interpret code by breaking it down into tokens and translating it into machine code.
+- Example:
+  \`\`\`javascript
+  let musician = new Musician("Drake");
+  
+  let top_song = musician.getTopSong();
+  \`\`\`
+- Tokens in the code include keywords (let, new), identifiers (musician, top_song, Musician), operators (=), and literals ("Drake").
+
+- **String Conversion**:
+- Strings are broken down into arrays of characters.
+  - "Drake" becomes \`['D', 'r', 'a', 'k', 'e']\`.
+- Each character is mapped to numerical codes (e.g., ASCII or Unicode) and then to binary representations.
+
+## Data Structures
+
+- **Memory Management**:
+- Computers reserve space in memory and create addresses to reference information.
+- Understanding how data is stored and referenced is crucial for grasping complex data structures.
+
+- **Linked Lists**:
+- A foundational data structure that helps in understanding more complex structures like trees and graphs.
+- Represents a sequence of nodes where each node points to the next.
+
+## Trees and Algorithms
+
+- **Traversing Trees**:
+- **Depth-First Search (DFS)**:
+  - Explores as far as possible along each branch before backtracking.
+  - Useful for scenarios where you need to explore all possible paths.
+
+- **Breadth-First Search (BFS)**:
+  - Explores all neighbors of a node before moving to the next level.
+  - Ideal for finding the shortest path in unweighted graphs.
+
+- **Example of DFS Counting Null Nodes**:
+\`\`\`javascript
+let countNull = (root) => {
+  let count = 0;
+
+  let depthFirstSearch = (currentRoot) => {
+    if (currentRoot === null) {
+      count++;
+      return;
+    }
+
+    for (let nextLocation in currentRoot) {
+      depthFirstSearch(currentRoot[nextLocation]);
+    }
+  };
+
+  depthFirstSearch(root);
+  return count;
+};
+\`\`\`
+
+- **Understanding Traversal**:
+- Visualizing how algorithms navigate through data structures helps in comprehending their functionality.
+- Breaking down each step and counting operations can clarify complex processes.
+
+## Linked Lists
+
+- **Definition**:
+- A linear data structure where each element (node) contains data and a reference (link) to the next node.
+
+- **Building a Linked List**:
+\`\`\`javascript
+class ListItem {
+  constructor(value) {
+    this.value = value;
+    this.linkedTo = null;
+  }
+
+  setLinkedTo(listItem) {
+    this.linkedTo = listItem;
+  }
+
+  getLinkedTo() {
+    return this.linkedTo;
+  }
+}
+
+let meta = new ListItem("meta");
+let instagram = new ListItem("instagram");
+let reels = new ListItem("reels");
+
+// Linking nodes
+instagram.setLinkedTo(reels);
+meta.setLinkedTo(instagram);
+
+class LinkedList {
+  constructor(head) {
+    this.head = head;
+  }
+
+  getLastItem() {
+    let currentItem = this.head;
+    while (currentItem.getLinkedTo()) {
+      currentItem = currentItem.getLinkedTo();
+    }
+    return currentItem;
+  }
+}
+
+let company = new LinkedList(meta);
+
+// Outputs the last item in the list
+console.log(company.getLastItem()); 
+\`\`\`
+
+- **Reversing a Linked List**:
+\`\`\`javascript
+reverse(head) {
+  let previousItem = null;
+  let currentItem = head;
+
+  while (currentItem) {
+    let nextItem = currentItem.getLinkedTo();
+    currentItem.setLinkedTo(previousItem);
+    previousItem = currentItem;
+    currentItem = nextItem;
+  }
+  return previousItem;
+}
+\`\`\`
+
+## Practice and Perseverance
+
+- **Importance of Repetition**:
+- Repeatedly practicing these concepts helps in making them second nature.
+- Taking time to thoroughly understand foundational structures is crucial for tackling advanced topics.
+
+- **Approach to Learning**:
+- Break down complex problems into smaller, manageable parts.
+- Use visualization and counting techniques to follow algorithm steps.
+
+## Advanced Challenges
+
+- **N-Queens Problem**:
+- A classic algorithmic puzzle that involves placing N queens on an N×N chessboard so that no two queens threaten each other.
+- Demonstrates the concept of backtracking and combinatorial complexity.
+- Encourages thinking about optimization and efficient solution strategies.
+- [Learn more about the Eight Queens Puzzle](https://en.wikipedia.org/wiki/Eight_queens_puzzle)
+
+## Conclusion
+
+- **Continuous Learning**:
+- Mastery of data structures and algorithms requires ongoing practice and dedication.
+- Investing time and resources into learning these concepts pays off in the long run.
+
+- **Positive Mindset**:
+- Avoid self-doubt and recognize that challenges are part of the learning process.
+- Affirm your capability to learn and grow in the field of computer science.
+
+- **Seeking Support**:
+- Engage with tutors, mentors, and communities to enhance your understanding.
+- Collaboration and discussion can provide new insights and reinforce learning.
+
+---
+
+**Note**: This lecture emphasizes the foundational importance of data structures like linked lists and trees, and algorithms such as depth-first search. Understanding these core concepts is essential for advancing in computer science and tackling more complex problems.
+    `,
+    "chatcom.instructions.1":
+      "Generate a useful, friendly and professional lecture with javascript coding examples in",
+    "chatcom.instructions.2": "for beginners on the following question/answer:",
+    "button.pickedup": "Picked up",
+    "toast.title.keysCopied": "Keys copied.",
+    "toast.title.chatDataCopied": "Opening ChatGPT...",
+    "toast.description.chatDataCopied":
+      "Paste the data in the following chat to learn more.",
+    "toast.description.keysCopied":
+      "Your secret key has been copied to the clipboard.",
+    "toast.title.addressCopied": "Lightning address copied.",
+    "toast.description.addressCopied":
+      "Your lightning address has been copied.",
+    "toast.title.idCopied": "ID copied.",
+
+    "toast.description.idCopied": "Your ID has been copied.",
+    "landing.welcome": "Sunset",
+    "landing.introduction": (
+      <div>
+        {/* Create scholarships with learning */}
+        A better alternative to Codecademy.
+        <br />
+        <br /> Work smart and learn what you need to know to code and build your
+        ideas with AI quickly.
+        {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
+      </div>
+    ),
+    "landing.button.telemetry": "Create Account",
+    "landing.button.signIn": "Sign In",
+    "createAccount.instructions": "All we need to start is a user name.",
+    "createAccount.input.placeholder": "Enter a user name",
+    "button.back": "Back",
+    "button.create": "Create",
+    "button.save": "Save",
+    "button.close": "Close",
+    "createAccount.isLoading": "Creating...",
+
+    "createAccount.isCreating": "Creating account... 1/3",
+    "createAccount.isCreatingProfile": "Creating profile... 2/3",
+    "createAccount.isCreatingProfilePicture": "Creating profile picture...3/4",
+    "createAccount.isCreatingIntroPost":
+      "Creating community #introductions post... 3/3",
+    "nostrContent.answeredQuestion.1": "Completed question",
+    "nostrContent.answeredQuestion.2": "with a grade of",
+    "nostrContent.answeredQuestion.3": "on",
+    "nostrContent.onboardedProfileAbout":
+      "A student onboarded with Robots Building Education",
+    "nostrContent.introductionPost":
+      "gm nostr! I've joined #LearnWithNostr from Tiktok by creating an account with https://robotsbuildingeducation.com so I can learn how to code with AI.",
+
+    "createAccount.successMessage": "That's it! ✨",
+    "createAccount.lastStepMessage": "Last step (optional)",
+    // "createAccount.lastStepInstructions": "Last step (optional)",
+    "createAccount.awareness":
+      "Your account now works on a number of decentralized apps and works exactly like a mailbox. Use your secret key to sign into apps in our ",
+    "createAccount.roxLink": "decentralized app store",
+    or: "or",
+    "createAccount.primalLink": "with Primal, the social wallet",
+    "button.copyKey": "Copy Secret Key",
+    "createAccount.checkbox.disclaimer":
+      "I understand that my key allows me to sign into different apps that may contain important and private data like Bitcoin. I have safely saved my keys somewhere else.",
+    "createAccount.button.launchApp": "Launch App",
+    "signIn.instructions": "Enter your nostr secret key",
+    "signIn.input.placeholder": "Enter your secret key (nsec...)",
+    "button.dismiss": "Dimiss",
+    "app.progress": "progress",
+    "app.streak": "streak",
+    "app.button.answer": "Answer",
+    "app.button.nextQuestion": "Next Question",
+    "app.button.voiceToText": "Voice To Text",
+    "app.button.voiceToAI": "Voice Request",
+    "app.button.learn": "Learn",
+    "app.listening": "Listening...",
+    "app.input.placeholder": "Type your response or use vocal requests",
+    "settings.title": "Settings",
+    "settings.selfPace": "Self-pace",
+    "settings.button.selfPace": "Self-pace",
+    "settings.button.socialProgress": "Social Progress",
+    "settings.button.adaptiveLearning": "Adaptive Learning",
+    "settings.button.bitcoinMode": "Wallet",
+
+    "settings.button.tutor": "Open Tutor",
+    "settings.button.tutorGPT": "Open Tutor (GPT)",
+    "settings.button.socialWallet": "Decentralize",
+    "settings.button.yourTutor": "Your Tutor",
+    "settings.button.yourProfile": "Your Profile",
+    "settings.button.nostrApps": "App Store",
+    "settings.button.patreon": "Subscription",
+    "settings.button.studyGuide": "Study Guide",
+    "settings.button.feedback": "Feedback",
+    "settings.button.signOut": "Sign Out",
+    "modal.title.decentralizedTranscript": "Decentralized Transcript",
+    "modal.title.selfPace": "Self-pace",
+    "modal.selfPace.instruction":
+      "Choose how much time can elapse to grow your streak. Your streak timer renews every time you make progress.",
+
+    "modal.dailyGoal.instruction":
+      "Choose how many questions to complete to accomplish your daily goal. The goal timer resets every 24 hours.",
+    "modal.selfPace.day": "day",
+    "modal.selfPace.hour": "hour",
+    "modal.selfPace.minute": "minute",
+    "modal.selfPace.mode": "mode",
+    "modal.selfPace.mode.casual": "casual",
+    "modal.selfPace.mode.grind": "grind",
+    "modal.selfPace.mode.motivated": "motivated",
+
+    "modal.adaptiveLearning.stepsTaken": "Your Progress",
+    //create wallet
+    "modal.bitcoinMode.title": "Bitcoin Wallet",
+    "modal.bitcoinMode.instructions.createWallet.1":
+      "The goal is to create scholarships with learning!",
+
+    "modal.bitcoinMode.instructions.createWallet.2":
+      "Selecting a recipient creates a wallet allows you to optionally deposit a maximum of about $0.01 worth in Bitcoin.",
+
+    "modal.bitcoinMode.instructions.createWallet.2.25":
+      "When you answer questions and make progress in the app, your Bitcoin deposit gets spent and sent to your receipient!",
+    "modal.bitcoinMode.instructions.createWallet.2.5":
+      "This feature is experimental.",
+    "modal.bitcoinMode.instructions.createWallet.3":
+      "We recommend scanning with Cash App to buy Bitcoin and create your deposit!",
+
+    //deposit bitcoin
+    "modal.bitcoinMode.instructions.deposit.1":
+      "Press deposit to generate a QR code that you can scan or an address you can send to. This will request about $0.01 worth in Bitcoin from your Bitcoin wallet.",
+
+    "modal.bitcoinMode.instructions.activeWallet.1":
+      "You're now using Bitcoin!",
+
+    "modal.bitcoinMode.instructions.activeWallet.2":
+      "Answer more questions to create scholarships with learning.",
+    "modal.bitcoinMode.instructions.activeWallet.3":
+      "Verify your transactions ",
+
+    "modal.bitcoinMode.instructions.activeWallet.4": "in the public record",
+    "deposit.button": "Deposit",
+    "createWallet.button": "Create Wallet",
+    "lastStep.button": "Next",
+    "deposit.ps":
+      "(P.S. After sending Bitcon to your address, you may need to wait a few seconds before your balance updates.)",
+
+    "modal.bitcoinMode.copyAddressButton": "Copy Address",
+    "modal.bitcoinMode.rechargeButton": "Generate Address",
+    "modal.bitcoinMode.successMessage": "You're now using Bitcoin!",
+    "modal.bitcoinMode.cardNameLabel": "Bitcoin Deposit Card",
+    "modal.bitcoinMode.balanceLabel": "Balance",
+    "modal.bitcoinMode.testCashTapButton": "Test cash tap",
+    "modal.openTutor.title": "Open Tutor",
+    "modal.openTutor.instructions": "Don't forget your keys before leaving!",
+    "modal.openTutor.startButton": "Start Tutoring App",
+    "modal.openSocialWallet.title": "Decentralize",
+    "modal.openSocialWallet.instructions":
+      "Don't forget your keys before leaving!",
+    "modal.openSocialWallet.startButton": "Go To Social Wallet",
+    "modal.learn.title": "Learn",
+    "modal.learn.instructions":
+      "Give us a few seconds to create quick lesson notes.",
+    "modal.feedback.title": "Submit Feedback",
+    "modal.feedback.contactLabel": "Contact",
+    "modal.feedback.contactPlaceholder": "Enter your contact info",
+    "modal.feedback.messageLabel": "Message",
+    "modal.feedback.messagePlaceholder": "Enter your feedback",
+    "modal.feedback.submitButton": "Submit",
+    "modal.feedback.cancelButton": "Cancel",
+    "toast.feedbackSubmittedTitle": "Feedback submitted.",
+    "toast.feedbackSubmittedDescription": "Thank you for your feedback!",
+    "toast.feedbackErrorTitle": "Error submitting feedback.",
+    "toast.feedbackErrorDescription":
+      "An error occurred while submitting your feedback. Please try again.",
+    "mockTerminal.welcomeMessage":
+      "Welcome to the mock terminal. Use basic commands to navigate the file system. Submit your answer in the text input above the terminal.",
+    "mockTerminal.userName": "user@mock-terminal",
+    "mockTerminal.bashCommand": "bash:",
+    "mockTerminal.commandNotFound": "command not found",
+    "mockTerminal.cdCommand": "cd:",
+    "mockTerminal.noSuchFileOrDirectory": "no such file or directory",
+    "mockTerminal.mkDirCommand": "mkDir:",
+    "mockTerminal.cannotCreatDirectory": "cannot create directory",
+    "mockTerminal.fileExists": "File exists",
+    "mockTerminal.catCommand": "cat:",
+    "mockTerminal.noSuchFile": "No such file",
+    "mockTerminal.help":
+      "Available commands: help, clear, ls, cat, mkdir, cd, pwd, echo, printenv, whoami",
+    "mockTerminal.directory": "Directory",
+    "badBrowser.header": "⚠️ Unsupported Browser",
+    "badBrowser.bodyOne":
+      "This platform makes use out of speech recognition to prompt AI to write code vocally on mobile devices. The",
+    "badBrowser.bodyTwo":
+      "browser does not support these features since they develop non-standard in-app browsers. On the brightside, the alternative allows you to download the page as an app on your phone!",
+    "badBrowser.bodyThree": "Simply",
+    "badBrowser.stepOne":
+      "Open this page in your browser with the More Options button",
+    "badBrowser.stepTwo": "Press the Share button",
+    "badBrowser.stepThree": "Press the Add To Homescreen button",
+    "badBrowser.footer":
+      "That's it! You don't need to download the app through an app store because we're using open-source standards for Progressive Web Apps.",
+    "about.about": (
+      <div>
+        Think about how communities fund schools. People work, create income and
+        have that incomed taxed in a number of ways to provide the budgets and
+        funds for schools. This eventually creates walled gardens and
+        inequities.
+        <br />
+        <br />
+        Robots Building Education is a platform using protocols that introduces
+        new ways to provide funds for education by connecting participants
+        beyond neighborhood lines. When students learn, real economic value is
+        created. We believe this should be represented by creating material and
+        resilient outcomes for communities so when you answer questions, Bitcoin
+        gets automatically sent to recipients you select in the form of
+        scholarships.
+        <br />
+        <br />
+        You might notice that this app is a little different than others. Things
+        seem to work faster with less rules. Robots Building Education uses open
+        source protocols to allow for seamless decentralized, cross-platform and
+        permissionless experiences.
+        <br />
+        <br />
+        This means depositing Bitcoin and sending it is as easy as easy as
+        scanning a QR code with a popular app like Cash App and answering a
+        question. That's it! No more and no less is needed.
+        <br />
+        <br />
+        This is a new way that the internet can work. It can be used and afford
+        new experiences like the ability to publish progress across different
+        apps, create scholarships with learning or even take your Bitcoin
+        deposits to other places!
+      </div>
+      // <div>
+      //   The point of AI is to save you time and energy. At the same time, real
+      //   education is about challenging yourself so that you can create real
+      //   knowledge. In short, you'll work through 100+ questions and it will
+      //   introduce you to building your ideas with software, learning computer
+      //   science and creating opportunities for yourself with good technology.
+      //   <br />
+      //   <br />
+      //   I also want to teach you quickly, effectively and in a similar fashion
+      //   to you having to pick up the skills on the job. At the end of the day, a
+      //   software entrepeneur needs to learn about business, engineering,
+      //   investing, marketing, sales, design and a number of other well-rounded
+      //   skills in order to be successful, which is what we try to prepare you
+      //   here with.
+      //   <br />
+      //   <br />
+      //   There are many things beyond coding taught on RO.B.E, ranging from the
+      //   psychology of self-esteem, to the development of startups distributed
+      //   globally. You are encouraged to imagine, think big and work hard in
+      //   order to find success here.
+      //   <br />
+      //   <br /> The app is a service created by Robots Building Education, a
+      //   platform founded on researching technology the following three
+      //   priorities:
+      //   <br /> <br />
+      //   1. Every student should have access to many good teachers.
+      //   <br />
+      //   2. Online education should be the best education.
+      //   <br />
+      //   3. Learning creates scholarships.
+      //   <br />
+      //   <br />
+      //   This is accomplished with the human-computer interaction discipline,
+      //   which researches how to make technology more useful and meaningful. I
+      //   personally revise anything done with AI to add human touch to it as to
+      //   not offer cheap generated material but a genuine delivery of good
+      //   quality education.
+      //   <br />
+      //   <br />
+      //   The following are all the features and benefits you'll find across the
+      //   platform which are typically free. As of now I just ask folks to
+      //   optionally sign up for $10 to access more content around
+      //   entrepreneurship, finance, and engineering to the work and to create a
+      //   stronger network.
+      //   <br />
+      //   <br />
+      //   Why so low for so much? I love education technology and I want to work
+      //   on this platform until you feel it's worth supporting. I also believe
+      //   that social media helps me reach so many people that keeping it low
+      //   price is only fair. I would eventually like to explore teaching folks so
+      //   we can create a pipeline to access more capital from folks eager to
+      //   invest in diverse technology businesses.
+      //   <br />
+      //   <br />
+      //   {/* <a
+      //     style={{ textDecoration: "underline" }}
+      //     href="https://patreon.com/notesandotherstuff"
+      //     target="_blank"
+      //   >
+      //     https://patreon.com/notesandotherstuff
+      //   </a> */}
+      // </div>
+    ),
+    "button.secretKey": "Secret Key",
+    "button.about": "About",
+    "about.featuresHeader": "Features",
+
+    "about.title": "What is this?",
+    "about.title.programAiApp": "App: Robots Building Education",
+    "about.platform.programAiApp": (
+      <div>
+        The app is a series of 100 questions meant to be easily integrated into
+        social media with AI. The goal is to make access to education easier
+        while also making it possible to learn skills like coding on mobile
+        devices with useful AI features.
+        <br />
+        <br />
+      </div>
+    ),
+
+    "about.platform.rox": (
+      <div>
+        Rox is a hand crafted teaching assistant that delivers lectures or
+        courses on the material that informs the questions inside of Program AI
+        App experience. Although robotic looking, it's mostly me doing the
+        majority of the teaching. Once the main product, now a feature connected
+        to Robots Building Education.
+      </div>
+    ),
+    "about.platform.roxGPT": (
+      <div>
+        The ChatGPT version of the applications - a chat assistant armed by the
+        information and content found on Robots Building Education.
+      </div>
+    ),
+    "about.platform.Patreon": (
+      <div>
+        A content & community platform to help you stay in touch via email over
+        deeper material into technology, education, entrepreneurship, investing
+        and other important skills.
+      </div>
+    ),
+    "about.title.rox": "App: Rox",
+    "about.title.roxGPT": "Custom GPT",
+    // "about.title.Patreon": "App: Patreon",
+
+    "about.title.decentralizedIdentity": "Decentralized Identity",
+    "about.title.spanishMode": "Spanish Mode",
+    "about.title.streaks": "Streaks",
+    "about.title.quizSeries": "Quiz Series",
+    "about.title.vocalCoding": "Vocal Coding",
+    "about.title.aiLectureNotes": "AI Lecture Notes",
+    "about.title.aiFeedback": "AI Feedback",
+    "about.title.adaptiveLearning": "Adaptive Learning",
+    "about.title.bitcoinWallet": (
+      <div>
+        {/* <Datatags isNew /> */}
+        Bitcoin Wallet
+      </div>
+    ),
+    "about.title.customerService": "Customer Service",
+    "about.title.lectures": "Hand Crafted Lectures",
+    "about.title.conversationQuiz": "Conversation Quiz",
+    "about.title.schedulingAssistant": "Scheduling Assistant",
+    "about.title.shop": "Shop",
+    "about.title.algorithmHelper": "Algorithm Helper",
+    "about.title.emotionalIntelligence": "Emotional Intelligence",
+    "about.title.syllabus": "Syllabus",
+    "about.title.guides": "Guides",
+    "about.title.insights": "Insights",
+    "about.title.ofi": "Old-fashioned Intelligence",
+
+    "about.title.smartCards": <div>Smart Cards</div>,
+    "about.title.socialProgress": <div>Social Progress</div>,
+    "about.feature.socialProgress": (
+      <div>
+        {/* <DataTags isNew /> */}
+        See the progress of other folks learning using our decentralized
+        technology!
+      </div>
+    ),
+    "about.title.buildYourApp": <div>Build Your App</div>,
+    "about.feature.buildYourApp": (
+      <div>
+        {/* <DataTags isNew /> */}A feature that lets you materialize your
+        learning by creating an app or an idea as you progress.
+      </div>
+    ),
+
+    "about.feature.decentralizedIdentity": (
+      <div>
+        {/* <Datatags isRox isProgramAI /> */}
+        Robots Building Education leverages decentralized identities to allow
+        for cross-platform accounts and data ownership. This allows us to
+        integrate our apps directly inside of social media. All we need is a
+        simple user name and we'll create keys that let you access the bridge
+        into the decentralized world.
+      </div>
+    ),
+    "about.title.decentralizedTranscripts": "Cross-platform Transcripts",
+    "about.feature.smartCards": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        Smart card is an intelligent flashcard feature that creates new practice
+        questions based on your progress. You can keep practicing problems at
+        the same difficulty and knowledge level before continuing to the next
+        question.
+      </div>
+    ),
+    "about.feature.decentralizedTranscripts": (
+      <div>
+        <DataTags isRox isProgramAI />
+        Making progress on either app will award you transcript badges that you
+        can carry cross-platform to other apps. This makes online education more
+        awesome and representative of effort.
+      </div>
+    ),
+    "about.feature.spanishMode": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        Robots Building Education is available in Spanish. You're welcome to
+        learning in Spanish to practice your human language skills too!
+      </div>
+    ),
+    "about.feature.streaks": (
+      <div>
+        {/* <DataTags isProgramAI /> */}A self-pacing feature to help you stay
+        discplined. Set up 30 minute to 3 day timers!
+      </div>
+    ),
+    "about.feature.quizSeries": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        100 questions informed by the rox teaching assistant, paired with a
+        number of features to introduce you to new concepts and challenges.
+      </div>
+    ),
+    "about.feature.vocalCoding": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        The ability to record your answer vocally so that AI can transform your
+        request into code on mobile devices.
+      </div>
+    ),
+    "about.feature.aiLectureNotes": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        Each question comes with the ability to generate lecture notes so that
+        you can learn more about the question as you're introduced to a new
+        challeng.
+      </div>
+    ),
+    "about.feature.aiFeedback": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        Each question is graded by AI before allowing you to continue to the
+        next question.
+      </div>
+    ),
+    "about.feature.adaptiveLearning": (
+      <div>
+        {/* <DataTags isProgramAI isRox /> */}A feature that keeps track of your
+        progress and suggests the next best challenge to learn.
+      </div>
+    ),
+    "about.feature.bitcoinWallet": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        An experimental feature that lets me easily monetize interactions with
+        the apps rather than bundling it behind subscriptions to be able to
+        create scholarships with learning. Right now you can only deposit $0.02
+        so that each interaction costs about $0.0008 USD per interaction. All
+        you need is a Cash App and youll be easily able to deposit for use! Now
+        works cross-platform with other apps like https://civico.app.
+      </div>
+    ),
+    "about.feature.customerService": (
+      <div>
+        {/* <DataTags isPatreon /> */}
+        With enough support, I'm able to run more personal service with remote
+        calls, tutoring and other direct-to-student effort.
+      </div>
+    ),
+    "about.feature.lectures": (
+      <div>
+        {/* <DataTags isRox isProgramAI /> */}A collection of lectures that I
+        believe are high value created with high quality animation and effort.
+        The experience is an introduction to advanced concepts done in a way to
+        inspire confidence into a journey of learning.
+      </div>
+    ),
+    "about.feature.conversationQuiz": (
+      <div>
+        {/* <DataTags isRox isProgramAI /> */}A quiz feature where your
+        conversation with AI can be graded.
+      </div>
+    ),
+    "about.feature.schedulingAssistant": (
+      <div>
+        {/* <DataTags isRox isPatreon /> */}A feature to help you schedule your
+        learning on a micro and macro level.
+      </div>
+    ),
+    "about.feature.shop": (
+      <div>
+        {/* <DataTags isRox isPatreon />  */}
+        The ability to shop for books to deepen your knowledge across domains.
+      </div>
+    ),
+    "about.feature.algorithmHelper": (
+      <div>
+        {/* <DataTags isRox /> */}A feature that help you train your
+        understanding of algorithms with decision-making patterns, code
+        assistance and feedback
+      </div>
+    ),
+    "about.feature.emotionalIntelligence": (
+      <div>
+        {" "}
+        {/* <DataTags isRox isPatreon /> */}
+        An emotion tracking feature centered around self-esteem.
+      </div>
+    ),
+    "about.feature.syllabus": (
+      <div>
+        {/* <DataTags isPatreon /> */}A challenging getting started kit for
+        short term and long term knowledge gains.
+      </div>
+    ),
+    "about.feature.guides": (
+      <div>
+        {/* <DataTags isPatreon /> */}
+        Higher intent essays and software on investments and software
+        development{" "}
+      </div>
+    ),
+    "about.feature.insights": (
+      <div>
+        {" "}
+        {/* <DataTags isPatreon /> */}
+        Behind the scenes access to the development of Robots Building Education
+      </div>
+    ),
+    "about.feature.ofi": (
+      <div>
+        {/* <DataTags isPatreon /> */}
+        Paid (but inexpensive) content for post-platform learning. Developed
+        with the intention to attempt to produce a significant return on
+        investment for supporting the platform.
+      </div>
+    ),
+    "button.addToConversation": "Add To Conversation",
+    "button.subjectsCovered": "Subjects Covered",
+    "link.connectWithMe": "Connect with me!",
+    "tags.grade": "Grade: ",
+    "Sunset Tutorial": "Sunset Tutorial",
+    "Basics of Coding": "Basics of Coding",
+    "Object-Oriented Programming": "Object-Oriented Programming",
+    "Frontend Development": "Frontend Development",
+    "Backend Engineering Fundamentals": "Backend Engineering Fundamentals",
+    "Creating Apps & Experiences": "Creating Apps & Experiences",
+    "Computer Science": "Computer Science",
+    "Introduction to Engineering": "Introduction to Engineering",
+    "Programming Fundamentals": "Programming Fundamentals",
+    "Frontend Software Engineering": "Frontend Software Engineering",
+    "Backend Software Engineering": "Backend Software Engineering",
+    "Data Structures & Algorithms": "Data Structures & Algorithms",
+    "Full-stack Software Engineering": "Full-stack Software Engineering",
+    "Psychology of Self-esteem": "Psychology of Self-esteem",
+    "Philosophy of Critical Theory & Technology":
+      "Philosophy of Critical Theory & Technology",
+    "Human-Computer Interaction": "Human-Computer Interaction",
+    "Business Writing": "Business Writing",
+    "Introduction to Finance": "Introduction to Finance",
+    "modal.decentralizedTranscript.youEarned": "You earned",
+    "modal.decentralizedTranscript.awareness":
+      "These badge awards are cross-platform and can be found in other apps in our decentralized app store. That way you own your online education!",
+    "modal.decentralizedTranscript.awardsEarned": "Awards Earned",
+    loading: "Loading...",
+    "loading.wallet": "Generating Wallet...",
+    "loading.wallet.address": "Creating Address...",
+
+    "settings.button.transcript": "Transcript",
+    "modal.transcript.instructions": "",
+    yourID: "Your ID",
+    noTranscriptFound: "No older transcripts awards were found.",
+    chapter: "chapter",
+    tutorial: "Tutorial",
+    congratulations: "Congratulations!",
+    "congrats.message":
+      "You have completed the quiz. You should be proud because most people don't get this far. You are genuinely exceptional. Well done!",
+    "congrats.connect": "Connect with everyone that has finished",
+    advice: "My Advice",
+    "advice.content": (
+      <div>
+        This platform will help you learn fast and effectively, but it is also
+        designed to challenge you. Real education can be uncomfortable and you
+        have to embrace failure, mistakes and the improvement process. This
+        platform isn't designed to be like Tiktok or Duolingo, where the
+        material is handed to you in a way to maximize engagement, it's meant
+        for you to learn and grow using the power of AI. In short, doing things
+        the gritty way is often more enjoyable and meaningful. If you come
+        across something confusing or tough, work through it! You'll be grateful
+        you did.
+        <br />
+        <br />
+        This platform comes with a tutor called Rox that will provide
+        introductory video lectures that are handcrafted and animated to arm you
+        with knowledge before or after practicing the questions involved in each
+        chapter. Each lecture starts by working backwards, so that you can get
+        used to appreciating challenge-oriented learning.
+      </div>
+    ),
+    "passcode.instructions": (
+      <div>
+        You'll need to subscribe to the Robots Building Education Patreon in
+        order to access the rest of the experience.
+        <br />
+        <br />
+        <div style={{ fontSize: "0.95rem" }}>
+          It's packed with value and refund friendly. I made sure that it's
+          worth every penny so you can get a great return on investment for your
+          time, energy and money.
+        </div>
+        <br />
+        <div style={{ fontSize: "0.95rem" }}>
+          <b>Your subscription will get you:</b>
+          <OrderedList>
+            <ListItem>Full access to this app.</ListItem>
+
+            <ListItem>Personal assistance from me and a group chat.</ListItem>
+            <ListItem>
+              Competitive coding projects &amp; advanced software engineering
+              material.
+            </ListItem>
+            <ListItem>
+              Access to crash courses, startup development content &amp; finance
+              content.
+            </ListItem>
+
+            <ListItem>
+              Love, appreciation &amp; respect from me for helping me build
+              education technology, create scholarships and succeed as a small
+              business owner.{" "}
+            </ListItem>
+          </OrderedList>
+        </div>
+        <br />
+        <a
+          style={{
+            fontSize: "0.95rem",
+            textDecoration: "underline",
+            color: "#63b3ed",
+            fontWeight: "bold",
+          }}
+          href="https://www.patreon.com/NotesAndOtherStuff/about"
+          target="_blank"
+        >
+          Register and subscribe as a member
+        </a>
+        <br />
+        <br />
+        <a
+          style={{
+            fontSize: "0.95rem",
+            textDecoration: "underline",
+            color: "#63b3ed",
+            fontWeight: "bold",
+          }}
+          href="https://www.patreon.com/posts/syllabus-getting-86153437?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link"
+          target="_blank"
+        >
+          Get the passcode
+        </a>{" "}
+        <span style={{ fontSize: "0.95rem" }}>
+          or find it by going to the Start Learning collection after
+          subscribing.
+        </span>
+      </div>
+    ),
+    "passcode.label": "Enter passcode",
+    "email.donotdelete": "Data about the question, do not delete pls 🙏🙏🙏",
+    "email.question": "Question",
+    thinking: "Thinking...",
+    "prompt.passcode":
+      "Enter the subscriber passcode in order to enable AI features. The subscription platform can be found in the settings menu.",
+    "prompt.invalid_passcode": "Invalid passcode!",
+    "lockout.message": "You've reached the maximum number of attempts.",
+    "lockout.suggestion":
+      "Please take a 15-minute break or study the material before trying again.",
+    "lockout.timer": "Time remaining",
+    "lockout.toastTitle": "Locked Out",
+    "lockout.toastDescription":
+      "You've been locked out for 15 minutes due to multiple incorrect attempts.",
+    "lockout.attempts": "Incorrect attempts",
+    "lockout.outOf": "out of",
+    "lockout.message":
+      "We've gotten the problem wrong 5 times in a row! Let's slow down, take a quick 15 minute break and rethink our strategy.",
+    "ai.error": "Error formatting AI response",
+    "label.new": "New!",
+    confirm: "Confirm",
+    cancel: "Cancel",
+    analyzer: "Analyzing your progress & creating new question card",
+    "settings.button.algorithmHelper": "Algorithm Practice",
+    "modal.title.algorithmHelper": "Algorithm Practice",
+    "algorithmHelper.button.generateProblem": "Generate Algorithm Problem",
+    "learnwithnostr.intructions":
+      "Connect with others using decentralized education technology!",
+    adaptive_learning_off: "Adaptive learning is off.",
+    adaptive_learning_on: "Adaptive learning is on.",
+    "buildYourApp.how_to_use_feature": "How to use this feature:",
+    "buildYourApp.step_1": "Define the idea or app you want to build.",
+    "buildYourApp.step_2": "Generate code based on your progress.",
+    "buildYourApp.step_3": "Copy the code & prompt after generating it.",
+    "buildYourApp.step_4": "Submit the code to the app you get redirected to.",
+    "buildYourApp.step_5": "Congrats! You're building your app using AI!",
+    "buildYourApp.input.label": "Your idea",
+    "buildYourApp.button.label.1": "Create your idea",
+    "buildYourApp.button.label.2": "Update your idea",
+    "buildYourApp.idea.label": "Idea you're building:",
+    "modal.adaptiveLearning.title": "Build your app",
+    "modal.adaptiveLearning.recommendButton": "Build your app",
+    copied: "Copied!",
+    copy_code_launch_builder: "Copy, build and ship with v0",
+    "subscription.nudge": (
+      <>
+        <b>Are you enjoying the experience?</b>
+        <p style={{ maxWidth: "600px" }}>
+          Subscriptions help us pay for the cost of creating scholarships, AI
+          and improving the technology as a small creator business. It costs
+          less than $6 with discounts and you get much more content on
+          investing, engineering and business!
+        </p>
+        <br />
+      </>
+    ),
+    "tag.allowPosting": "Do not post my progress",
+  },
+  "android-en": {
+    "search...": "Search…",
+    backToQuestion9: "Go back to question 9",
+    completeTutorialFirst: "You have to finish the tutorial first.",
+    askForHelp: "Ask for help",
+    onboardingProgress: "Account setup progress",
+    goodJob: "Good job!",
+    nextStep: "Next step",
+    generatingCode: "Generating code...",
+    "buildYourApp.onboarding.instruction":
+      "This app will grow and adapts with you when you learn and make progress. For now, we'll start with a light app to show you some things you'll learn. You can change your idea later.",
+    skip: "Skip",
+
+    runCode: "Run code",
+    "modal.selfPace.weekPlan": "Set up 1 week plan",
+    "modal.selfPace.monthPlan": "Set up 1 month plan",
+    "modal.dailyGoal.estimate":
+      "At this pace, you’ll finish all 90 questions in about {days} day{plural}.",
+    "modal.dailyGoal.estimatedDateLabel": "Estimated completion date:",
+
+    "app.terminal.placeholder": "Enter your answer here",
+    "badBrowser.install":
+      "This browser doesn't support speech recognition. Privately install the app on your phone to access this feature.",
+    "app.button.complete": "Complete chapter",
+    optional: "(optional)",
+    faq_1_question: "What about AI?",
+    faq_1_item_1:
+      "If AI can program themselves, it's likely that all work as we know it will fundamentally change. But for now, it's going to change the supply and demand of things in a relevant way.",
+    faq_1_item_2:
+      "In my view, AI makes software engineering more realistic for more people. Before AI, it was clear that there was an unmanageable amount of work being generated in a way where a software engineer would create more work than they could complete. So I personally find it more enjoyable to write code with AI than without it and I believe that it makes more things like entrepreneurship more accessible. Things can actually get done now.",
+    faq_1_item_3:
+      "Thinking critically, AI is mostly concerned with making good decisions. So roles that depend more on decisions will be impacted. In my view, that's more executive roles, thus the sweetspot these days is being a junior or senior engineer so you could start to build lean businesses on your own. So that's what we try to do here - we arm you with new skills and hope that it influences your decisions or opportunities in a good way.",
+    faq_2_question: "What kind of computer do I need?",
+    faq_2_item_1:
+      "When it comes to learning, I recommend paper and pencil. RO.B.E is not a software intensive program. It can be used on your mobile device or any laptop. I like it on mobile phones.",
+    faq_2_item_2:
+      "If you're wondering what kind of computer you need to code, I recommend a macbook pro. The next best answer is whatever you can afford. People usually overthink this and the truth is you don't need anything fancy. There's no wrong answer.",
+    faq_2_item_3:
+      "Macbook pros are good general solution. If you need something specialized and you're certain about your investment, then in a similar spirit, invest in the best computing power you can get.",
+    faq_3_question: "Is coding hard? Do I need to be good at math?",
+    faq_3_item_1: "This is a loaded question.",
+    faq_3_item_2:
+      "No. You don't have to be good at math. And programming isn't hard, it's challenging. Education IS overcoming the challenge. You should recognize that you can accomplish the things you want to accomplish.",
+    faq_3_item_3:
+      "Coding is about organizing information. So if you can write instructions, you can write code.",
+    faq_3_item_4:
+      "So maybe you ask that question because there's a part of you that wishes someone would tell you that it can be made easy. People can make it easier. It's going to be a challenge, but that's part of the fun too.",
+    faq_4_question: "What programming language should I pick?",
+    faq_4_item_1:
+      "So if you've done any research already, you've probably come across Python and Javascript. They're very popular for a reason, but before explaining why, I strongly recommend to think about what kind of machines you want to work on and what kind of problems you want to solve.",
+    faq_4_item_2:
+      "The reason Javascript and Python are so widespread is because of the internet. They're mostly used to do a lot of the service work of the internet.",
+    faq_4_item_3:
+      "But what if you need an iOS app, an android one, a video game, or some kind of robot? Ultimately you'll find that when you learn one language, you kinda learn them all. There's a reason for that, but ultimately it's like worrying whether you should learn how to use a hammer or drill when building a home - you're likely going to use many languages eventually and it'll all feel pretty familiar. There's no wrong answer.",
+    faq_5_question: "Is a bootcamp worth it?",
+    faq_5_item_1:
+      "As usual, the best answer is going to be 'it depends'. What you really pay a lot of money for is an employment network, and as you've seen in recent years, that kind of business can experience hard times.",
+    faq_5_item_2:
+      "I don't recommend going to a bootcamp as a shortcut into the industry. A bootcamp is no different than being self-taught or going to college. You will still need to learn relevant skills, find early-stage employment, create business-savvy projects and pass technical interviews.",
+    faq_5_item_3:
+      "How you approach each will be wildly different. A self-taught developer in San Francisco is different than a computer science student in Nebraska. A dropout from Stanford will have a different environment than someone at a community college. The key thing here is that your environment plays an important role in your opportunities.",
+    faq_6_question: "What is coding and what can I do with it?",
+    faq_6_item_1:
+      "Coding is a way to organize information. So it exists everywhere. Think of it this way. Coding is written by software engineers to organize information. Software engineers study computer science. Computer science is the science of computation. Computation is problem solving. So coding expresses the science of solving problems.",
+    faq_6_item_2:
+      "That means you can do just about anything. You can code for media, medicine research, sports, robots, energy systems, financial systems or just about anything you can think of. It's certainly a preferred game for entrepreneurs, but many people also take the well-balanced life approach with it too. So sometimes people code because they want a more relaxed life too.",
+    faq_7_question: "Am I too old to learn?",
+    faq_7_item_1:
+      "No. Simply put, your brain doesn't work that way. You may experience some 'rustyness' if you haven't done deep learning of a subject in some time, but that's not too different than a college student realizing that they need to learn how to learn. Maybe you already know how to learn or you understand what works for you. Now suddenly you have an advantage.",
+    faq_7_item_2:
+      "As one of my directors say, slow is smooth and smooth is fast. This isn't to create any sense of superiority or inferiority - you're just in a competitive market and it's usually better to take the productive outlook.",
+    "modal.selfPace.notificationsUnavailable":
+      "Notifications aren't supported on this browser. Follow installation instructions in the menu to access all features",
+    "modal.selfPace.notificationDescription":
+      "Send a positive and encouraging notification daily",
+    notificationsEnabled: "Notifications Enabled",
+    notificationsDisabled: "Notifications Disabled",
+
+    notificationsHeader: "Notifications",
+    gotItButton: "Got it!",
+    notifications_available_line1:
+      "Notifications let me send a positive and encouraging message once a day.",
+    notifications_available_line2:
+      "I believe education is in the challenge rather than the reminders or the material, so courage and encouragement play a crucial role in finding success.",
+    notifications_status_enabled: "Notifications Enabled",
+    notifications_status_disabled: "Notifications Disabled",
+    notifications_unavailable_line1:
+      "You're using {browser} that does not allow me to set up device notifications 😔",
+    notifications_unavailable_line2:
+      "Installing the app grants you full access to features like being able to speak to write code or receive notifications meant to send positive and encouraging messages once per day.",
+    notifications_unavailable_line3:
+      "I believe education is in the challenge rather than the reminders or the material, so courage and encouragement play a crucial role in finding success.",
+    notifications_installation_directions:
+      "Installation directions can be found in menu.",
+    celebrateMessage: ". You're doing a great job! 🙌 🥳",
+    Progress: "Progress",
+
+    dailyGoal: "Daily goal",
+    questions: "questions",
+    goal: "goal",
+    completed: "completed",
+    "onboarding.chapter0.questions": "Questions 0-9",
+    "onboarding.chapter1.questions": "Questions 10-30",
+    "onboarding.chapter2.questions": "Questions 31-48",
+    "onboarding.chapter3.questions": "Questions 49-68",
+    "onboarding.chapter4.questions": "Questions 69-90",
+    "onboarding.chapter5.questions": "Questions 91-111",
+    "onboarding.chapter6.questions": "Questions 112-133",
+    "onboarding.chapter0.title": "Tutorial Chapter: Platform Introduction",
+
+    "onboarding.chapter0.content":
+      "Discover all the features the platform has to offer to help you create success.",
+    "onboarding.chapter1.title": "Chapter 1: Coding Basics",
+    "onboarding.chapter1.content":
+      "Learn about the basic building blocks used to write programs.",
+    "onboarding.chapter2.title": "Chapter 2: Object-Oriented Programming",
+    "onboarding.chapter2.content": "Understand how software data is designed.",
+    "onboarding.chapter3.title": "Chapter 3: Frontend Development",
+    "onboarding.chapter3.content": "Create components and user interfaces.",
+    "onboarding.chapter4.title": "Chapter 4: Backend Engineering Fundamentals",
+    "onboarding.chapter4.content":
+      "Comprehend what backend engineering means in the world of software",
+    "onboarding.chapter5.title": "Chapter 5: Building Apps",
+    "onboarding.chapter5.content":
+      "Tie your knowledge together to create real apps and users.",
+    "onboarding.chapter6.title": "Chapter 6: Computer Science",
+    "onboarding.chapter6.content":
+      "Deep-dive into foundations of algorithms and data structures.",
+
+    "onboarding.step1.accordionTitle": "What to expect",
+    "countdown.streakTimeLeft": "Streak time left - ",
+    "countdown.dailyGoalsTimeLeft": "Daily goals time left - ",
+    "modal.selfPace.instruction":
+      "Choose the duration of your streak. Your streak timer renews when this time elapses.",
+    "modal.selfPace.day": "day",
+    "modal.selfPace.oneDay": "1 Day",
+    "modal.selfPace.twoDays": "2 Days",
+    "modal.selfPace.threeDays": "3 Days",
+    "modal.selfPace.signal.grind": "Grind",
+    "modal.selfPace.signal.motivated": "Motivated",
+    "modal.selfPace.signal.casual": "Casual",
+    "modal.dailyGoal.instruction":
+      "Choose how many questions to complete to reach your daily goal. The goal timer resets every 24 hours.",
+    "modal.dailyGoal.dailyGoalLabel": "Daily goal:",
+    "button.save": "Save",
+    "button.back": "Back",
+    "onboarding.step1.challengeTitle": "The Challenge Ahead",
+    "onboarding.step1.challengeText1":
+      "The harsh reality is that most who attempt to learn for 100 days will drop off within the first 20 days. The same is also true for most videos and courses – most folks drop off in the first 20 seconds and the first 20 questions!",
+    "onboarding.step1.challengeText2":
+      "But perhaps being aware of this and making a conscious effort to resist certain temptations may keep you in the loop to find success with the program. And perhaps the real challenge is actually a lot easier than we thought.",
+    "onboarding.step1.challengeText3":
+      "What do you say? Are you up for the challenge? Let's get passed 20 questions in a more manageable way!",
+    "onboarding.step1.buttonLabel": "Let's do it!",
+
+    "onboarding.step2.dailyGoalsTitle": "Set up your daily goals",
+    "onboarding.step2.dailyGoalsDescription":
+      "I recommend doing three questions per day. By the end of the month, you'll get to the point where you can start putting together what you've learned to build and ship apps.",
+
+    "onboarding.step2.dailyGoalsDescription.faster":
+      "If you want to go fast and finish within a week, try doing 12 questions a day.",
+
+    "onboarding.step3.lastStepMessage":
+      "Your account is almost ready. Just one last step to complete your setup!",
+    "onboarding.step3.launchAppButton": "Complete Account Setup",
+    "onboarding.final.launch": "Launch App",
+
+    "modal.externalLinkTitle": "Leaving The App",
+    "modal.externalLinkBody":
+      "You are about to be redirected to the free version of ChatGPT where no login is required. Paste the question data that we've copied to generate help. Create an account with ChatGPT to acces the custom chat version of this app instead.",
+    "modal.dontShowAgain": "Don't tell me this again",
+    "modal.cancel": "Cancel",
+    "modal.continue": "Continue to ChatGPT",
+
+    installAppInstructions1: `Open this page in your browser with the More Options button`,
+    installAppInstructions2: `Press the Share button`,
+    installAppInstructions3: `Press the Add To Homescreen button`,
+    installAppInstructions4: `That's it! You don't need to download the app through an app store because we're using open-source standards for Progressive Web Apps.`,
+
+    installApp: "Install App",
+    "select.recipient": "Select your scholarship recipient",
+    "change.recipient": "Change your scholarship recipient",
+
+    "disabled.select.soon": "More schools, teachers and students soon!",
+    transcriptBadges: "Transcript Badges",
+    instructions: "Instructions",
+    "tutorModal.instructions.1":
+      "These videos are from the connected tutoring platform on ",
+    "tutorModal.instructions.1.33": "Rox the tutor",
+    "tutorModal.instructions.1.66":
+      "Fun fact: The questions found on this app are based on the lessons learned in these hand-written videos!",
+    "tutorModal.instructions.2": "To earn badges:",
+    "tutorModal.instructions.3":
+      "Watch 80% of the video, read the summary and complete the practice exercise for each chapter in this tutoring modal.",
+    "tutorModal.instructions.4":
+      "Complete the chapter by answering questions in the main application.",
+    "video.summary.tutorial": `Welcome to **Robots Building Education**! This introductory lecture addresses common concerns and sets the stage for your journey in learning coding and building businesses with AI, specifically using tools like ChatGPT (referred to here as Roxana).
+
+### Overcoming Doubts and Imposter Syndrome
+
+Feeling intimidated or questioning your abilities is normal. Even the instructor experiences imposter syndrome. These feelings indicate you're challenging yourself and aiming for higher standards. Ground yourself and recognize that with the right preparation, you can overcome these challenges.
+
+### FAQs Speed Run
+
+Here are quick answers to common questions:
+
+- **Is programming hard?** No.
+- **What computer do I need?** No specific requirement.
+- **Am I too old?** No.
+- **What kind of jobs can I do?** Numerous opportunities across various fields.
+- **Is a bootcamp worth it?** No.
+
+For more details, visit the FAQs on [embedded-rox.app](https://embedded-rox.app).
+
+#### Learning Approach
+
+The learning process consists of four key steps:
+
+1. **Imagine and Illustrate**: Visualize concepts to enhance understanding.
+2. **Draw Connections and Relationships**: Link new ideas with existing knowledge.
+3. **Observe New Information**: Pay attention to new insights and data.
+4. **Practice**: Apply what you've learned through hands-on activities.
+
+### Embracing the Learning Experience
+
+The aim is to help you experience the sensation of learning, unlocking the potential to learn anything you desire. Coding is not just about programming; it's a means to engineer solutions, communicate ideas, and interact with the world.
+
+### The Versatility of Computer Science
+
+Computer science is the science of solving problems and can be applied to any field—climate technology, psychology, cancer research, art, sports, and more. Technology plays a role wherever information exists.
+
+### Encouragement to Proceed
+
+Take time to internalize these lessons. Allow yourself to become the person who embraces challenges and continues to move forward. With courage and persistence, you'll transform the unknown into familiarity and make a significant impact.
+
+    `,
+    "video.summary.2": `
+## Overview
+
+This lecture introduces the fundamentals of coding, focusing on:
+
+- **Objects**
+- **Functions**
+- **Loops**
+- **Data and Logic**
+- **Network Functions**
+
+The approach is to start with more challenging concepts and work down to the basics, catering to learners from diverse backgrounds.
+
+## Objects
+
+- **Definition**: Objects in code model the digital world using information, data, and logic.
+- **Classes**: Define how objects are created, including their state and functionality.
+- **Key Point**: Objects have a common way to define their state and manage it through functionality.
+- **Examples**:
+  - Creating a \`Robot\` class in JavaScript.
+  - Using objects to structure data in applications like social media posts or crypto transactions.
+- **Takeaway**: Coding is about organizing information, not about math.
+
+## Functions
+
+- **Purpose**: Essential for organizing and handling data.
+- **Types**:
+  - **Synchronous Functions**: Execute tasks sequentially (like cooking in a pan).
+  - **Asynchronous Functions**: Allow other processes to run concurrently (like cooking in an oven).
+- **Importance**: Understanding functions helps manage data flow, especially when handling data across networks.
+
+## Loops
+
+- **Usage**: Perform repeatable actions on groups of data.
+- **Types of Looping Functions**:
+  - Transforming values.
+  - Filtering values.
+  - Reversing values.
+- **Example**: Using \`forEach\` in JavaScript to find an artist with the highest Spotify monthly listeners.
+- **Documentation**: Encouraged to read language documentation to understand built-in methods and functionalities.
+
+## Data and Logic
+
+- **Fundamentals**:
+  - Data types include words, numbers, groups, and logical conclusions.
+  - Logic boils down to true or false values—how computers interpret the world.
+- **Examples**:
+  - Defining objects like \`obama\` and \`elon\` with properties.
+  - Creating functions that use logical conditions to return results.
+- **Key Point**: Individual pieces of data create logic; groups of data create functionality.
+
+## Coding and Logic (Reinforced)
+
+- **Coding**: The organization of information.
+- **Logic**: Determining if statements are true or false.
+- **Real-World Connection**: Observing how everyday items and situations can be represented in code.
+- **Encouragement**: Understand that coding concepts can be grasped without heavy emphasis on math.
+
+## Practice and Learning Strategies
+
+- **Use AI Assistance**: Utilize AI tools like ChatGPT for guidance.
+- **Hands-On Practice**:
+  - Write code by hand on paper.
+  - Draw connections and visualize data structures.
+- **Model Real-World Data**: Practice representing real-world scenarios as data models in code.
+- **Mindset**: Focus on learning and understanding rather than worrying about right or wrong.
+
+## Conclusion
+
+- **Main Takeaways**:
+  - Coding models the digital world with information, data, and logic.
+  - Organizing information is the essence of coding.
+  - Logic in coding is about true or false values.
+- **Next Steps**:
+  - Prepare to build visual applications using HTML, CSS, JavaScript, and React.
+- **Encouragement**:
+  - Slow down and internalize the lessons.
+  - Embrace challenges and trust the learning process.
+  - Practice consistently to strengthen your skills.
+
+---
+
+**Note**: The lecture emphasizes starting with foundational concepts and building upon them to create a solid understanding of coding. It encourages using available resources, practicing regularly, and maintaining a positive mindset towards learning.
+
+    `,
+    "video.summary.1": `
+**UI/UX** stands for User Interfaces and User Experiences. It's a multidisciplinary approach based on the study of human-computer interaction, also known as **Interaction Design** or simply **Design**. This field goes beyond visual design and idea brainstorming; it's a thoughtful practice applicable in many environments.
+
+## Role of an Interaction Designer
+
+Interaction designers:
+
+- Research and design based on human-computer interaction.
+- Conduct surveys, interviews, and observations to gather deeper insights into a product.
+- Focus on improving experiences, such as enhancing a restaurant's experience or determining which movie trailer generates the most anticipation.
+- Combine technical skills and business acumen to amplify impact.
+
+## Accessibility
+
+- **Importance**: Accessibility focuses on enabling more people to use products and services.
+- **Considerations**:
+  - Designing for blind users who rely on screen readers.
+  - Organizing information to make sense for both visual and auditory users.
+- **Benefits**:
+  - Thoughtful accessibility design often benefits all users.
+  - Effective organization can make content more meaningful for people using only audio, such as in podcasts or radio.
+
+## Multidisciplinarity
+
+- Design is fundamentally multidisciplinary and can be applied in fields like chemical engineering, business, architecture, and education.
+- **Impact of Choices**:
+  - The words you choose can influence how search engines and social media algorithms distribute your material.
+  - The intent behind features and the tone you use can affect user retention and success.
+- **Attention to Detail**: Good design is about making the people you're designing for happy, which requires direct communication and research.
+
+## Heuristics
+
+- **Definition**: Heuristics are guidelines used when creating with constraints or limited feedback.
+- **Application**:
+  - Considering how a user can correct a mistake or malfunction.
+  - Using concepts like **affordances**, which are signals or properties of an object that inform a user of its possible uses.
+- **Examples**:
+  - Recognizing that a water pitcher is meant for pouring water, not as a glove.
+  - Understanding that pixels on a screen represent interactive buttons.
+
+## Design Systems
+
+- **Tools and Methods**:
+  - Paper prototypes, surveys, personal interviews, online tools.
+- **Considerations**:
+  - Each tool has trade-offs that affect outcomes.
+  - Resources and budgets can influence the effectiveness of methods.
+  - Different settings (e.g., boardroom vs. TikTok) can yield different results.
+- **Collaboration**:
+  - Over time, you discover what works well with you and different teams.
+  - It's important to think critically and keep an open mind when making design choices.
+
+## Further Reading
+
+- **"The Design of Everyday Things"** by Don Norman: A foundational book in the field of human-computer interaction.
+- **NNGroup.com**: Resources from the Nielsen Norman Group for professionals concerned with usability standards.
+- **Bitcoin.design**: An open-source platform supporting usability research and development for Bitcoin.
+
+## Conclusion
+
+Interaction design is a discipline that combines research, creativity, and empathy to improve user experiences. By integrating principles of accessibility, multidisciplinarity, and heuristics, designers can create meaningful and effective solutions. Members of the Robots Building Education community are encouraged to apply these principles to communicate ideas, improvements, or case studies to gain experience. Collaboration and brainstorming are welcomed to enhance our AI mentoring platform.
+
+---
+
+**Note**: If you're part of the Robots Building Education community, feel free to use design principles to communicate ideas, improvements, or case studies to gain experience here too! I'm happy to sit down with you and brainstorm on things that can improve our little AI mentoring platform.
+`,
+    "video.summary.3": `
+- **Review of Lesson 1**: Fundamentals of organizing data with code using objects, functions, loops, and logic.
+- **Focus of Lesson 2**: Understanding React components and event-driven programming to create user interfaces and experiences.
+
+## React Components
+
+- **Components**: Functions that return UI elements and manage their own state and properties.
+- **Main Parts of a React Component**:
+  1. **Hooks**: Functions that handle and synchronize operations with the component's state (e.g., \`useState\`).
+  2. **State**: Dynamic data within the component that changes over time, triggering re-renders.
+  3. **Properties (Props)**: Data passed into the component that should remain unchanged within it.
+
+- **Event-Based Programming**: React components respond to user interactions (events) that trigger state changes and UI updates.
+
+## Data Flow in React
+
+- React uses a **one-way data flow**, making it intuitive to design relationships and manage data.
+- **Updating State**: Changing a component's state refreshes the display and re-renders the component.
+- **Props vs. State**:
+  - **Props**: Immutable data received from parent components.
+  - **State**: Mutable data managed within the component.
+
+## Practical Example: Tweet Component
+
+- Demonstrated a \`Tweet\` component that displays tweet information and handles user interactions like likes.
+- Showed how to:
+  - Use hooks (\`useState\`) to manage state.
+  - Pass functions and data as props to child components.
+  - Update state in response to events (e.g., \`createLike\` function).
+
+## Overcoming Challenges
+
+- Recognized that combining hooks, state, and props can be complex.
+- Encouraged practice, experimentation, and embracing challenges to understand React's data flow.
+- Emphasized that professional software engineers also navigate these complexities.
+
+## HTML and Structuring the Display
+
+- **HTML (HyperText Markup Language)**: Used to structure content on the web.
+- **Elements and Attributes**:
+  - **Events**: Handle user interactions like clicks and hovers.
+  - **ID**: Unique identifier for elements.
+  - **Class**: Groups elements for styling.
+  - **Style**: Inline styling of elements.
+
+- Recommended thinking of HTML elements as containers organized logically.
+
+## CSS and Styling Elements
+
+- **CSS (Cascading Style Sheets)**: Styles the appearance of HTML elements.
+- **Key Concepts**:
+  - **Box Model**: Shapes elements using properties like \`margin\`, \`padding\`, \`border\`, and \`width\`.
+  - **Flexbox Model**: Positions elements in rows or columns for responsive design.
+  - **Animation Model**: Animates elements using CSS animations or JavaScript.
+
+- Suggested using inline styles or CSS-in-JS libraries like Styled-Components with React for better control.
+
+## Combining Concepts
+
+- Provided examples of combining React components with HTML and CSS to create interactive UI elements.
+- Showed how to use state and event handlers to manage data and user interactions.
+- Emphasized the importance of understanding how these technologies work together.
+
+## Practice and Learning
+
+- Encouraged using resources like W3Schools and documentation to explore HTML and CSS attributes.
+- Recommended leveraging AI tools like ChatGPT for assistance.
+- Highlighted the value of hands-on experimentation and breaking down complex problems.
+
+## Conclusion
+
+- Reinforced that mastering frontend development involves understanding components, data flow, and styling.
+- Encouraged continuous practice and exploration to build proficiency.
+- Previewed building real-world applications using the concepts learned.
+
+---
+
+**Note**: This lecture emphasizes the integration of React components with HTML and CSS to create dynamic and responsive user interfaces. Understanding event-driven programming and data flow in React is crucial for developing efficient frontend applications.
+
+    `,
+    "video.summary.4": `
+Backend software engineering often appears mysterious and complex, but this lesson aims to clarify its concepts and make it accessible.
+
+## Lessons Covered
+
+1. **Creating Users**
+2. **Database Foundations**
+3. **Backend Clouds**
+4. **Operating Systems & Machines**
+
+## Operating Systems
+
+- **Modeling the Real World**: Computer science uses technology to simulate real-world systems.
+- **Analogy with a Restaurant Kitchen**: Just as a kitchen has many moving parts to deliver a meal, operating systems manage numerous processes to deliver user experiences.
+- **Variety of Machines**: Understanding different operating systems helps in working with diverse devices like MacBooks, Bitcoin miners, or Tesla robots.
+
+## Command Line Interface (CLI)
+
+- **Text-Based Interaction**: The CLI allows direct communication with the operating system through text commands.
+- **Usability**: Similar to how ChatGPT differs from Google Search, the CLI offers a different form of usability compared to graphical interfaces.
+- **Efficiency**: Engineers use the CLI for efficient and powerful control over the system.
+
+## Backend Engineering
+
+- **Letting Machines Work**: Emphasizes the importance of automating tasks and utilizing powerful tools.
+- **Building Pipelines**: Involves constructing data pathways and routes for various needs, such as distributing data for machine learning or ensuring smooth user experiences.
+- **Modeling Logic**: Programming uses logic to model real-world operations, making complex systems predictable and manageable.
+
+## Using the Command Line
+
+- **Practical Skills**: Encourages familiarity with basic command-line operations like navigating file systems, downloading, installing, and saving files.
+- **Cheat Sheets**: Recommends using cheat sheets to remember essential commands.
+- **Exploration**: Suggests delving into more advanced techniques as curiosity grows.
+
+## Databases
+
+- **Data Storage**: Databases are where data is stored and managed responsibly.
+- **Types of Databases**:
+  - **Relational Databases**: Use tables and structured query language (SQL) to manage data (e.g., Excel spreadsheets).
+  - **Non-Relational Databases**: Use key-value pairs for more flexible data structures.
+- **Organizing Information**: Focuses on using identities and relationships to organize data.
+- **Real-World Example**: Describing restaurant operations using identities like the restaurant name, city, order number, and order type.
+
+## Creating Users
+
+- **User Accounts**: Created by combining data such as login information, personal details, and financial data to form a unique identity.
+- **Authentication**: Uses secret keys and authorization servers to verify and secure user accounts.
+- **Data Direction**: Unique user identities help direct data appropriately within services and applications.
+
+## Conclusion
+
+- **Internalization**: Encourages taking time to understand and imagine the concepts discussed.
+- **Creativity**: Invites learners to be creative and not fear making mistakes.
+- **Acknowledging Challenges**: Recognizes the difficulty but emphasizes that understanding data structures and algorithms aids in grasping larger systems.
+- **Next Steps**: Preparing to connect systems and create an app with user functionalities in upcoming lessons.
+
+---
+
+**Note**: This lesson demystifies backend software engineering by drawing parallels with real-world systems and highlighting the importance of operating systems, command lines, databases, and user creation in building complex applications.
+
+    `,
+    "video.summary.5": `
+In this lesson, we're going step-by-step to piece together everything we've learned so that we can build an application by connecting systems together, culminating in having real users. Tools like Google, YouTube, ChatGPT, and Stack Overflow will be your best friends here if you come across something you want to learn more about.
+    
+## Setting Up The Backend
+
+1. **Install Necessary Tools**:
+    - Download and install **VSCode** (code editor).
+    - Download and install **Node.js** (allows you to build JavaScript apps).
+
+2. **Install npm**:
+    - Open your command line terminal.
+    - Install npm (Node Package Manager) to use packages shared by other developers.
+    - *Note*: Use \`sudo\` cautiously on Unix systems; on Windows, adjust permissions if you encounter errors.
+
+3. **Create a Project Folder**:
+    - Create a folder named after your project (e.g., *The Digital Border*).
+
+4. **Initialize the Project**:
+    - Open VSCode and open your project folder.
+    - Open the integrated terminal in VSCode.
+    - Run \`npm create vite@latest\` to start a React project with Vite.
+    - Follow the prompts to configure the project (choose React and JavaScript).
+    - The configuration might look like this:
+      - Framework: React
+      - Variant: JavaScript
+
+5. **Install Dependencies**:
+    - Run \`npm install\` to install project dependencies listed in \`package.json\`
+
+6. **Run the Application**:
+    - Build the app with \`npm run build\`
+    - Start the development server with \`npm run dev\`
+
+7. **Set Up Firebase (Backend Services)**:
+    - Install Firebase CLI: \`npm install -g firebase-tools\`
+    - Log in to Firebase: \`firebase login\` (authenticate via Google account).
+    - Go to [Firebase Console](https://console.firebase.google.com) and create a new project.
+    - Activate **Authentication**, **Firestore**, and **Hosting** services.
+
+8. **Initialize Firebase in Your Project**:
+    - Run \`firebase init\` and select options to configure Firestore and Hosting.
+    - Choose your existing project when prompted.
+    - Accept defaults for creating rules and indexes files.
+    - Configuration steps:
+      - Activate Firestore and Hosting.
+      - Select "Use an existing project" and choose your project.
+      - Allow Firebase to create rules and indexes files.
+
+9. **Deploy the App**:
+    - Build your app again with \`npm run build\`
+    - Deploy to Firebase Hosting with \`firebase deploy\`
+    - Access your app via the provided Firebase Hosting URL.
+
+## Creating Users
+
+1. **Install Firebase and React Firebase UI**:
+    - Run \`npm install --save firebase react-firebaseui --legacy-peer-deps\`
+
+2. **Enable Authentication in Firebase**:
+    - In the Firebase Console, go to **Authentication** > **Sign-in method**.
+    - Enable **Google** sign-in.
+
+3. **Obtain Firebase Configuration**:
+    - Go to your project settings in Firebase Console.
+    - Select the web app icon to register your app.
+    - Retrieve your app's configuration keys.
+
+4. **Set Up Firebase in Your Code**:
+    - Create a folder \`database\` inside \`src\` and add \`firebaseResources.js\`
+    - Initialize Firebase with your configuration keys in this file.
+
+5. **Implement Authentication UI**:
+    - In \`App.jsx\`, import the sign-in button component from \`react-firebaseui\`
+    - Render the sign-in button in your app.
+
+6. **Manage User State**:
+    - Import necessary Firebase authentication functions.
+    - Define state to track the user's authentication status.
+    - Use the \`useEffect\` hook to handle authentication state changes.
+    - Create a header component to display user information based on authentication state.
+
+7. **Update and Deploy**:
+    - Insert the header component into your app's render method.
+    - Build your app with \`npm run build\`
+    - Deploy the updated app with \`firebase deploy\`
+
+## Summary
+
+- **Set Up Application**: Used the command line to set up a React application with Firebase.
+- **Configured Code**: Connected frontend and backend using identities and keys.
+- **Created Users**: Implemented authentication to create user accounts.
+- **Designed User Experiences**: Built UI components to enhance user interaction.
+- **Frontend vs. Backend**:
+  - *Frontend*: Manages user experiences, visual elements, and events.
+  - *Backend*: Designs pipelines to communicate and move data across networks.
+
+## Working with Other Engineers: GitHub
+
+- **GitHub**: A platform to collaborate with other engineers, similar to Google Drive but optimized for code with version control.
+- **Key Concepts**:
+  1. **Cloning**: Copying code from GitHub to your computer.
+  2. **Adding**: Preparing your code's changes to be shipped to GitHub.
+  3. **Commit**: Adding a label, identity, and description to your container of changes.
+  4. **Pushing**: Deploying or sending your code changes to your GitHub repository.
+  5. **Pulling**: Bringing in any updates from other people to the code.
+  6. **Branches**: Copies of the codebase within the repository itself.
+  7. **Forks**: Copies of the codebase within your profile.
+  8. **Pull Requests**: Comparing changes between branches/forks and merging them.
+  9. **Merging**: Updating code once and for all; completes a lifecycle of updates.
+
+- **Challenge**: Learn GitHub workflows independently to simulate real-world engineering tasks and enhance your problem-solving skills.
+
+## Conclusion
+
+- **Mindset**: Engage your imagination and embrace challenges to build your confidence.
+- **Support**: Private tutoring is available if you need assistance with the material or next steps.
+- **Continuous Learning**: Expect these lessons to upgrade over time.
+- **Gratitude**: Thank you for supporting Robots Building Education. Looking forward to creating more awesome stuff for you!`,
+    "video.summary.6": `
+Data Structures and Algorithms is a subject that often intimidates students due to its complexity and its use in challenging interviews. While it is indeed challenging and requires practice, with proper guidance, the concepts can become more approachable.
+
+## Programming Languages
+
+- **Understanding Code Interpretation**:
+- Computers interpret code by breaking it down into tokens and translating it into machine code.
+- Example:
+  \`\`\`javascript
+  let musician = new Musician("Drake");
+  
+  let top_song = musician.getTopSong();
+  \`\`\`
+- Tokens in the code include keywords (let, new), identifiers (musician, top_song, Musician), operators (=), and literals ("Drake").
+
+- **String Conversion**:
+- Strings are broken down into arrays of characters.
+  - "Drake" becomes \`['D', 'r', 'a', 'k', 'e']\`.
+- Each character is mapped to numerical codes (e.g., ASCII or Unicode) and then to binary representations.
+
+## Data Structures
+
+- **Memory Management**:
+- Computers reserve space in memory and create addresses to reference information.
+- Understanding how data is stored and referenced is crucial for grasping complex data structures.
+
+- **Linked Lists**:
+- A foundational data structure that helps in understanding more complex structures like trees and graphs.
+- Represents a sequence of nodes where each node points to the next.
+
+## Trees and Algorithms
+
+- **Traversing Trees**:
+- **Depth-First Search (DFS)**:
+  - Explores as far as possible along each branch before backtracking.
+  - Useful for scenarios where you need to explore all possible paths.
+
+- **Breadth-First Search (BFS)**:
+  - Explores all neighbors of a node before moving to the next level.
+  - Ideal for finding the shortest path in unweighted graphs.
+
+- **Example of DFS Counting Null Nodes**:
+\`\`\`javascript
+let countNull = (root) => {
+  let count = 0;
+
+  let depthFirstSearch = (currentRoot) => {
+    if (currentRoot === null) {
+      count++;
+      return;
+    }
+
+    for (let nextLocation in currentRoot) {
+      depthFirstSearch(currentRoot[nextLocation]);
+    }
+  };
+
+  depthFirstSearch(root);
+  return count;
+};
+\`\`\`
+
+- **Understanding Traversal**:
+- Visualizing how algorithms navigate through data structures helps in comprehending their functionality.
+- Breaking down each step and counting operations can clarify complex processes.
+
+## Linked Lists
+
+- **Definition**:
+- A linear data structure where each element (node) contains data and a reference (link) to the next node.
+
+- **Building a Linked List**:
+\`\`\`javascript
+class ListItem {
+  constructor(value) {
+    this.value = value;
+    this.linkedTo = null;
+  }
+
+  setLinkedTo(listItem) {
+    this.linkedTo = listItem;
+  }
+
+  getLinkedTo() {
+    return this.linkedTo;
+  }
+}
+
+let meta = new ListItem("meta");
+let instagram = new ListItem("instagram");
+let reels = new ListItem("reels");
+
+// Linking nodes
+instagram.setLinkedTo(reels);
+meta.setLinkedTo(instagram);
+
+class LinkedList {
+  constructor(head) {
+    this.head = head;
+  }
+
+  getLastItem() {
+    let currentItem = this.head;
+    while (currentItem.getLinkedTo()) {
+      currentItem = currentItem.getLinkedTo();
+    }
+    return currentItem;
+  }
+}
+
+let company = new LinkedList(meta);
+
+// Outputs the last item in the list
+console.log(company.getLastItem()); 
+\`\`\`
+
+- **Reversing a Linked List**:
+\`\`\`javascript
+reverse(head) {
+  let previousItem = null;
+  let currentItem = head;
+
+  while (currentItem) {
+    let nextItem = currentItem.getLinkedTo();
+    currentItem.setLinkedTo(previousItem);
+    previousItem = currentItem;
+    currentItem = nextItem;
+  }
+  return previousItem;
+}
+\`\`\`
+
+## Practice and Perseverance
+
+- **Importance of Repetition**:
+- Repeatedly practicing these concepts helps in making them second nature.
+- Taking time to thoroughly understand foundational structures is crucial for tackling advanced topics.
+
+- **Approach to Learning**:
+- Break down complex problems into smaller, manageable parts.
+- Use visualization and counting techniques to follow algorithm steps.
+
+## Advanced Challenges
+
+- **N-Queens Problem**:
+- A classic algorithmic puzzle that involves placing N queens on an N×N chessboard so that no two queens threaten each other.
+- Demonstrates the concept of backtracking and combinatorial complexity.
+- Encourages thinking about optimization and efficient solution strategies.
+- [Learn more about the Eight Queens Puzzle](https://en.wikipedia.org/wiki/Eight_queens_puzzle)
+
+## Conclusion
+
+- **Continuous Learning**:
+- Mastery of data structures and algorithms requires ongoing practice and dedication.
+- Investing time and resources into learning these concepts pays off in the long run.
+
+- **Positive Mindset**:
+- Avoid self-doubt and recognize that challenges are part of the learning process.
+- Affirm your capability to learn and grow in the field of computer science.
+
+- **Seeking Support**:
+- Engage with tutors, mentors, and communities to enhance your understanding.
+- Collaboration and discussion can provide new insights and reinforce learning.
+
+---
+
+**Note**: This lecture emphasizes the foundational importance of data structures like linked lists and trees, and algorithms such as depth-first search. Understanding these core concepts is essential for advancing in computer science and tackling more complex problems.
+    `,
+    "chatcom.instructions.1":
+      "Generate a useful, friendly and professional lecture with javascript coding examples in",
+    "chatcom.instructions.2": "for beginners on the following question/answer:",
+    "button.pickedup": "Picked up",
+    "toast.title.keysCopied": "Keys copied.",
+    "toast.title.chatDataCopied": "Opening ChatGPT...",
+    "toast.description.chatDataCopied":
+      "Paste the data in the following chat to learn more.",
+    "toast.description.keysCopied":
+      "Your secret key has been copied to the clipboard.",
+    "toast.title.addressCopied": "Lightning address copied.",
+    "toast.description.addressCopied":
+      "Your lightning address has been copied.",
+    "toast.title.idCopied": "ID copied.",
+
+    "toast.description.idCopied": "Your ID has been copied.",
+    "landing.welcome": "Sunset",
+    "landing.introduction": (
+      <div>
+        {/* Create scholarships with learning */}
+        A better alternative to Codecademy.
+        <br />
+        <br /> Work smart and learn what you need to know to code and build your
+        ideas with AI quickly.
+        {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
+      </div>
+    ),
+    "landing.button.telemetry": "Create Account",
+    "landing.button.signIn": "Sign In",
+    "createAccount.instructions": "All we need to start is a user name.",
+    "createAccount.input.placeholder": "Enter a user name",
+    "button.back": "Back",
+    "button.create": "Create",
+    "button.save": "Save",
+    "button.close": "Close",
+    "createAccount.isLoading": "Creating...",
+
+    "createAccount.isCreating": "Creating account... 1/3",
+    "createAccount.isCreatingProfile": "Creating profile... 2/3",
+    "createAccount.isCreatingProfilePicture": "Creating profile picture...3/4",
+    "createAccount.isCreatingIntroPost":
+      "Creating community #introductions post... 3/3",
+    "nostrContent.answeredQuestion.1": "Completed question",
+    "nostrContent.answeredQuestion.2": "with a grade of",
+    "nostrContent.answeredQuestion.3": "on",
+    "nostrContent.onboardedProfileAbout":
+      "A student onboarded with Robots Building Education",
+    "nostrContent.introductionPost":
+      "gm nostr! I've joined #LearnWithNostr from Tiktok by creating an account with https://robotsbuildingeducation.com so I can learn how to code with AI.",
+
+    "createAccount.successMessage": "That's it! ✨",
+    "createAccount.lastStepMessage": "Last step (optional)",
+    // "createAccount.lastStepInstructions": "Last step (optional)",
+    "createAccount.awareness":
+      "Your account now works on a number of decentralized apps and works exactly like a mailbox. Use your secret key to sign into apps in our ",
+    "createAccount.roxLink": "decentralized app store",
+    or: "or",
+    "createAccount.primalLink": "with Primal, the social wallet",
+    "button.copyKey": "Copy Secret Key",
+    "createAccount.checkbox.disclaimer":
+      "I understand that my key allows me to sign into different apps that may contain important and private data like Bitcoin. I have safely saved my keys somewhere else.",
+    "createAccount.button.launchApp": "Launch App",
+    "signIn.instructions": "Enter your nostr secret key",
+    "signIn.input.placeholder": "Enter your secret key (nsec...)",
+    "button.dismiss": "Dimiss",
+    "app.progress": "progress",
+    "app.streak": "streak",
+    "app.button.answer": "Answer",
+    "app.button.nextQuestion": "Next Question",
+    "app.button.voiceToText": "Voice To Text",
+    "app.button.voiceToAI": "Voice Request",
+    "app.button.learn": "Learn",
+    "app.listening": "Listening...",
+    "app.input.placeholder": "Type your response or use vocal requests",
+    "settings.title": "Settings",
+    "settings.selfPace": "Self-pace",
+    "settings.button.selfPace": "Self-pace",
+    "settings.button.socialProgress": "Social Progress",
+    "settings.button.adaptiveLearning": "Adaptive Learning",
+    "settings.button.bitcoinMode": "Wallet",
+
+    "settings.button.tutor": "Open Tutor",
+    "settings.button.tutorGPT": "Open Tutor (GPT)",
+    "settings.button.socialWallet": "Decentralize",
+    "settings.button.yourTutor": "Your Tutor",
+    "settings.button.yourProfile": "Your Profile",
+    "settings.button.nostrApps": "App Store",
+    "settings.button.patreon": "Subscription",
+    "settings.button.studyGuide": "Study Guide",
+    "settings.button.feedback": "Feedback",
+    "settings.button.signOut": "Sign Out",
+    "modal.title.decentralizedTranscript": "Decentralized Transcript",
+    "modal.title.selfPace": "Self-pace",
+    "modal.selfPace.instruction":
+      "Choose how much time can elapse to grow your streak. Your streak timer renews every time you make progress.",
+
+    "modal.dailyGoal.instruction":
+      "Choose how many questions to complete to accomplish your daily goal. The goal timer resets every 24 hours.",
+    "modal.selfPace.day": "day",
+    "modal.selfPace.hour": "hour",
+    "modal.selfPace.minute": "minute",
+    "modal.selfPace.mode": "mode",
+    "modal.selfPace.mode.casual": "casual",
+    "modal.selfPace.mode.grind": "grind",
+    "modal.selfPace.mode.motivated": "motivated",
+
+    "modal.adaptiveLearning.stepsTaken": "Your Progress",
+    //create wallet
+    "modal.bitcoinMode.title": "Bitcoin Wallet",
+    "modal.bitcoinMode.instructions.createWallet.1":
+      "The goal is to create scholarships with learning!",
+
+    "modal.bitcoinMode.instructions.createWallet.2":
+      "Selecting a recipient creates a wallet allows you to optionally deposit a maximum of about $0.01 worth in Bitcoin.",
+
+    "modal.bitcoinMode.instructions.createWallet.2.25":
+      "When you answer questions and make progress in the app, your Bitcoin deposit gets spent and sent to your receipient!",
+    "modal.bitcoinMode.instructions.createWallet.2.5":
+      "This feature is experimental.",
+    "modal.bitcoinMode.instructions.createWallet.3":
+      "We recommend scanning with Cash App to buy Bitcoin and create your deposit!",
+
+    //deposit bitcoin
+    "modal.bitcoinMode.instructions.deposit.1":
+      "Press deposit to generate a QR code that you can scan or an address you can send to. This will request about $0.01 worth in Bitcoin from your Bitcoin wallet.",
+
+    "modal.bitcoinMode.instructions.activeWallet.1":
+      "You're now using Bitcoin!",
+
+    "modal.bitcoinMode.instructions.activeWallet.2":
+      "Answer more questions to create scholarships with learning.",
+    "modal.bitcoinMode.instructions.activeWallet.3":
+      "Verify your transactions ",
+
+    "modal.bitcoinMode.instructions.activeWallet.4": "in the public record",
+    "deposit.button": "Deposit",
+    "createWallet.button": "Create Wallet",
+    "lastStep.button": "Next",
+    "deposit.ps":
+      "(P.S. After sending Bitcon to your address, you may need to wait a few seconds before your balance updates.)",
+
+    "modal.bitcoinMode.copyAddressButton": "Copy Address",
+    "modal.bitcoinMode.rechargeButton": "Generate Address",
+    "modal.bitcoinMode.successMessage": "You're now using Bitcoin!",
+    "modal.bitcoinMode.cardNameLabel": "Bitcoin Deposit Card",
+    "modal.bitcoinMode.balanceLabel": "Balance",
+    "modal.bitcoinMode.testCashTapButton": "Test cash tap",
+    "modal.openTutor.title": "Open Tutor",
+    "modal.openTutor.instructions": "Don't forget your keys before leaving!",
+    "modal.openTutor.startButton": "Start Tutoring App",
+    "modal.openSocialWallet.title": "Decentralize",
+    "modal.openSocialWallet.instructions":
+      "Don't forget your keys before leaving!",
+    "modal.openSocialWallet.startButton": "Go To Social Wallet",
+    "modal.learn.title": "Learn",
+    "modal.learn.instructions":
+      "Give us a few seconds to create quick lesson notes.",
+    "modal.feedback.title": "Submit Feedback",
+    "modal.feedback.contactLabel": "Contact",
+    "modal.feedback.contactPlaceholder": "Enter your contact info",
+    "modal.feedback.messageLabel": "Message",
+    "modal.feedback.messagePlaceholder": "Enter your feedback",
+    "modal.feedback.submitButton": "Submit",
+    "modal.feedback.cancelButton": "Cancel",
+    "toast.feedbackSubmittedTitle": "Feedback submitted.",
+    "toast.feedbackSubmittedDescription": "Thank you for your feedback!",
+    "toast.feedbackErrorTitle": "Error submitting feedback.",
+    "toast.feedbackErrorDescription":
+      "An error occurred while submitting your feedback. Please try again.",
+    "mockTerminal.welcomeMessage":
+      "Welcome to the mock terminal. Use basic commands to navigate the file system. Submit your answer in the text input above the terminal.",
+    "mockTerminal.userName": "user@mock-terminal",
+    "mockTerminal.bashCommand": "bash:",
+    "mockTerminal.commandNotFound": "command not found",
+    "mockTerminal.cdCommand": "cd:",
+    "mockTerminal.noSuchFileOrDirectory": "no such file or directory",
+    "mockTerminal.mkDirCommand": "mkDir:",
+    "mockTerminal.cannotCreatDirectory": "cannot create directory",
+    "mockTerminal.fileExists": "File exists",
+    "mockTerminal.catCommand": "cat:",
+    "mockTerminal.noSuchFile": "No such file",
+    "mockTerminal.help":
+      "Available commands: help, clear, ls, cat, mkdir, cd, pwd, echo, printenv, whoami",
+    "mockTerminal.directory": "Directory",
+    "badBrowser.header": "⚠️ Unsupported Browser",
+    "badBrowser.bodyOne":
+      "This platform makes use out of speech recognition to prompt AI to write code vocally on mobile devices. The",
+    "badBrowser.bodyTwo":
+      "browser does not support these features since they develop non-standard in-app browsers. On the brightside, the alternative allows you to download the page as an app on your phone!",
+    "badBrowser.bodyThree": "Simply",
+    "badBrowser.stepOne":
+      "Open this page in your browser with the More Options button",
+    "badBrowser.stepTwo": "Press the Share button",
+    "badBrowser.stepThree": "Press the Add To Homescreen button",
+    "badBrowser.footer":
+      "That's it! You don't need to download the app through an app store because we're using open-source standards for Progressive Web Apps.",
+    "about.about": (
+      <div>
+        Think about how communities fund schools. People work, create income and
+        have that incomed taxed in a number of ways to provide the budgets and
+        funds for schools. This eventually creates walled gardens and
+        inequities.
+        <br />
+        <br />
+        Robots Building Education is a platform using protocols that introduces
+        new ways to provide funds for education by connecting participants
+        beyond neighborhood lines. When students learn, real economic value is
+        created. We believe this should be represented by creating material and
+        resilient outcomes for communities so when you answer questions, Bitcoin
+        gets automatically sent to recipients you select in the form of
+        scholarships.
+        <br />
+        <br />
+        You might notice that this app is a little different than others. Things
+        seem to work faster with less rules. Robots Building Education uses open
+        source protocols to allow for seamless decentralized, cross-platform and
+        permissionless experiences.
+        <br />
+        <br />
+        This means depositing Bitcoin and sending it is as easy as easy as
+        scanning a QR code with a popular app like Cash App and answering a
+        question. That's it! No more and no less is needed.
+        <br />
+        <br />
+        This is a new way that the internet can work. It can be used and afford
+        new experiences like the ability to publish progress across different
+        apps, create scholarships with learning or even take your Bitcoin
+        deposits to other places!
+      </div>
+      // <div>
+      //   The point of AI is to save you time and energy. At the same time, real
+      //   education is about challenging yourself so that you can create real
+      //   knowledge. In short, you'll work through 100+ questions and it will
+      //   introduce you to building your ideas with software, learning computer
+      //   science and creating opportunities for yourself with good technology.
+      //   <br />
+      //   <br />
+      //   I also want to teach you quickly, effectively and in a similar fashion
+      //   to you having to pick up the skills on the job. At the end of the day, a
+      //   software entrepeneur needs to learn about business, engineering,
+      //   investing, marketing, sales, design and a number of other well-rounded
+      //   skills in order to be successful, which is what we try to prepare you
+      //   here with.
+      //   <br />
+      //   <br />
+      //   There are many things beyond coding taught on RO.B.E, ranging from the
+      //   psychology of self-esteem, to the development of startups distributed
+      //   globally. You are encouraged to imagine, think big and work hard in
+      //   order to find success here.
+      //   <br />
+      //   <br /> The app is a service created by Robots Building Education, a
+      //   platform founded on researching technology the following three
+      //   priorities:
+      //   <br /> <br />
+      //   1. Every student should have access to many good teachers.
+      //   <br />
+      //   2. Online education should be the best education.
+      //   <br />
+      //   3. Learning creates scholarships.
+      //   <br />
+      //   <br />
+      //   This is accomplished with the human-computer interaction discipline,
+      //   which researches how to make technology more useful and meaningful. I
+      //   personally revise anything done with AI to add human touch to it as to
+      //   not offer cheap generated material but a genuine delivery of good
+      //   quality education.
+      //   <br />
+      //   <br />
+      //   The following are all the features and benefits you'll find across the
+      //   platform which are typically free. As of now I just ask folks to
+      //   optionally sign up for $10 to access more content around
+      //   entrepreneurship, finance, and engineering to the work and to create a
+      //   stronger network.
+      //   <br />
+      //   <br />
+      //   Why so low for so much? I love education technology and I want to work
+      //   on this platform until you feel it's worth supporting. I also believe
+      //   that social media helps me reach so many people that keeping it low
+      //   price is only fair. I would eventually like to explore teaching folks so
+      //   we can create a pipeline to access more capital from folks eager to
+      //   invest in diverse technology businesses.
+      //   <br />
+      //   <br />
+      //   {/* <a
+      //     style={{ textDecoration: "underline" }}
+      //     href="https://patreon.com/notesandotherstuff"
+      //     target="_blank"
+      //   >
+      //     https://patreon.com/notesandotherstuff
+      //   </a> */}
+      // </div>
+    ),
+    "button.secretKey": "Secret Key",
+    "button.about": "About",
+    "about.featuresHeader": "Features",
+
+    "about.title": "What is this?",
+    "about.title.programAiApp": "App: Robots Building Education",
+    "about.platform.programAiApp": (
+      <div>
+        The app is a series of 100 questions meant to be easily integrated into
+        social media with AI. The goal is to make access to education easier
+        while also making it possible to learn skills like coding on mobile
+        devices with useful AI features.
+        <br />
+        <br />
+      </div>
+    ),
+
+    "about.platform.rox": (
+      <div>
+        Rox is a hand crafted teaching assistant that delivers lectures or
+        courses on the material that informs the questions inside of Program AI
+        App experience. Although robotic looking, it's mostly me doing the
+        majority of the teaching. Once the main product, now a feature connected
+        to Robots Building Education.
+      </div>
+    ),
+    "about.platform.roxGPT": (
+      <div>
+        The ChatGPT version of the applications - a chat assistant armed by the
+        information and content found on Robots Building Education.
+      </div>
+    ),
+    "about.platform.Patreon": (
+      <div>
+        A content & community platform to help you stay in touch via email over
+        deeper material into technology, education, entrepreneurship, investing
+        and other important skills.
+      </div>
+    ),
+    "about.title.rox": "App: Rox",
+    "about.title.roxGPT": "Custom GPT",
+    // "about.title.Patreon": "App: Patreon",
+
+    "about.title.decentralizedIdentity": "Decentralized Identity",
+    "about.title.spanishMode": "Spanish Mode",
+    "about.title.streaks": "Streaks",
+    "about.title.quizSeries": "Quiz Series",
+    "about.title.vocalCoding": "Vocal Coding",
+    "about.title.aiLectureNotes": "AI Lecture Notes",
+    "about.title.aiFeedback": "AI Feedback",
+    "about.title.adaptiveLearning": "Adaptive Learning",
+    "about.title.bitcoinWallet": (
+      <div>
+        {/* <Datatags isNew /> */}
+        Bitcoin Wallet
+      </div>
+    ),
+    "about.title.customerService": "Customer Service",
+    "about.title.lectures": "Hand Crafted Lectures",
+    "about.title.conversationQuiz": "Conversation Quiz",
+    "about.title.schedulingAssistant": "Scheduling Assistant",
+    "about.title.shop": "Shop",
+    "about.title.algorithmHelper": "Algorithm Helper",
+    "about.title.emotionalIntelligence": "Emotional Intelligence",
+    "about.title.syllabus": "Syllabus",
+    "about.title.guides": "Guides",
+    "about.title.insights": "Insights",
+    "about.title.ofi": "Old-fashioned Intelligence",
+
+    "about.title.smartCards": <div>Smart Cards</div>,
+    "about.title.socialProgress": <div>Social Progress</div>,
+    "about.feature.socialProgress": (
+      <div>
+        {/* <DataTags isNew /> */}
+        See the progress of other folks learning using our decentralized
+        technology!
+      </div>
+    ),
+    "about.title.buildYourApp": <div>Build Your App</div>,
+    "about.feature.buildYourApp": (
+      <div>
+        {/* <DataTags isNew /> */}A feature that lets you materialize your
+        learning by creating an app or an idea as you progress.
+      </div>
+    ),
+
+    "about.feature.decentralizedIdentity": (
+      <div>
+        {/* <Datatags isRox isProgramAI /> */}
+        Robots Building Education leverages decentralized identities to allow
+        for cross-platform accounts and data ownership. This allows us to
+        integrate our apps directly inside of social media. All we need is a
+        simple user name and we'll create keys that let you access the bridge
+        into the decentralized world.
+      </div>
+    ),
+    "about.title.decentralizedTranscripts": "Cross-platform Transcripts",
+    "about.feature.smartCards": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        Smart card is an intelligent flashcard feature that creates new practice
+        questions based on your progress. You can keep practicing problems at
+        the same difficulty and knowledge level before continuing to the next
+        question.
+      </div>
+    ),
+    "about.feature.decentralizedTranscripts": (
+      <div>
+        <DataTags isRox isProgramAI />
+        Making progress on either app will award you transcript badges that you
+        can carry cross-platform to other apps. This makes online education more
+        awesome and representative of effort.
+      </div>
+    ),
+    "about.feature.spanishMode": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        Robots Building Education is available in Spanish. You're welcome to
+        learning in Spanish to practice your human language skills too!
+      </div>
+    ),
+    "about.feature.streaks": (
+      <div>
+        {/* <DataTags isProgramAI /> */}A self-pacing feature to help you stay
+        discplined. Set up 30 minute to 3 day timers!
+      </div>
+    ),
+    "about.feature.quizSeries": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        100 questions informed by the rox teaching assistant, paired with a
+        number of features to introduce you to new concepts and challenges.
+      </div>
+    ),
+    "about.feature.vocalCoding": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        The ability to record your answer vocally so that AI can transform your
+        request into code on mobile devices.
+      </div>
+    ),
+    "about.feature.aiLectureNotes": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        Each question comes with the ability to generate lecture notes so that
+        you can learn more about the question as you're introduced to a new
+        challeng.
+      </div>
+    ),
+    "about.feature.aiFeedback": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        Each question is graded by AI before allowing you to continue to the
+        next question.
+      </div>
+    ),
+    "about.feature.adaptiveLearning": (
+      <div>
+        {/* <DataTags isProgramAI isRox /> */}A feature that keeps track of your
+        progress and suggests the next best challenge to learn.
+      </div>
+    ),
+    "about.feature.bitcoinWallet": (
+      <div>
+        {/* <DataTags isProgramAI /> */}
+        An experimental feature that lets me easily monetize interactions with
+        the apps rather than bundling it behind subscriptions to be able to
+        create scholarships with learning. Right now you can only deposit $0.02
+        so that each interaction costs about $0.0008 USD per interaction. All
+        you need is a Cash App and youll be easily able to deposit for use! Now
+        works cross-platform with other apps like https://civico.app.
+      </div>
+    ),
+    "about.feature.customerService": (
+      <div>
+        {/* <DataTags isPatreon /> */}
+        With enough support, I'm able to run more personal service with remote
+        calls, tutoring and other direct-to-student effort.
+      </div>
+    ),
+    "about.feature.lectures": (
+      <div>
+        {/* <DataTags isRox isProgramAI /> */}A collection of lectures that I
+        believe are high value created with high quality animation and effort.
+        The experience is an introduction to advanced concepts done in a way to
+        inspire confidence into a journey of learning.
+      </div>
+    ),
+    "about.feature.conversationQuiz": (
+      <div>
+        {/* <DataTags isRox isProgramAI /> */}A quiz feature where your
+        conversation with AI can be graded.
+      </div>
+    ),
+    "about.feature.schedulingAssistant": (
+      <div>
+        {/* <DataTags isRox isPatreon /> */}A feature to help you schedule your
+        learning on a micro and macro level.
+      </div>
+    ),
+    "about.feature.shop": (
+      <div>
+        {/* <DataTags isRox isPatreon />  */}
+        The ability to shop for books to deepen your knowledge across domains.
+      </div>
+    ),
+    "about.feature.algorithmHelper": (
+      <div>
+        {/* <DataTags isRox /> */}A feature that help you train your
+        understanding of algorithms with decision-making patterns, code
+        assistance and feedback
+      </div>
+    ),
+    "about.feature.emotionalIntelligence": (
+      <div>
+        {" "}
+        {/* <DataTags isRox isPatreon /> */}
+        An emotion tracking feature centered around self-esteem.
+      </div>
+    ),
+    "about.feature.syllabus": (
+      <div>
+        {/* <DataTags isPatreon /> */}A challenging getting started kit for
+        short term and long term knowledge gains.
+      </div>
+    ),
+    "about.feature.guides": (
+      <div>
+        {/* <DataTags isPatreon /> */}
+        Higher intent essays and software on investments and software
+        development{" "}
+      </div>
+    ),
+    "about.feature.insights": (
+      <div>
+        {" "}
+        {/* <DataTags isPatreon /> */}
+        Behind the scenes access to the development of Robots Building Education
+      </div>
+    ),
+    "about.feature.ofi": (
+      <div>
+        {/* <DataTags isPatreon /> */}
+        Paid (but inexpensive) content for post-platform learning. Developed
+        with the intention to attempt to produce a significant return on
+        investment for supporting the platform.
+      </div>
+    ),
+    "button.addToConversation": "Add To Conversation",
+    "button.subjectsCovered": "Subjects Covered",
+    "link.connectWithMe": "Connect with me!",
+    "tags.grade": "Grade: ",
+    "Sunset Tutorial": "Sunset Tutorial",
+    "Basics of Coding": "Basics of Coding",
+    "Object-Oriented Programming": "Object-Oriented Programming",
+    "Frontend Development": "Frontend Development",
+    "Backend Engineering Fundamentals": "Backend Engineering Fundamentals",
+    "Creating Apps & Experiences": "Creating Apps & Experiences",
+    "Computer Science": "Computer Science",
+    "Introduction to Engineering": "Introduction to Engineering",
+    "Programming Fundamentals": "Programming Fundamentals",
+    "Frontend Software Engineering": "Frontend Software Engineering",
+    "Backend Software Engineering": "Backend Software Engineering",
+    "Data Structures & Algorithms": "Data Structures & Algorithms",
+    "Full-stack Software Engineering": "Full-stack Software Engineering",
+    "Psychology of Self-esteem": "Psychology of Self-esteem",
+    "Philosophy of Critical Theory & Technology":
+      "Philosophy of Critical Theory & Technology",
+    "Human-Computer Interaction": "Human-Computer Interaction",
+    "Business Writing": "Business Writing",
+    "Introduction to Finance": "Introduction to Finance",
+    "modal.decentralizedTranscript.youEarned": "You earned",
+    "modal.decentralizedTranscript.awareness":
+      "These badge awards are cross-platform and can be found in other apps in our decentralized app store. That way you own your online education!",
+    "modal.decentralizedTranscript.awardsEarned": "Awards Earned",
+    loading: "Loading...",
+    "loading.wallet": "Generating Wallet...",
+    "loading.wallet.address": "Creating Address...",
+
+    "settings.button.transcript": "Transcript",
+    "modal.transcript.instructions": "",
+    yourID: "Your ID",
+    noTranscriptFound: "No older transcripts awards were found.",
+    chapter: "chapter",
+    tutorial: "Tutorial",
+    congratulations: "Congratulations!",
+    "congrats.message":
+      "You have completed the quiz. You should be proud because most people don't get this far. You are genuinely exceptional. Well done!",
+    "congrats.connect": "Connect with everyone that has finished",
+    advice: "My Advice",
+    "advice.content": (
+      <div>
+        This platform will help you learn fast and effectively, but it is also
+        designed to challenge you. Real education can be uncomfortable and you
+        have to embrace failure, mistakes and the improvement process. This
+        platform isn't designed to be like Tiktok or Duolingo, where the
+        material is handed to you in a way to maximize engagement, it's meant
+        for you to learn and grow using the power of AI. In short, doing things
+        the gritty way is often more enjoyable and meaningful. If you come
+        across something confusing or tough, work through it! You'll be grateful
+        you did.
+        <br />
+        <br />
+        This platform comes with a tutor called Rox that will provide
+        introductory video lectures that are handcrafted and animated to arm you
+        with knowledge before or after practicing the questions involved in each
+        chapter. Each lecture starts by working backwards, so that you can get
+        used to appreciating challenge-oriented learning.
+      </div>
+    ),
+    "passcode.instructions": (
+      <div>
+        You'll need to subscribe to the Robots Building Education Patreon in
+        order to access the rest of the experience.
+        <br />
+        <br />
+        <div style={{ fontSize: "0.95rem" }}>
+          It's packed with value and refund friendly. I made sure that it's
+          worth every penny so you can get a great return on investment for your
+          time, energy and money.
+        </div>
+        <br />
+        <div style={{ fontSize: "0.95rem" }}>
+          <b>Your subscription will get you:</b>
+          <OrderedList>
+            <ListItem>Full access to this app.</ListItem>
+
+            <ListItem>Personal assistance from me and a group chat.</ListItem>
+            <ListItem>
+              Competitive coding projects &amp; advanced software engineering
+              material.
+            </ListItem>
+            <ListItem>
+              Access to crash courses, startup development content &amp; finance
+              content.
+            </ListItem>
+
+            <ListItem>
+              Love, appreciation &amp; respect from me for helping me build
+              education technology, create scholarships and succeed as a small
+              business owner.{" "}
+            </ListItem>
+          </OrderedList>
+        </div>
+        <br />
+        <a
+          style={{
+            fontSize: "0.95rem",
+            textDecoration: "underline",
+            color: "#63b3ed",
+            fontWeight: "bold",
+          }}
+          href="https://www.patreon.com/NotesAndOtherStuff/about"
+          target="_blank"
+        >
+          Register and subscribe as a member
+        </a>
+        <br />
+        <br />
+        <a
+          style={{
+            fontSize: "0.95rem",
+            textDecoration: "underline",
+            color: "#63b3ed",
+            fontWeight: "bold",
+          }}
+          href="https://www.patreon.com/posts/syllabus-getting-86153437?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link"
+          target="_blank"
+        >
+          Get the passcode
+        </a>{" "}
+        <span style={{ fontSize: "0.95rem" }}>
+          or find it by going to the Start Learning collection after
+          subscribing.
+        </span>
+      </div>
+    ),
+    "passcode.label": "Enter passcode",
+    "email.donotdelete": "Data about the question, do not delete pls 🙏🙏🙏",
+    "email.question": "Question",
+    thinking: "Thinking...",
+    "prompt.passcode":
+      "Enter the subscriber passcode in order to enable AI features. The subscription platform can be found in the settings menu.",
+    "prompt.invalid_passcode": "Invalid passcode!",
+    "lockout.message": "You've reached the maximum number of attempts.",
+    "lockout.suggestion":
+      "Please take a 15-minute break or study the material before trying again.",
+    "lockout.timer": "Time remaining",
+    "lockout.toastTitle": "Locked Out",
+    "lockout.toastDescription":
+      "You've been locked out for 15 minutes due to multiple incorrect attempts.",
+    "lockout.attempts": "Incorrect attempts",
+    "lockout.outOf": "out of",
+    "lockout.message":
+      "We've gotten the problem wrong 5 times in a row! Let's slow down, take a quick 15 minute break and rethink our strategy.",
+    "ai.error": "Error formatting AI response",
+    "label.new": "New!",
+    confirm: "Confirm",
+    cancel: "Cancel",
+    analyzer: "Analyzing your progress & creating new question card",
+    "settings.button.algorithmHelper": "Algorithm Practice",
+    "modal.title.algorithmHelper": "Algorithm Practice",
+    "algorithmHelper.button.generateProblem": "Generate Algorithm Problem",
+    "learnwithnostr.intructions":
+      "Connect with others using decentralized education technology!",
+    adaptive_learning_off: "Adaptive learning is off.",
+    adaptive_learning_on: "Adaptive learning is on.",
+    "buildYourApp.how_to_use_feature": "How to use this feature:",
+    "buildYourApp.step_1": "Define the idea or app you want to build.",
+    "buildYourApp.step_2": "Generate code based on your progress.",
+    "buildYourApp.step_3": "Copy the code & prompt after generating it.",
+    "buildYourApp.step_4": "Submit the code to the app you get redirected to.",
+    "buildYourApp.step_5": "Congrats! You're building your app using AI!",
+    "buildYourApp.input.label": "Your idea",
+    "buildYourApp.button.label.1": "Create your idea",
+    "buildYourApp.button.label.2": "Update your idea",
+    "buildYourApp.idea.label": "Idea you're building:",
+    "modal.adaptiveLearning.title": "Build your app",
+    "modal.adaptiveLearning.recommendButton": "Build your app",
+    copied: "Copied!",
+    copy_code_launch_builder: "Copy, build and ship with v0",
+    "subscription.nudge": (
+      <>
+        <b>Are you enjoying the experience?</b>
+        <p style={{ maxWidth: "600px" }}>
+          Subscriptions help us pay for the cost of creating scholarships, AI
+          and improving the technology as a small creator business. It costs
+          less than $6 with discounts and you get much more content on
+          investing, engineering and business!
+        </p>
+        <br />
+      </>
+    ),
+    "tag.allowPosting": "Do not post my progress",
   },
 };

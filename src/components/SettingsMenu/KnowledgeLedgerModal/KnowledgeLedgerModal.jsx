@@ -47,30 +47,51 @@ export let transcriptDisplay = {
   tutorial: {
     en: "Tutorial",
     es: "Tutorial",
+    "py-en": "Tutorial",
+    "swift-en": "Tutorial",
+    "android-en": "Tutorial",
   },
   1: {
     en: "Basics of Coding",
     es: "Fundamentos de la Programación",
+    "py-en": "Basics of Coding",
+    "swift-en": "Basics of Coding",
+    "android-en": "Basics of Coding",
   },
   2: {
     en: "Object-Oriented Programming",
     es: "Programación Orientada a Objetos",
+    "py-en": "Object-Oriented Programming",
+    "swift-en": "Object-Oriented Programming",
+    "android-en": "Object-Oriented Programming",
   },
   3: {
     en: "Frontend Development",
     es: "Desarrollo Frontend",
+    "py-en": "Frontend Development",
+    "swift-en": "Frontend Development",
+    "android-en": "Frontend Development",
   },
   4: {
     en: "Backend Engineering Fundamentals",
     es: "Fundamentos de Ingeniería de Backend",
+    "py-en": "Backend Engineering Fundamentals",
+    "swift-en": "Backend Engineering Fundamentals",
+    "android-en": "Backend Engineering Fundamentals",
   },
   5: {
     en: "Creating Apps & Experiences",
     es: "Creando Aplicaciones y Experiencias",
+    "py-en": "Creating Apps & Experiences",
+    "swift-en": "Creating Apps & Experiences",
+    "android-en": "Creating Apps & Experiences",
   },
   6: {
     en: "Computer Science",
     es: "Ciencias de la Computación",
+    "py-en": "Computer Science",
+    "swift-en": "Computer Science",
+    "android-en": "Computer Science",
   },
 };
 
@@ -273,7 +294,7 @@ export const KnowledgeLedgerModal = ({
   
 4. Strictly include a prompt that a user can submit to build the application first and then the code written by a formatted backticked code block. Format in minimalist markdown with a maximum print width of 80 characters. Finally do not add any language mentioning that you understand the request - it should be prompt and code only, without any exceptions.
 
-5. The user is speaking in ${userLanguage === "en" ? "English" : "Spanish"}.`;
+5. The user is speaking in ${userLanguage.includes("en") ? "English" : "Spanish"}.`;
 
       if (userIdea) {
         prompt =

@@ -5577,190 +5577,107 @@ console.log(arr);
       },
     },
   ],
+
   "py-en": [
     {
       group: "introduction",
-      title: "Introduction To Software Development",
+      title: "Introduction To Python Development",
       isStudyGuide: true,
       description:
-        "Expose yourself to fundamentals to improve the quality of your learning before making progress.",
+        "Expose yourself to Python fundamentals to improve the quality of your learning before making progress.",
       question: {
         questionText: (
           <div>
             <p style={{ marginBottom: 12 }}>
               One of the best predictors for student success is exposure to
               course material before studying it. You're encouraged to read
-              about the fundamentals of software in the study guide before
-              starting. You can reference this study guide in the menu
-              throughout your progress too.
+              about the fundamentals of Python in this study guide before
+              starting. You can reference this guide in the menu throughout your
+              progress, too.
             </p>
-
             <p style={{ marginBottom: 12 }}>
               Remember to fail faster and fail forward! The real education
               happens when you push through a challenge. We'll start off nice
-              and easy at first, but then we'll start to level up the difficulty
-              as you collect more progress. Make sure to use the tools at your
-              disposal! You're going to need it.
+              and easy at first, then level up in difficulty as you collect more
+              progress. Make sure to use the tools at your disposal—you’re going
+              to need them.
             </p>
           </div>
         ),
         metaData: `### Advice
-I know this looks like ChatGPT content... 
+I know this looks like ChatGPT content…but it's not—it's me!
 
-but it's not -_-" It's me!
-
-It's important to remember this as a beginner:
-
-1. Building things with software is mostly about organizing information rather than being good at math. Programming languages use logic and computation to express ideas instead of equations and algebra.
-
-2. Like the English language, you can express things in many different ways.
-
-3. When something challenges you, fail faster and break the problem into more understandable steps.
-
+As a beginner, remember:
+1. Programming is mostly about organizing information rather than complex math. Code uses logic and control flow instead of algebraic equations.
+2. Like natural languages, you can express the same idea in many ways.
+3. When something challenges you, fail faster and break the problem into smaller, understandable steps.
 
 ### Exposure
-The idea here is to expose you to concepts before you start to answer questions about it in the app so you aren't intimidated by it later. Don't worry about not understanding everything. In fact, try your best to make sense out of it at a glance or use AI to your advantage to create an understanding.
+This guide exposes you to concepts before you answer questions, so you aren’t intimidated later. Don’t worry if you don’t grasp everything—skim it, then dive in.
 
-### Code
+### Core Concepts in Python
 
-Let's observe these lists. We can see that:
-- \`my_custom_data && my_custom_list\` are equivalent.
-- \`data_set && data_object\` are also fundamentally equivalent.
+\`\`\`py
+# Lists vs constructors
+my_list = [1, 2, 3, 'a', 'b', 'c', None, False]
+my_list.append('new data')
 
-
-\`\`\`js
-let my_custom_data = [1, 2, 3, 'a', 'b', 'c', null, false]
-const my_custom_list = new Array(1,2,3,'a','b','c', null, false)
-my_custom_data.push('new data')
-my_custom_list.push('new data')
-
-let data_set = {
-  introduction: "Welcome",
-  title: "Chapter 1",
-  is_live: true
+# Dictionaries (key/value objects)
+data_set = {
+    "introduction": "Welcome",
+    "title": "Chapter 1",
+    "is_live": True
 }
-data_set.page = 4
-data_set['book'] = 'Coding Basics'
-
-let data_object = new Object()
-data_object.introduction = 'Welcome'
-data_object.title = 'Chapter 1'
-data_object.is_live = true
-data_object.page = 4
-data_object['book'] = 'Coding Basics'
-
+data_set["page"] = 4
+data_set["book"] = "Coding Basics"
 \`\`\`
 
-Additionally, in the example above, we're exposed to variable definitions, data types, arrays, functions and objects. A lot of the software that you likely operates on those concepts under the hood. This is way \`[]\` and \`new Array\` can create the same data - it translates the same way when it comes to turning your code into signals that can be sent across the internet.
+\`\`\`py
+# Custom classes
+class House:
+    def __init__(self, paint=None):
+        self.house_paint = paint
 
-Now in the example below, we take a look at creating our own custom objects. We create our own custom object, along with an interface of functions. Generally when it comes to data, you're able to create, retrieve, update or delete it in some form or another.
+    def get_paint(self):
+        return self.house_paint
 
-\`\`\`js
-class House {
-  house_paint = null
+    def set_paint(self, paint):
+        self.house_paint = paint
 
-  constructor(paint){
-    this.house_paint = paint
-  }
-
-  getPaint(){
-    return this.house_paint
-  }
-
-  setPaint(paint) = (paint) => {
-    this.house_paint = paint
-  }
-
-  deletePaint = () => {
-    this.house_paint = null
-  }
-}
-
-let first_home = new House("pink")
-let next_home = new House("blue")
-
-let first_paint = first_house.getPaint() // returns the value "pink"
-let next_paint = new_home.house_paint // returns the value "blue"
-next_paint = new_home['house_paint'] // still returns the value 'blue'
-
+    def delete_paint(self):
+        self.house_paint = None
 \`\`\`
 
-So that's creating data and working with data. You'll find that you can usually combine ideas depending on what you need to create. For example, the above component can also be written the following way:
+### Data Analysis with pandas
 
-\`\`\`js
-function createHouse(paint = null) {
-  return {
-    house_paint: paint,
+\`\`\`py
+import pandas as pd
 
-    getPaint() {
-      return this.house_paint;
-    },
+# Create a DataFrame
+df = pd.DataFrame({
+    "house_paint": ["pink", "blue", "green"],
+    "rooms": [3, 4, 2]
+})
 
-    setPaint(paint) {
-      this.house_paint = paint;
-    },
+# Inspect your data
+print(df.head())      # first rows
+print(df.describe())  # summary statistics
 
-    deletePaint() {
-      this.house_paint = null;
-    },
-  };
-}
-
-//what is the value of the result by the end of the program?
-const myHouse = createHouse('blue');
-let paint = myHouse.house_paint;
-
-myHouse.house_paint = 'red'; 
-paint = myHouse.getPaint()
-
-myHouse.setPaint('green'); 
-paint = myHouse.house_paint
-
-myHouse.deletePaint(); 
-
-let result = myHouse['house_paint']
+# Filter and group
+filtered = df[df["rooms"] >= 3]
+grouped = df.groupby("house_paint").rooms.mean()
 \`\`\`
-
-
-Finally, we combine this to work with some code that renders the following screen
-\`\`\`jsx
-const CelebrationMessage = ({ name }) => {
-  const styling_data = {
-    textAlign: 'center'
-  }
-  
-  return <div style={styling_data}>{name}</div>
-}
-
-const App = () => {
-  return (
-    <section style={{ border: '3px solid black' }}>
-      <header>
-        <h2>Good job!</h2>
-      </header>
-      
-      <CelebrationMessage name="You created a small app!" />
-     </section>
-  )
-}
-\`\`\`
-
-
-And that's all! In the last example, we've used a library called React, which gives us access to special functions that are specialized for rendering elements on a screen. But it follows the same thought process as the stuff before it.
 
 ### Conclusion
-Remember that failing faster is in your best interest when learning new skills with software. This one pager document will be available inside of the app. There are also many other features to help your journey along the way, but I'll leave that to your exploration of the platform and everything it has to offer.
-
-Stay focused and best of luck with the rest!
-        `,
+Failing fast is in your best interest when learning a new language. This one-pager will be available inside the app. Good luck, and happy coding!
+`,
       },
     },
-    // Add these entries to `"py-en": [ … ]` immediately after the “introduction” object:
 
     {
       group: "tutorial",
       title: "Understanding Coding",
-      description: "Grasp the basic concept of coding.",
+      description: "Grasp the basic concept of coding in Python.",
       isMultipleChoice: true,
       question: {
         questionText: "Which of the following best describes coding?",
@@ -5780,18 +5697,18 @@ Stay focused and best of luck with the rest!
       isSelectOrder: true,
       question: {
         questionText:
-          "Arrange the steps with drag-and-drop and order how programs execute.",
+          "Arrange the steps with drag-and-drop to order how a Python program executes.",
         options: [
           "Writing Code",
-          "Code Compilation",
+          "Code Interpretation",
           "Debugging",
-          "Executing Program",
+          "Program Execution",
         ],
         answer: [
           "Writing Code",
-          "Code Compilation",
+          "Code Interpretation",
           "Debugging",
-          "Executing Program",
+          "Program Execution",
         ],
       },
     },
@@ -5799,28 +5716,29 @@ Stay focused and best of luck with the rest!
       group: "tutorial",
       title: "Introduction to Variables",
       description:
-        "Select all the steps involved in correctly declaring a variable in Python.",
+        "In this step, you will learn about variables and how to use them in your code.",
       isMultipleAnswerChoice: true,
       question: {
         questionText:
           "Select all the steps involved in correctly declaring a variable in Python:",
         options: [
           "Choose a descriptive variable name",
+          "Start the name with a letter or underscore",
           "Assign a value using the equals sign (=)",
-          "Ensure the variable name doesn't start with a number",
-          "Use lowercase letters and underscores",
-          "Capitalize the first letter of the variable name",
-          "Begin the variable name with a number",
+          "End the name with a semicolon (;)",
+          "Use uppercase letters for all variable names",
+          "Include type annotations for static typing",
         ],
         answer: [
           "Choose a descriptive variable name",
+          "Start the name with a letter or underscore",
           "Assign a value using the equals sign (=)",
         ],
       },
     },
     {
       group: "tutorial",
-      title: "Understanding Variable Declarations for Lists",
+      title: "Understanding List Declarations",
       description:
         "Complete the code by selecting the correct way to declare a list of items in Python.",
       isCodeCompletion: true,
@@ -5828,24 +5746,24 @@ Stay focused and best of luck with the rest!
         questionText:
           "Which code block correctly declares a list of items in Python?",
         options: [
-          "items = ['apple', 'banana', 'cherry']",
-          "items = ('apple', 'banana', 'cherry')",
-          "items = {'apple', 'banana', 'cherry'}",
-          "items = 'apple, banana, cherry'",
-          "items = dict(fruit1='apple', fruit2='banana', fruit3='cherry')",
+          `items = ['apple', 'banana', 'cherry']`,
+          `items = {'apple': 1, 'banana': 2, 'cherry': 3}`,
+          `def items():\n    return 'apple, banana, cherry'`,
+          `items = 'apple, banana, cherry'`,
+          `class Items:\n    pass`,
         ],
-        answer: "items = ['apple', 'banana', 'cherry']",
+        answer: `items = ['apple', 'banana', 'cherry']`,
       },
     },
     {
       group: "tutorial",
-      title: "Variable Declaration in Python",
-      description: "Learn how to declare variables in Python.",
+      title: "Variable Assignment in Python",
+      description: "Learn how to assign values to variables in Python.",
       isCode: true,
       isTerminal: false,
       question: {
         questionText:
-          "Declare a variable named `age` and assign it the value `25` in Python.",
+          "Declare a variable named `age` and assign it the value 25.",
       },
     },
     {
@@ -5855,9 +5773,9 @@ Stay focused and best of luck with the rest!
       isSingleLineText: true,
       question: {
         questionText:
-          "What naming convention is used to denote a constant in Python?",
+          "By convention, how should you name a constant in Python?",
         placeholder: "Type your answer here...",
-        answer: "Use uppercase letters for the variable name",
+        answer: "UPPERCASE_WITH_UNDERSCORES",
       },
     },
     {
@@ -5878,7 +5796,7 @@ Stay focused and best of luck with the rest!
       isTerminal: true,
       question: {
         questionText:
-          "Enter the command to change to the new_folder directory using a bash terminal",
+          "Enter the command to change to the `new_folder` directory using a Bash terminal.",
       },
     },
     {
@@ -5889,6 +5807,6893 @@ Stay focused and best of luck with the rest!
       question: {
         questionText: "Let's chat about the questions we've worked on so far.",
         range: [1, 8],
+      },
+    },
+    // 1
+    {
+      group: "1",
+      title: "Data Types in Programming",
+      description: "Identify different primitive data types used in Python.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following are primitive data types in Python?",
+        options: [
+          "str",
+          "int",
+          "float",
+          "bool",
+          "NoneType",
+          "list",
+          "dict",
+          "complex",
+        ],
+        answer: ["str", "int", "float", "bool", "NoneType", "complex"],
+      },
+    },
+    // 2
+    {
+      group: "1",
+      title: "Steps to Create a Function",
+      description: "Understand the sequence of creating and using a function.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps with drag-and-drop to create and use a Python function.",
+        options: [
+          "Define the function",
+          "Call the function",
+          "Execute the function body",
+          "Return a value",
+        ],
+        answer: [
+          "Define the function",
+          "Call the function",
+          "Execute the function body",
+          "Return a value",
+        ],
+      },
+    },
+    // 3
+    {
+      group: "1",
+      title: "Writing a Simple Function",
+      description: "Practice writing functions in Python.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write a function named `greet` that takes a name as a parameter and prints a greeting with that name.",
+      },
+    },
+    // 4
+    {
+      group: "1",
+      title: "Functions in Programming",
+      description: "Discuss the role of functions.",
+      isText: true,
+      question: {
+        questionText:
+          "What is a function, and why is it useful in programming?",
+      },
+    },
+    // 5
+    {
+      group: "1",
+      title: "Conditional Statements",
+      description: "Identify the purpose of conditional statements.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "What is the primary purpose of an `if` statement?",
+        options: [
+          "To repeat a block of code multiple times",
+          "To execute a block of code based on a condition",
+          "To define a variable",
+          "To import external libraries",
+        ],
+        answer: "To execute a block of code based on a condition",
+      },
+    },
+    // 6
+    {
+      group: "1",
+      title: "Order of Conditional Checks",
+      description:
+        "Complete the code that evaluates an `if`/`elif`/`else` statement.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Complete the following code to correctly implement an `if`/`elif`/`else` statement that checks if `x` is greater than 10, equal to 10, or less than 10.",
+        options: [
+          `if x > 10:\n    print("x is greater than 10")\nelif x == 10:\n    print("x is equal to 10")\nelse:\n    print("x is less than 10")`,
+          `if x == 10:\n    print("x is equal to 10")\nelif x > 10:\n    print("x is greater than 10")`,
+          `if x > 10:\n    print("x is greater than 10")\nelse:\n    print("x is not greater than 10")`,
+          `if x >= 10:\n    print("x is greater than or equal to 10")\nelse:\n    print("x is less than 10")`,
+        ],
+        answer: `if x > 10:\n    print("x is greater than 10")\nelif x == 10:\n    print("x is equal to 10")\nelse:\n    print("x is less than 10")`,
+      },
+    },
+    // 7
+    {
+      group: "1",
+      title: "Implementing Conditional Logic",
+      description: "Apply conditional logic in code.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write an `if`/`elif`/`else` statement that checks if a number `num` is positive, negative, or zero, and prints an appropriate message.",
+      },
+    },
+    // 8
+    {
+      group: "1",
+      title: "Understanding Conditional Logic in Programming",
+      description:
+        "Learn how logical operators like AND and OR control conditions in programming.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "Which logical operator is used to check if both conditions in a conditional statement are true in Python?",
+        placeholder: "Type your answer here...",
+        answer: "and",
+      },
+    },
+    // 9
+    {
+      group: "1",
+      title: "Real-world Use of Conditionals",
+      description: "Reflect on how conditionals are used.",
+      isText: true,
+      question: {
+        questionText:
+          "Provide an example of how conditional statements are used in real-world applications.",
+      },
+    },
+    // 10
+    {
+      group: "1",
+      title: "Terminal Practice: Help Command",
+      description: "Write the help command to observe basic commands.",
+      isCode: true,
+      isTerminal: true,
+      question: {
+        questionText:
+          "In a Bash terminal environment, enter the help command to discover basic commands.",
+      },
+    },
+    // 11
+    {
+      group: "1",
+      title: "Loops in Programming",
+      description: "Understand the purpose of loops.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which loop will continue executing as long as its condition remains true in Python?",
+        options: ["for loop", "while loop", "do...while loop", "foreach loop"],
+        answer: "while loop",
+      },
+    },
+    // 12
+    {
+      group: "1",
+      title: "Sequence of Loop Execution",
+      description: "Grasp the order in which loops execute.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps of a Python `for` loop execution with drag-and-drop.",
+        options: [
+          "Initialize iterator",
+          "Check condition",
+          "Execute code block",
+          "Advance iterator",
+        ],
+        answer: [
+          "Initialize iterator",
+          "Check condition",
+          "Execute code block",
+          "Advance iterator",
+        ],
+      },
+    },
+    // 13
+    {
+      group: "1",
+      title: "Creating a Loop",
+      description: "Practice writing loops.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write a `for` loop that prints numbers from 1 to 5 in Python.",
+      },
+    },
+    // 14
+    {
+      group: "1",
+      title: "Applications of Loops",
+      description: "Discuss where loops are useful.",
+      isText: true,
+      question: {
+        questionText:
+          "Describe a scenario in software development where loops are essential.",
+      },
+    },
+    // 15
+    {
+      group: "1",
+      title: "Lists in Python",
+      description: "Identify methods used for manipulating lists in Python.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following methods are valid for manipulating lists in Python?",
+        options: [
+          ".append()",
+          ".pop()",
+          ".remove()",
+          ".extend()",
+          ".sort()",
+          ".reverse()",
+          ".map()", // map is a built-in function, not a list method
+          ".join()", // join is a string method
+        ],
+        answer: [
+          ".append()",
+          ".pop()",
+          ".remove()",
+          ".extend()",
+          ".sort()",
+          ".reverse()",
+        ],
+      },
+    },
+    // 16
+    {
+      group: "1",
+      title: "Order of List Operations",
+      description: "Understand how list operations are performed.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Complete the code to declare a list, add an element to it, remove the last element, and then access an element.",
+        options: [
+          `fruits = ['apple', 'banana']\nfruits.append('pink')\nfruits.pop()\nprint(fruits[0])`,
+          `fruits = 'apple, banana'\nfruits.append('pink')\nfruits.pop()\nprint(fruits[0])`,
+          `fruits = {'apple':1, 'banana':2}\nfruits.append('pink')\nfruits.pop()\nprint(list(fruits)[0])`,
+        ],
+        answer: `fruits = ['apple', 'banana']\nfruits.append('pink')\nfruits.pop()\nprint(fruits[0])`,
+      },
+    },
+    // 17
+    {
+      group: "1",
+      title: "Manipulating Lists",
+      description: "Apply list methods in code.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Create a list `fruits` with 'apple' and 'banana'. Add 'pink' to the end and remove 'apple' from the beginning.",
+      },
+    },
+    // 18
+    {
+      group: "1",
+      title: "Use Cases for Lists",
+      description: "Explore scenarios where lists are used.",
+      isText: true,
+      question: {
+        questionText:
+          "Provide an example of how a list can be used to manage data in a Python application.",
+      },
+    },
+    // 19
+    {
+      group: "1",
+      title: "Terminal Practice: Creating Directories",
+      description: "Creating a directory command in a bash terminal",
+      isCode: true,
+      isTerminal: true,
+      question: {
+        questionText:
+          "In a Bash terminal environment, create a directory called `app` using the mkdir command.",
+      },
+    },
+    // 20
+    {
+      group: "1",
+      title: "Advanced Coding Output",
+      description:
+        "Predict the output of the following code with lists, conditionals, logical operators, and list comprehensions.",
+      isSingleLineText: true,
+      question: {
+        questionText: (
+          <div>
+            What will be the output of the following code?
+            <br />
+            <pre>
+              {`
+arr = [1, 2, 3, 4]
+x = 10
+y = 5
+
+if x > y and len(arr) > 3:
+    arr.append(x)
+    arr = [n for n in arr if n % 2 == 0]
+
+print(arr)
+`}
+            </pre>
+          </div>
+        ),
+        placeholder: "Type your answer here...",
+        answer: "[2, 4, 10]",
+      },
+    },
+    // 21
+    {
+      group: "1",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [10, 29], // Indices of steps to review
+      },
+    },
+    // 1
+    {
+      group: "2",
+      title: "Introduction to Objects",
+      description:
+        "In this step, you will learn what an object is in programming.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "In programming, which keyword creates a new object instance in Python?",
+        placeholder: "Type your answer here...",
+        answer:
+          "None (Python uses class instantiation without a specific keyword)",
+      },
+    },
+    // 2
+    {
+      group: "2",
+      title: "Understanding the __init__ Method",
+      description:
+        "In this step, you will learn about the purpose of the `__init__` method in a Python class.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which of the following code blocks correctly defines the `__init__` method for class instantiation in Python?",
+        options: [
+          `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\nmy_car = Car("Toyota")`,
+          `class Car:\n    def init(self, brand):\n        self.brand = brand\n\nmy_car = Car("Toyota")`,
+          `class Car:\n    def __init__(brand):\n        self.brand = brand\n\nmy_car = Car("Toyota")`,
+          `class Car:\n    def __init__(self, brand):\n        brand = self.brand\n\nmy_car = Car("Toyota")`,
+        ],
+        answer: `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\nmy_car = Car("Toyota")`,
+      },
+    },
+    // 3
+    {
+      group: "2",
+      title: "Purpose of the __init__ Method",
+      description:
+        "In this step, you will learn about the purpose of the `__init__` method in a class.",
+      isText: true,
+      question: {
+        questionText:
+          "Explain the purpose of the `__init__` method in a Python class.",
+      },
+    },
+    // 4
+    {
+      group: "2",
+      title: "Creating an Instance of a Class",
+      description:
+        "In this step, you will learn how to create an instance of a class in Python.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Select all correct steps required to create an instance of a class in Python:",
+        options: [
+          `Define class using class keyword`,
+          `Call constructor with parentheses`,
+          `Pass required arguments to constructor`,
+          `Store returned instance in a variable`,
+          `Use new keyword`,
+          `Define class with function keyword`,
+          `Call class directly without parentheses`,
+        ],
+        answer: [
+          `Define class using class keyword`,
+          `Call constructor with parentheses`,
+          `Pass required arguments to constructor`,
+          `Store returned instance in a variable`,
+        ],
+      },
+    },
+    // 5
+    {
+      group: "2",
+      title: "Declaring a Method in a Class",
+      description:
+        "In this step, you will learn how to declare a method inside a class.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Declare a method named `update_model` in the `Car` class that updates the `model` attribute.",
+      },
+    },
+    // 6
+    {
+      group: "2",
+      title: "Using self",
+      description:
+        "Complete the code by selecting the correct way to use `self` to refer to the instance property.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which code block correctly uses `self` to refer to the object's property?",
+        options: [
+          `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\n    def show_brand(self):\n        print(brand)`,
+          `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\n    def show_brand(self):\n        print(self.brand)`,
+          `class Car:\n    def __init__(self, brand):\n        brand = self.brand\n\n    def show_brand(self):\n        print(brand)`,
+          `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\n    def show_brand(self):\n        print(self.brand())`,
+        ],
+        answer: `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\n    def show_brand(self):\n        print(self.brand)`,
+      },
+    },
+    // 7
+    {
+      group: "2",
+      title: "Adding Attributes to an Object",
+      description:
+        "In this step, you will learn how to add attributes to a Python class.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText: "Add a new attribute `year` to the `Car` class.",
+      },
+    },
+    // 8
+    {
+      group: "2",
+      title: "Accessing and Modifying Attributes",
+      description:
+        "In this step, you will learn how to get or set attributes of an object.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following are valid ways to get or set properties in Python?",
+        options: [
+          `Use dot notation (e.g., obj.property)`,
+          `Use getattr(obj, 'property')`,
+          `Use setter method if defined`,
+          `Use obj['property']`,
+          `Call obj.property() without defining method`,
+        ],
+        answer: [
+          `Use dot notation (e.g., obj.property)`,
+          `Use getattr(obj, 'property')`,
+          `Use setter method if defined`,
+        ],
+      },
+    },
+    // 9
+    {
+      group: "2",
+      title: "Modifying Object Attributes",
+      description:
+        "In this step, you will learn how to modify attributes of an object.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Modify the `model` attribute of an instance of the `Car` class.",
+      },
+    },
+    // 10
+    {
+      group: "2",
+      title: "Understanding Inheritance",
+      description:
+        "In this step, you will learn about inheritance in object-oriented programming.",
+      isText: true,
+      question: {
+        questionText: "What is inheritance in object-oriented programming?",
+      },
+    },
+    // 11
+    {
+      group: "2",
+      title: "Implementing Inheritance",
+      description:
+        "In this step, you will implement inheritance in Python by subclassing.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Extend the `Car` class to create an `ElectricCar` class with an additional attribute `battery_life`.",
+      },
+    },
+    // 12
+    {
+      group: "2",
+      title: "Overriding Methods",
+      description:
+        "In this step, you will learn how to override methods in a subclass.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "What does it mean to override a method in a subclass?",
+        options: [
+          `Replace superclass method with new implementation`,
+          `Delete method from superclass`,
+          `Inherit method without changes`,
+          `Call method from a different class`,
+          `Extend method functionality via super()`,
+        ],
+        answer: [
+          `Replace superclass method with new implementation`,
+          `Extend method functionality via super()`,
+        ],
+      },
+    },
+    // 13
+    {
+      group: "2",
+      title: "Understanding Encapsulation",
+      description:
+        "In this step, you will learn about encapsulation in object-oriented programming.",
+      isText: true,
+      question: {
+        questionText: "What is encapsulation in object-oriented programming?",
+      },
+    },
+    // 14
+    {
+      group: "2",
+      title: "Implementing Encapsulation",
+      description:
+        "In this step, you will implement encapsulation by using getter and setter methods.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Add getter and setter methods for the `battery_life` attribute in the `ElectricCar` class.",
+      },
+    },
+    // 15
+    {
+      group: "2",
+      title: "Encapsulation Concept",
+      description:
+        "In this step, you will define the core concept of encapsulation in one word.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What is the primary concept encapsulation ensures in object-oriented programming?",
+        placeholder: "Type your answer here...",
+        answer: "Abstraction",
+      },
+    },
+    // 16
+    {
+      group: "2",
+      title: "Combining Concepts",
+      description:
+        "In this step, you will combine various concepts learned to create a small project.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Create a small project that defines a `Person` class, uses inheritance to create a `Student` subclass, and demonstrates encapsulation and lists of objects.",
+      },
+    },
+    // 17
+    {
+      group: "2",
+      title: "Printing in the Terminal",
+      description: "In this step, you will print a message using the terminal",
+      isCode: true,
+      isTerminal: true,
+      question: {
+        questionText:
+          "Type a command to print: 'I'm talking to the inside of a computer!'",
+      },
+    },
+    // 18
+    {
+      group: "2",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [31, 47],
+      },
+    },
+
+    {
+      group: "3",
+      title: "Introduction to React Components",
+      description:
+        "In this step, you will learn about React components, their role in creating reusable UI elements, and how they help manage the user interface efficiently.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which of the following best describes a React component?",
+        options: [
+          "A method for handling events in JavaScript",
+          "A feature exclusive to server-side rendering in React",
+          "A reusable piece of user interface defined as a function or class that returns JSX",
+          "A built-in HTML element in React",
+        ],
+        answer:
+          "A reusable piece of user interface defined as a function or class that returns JSX",
+      },
+    },
+    {
+      group: "3",
+      title: "Key Concepts in React",
+      description:
+        "In this step, you will learn about the fundamental concepts of React, including properties (props), state, events, and styles.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText: "Which of the following are key concepts in React?",
+        options: [
+          "Managing properties to pass data between components",
+          "Manipulating the DOM directly for better performance",
+          "Using state to manage data within a component",
+          "Handling events such as clicks with event handlers",
+          "Applying inline styles or CSS classes to components",
+        ],
+        answer: [
+          "Managing properties to pass data between components",
+          "Using state to manage data within a component",
+          "Handling events such as clicks with event handlers",
+          "Applying inline styles or CSS classes to components",
+        ],
+      },
+    },
+    {
+      group: "3",
+      title: "Effect of State Changes on a Component",
+      description:
+        "In this step, you will explain what happens to a React component when its state changes.",
+      isText: true,
+      question: {
+        questionText:
+          "What happens to a React component when its state changes?",
+      },
+    },
+
+    //next lecture
+    {
+      group: "3",
+      title: "Creating a Simple React Component",
+      description:
+        "In this step, you will define a basic React component that returns some simple JSX.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which of the following code blocks correctly defines a simple React component that returns a heading and a paragraph?",
+        options: [
+          // Option 1: Correct answer
+          `function MyComponent() {
+  return (
+    <div>
+      <h1>Hello, World!</h1>
+      <p>Welcome to the thunderdome</p>
+    </div>
+  );
+}`,
+
+          // Option 2: Incorrect - missing return statement
+          `function MyComponent() {
+  <div>
+    <h1>Hello, World!</h1>
+    <p>Welcome to the thunderdome</p>
+  </div>;
+}`,
+
+          // Option 3: Incorrect - uses class instead of function
+          `class MyComponent {
+  render() {
+    return (
+      <div>
+        <h1>Hello, World!</h1>
+        <p>How are we today?</p>
+      </div>
+    );
+  }
+}`,
+
+          // Option 4: Incorrect - missing JSX inside the return
+          `function MyComponent() {
+  return (
+    <div>Hello World</div>
+    <p>How are we today?</p>
+  );
+}`,
+        ],
+        answer: `function MyComponent() {
+  return (
+    <div>
+      <h1>Hello, World!</h1>
+      <p>Welcome to the thunderdome</p>
+    </div>
+  );
+}`,
+      },
+    },
+    {
+      group: "3",
+      title: "Handling Events in React",
+      description:
+        "In this step, you will define a basic React component that handles a button click event using the `onClick` attribute.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which of the following code blocks correctly defines a React component that handles a button click event?",
+        options: [
+          // Option 2: Incorrect - no event handler function defined
+          `function MyComponent() {
+  return (
+    <div>
+      <button 
+        onClick={
+          alert('Button clicked!')
+        }
+      >
+        Click me
+      </button>
+    </div>
+  );
+}`,
+
+          // Option 3: Incorrect - inline event handler, not recommended
+          `function MyComponent() {
+return (
+  <div>
+    <button 
+      onClick= () => {
+        alert('Button clicked!')
+      }
+    >
+      Click me
+    </button>
+  </div>
+);
+}`,
+          `function MyComponent() {
+  const handleClick = () => {
+    alert('Button clicked!');
+  };
+    
+  return (
+    <div>
+      <button 
+        onClick={handleClick}
+      >
+        Click me
+      </button>
+    </div>
+  );
+}`,
+
+          // Option 4: Incorrect - no onClick attribute
+          `function MyComponent() {
+return (
+  <div>
+    <button>
+      Click me
+    </button>
+  </div>
+);
+    }`,
+        ],
+        answer: `function MyComponent() {
+  const handleClick = () => {
+    alert('Button clicked!');
+  };
+
+  return (
+    <div>
+      <button 
+        onClick={handleClick}
+      >
+        Click me
+      </button>
+    </div>
+  );
+}`,
+      },
+    },
+
+    {
+      group: "3",
+      title: "Managing State with useState Hook",
+      description:
+        "In this step, you will learn how to use the useState hook to manage the state of a component.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText: `Modify the Tweet component to include a like button that toggles the liked state using the useState hook.`,
+      },
+    },
+
+    //next lecture
+    {
+      group: "3",
+      title: "Component Properties",
+      description:
+        "In this step, you will learn about passing properties to components in React.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What is the term used for passing data to a React component?",
+        placeholder: "Type your answer here...",
+        answer: "props",
+      },
+    },
+    {
+      group: "3",
+      title: "Passing and Using Props",
+      description:
+        "In this step, you will learn how to pass and use props in a React component.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Update the Tweet component to accept and display the user's name, handle, and tweet content as props.",
+      },
+    },
+    {
+      group: "3",
+      title: "Working with Props and State Together",
+      description:
+        "In this step, you will learn how to work with both props and state in a React component.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "What is the main difference between props and state in React?",
+        options: [
+          "Props are immutable while state is mutable",
+          "Props are managed by the component itself while state is passed down from parent components",
+          "State is used for styling while props are used for logic",
+          "There is no difference; they are the same",
+        ],
+        answer: "Props are immutable while state is mutable",
+      },
+    },
+
+    //next lecture
+    {
+      group: "3",
+      title: "Terminal Practice: Listing Files",
+      description:
+        "In this step, you will learn how to list files in a bash terminal.",
+      isCode: true,
+      isTerminal: true,
+      question: {
+        questionText: `Use the terminal to list all the files using the list command.`,
+      },
+    },
+
+    {
+      group: "3",
+      title: "Styling React Components",
+      description:
+        "In this step, you will learn how to style React components using CSS.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText: `Add styles to the Tweet component to improve its appearance.`,
+      },
+    },
+    {
+      group: "3",
+      title: "Using Flexbox for Layouts",
+      description:
+        "In this step, you will learn how to use Flexbox to create layouts in React.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the following CSS properties in the order needed to center a basic layout with flexbox styling:",
+        options: [
+          "display: flex;",
+          "justify-content: center;",
+          "align-items: center;",
+          "flex-direction: row;",
+        ],
+        answer: [
+          "display: flex;",
+          "flex-direction: row;",
+          "justify-content: center;",
+          "align-items: center;",
+        ],
+      },
+    },
+
+    //next lecture
+    {
+      group: "3",
+      title: "Lifting State Up",
+      description:
+        "In this step, you will learn how to lift state up to a common ancestor component to share state between components.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText: `Create a parent component that manages the state for multiple Tweet components and passes the state and event handlers as props.`,
+      },
+    },
+    {
+      group: "3",
+      title: "Using useEffect for Side Effects",
+      description:
+        "In this step, you will learn how to use the useEffect hook to handle side effects in a React component.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Modify the Tweet component to use the useEffect hook to log a message to the console every time the number of retweets changes.",
+      },
+    },
+
+    {
+      group: "3",
+      title: "Understanding Component Lifecycle",
+      description:
+        "In this step, you will learn about the lifecycle of React components and how to use useEffect hook to manage side effects.",
+      isText: true,
+      question: {
+        questionText:
+          "What is the component lifecycle in React and what is the purpose of the useEffect hook?",
+      },
+    },
+
+    //next
+    {
+      group: "3",
+      title: "Fetching Data with useEffect",
+      description:
+        "In this step, you will learn how to fetch data from an API using the useEffect hook.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps with drag-and-drop to correctly fetch data using useEffect.",
+        options: [
+          "Import React and useState",
+          "Import useEffect from React",
+          "Create a component",
+          "Define the useEffect hook",
+          "Make the API call inside useEffect",
+          "Use async/await or .then() to handle the API response",
+          "Update the component state with the fetched data",
+          "Handle errors in the API call",
+          "Render the data in the component",
+        ],
+        answer: [
+          "Import React and useState",
+          "Import useEffect from React",
+          "Create a component",
+          "Define the useEffect hook",
+          "Make the API call inside useEffect",
+          "Use async/await or .then() to handle the API response",
+          "Update the component state with the fetched data",
+          "Handle errors in the API call",
+          "Render the data in the component",
+        ],
+      },
+    },
+
+    {
+      group: "3",
+      title: "Building a Complete Tweet App",
+      description:
+        "In this step, you will combine everything you have learned to build a complete Tweet app.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText: `Build a complete Tweet app that fetches tweets from an API, displays them using the Tweet component, and allows users to like and retweet.`,
+      },
+    },
+    {
+      group: "3",
+      title: "Terminal Practice: Setting Up A React App",
+      description: "In this step, you will learn how to set up a react project",
+
+      isText: true,
+      question: {
+        questionText:
+          "Enter the command to install the latest version of a react project with vite.",
+      },
+    },
+
+    //next
+    {
+      group: "3",
+      title: "Creating a New React Project with Vite",
+      description:
+        "In this step, you will learn how to create a new React project using Vite by following the correct steps and running command-line commands.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps with drag-and-drop to correctly create a new React project using Vite, including command-line commands.",
+        options: [
+          "Ensure Node.js, NPM and VSCode are installed",
+          "Run `npm create vite@latest` to create a new Vite project",
+          "Select the React template when prompted",
+          "Navigate to the project directory using `cd project-name`",
+          "Run `npm install` to install dependencies",
+          "Start the development server with `npm run dev`",
+        ],
+        answer: [
+          "Ensure Node.js, NPM and VSCode are installed",
+          "Run `npm create vite@latest` to create a new Vite project",
+          "Select the React template when prompted",
+          "Navigate to the project directory using `cd project-name`",
+          "Run `npm install` to install dependencies",
+          "Start the development server with `npm run dev`",
+        ],
+      },
+    },
+    {
+      group: "3",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [49, 67], // Indices of steps to review
+      },
+    },
+    // 1
+    {
+      group: "4",
+      title: "Introduction to Python Backend Engineering",
+      description:
+        "In this step, you will learn what backend software engineering is and why it is important.",
+      isText: true,
+      question: {
+        questionText:
+          "What is backend software engineering and why is it important in building applications?",
+      },
+    },
+    // 2
+    {
+      group: "4",
+      title: "Main Lessons Overview",
+      description:
+        "In this step, you will identify a core responsibility of backend engineering in Python.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which of the following is a core responsibility in backend engineering?",
+        options: [
+          "Managing concurrency and ensuring thread safety in multi-user applications",
+          "Implementing user authentication directly in the user interface",
+          "Handling memory allocation and garbage collection in the Python interpreter",
+          "Designing scalable front-end components for cross-browser compatibility",
+          "Optimizing database queries and ensuring data consistency",
+        ],
+        answer: "Optimizing database queries and ensuring data consistency",
+      },
+    },
+    // 3
+    {
+      group: "4",
+      title: "Key Responsibilities of Backend Engineering",
+      description:
+        "In this step, you will learn about the various responsibilities involved in Python backend engineering.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following are core responsibilities of backend engineering?",
+        options: [
+          "Managing and optimizing databases for storing and retrieving data efficiently",
+          "Designing and implementing RESTful APIs to facilitate communication between systems",
+          "Ensuring security through user authentication and authorization mechanisms",
+          "Handling server-side logic, including business operations and calculations",
+          "Maintaining server reliability and performance under high traffic",
+          "Managing data integrity and consistency across distributed systems",
+          "Implementing logging and monitoring to ensure system health and debug issues",
+        ],
+        answer: [
+          "Managing and optimizing databases for storing and retrieving data efficiently",
+          "Designing and implementing RESTful APIs to facilitate communication between systems",
+          "Ensuring security through user authentication and authorization mechanisms",
+          "Handling server-side logic, including business operations and calculations",
+          "Maintaining server reliability and performance under high traffic",
+          "Managing data integrity and consistency across distributed systems",
+          "Implementing logging and monitoring to ensure system health and debug issues",
+        ],
+      },
+    },
+    // 4
+    {
+      group: "4",
+      title: "Interfacing with the Terminal",
+      description:
+        "In this step, you will learn about using the terminal in Python backend engineering.",
+      isText: true,
+      question: {
+        questionText:
+          "Why is learning to use the terminal important for backend development, and what kinds of tasks can you perform using it?",
+      },
+    },
+    // 5
+    {
+      group: "4",
+      title: "Upgrading pip",
+      description: "In this step, you will learn how to upgrade pip globally.",
+      isText: true,
+      question: {
+        questionText:
+          "Write the command to upgrade pip, the Python package manager, globally.",
+      },
+    },
+    // 6
+    {
+      group: "4",
+      title: "Installing a Python Package",
+      description:
+        "In this step, you will use the terminal to install a package with pip.",
+      isText: true,
+      question: {
+        questionText:
+          "Write the command to install Flask, a popular Python web framework.",
+      },
+    },
+    // 7
+    {
+      group: "4",
+      title: "User Creation and Authentication",
+      description:
+        "In this step, you will understand the key concept related to creating users in backend systems.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What is the process called that verifies a user's identity during account creation?",
+        placeholder: "Type your answer here...",
+        answer: "authentication",
+      },
+    },
+    // 8
+    {
+      group: "4",
+      title: "Database Foundations",
+      description:
+        "In this step, you will learn about the foundations of databases in backend engineering.",
+      isText: true,
+      question: {
+        questionText:
+          "What are the main types of databases used in backend engineering?",
+      },
+    },
+    // 9
+    {
+      group: "4",
+      title: "Connecting Systems",
+      description:
+        "Write a code snippet to connect a Python application to a PostgreSQL database using psycopg2.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write a Python code snippet to connect an application to a PostgreSQL database.",
+      },
+    },
+    // 10
+    {
+      group: "4",
+      title: "Starting a Django Project",
+      description:
+        "In this step, you will learn how to start a Django project using the command line.",
+      isSingleLineText: true,
+      question: {
+        questionText: "What is the command to start a new Django project?",
+        answer: "django-admin startproject mysite",
+      },
+    },
+    // 11
+    {
+      group: "4",
+      title: "Advanced Data Storage Practices",
+      description:
+        "In this step, you will learn advanced practices for storing data responsibly in backend systems.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following are best practices for ensuring responsible data storage in a backend system?",
+        options: [
+          "Cache data in memory (e.g., Redis) to reduce database access time",
+          "Use a single centralized backup to reduce complexity and cost",
+          "Encrypt sensitive data both at rest and in transit to ensure security",
+          "Implement database replication across multiple servers to improve fault tolerance",
+        ],
+        answer: [
+          "Cache data in memory (e.g., Redis) to reduce database access time",
+          "Encrypt sensitive data both at rest and in transit to ensure security",
+          "Implement database replication across multiple servers to improve fault tolerance",
+        ],
+      },
+    },
+    // 12
+    {
+      group: "4",
+      title: "Initializing SQLAlchemy and Adding a Record",
+      description:
+        "In this step, you will learn how to initialize SQLAlchemy and add a record.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Complete the code to initialize SQLAlchemy with a Flask app and add a new User record.",
+        options: [
+          `from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@localhost/db'
+db = SQLAlchemy(app)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String, unique=True)
+
+# Add user
+new_user = User(username='alice')
+db.session.add(new_user)
+db.session.commit()`,
+        ],
+        answer: `from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@localhost/db'
+db = SQLAlchemy(app)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String, unique=True)
+
+# Add user
+new_user = User(username='alice')
+db.session.add(new_user)
+db.session.commit()`,
+      },
+    },
+    // 13
+    {
+      group: "4",
+      title: "Handling User Data",
+      description:
+        "In this step, you will learn how to retrieve a user object using SQLAlchemy.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write a Python code snippet to get a User object by ID using SQLAlchemy.",
+      },
+    },
+    // 14
+    {
+      group: "4",
+      title: "Retrieving a Record After Authentication",
+      description:
+        "In this step, you will learn how to retrieve a record after verifying credentials.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write code to retrieve a User record from the database after authentication.",
+      },
+    },
+    // 15
+    {
+      group: "4",
+      title: "Understanding the Authentication Flow",
+      description:
+        "In this step, you will learn about the typical flow of authentication in backend systems.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the following steps in the correct order for a typical JWT authentication flow in a Python backend.",
+        options: [
+          "User submits credentials via POST",
+          "Backend verifies credentials against the database",
+          "JWT token is generated and signed",
+          "Client stores token locally",
+          "Backend validates token on protected routes",
+        ],
+        answer: [
+          "User submits credentials via POST",
+          "Backend verifies credentials against the database",
+          "JWT token is generated and signed",
+          "Client stores token locally",
+          "Backend validates token on protected routes",
+        ],
+      },
+    },
+    // 16
+    {
+      group: "4",
+      title: "OAuth Authentication",
+      description:
+        "In this step, you will learn about OAuth-style authentication systems.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What is the widely used protocol for authorization that allows third-party services to access user data without exposing credentials?",
+        placeholder: "Type your answer here...",
+        answer: "OAuth 2.0",
+      },
+    },
+    // 17
+    {
+      group: "4",
+      title: "Using Environment Variables",
+      description:
+        "In this step, you will learn about using environment variables in backend development.",
+      isText: true,
+      question: {
+        questionText: "What role do environment variables play in a codebase?",
+      },
+    },
+    // 18
+    {
+      group: "4",
+      title: "Database Relationships",
+      description:
+        "In this step, you will learn about defining relationships in SQLAlchemy.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write a code snippet to define a one-to-many relationship between User and Post models in SQLAlchemy.",
+      },
+    },
+    // 19
+    {
+      group: "4",
+      title: "Interfacing with an API",
+      description:
+        "In this step, you will learn the common HTTP methods used to interface with an API.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following HTTP methods are commonly used to interface with a REST API, and what do they do?",
+        options: [
+          "GET (Retrieves data)",
+          "POST (Creates a new resource)",
+          "SEND (Sends data for processing)",
+          "PATCH (Partially updates a resource)",
+          "DELETE (Deletes a resource)",
+        ],
+        answer: [
+          "GET (Retrieves data)",
+          "POST (Creates a new resource)",
+          "PATCH (Partially updates a resource)",
+          "DELETE (Deletes a resource)",
+        ],
+      },
+    },
+    // 20
+    {
+      group: "4",
+      title: "Creating a JWT Authentication System",
+      description:
+        "In this step, you will create a simple user authentication system with JWT.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps with drag-and-drop to implement JWT authentication in Python.",
+        options: [
+          "Install PyJWT",
+          "Define User model",
+          "Create register endpoint",
+          "Hash passwords before storing",
+          "Create login endpoint",
+          "Verify user credentials",
+          "Generate JWT token",
+          "Return token to client",
+          "Protect routes with token verification",
+        ],
+        answer: [
+          "Install PyJWT",
+          "Define User model",
+          "Create register endpoint",
+          "Hash passwords before storing",
+          "Create login endpoint",
+          "Verify user credentials",
+          "Generate JWT token",
+          "Return token to client",
+          "Protect routes with token verification",
+        ],
+      },
+    },
+    // 21
+    {
+      group: "4",
+      title: "Deploying a Python Application",
+      description:
+        "In this step, you will learn how to deploy a Python backend application.",
+      isText: true,
+      question: {
+        questionText:
+          "Write the command to start a Gunicorn server for your Flask app.",
+      },
+    },
+    // 22
+    {
+      group: "4",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [69, 89],
+      },
+    },
+    // 1
+    {
+      group: "5",
+      title: "Benefits of Serverless Cloud Platforms",
+      description:
+        "In this step, you will explore the advantages of using Firebase in software development.",
+      isText: true,
+      question: {
+        questionText:
+          "What are the key benefits of using Firebase as a serverless backend, and how does it differ from traditional server-based models?",
+      },
+    },
+    // 2
+    {
+      group: "5",
+      title: "Understanding VSCode",
+      description:
+        "In this step, you will explore what Visual Studio Code (VSCode) is and why it is a popular code editor for Firebase development.",
+      isText: true,
+      question: {
+        questionText:
+          "What is Visual Studio Code (VSCode) and why do many Firebase developers choose it?",
+      },
+    },
+    // 3
+    {
+      group: "5",
+      title: "Installing Node.js and npm",
+      description:
+        "Install Node.js and npm, required for the Firebase CLI and local emulation.",
+      isText: true,
+      question: {
+        questionText:
+          "What is the purpose of Node.js and npm when working with Firebase projects?",
+      },
+    },
+    // 4
+    {
+      group: "5",
+      title: "Installing Project Dependencies",
+      description: "Install all dependencies listed in package.json.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "Enter the command to install dependencies from package.json.",
+        answer: "npm install",
+      },
+    },
+    // 5
+    {
+      group: "5",
+      title: "Install Firebase CLI",
+      description: "Install the Firebase CLI globally using npm.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What command do you use to install the Firebase CLI globally?",
+        answer: "npm install -g firebase-tools",
+      },
+    },
+    // 6
+    {
+      group: "5",
+      title: "Initializing a Firebase Project",
+      description:
+        "In this step, you will initialize a new Firebase project using the CLI.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What command do you use to initialize a Firebase project in your directory?",
+        answer: "firebase init",
+      },
+    },
+    // 7
+    {
+      group: "5",
+      title: "Selecting Firebase Features",
+      description:
+        "Choose which Firebase services to configure during initialization.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "During `firebase init`, which of the following features might you enable?",
+        options: [
+          "Authentication",
+          "Firestore",
+          "Realtime Database",
+          "Cloud Functions",
+          "Hosting",
+          "Storage",
+          "Emulators",
+        ],
+        answer: ["Authentication", "Firestore", "Cloud Functions", "Hosting"],
+      },
+    },
+    // 8
+    {
+      group: "5",
+      title: "Configuring Firebase SDK",
+      description:
+        "In this step, you will set up the Firebase Admin SDK in Python.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write the Python code to initialize the Firebase Admin SDK with a service account.",
+      },
+    },
+    // 9
+    {
+      group: "5",
+      title: "Setting Up Firestore",
+      description: "Learn how to initialize Firestore in your Python code.",
+      isCode: true,
+      question: {
+        questionText:
+          "Add the code to get a Firestore client from the initialized Admin SDK.",
+      },
+    },
+    // 10
+    {
+      group: "5",
+      title: "Understanding Authentication",
+      description:
+        "In this step, you will learn about Firebase Authentication.",
+      isText: true,
+      question: {
+        questionText:
+          "What is Firebase Authentication, and what types of sign-in methods does it support?",
+      },
+    },
+    // 11
+    {
+      group: "5",
+      title: "Creating a User with Firebase Auth",
+      description:
+        "In this step, you will learn how to create a new user account programmatically.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write Python code using the Admin SDK to create a new user with email and password.",
+      },
+    },
+    // 12
+    {
+      group: "5",
+      title: "Verifying ID Tokens",
+      description:
+        "Learn how to verify a client’s Firebase ID token on your backend.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write Python code to verify a Firebase ID token and extract the user UID.",
+      },
+    },
+    // 13
+    {
+      group: "5",
+      title: "CRUD with Firestore",
+      description:
+        "In this step, you will perform basic database operations with Firestore.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Complete the Python code to add, get, update, and delete a document in Firestore.",
+        options: [
+          `# assume db is a Firestore client
+doc_ref = db.collection('users').document('alice')
+# create
+doc_ref.set({'email': 'alice@example.com', 'age': 30})
+# read
+user = doc_ref.get().to_dict()
+# update
+doc_ref.update({'age': 31})
+# delete
+doc_ref.delete()`,
+        ],
+        answer: `# assume db is a Firestore client
+doc_ref = db.collection('users').document('alice')
+# create
+doc_ref.set({'email': 'alice@example.com', 'age': 30})
+# read
+user = doc_ref.get().to_dict()
+# update
+doc_ref.update({'age': 31})
+# delete
+doc_ref.delete()`,
+      },
+    },
+    // 14
+    {
+      group: "5",
+      title: "Writing Cloud Functions",
+      description:
+        "In this step, you will write a simple Firebase Cloud Function in Python.",
+      isCode: true,
+      question: {
+        questionText:
+          "Show a basic HTTP-triggered Cloud Function that returns 'Hello Firebase'.",
+      },
+    },
+    // 15
+    {
+      group: "5",
+      title: "Local Emulation",
+      description: "Learn how to test Functions and Firestore locally.",
+      isSingleLineText: true,
+      question: {
+        questionText: "What command starts the local Firebase emulator suite?",
+        answer: "firebase emulators:start",
+      },
+    },
+    // 16
+    {
+      group: "5",
+      title: "Deploying to Firebase",
+      description:
+        "In this step, you will deploy your Functions and Firestore rules to production.",
+      isSingleLineText: true,
+      question: {
+        questionText: "What command do you use to deploy only Cloud Functions?",
+        answer: "firebase deploy --only functions",
+      },
+    },
+    // 17
+    {
+      group: "5",
+      title: "Storage with Firebase",
+      description:
+        "Learn how to upload and serve files using Firebase Storage.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write Python code using the Admin SDK to upload a file to a Storage bucket.",
+      },
+    },
+    // 18
+    {
+      group: "5",
+      title: "Security Rules Basics",
+      description:
+        "In this step, you will learn about Firestore security rules.",
+      isText: true,
+      question: {
+        questionText:
+          "What are Firestore security rules and when are they evaluated?",
+      },
+    },
+    // 19
+    {
+      group: "5",
+      title: "Monitoring and Analytics",
+      description:
+        "Explore Firebase’s built-in monitoring and analytics tools.",
+      isText: true,
+      question: {
+        questionText:
+          "Which Firebase products help you monitor performance and usage of your backend?",
+      },
+    },
+    // 20
+    {
+      group: "5",
+      title: "Popular Firebase Extensions",
+      description: "Learn about official Firebase Extensions you can install.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following are Firebase Extensions provided by Google?",
+        options: [
+          "Trigger Email via SendGrid",
+          "Resize Images",
+          "Translate Text",
+          "Host Static Site",
+          "Backup Realtime Database",
+        ],
+        answer: [
+          "Trigger Email via SendGrid",
+          "Resize Images",
+          "Translate Text",
+          "Backup Realtime Database",
+        ],
+      },
+    },
+    // 21
+    {
+      group: "5",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [91, 110],
+      },
+    },
+    // 1
+    {
+      group: "6",
+      title: "Introduction to Data Structures and Algorithms",
+      description:
+        "Understand the importance and challenges of learning data structures and algorithms.",
+      isText: true,
+      question: {
+        questionText:
+          "Why do data structures and algorithms often push people away from computer science?",
+      },
+    },
+    // 2
+    {
+      group: "6",
+      title: "Programming Languages and Autocorrect Technology",
+      description:
+        "Explore how programming languages work and how computers understand code.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write a simple Python program, without any external libraries, to demonstrate how autocorrect might identify and correct a misspelled word.",
+      },
+    },
+    // 3
+    {
+      group: "6",
+      title: "Tokens in Code",
+      description:
+        "Break down code into tokens to understand how computers interpret information.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which of the following is an example of a token in a programming language?",
+        options: [
+          "An entire function",
+          "A single character like ':'",
+          "A variable definition like `x = 10`",
+          "A block of HTML code",
+          "A Python module",
+          "A library imported with `import`",
+        ],
+        answer: "A single character like ':'",
+      },
+    },
+    // 4
+    {
+      group: "6",
+      title: "Breaking Down Strings into Characters",
+      description:
+        "Understand how strings are broken down into characters and further into mappings.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write the Python code to break down the string `'Kendrick'` into a list of characters and then into a dictionary mapping each character to its position in the string.",
+      },
+    },
+    // 5
+    {
+      group: "6",
+      title: "Understanding Data Structures",
+      description:
+        "Convert a string into a list of key-value pair dictionaries that map characters to their ASCII codes.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Convert the string `'Kendrick'` into a list of dictionaries where each character maps to its ASCII code.",
+        options: [
+          `{'K': 75}`,
+          `{'e': 101}`,
+          `{'n': 110}`,
+          `{'d': 100}`,
+          `{'r': 114}`,
+          `{'i': 105}`,
+          `{'c': 99}`,
+          `{'k': 107}`,
+        ],
+        answer: [
+          `{'K': 75}`,
+          `{'e': 101}`,
+          `{'n': 110}`,
+          `{'d': 100}`,
+          `{'r': 114}`,
+          `{'i': 105}`,
+          `{'c': 99}`,
+          `{'k': 107}`,
+        ],
+      },
+    },
+    // 6
+    {
+      group: "6",
+      title: "Binary Conversion",
+      description: "Convert characters to their binary representation.",
+      isCode: true,
+      question: {
+        questionText:
+          "Convert the dictionary mapping of ASCII codes for `'Kendrick'` into a mapping of binary strings.",
+      },
+    },
+    // 7
+    {
+      group: "6",
+      title: "Understanding Data Structures",
+      description: "Learn how data structures store and reference information.",
+      isText: true,
+      question: {
+        questionText:
+          "Why is it important to understand how computers reserve space and create addresses to reference information? What are some real-world examples at scale?",
+      },
+    },
+    // 8
+    {
+      group: "6",
+      title: "Introduction to Linked Lists",
+      description: "Learn about the basic concepts of linked lists.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which of the following is a characteristic of linked lists?",
+        options: [
+          "Fixed-size arrays",
+          "Dynamic memory allocation",
+          "Constant time random access",
+          "Elements stored in contiguous memory",
+        ],
+        answer: "Dynamic memory allocation",
+      },
+    },
+    // 9
+    {
+      group: "6",
+      title: "Building a Linked List",
+      description:
+        "Construct a simple linked list in Python with the values 'meta', 'instagram', 'reels'.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which of the following code snippets correctly creates a linked list with 'meta', 'instagram', and 'reels' in Python?",
+        options: [
+          `class Node:
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def add(self, value):
+        node = Node(value)
+        if not self.head:
+            self.head = node
+        else:
+            curr = self.head
+            while curr.next:
+                curr = curr.next
+            curr.next = node
+
+lst = LinkedList()
+lst.add('meta')
+lst.add('instagram')
+lst.add('reels')`,
+          `# Uses Python list instead of linked list
+lst = ['meta', 'instagram', 'reels']`,
+          `class Node:
+    def __init__(self, value):
+        self.value = value
+
+class LinkedList:
+    def __init__(self):
+        self.head = None`,
+          `# Circular linked list implementation (incorrect for this task)`,
+        ],
+        answer: `class Node:
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+    def add(self, value):
+        node = Node(value)
+        if not self.head:
+            self.head = node
+        else:
+            curr = self.head
+            while curr.next:
+                curr = curr.next
+            curr.next = node
+
+lst = LinkedList()
+lst.add('meta')
+lst.add('instagram')
+lst.add('reels')`,
+      },
+    },
+    // 10
+    {
+      group: "6",
+      title: "Practical Linked List Application",
+      description: "Apply the LinkedList class to a real-world scenario.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write Python code to create a linked list of Google's departments (e.g., 'Search', 'Ads', 'Cloud') and print each value.",
+      },
+    },
+    // 11
+    {
+      group: "6",
+      title: "Traversing a Linked List",
+      description:
+        "Implement a method to traverse a linked list and return the last item.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write a method in the LinkedList class that traverses the list and returns the last node's value.",
+      },
+    },
+    // 12
+    {
+      group: "6",
+      title: "Linked List Class Implementation",
+      description: "Implement the LinkedList and Node classes in Python.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which method name is most Pythonic to add a new item to the end of a linked list?",
+        options: ["add_at_index", "append", "insert", "push", "create"],
+        answer: "append",
+      },
+    },
+    // 13
+    {
+      group: "6",
+      title: "Reversing a Linked List",
+      description: "Reverse the direction of a linked list.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "What is the time complexity of reversing a linked list?",
+        options: ["O(1)", "O(log n)", "O(n)", "O(n²)", "O(n log n)", "O(2ⁿ)"],
+        answer: "O(n)",
+      },
+    },
+    // 14
+    {
+      group: "6",
+      title: "Depth-First Search Algorithm (Recursion)",
+      description:
+        "Understand and implement a depth-first search algorithm using recursion.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps to implement a recursive DFS on a graph in Python.",
+        options: [
+          "Start at the root node",
+          "Mark the current node as visited",
+          "Process the node (e.g., print or store its value)",
+          "Recursively visit each unvisited neighbor",
+          "Backtrack once all neighbors are visited",
+          "Repeat until all nodes are visited",
+        ],
+        answer: [
+          "Start at the root node",
+          "Mark the current node as visited",
+          "Process the node (e.g., print or store its value)",
+          "Recursively visit each unvisited neighbor",
+          "Backtrack once all neighbors are visited",
+          "Repeat until all nodes are visited",
+        ],
+      },
+    },
+    // 15
+    {
+      group: "6",
+      title: "Creating a Tree Structure",
+      description:
+        "Build a simple tree structure to practice depth-first search.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write Python code to create a binary tree three levels deep representing company divisions.",
+      },
+    },
+    // 16
+    {
+      group: "6",
+      title: "Understanding Depth-First and Breadth-First Search",
+      description:
+        "Learn the differences between depth-first search and breadth-first search.",
+      isText: true,
+      question: {
+        questionText: "Explain the difference between DFS and BFS algorithms.",
+      },
+    },
+    // 17
+    {
+      group: "6",
+      title: "Implementing Depth-First Search with Recursion",
+      description:
+        "Complete the implementation of DFS using recursion to traverse a binary tree.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which Python snippet correctly implements pre-order DFS on a binary tree?",
+        options: [
+          `class Node:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+def dfs(node):
+    if not node:
+        return
+    print(node.value)
+    dfs(node.left)
+    dfs(node.right)
+
+# build tree...
+dfs(root)`,
+        ],
+        answer: `class Node:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+def dfs(node):
+    if not node:
+        return
+    print(node.value)
+    dfs(node.left)
+    dfs(node.right)
+
+# build tree...
+dfs(root)`,
+      },
+    },
+    // 18
+    {
+      group: "6",
+      title: "Algorithm Optimization",
+      description:
+        "Explore ways to optimize algorithms for better performance.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write an optimized Python implementation of bubble sort that stops early if no swaps occur.",
+      },
+    },
+    // 19
+    {
+      group: "6",
+      title: "Exploring the N-Queens Problem",
+      description: "Understand the N-Queens problem and its complexity.",
+      isText: true,
+      question: {
+        questionText:
+          "What is the N-Queens problem, and why is it considered complex?",
+      },
+    },
+    // 20
+    {
+      group: "6",
+      title: "Implementing Backtracking",
+      description: "Implement a backtracking algorithm to solve a problem.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps to apply backtracking for the 4×4 N-Queens problem in Python.",
+        options: [
+          "Start with an empty board",
+          "Place a queen in the current row",
+          "Check if placement is safe",
+          "If safe, move to the next row",
+          "If not, try next column",
+          "If no columns left, backtrack up",
+          "If board full, record solution",
+          "Continue until all solutions found",
+        ],
+        answer: [
+          "Start with an empty board",
+          "Place a queen in the current row",
+          "Check if placement is safe",
+          "If safe, move to the next row",
+          "If not, try next column",
+          "If no columns left, backtrack up",
+          "If board full, record solution",
+          "Continue until all solutions found",
+        ],
+      },
+    },
+    // 21
+    {
+      group: "6",
+      title: "Implementing Backtracking for 4×4 N-Queens",
+      description:
+        "Implement a backtracking algorithm to solve the 4×4 N-Queens problem.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write Python code to solve the 4×4 N-Queens problem using backtracking.",
+      },
+    },
+    // 22
+    {
+      group: "6",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [112, 132],
+      },
+    },
+  ],
+
+  ["swift-en"]: [
+    {
+      group: "introduction",
+      title: "Introduction To iOS Development with Swift",
+      isStudyGuide: true,
+      description:
+        "Expose yourself to Swift fundamentals and SwiftUI basics to improve the quality of your learning before making progress.",
+      question: {
+        questionText: (
+          <div>
+            <p style={{ marginBottom: 12 }}>
+              One of the best predictors for student success is exposure to
+              course material before studying it. You're encouraged to read
+              about the fundamentals of Swift in this study guide before
+              starting. You can reference this guide in the menu throughout your
+              progress, too.
+            </p>
+            <p style={{ marginBottom: 12 }}>
+              Remember to fail faster and fail forward! The real education
+              happens when you push through a challenge. We'll start off nice
+              and easy at first, then level up in difficulty as you collect more
+              progress. Make sure to use the tools at your disposal—you’re going
+              to need them.
+            </p>
+          </div>
+        ),
+        metaData: `### Advice
+This looks like ChatGPT content…but it’s not—it's me, your instructor!
+
+As a beginner:
+1. Programming is about structuring data and logic, not advanced math.
+2. Like spoken languages, you can express the same idea in many ways.
+3. When something challenges you, break it into smaller steps and iterate quickly.
+
+### Exposure
+This guide exposes you to concepts before you answer questions, so you won’t be intimidated later. Skim it now, code along later.
+
+### Core Concepts in Swift
+
+\`\`\`swift
+// Arrays
+var myArray: [Any] = [1, 2, 3, "a", "b", "c"]
+myArray.append("new data")
+
+// Dictionaries
+var dataSet: [String: Any] = [
+    "introduction": "Welcome",
+    "title": "Chapter 1",
+    "isLive": true
+]
+dataSet["page"] = 4
+dataSet["book"] = "Coding Basics"
+\`\`\`
+
+\`\`\`swift
+// Defining a class
+class House {
+    private var housePaint: String?
+
+    init(paint: String? = nil) {
+        self.housePaint = paint
+    }
+
+    func getPaint() -> String? {
+        return housePaint
+    }
+
+    func setPaint(_ paint: String) {
+        housePaint = paint
+    }
+
+    func deletePaint() {
+        housePaint = nil
+    }
+}
+
+// Usage
+let firstHome = House(paint: "pink")
+let nextHome = House(paint: "blue")
+print(firstHome.getPaint()!)   // "pink"
+\`\`\`
+
+### SwiftUI Quick Preview
+
+\`\`\`swift
+import SwiftUI
+
+struct CelebrationView: View {
+    let message: String
+
+    var body: some View {
+        VStack {
+            Text("Good job!")
+                .font(.title)
+                .padding(.bottom, 8)
+            Text(message)
+                .multilineTextAlignment(.center)
+                .padding()
+                .border(Color.black, width: 2)
+        }
+    }
+}
+
+// Preview in Xcode
+struct CelebrationView_Previews: PreviewProvider {
+    static var previews: some View {
+        CelebrationView(message: "You created a small app!")
+    }
+}
+\`\`\`
+
+### Conclusion
+Failing fast is in your best interest when learning a new language. This one-pager will be available inside the app. Good luck, and happy coding in Swift!`,
+      },
+    },
+
+    {
+      group: "tutorial",
+      title: "Understanding Coding",
+      description: "Grasp the basic concept of coding in Swift.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "Which of the following best describes coding?",
+        options: [
+          "Writing instructions for computers to perform tasks",
+          "Creating physical components for computers",
+          "Designing user interfaces",
+          "Managing databases",
+        ],
+        answer: "Writing instructions for computers to perform tasks",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Sequence of Program Execution",
+      description: "Learn the correct order of program execution.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps with drag-and-drop to order how a Swift program is built and run.",
+        options: [
+          "Writing Code",
+          "Code Compilation",
+          "Debugging",
+          "Program Execution",
+        ],
+        answer: [
+          "Writing Code",
+          "Code Compilation",
+          "Debugging",
+          "Program Execution",
+        ],
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Introduction to Variables",
+      description:
+        "In this step, you will learn about variables and how to declare them in Swift.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Select all the steps involved in correctly declaring a variable in Swift:",
+        options: [
+          "Use the var or let keyword",
+          "Choose a descriptive variable name",
+          "Assign a value using the equals sign (=)",
+          "End the declaration with a semicolon (;)",
+          "Capitalize the first letter of the variable name",
+          "Annotate the type explicitly (optional)",
+        ],
+        answer: [
+          "Use the var or let keyword",
+          "Choose a descriptive variable name",
+          "Assign a value using the equals sign (=)",
+        ],
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Understanding List Declarations",
+      description:
+        "Complete the code by selecting the correct way to declare an array of items in Swift.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which code block correctly declares a list of items in Swift?",
+        options: [
+          `let items = ["apple", "banana", "cherry"]`,
+          `var items: [String] = ["apple", "banana", "cherry"]`,
+          `let items = ("apple", "banana", "cherry")`,
+          `let items = "apple, banana, cherry"`,
+          `class Items {\n    // properties here\n}`,
+        ],
+        answer: `let items = ["apple", "banana", "cherry"]`,
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Variable Assignment in Swift",
+      description: "Learn how to assign values to variables in Swift.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Declare a variable named `age` and assign it the value 25.",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Understanding Data Types",
+      description: "Learn the basics of data types in Swift.",
+      isSingleLineText: true,
+      question: {
+        questionText: "What keyword is used to declare a constant in Swift?",
+        placeholder: "Type your answer here...",
+        answer: "let",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Purpose of Variables",
+      description: "Understand why variables are used in programming.",
+      isText: true,
+      question: {
+        questionText:
+          "In your own words, explain the purpose of variables in programming.",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Bash Terminal Practice: Changing Directories",
+      description: "Practice changing directories in a terminal environment.",
+      isCode: true,
+      isTerminal: true,
+      question: {
+        questionText:
+          "Enter the command to change to the `new_folder` directory using a Bash terminal.",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [1, 8],
+      },
+    },
+    // 1
+    {
+      group: "1",
+      title: "Data Types in Programming",
+      description: "Identify different primitive data types used in Swift.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following are primitive data types in Swift?",
+        options: ["String", "Int", "Float", "Double", "Bool", "Character"],
+        answer: ["String", "Int", "Float", "Double", "Bool", "Character"],
+      },
+    },
+    // 2
+    {
+      group: "1",
+      title: "Steps to Create a Function",
+      description: "Understand the sequence of creating and using a function.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps with drag-and-drop to create and use a Swift function.",
+        options: [
+          "Define the function",
+          "Call the function",
+          "Execute the function body",
+          "Return a value",
+        ],
+        answer: [
+          "Define the function",
+          "Call the function",
+          "Execute the function body",
+          "Return a value",
+        ],
+      },
+    },
+    // 3
+    {
+      group: "1",
+      title: "Writing a Simple Function",
+      description: "Practice writing functions in Swift.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write a function named `greet` that takes a `name: String` parameter and prints a greeting with that name.",
+      },
+    },
+    // 4
+    {
+      group: "1",
+      title: "Functions in Programming",
+      description: "Discuss the role of functions.",
+      isText: true,
+      question: {
+        questionText:
+          "What is a function, and why is it useful in programming?",
+      },
+    },
+    // 5
+    {
+      group: "1",
+      title: "Conditional Statements",
+      description: "Identify the purpose of conditional statements.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "What is the primary purpose of an `if` statement?",
+        options: [
+          "To repeat a block of code multiple times",
+          "To execute a block of code based on a condition",
+          "To define a variable",
+          "To import external libraries",
+        ],
+        answer: "To execute a block of code based on a condition",
+      },
+    },
+    // 6
+    {
+      group: "1",
+      title: "Order of Conditional Checks",
+      description:
+        "Complete the code that evaluates an `if`/`else if`/`else` statement.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Complete the following Swift code to check if `x` is greater than 10, equal to 10, or less than 10.",
+        options: [
+          `if x > 10 {\n    print("x is greater than 10")\n} else if x == 10 {\n    print("x is equal to 10")\n} else {\n    print("x is less than 10")\n}`,
+        ],
+        answer: `if x > 10 {\n    print("x is greater than 10")\n} else if x == 10 {\n    print("x is equal to 10")\n} else {\n    print("x is less than 10")\n}`,
+      },
+    },
+    // 7
+    {
+      group: "1",
+      title: "Implementing Conditional Logic",
+      description: "Apply conditional logic in code.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write an `if`/`else if`/`else` statement that checks if a number `num` is positive, negative, or zero, and prints an appropriate message.",
+      },
+    },
+    // 8
+    {
+      group: "1",
+      title: "Understanding Conditional Logic in Programming",
+      description:
+        "Learn how logical operators like AND and OR control conditions in programming.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "Which logical operator is used to check if both conditions in a conditional statement are true in Swift?",
+        placeholder: "Type your answer here...",
+        answer: "&&",
+      },
+    },
+    // 9
+    {
+      group: "1",
+      title: "Real-world Use of Conditionals",
+      description: "Reflect on how conditionals are used.",
+      isText: true,
+      question: {
+        questionText:
+          "Provide an example of how conditional statements are used in real-world applications.",
+      },
+    },
+    // 10
+    {
+      group: "1",
+      title: "Terminal Practice: Help Command",
+      description: "Write the help command to observe basic commands.",
+      isCode: true,
+      isTerminal: true,
+      question: {
+        questionText:
+          "In a Bash terminal environment, enter the help command to discover basic commands.",
+      },
+    },
+    // 11
+    {
+      group: "1",
+      title: "Loops in Programming",
+      description: "Understand the purpose of loops.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which loop will continue executing as long as its condition remains true in Swift?",
+        options: [
+          "for-in loop",
+          "while loop",
+          "repeat-while loop",
+          "forEach method",
+        ],
+        answer: "while loop",
+      },
+    },
+    // 12
+    {
+      group: "1",
+      title: "Sequence of Loop Execution",
+      description: "Grasp the order in which loops execute.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps of a Swift `for-in` loop execution with drag-and-drop.",
+        options: [
+          "Initialize iterator",
+          "Check condition",
+          "Execute code block",
+          "Advance iterator",
+        ],
+        answer: [
+          "Initialize iterator",
+          "Check condition",
+          "Execute code block",
+          "Advance iterator",
+        ],
+      },
+    },
+    // 13
+    {
+      group: "1",
+      title: "Creating a Loop",
+      description: "Practice writing loops.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write a `for i in 1...5 { print(i) }` loop that prints numbers from 1 to 5 in Swift.",
+      },
+    },
+    // 14
+    {
+      group: "1",
+      title: "Applications of Loops",
+      description: "Discuss where loops are useful.",
+      isText: true,
+      question: {
+        questionText:
+          "Describe a scenario in software development where loops are essential.",
+      },
+    },
+    // 15
+    {
+      group: "1",
+      title: "Arrays in Swift",
+      description: "Identify methods used for manipulating arrays in Swift.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following methods are valid for manipulating arrays in Swift?",
+        options: [
+          ".append()",
+          ".removeLast()",
+          ".remove(at:)",
+          ".insert(_:at:)",
+          ".map()",
+          ".filter()",
+        ],
+        answer: [
+          ".append()",
+          ".removeLast()",
+          ".remove(at:)",
+          ".insert(_:at:)",
+          ".map()",
+          ".filter()",
+        ],
+      },
+    },
+    // 16
+    {
+      group: "1",
+      title: "Order of Array Operations",
+      description: "Understand how array operations are performed.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Complete the code to declare an array, add an element to it, remove the first element, and then access an element.",
+        options: [
+          `var fruits = ["apple", "banana"]\nfruits.append("pink")\nfruits.removeFirst()\nprint(fruits[0])`,
+        ],
+        answer: `var fruits = ["apple", "banana"]\nfruits.append("pink")\nfruits.removeFirst()\nprint(fruits[0])`,
+      },
+    },
+    // 17
+    {
+      group: "1",
+      title: "Manipulating Arrays",
+      description: "Apply array methods in code.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          'Create an array `fruits` with "apple" and "banana". Add "pink" to the end and remove the first element.',
+      },
+    },
+    // 18
+    {
+      group: "1",
+      title: "Use Cases for Arrays",
+      description: "Explore scenarios where arrays are used.",
+      isText: true,
+      question: {
+        questionText:
+          "Provide an example of how an array can be used to manage data in an iOS application.",
+      },
+    },
+    // 19
+    {
+      group: "1",
+      title: "Terminal Practice: Creating Directories",
+      description: "Creating a directory command in a bash terminal",
+      isCode: true,
+      isTerminal: true,
+      question: {
+        questionText:
+          "In a Bash terminal environment, create a directory called `app` using the `mkdir` command.",
+      },
+    },
+    // 20
+    {
+      group: "1",
+      title: "Advanced Coding Output",
+      description:
+        "Predict the output of the following code with arrays, conditionals, logical operators, and array operations.",
+      isSingleLineText: true,
+      question: {
+        questionText: (
+          <div>
+            What will be the output of the following code?
+            <br />
+            <pre>
+              {`
+var arr = [1, 2, 3, 4]
+let x = 10
+let y = 5
+
+if x > y && arr.count > 3 {
+    arr.append(x)
+    arr = arr.filter { $0 % 2 == 0 }
+}
+
+print(arr)
+`}
+            </pre>
+          </div>
+        ),
+        placeholder: "Type your answer here...",
+        answer: "[2, 4, 10]",
+      },
+    },
+    // 21
+    {
+      group: "1",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [10, 29],
+      },
+    },
+    // 1
+    {
+      group: "2",
+      title: "Introduction to Objects",
+      description:
+        "In this step, you will learn what an object is in programming.",
+      isSingleLineText: true,
+      question: {
+        questionText: "In Swift, how do you create a new instance of a class?",
+        placeholder: "Type your answer here...",
+        answer: "Call the class initializer, e.g. MyClass()",
+      },
+    },
+    // 2
+    {
+      group: "2",
+      title: "Understanding the init Method",
+      description:
+        "In this step, you will learn about the purpose of the `init` method in a class.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which of the following code blocks correctly defines the `init` method and instantiates the class in Swift?",
+        options: [
+          `class Car {
+    var brand: String
+    init(brand: String) {
+        self.brand = brand
+    }
+}
+let myCar = Car(brand: "Toyota")`,
+          `class Car {
+    var brand: String
+    func init(brand: String) {
+        self.brand = brand
+    }
+}
+let myCar = Car(brand: "Toyota")`,
+          `class Car {
+    var brand: String
+    init(_ brand: String) {
+        self.brand = brand
+    }
+}
+let myCar = Car("Toyota")`,
+          `class Car {
+    var brand: String?
+    init() {
+        brand = "Toyota"
+    }
+}
+let myCar = Car()`,
+        ],
+        answer: `class Car {
+    var brand: String
+    init(brand: String) {
+        self.brand = brand
+    }
+}
+let myCar = Car(brand: "Toyota")`,
+      },
+    },
+    // 3
+    {
+      group: "2",
+      title: "Purpose of the init Method",
+      description:
+        "In this step, you will learn about the purpose of the `init` method in a class.",
+      isText: true,
+      question: {
+        questionText:
+          "Explain the purpose of the `init` method in a Swift class.",
+      },
+    },
+    // 4
+    {
+      group: "2",
+      title: "Creating an Instance of a Class",
+      description:
+        "In this step, you will learn how to create an instance of a class in Swift.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Select all the correct steps required to create an instance of a class in Swift:",
+        options: [
+          "Define the class with the `class` keyword",
+          "Call the class initializer with parentheses",
+          "Pass required parameters to the initializer",
+          "Store the returned instance in a variable",
+          "Use the `new` keyword",
+          "Call the class without parentheses",
+        ],
+        answer: [
+          "Define the class with the `class` keyword",
+          "Call the class initializer with parentheses",
+          "Pass required parameters to the initializer",
+          "Store the returned instance in a variable",
+        ],
+      },
+    },
+    // 5
+    {
+      group: "2",
+      title: "Declaring a Method in a Class",
+      description:
+        "In this step, you will learn how to declare a method inside a class.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Declare a method named `updateModel()` in the `Car` class that updates the `model` property.",
+      },
+    },
+    // 6
+    {
+      group: "2",
+      title: "Using self",
+      description:
+        "Complete the code by selecting the correct way to use `self` to refer to the instance property.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which code block correctly uses `self` to refer to the object's property?",
+        options: [
+          `class Car {
+    var brand: String
+    init(brand: String) { self.brand = brand }
+    func showBrand() { print(brand) }
+}
+let myCar = Car(brand: "Toyota")
+myCar.showBrand()`,
+          `class Car {
+    var brand: String
+    init(brand: String) { self.brand = brand }
+    func showBrand() { print(self.brand) }
+}
+let myCar = Car(brand: "Toyota")
+myCar.showBrand()`,
+          `class Car {
+    var brand: String
+    init(brand: String) { brand = self.brand }
+    func showBrand() { print(self.brand) }
+}
+let myCar = Car(brand: "Toyota")
+myCar.showBrand()`,
+          `class Car {
+    var brand: String
+    init(brand: String) { self.brand = brand }
+    func showBrand() { print(self.brand()) }
+}
+let myCar = Car(brand: "Toyota")
+myCar.showBrand()`,
+        ],
+        answer: `class Car {
+    var brand: String
+    init(brand: String) { self.brand = brand }
+    func showBrand() { print(self.brand) }
+}
+let myCar = Car(brand: "Toyota")
+myCar.showBrand()`,
+      },
+    },
+    // 7
+    {
+      group: "2",
+      title: "Adding Properties to an Object",
+      description:
+        "In this step, you will learn how to add properties to a Swift class.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText: "Add a new property `year: Int` to the `Car` class.",
+      },
+    },
+    // 8
+    {
+      group: "2",
+      title: "Accessing and Modifying Object Properties",
+      description:
+        "In this step, you will learn how to get or set properties of an object in Swift.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following are valid ways to get or set properties in Swift?",
+        options: [
+          "Use dot notation (e.g., obj.property)",
+          "Use custom getter/setter if defined",
+          "Use Key-Value Coding (KVC)",
+          "Use reflection APIs",
+        ],
+        answer: [
+          "Use dot notation (e.g., obj.property)",
+          "Use custom getter/setter if defined",
+        ],
+      },
+    },
+    // 9
+    {
+      group: "2",
+      title: "Modifying Object Properties",
+      description:
+        "In this step, you will learn how to modify properties of an object.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Modify the `model` property of an instance of the `Car` class.",
+      },
+    },
+    // 10
+    {
+      group: "2",
+      title: "Understanding Inheritance",
+      description:
+        "In this step, you will learn about inheritance in object-oriented programming.",
+      isText: true,
+      question: {
+        questionText: "What is inheritance in object-oriented programming?",
+      },
+    },
+    // 11
+    {
+      group: "2",
+      title: "Implementing Inheritance",
+      description:
+        "In this step, you will implement inheritance in Swift by subclassing.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Extend the `Car` class to create an `ElectricCar` subclass with an additional property `batteryLife: Int`.",
+      },
+    },
+    // 12
+    {
+      group: "2",
+      title: "Overriding Methods",
+      description:
+        "In this step, you will learn how to override methods in a subclass.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "What does it mean to override a method in a subclass?",
+        options: [
+          "Provide a new implementation for a superclass method",
+          "Delete the superclass method",
+          "Call the superclass method without changes",
+          "Extend functionality via super.method()",
+        ],
+        answer: "Provide a new implementation for a superclass method",
+      },
+    },
+    // 13
+    {
+      group: "2",
+      title: "Understanding Encapsulation",
+      description:
+        "In this step, you will learn about encapsulation in object-oriented programming.",
+      isText: true,
+      question: {
+        questionText: "What is encapsulation in object-oriented programming?",
+      },
+    },
+    // 14
+    {
+      group: "2",
+      title: "Implementing Encapsulation",
+      description:
+        "In this step, you will implement encapsulation by using computed properties.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Add a computed property `batteryLife` with get and set in the `ElectricCar` subclass.",
+      },
+    },
+    // 15
+    {
+      group: "2",
+      title: "Encapsulation Concept",
+      description:
+        "In this step, you will define the core concept of encapsulation in one word.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What is the primary concept encapsulation ensures in object-oriented programming?",
+        placeholder: "Type your answer here...",
+        answer: "Abstraction",
+      },
+    },
+    // 16
+    {
+      group: "2",
+      title: "Combining Concepts",
+      description:
+        "In this step, you will combine various concepts learned to create a small project.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Create a small project that defines a `Person` class, uses inheritance to create a `Student` subclass, and demonstrates encapsulation and arrays of objects in Swift.",
+      },
+    },
+    // 17
+    {
+      group: "2",
+      title: "Printing in Code",
+      description: "In this step, you will print a message using Swift code.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write a Swift statement to print: 'I'm talking to the inside of a computer!'",
+      },
+    },
+    // 18
+    {
+      group: "2",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [31, 47],
+      },
+    },
+    // 1
+    {
+      group: "3",
+      title: "Introduction to SwiftUI Views",
+      description:
+        "In this step, you will learn about SwiftUI views, their role in creating reusable UI elements, and how they help manage the user interface efficiently.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "Which of the following best describes a SwiftUI view?",
+        options: [
+          "A method for handling events in Swift",
+          "A feature exclusive to UIKit",
+          "A reusable piece of user interface defined as a struct or class conforming to View",
+          "A built-in HTML element in Swift",
+        ],
+        answer:
+          "A reusable piece of user interface defined as a struct or class conforming to View",
+      },
+    },
+    // 2
+    {
+      group: "3",
+      title: "Key Concepts in SwiftUI",
+      description:
+        "In this step, you will learn about fundamental SwiftUI concepts, including properties, state, modifiers, and layout containers.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText: "Which of the following are key concepts in SwiftUI?",
+        options: [
+          "@State for local mutable state",
+          "Directly manipulating the view hierarchy",
+          "View modifiers for styling and behavior",
+          "HStack, VStack, ZStack for layout",
+        ],
+        answer: [
+          "@State for local mutable state",
+          "View modifiers for styling and behavior",
+          "HStack, VStack, ZStack for layout",
+        ],
+      },
+    },
+    // 3
+    {
+      group: "3",
+      title: "Effect of State Changes on a View",
+      description:
+        "In this step, you will explain what happens to a SwiftUI view when its @State changes.",
+      isText: true,
+      question: {
+        questionText:
+          "What happens to a SwiftUI view when its @State property changes?",
+      },
+    },
+    // 4
+    {
+      group: "3",
+      title: "Creating a Simple SwiftUI View",
+      description:
+        "In this step, you will define a basic SwiftUI view that displays a heading and a text.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which of the following code blocks correctly defines a simple SwiftUI view that shows a title and subtitle?",
+        options: [
+          `struct MyView: View {
+    var body: some View {
+        VStack {
+            Text("Hello, World!")
+            Text("Welcome to the thunderdome")
+        }
+    }
+}`,
+          `class MyView: View {
+    func body() -> some View {
+        VStack {
+            Text("Hello, World!")
+            Text("Welcome to the thunderdome")
+        }
+    }
+}`,
+          `struct MyView {
+    var body: some View {
+        VStack {
+            Text("Hello, World!")
+            Text("Welcome to the thunderdome")
+        }
+    }
+}`,
+          `struct MyView: View {
+    var content: some View {
+        VStack {
+            Text("Hello, World!")
+            Text("Welcome to the thunderdome")
+        }
+    }
+}`,
+        ],
+        answer: `struct MyView: View {
+    var body: some View {
+        VStack {
+            Text("Hello, World!")
+            Text("Welcome to the thunderdome")
+        }
+    }
+}`,
+      },
+    },
+    // 5
+    {
+      group: "3",
+      title: "Handling Tap Gestures",
+      description:
+        "In this step, you will handle a button tap event using SwiftUI's modifiers.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which of the following code blocks correctly defines a SwiftUI view that handles a button tap?",
+        options: [
+          `Button("Click me") {
+    print("Button clicked!")
+}`,
+          `Button(action: {
+    print("Button clicked!")
+}) {
+    Text("Click me")
+}`,
+          `Button("Click me", action: print("Button clicked!"))`,
+          `Button {
+    Text("Click me")
+} onTap: {
+    print("Button clicked!")
+}`,
+        ],
+        answer: `Button("Click me") {
+    print("Button clicked!")
+}`,
+      },
+    },
+    // 6
+    {
+      group: "3",
+      title: "Managing State with @State",
+      description:
+        "In this step, you will learn how to use the @State property wrapper to manage local view state.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Modify the TweetView to include a like button that toggles a `@State var liked: Bool` property.",
+      },
+    },
+    // 7
+    {
+      group: "3",
+      title: "View Properties",
+      description:
+        "In this step, you will learn about passing data into SwiftUI views.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What is the term used for data passed into a SwiftUI view?",
+        placeholder: "Type your answer here...",
+        answer: "View properties (initializer parameters)",
+      },
+    },
+    // 8
+    {
+      group: "3",
+      title: "Passing and Using Properties",
+      description:
+        "In this step, you will learn how to pass and use properties in a SwiftUI view.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Update the TweetView to accept and display the user’s `name`, `handle`, and `content` as view properties.",
+      },
+    },
+    // 9
+    {
+      group: "3",
+      title: "Working with Properties and State Together",
+      description:
+        "In this step, you will learn the difference between properties and @State.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "What is the main difference between view properties and @State?",
+        options: [
+          "Properties are immutable while @State is mutable",
+          "Properties trigger view updates while @State does not",
+          "@State is passed from parent views, properties are local",
+          "There is no difference; they behave the same",
+        ],
+        answer: "Properties are immutable while @State is mutable",
+      },
+    },
+    // 10
+    {
+      group: "3",
+      title: "Terminal Practice: Listing Files",
+      description:
+        "In this step, you will learn how to list files in a bash terminal.",
+      isCode: true,
+      isTerminal: true,
+      question: {
+        questionText:
+          "Use the terminal to list all files using the `ls` command.",
+      },
+    },
+    // 11
+    {
+      group: "3",
+      title: "Styling SwiftUI Views",
+      description:
+        "In this step, you will learn how to style SwiftUI views using modifiers.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Add modifiers to the TweetView to set font, padding, background, and corner radius.",
+      },
+    },
+    // 12
+    {
+      group: "3",
+      title: "Using Stacks for Layout",
+      description:
+        "In this step, you will learn how to use HStack and VStack for layout in SwiftUI.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the following in the order needed to center content using VStack and modifiers:",
+        options: [
+          "VStack { }",
+          ".frame(maxWidth: .infinity, maxHeight: .infinity)",
+          ".background(Color.white)",
+          ".multilineTextAlignment(.center)",
+        ],
+        answer: [
+          "VStack { }",
+          ".frame(maxWidth: .infinity, maxHeight: .infinity)",
+          ".multilineTextAlignment(.center)",
+          ".background(Color.white)",
+        ],
+      },
+    },
+    // 13
+    {
+      group: "3",
+      title: "Lifting State Up",
+      description:
+        "In this step, you will learn how to lift state to a parent view to share data.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Create a parent view that manages an array of Tweet models with @State and passes bindings to child TweetViews.",
+      },
+    },
+    // 14
+    {
+      group: "3",
+      title: "Using onAppear for Side Effects",
+      description:
+        "In this step, you will learn how to use onAppear to handle side effects in a SwiftUI view.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Modify the TweetView to use `.onAppear` or `.onChange` to log a message when the retweet count changes.",
+      },
+    },
+    // 15
+    {
+      group: "3",
+      title: "Understanding View Lifecycle",
+      description:
+        "In this step, you will learn about the SwiftUI view lifecycle and the purpose of onAppear.",
+      isText: true,
+      question: {
+        questionText:
+          "What is the SwiftUI view lifecycle, and what is the purpose of onAppear?",
+      },
+    },
+    // 16
+    {
+      group: "3",
+      title: "Fetching Data with async/await",
+      description:
+        "In this step, you will learn how to fetch data from an API using async/await in SwiftUI.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps to correctly fetch data in a SwiftUI view using async/await:",
+        options: [
+          "Import SwiftUI and Foundation",
+          "Define @State var data",
+          "Use Task { await fetchData() } in .task modifier",
+          "Handle errors with do/catch",
+          "Update state with received data",
+          "Render data in view",
+        ],
+        answer: [
+          "Import SwiftUI and Foundation",
+          "Define @State var data",
+          "Use Task { await fetchData() } in .task modifier",
+          "Handle errors with do/catch",
+          "Update state with received data",
+          "Render data in view",
+        ],
+      },
+    },
+    // 17
+    {
+      group: "3",
+      title: "Building a Complete Tweet App",
+      description:
+        "In this step, you will combine everything you have learned to build a complete Tweet app in SwiftUI.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Build a SwiftUI Tweet app that fetches tweets via async/await, displays them in a List, and allows users to like and retweet.",
+      },
+    },
+    // 18
+    {
+      group: "3",
+      title: "Terminal Practice: Creating a Swift Package",
+      description:
+        "In this step, you will learn how to initialize a Swift package using the terminal.",
+      isText: true,
+      question: {
+        questionText:
+          "Enter the command to create a new Swift package: `swift package init --type executable`.",
+      },
+    },
+    // 19
+    {
+      group: "3",
+      title: "Creating a New SwiftUI Project",
+      description:
+        "In this step, you will learn how to create a new SwiftUI project in Xcode.",
+      isSelectOrder: true,
+      question: {
+        questionText: "Arrange the steps to create a new SwiftUI app in Xcode:",
+        options: [
+          "Open Xcode and select File > New > Project",
+          "Choose App template and click Next",
+          "Select SwiftUI for Interface and Swift for Language",
+          "Enter product name and organization identifier",
+          "Choose a location and create the project",
+        ],
+        answer: [
+          "Open Xcode and select File > New > Project",
+          "Choose App template and click Next",
+          "Select SwiftUI for Interface and Swift for Language",
+          "Enter product name and organization identifier",
+          "Choose a location and create the project",
+        ],
+      },
+    },
+    // 20
+    {
+      group: "3",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [49, 67],
+      },
+    },
+    // 1
+    {
+      group: "4",
+      title: "Introduction to Swift Backend Engineering with Vapor",
+      description:
+        "In this step, you will learn what backend software engineering is and why it is important.",
+      isText: true,
+      question: {
+        questionText:
+          "What is backend software engineering and why is it important in building applications?",
+      },
+    },
+    // 2
+    {
+      group: "4",
+      title: "Main Lessons Overview",
+      description:
+        "In this step, you will identify a core responsibility of backend engineering in Swift.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which of the following is a core responsibility in backend engineering?",
+        options: [
+          "Managing concurrency and ensuring thread safety in multi-user applications",
+          "Implementing user authentication directly in the UI layer",
+          "Handling memory allocation in the Swift runtime",
+          "Designing scalable UI components for cross-platform compatibility",
+          "Optimizing database queries and ensuring data consistency",
+        ],
+        answer: "Optimizing database queries and ensuring data consistency",
+      },
+    },
+    // 3
+    {
+      group: "4",
+      title: "Key Responsibilities of Backend Engineering",
+      description:
+        "In this step, you will learn about the various responsibilities involved in Swift backend engineering with Vapor.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following are core responsibilities of backend engineering?",
+        options: [
+          "Managing and optimizing databases for storing and retrieving data efficiently",
+          "Designing and implementing RESTful APIs using Vapor",
+          "Ensuring security through user authentication and authorization mechanisms",
+          "Handling server-side logic, including business operations and calculations",
+          "Maintaining server reliability and performance under high traffic",
+          "Managing data integrity and consistency across distributed systems",
+          "Implementing logging and monitoring to ensure system health and debug issues",
+        ],
+        answer: [
+          "Managing and optimizing databases for storing and retrieving data efficiently",
+          "Designing and implementing RESTful APIs using Vapor",
+          "Ensuring security through user authentication and authorization mechanisms",
+          "Handling server-side logic, including business operations and calculations",
+          "Maintaining server reliability and performance under high traffic",
+          "Managing data integrity and consistency across distributed systems",
+          "Implementing logging and monitoring to ensure system health and debug issues",
+        ],
+      },
+    },
+    // 4
+    {
+      group: "4",
+      title: "Interfacing with the Terminal",
+      description:
+        "In this step, you will learn about using the terminal in Swift backend engineering.",
+      isText: true,
+      question: {
+        questionText:
+          "Why is learning to use the terminal important for backend development, and what tasks can you perform using it?",
+      },
+    },
+    // 5
+    {
+      group: "4",
+      title: "Installing the Vapor Toolbox",
+      description:
+        "In this step, you will learn how to install the Vapor CLI globally.",
+      isText: true,
+      question: {
+        questionText:
+          "Write the command to install the Vapor Toolbox using Homebrew.",
+      },
+    },
+    // 6
+    {
+      group: "4",
+      title: "Adding a Swift Package with SwiftPM",
+      description:
+        "In this step, you will use Swift Package Manager to add a dependency.",
+      isText: true,
+      question: {
+        questionText:
+          "Write the command to add the FluentPostgresDriver package via SwiftPM.",
+      },
+    },
+    // 7
+    {
+      group: "4",
+      title: "User Creation and Authentication",
+      description:
+        "In this step, you will understand the key concept related to creating users in backend systems.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What is the process called that verifies a user's identity during account creation?",
+        placeholder: "Type your answer here...",
+        answer: "authentication",
+      },
+    },
+    // 8
+    {
+      group: "4",
+      title: "Database Foundations",
+      description:
+        "In this step, you will learn about the foundations of databases in backend engineering.",
+      isText: true,
+      question: {
+        questionText:
+          "What are the main types of databases used in backend engineering?",
+      },
+    },
+    // 9
+    {
+      group: "4",
+      title: "Connecting to PostgreSQL with Fluent",
+      description:
+        "In this step, you will write a code snippet to connect a Vapor app to a PostgreSQL database.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write a Swift code snippet using FluentPostgresDriver to configure the database connection.",
+      },
+    },
+    // 10
+    {
+      group: "4",
+      title: "Initiating a Vapor Project",
+      description:
+        "In this step, you will learn how to start a new Vapor project using the CLI.",
+      isSingleLineText: true,
+      question: {
+        questionText: "What is the command to create a new Vapor API project?",
+        answer: "vapor new MyApp --api",
+      },
+    },
+    // 11
+    {
+      group: "4",
+      title: "Advanced Data Storage Practices",
+      description:
+        "In this step, you will learn advanced practices for storing data responsibly in backend systems.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following are best practices for ensuring responsible data storage in a backend system?",
+        options: [
+          "Cache data in memory (e.g., Redis) to reduce database access time",
+          "Use a single centralized backup to reduce complexity and cost",
+          "Encrypt sensitive data both at rest and in transit to ensure security",
+          "Implement database replication across multiple servers to improve fault tolerance",
+        ],
+        answer: [
+          "Cache data in memory (e.g., Redis) to reduce database access time",
+          "Encrypt sensitive data both at rest and in transit to ensure security",
+          "Implement database replication across multiple servers to improve fault tolerance",
+        ],
+      },
+    },
+    // 12
+    {
+      group: "4",
+      title: "Configuring Fluent and Running Migrations",
+      description:
+        "In this step, you will learn how to initialize Fluent and run migrations in Vapor.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Complete the code to configure PostgreSQL and register a User migration in Vapor.",
+        options: [
+          `import Fluent
+import FluentPostgresDriver
+import Vapor
+
+public func configure(_ app: Application) throws {
+    app.databases.use(.postgres(
+        hostname: "localhost",
+        username: "user",
+        password: "pass",
+        database: "db"
+    ), as: .psql)
+    app.migrations.add(CreateUser())
+    try app.autoMigrate().wait()
+}`,
+        ],
+        answer: `import Fluent
+import FluentPostgresDriver
+import Vapor
+
+public func configure(_ app: Application) throws {
+    app.databases.use(.postgres(
+        hostname: "localhost",
+        username: "user",
+        password: "pass",
+        database: "db"
+    ), as: .psql)
+    app.migrations.add(CreateUser())
+    try app.autoMigrate().wait()
+}`,
+      },
+    },
+    // 13
+    {
+      group: "4",
+      title: "Handling User Data",
+      description:
+        "In this step, you will learn how to retrieve a User model instance.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write a Vapor route handler to fetch a User by ID from the database.",
+      },
+    },
+    // 14
+    {
+      group: "4",
+      title: "Retrieving a User After Authentication",
+      description:
+        "In this step, you will learn how to retrieve the authenticated user.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write code to retrieve the authenticated User from the request auth context in Vapor.",
+      },
+    },
+    // 15
+    {
+      group: "4",
+      title: "Understanding the Authentication Flow",
+      description:
+        "In this step, you will learn about the typical flow of JWT authentication in a backend system.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the following steps in the correct order for a typical JWT authentication flow in Vapor.",
+        options: [
+          "User submits credentials via POST",
+          "Server verifies credentials against database",
+          "JWT token is generated and signed",
+          "Client stores token locally",
+          "Protected routes validate token",
+        ],
+        answer: [
+          "User submits credentials via POST",
+          "Server verifies credentials against database",
+          "JWT token is generated and signed",
+          "Client stores token locally",
+          "Protected routes validate token",
+        ],
+      },
+    },
+    // 16
+    {
+      group: "4",
+      title: "OAuth Authentication",
+      description:
+        "In this step, you will learn about OAuth-style authentication systems.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What is the widely used protocol for authorization that allows third-party services to access user data without exposing credentials?",
+        placeholder: "Type your answer here...",
+        answer: "OAuth 2.0",
+      },
+    },
+    // 17
+    {
+      group: "4",
+      title: "Using Environment Variables",
+      description:
+        "In this step, you will learn about using environment variables in backend development.",
+      isText: true,
+      question: {
+        questionText: "What role do environment variables play in a codebase?",
+      },
+    },
+    // 18
+    {
+      group: "4",
+      title: "Database Relationships with Fluent",
+      description:
+        "In this step, you will learn about defining relationships in Fluent.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write a Fluent model snippet to define a one-to-many relationship between User and Post.",
+      },
+    },
+    // 19
+    {
+      group: "4",
+      title: "Interfacing with an API",
+      description:
+        "In this step, you will learn the common HTTP methods used to interface with an API.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following HTTP methods are commonly used to interface with a REST API, and what do they do?",
+        options: [
+          "GET (Retrieves data)",
+          "POST (Creates a new resource)",
+          "PUT (Replaces a resource)",
+          "PATCH (Partially updates a resource)",
+          "DELETE (Deletes a resource)",
+        ],
+        answer: [
+          "GET (Retrieves data)",
+          "POST (Creates a new resource)",
+          "PATCH (Partially updates a resource)",
+          "DELETE (Deletes a resource)",
+        ],
+      },
+    },
+    // 20
+    {
+      group: "4",
+      title: "Creating a JWT Authentication System",
+      description:
+        "In this step, you will create a simple user authentication system with JWT in Vapor.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps with drag-and-drop to implement JWT authentication in Vapor.",
+        options: [
+          "Add jwt-kit dependency",
+          "Define User model",
+          "Configure JWT signer",
+          "Create register route",
+          "Hash password before storing",
+          "Create login route",
+          "Verify credentials",
+          "Generate JWT token",
+          "Return token to client",
+          "Protect routes with token middleware",
+        ],
+        answer: [
+          "Add jwt-kit dependency",
+          "Define User model",
+          "Configure JWT signer",
+          "Create register route",
+          "Hash password before storing",
+          "Create login route",
+          "Verify credentials",
+          "Generate JWT token",
+          "Return token to client",
+          "Protect routes with token middleware",
+        ],
+      },
+    },
+    // 21
+    {
+      group: "4",
+      title: "Deploying a Vapor Application",
+      description:
+        "In this step, you will learn how to deploy a Vapor application.",
+      isText: true,
+      question: {
+        questionText:
+          "Write the command to run your Vapor app in production mode.",
+      },
+    },
+    // 22
+    {
+      group: "4",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [69, 89],
+      },
+    },
+    // 1
+    {
+      group: "5",
+      title: "Benefits of Serverless Cloud Platforms",
+      description:
+        "In this step, you will explore the advantages of using Firebase in iOS development.",
+      isText: true,
+      question: {
+        questionText:
+          "What are the key benefits of using Firebase as a serverless backend for an iOS app, and how does it differ from a traditional server-based model?",
+      },
+    },
+    // 2
+    {
+      group: "5",
+      title: "Understanding Xcode",
+      description:
+        "In this step, you will explore what Xcode is and why it is the primary IDE for iOS development.",
+      isText: true,
+      question: {
+        questionText:
+          "What is Xcode and why is it the most popular IDE among iOS developers?",
+      },
+    },
+    // 3
+    {
+      group: "5",
+      title: "Installing Swift and SwiftPM",
+      description: "Install Swift and use the Swift Package Manager.",
+      isText: true,
+      question: {
+        questionText:
+          "What is the purpose of Swift and Swift Package Manager (SwiftPM) in iOS development?",
+      },
+    },
+    // 4
+    {
+      group: "5",
+      title: "Installing CocoaPods",
+      description: "Set up CocoaPods to manage Firebase dependencies.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "Enter the command to install CocoaPods on your macOS system.",
+        answer: "sudo gem install cocoapods",
+      },
+    },
+    // 5
+    {
+      group: "5",
+      title: "Adding Firebase via CocoaPods",
+      description: "Add Firebase SDK pods to your Xcode project.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What entry do you add under `pod 'Firebase/Core'` in your Podfile?",
+        answer:
+          "pod 'Firebase/Auth'\npod 'Firebase/Firestore'\npod 'Firebase/Storage'",
+      },
+    },
+    // 6
+    {
+      group: "5",
+      title: "Initializing a Firebase Project",
+      description:
+        "In this step, you will initialize Firebase in your iOS project by adding the config file.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What file do you download from the Firebase console and add to your Xcode project root?",
+        answer: "GoogleService-Info.plist",
+      },
+    },
+    // 7
+    {
+      group: "5",
+      title: "Selecting Firebase Modules",
+      description: "Choose which Firebase modules to include in your iOS app.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following Firebase SDK modules might you enable for an iOS app?",
+        options: [
+          "Auth",
+          "Firestore",
+          "Realtime Database",
+          "Cloud Functions",
+          "Analytics",
+          "Storage",
+        ],
+        answer: ["Auth", "Firestore", "Analytics", "Storage"],
+      },
+    },
+    // 8
+    {
+      group: "5",
+      title: "Configuring Firebase in AppDelegate",
+      description:
+        "Initialize Firebase in your AppDelegate or SwiftUI App entry point.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write the Swift code to configure Firebase in AppDelegate `application(_:didFinishLaunchingWithOptions:)`.",
+      },
+    },
+    // 9
+    {
+      group: "5",
+      title: "Setting Up Firestore",
+      description: "Learn how to initialize and use Firestore in Swift.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write the Swift code to get a Firestore instance and add a document to `users` collection.",
+      },
+    },
+    // 10
+    {
+      group: "5",
+      title: "Understanding Authentication",
+      description:
+        "In this step, you will learn about Firebase Authentication in iOS.",
+      isText: true,
+      question: {
+        questionText:
+          "What is Firebase Authentication, and which sign-in methods does it support on iOS?",
+      },
+    },
+    // 11
+    {
+      group: "5",
+      title: "Creating a User with FirebaseAuth",
+      description: "Create a new user account programmatically in Swift.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write Swift code using `Auth.auth().createUser` with email and password.",
+      },
+    },
+    // 12
+    {
+      group: "5",
+      title: "Verifying ID Tokens",
+      description: "Obtain and verify the current user's ID token.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write Swift code to fetch `currentUser.getIDToken(completion:)` and print the token.",
+      },
+    },
+    // 13
+    {
+      group: "5",
+      title: "CRUD with Firestore",
+      description: "Perform basic Firestore operations in Swift.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Complete the Swift code to create, read, update, and delete a document in Firestore.",
+        options: [
+          `let db = Firestore.firestore()
+let doc = db.collection("users").document("alice")
+// create
+doc.setData(["email": "alice@example.com", "age": 30])
+// read
+doc.getDocument { snapshot, error in
+  let data = snapshot?.data()
+// update
+doc.updateData(["age": 31])
+// delete
+doc.delete()`,
+        ],
+        answer: `let db = Firestore.firestore()
+let doc = db.collection("users").document("alice")
+// create
+doc.setData(["email": "alice@example.com", "age": 30])
+// read
+doc.getDocument { snapshot, error in
+  let data = snapshot?.data()
+}
+// update
+doc.updateData(["age": 31])
+// delete
+doc.delete()`,
+      },
+    },
+    // 14
+    {
+      group: "5",
+      title: "Calling Cloud Functions",
+      description: "Invoke an HTTPS Callable Cloud Function from Swift.",
+      isCode: true,
+      question: {
+        questionText:
+          'Write Swift code to call `functions.httpsCallable("helloWorld").call()` and handle the result.',
+      },
+    },
+    // 15
+    {
+      group: "5",
+      title: "Local Emulation",
+      description: "Learn how to test Firebase services locally.",
+      isSingleLineText: true,
+      question: {
+        questionText: "What command starts the local Firebase emulator suite?",
+        answer: "firebase emulators:start",
+      },
+    },
+    // 16
+    {
+      group: "5",
+      title: "Deploying to Firebase",
+      description: "Deploy your Cloud Functions and Firestore rules.",
+      isSingleLineText: true,
+      question: {
+        questionText: "What command do you use to deploy only Cloud Functions?",
+        answer: "firebase deploy --only functions",
+      },
+    },
+    // 17
+    {
+      group: "5",
+      title: "Uploading to Storage",
+      description: "Upload files to Firebase Storage in Swift.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write Swift code using `Storage.storage().reference()` to upload `data` to `images/photo.jpg`.",
+      },
+    },
+    // 18
+    {
+      group: "5",
+      title: "Security Rules Basics",
+      description: "Understand Firestore security rules for iOS clients.",
+      isText: true,
+      question: {
+        questionText:
+          "What are Firestore security rules and when are they evaluated on client requests?",
+      },
+    },
+    // 19
+    {
+      group: "5",
+      title: "Performance Monitoring",
+      description: "Explore Firebase’s performance monitoring for iOS apps.",
+      isText: true,
+      question: {
+        questionText:
+          "Which Firebase product helps you monitor performance metrics in an iOS app?",
+      },
+    },
+    // 20
+    {
+      group: "5",
+      title: "Popular Firebase Extensions",
+      description: "Learn about official Firebase Extensions you can install.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following are Firebase Extensions you might add to your project?",
+        options: [
+          "Trigger Email via SendGrid",
+          "Resize Images",
+          "Translate Text",
+          "Backup Realtime Database",
+        ],
+        answer: [
+          "Trigger Email via SendGrid",
+          "Resize Images",
+          "Translate Text",
+          "Backup Realtime Database",
+        ],
+      },
+    },
+    // 21
+    {
+      group: "5",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [91, 110],
+      },
+    },
+    // 1
+    {
+      group: "6",
+      title: "Introduction to Data Structures and Algorithms",
+      description:
+        "Understand the importance and challenges of learning data structures and algorithms.",
+      isText: true,
+      question: {
+        questionText:
+          "Why do data structures and algorithms often push people away from computer science?",
+      },
+    },
+    // 2
+    {
+      group: "6",
+      title: "Programming Languages and Autocorrect Technology",
+      description:
+        "Explore how programming languages work and how apps might implement autocorrect.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write a simple Swift program, without any external libraries, to demonstrate how autocorrect might identify and correct a misspelled word.",
+      },
+    },
+    // 3
+    {
+      group: "6",
+      title: "Tokens in Code",
+      description:
+        "Break down code into tokens to understand how compilers interpret information.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which of the following is an example of a token in a programming language?",
+        options: [
+          "An entire function",
+          "A single character like ':'",
+          "A variable declaration like `var apples = 10`",
+          "A block of HTML code",
+          "A Swift struct definition",
+          "A Swift module",
+        ],
+        answer: "A single character like ':'",
+      },
+    },
+    // 4
+    {
+      group: "6",
+      title: "Breaking Down Strings into Characters",
+      description:
+        "Understand how strings are broken down into characters and mapped.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write the Swift code to break down the string “Kendrick” into an array of characters and then into a dictionary mapping each character to its index.",
+      },
+    },
+    // 5
+    {
+      group: "6",
+      title: "Understanding Data Structures",
+      description:
+        "Convert a string into an array of key-value pair dictionaries that map characters to their ASCII codes.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Convert the string “Kendrick” into an array of dictionaries where each character maps to its ASCII code.",
+        options: [
+          `["K": 75]`,
+          `["e": 101]`,
+          `["n": 110]`,
+          `["d": 100]`,
+          `["r": 114]`,
+          `["i": 105]`,
+          `["c": 99]`,
+          `["k": 107]`,
+        ],
+        answer: `["K": 75], ["e": 101], ["n": 110], ["d": 100], ["r": 114], ["i": 105], ["c": 99], ["k": 107]`,
+      },
+    },
+    // 6
+    {
+      group: "6",
+      title: "Binary Conversion",
+      description: "Convert characters to their binary representation.",
+      isCode: true,
+      question: {
+        questionText:
+          "Convert the dictionary mapping of ASCII codes for “Kendrick” into a dictionary mapping of binary strings in Swift.",
+      },
+    },
+    // 7
+    {
+      group: "6",
+      title: "Understanding Data Structures",
+      description:
+        "Learn how data structures reserve space and create references.",
+      isText: true,
+      question: {
+        questionText:
+          "Why is it important to understand how computers reserve space and create addresses to reference information? What are real-world examples at scale?",
+      },
+    },
+    // 8
+    {
+      group: "6",
+      title: "Introduction to Linked Lists",
+      description: "Learn about the basic concepts of linked lists.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which of the following is a characteristic of linked lists?",
+        options: [
+          "Fixed-size arrays",
+          "Dynamic memory allocation",
+          "O(1) random access",
+          "Elements in contiguous memory",
+        ],
+        answer: "Dynamic memory allocation",
+      },
+    },
+    // 9
+    {
+      group: "6",
+      title: "Building a Linked List",
+      description:
+        "Construct a simple linked list in Swift with the values “meta”, “instagram”, “reels”.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which Swift code snippet correctly creates a linked list with “meta”, “instagram”, and “reels”?",
+        options: [
+          `class Node {
+    var value: String
+    var next: Node?
+    init(_ value: String) { self.value = value }
+}
+
+class LinkedList {
+    var head: Node?
+    func add(_ val: String) {
+        let node = Node(val)
+        if head == nil { head = node }
+        else {
+            var curr = head
+            while curr?.next != nil { curr = curr?.next }
+            curr?.next = node
+        }
+    }
+}
+
+let list = LinkedList()
+list.add("meta")
+list.add("instagram")
+list.add("reels")`,
+          `// Uses Swift Array instead of linked list
+let list = ["meta", "instagram", "reels"]`,
+          `class Node {
+    var value: String
+    init(_ value: String) { self.value = value }
+}
+
+class LinkedList {
+    var head: Node?
+}`,
+          `// Circular linked list (not correct here)`,
+        ],
+        answer: `class Node {
+    var value: String
+    var next: Node?
+    init(_ value: String) { self.value = value }
+}
+
+class LinkedList {
+    var head: Node?
+    func add(_ val: String) {
+        let node = Node(val)
+        if head == nil { head = node }
+        else {
+            var curr = head
+            while curr?.next != nil { curr = curr?.next }
+            curr?.next = node
+        }
+    }
+}
+
+let list = LinkedList()
+list.add("meta")
+list.add("instagram")
+list.add("reels")`,
+      },
+    },
+    // 10
+    {
+      group: "6",
+      title: "Practical Linked List Application",
+      description: "Apply the LinkedList class to a real-world scenario.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write Swift code to create a linked list of Google’s departments (e.g., “Search”, “Ads”, “Cloud”) and print each value.",
+      },
+    },
+    // 11
+    {
+      group: "6",
+      title: "Traversing a Linked List",
+      description:
+        "Implement a method to traverse a linked list and return the last item.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write a Swift method in the LinkedList class that traverses the list and returns the last node’s value.",
+      },
+    },
+    // 12
+    {
+      group: "6",
+      title: "Linked List Class Implementation",
+      description: "Implement the LinkedList and Node classes in Swift.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which method name is most Swifty to add a new item to the end of a linked list?",
+        options: ["add(at:)", "append", "insert", "push", "create"],
+        answer: "append",
+      },
+    },
+    // 13
+    {
+      group: "6",
+      title: "Reversing a Linked List",
+      description: "Reverse the direction of a linked list.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "What is the time complexity of reversing a linked list?",
+        options: ["O(1)", "O(log n)", "O(n)", "O(n²)", "O(n log n)", "O(2ⁿ)"],
+        answer: "O(n)",
+      },
+    },
+    // 14
+    {
+      group: "6",
+      title: "Depth-First Search Algorithm (Recursion)",
+      description: "Understand and implement a DFS algorithm using recursion.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps to implement recursive DFS on a graph in Swift.",
+        options: [
+          "Start at the root node",
+          "Mark the current node as visited",
+          "Process the node (e.g., print its value)",
+          "Recursively visit each unvisited neighbor",
+          "Backtrack once all neighbors are visited",
+          "Repeat until all nodes are visited",
+        ],
+        answer:
+          "Start at the root node, Mark the current node as visited, Process the node (e.g., print its value), Recursively visit each unvisited neighbor, Backtrack once all neighbors are visited, Repeat until all nodes are visited",
+      },
+    },
+    // 15
+    {
+      group: "6",
+      title: "Creating a Tree Structure",
+      description: "Build a simple tree structure to practice DFS.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write Swift code to create a binary tree three levels deep representing company divisions.",
+      },
+    },
+    // 16
+    {
+      group: "6",
+      title: "Understanding Depth-First and Breadth-First Search",
+      description: "Learn the differences between DFS and BFS.",
+      isText: true,
+      question: {
+        questionText:
+          "Explain the difference between depth-first search and breadth-first search algorithms.",
+      },
+    },
+    // 17
+    {
+      group: "6",
+      title: "Implementing Depth-First Search with Recursion",
+      description:
+        "Complete the implementation of DFS using recursion to traverse a binary tree.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which Swift snippet correctly implements pre-order DFS on a binary tree?",
+        options: [
+          `class Node {
+    var value: Int
+    var left: Node?
+    var right: Node?
+    init(_ v: Int) { value = v }
+}
+
+func dfs(_ node: Node?) {
+    guard let n = node else { return }
+    print(n.value)
+    dfs(n.left)
+    dfs(n.right)
+}
+
+// build tree...
+dfs(root)`,
+        ],
+        answer: `class Node {
+    var value: Int
+    var left: Node?
+    var right: Node?
+    init(_ v: Int) { value = v }
+}
+
+func dfs(_ node: Node?) {
+    guard let n = node else { return }
+    print(n.value)
+    dfs(n.left)
+    dfs(n.right)
+}
+
+// build tree...
+dfs(root)`,
+      },
+    },
+    // 18
+    {
+      group: "6",
+      title: "Algorithm Optimization",
+      description:
+        "Explore ways to optimize algorithms for better performance.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write an optimized Swift implementation of bubble sort that stops early if no swaps occur.",
+      },
+    },
+    // 19
+    {
+      group: "6",
+      title: "Exploring the N-Queens Problem",
+      description: "Understand the N-Queens problem and its complexity.",
+      isText: true,
+      question: {
+        questionText:
+          "What is the N-Queens problem, and why is it considered complex?",
+      },
+    },
+    // 20
+    {
+      group: "6",
+      title: "Implementing Backtracking",
+      description: "Implement a backtracking algorithm to solve a problem.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps to apply backtracking for the 4×4 N-Queens problem in Swift.",
+        options: [
+          "Start with an empty board",
+          "Place a queen in the current row",
+          "Check if placement is safe",
+          "If safe, move to the next row",
+          "If not safe, try next column",
+          "If no columns left, backtrack up",
+          "If board full, record solution",
+          "Continue until all solutions are found",
+        ],
+        answer:
+          "Start with an empty board, Place a queen in the current row, Check if placement is safe, If safe, move to the next row, If not safe, try next column, If no columns left, backtrack up, If board full, record solution, Continue until all solutions are found",
+      },
+    },
+    // 21
+    {
+      group: "6",
+      title: "Implementing Backtracking for 4×4 N-Queens",
+      description:
+        "Implement a backtracking algorithm to solve the 4×4 N-Queens problem.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write Swift code to solve the 4×4 N-Queens problem using backtracking.",
+      },
+    },
+    // 22
+    {
+      group: "6",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [112, 132],
+      },
+    },
+  ],
+
+  ["android-en"]: [
+    {
+      group: "introduction",
+      title: "Introduction To Android Development with Java",
+      isStudyGuide: true,
+      description:
+        "Expose yourself to Java fundamentals and Android basics to improve the quality of your learning before making progress.",
+      question: {
+        questionText: (
+          <div>
+            <p style={{ marginBottom: 12 }}>
+              One of the best predictors for student success is exposure to
+              course material before studying it. You're encouraged to read
+              about the fundamentals of Java and Android in this study guide
+              before starting. You can reference this guide in the menu
+              throughout your progress, too.
+            </p>
+            <p style={{ marginBottom: 12 }}>
+              Remember to fail faster and fail forward! The real education
+              happens when you push through a challenge. We'll start off nice
+              and easy at first, then level up in difficulty as you collect more
+              progress. Make sure to use the tools at your disposal—you’re going
+              to need them.
+            </p>
+          </div>
+        ),
+        metaData: `### Advice
+I know this looks like ChatGPT content…but it’s not—it's me!
+
+As a beginner:
+1. Programming is about structuring data and logic, not complex math.
+2. Like spoken languages, you can express the same idea in many ways.
+3. When something challenges you, break it into smaller steps and iterate quickly.
+
+### Exposure
+This guide exposes you to concepts before you answer questions, so you won’t be intimidated later. Skim it now, code along later.
+
+### Core Concepts in Java
+
+\`\`\`java
+// Lists with ArrayList
+import java.util.ArrayList;
+
+ArrayList<Object> myList = new ArrayList<>();
+myList.add(1);
+myList.add(2);
+myList.add(3);
+myList.add("a");
+myList.add(null);
+myList.add(false);
+myList.add("new data");
+\`\`\`
+
+\`\`\`java
+// Maps with HashMap
+import java.util.HashMap;
+
+HashMap<String, Object> dataSet = new HashMap<>();
+dataSet.put("introduction", "Welcome");
+dataSet.put("title", "Chapter 1");
+dataSet.put("isLive", true);
+dataSet.put("page", 4);
+dataSet.put("book", "Coding Basics");
+\`\`\`
+
+\`\`\`java
+// Defining a class
+public class House {
+    private String housePaint;
+
+    public House(String paint) {
+        this.housePaint = paint;
+    }
+
+    public String getPaint() {
+        return housePaint;
+    }
+
+    public void setPaint(String paint) {
+        this.housePaint = paint;
+    }
+
+    public void deletePaint() {
+        this.housePaint = null;
+    }
+}
+
+// Usage:
+// House firstHome = new House("pink");
+// System.out.println(firstHome.getPaint()); // "pink"
+\`\`\`
+
+### Android UI Quick Preview
+
+\`\`\`java
+// MainActivity.java
+package com.example.introapp;
+
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        TextView tv = new TextView(this);
+        tv.setText("Good job! You created a small Android app!");
+        tv.setTextSize(24);
+        setContentView(tv);
+    }
+}
+\`\`\`
+
+### Conclusion
+Failing fast is in your best interest when learning a new language. This one-pager will be available inside the app. Good luck, and happy coding in Java & Android!`,
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Understanding Coding",
+      description: "Grasp the basic concept of coding in Java.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "Which of the following best describes coding?",
+        options: [
+          "Writing instructions for computers to perform tasks",
+          "Creating physical components for computers",
+          "Designing user interfaces",
+          "Managing databases",
+        ],
+        answer: "Writing instructions for computers to perform tasks",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Sequence of Program Execution",
+      description: "Learn the correct order of program execution in Java.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps with drag-and-drop to order how a Java program is built and run.",
+        options: [
+          "Writing Code",
+          "Code Compilation",
+          "Debugging",
+          "Program Execution",
+        ],
+        answer: [
+          "Writing Code",
+          "Code Compilation",
+          "Debugging",
+          "Program Execution",
+        ],
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Introduction to Variables",
+      description:
+        "In this step, you will learn about declaring variables in Java.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Select all the steps involved in correctly declaring a variable in Java:",
+        options: [
+          "Specify a type (e.g., int, String)",
+          "Choose a descriptive variable name",
+          "Assign a value using the equals sign (=)",
+          "End the declaration with a semicolon (;)",
+          "Start the name with a number",
+          "Use uppercase letters for all variable names",
+        ],
+        answer: [
+          "Specify a type (e.g., int, String)",
+          "Choose a descriptive variable name",
+          "Assign a value using the equals sign (=)",
+          "End the declaration with a semicolon (;)",
+        ],
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Understanding List Declarations",
+      description:
+        "Complete the code by selecting the correct way to declare a list of items in Java.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which code block correctly declares a list of items in Java?",
+        options: [
+          `String[] items = {"apple", "banana", "cherry"};`,
+          `List<String> items = Arrays.asList("apple", "banana", "cherry");`,
+          `String items = "apple, banana, cherry";`,
+          `Map<String, Integer> items = Map.of("apple", 1, "banana", 2, "cherry", 3);`,
+          `class Items { /* ... */ }`,
+        ],
+        answer: `String[] items = {"apple", "banana", "cherry"};`,
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Variable Assignment in Java",
+      description: "Learn how to assign values to variables in Java.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Declare a variable named `age` and assign it the value 25.",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Understanding Data Types",
+      description: "Learn the basics of data types in Java.",
+      isSingleLineText: true,
+      question: {
+        questionText: "Which keyword is used to declare a constant in Java?",
+        placeholder: "Type your answer here...",
+        answer: "final",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Purpose of Variables",
+      description: "Understand why variables are used in programming.",
+      isText: true,
+      question: {
+        questionText:
+          "In your own words, explain the purpose of variables in programming.",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Bash Terminal Practice: Changing Directories",
+      description: "Practice changing directories in a terminal environment.",
+      isCode: true,
+      isTerminal: true,
+      question: {
+        questionText:
+          "Enter the command to change to the `new_folder` directory using a Bash terminal.",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [1, 8],
+      },
+    },
+
+    // 1
+    {
+      group: "1",
+      title: "Data Types in Programming",
+      description: "Identify different primitive data types used in Java.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following are primitive data types in Java?",
+        options: [
+          "byte",
+          "short",
+          "int",
+          "long",
+          "float",
+          "double",
+          "boolean",
+          "char",
+        ],
+        answer: [
+          "byte",
+          "short",
+          "int",
+          "long",
+          "float",
+          "double",
+          "boolean",
+          "char",
+        ],
+      },
+    },
+    // 2
+    {
+      group: "1",
+      title: "Steps to Create a Function",
+      description: "Understand the sequence of creating and using a method.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps with drag-and-drop to create and use a Java method.",
+        options: [
+          "Define the method",
+          "Call the method",
+          "Execute the method body",
+          "Return a value",
+        ],
+        answer: [
+          "Define the method",
+          "Call the method",
+          "Execute the method body",
+          "Return a value",
+        ],
+      },
+    },
+    // 3
+    {
+      group: "1",
+      title: "Writing a Simple Function",
+      description: "Practice writing methods in Java.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write a static method named `greet` that takes a `String name` parameter and prints a greeting with that name.",
+      },
+    },
+    // 4
+    {
+      group: "1",
+      title: "Functions in Programming",
+      description: "Discuss the role of methods.",
+      isText: true,
+      question: {
+        questionText: "What is a method, and why is it useful in programming?",
+      },
+    },
+    // 5
+    {
+      group: "1",
+      title: "Conditional Statements",
+      description: "Identify the purpose of conditional statements.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "What is the primary purpose of an `if` statement?",
+        options: [
+          "To repeat a block of code multiple times",
+          "To execute a block of code based on a condition",
+          "To define a variable",
+          "To import external libraries",
+        ],
+        answer: "To execute a block of code based on a condition",
+      },
+    },
+    // 6
+    {
+      group: "1",
+      title: "Order of Conditional Checks",
+      description:
+        "Complete the code that evaluates an `if`/`else if`/`else` statement.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Complete the following code to check if `x` is greater than 10, equal to 10, or less than 10.",
+        options: [
+          `if (x > 10) {\n    System.out.println("x is greater than 10");\n} else if (x == 10) {\n    System.out.println("x is equal to 10");\n} else {\n    System.out.println("x is less than 10");\n}`,
+        ],
+        answer: `if (x > 10) {\n    System.out.println("x is greater than 10");\n} else if (x == 10) {\n    System.out.println("x is equal to 10");\n} else {\n    System.out.println("x is less than 10");\n}`,
+      },
+    },
+    // 7
+    {
+      group: "1",
+      title: "Implementing Conditional Logic",
+      description: "Apply conditional logic in code.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write an `if`/`else if`/`else` statement that checks if a number `num` is positive, negative, or zero, and prints an appropriate message.",
+      },
+    },
+    // 8
+    {
+      group: "1",
+      title: "Understanding Conditional Logic in Programming",
+      description:
+        "Learn how logical operators like AND and OR control conditions in programming.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "Which logical operator is used to check if both conditions in a conditional statement are true in Java?",
+        placeholder: "Type your answer here...",
+        answer: "&&",
+      },
+    },
+    // 9
+    {
+      group: "1",
+      title: "Real-world Use of Conditionals",
+      description: "Reflect on how conditionals are used.",
+      isText: true,
+      question: {
+        questionText:
+          "Provide an example of how conditional statements are used in real-world applications.",
+      },
+    },
+    // 10
+    {
+      group: "1",
+      title: "Terminal Practice: Help Command",
+      description: "Write the help command to observe basic commands.",
+      isCode: true,
+      isTerminal: true,
+      question: {
+        questionText:
+          "In a Bash terminal environment, enter the help command to discover basic commands.",
+      },
+    },
+    // 11
+    {
+      group: "1",
+      title: "Loops in Programming",
+      description: "Understand the purpose of loops.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which loop will continue executing as long as its condition remains true in Java?",
+        options: ["for loop", "while loop", "do...while loop", "foreach loop"],
+        answer: "while loop",
+      },
+    },
+    // 12
+    {
+      group: "1",
+      title: "Sequence of Loop Execution",
+      description: "Grasp the order in which loops execute.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps of a Java `for` loop execution with drag-and-drop.",
+        options: [
+          "Initialization",
+          "Condition Check",
+          "Execution of Code Block",
+          "Update Expression",
+        ],
+        answer: [
+          "Initialization",
+          "Condition Check",
+          "Execution of Code Block",
+          "Update Expression",
+        ],
+      },
+    },
+    // 13
+    {
+      group: "1",
+      title: "Creating a Loop",
+      description: "Practice writing loops.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText: "Write a `for` loop that prints numbers from 1 to 5.",
+      },
+    },
+    // 14
+    {
+      group: "1",
+      title: "Applications of Loops",
+      description: "Discuss where loops are useful.",
+      isText: true,
+      question: {
+        questionText:
+          "Describe a scenario in software development where loops are essential.",
+      },
+    },
+    // 15
+    {
+      group: "1",
+      title: "Arrays in Java",
+      description: "Identify methods used for manipulating arrays in Java.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following are valid for manipulating arrays in Java?",
+        options: [
+          ".length",
+          "Arrays.sort()",
+          "Arrays.asList()",
+          "System.arraycopy()",
+          ".clone()",
+        ],
+        answer: [
+          "Arrays.sort()",
+          "Arrays.asList()",
+          "System.arraycopy()",
+          ".clone()",
+        ],
+      },
+    },
+    // 16
+    {
+      group: "1",
+      title: "Order of Array Operations",
+      description: "Understand how array operations are performed.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Complete the code to declare an array, add an element, remove the last element, and then access an element.",
+        options: [
+          `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));\nfruits.add("pink");\nfruits.remove(fruits.size() - 1);\nSystem.out.println(fruits.get(0));`,
+        ],
+        answer: `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));\nfruits.add("pink");\nfruits.remove(fruits.size() - 1);\nSystem.out.println(fruits.get(0));`,
+      },
+    },
+    // 17
+    {
+      group: "1",
+      title: "Manipulating Arrays",
+      description: "Apply array operations in code.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          'Create an ArrayList `fruits` with "apple" and "banana". Add "pink" to the list and remove the first element.',
+      },
+    },
+    // 18
+    {
+      group: "1",
+      title: "Use Cases for Arrays",
+      description: "Explore scenarios where arrays are used.",
+      isText: true,
+      question: {
+        questionText:
+          "Provide an example of how an array can be used to manage data in an Android application.",
+      },
+    },
+    // 19
+    {
+      group: "1",
+      title: "Terminal Practice: Creating Directories",
+      description: "Creating a directory command in a bash terminal",
+      isCode: true,
+      isTerminal: true,
+      question: {
+        questionText:
+          "In a Bash terminal environment, create a directory called `app` using the `mkdir` command.",
+      },
+    },
+    // 20
+    {
+      group: "1",
+      title: "Advanced Coding Output",
+      description:
+        "Predict the output of the following code with arrays, conditionals, logical operators, and streams.",
+      isSingleLineText: true,
+      question: {
+        questionText: (
+          <div>
+            What will be the output of the following code?
+            <br />
+            <pre>
+              {`
+List<Integer> arr = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
+int x = 10;
+int y = 5;
+
+if (x > y && arr.size() > 3) {
+    arr.add(x);
+    arr = arr.stream().filter(n -> n % 2 == 0).collect(Collectors.toList());
+}
+
+System.out.println(arr);
+`}
+            </pre>
+          </div>
+        ),
+        placeholder: "Type your answer here...",
+        answer: "[2, 4, 10]",
+      },
+    },
+    // 21
+    {
+      group: "1",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [10, 29],
+      },
+    },
+    // 1
+    {
+      group: "2",
+      title: "Introduction to Objects",
+      description:
+        "In this step, you will learn what an object is in programming.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "Which keyword is used to create a new object instance in Java?",
+        placeholder: "Type your answer here...",
+        answer: "new",
+      },
+    },
+    // 2
+    {
+      group: "2",
+      title: "Understanding the Constructor Method",
+      description:
+        "In this step, you will learn about the purpose of the constructor method in a class.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which of the following code blocks correctly defines the constructor method and instantiates the class in Java?",
+        options: [
+          `public class Car {
+    private String brand;
+    public Car(String brand) {
+      this.brand = brand;
+    }
+    public void drive() {
+      System.out.println("The car is driving");
+    }
+}
+Car myCar = new Car("Toyota");`,
+          `public class Car {
+    private String brand;
+    public Car() {
+      this.brand = "Toyota";
+    }
+    public void drive() {
+      System.out.println("The car is driving");
+    }
+}
+Car myCar = new Car();`,
+          `public class Car {
+    private String brand;
+    public void Car(String brand) {
+      this.brand = brand;
+    }
+    public void drive() {
+      System.out.println("The car is driving");
+    }
+}
+Car myCar = new Car("Toyota");`,
+          `public class Car {
+    private String brand;
+    public Car(String b) {
+      brand = b;
+    }
+    public void drive() {
+      System.out.println("The car is driving");
+    }
+}
+Car myCar = new Car("Toyota");`,
+        ],
+        answer: `public class Car {
+    private String brand;
+    public Car(String brand) {
+      this.brand = brand;
+    }
+    public void drive() {
+      System.out.println("The car is driving");
+    }
+}
+Car myCar = new Car("Toyota");`,
+      },
+    },
+    // 3
+    {
+      group: "2",
+      title: "Purpose of the Constructor Method",
+      description:
+        "In this step, you will learn about the purpose of the constructor method in a class.",
+      isText: true,
+      question: {
+        questionText:
+          "Explain the purpose of the constructor method in a class.",
+      },
+    },
+    // 4
+    {
+      group: "2",
+      title: "Creating an Instance of a Class",
+      description:
+        "In this step, you will learn how to create an instance of a class in Java.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Select all the correct steps required to create an instance of a class in Java:",
+        options: [
+          "Define the class using the `class` keyword",
+          "Use the `new` keyword to create an instance",
+          "Pass arguments required by the constructor when calling the class",
+          "Store the new instance in a variable",
+          "Declare the class instance without `new`",
+          "Instantiate the class before defining it",
+        ],
+        answer: [
+          "Define the class using the `class` keyword",
+          "Use the `new` keyword to create an instance",
+          "Pass arguments required by the constructor when calling the class",
+          "Store the new instance in a variable",
+        ],
+      },
+    },
+    // 5
+    {
+      group: "2",
+      title: "Declaring a Method in a Class",
+      description:
+        "In this step, you will learn how to declare a method inside a class.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Declare a method named `updateModel` in the `Car` class that updates the `model` property.",
+      },
+    },
+    // 6
+    {
+      group: "2",
+      title: "Using the this Keyword",
+      description:
+        "Complete the code by selecting the correct way to use the `this` keyword in a class method.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which code block correctly uses the `this` keyword to refer to the object's property?",
+        options: [
+          `public class Car {
+    private String brand;
+    public Car(String brand) { this.brand = brand; }
+    public void showBrand() { System.out.println(brand); }
+}
+Car myCar = new Car("Toyota");
+myCar.showBrand();`,
+          `public class Car {
+    private String brand;
+    public Car(String brand) { this.brand = brand; }
+    public void showBrand() { System.out.println(this.brand); }
+}
+Car myCar = new Car("Toyota");
+myCar.showBrand();`,
+          `public class Car {
+    private String brand;
+    public Car(String brand) { brand = this.brand; }
+    public void showBrand() { System.out.println(brand); }
+}
+Car myCar = new Car("Toyota");
+myCar.showBrand();`,
+          `public class Car {
+    private String brand;
+    public Car(String brand) { this.brand = brand; }
+    public void showBrand() { System.out.println(this.brand()); }
+}
+Car myCar = new Car("Toyota");
+myCar.showBrand();`,
+        ],
+        answer: `public class Car {
+    private String brand;
+    public Car(String brand) { this.brand = brand; }
+    public void showBrand() { System.out.println(this.brand); }
+}
+Car myCar = new Car("Toyota");
+myCar.showBrand();`,
+      },
+    },
+    // 7
+    {
+      group: "2",
+      title: "Adding Properties to an Object",
+      description:
+        "In this step, you will learn how to add properties to a class in Java.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Add a new property `private int year;` to the `Car` class.",
+      },
+    },
+    // 8
+    {
+      group: "2",
+      title: "Accessing and Modifying Object Properties",
+      description:
+        "In this step, you will learn how to get or set properties of an object in Java.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following are valid ways to get or set properties in Java?",
+        options: [
+          "Use a getter method (e.g., getModel())",
+          "Use a setter method (e.g., setModel())",
+          "Access a public field directly (e.g., obj.model)",
+          "Use reflection APIs",
+        ],
+        answer: [
+          "Use a getter method (e.g., getModel())",
+          "Use a setter method (e.g., setModel())",
+          "Access a public field directly (e.g., obj.model)",
+        ],
+      },
+    },
+    // 9
+    {
+      group: "2",
+      title: "Modifying Object Properties",
+      description:
+        "In this step, you will learn how to modify properties of an object in Java.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Modify the `model` property of an instance of the `Car` class.",
+      },
+    },
+    // 10
+    {
+      group: "2",
+      title: "Understanding Inheritance",
+      description:
+        "In this step, you will learn about inheritance in object-oriented programming.",
+      isText: true,
+      question: {
+        questionText: "What is inheritance in object-oriented programming?",
+      },
+    },
+    // 11
+    {
+      group: "2",
+      title: "Implementing Inheritance",
+      description:
+        "In this step, you will implement inheritance in Java by extending a class.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Extend the `Car` class to create an `ElectricCar` class with an additional property `private int batteryLife;`.",
+      },
+    },
+    // 12
+    {
+      group: "2",
+      title: "Overriding Methods",
+      description:
+        "In this step, you will learn how to override methods in a subclass.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "What does it mean to override a method in a subclass?",
+        options: [
+          "Provide a new implementation for a superclass method",
+          "Delete the superclass method",
+          "Inherit the method without changes",
+          "Call the superclass method via super.method()",
+        ],
+        answer: "Provide a new implementation for a superclass method",
+      },
+    },
+    // 13
+    {
+      group: "2",
+      title: "Understanding Encapsulation",
+      description:
+        "In this step, you will learn about encapsulation in object-oriented programming.",
+      isText: true,
+      question: {
+        questionText: "What is encapsulation in object-oriented programming?",
+      },
+    },
+    // 14
+    {
+      group: "2",
+      title: "Implementing Encapsulation",
+      description:
+        "In this step, you will implement encapsulation by using getter and setter methods.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Add getter and setter methods for the `batteryLife` property in the `ElectricCar` class.",
+      },
+    },
+    // 15
+    {
+      group: "2",
+      title: "Encapsulation Concept",
+      description:
+        "In this step, you will define the concept of encapsulation in one word.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What is the primary concept encapsulation ensures in object-oriented programming?",
+        placeholder: "Type your answer here...",
+        answer: "Privacy",
+      },
+    },
+    // 16
+    {
+      group: "2",
+      title: "Combining Concepts",
+      description:
+        "In this step, you will combine various concepts learned to create a small project.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Create a small project that defines a `Person` class, uses inheritance to create a `Student` class, and demonstrates encapsulation and arrays of objects.",
+      },
+    },
+    // 17
+    {
+      group: "2",
+      title: "Printing In The Terminal",
+      description: "In this step, you will print a message using the terminal",
+      isCode: true,
+      isTerminal: true,
+      question: {
+        questionText:
+          "Type a command to print the message: 'I'm talking to the inside of a computer!'",
+      },
+    },
+    // 18
+    {
+      group: "2",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [31, 47],
+      },
+    },
+    // 1
+    {
+      group: "3",
+      title: "Introduction to Android Views",
+      description:
+        "In this step, you will learn about Android Views, their role in creating reusable UI elements, and how they help manage the user interface efficiently.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "Which of the following best describes an Android View?",
+        options: [
+          "A method for handling events in Java",
+          "A feature exclusive to background services",
+          "A reusable piece of user interface defined by the View class or its subclasses",
+          "A built-in XML element that only represents layouts",
+        ],
+        answer:
+          "A reusable piece of user interface defined by the View class or its subclasses",
+      },
+    },
+    // 2
+    {
+      group: "3",
+      title: "Key Concepts in Android UI",
+      description:
+        "In this step, you will learn about fundamental Android UI concepts, including Activities, Fragments, XML layouts, and event handling.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText: "Which of the following are key concepts in Android UI?",
+        options: [
+          "Activities as screen controllers",
+          "Directly manipulating the window manager for animations",
+          "Fragments for modular UI",
+          "XML layouts for defining view hierarchies",
+          "Using TextView for data binding",
+        ],
+        answer: [
+          "Activities as screen controllers",
+          "Fragments for modular UI",
+          "XML layouts for defining view hierarchies",
+        ],
+      },
+    },
+    // 3
+    {
+      group: "3",
+      title: "Effect of LiveData Changes on UI",
+      description:
+        "In this step, you will explain what happens to an Activity or Fragment when its LiveData updates.",
+      isText: true,
+      question: {
+        questionText:
+          "What happens to the UI when observed LiveData in a ViewModel changes?",
+      },
+    },
+    // 4
+    {
+      group: "3",
+      title: "Creating a Simple Activity",
+      description:
+        "In this step, you will define a basic Android Activity that sets a TextView in onCreate.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which of the following code blocks correctly defines a simple Activity that sets its content view and updates a TextView?",
+        options: [
+          `public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        TextView tv = new TextView(this);
+        tv.setText("Hello, Android!");
+        setContentView(tv);
+    }
+}`,
+          `public class MainActivity {
+    protected void onCreate() {
+        setContentView(R.layout.activity_main);
+    }
+}`,
+          `class MainActivity extends Activity {
+    void onCreate(Bundle s) {
+        super.onCreate(s);
+    }
+}`,
+          `public class MainActivity extends AppCompatActivity {
+    void onStart() {
+        TextView tv = findViewById(R.id.tv);
+        tv.setText("Hello, Android!");
+    }
+}`,
+        ],
+        answer: `public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        TextView tv = new TextView(this);
+        tv.setText("Hello, Android!");
+        setContentView(tv);
+    }
+}`,
+      },
+    },
+    // 5
+    {
+      group: "3",
+      title: "Handling Button Clicks",
+      description:
+        "In this step, you will define a basic Activity that handles a button click event using setOnClickListener.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which of the following code blocks correctly sets a click listener on a Button?",
+        options: [
+          `Button btn = findViewById(R.id.btn);
+btn.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        Toast.makeText(this, "Clicked!", Toast.LENGTH_SHORT).show();
+    }
+});`,
+          `Button btn = findViewById(R.id.btn);
+btn.setOnClickListener(v -> {
+    Toast.makeText(MainActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
+});`,
+          `Button btn = findViewById(R.id.btn);
+btn.onClick(() -> Toast.makeText(this, "Clicked!", Toast.LENGTH_SHORT).show());`,
+          `findViewById(R.id.btn).setClickListener(this);`,
+        ],
+        answer: `Button btn = findViewById(R.id.btn);
+btn.setOnClickListener(v -> {
+    Toast.makeText(MainActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
+});`,
+      },
+    },
+    // 6
+    {
+      group: "3",
+      title: "Managing State with ViewModel",
+      description:
+        "In this step, you will learn how to use ViewModel and LiveData to manage UI-related data.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Modify your Activity to use a ViewModel with LiveData<Boolean> liked and observe it to update the UI.",
+      },
+    },
+    // 7
+    {
+      group: "3",
+      title: "Intent Extras",
+      description:
+        "In this step, you will learn about passing data between Activities using Intent extras.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What is the term used for passing data into an Activity at launch?",
+        placeholder: "Type your answer here...",
+        answer: "Intent extras",
+      },
+    },
+    // 8
+    {
+      group: "3",
+      title: "Passing and Using Extras",
+      description:
+        "In this step, you will learn how to pass and retrieve extras in an Activity.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          'Update your Activity to read a String extra named "username" from the Intent and display it.',
+      },
+    },
+    // 9
+    {
+      group: "3",
+      title: "Props vs State in Android",
+      description:
+        "In this step, you will learn the difference between Intent extras and LiveData state.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "What is the main difference between Intent extras and LiveData in an Android app?",
+        options: [
+          "Extras are immutable once set, LiveData can update over time",
+          "LiveData is only for background tasks",
+          "Extras trigger UI updates automatically",
+          "LiveData cannot be observed from Fragments",
+        ],
+        answer: "Extras are immutable once set, LiveData can update over time",
+      },
+    },
+    // 10
+    {
+      group: "3",
+      title: "Terminal Practice: Listing Files",
+      description:
+        "In this step, you will learn how to list files in a bash terminal.",
+      isCode: true,
+      isTerminal: true,
+      question: {
+        questionText:
+          "Use the terminal to list all files using the `ls` command.",
+      },
+    },
+    // 11
+    {
+      group: "3",
+      title: "Styling Android Views",
+      description:
+        "In this step, you will learn how to style Views using XML attributes and programmatic methods.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Add XML attributes to a TextView to set textSize, textColor, padding, and background.",
+      },
+    },
+    // 12
+    {
+      group: "3",
+      title: "ConstraintLayout Basics",
+      description:
+        "In this step, you will learn how to use ConstraintLayout for positioning UI elements.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the following steps to constrain a Button to the center of its parent:",
+        options: [
+          'app:layout_constraintTop_toTopOf="parent"',
+          'app:layout_constraintBottom_toBottomOf="parent"',
+          'app:layout_constraintStart_toStartOf="parent"',
+          'app:layout_constraintEnd_toEndOf="parent"',
+        ],
+        answer: [
+          'app:layout_constraintTop_toTopOf="parent"',
+          'app:layout_constraintBottom_toBottomOf="parent"',
+          'app:layout_constraintStart_toStartOf="parent"',
+          'app:layout_constraintEnd_toEndOf="parent"',
+        ],
+      },
+    },
+    // 13
+    {
+      group: "3",
+      title: "Sharing ViewModel Between Fragments",
+      description:
+        "In this step, you will learn how to share state via a ViewModel between Fragments.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Create a shared ViewModel in your Activity and have two Fragments observe its LiveData.",
+      },
+    },
+    // 14
+    {
+      group: "3",
+      title: "Observing LiveData for Side Effects",
+      description:
+        "In this step, you will learn how to observe LiveData to handle side effects in the UI.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Modify your Fragment to observe a LiveData<Int> retweetCount and show a Toast whenever it changes.",
+      },
+    },
+    // 15
+    {
+      group: "3",
+      title: "Understanding Activity Lifecycle",
+      description:
+        "In this step, you will learn about the Android Activity lifecycle and its callback methods.",
+      isText: true,
+      question: {
+        questionText:
+          "What are the main callbacks in the Activity lifecycle and when is onResume called?",
+      },
+    },
+    // 16
+    {
+      group: "3",
+      title: "Fetching Data with Retrofit and LiveData",
+      description:
+        "In this step, you will learn how to fetch data from an API using Retrofit and expose it via LiveData.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps to correctly fetch tweets using Retrofit and LiveData:",
+        options: [
+          "Define a Retrofit interface",
+          "Create a Repository to call Retrofit",
+          "Expose results as LiveData in ViewModel",
+          "Observe LiveData in UI",
+          "Handle errors in the Repository",
+        ],
+        answer: [
+          "Define a Retrofit interface",
+          "Create a Repository to call Retrofit",
+          "Expose results as LiveData in ViewModel",
+          "Handle errors in the Repository",
+          "Observe LiveData in UI",
+        ],
+      },
+    },
+    // 17
+    {
+      group: "3",
+      title: "Building a Complete Tweet App",
+      description:
+        "In this step, you will combine everything you have learned to build a complete Tweet app on Android.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Build an Android Tweet app with Retrofit, ViewModel, LiveData, and RecyclerView allowing users to like and retweet.",
+      },
+    },
+    // 18
+    {
+      group: "3",
+      title: "Terminal Practice: Building with Gradle",
+      description:
+        "In this step, you will learn how to build your Android project using the terminal.",
+      isText: true,
+      question: {
+        questionText:
+          "Enter the command to build your project using Gradle: `./gradlew build`.",
+      },
+    },
+    // 19
+    {
+      group: "3",
+      title: "Creating a New Android Project",
+      description:
+        "In this step, you will learn how to create a new Android project in Android Studio.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps to create a new Android app in Android Studio:",
+        options: [
+          "Open Android Studio and select New Project",
+          "Choose Empty Activity template",
+          "Select Java as the language",
+          "Enter application name and package",
+          "Click Finish to generate project",
+        ],
+        answer: [
+          "Open Android Studio and select New Project",
+          "Choose Empty Activity template",
+          "Select Java as the language",
+          "Enter application name and package",
+          "Click Finish to generate project",
+        ],
+      },
+    },
+    // 20
+    {
+      group: "3",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [49, 67],
+      },
+    },
+    // 1
+    {
+      group: "4",
+      title: "Introduction to Java Backend Engineering with Spring Boot",
+      description:
+        "In this step, you will learn what backend software engineering is and why it is important.",
+      isText: true,
+      question: {
+        questionText:
+          "What is backend software engineering and why is it important in building applications?",
+      },
+    },
+    // 2
+    {
+      group: "4",
+      title: "Main Lessons Overview",
+      description:
+        "In this step, you will identify a core responsibility of backend engineering in Java.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which of the following is a core responsibility in backend engineering?",
+        options: [
+          "Managing concurrency and ensuring thread safety in multi-user applications",
+          "Implementing user authentication directly in the user interface",
+          "Handling memory allocation in the Java Virtual Machine",
+          "Designing scalable UI components for cross-platform compatibility",
+          "Optimizing database queries and ensuring data consistency",
+        ],
+        answer: "Optimizing database queries and ensuring data consistency",
+      },
+    },
+    // 3
+    {
+      group: "4",
+      title: "Key Responsibilities of Backend Engineering",
+      description:
+        "In this step, you will learn about the various responsibilities involved in Java backend engineering with Spring Boot.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following are core responsibilities of backend engineering?",
+        options: [
+          "Managing and optimizing databases for storing and retrieving data efficiently",
+          "Designing and implementing RESTful APIs using Spring MVC",
+          "Ensuring security through user authentication and authorization mechanisms",
+          "Handling server-side logic, including business operations and calculations",
+          "Maintaining server reliability and performance under high traffic",
+          "Managing data integrity and consistency across distributed systems",
+          "Implementing logging and monitoring to ensure system health and debug issues",
+        ],
+        answer: [
+          "Managing and optimizing databases for storing and retrieving data efficiently",
+          "Designing and implementing RESTful APIs using Spring MVC",
+          "Ensuring security through user authentication and authorization mechanisms",
+          "Handling server-side logic, including business operations and calculations",
+          "Maintaining server reliability and performance under high traffic",
+          "Managing data integrity and consistency across distributed systems",
+          "Implementing logging and monitoring to ensure system health and debug issues",
+        ],
+      },
+    },
+    // 4
+    {
+      group: "4",
+      title: "Interfacing with the Terminal",
+      description:
+        "In this step, you will learn about using the terminal in Java backend engineering.",
+      isText: true,
+      question: {
+        questionText:
+          "Why is learning to use the terminal important for backend development, and what kinds of tasks can you perform using it?",
+      },
+    },
+    // 5
+    {
+      group: "4",
+      title: "Installing Maven",
+      description:
+        "In this step, you will learn how to install Maven globally.",
+      isText: true,
+      question: {
+        questionText:
+          "Write the command to install Apache Maven using Homebrew or apt.",
+      },
+    },
+    // 6
+    {
+      group: "4",
+      title: "Adding a Maven Dependency",
+      description: "In this step, you will use Maven to add a dependency.",
+      isText: true,
+      question: {
+        questionText:
+          "Write the XML snippet to add the Spring Web starter dependency in pom.xml.",
+      },
+    },
+    // 7
+    {
+      group: "4",
+      title: "User Creation and Authentication",
+      description:
+        "In this step, you will understand the key concept related to creating users in backend systems.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What is the process called that verifies a user's identity during account creation?",
+        placeholder: "Type your answer here...",
+        answer: "authentication",
+      },
+    },
+    // 8
+    {
+      group: "4",
+      title: "Database Foundations",
+      description:
+        "In this step, you will learn about the foundations of databases in backend engineering.",
+      isText: true,
+      question: {
+        questionText:
+          "What are the main types of databases used in backend engineering?",
+      },
+    },
+    // 9
+    {
+      group: "4",
+      title: "Connecting to a Database with Spring Data JPA",
+      description:
+        "Write a code snippet to connect a Spring Boot application to a PostgreSQL database.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write a Java code snippet (application.properties and Entity configuration) to configure Spring Data JPA with PostgreSQL.",
+      },
+    },
+    // 10
+    {
+      group: "4",
+      title: "Initiating a Spring Boot Project",
+      description:
+        "In this step, you will learn how to start a Spring Boot project using the CLI.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What is the command to create a new Spring Boot project using Spring Initializr CLI?",
+        answer: "spring init --dependencies=web,data-jpa,postgresql my-app",
+      },
+    },
+    // 11
+    {
+      group: "4",
+      title: "Advanced Data Storage Practices",
+      description:
+        "In this step, you will learn advanced practices for storing data responsibly in backend systems.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following are best practices for ensuring responsible data storage in a backend system?",
+        options: [
+          "Cache data in memory (e.g., with Redis) to reduce database access time",
+          "Use a single centralized backup to reduce complexity and cost",
+          "Encrypt sensitive data both at rest and in transit to ensure security",
+          "Implement database replication across multiple servers to improve fault tolerance",
+        ],
+        answer: [
+          "Cache data in memory (e.g., with Redis) to reduce database access time",
+          "Encrypt sensitive data both at rest and in transit to ensure security",
+          "Implement database replication across multiple servers to improve fault tolerance",
+        ],
+      },
+    },
+    // 12
+    {
+      group: "4",
+      title: "Configuring JPA and Saving an Entity",
+      description:
+        "In this step, you will learn how to initialize JPA and save an entity.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Complete the code to configure Spring Data JPA and save a User entity.",
+        options: [
+          `@Entity
+public class User {
+    @Id @GeneratedValue
+    private Long id;
+    private String username;
+    // getters/setters
+}
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {}
+
+@Service
+public class UserService {
+    @Autowired
+    private UserRepository repo;
+
+    public void addUser(String name) {
+        User u = new User();
+        u.setUsername(name);
+        repo.save(u);
+    }
+}`,
+        ],
+        answer: `@Entity
+public class User {
+    @Id @GeneratedValue
+    private Long id;
+    private String username;
+    // getters/setters
+}
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {}
+
+@Service
+public class UserService {
+    @Autowired
+    private UserRepository repo;
+
+    public void addUser(String name) {
+        User u = new User();
+        u.setUsername(name);
+        repo.save(u);
+    }
+}`,
+      },
+    },
+    // 13
+    {
+      group: "4",
+      title: "Handling User Data",
+      description:
+        "In this step, you will learn how to retrieve a User entity by ID.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write a Java code snippet using UserRepository to fetch a User by its ID.",
+      },
+    },
+    // 14
+    {
+      group: "4",
+      title: "Retrieving a User After Authentication",
+      description:
+        "In this step, you will learn how to retrieve the authenticated user principal.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write a Spring Security code snippet to get the authenticated username in a controller.",
+      },
+    },
+    // 15
+    {
+      group: "4",
+      title: "Understanding the Authentication Flow",
+      description:
+        "In this step, you will learn about the typical flow of authentication in backend systems.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the following steps in the correct order for a typical JWT authentication flow in a Java backend.",
+        options: [
+          "User submits credentials to /login endpoint",
+          "AuthenticationManager verifies credentials",
+          "JWT token is generated and signed",
+          "Client stores token locally",
+          "Protected endpoints validate token",
+        ],
+        answer: [
+          "User submits credentials to /login endpoint",
+          "AuthenticationManager verifies credentials",
+          "JWT token is generated and signed",
+          "Client stores token locally",
+          "Protected endpoints validate token",
+        ],
+      },
+    },
+    // 16
+    {
+      group: "4",
+      title: "OAuth Authentication",
+      description:
+        "In this step, you will learn about OAuth-style authentication systems.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What is the widely used protocol for authorization that allows third-party services to access user data without exposing credentials?",
+        placeholder: "Type your answer here...",
+        answer: "OAuth 2.0",
+      },
+    },
+    // 17
+    {
+      group: "4",
+      title: "Using Environment Variables",
+      description:
+        "In this step, you will learn about using environment variables in backend development.",
+      isText: true,
+      question: {
+        questionText: "What role do environment variables play in a codebase?",
+      },
+    },
+    // 18
+    {
+      group: "4",
+      title: "Database Relationships with JPA",
+      description:
+        "In this step, you will learn about defining relationships in JPA.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write a JPA code snippet to define a one-to-many relationship between User and Post entities.",
+      },
+    },
+    // 19
+    {
+      group: "4",
+      title: "Interfacing with an API",
+      description:
+        "In this step, you will learn the common HTTP methods used to interface with a REST API.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following HTTP methods are commonly used to interface with a REST API, and what do they do?",
+        options: [
+          "GET (Retrieves data)",
+          "POST (Creates a new resource)",
+          "PUT (Replaces a resource)",
+          "PATCH (Partially updates a resource)",
+          "DELETE (Deletes a resource)",
+        ],
+        answer: [
+          "GET (Retrieves data)",
+          "POST (Creates a new resource)",
+          "PATCH (Partially updates a resource)",
+          "DELETE (Deletes a resource)",
+        ],
+      },
+    },
+    // 20
+    {
+      group: "4",
+      title: "Creating a JWT Authentication System",
+      description:
+        "In this step, you will create a simple user authentication system with JWT.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps with drag-and-drop to implement JWT authentication in a Spring Boot app.",
+        options: [
+          "Add jjwt dependency",
+          "Configure security filter chain",
+          "Define UserDetailsService",
+          "Create /register endpoint",
+          "Hash passwords before storing",
+          "Create /login endpoint",
+          "Authenticate credentials",
+          "Generate JWT token",
+          "Return token in response",
+          "Validate token in filter",
+        ],
+        answer: [
+          "Add jjwt dependency",
+          "Configure security filter chain",
+          "Define UserDetailsService",
+          "Create /register endpoint",
+          "Hash passwords before storing",
+          "Create /login endpoint",
+          "Authenticate credentials",
+          "Generate JWT token",
+          "Return token in response",
+          "Validate token in filter",
+        ],
+      },
+    },
+    // 21
+    {
+      group: "4",
+      title: "Deploying a Spring Boot Application",
+      description:
+        "In this step, you will learn how to deploy a Spring Boot application.",
+      isText: true,
+      question: {
+        questionText:
+          "Write the command to package and run your Spring Boot app with Maven.",
+      },
+    },
+    // 22
+    {
+      group: "4",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [69, 89],
+      },
+    },
+    // 1
+    {
+      group: "5",
+      title: "Benefits of Serverless Cloud Platforms",
+      description:
+        "Explore the advantages of using Firebase as a serverless backend for Android development.",
+      isText: true,
+      question: {
+        questionText:
+          "What are the key benefits of using Firebase as a serverless backend for an Android app, and how does it differ from a traditional server-based model?",
+      },
+    },
+    // 2
+    {
+      group: "5",
+      title: "Understanding Android Studio",
+      description:
+        "Learn what Android Studio is and why it's the primary IDE for Android development.",
+      isText: true,
+      question: {
+        questionText:
+          "What is Android Studio and why do most Android developers choose it?",
+      },
+    },
+    // 3
+    {
+      group: "5",
+      title: "Installing Java and Android SDK",
+      description:
+        "Install the Java JDK and Android SDK tools required for Android development.",
+      isText: true,
+      question: {
+        questionText:
+          "What roles do the Java JDK and the Android SDK play in building Android apps?",
+      },
+    },
+    // 4
+    {
+      group: "5",
+      title: "Adding Firebase to Gradle",
+      description:
+        "Configure your project-level Gradle file to include Firebase dependencies.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What lines do you add to your module-level `build.gradle` to include the Firebase BOM?",
+        answer:
+          "implementation platform('com.google.firebase:firebase-bom:31.2.3')",
+      },
+    },
+    // 5
+    {
+      group: "5",
+      title: "Applying Google Services Plugin",
+      description:
+        "Enable the Google Services Gradle plugin to integrate Firebase.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What line do you add to your project-level `build.gradle` to apply the Google Services plugin?",
+        answer: "classpath 'com.google.gms:google-services:4.4.0'",
+      },
+    },
+    // 6
+    {
+      group: "5",
+      title: "Initializing a Firebase Project in Android",
+      description:
+        "Add the `google-services.json` file and apply the plugin in your module Gradle.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What file do you download from the Firebase console and where do you place it in your Android project?",
+        answer: "google-services.json in app/",
+      },
+    },
+    // 7
+    {
+      group: "5",
+      title: "Selecting Firebase Modules",
+      description:
+        "Choose which Firebase Android SDK libraries to include in your app.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following Firebase modules might you add to your Android app?",
+        options: [
+          "firebase-auth",
+          "firebase-firestore",
+          "firebase-database",
+          "firebase-functions",
+          "firebase-storage",
+          "firebase-analytics",
+        ],
+        answer:
+          "firebase-auth, firebase-firestore, firebase-storage, firebase-analytics",
+      },
+    },
+    // 8
+    {
+      group: "5",
+      title: "Configuring FirebaseApp",
+      description: "Initialize Firebase in your Android `Application` class.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write the Java code to initialize Firebase in `public void onCreate()` of your `Application` subclass.",
+      },
+    },
+    // 9
+    {
+      group: "5",
+      title: "Setting Up Firestore",
+      description: "Learn how to obtain a Firestore instance and write data.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write Java code to get `FirebaseFirestore` instance and add a document to `users` collection.",
+      },
+    },
+    // 10
+    {
+      group: "5",
+      title: "Understanding Authentication",
+      description: "Learn about Firebase Authentication in Android.",
+      isText: true,
+      question: {
+        questionText:
+          "What is Firebase Authentication, and which sign-in methods does it support on Android?",
+      },
+    },
+    // 11
+    {
+      group: "5",
+      title: "Creating a User with FirebaseAuth",
+      description: "Programmatically create a new user account in Android.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write Java code using `FirebaseAuth.getInstance().createUserWithEmailAndPassword(...)`.",
+      },
+    },
+    // 12
+    {
+      group: "5",
+      title: "Retrieving the ID Token",
+      description: "Obtain the current user's ID token on the client.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write Java code to call `getCurrentUser().getIdToken(false)` and handle the result.",
+      },
+    },
+    // 13
+    {
+      group: "5",
+      title: "CRUD with Firestore",
+      description: "Perform basic Firestore operations in Android.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Complete the Java code to create, read, update, and delete a Firestore document.",
+        options: [
+          `FirebaseFirestore db = FirebaseFirestore.getInstance();
+DocumentReference doc = db.collection("users").document("alice");
+// create
+doc.set(new User("alice@example.com", 30));
+// read
+doc.get().addOnSuccessListener(snapshot -> { User u = snapshot.toObject(User.class); });
+// update
+doc.update("age", 31);
+// delete
+doc.delete();`,
+        ],
+        answer: `FirebaseFirestore db = FirebaseFirestore.getInstance();
+DocumentReference doc = db.collection("users").document("alice");
+// create
+doc.set(new User("alice@example.com", 30));
+// read
+doc.get().addOnSuccessListener(snapshot -> { User u = snapshot.toObject(User.class); });
+// update
+doc.update("age", 31);
+// delete
+doc.delete();`,
+      },
+    },
+    // 14
+    {
+      group: "5",
+      title: "Calling Cloud Functions",
+      description: "Invoke an HTTPS Callable Cloud Function from Android.",
+      isCode: true,
+      question: {
+        questionText:
+          'Write Java code to call `FirebaseFunctions.getInstance().getHttpsCallable("helloWorld").call()`.',
+      },
+    },
+    // 15
+    {
+      group: "5",
+      title: "Local Emulation",
+      description: "Test Functions and Firestore locally with the emulator.",
+      isSingleLineText: true,
+      question: {
+        questionText: "What command starts the local Firebase emulator suite?",
+        answer: "firebase emulators:start",
+      },
+    },
+    // 16
+    {
+      group: "5",
+      title: "Deploying to Firebase",
+      description: "Deploy only your Cloud Functions from the CLI.",
+      isSingleLineText: true,
+      question: {
+        questionText: "What command do you use to deploy only Cloud Functions?",
+        answer: "firebase deploy --only functions",
+      },
+    },
+    // 17
+    {
+      group: "5",
+      title: "Uploading to Storage",
+      description: "Upload files to Firebase Storage in Android.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write Java code using `FirebaseStorage.getInstance().getReference()` to upload a file.",
+      },
+    },
+    // 18
+    {
+      group: "5",
+      title: "Security Rules Basics",
+      description: "Learn about Firestore security rules for Android clients.",
+      isText: true,
+      question: {
+        questionText:
+          "What are Firestore security rules and when are they evaluated for Android requests?",
+      },
+    },
+    // 19
+    {
+      group: "5",
+      title: "Performance Monitoring",
+      description: "Explore Firebase Performance Monitoring for Android apps.",
+      isText: true,
+      question: {
+        questionText:
+          "Which Firebase product helps you monitor performance metrics in an Android app?",
+      },
+    },
+    // 20
+    {
+      group: "5",
+      title: "Popular Firebase Extensions",
+      description: "Learn about official Firebase Extensions you can install.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Which of the following are Firebase Extensions provided by Google?",
+        options: [
+          "Trigger Email via SendGrid",
+          "Resize Images",
+          "Translate Text",
+          "Backup Realtime Database",
+        ],
+        answer:
+          "Trigger Email via SendGrid, Resize Images, Translate Text, Backup Realtime Database",
+      },
+    },
+    // 21
+    {
+      group: "5",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [91, 110],
+      },
+    },
+    // 1
+    {
+      group: "6",
+      title: "Introduction to Data Structures and Algorithms",
+      description:
+        "Understand the importance and challenges of learning data structures and algorithms.",
+      isText: true,
+      question: {
+        questionText:
+          "Why do data structures and algorithms often push people away from computer science?",
+      },
+    },
+    // 2
+    {
+      group: "6",
+      title: "Programming Languages and Autocorrect Technology",
+      description:
+        "Explore how programming languages work and how applications might implement autocorrect.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write a simple Java program (without external libraries) that demonstrates how autocorrect might identify and correct a misspelled word.",
+      },
+    },
+    // 3
+    {
+      group: "6",
+      title: "Tokens in Code",
+      description:
+        "Break down code into tokens to understand how compilers interpret information.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which of the following is an example of a token in a programming language?",
+        options: [
+          "An entire function",
+          "A single character like ';'",
+          "A variable declaration like `int x = 10;`",
+          "A block of HTML code",
+          "A Java class definition",
+          "A Java library",
+        ],
+        answer: "A single character like ';'",
+      },
+    },
+    // 4
+    {
+      group: "6",
+      title: "Breaking Down Strings into Characters",
+      description:
+        "Understand how strings are broken down into characters and mapped.",
+      isCode: true,
+      question: {
+        questionText:
+          'Write the Java code to break down the string "Kendrick" into a character array and then into a `Map<Character,Integer>` mapping each character to its index.',
+      },
+    },
+    // 5
+    {
+      group: "6",
+      title: "Understanding Data Structures",
+      description:
+        "Convert a string into a list of key-value pair maps that map characters to their ASCII codes.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          'Convert the string "Kendrick" into a `List<Map<Character,Integer>>` where each entry maps a character to its ASCII code.',
+        options: [
+          "{ 'K': 75 }",
+          "{ 'e': 101 }",
+          "{ 'n': 110 }",
+          "{ 'd': 100 }",
+          "{ 'r': 114 }",
+          "{ 'i': 105 }",
+          "{ 'c': 99 }",
+          "{ 'k': 107 }",
+        ],
+        answer: [
+          "{ 'K': 75 }",
+          "{ 'e': 101 }",
+          "{ 'n': 110 }",
+          "{ 'd': 100 }",
+          "{ 'r': 114 }",
+          "{ 'i': 105 }",
+          "{ 'c': 99 }",
+          "{ 'k': 107 }",
+        ],
+      },
+    },
+    // 6
+    {
+      group: "6",
+      title: "Binary Conversion",
+      description: "Convert characters to their binary representation.",
+      isCode: true,
+      question: {
+        questionText:
+          'Write Java code to take the ASCII mapping of "Kendrick" and produce a `Map<Character,String>` of binary strings using `Integer.toBinaryString(...)`.',
+      },
+    },
+    // 7
+    {
+      group: "6",
+      title: "Understanding Memory and Addresses",
+      description:
+        "Learn how data structures reserve space and reference information.",
+      isText: true,
+      question: {
+        questionText:
+          "Why is it important to understand how computers reserve space and create addresses to reference information? Give real-world examples at scale.",
+      },
+    },
+    // 8
+    {
+      group: "6",
+      title: "Introduction to Linked Lists",
+      description: "Learn about the basic concepts of linked lists in Java.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which of the following is a characteristic of linked lists?",
+        options: [
+          "Fixed-size arrays",
+          "Dynamic memory allocation",
+          "Constant-time random access",
+          "Elements stored contiguously",
+        ],
+        answer: "Dynamic memory allocation",
+      },
+    },
+    // 9
+    {
+      group: "6",
+      title: "Building a Linked List",
+      description:
+        'Construct a simple linked list in Java with the values "meta", "instagram", "reels".',
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          'Which of the following Java snippets correctly creates a linked list with "meta", "instagram", and "reels"?',
+        options: [
+          `class Node {
+    String value;
+    Node next;
+    Node(String v) { value = v; }
+}
+
+class LinkedList {
+    Node head;
+    void add(String v) {
+        Node n = new Node(v);
+        if (head == null) head = n;
+        else {
+            Node curr = head;
+            while (curr.next != null) curr = curr.next;
+            curr.next = n;
+        }
+    }
+}
+
+LinkedList list = new LinkedList();
+list.add("meta");
+list.add("instagram");
+list.add("reels");`,
+          `// Uses ArrayList instead of linked list
+List<String> list = Arrays.asList("meta","instagram","reels");`,
+          `class Node {
+    String value;
+    Node(String v) { value = v; }
+}`,
+        ],
+        answer: `class Node {
+    String value;
+    Node next;
+    Node(String v) { value = v; }
+}
+
+class LinkedList {
+    Node head;
+    void add(String v) {
+        Node n = new Node(v);
+        if (head == null) head = n;
+        else {
+            Node curr = head;
+            while (curr.next != null) curr = curr.next;
+            curr.next = n;
+        }
+    }
+}
+
+LinkedList list = new LinkedList();
+list.add("meta");
+list.add("instagram");
+list.add("reels");`,
+      },
+    },
+    // 10
+    {
+      group: "6",
+      title: "Practical Linked List Application",
+      description: "Apply the LinkedList class to a real-world scenario.",
+      isCode: true,
+      question: {
+        questionText:
+          'Write Java code to create a linked list of Google\'s departments ("Search","Ads","Cloud") and print each value.',
+      },
+    },
+    // 11
+    {
+      group: "6",
+      title: "Traversing a Linked List",
+      description:
+        "Implement a method to traverse a linked list and return the last item.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write a method `String getLast()` in your LinkedList class that traverses and returns the last node's value.",
+      },
+    },
+    // 12
+    {
+      group: "6",
+      title: "Linked List API Design",
+      description:
+        "Learn which method name is most idiomatic in Java to append elements.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which method name would you choose to add an item to the end of a linked list?",
+        options: ["addAtIndex", "append", "insert", "push", "create"],
+        answer: "append",
+      },
+    },
+    // 13
+    {
+      group: "6",
+      title: "Reversing a Linked List",
+      description: "Reverse the direction of a linked list.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "What is the time complexity of reversing a linked list?",
+        options: ["O(1)", "O(log n)", "O(n)", "O(n^2)", "O(n log n)", "O(2^n)"],
+        answer: "O(n)",
+      },
+    },
+    // 14
+    {
+      group: "6",
+      title: "Depth-First Search Algorithm (Recursion)",
+      description:
+        "Understand and implement a DFS algorithm using recursion in Java.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps to implement recursive DFS on a graph in Java.",
+        options: [
+          "Start at the root node",
+          "Mark the current node as visited",
+          "Process the node (e.g., print or store its value)",
+          "Recursively visit each unvisited neighbor",
+          "Backtrack once all neighbors are visited",
+          "Repeat until all nodes are visited",
+        ],
+        answer: [
+          "Start at the root node",
+          "Mark the current node as visited",
+          "Process the node (e.g., print or store its value)",
+          "Recursively visit each unvisited neighbor",
+          "Backtrack once all neighbors are visited",
+          "Repeat until all nodes are visited",
+        ],
+      },
+    },
+    // 15
+    {
+      group: "6",
+      title: "Creating a Tree Structure",
+      description: "Build a simple tree structure to practice DFS in Java.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write Java code to create a binary tree three levels deep representing company divisions.",
+      },
+    },
+    // 16
+    {
+      group: "6",
+      title: "Understanding DFS vs BFS",
+      description:
+        "Learn the differences between depth-first search and breadth-first search.",
+      isText: true,
+      question: {
+        questionText: "Explain the difference between DFS and BFS algorithms.",
+      },
+    },
+    // 17
+    {
+      group: "6",
+      title: "Implementing DFS with Recursion",
+      description:
+        "Complete the implementation of pre-order DFS using recursion.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which Java snippet correctly implements pre-order DFS on a binary tree?",
+        options: [
+          `class Node {
+    int value;
+    Node left, right;
+    Node(int v) { value = v; }
+}
+
+void dfs(Node node) {
+    if (node == null) return;
+    System.out.println(node.value);
+    dfs(node.left);
+    dfs(node.right);
+}
+
+// build tree...
+dfs(root);`,
+        ],
+        answer: `class Node {
+    int value;
+    Node left, right;
+    Node(int v) { value = v; }
+}
+
+void dfs(Node node) {
+    if (node == null) return;
+    System.out.println(node.value);
+    dfs(node.left);
+    dfs(node.right);
+}
+
+// build tree...
+dfs(root);`,
+      },
+    },
+    // 18
+    {
+      group: "6",
+      title: "Algorithm Optimization",
+      description:
+        "Explore ways to optimize algorithms for better performance.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write an optimized Java implementation of bubble sort that stops early if no swaps occur.",
+      },
+    },
+    // 19
+    {
+      group: "6",
+      title: "Exploring the N-Queens Problem",
+      description: "Understand the N-Queens problem and its complexity.",
+      isText: true,
+      question: {
+        questionText:
+          "What is the N-Queens problem, and why is it considered complex?",
+      },
+    },
+    // 20
+    {
+      group: "6",
+      title: "Implementing Backtracking",
+      description: "Implement a backtracking algorithm to solve a problem.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps to apply backtracking for the 4×4 N-Queens problem in Java.",
+        options: [
+          "Start with an empty board",
+          "Place a queen in the current row",
+          "Check if placement is safe",
+          "If safe, move to the next row",
+          "If not, try next column",
+          "If no columns left, backtrack up",
+          "If board full, record solution",
+          "Continue until all solutions are found",
+        ],
+        answer: [
+          "Start with an empty board",
+          "Place a queen in the current row",
+          "Check if placement is safe",
+          "If safe, move to the next row",
+          "If not, try next column",
+          "If no columns left, backtrack up",
+          "If board full, record solution",
+          "Continue until all solutions are found",
+        ],
+      },
+    },
+    // 21
+    {
+      group: "6",
+      title: "Implementing Backtracking for 4×4 N-Queens",
+      description:
+        "Implement a backtracking algorithm to solve the 4×4 N-Queens problem in Java.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write Java code to solve the 4×4 N-Queens problem using backtracking.",
+      },
+    },
+    // 22
+    {
+      group: "6",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [112, 132],
       },
     },
   ],
@@ -5913,6 +12718,45 @@ export const lectureSummaries = {
   },
   es: {
     tutorial: {},
+    1: {},
+    2: {},
+    3: {},
+    4: {},
+    5: {},
+    6: {},
+  },
+  "py-en": {
+    tutorial: {
+      videoSrc: "", //string url
+      content: <div>Hello world</div>, //jsx
+      challengeQuestion: "",
+    },
+    1: {},
+    2: {},
+    3: {},
+    4: {},
+    5: {},
+    6: {},
+  },
+  "swift-end": {
+    tutorial: {
+      videoSrc: "", //string url
+      content: <div>Hello world</div>, //jsx
+      challengeQuestion: "",
+    },
+    1: {},
+    2: {},
+    3: {},
+    4: {},
+    5: {},
+    6: {},
+  },
+  "android-en": {
+    tutorial: {
+      videoSrc: "", //string url
+      content: <div>Hello world</div>, //jsx
+      challengeQuestion: "",
+    },
     1: {},
     2: {},
     3: {},
@@ -6305,6 +13149,432 @@ export const celebrationMessages = {
     "¡Estás que ardes! 🔥🚀",
     "¡Sigue siendo increíble! 🌟😄",
     "¡Hoy eres imparable! 🚀✨",
+  ],
+  "py-en": [
+    "You're doing amazing! 🎉✨",
+    "Fantastic job! Keep it up! 🚀🎈",
+    "You're crushing it! 💪😄",
+    "Awesome work! 👏🥳",
+    "Impressive progress! 🌠🙌",
+    "Way to go! 🥳🔥",
+    "Outstanding performance! 🥇👏",
+    "You're incredible! 🤩✨",
+    "Keep up the fantastic work! 🎈🙌",
+    "You've got this! 💪🎉",
+    "Bravo! 👏🎊",
+    "So proud of you! 🌟😊",
+    "Keep up the amazing effort! 🙌🔥",
+    "You're a total champion! 🏆😄",
+    "Great job, keep rocking! 🤘🎉",
+    "You're unstoppable today! 🚀💥",
+    "Absolutely fantastic! 🌟🎉",
+    "You're making waves! 🌊😄",
+    "Keep being awesome! 😎✨",
+    "Epic job! 🚀🥳",
+    "You're flying high! ✈️😊",
+    "Outstanding job! 🌟🎈",
+    "You nailed it! 🎯😄",
+    "Keep soaring! 🦅✨",
+    "You're incredible! 🤩🙌",
+    "You're on fire! 🔥🥳",
+    "Amazing job, keep it up! 🚀😄",
+    "You're thriving! 🌱😊",
+    "Extraordinary effort! 🎖️👏",
+    "Keep shining bright! ✨😄",
+    "Magnificent performance! 🌟🙌",
+    "You're unstoppable! 🚀💪",
+    "You're a powerhouse! 💥🥳",
+    "You're a true superstar! 🤩🌟",
+    "Epic performance! 🚀🎉",
+    "You're doing wonderfully! 😊👏",
+    "Great momentum! Keep it going! 🌟🚀",
+    "Keep dazzling! ✨😄",
+    "You're making magic happen! ✨🪄",
+    "You're unstoppable! 🚀🔥",
+    "Incredible progress! 🙌😄",
+    "You're phenomenal! 🌟🥳",
+    "Keep shining bright! ✨🌞",
+    "You're slaying! 🔥👏",
+    "You're positively radiant! 😊✨",
+    "You're unstoppable today! 🚀🎊",
+    "Outstanding performance! 👏😊",
+    "Keep being fabulous! 🌟🎈",
+    "You're rocking this! 🎸🥳",
+    "You're amazing! Keep going! 🌟✨",
+    "You're absolutely brilliant! 💡🎉",
+    "Keep conquering! 🏅🚀",
+    "Fantastic work! Keep soaring! ✈️🌟",
+    "You're truly impressive! 👏✨",
+    "You're extraordinary! 🌟😊",
+    "Great job! Keep thriving! 🌱🎉",
+    "You're exceptional! 🎉🌟",
+    "Keep up the awesome work! 🙌🥳",
+    "You're fantastic! ✨😄",
+    "You're truly inspirational! 🌈👏",
+    "You're absolutely smashing it! 🚀💥",
+    "You're outstanding! 🌟🎉",
+    "Keep making us proud! 😊🙌",
+    "You're truly unstoppable! 🚀🎈",
+    "You're amazing! Keep pushing! 💪🥳",
+    "You're a legend! 🏅😄",
+    "Keep lighting it up! 🔥✨",
+    "You're doing incredible! 🎉👏",
+    "You're truly spectacular! 🌠😊",
+    "Keep it going! You're doing great! 💪✨",
+    "You're wonderful! 🌟😄",
+    "You're unstoppable brilliance! 🚀✨",
+    "You're absolutely rocking it! 🎸😊",
+    "Keep reaching new heights! 🏔️🎉",
+    "You're superb! ✨🙌",
+    "You're on a fantastic roll! 🎲🥳",
+    "Keep crushing those goals! 🎯😄",
+    "You're brilliant! 💡✨",
+    "You're fantastic beyond words! 🎉👏",
+    "You're totally rocking it! 🤘😎",
+    "Keep it up, superstar! 🌟😊",
+    "You're shining bright today! ✨😄",
+    "Keep smashing it! 🚀💥",
+    "You're truly unstoppable! 🚀🎊",
+    "Outstanding effort! 🎖️✨",
+    "You're awesome, keep it going! 🎉😄",
+    "Keep breaking barriers! 🚧💪",
+    "You're extraordinary every day! 🎉😊",
+    "Keep achieving greatness! 🏆✨",
+    "You're a shining example! ✨😊",
+    "You're a total winner! 🏅😄",
+    "Keep shining, you're amazing! ✨🌞",
+    "You're absolutely crushing it! 💪🔥",
+    "You're fantastic today! 🎉😄",
+    "Keep the greatness coming! 🚀✨",
+    "You're inspirational! 🌈😊",
+    "You're lighting it up! 🔥🎈",
+    "Keep soaring high! 🦅✨",
+    "You're doing an awesome job! 🎉😊",
+    "You're unstoppable greatness! 🚀🌟",
+    "Keep going strong! 💪😄",
+    "You're absolutely remarkable! 🎖️✨",
+    "Keep being amazing! 🌟😊",
+    "You're thriving wonderfully! 🌱🎉",
+    "You're absolutely incredible! 🌠😄",
+    "Keep shining! ✨🎈",
+    "You're exceptional! 🌟👏",
+    "You're unstoppable brilliance today! 🚀😄",
+    "Keep up the excellent work! 🎉🙌",
+    "You're extraordinary! Keep going! 🌟😊",
+    "Keep pushing forward! 🚀🎉",
+    "You're making fantastic progress! 🎈😊",
+    "You're an absolute champion! 🏆😄",
+    "Keep slaying your goals! 🔥👏",
+    "You're fantastic! Keep going strong! 🎉💪",
+    "You're totally impressive! 🌟😄",
+    "Keep rocking! 🎸✨",
+    "You're absolutely magnificent! 🎉🌟",
+    "You're on a roll! Keep it up! 🎲😄",
+    "You're exceptional today! 🎉👏",
+    "Keep shining brightly! ✨😊",
+    "You're totally unstoppable! 🚀🥳",
+    "You're thriving and inspiring! 🌱😊",
+    "Keep excelling! 🎖️😄",
+    "You're doing wonderfully today! 🌟🎉",
+    "You're making it happen! 🚀✨",
+    "Keep being unstoppable! 🔥💪",
+    "You're spectacular! 🎉🌠",
+    "Keep achieving greatness! 🏆✨",
+    "You're positively radiant today! 😊✨",
+    "Keep being fantastic! 🌟😄",
+    "You're crushing everything! 💥💪",
+    "Keep up the amazing work! 🎉🙌",
+    "You're totally epic! 🚀😄",
+    "You're remarkable! 🌟👏",
+    "Keep shining, you're a star! ✨😊",
+    "You're truly magnificent! 🎉😄",
+    "You're on fire! 🔥🚀",
+    "Keep being incredible! 🌟😄",
+    "You're unstoppable today! 🚀✨",
+  ],
+  "swift-en": [
+    "You're doing amazing! 🎉✨",
+    "Fantastic job! Keep it up! 🚀🎈",
+    "You're crushing it! 💪😄",
+    "Awesome work! 👏🥳",
+    "Impressive progress! 🌠🙌",
+    "Way to go! 🥳🔥",
+    "Outstanding performance! 🥇👏",
+    "You're incredible! 🤩✨",
+    "Keep up the fantastic work! 🎈🙌",
+    "You've got this! 💪🎉",
+    "Bravo! 👏🎊",
+    "So proud of you! 🌟😊",
+    "Keep up the amazing effort! 🙌🔥",
+    "You're a total champion! 🏆😄",
+    "Great job, keep rocking! 🤘🎉",
+    "You're unstoppable today! 🚀💥",
+    "Absolutely fantastic! 🌟🎉",
+    "You're making waves! 🌊😄",
+    "Keep being awesome! 😎✨",
+    "Epic job! 🚀🥳",
+    "You're flying high! ✈️😊",
+    "Outstanding job! 🌟🎈",
+    "You nailed it! 🎯😄",
+    "Keep soaring! 🦅✨",
+    "You're incredible! 🤩🙌",
+    "You're on fire! 🔥🥳",
+    "Amazing job, keep it up! 🚀😄",
+    "You're thriving! 🌱😊",
+    "Extraordinary effort! 🎖️👏",
+    "Keep shining bright! ✨😄",
+    "Magnificent performance! 🌟🙌",
+    "You're unstoppable! 🚀💪",
+    "You're a powerhouse! 💥🥳",
+    "You're a true superstar! 🤩🌟",
+    "Epic performance! 🚀🎉",
+    "You're doing wonderfully! 😊👏",
+    "Great momentum! Keep it going! 🌟🚀",
+    "Keep dazzling! ✨😄",
+    "You're making magic happen! ✨🪄",
+    "You're unstoppable! 🚀🔥",
+    "Incredible progress! 🙌😄",
+    "You're phenomenal! 🌟🥳",
+    "Keep shining bright! ✨🌞",
+    "You're slaying! 🔥👏",
+    "You're positively radiant! 😊✨",
+    "You're unstoppable today! 🚀🎊",
+    "Outstanding performance! 👏😊",
+    "Keep being fabulous! 🌟🎈",
+    "You're rocking this! 🎸🥳",
+    "You're amazing! Keep going! 🌟✨",
+    "You're absolutely brilliant! 💡🎉",
+    "Keep conquering! 🏅🚀",
+    "Fantastic work! Keep soaring! ✈️🌟",
+    "You're truly impressive! 👏✨",
+    "You're extraordinary! 🌟😊",
+    "Great job! Keep thriving! 🌱🎉",
+    "You're exceptional! 🎉🌟",
+    "Keep up the awesome work! 🙌🥳",
+    "You're fantastic! ✨😄",
+    "You're truly inspirational! 🌈👏",
+    "You're absolutely smashing it! 🚀💥",
+    "You're outstanding! 🌟🎉",
+    "Keep making us proud! 😊🙌",
+    "You're truly unstoppable! 🚀🎈",
+    "You're amazing! Keep pushing! 💪🥳",
+    "You're a legend! 🏅😄",
+    "Keep lighting it up! 🔥✨",
+    "You're doing incredible! 🎉👏",
+    "You're truly spectacular! 🌠😊",
+    "Keep it going! You're doing great! 💪✨",
+    "You're wonderful! 🌟😄",
+    "You're unstoppable brilliance! 🚀✨",
+    "You're absolutely rocking it! 🎸😊",
+    "Keep reaching new heights! 🏔️🎉",
+    "You're superb! ✨🙌",
+    "You're on a fantastic roll! 🎲🥳",
+    "Keep crushing those goals! 🎯😄",
+    "You're brilliant! 💡✨",
+    "You're fantastic beyond words! 🎉👏",
+    "You're totally rocking it! 🤘😎",
+    "Keep it up, superstar! 🌟😊",
+    "You're shining bright today! ✨😄",
+    "Keep smashing it! 🚀💥",
+    "You're truly unstoppable! 🚀🎊",
+    "Outstanding effort! 🎖️✨",
+    "You're awesome, keep it going! 🎉😄",
+    "Keep breaking barriers! 🚧💪",
+    "You're extraordinary every day! 🎉😊",
+    "Keep achieving greatness! 🏆✨",
+    "You're a shining example! ✨😊",
+    "You're a total winner! 🏅😄",
+    "Keep shining, you're amazing! ✨🌞",
+    "You're absolutely crushing it! 💪🔥",
+    "You're fantastic today! 🎉😄",
+    "Keep the greatness coming! 🚀✨",
+    "You're inspirational! 🌈😊",
+    "You're lighting it up! 🔥🎈",
+    "Keep soaring high! 🦅✨",
+    "You're doing an awesome job! 🎉😊",
+    "You're unstoppable greatness! 🚀🌟",
+    "Keep going strong! 💪😄",
+    "You're absolutely remarkable! 🎖️✨",
+    "Keep being amazing! 🌟😊",
+    "You're thriving wonderfully! 🌱🎉",
+    "You're absolutely incredible! 🌠😄",
+    "Keep shining! ✨🎈",
+    "You're exceptional! 🌟👏",
+    "You're unstoppable brilliance today! 🚀😄",
+    "Keep up the excellent work! 🎉🙌",
+    "You're extraordinary! Keep going! 🌟😊",
+    "Keep pushing forward! 🚀🎉",
+    "You're making fantastic progress! 🎈😊",
+    "You're an absolute champion! 🏆😄",
+    "Keep slaying your goals! 🔥👏",
+    "You're fantastic! Keep going strong! 🎉💪",
+    "You're totally impressive! 🌟😄",
+    "Keep rocking! 🎸✨",
+    "You're absolutely magnificent! 🎉🌟",
+    "You're on a roll! Keep it up! 🎲😄",
+    "You're exceptional today! 🎉👏",
+    "Keep shining brightly! ✨😊",
+    "You're totally unstoppable! 🚀🥳",
+    "You're thriving and inspiring! 🌱😊",
+    "Keep excelling! 🎖️😄",
+    "You're doing wonderfully today! 🌟🎉",
+    "You're making it happen! 🚀✨",
+    "Keep being unstoppable! 🔥💪",
+    "You're spectacular! 🎉🌠",
+    "Keep achieving greatness! 🏆✨",
+    "You're positively radiant today! 😊✨",
+    "Keep being fantastic! 🌟😄",
+    "You're crushing everything! 💥💪",
+    "Keep up the amazing work! 🎉🙌",
+    "You're totally epic! 🚀😄",
+    "You're remarkable! 🌟👏",
+    "Keep shining, you're a star! ✨😊",
+    "You're truly magnificent! 🎉😄",
+    "You're on fire! 🔥🚀",
+    "Keep being incredible! 🌟😄",
+    "You're unstoppable today! 🚀✨",
+  ],
+  "android-en": [
+    "You're doing amazing! 🎉✨",
+    "Fantastic job! Keep it up! 🚀🎈",
+    "You're crushing it! 💪😄",
+    "Awesome work! 👏🥳",
+    "Impressive progress! 🌠🙌",
+    "Way to go! 🥳🔥",
+    "Outstanding performance! 🥇👏",
+    "You're incredible! 🤩✨",
+    "Keep up the fantastic work! 🎈🙌",
+    "You've got this! 💪🎉",
+    "Bravo! 👏🎊",
+    "So proud of you! 🌟😊",
+    "Keep up the amazing effort! 🙌🔥",
+    "You're a total champion! 🏆😄",
+    "Great job, keep rocking! 🤘🎉",
+    "You're unstoppable today! 🚀💥",
+    "Absolutely fantastic! 🌟🎉",
+    "You're making waves! 🌊😄",
+    "Keep being awesome! 😎✨",
+    "Epic job! 🚀🥳",
+    "You're flying high! ✈️😊",
+    "Outstanding job! 🌟🎈",
+    "You nailed it! 🎯😄",
+    "Keep soaring! 🦅✨",
+    "You're incredible! 🤩🙌",
+    "You're on fire! 🔥🥳",
+    "Amazing job, keep it up! 🚀😄",
+    "You're thriving! 🌱😊",
+    "Extraordinary effort! 🎖️👏",
+    "Keep shining bright! ✨😄",
+    "Magnificent performance! 🌟🙌",
+    "You're unstoppable! 🚀💪",
+    "You're a powerhouse! 💥🥳",
+    "You're a true superstar! 🤩🌟",
+    "Epic performance! 🚀🎉",
+    "You're doing wonderfully! 😊👏",
+    "Great momentum! Keep it going! 🌟🚀",
+    "Keep dazzling! ✨😄",
+    "You're making magic happen! ✨🪄",
+    "You're unstoppable! 🚀🔥",
+    "Incredible progress! 🙌😄",
+    "You're phenomenal! 🌟🥳",
+    "Keep shining bright! ✨🌞",
+    "You're slaying! 🔥👏",
+    "You're positively radiant! 😊✨",
+    "You're unstoppable today! 🚀🎊",
+    "Outstanding performance! 👏😊",
+    "Keep being fabulous! 🌟🎈",
+    "You're rocking this! 🎸🥳",
+    "You're amazing! Keep going! 🌟✨",
+    "You're absolutely brilliant! 💡🎉",
+    "Keep conquering! 🏅🚀",
+    "Fantastic work! Keep soaring! ✈️🌟",
+    "You're truly impressive! 👏✨",
+    "You're extraordinary! 🌟😊",
+    "Great job! Keep thriving! 🌱🎉",
+    "You're exceptional! 🎉🌟",
+    "Keep up the awesome work! 🙌🥳",
+    "You're fantastic! ✨😄",
+    "You're truly inspirational! 🌈👏",
+    "You're absolutely smashing it! 🚀💥",
+    "You're outstanding! 🌟🎉",
+    "Keep making us proud! 😊🙌",
+    "You're truly unstoppable! 🚀🎈",
+    "You're amazing! Keep pushing! 💪🥳",
+    "You're a legend! 🏅😄",
+    "Keep lighting it up! 🔥✨",
+    "You're doing incredible! 🎉👏",
+    "You're truly spectacular! 🌠😊",
+    "Keep it going! You're doing great! 💪✨",
+    "You're wonderful! 🌟😄",
+    "You're unstoppable brilliance! 🚀✨",
+    "You're absolutely rocking it! 🎸😊",
+    "Keep reaching new heights! 🏔️🎉",
+    "You're superb! ✨🙌",
+    "You're on a fantastic roll! 🎲🥳",
+    "Keep crushing those goals! 🎯😄",
+    "You're brilliant! 💡✨",
+    "You're fantastic beyond words! 🎉👏",
+    "You're totally rocking it! 🤘😎",
+    "Keep it up, superstar! 🌟😊",
+    "You're shining bright today! ✨😄",
+    "Keep smashing it! 🚀💥",
+    "You're truly unstoppable! 🚀🎊",
+    "Outstanding effort! 🎖️✨",
+    "You're awesome, keep it going! 🎉😄",
+    "Keep breaking barriers! 🚧💪",
+    "You're extraordinary every day! 🎉😊",
+    "Keep achieving greatness! 🏆✨",
+    "You're a shining example! ✨😊",
+    "You're a total winner! 🏅😄",
+    "Keep shining, you're amazing! ✨🌞",
+    "You're absolutely crushing it! 💪🔥",
+    "You're fantastic today! 🎉😄",
+    "Keep the greatness coming! 🚀✨",
+    "You're inspirational! 🌈😊",
+    "You're lighting it up! 🔥🎈",
+    "Keep soaring high! 🦅✨",
+    "You're doing an awesome job! 🎉😊",
+    "You're unstoppable greatness! 🚀🌟",
+    "Keep going strong! 💪😄",
+    "You're absolutely remarkable! 🎖️✨",
+    "Keep being amazing! 🌟😊",
+    "You're thriving wonderfully! 🌱🎉",
+    "You're absolutely incredible! 🌠😄",
+    "Keep shining! ✨🎈",
+    "You're exceptional! 🌟👏",
+    "You're unstoppable brilliance today! 🚀😄",
+    "Keep up the excellent work! 🎉🙌",
+    "You're extraordinary! Keep going! 🌟😊",
+    "Keep pushing forward! 🚀🎉",
+    "You're making fantastic progress! 🎈😊",
+    "You're an absolute champion! 🏆😄",
+    "Keep slaying your goals! 🔥👏",
+    "You're fantastic! Keep going strong! 🎉💪",
+    "You're totally impressive! 🌟😄",
+    "Keep rocking! 🎸✨",
+    "You're absolutely magnificent! 🎉🌟",
+    "You're on a roll! Keep it up! 🎲😄",
+    "You're exceptional today! 🎉👏",
+    "Keep shining brightly! ✨😊",
+    "You're totally unstoppable! 🚀🥳",
+    "You're thriving and inspiring! 🌱😊",
+    "Keep excelling! 🎖️😄",
+    "You're doing wonderfully today! 🌟🎉",
+    "You're making it happen! 🚀✨",
+    "Keep being unstoppable! 🔥💪",
+    "You're spectacular! 🎉🌠",
+    "Keep achieving greatness! 🏆✨",
+    "You're positively radiant today! 😊✨",
+    "Keep being fantastic! 🌟😄",
+    "You're crushing everything! 💥💪",
+    "Keep up the amazing work! 🎉🙌",
+    "You're totally epic! 🚀😄",
+    "You're remarkable! 🌟👏",
+    "Keep shining, you're a star! ✨😊",
+    "You're truly magnificent! 🎉😄",
+    "You're on fire! 🔥🚀",
+    "Keep being incredible! 🌟😄",
+    "You're unstoppable today! 🚀✨",
   ],
 };
 

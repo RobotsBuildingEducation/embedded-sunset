@@ -174,7 +174,7 @@ export const AlgorithmHelper = ({ isOpen, onClose, userLanguage }) => {
 
     However, despite being minimalist, make sure to provide clear, effective and helpful communication the example and constraints. Your response should not be a JSON output.
     Lastly, the user is speaking in ${
-      userLanguage === "en" ? "english" : "spanish"
+      userLanguage.includes("en") ? "english" : "spanish"
     }
     `;
       // Fire off a prompt to the AI. It will stream back in `messages`.

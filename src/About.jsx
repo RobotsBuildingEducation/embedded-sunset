@@ -62,7 +62,7 @@ export const About = ({ userLanguage, handleToggle }) => {
           </Button>
         </Box>
         <FormLabel htmlFor="language-toggle" mb="0">
-          {userLanguage === "en" ? "English" : "Español"}
+          {userLanguage.includes("en") ? "English" : "Español"}
         </FormLabel>
 
         <Switch

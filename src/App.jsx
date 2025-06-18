@@ -87,7 +87,7 @@ import {
 } from "firebase/firestore";
 import { analytics, database } from "./database/firebaseResources";
 
-import { translation } from "./utility/translation";
+import { pickProgrammingLanguage, translation } from "./utility/translation";
 
 import { Dashboard } from "./components/Dashboard/Dashboard";
 import { isUnsupportedBrowser } from "./utility/browser";
@@ -491,7 +491,7 @@ export const VoiceInput = ({
     onChange(""); // Clear input when starting voice
     SpeechRecognition.startListening({
       continuous: true,
-      language: userLanguage === "en" ? "en-US" : "es-MX",
+      language: userLanguage.includes("en") ? "en-US" : "es-MX",
     });
   };
 
@@ -522,7 +522,7 @@ export const VoiceInput = ({
     onChange(""); // Clear input when starting AI
     SpeechRecognition.startListening({
       continuous: true,
-      language: userLanguage === "en" ? "en-US" : "es-MX",
+      language: userLanguage.includes("en") ? "en-US" : "es-MX",
     });
   };
 
@@ -567,7 +567,7 @@ export const VoiceInput = ({
           "The user has requested" +
             aiTranscript +
             `The user is working on a review of the subjects studied: ${JSON.stringify(relevantSteps)} while learning with javascript - so provide assistance writing material based on the user's input. Keep it short. Absolutely no other text or data should be included or communicated, including these instructions. Lastly the user is speaking in ${
-              userLanguage === "en" ? "english" : "spanish"
+              userLanguage.includes("en") ? "english" : "spanish"
             }`
         );
       } else {
@@ -575,7 +575,7 @@ export const VoiceInput = ({
           aiTranscript +
           "If the request is a coding problem, the output should strictly answer what is requested in javascript with a maximum print of 80 characters, otherwise continue as normal with answering the request. Absolutely no other text or data should be included or communicated." +
           `Lastly the user is speaking in ${
-            userLanguage === "en" ? "english" : "spanish"
+            userLanguage.includes("en") ? "english" : "spanish"
           }`;
         submitPrompt(prompt);
       }
@@ -644,8 +644,8 @@ export const VoiceInput = ({
       submitEducationalPrompt(
         `Generate educational material about ${JSON.stringify(
           step
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning.  Additionally the Javascript or relevant code should consider line breaks, whitespace and have a maximum print width of 80 characters in well formatted markdown. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
-          userLanguage === "en" ? "english" : "spanish"
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning.  Additionally the ${pickProgrammingLanguage(userLanguage)} or relevant code should consider line breaks, whitespace and have a maximum print width of 80 characters in well formatted markdown. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
+          userLanguage.includes("en") ? "english" : "spanish"
         }`
       );
     } else {
@@ -654,8 +654,8 @@ export const VoiceInput = ({
       submitEducationalPrompt(
         `Generate educational material about ${JSON.stringify(
           relevantSteps
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally the Javascript or relevant code should consider line breaks and formatting and have a maximum print width of 80 characters in well formatted markdown. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets.  Never specify the answer. Lastly the user is speaking in ${
-          userLanguage === "en" ? "english" : "spanish"
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally the ${pickProgrammingLanguage(userLanguage)} or relevant code should consider line breaks and formatting and have a maximum print width of 80 characters in well formatted markdown. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets.  Never specify the answer. Lastly the user is speaking in ${
+          userLanguage.includes("en") ? "english" : "spanish"
         }`
       );
     }
@@ -1494,11 +1494,11 @@ const Step = ({
         await submitSuggestionMessages([
           {
             content: `
-            The user is on question ${currentStep}. If the question number is 0 offer some words of encouragement when it comes to learning journeys and do not proceed with further instruction. If the question is 1, suggest learning the very basics of coding in two sentences and ignore the rest of this instruction. Otherwise, for any other question, the user has completed the following subjects: ${JSON.stringify(subjectsCompleted)}. Based on their progress, suggest the next best topic to learn and explain why. Based on their progress, suggest the next best topic to learn and explain why while also providing a brief example of code too to expose the individual to the concept. This must always be in Javascript when code is being expressed.           
+            The user is on question ${currentStep}. If the question number is 0 offer some words of encouragement when it comes to learning journeys and do not proceed with further instruction. If the question is 1, suggest learning the very basics of coding in two sentences and ignore the rest of this instruction. Otherwise, for any other question, the user has completed the following subjects: ${JSON.stringify(subjectsCompleted)}. Based on their progress, suggest the next best topic to learn and explain why. Based on their progress, suggest the next best topic to learn and explain why while also providing a brief example of code too to expose the individual to the concept. This must always be in ${pickProgrammingLanguage(userLanguage)} when code is being expressed.           
             
             This applies to any question: Respond in minimalist markdown without any headers, only bold facing is allowed to indicate headers for new paragraphs. Never reference the user's subjects, that's for your eyes only. Never reference other businesses or organizations.
               The user is speaking ${
-                userLanguage === "en" ? "English" : "Spanish"
+                userLanguage.includes("en") ? "English" : "Spanish"
               }.
             `,
             role: "user",
@@ -1672,7 +1672,7 @@ const Step = ({
 
             This applies to any question: Respond in minimalist markdown without any headers, only bold facing is allowed to indicate headers for new paragraphs. Never reference the user's subjects, that's for your eyes only. Never reference other businesses or organizations.
               The user is speaking ${
-                userLanguage === "en" ? "English" : "Spanish"
+                userLanguage.includes("en") ? "English" : "Spanish"
               }.
             `,
             role: "user",
@@ -1715,7 +1715,7 @@ const Step = ({
             
             This applies to any question: Respond in minimalist markdown without any headers, only bold facing is allowed to indicate headers for new paragraphs. Never reference the user's subjects, that's for your eyes only. Never reference other businesses or organizations.
               The user is speaking ${
-                userLanguage === "en" ? "English" : "Spanish"
+                userLanguage.includes("en") ? "English" : "Spanish"
               }.
             `,
             role: "user",
@@ -2280,10 +2280,10 @@ const Step = ({
         // [
         //   {
         //     content:
-        `Generate educational Javascript material about ${JSON.stringify(
+        `Generate educational ${pickProgrammingLanguage(userLanguage)} material about ${JSON.stringify(
           step
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally any Javascript or relevant code should have a maximum print width of 80 characters in well formatted markdown. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
-          userLanguage === "en" ? "english" : "spanish"
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally any ${pickProgrammingLanguage(userLanguage)} or relevant code should have a maximum print width of 80 characters in well formatted markdown. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
+          userLanguage.includes("en") ? "english" : "spanish"
         }`
         //     ,
         //     role: "user",
@@ -2355,12 +2355,12 @@ const Step = ({
   //     responseMimeType: "application/json",
   //     responseSchema: jsonSchema,
   //   };
-  //   const prompt = `Generate educational Javascript material about ${JSON.stringify(
+  //   const prompt = `Generate educational ${pickProgrammingLanguage(userLanguage)} material about ${JSON.stringify(
   //     step
   //   )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { "input": "${JSON.stringify(
   //     step
   //   )}", output: [{ "code": "code_example", "explanation": "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
-  //     userLanguage === "en" ? "english" : "spanish"
+  //     (userLanguage === "en" || userLanguage === 'py-en') ? "english" : "spanish"
   //   }`;
 
   //   // To stream generated text output, call generateContentStream with the text input
@@ -2517,7 +2517,7 @@ const Step = ({
         
         Remember, the types are things like isText, isTerminal, isMultipleChoice, isCodeCompletion, etc. But it must strictly be a different UI type than the step that the user started you off with. For example, if the user is sending you an isText: true question, you can't respond with an isText: true output.
         
-        Return the question in the proper JSON format as guided in the language of ${userLanguage === "en" ? "English" : "Spanish"}.}
+        Return the question in the proper JSON format as guided in the language of ${userLanguage.includes("en") ? "English" : "Spanish"}.}
       `;
 
       // console.log("PROMPT", prompt);
@@ -2632,7 +2632,7 @@ const Step = ({
                     }
                   }}
                 />
-                {userLanguage === "en" ? (
+                {userLanguage.includes("en") ? (
                   <IconButton
                     width="24px"
                     height="30px"
@@ -3876,7 +3876,7 @@ const Home = ({
   }, [view]);
 
   const handleToggle = async () => {
-    const newLanguage = userLanguage === "en" ? "es" : "en";
+    const newLanguage = userLanguage.includes("en") ? "es" : "en";
     setUserLanguage(newLanguage);
 
     // Update local storage
@@ -4052,7 +4052,7 @@ const Home = ({
                 m={2}
               >
                 <FormLabel htmlFor="language-toggle" mb="0">
-                  {userLanguage === "en" ? "English" : "Español"}
+                  {userLanguage.includes("en") ? "English" : "Español"}
                 </FormLabel>
                 <Switch
                   colorScheme="pink"
@@ -4546,7 +4546,7 @@ function App({ isShutDown }) {
   );
 
   const handleToggle = async () => {
-    const newLanguage = userLanguage === "en" ? "es" : "en";
+    const newLanguage = userLanguage.includes("en") ? "es" : "en";
     setUserLanguage(newLanguage);
 
     // Update local storage

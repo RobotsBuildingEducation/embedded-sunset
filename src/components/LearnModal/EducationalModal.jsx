@@ -266,7 +266,7 @@ const EducationalModal = ({
     
     Afterward, you can follow up with "Any other questions?" to conclude. 
 
-    Lastly, the user is speaking in ${userLanguage === "en" ? "English" : "Spanish"}.
+    Lastly, the user is speaking in ${userLanguage.includes("en") ? "English" : "Spanish"}.
     
     The following data is context to inform you and is strictly for your eyes only - do not reference this material in your response:
     {

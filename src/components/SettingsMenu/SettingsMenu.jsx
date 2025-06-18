@@ -18,6 +18,11 @@ import {
   FormLabel,
   Input,
   HStack,
+  Select,
+  MenuItem,
+  MenuList,
+  MenuButton,
+  Menu,
 } from "@chakra-ui/react";
 
 import { useNavigate } from "react-router-dom";
@@ -42,6 +47,7 @@ import { CareerAgent } from "../CareerAgent/CareerAgent";
 import { useNostrWalletStore } from "../../hooks/useNostrWalletStore";
 import SocialFeedModal from "../SocialFeedModal/SocialFeedModal";
 import StudyGuideModal from "../StudyGuideModal/StudyGuideModal";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 const SettingsMenu = ({
   testIsMatch,
@@ -137,7 +143,7 @@ const SettingsMenu = ({
   // const [interval, setIntervalState] = useState(2880);
 
   const handleToggle = async () => {
-    const newLanguage = userLanguage === "en" ? "es" : "en";
+    const newLanguage = userLanguage.includes("en") ? "es" : "en";
     setUserLanguage(newLanguage);
 
     // Update local storage
@@ -174,6 +180,18 @@ const SettingsMenu = ({
       }, 0);
     }
   }, [isOpen]);
+
+  const handleLanguageSelect = async (e) => {
+    const newLanguage = e.target.value;
+    setUserLanguage(newLanguage);
+    localStorage.setItem("userLanguage", newLanguage);
+
+    const npub = localStorage.getItem("local_npub");
+    if (npub) {
+      const userDoc = doc(database, "users", npub);
+      await updateDoc(userDoc, { language: newLanguage });
+    }
+  };
 
   const handleCopyKeys = (id) => {
     if (id) {
@@ -291,20 +309,85 @@ const SettingsMenu = ({
                 alignItems="center"
                 style={{ justifyContent: "center" }}
               >
-                <FormLabel htmlFor="language-toggle" mb="0">
-                  {userLanguage === "en" ? "English" : "Español"}
-                </FormLabel>
-                <Switch
-                  colorScheme="pink"
-                  id="language-toggle"
-                  isChecked={userLanguage === "es"}
-                  onChange={handleToggle}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleToggle();
-                    }
-                  }}
-                />
+                {/* <FormLabel htmlFor="language-toggle" mb="0">
+                  {userLanguage.includes("en")
+                    ? "English"
+                    : "Español"}
+                </FormLabel> */}
+                <FormControl>
+                  <FormLabel htmlFor="language-menu" mb={2}>
+                    {translation[userLanguage]["settings.languageLabel"]}
+                  </FormLabel>
+                  <Menu>
+                    <MenuButton
+                      as={Button}
+                      rightIcon={<ChevronDownIcon />}
+                      ref={firstButtonRef}
+                      id="language-menu"
+                      width="100%"
+                      textAlign="left"
+                      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                    >
+                      {
+                        {
+                          en: "JavaScript (English)",
+                          es: "JavaScript (Spanish)",
+                          "py-en": "Python (English)",
+                          "swift-en": "Swift & iOS (English)",
+                          "android-en": "Java & Android (English)",
+                        }[userLanguage]
+                      }
+                    </MenuButton>
+                    <MenuList boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)">
+                      <MenuItem
+                        p={6}
+                        borderBottom="1px solid #ececec"
+                        onClick={() =>
+                          handleLanguageSelect({ target: { value: "en" } })
+                        }
+                      >
+                        JavaScript (English)
+                      </MenuItem>
+                      <MenuItem
+                        p={6}
+                        borderBottom="1px solid #ececec"
+                        onClick={() =>
+                          handleLanguageSelect({ target: { value: "es" } })
+                        }
+                      >
+                        JavaScript (Spanish)
+                      </MenuItem>
+                      <MenuItem
+                        p={6}
+                        borderBottom="1px solid #ececec"
+                        onClick={() =>
+                          handleLanguageSelect({ target: { value: "py-en" } })
+                        }
+                      >
+                        Python (English)
+                      </MenuItem>
+                      <MenuItem
+                        p={6}
+                        borderBottom="1px solid #ececec"
+                        onClick={() =>
+                          handleLanguageSelect({
+                            target: { value: "swift-en" },
+                          })
+                        }
+                      >
+                        Swift & iOS (English)
+                      </MenuItem>
+                      <MenuItem
+                        p={6}
+                        onClick={() =>
+                          handleLanguageSelect({ target: { value: "java-en" } })
+                        }
+                      >
+                        Java & Android (English)
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
+                </FormControl>
               </FormControl>
               <HStack>
                 <Button
@@ -430,7 +513,7 @@ const SettingsMenu = ({
                 {translation[userLanguage]["settings.button.adaptiveLearning"]}
               </Button> */}
 
-              {userLanguage === "en" ? (
+              {userLanguage.includes("en") ? (
                 <Button
                   p={6}
                   colorScheme="pink"
