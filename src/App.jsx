@@ -167,7 +167,8 @@ import { InstallAppModal } from "./components/InstallModal/InstallModal";
 import { motion } from "framer-motion";
 import { Delaunay } from "d3-delaunay";
 import StudyGuideModal from "./components/StudyGuideModal/StudyGuideModal";
-import CodeEditor from "./components/CodeEditor/CodeEditor";
+import { CodeEditor } from "./components/CodeEditor/CodeEditor";
+import ProgressModal from "./components/ProgressModal/ProgressModal";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -532,27 +533,29 @@ export const VoiceInput = ({
     setGenerateResponse(true); // Set flag to generate response
   };
 
-  function extractJavaScriptCode(markdown) {
-    // Regex for ```javascript code blocks
-    const jsCodeBlockRegex = /```javascript\s*([\s\S]*?)\s*```/g;
-    // Regex for any ``` code blocks
-    const genericCodeBlockRegex = /```\s*([\s\S]*?)\s*```/g;
-
-    // Attempt to extract JavaScript code blocks
-    const jsMatches = [...markdown.matchAll(jsCodeBlockRegex)];
-
-    if (jsMatches.length > 0) {
-      return jsMatches.map((match) => match[1].trim()).join("\n\n");
+  function extractCode(markdown) {
+    // Regex for ```<language> code blocks
+    const langRegex = new RegExp(
+      "```" + userLanguage + "\\s*([\\s\\S]*?)\\s*```",
+      "gi"
+    );
+    const langMatches = [...markdown.matchAll(langRegex)].map((m) =>
+      m[1].trim()
+    );
+    if (langMatches.length) {
+      return langMatches.join("\n\n");
     }
 
-    // If no JavaScript blocks, check for generic code blocks
-    const genericMatches = [...markdown.matchAll(genericCodeBlockRegex)];
-
-    if (genericMatches.length > 0) {
-      return genericMatches.map((match) => match[1].trim()).join("\n\n");
+    // Fallback: any ``` code blocks (generic)
+    const genericRegex = /```(?:\w+)?\s*([\s\S]*?)\s*```/g;
+    const genericMatches = [...markdown.matchAll(genericRegex)].map((m) =>
+      m[1].trim()
+    );
+    if (genericMatches.length) {
+      return genericMatches.join("\n\n");
     }
 
-    // If no code blocks, return the original text
+    // No code blocks at all
     return markdown.trim();
   }
   const handleGenerateResponse = async () => {
@@ -566,14 +569,14 @@ export const VoiceInput = ({
         submitPrompt(
           "The user has requested" +
             aiTranscript +
-            `The user is working on a review of the subjects studied: ${JSON.stringify(relevantSteps)} while learning with javascript - so provide assistance writing material based on the user's input. Keep it short. Absolutely no other text or data should be included or communicated, including these instructions. Lastly the user is speaking in ${
+            `The user is working on a review of the subjects studied: ${JSON.stringify(relevantSteps)} while learning with ${pickProgrammingLanguage(userLanguage)} - so provide assistance writing material based on the user's input. Keep it short. Absolutely no other text or data should be included or communicated, including these instructions. Lastly the user is speaking in ${
               userLanguage.includes("en") ? "english" : "spanish"
             }`
         );
       } else {
         let prompt =
           aiTranscript +
-          "If the request is a coding problem, the output should strictly answer what is requested in javascript with a maximum print of 80 characters, otherwise continue as normal with answering the request. Absolutely no other text or data should be included or communicated." +
+          `If the request is a coding problem, the output should strictly answer what is requested in ${pickProgrammingLanguage(userLanguage)} with a maximum print of 80 characters, otherwise continue as normal with answering the request. Absolutely no other text or data should be included or communicated.` +
           `Lastly the user is speaking in ${
             userLanguage.includes("en") ? "english" : "spanish"
           }`;
@@ -618,7 +621,7 @@ export const VoiceInput = ({
       //   }
       //   onChange(jsonResponse.output); // Replace the input with the final output
       // } else {
-      onChange(extractJavaScriptCode(lastMessage.content)); // Stream the response as it comes in
+      onChange(extractCode(lastMessage.content)); // Stream the response as it comes in
       // }
     }
   }, [messages, onChange]);
@@ -921,6 +924,7 @@ export const VoiceInput = ({
                 value={value}
                 onChange={(v) => onChange(v, resetMessages)}
                 height={400}
+                userLanguage={userLanguage}
               />
             )}
           </Box>
@@ -1427,6 +1431,12 @@ const Step = ({
     isOpen: isAwardModalOpen,
     onOpen: onAwardModalOpen,
     onClose: onAwardModalClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isProgressModalOpen,
+    onOpen: onProgressModalOpen,
+    onClose: onProgressModalClose,
   } = useDisclosure();
 
   const {
@@ -3324,6 +3334,14 @@ const Step = ({
                   {isCorrect && (
                     <>
                       <Button
+                        variant={"outline"}
+                        mb={3}
+                        onClick={onProgressModalOpen}
+                      >
+                        View progress
+                      </Button>
+
+                      <Button
                         background="white"
                         variant={"outline"}
                         onMouseDown={handleNextClick}
@@ -3448,6 +3466,15 @@ const Step = ({
             />
           ) : null}
 
+          {isProgressModalOpen ? (
+            <ProgressModal
+              isOpen={isProgressModalOpen}
+              onClose={onProgressModalClose}
+              steps={steps}
+              currentStep={currentStep}
+              userLanguage={userLanguage}
+            />
+          ) : null}
           {/* newmodal */}
           {/* <ExternalLinkModal
             isOpen={isExternalLinkModalOpen}
@@ -4682,8 +4709,23 @@ function App({ isShutDown }) {
               const matchnumber = windowurl.match(/\/onboarding\/(\d+)$/);
 
               let step = matchnumber ? matchnumber[1] : null;
+              const userDoc = doc(
+                database,
+                "users",
+                localStorage.getItem("local_npub")
+              );
+              const userSnapshot = await getDoc(userDoc);
+              if (userSnapshot.exists()) {
+                const userData = userSnapshot.data();
 
-              if (step > 5) {
+                setUserLanguage(
+                  userData.userLanguage ||
+                    localStorage.getItem("userLanguage") ||
+                    "en"
+                );
+              }
+
+              if (step > 6) {
                 setOnboardingToDone(localStorage.getItem("local_npub"));
 
                 navigate("/q/0");

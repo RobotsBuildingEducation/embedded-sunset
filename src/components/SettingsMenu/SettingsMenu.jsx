@@ -48,6 +48,7 @@ import { useNostrWalletStore } from "../../hooks/useNostrWalletStore";
 import SocialFeedModal from "../SocialFeedModal/SocialFeedModal";
 import StudyGuideModal from "../StudyGuideModal/StudyGuideModal";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import { ChangeLanguageModal } from "../ChangeLanguageModal/ChangeLanguageModal";
 
 const SettingsMenu = ({
   testIsMatch,
@@ -140,6 +141,12 @@ const SettingsMenu = ({
     onClose: onStudyGuideModalClose,
   } = useDisclosure();
 
+  const {
+    isOpen: isLangOpen,
+    onOpen: onLangOpen,
+    onClose: onLangClose,
+  } = useDisclosure();
+
   // const [interval, setIntervalState] = useState(2880);
 
   const handleToggle = async () => {
@@ -180,17 +187,15 @@ const SettingsMenu = ({
       }, 0);
     }
   }, [isOpen]);
-
-  const handleLanguageSelect = async (e) => {
-    const newLanguage = e.target.value;
-    setUserLanguage(newLanguage);
-    localStorage.setItem("userLanguage", newLanguage);
-
+  const handleLanguageSelect = async (value) => {
+    setUserLanguage(value);
+    localStorage.setItem("userLanguage", value);
     const npub = localStorage.getItem("local_npub");
     if (npub) {
       const userDoc = doc(database, "users", npub);
-      await updateDoc(userDoc, { language: newLanguage });
+      await updateDoc(userDoc, { language: value });
     }
+    // onLangClose();
   };
 
   const handleCopyKeys = (id) => {
@@ -314,7 +319,7 @@ const SettingsMenu = ({
                     ? "English"
                     : "Español"}
                 </FormLabel> */}
-                <FormControl>
+                {/* <FormControl>
                   <FormLabel htmlFor="language-menu" mb={2}>
                     {translation[userLanguage]["settings.languageLabel"]}
                   </FormLabel>
@@ -387,7 +392,7 @@ const SettingsMenu = ({
                       </MenuItem>
                     </MenuList>
                   </Menu>
-                </FormControl>
+                </FormControl> */}
               </FormControl>
               <HStack>
                 <Button
@@ -471,6 +476,16 @@ const SettingsMenu = ({
                 &nbsp;
                 {translation[userLanguage]["settings.button.bitcoinMode"]}
               </Button> */}
+
+              <Button
+                colorScheme="pink"
+                width="100%"
+                onClick={onLangOpen}
+                ref={firstButtonRef}
+                rightIcon={<ChevronDownIcon />}
+              >
+                {translation[userLanguage]["settings.button.changeLanguage"]}
+              </Button>
               <Button
                 ref={firstButtonRef} // Assign the ref to the first button
                 colorScheme="pink"
@@ -774,6 +789,15 @@ const SettingsMenu = ({
           onClose={onStudyGuideModalClose}
           content={steps[userLanguage][0].question.metaData}
           userLanguage={userLanguage}
+        />
+      ) : null}
+
+      {isLangOpen ? (
+        <ChangeLanguageModal
+          userLanguage={userLanguage}
+          isOpen={isLangOpen}
+          onClose={onLangClose}
+          onSelect={handleLanguageSelect}
         />
       ) : null}
     </>

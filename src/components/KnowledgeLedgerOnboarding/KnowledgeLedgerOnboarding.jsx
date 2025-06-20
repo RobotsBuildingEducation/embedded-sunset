@@ -234,7 +234,7 @@ export default function KnowledgeLedgerOnboarding({
         border="1px solid #ececec"
         // boxShadow="0px 0px 0.5px 2px #ececec"
         boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-        value={(1 / 6) * 100}
+        value={(1 / 7) * 100}
         size="md"
         colorScheme={"green"}
         width="250px"

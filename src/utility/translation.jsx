@@ -14,6 +14,22 @@ export const pickProgrammingLanguage = (language) => {
 
 export let translation = {
   en: {
+    viewProgress: "View Progress",
+    "modal.progress.title": "View Progress",
+    "modal.progress.none": "No questions completed yet.",
+    "button.close": "Close",
+    "button.setLanguage": "Set language",
+    "languages.header.difficulty": "Difficulty",
+    "languages.header.subjects": "Subjects",
+    "languages.header.languages": "Languages",
+    "languages.header.frameworks": "Frameworks & Libraries",
+    "languages.header.devTools": "Developer Tools",
+    "language.javascript.english": "JavaScript (English)",
+    "language.javascript.spanish": "JavaScript (Spanish)",
+    "language.python.english": "Python (English)",
+    "language.swift.english": "Swift & iOS (English)",
+    "language.android.english": "Java & Android (English)",
+    "settings.button.changeLanguage": "Change App Language",
     "search...": "Search…",
     backToQuestion9: "Go back to question 9",
     completeTutorialFirst: "You have to finish the tutorial first.",
@@ -171,6 +187,10 @@ export let translation = {
     "onboarding.step2.dailyGoalsTitle": "Set up your daily goals",
     "onboarding.step2.dailyGoalsDescription":
       "I recommend doing three questions per day. By the end of the month, you'll get to the point where you can start putting together what you've learned to build and ship apps.",
+
+    "onboarding.languages.title": "Choose your language",
+    "onboarding.languages.description":
+      "Choose the programming languages you want to use. Don't overthink it! You'll learn the foundations of writing software so you can switch languages whenever you want without a problem! We recommend Javascript for beginners and for the best possible experience.",
 
     "onboarding.step2.dailyGoalsDescription.faster":
       "If you want to go fast and finish within a week, try doing 12 questions a day.",
@@ -1555,6 +1575,26 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   es: {
+    viewProgress: "Ver progreso",
+    "modal.progress.title": "Ver progreso",
+    "modal.progress.none": "Aún no has completado ninguna pregunta.",
+    "button.close": "Cerrar",
+    "button.setLanguage": "Establecer idioma",
+    "languages.header.difficulty": "Dificultad",
+    "languages.header.subjects": "Temas",
+    "languages.header.languages": "Lenguajes",
+    "languages.header.frameworks": "Frameworks y bibliotecas",
+    "languages.header.devTools": "Herramientas de desarrollo",
+
+    "language.javascript.english": "JavaScript (inglés)",
+    "language.javascript.spanish": "JavaScript (español)",
+    "language.python.english": "Python (inglés)",
+    "language.swift.english": "Swift e iOS (inglés)",
+    "language.android.english": "Java y Android (inglés)",
+    "settings.button.changeLanguage": "Cambiar idioma de app",
+    "onboarding.languages.title": "Elige tu idioma",
+    "onboarding.languages.description":
+      "Elige los lenguajes de programación y las herramientas que quieras usar. ¡No lo pienses demasiado, también puedes cambiar de idioma cuando quieras desde el menú! Recomendamos Javascript para principiantes y para la mejor experiencia posible.",
     "search...": "Buscar…",
     backToQuestion9: "Regresar a la pregunta 9",
 
@@ -3050,6 +3090,26 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "congrats.connect": "Conéctate con todos los que han terminado",
   },
   "py-en": {
+    viewProgress: "View Progress",
+    "modal.progress.title": "View Progress",
+    "modal.progress.none": "No questions completed yet.",
+    "button.close": "Close",
+    "button.setLanguage": "Set language",
+    "languages.header.difficulty": "Difficulty",
+    "languages.header.subjects": "Subjects",
+    "languages.header.languages": "Languages",
+    "languages.header.frameworks": "Frameworks & Libraries",
+    "languages.header.devTools": "Developer Tools",
+    "language.javascript.english": "JavaScript (English)",
+    "language.javascript.spanish": "JavaScript (Spanish)",
+    "language.python.english": "Python (English)",
+    "language.swift.english": "Swift & iOS (English)",
+    "language.android.english": "Java & Android (English)",
+    "settings.button.changeLanguage": "Change App Language",
+
+    "onboarding.languages.title": "Choose your language",
+    "onboarding.languages.description":
+      "Choose the programming languages you want to use. Don't overthink it! You'll learn the foundations of writing software so you can switch languages whenever you want without a problem! We recommend Javascript for beginners and for the best possible experience.",
     "search...": "Search…",
     backToQuestion9: "Go back to question 9",
     completeTutorialFirst: "You have to finish the tutorial first.",
@@ -4591,6 +4651,27 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "swift-en": {
+    viewProgress: "View Progress",
+    "modal.progress.title": "View Progress",
+    "modal.progress.none": "No questions completed yet.",
+    "button.close": "Close",
+    "button.setLanguage": "Set language",
+    "languages.header.difficulty": "Difficulty",
+    "languages.header.subjects": "Subjects",
+    "languages.header.languages": "Languages",
+    "languages.header.frameworks": "Frameworks & Libraries",
+    "languages.header.devTools": "Developer Tools",
+    "language.javascript.english": "JavaScript (English)",
+    "language.javascript.spanish": "JavaScript (Spanish)",
+    "language.python.english": "Python (English)",
+    "language.swift.english": "Swift & iOS (English)",
+    "language.android.english": "Java & Android (English)",
+    "settings.button.changeLanguage": "Change App Language",
+
+    "onboarding.languages.title": "Choose your language",
+    "onboarding.languages.description":
+      "Choose the programming languages you want to use. Don't overthink it! You'll learn the foundations of writing software so you can switch languages whenever you want without a problem! We recommend Javascript for beginners and for the best possible experience.",
+
     "search...": "Search…",
     backToQuestion9: "Go back to question 9",
     completeTutorialFirst: "You have to finish the tutorial first.",
@@ -6132,6 +6213,27 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "android-en": {
+    viewProgress: "View Progress",
+    "modal.progress.title": "View Progress",
+    "modal.progress.none": "No questions completed yet.",
+    "button.close": "Close",
+    "button.setLanguage": "Set language",
+    "languages.header.difficulty": "Difficulty",
+    "languages.header.subjects": "Subjects",
+    "languages.header.languages": "Languages",
+    "languages.header.frameworks": "Frameworks & Libraries",
+    "languages.header.devTools": "Developer Tools",
+    "language.javascript.english": "JavaScript (English)",
+    "language.javascript.spanish": "JavaScript (Spanish)",
+    "language.python.english": "Python (English)",
+    "language.swift.english": "Swift & iOS (English)",
+    "language.android.english": "Java & Android (English)",
+    "settings.button.changeLanguage": "Change App Language",
+
+    "onboarding.languages.title": "Choose your language",
+    "onboarding.languages.description":
+      "Choose the programming languages you want to use. Don't overthink it! You'll learn the foundations of writing software so you can switch languages whenever you want without a problem! We recommend Javascript for beginners and for the best possible experience.",
+
     "search...": "Search…",
     backToQuestion9: "Go back to question 9",
     completeTutorialFirst: "You have to finish the tutorial first.",

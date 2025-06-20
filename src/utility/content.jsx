@@ -5585,6 +5585,7 @@ console.log(arr);
       isStudyGuide: true,
       description:
         "Expose yourself to Python fundamentals to improve the quality of your learning before making progress.",
+
       question: {
         questionText: (
           <div>

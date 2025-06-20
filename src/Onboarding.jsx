@@ -16,6 +16,11 @@ import {
   Switch,
   Progress,
   useDisclosure,
+  Select,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Menu,
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { GiBullseye } from "react-icons/gi";
@@ -43,15 +48,17 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { getToken } from "firebase/messaging";
 
 import { LuPuzzle } from "react-icons/lu";
-import { FaBitcoin } from "react-icons/fa";
+import { FaBitcoin, FaCode } from "react-icons/fa";
 
 import KnowledgeLedgerOnboarding from "./components/KnowledgeLedgerOnboarding/KnowledgeLedgerOnboarding";
 import { Image } from "@chakra-ui/image";
 import AwardModalOnboarding from "./components/AwardModalOnboarding/AwardModalOnboarding";
 import { onboardingTranscript } from "./utility/transcript";
 import { useSharedNostr } from "./hooks/useNOSTR";
+import { TechOverview } from "./components/TechOverview/TechOverview";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
-export const Onboarding = ({ userLanguage }) => {
+export const Onboarding = ({ userLanguage, setUserLanguage }) => {
   const { assignExistingBadgeToNpub } = useSharedNostr(
     localStorage.getItem("local_npub"),
     localStorage.getItem("local_nsec")
@@ -163,6 +170,19 @@ export const Onboarding = ({ userLanguage }) => {
       } catch (error) {
         console.error("Error deleting FCM token:", error);
       }
+    }
+  };
+
+  // inside Onboarding, before the return
+  const handleLanguageSelect = async (e) => {
+    const newLanguage = e.target.value;
+    setUserLanguage(newLanguage);
+    localStorage.setItem("userLanguage", newLanguage);
+
+    const npub = localStorage.getItem("local_npub");
+    if (npub) {
+      const userDoc = doc(database, "users", npub);
+      await updateDoc(userDoc, { language: newLanguage });
     }
   };
 
@@ -289,7 +309,7 @@ export const Onboarding = ({ userLanguage }) => {
                   border="1px solid #ececec"
                   // boxShadow="0px 0px 0.5px 2px #ececec"
                   boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                  value={(2 / 6) * 100}
+                  value={(2 / 7) * 100}
                   size="md"
                   colorScheme={"green"}
                   width="250px"
@@ -761,7 +781,7 @@ export const Onboarding = ({ userLanguage }) => {
                   border="1px solid #ececec"
                   // boxShadow="0px 0px 0.5px 2px #ececec"
                   boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                  value={(3 / 6) * 100}
+                  value={(3 / 7) * 100}
                   size="md"
                   colorScheme={"green"}
                   width="250px"
@@ -820,7 +840,177 @@ export const Onboarding = ({ userLanguage }) => {
             </VStack>
           )}
 
+          {/* New Step 4: Choose your language */}
           {step === "4" && (
+            <VStack spacing={4}>
+              <Box>
+                <Text fontSize="sm">
+                  {translation[userLanguage]["onboardingProgress"]}
+                </Text>
+
+                <Progress
+                  opacity="0.8"
+                  border="1px solid #ececec"
+                  // boxShadow="0px 0px 0.5px 2px #ececec"
+                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                  value={(4 / 7) * 100}
+                  size="md"
+                  colorScheme={"green"}
+                  width="250px"
+                  mb={4}
+                  borderRadius="4px"
+                  background={"#ececec"}
+                />
+              </Box>
+
+              <RiseUpAnimation>
+                <Box
+                  borderRadius="24px"
+                  p={4}
+                  bg="white"
+                  boxShadow="0.5px 0.5px 1px black"
+                >
+                  <Text
+                    mb={6}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <FaCode color="#9f6bfa" />
+                    &nbsp;
+                    {translation[userLanguage]["onboarding.languages.title"]}
+                  </Text>
+
+                  <Text mb={6} textAlign="left" fontSize="sm" width="100%">
+                    {
+                      translation[userLanguage][
+                        "onboarding.languages.description"
+                      ]
+                    }
+                  </Text>
+
+                  {/* Replace Select with Menu */}
+                  <Menu width="100%" mb={6}>
+                    <MenuButton
+                      as={Button}
+                      rightIcon={<ChevronDownIcon />}
+                      width="250px"
+                      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                    >
+                      {
+                        {
+                          en: translation[userLanguage][
+                            "language.javascript.english"
+                          ],
+                          es: translation[userLanguage][
+                            "language.javascript.spanish"
+                          ],
+                          "py-en":
+                            translation[userLanguage][
+                              "language.python.english"
+                            ],
+                          "swift-en":
+                            translation[userLanguage]["language.swift.english"],
+                          "android-en":
+                            translation[userLanguage][
+                              "language.android.english"
+                            ],
+                        }[userLanguage]
+                      }
+                    </MenuButton>
+                    <MenuList boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)">
+                      <MenuItem
+                        p={6}
+                        borderBottom="1px solid #ececec"
+                        onClick={() =>
+                          handleLanguageSelect({ target: { value: "en" } })
+                        }
+                      >
+                        {
+                          translation[userLanguage][
+                            "language.javascript.english"
+                          ]
+                        }
+                      </MenuItem>
+                      <MenuItem
+                        p={6}
+                        borderBottom="1px solid #ececec"
+                        onClick={() =>
+                          handleLanguageSelect({ target: { value: "es" } })
+                        }
+                      >
+                        {
+                          translation[userLanguage][
+                            "language.javascript.spanish"
+                          ]
+                        }
+                      </MenuItem>
+                      <MenuItem
+                        p={6}
+                        borderBottom="1px solid #ececec"
+                        onClick={() =>
+                          handleLanguageSelect({ target: { value: "py-en" } })
+                        }
+                      >
+                        {translation[userLanguage]["language.python.english"]}
+                      </MenuItem>
+                      <MenuItem
+                        p={6}
+                        borderBottom="1px solid #ececec"
+                        onClick={() =>
+                          handleLanguageSelect({
+                            target: { value: "swift-en" },
+                          })
+                        }
+                      >
+                        {translation[userLanguage]["language.swift.english"]}
+                      </MenuItem>
+                      <MenuItem
+                        p={6}
+                        onClick={() =>
+                          handleLanguageSelect({
+                            target: { value: "android-en" },
+                          })
+                        }
+                      >
+                        {translation[userLanguage]["language.android.english"]}
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
+
+                  <TechOverview userLanguage={userLanguage} />
+
+                  <Button
+                    onClick={() => {
+                      incrementUserOnboardingStep(
+                        localStorage.getItem("local_npub")
+                      );
+                      navigate("/onboarding/5");
+                    }}
+                    boxShadow="0.5px 0.5px 1px 0px black"
+                    mb={18}
+                  >
+                    {translation[userLanguage]["button.setLanguage"]}
+                  </Button>
+                </Box>
+              </RiseUpAnimation>
+
+              <Box
+                width="100%"
+                display="flex"
+                justifyContent="flex-end"
+                mt="-36px"
+              >
+                <RiseUpAnimation>
+                  <Box>
+                    <RandomCharacter />
+                  </Box>
+                </RiseUpAnimation>
+              </Box>
+            </VStack>
+          )}
+
+          {step === "5" && (
             <VStack spacing={4}>
               <Box>
                 <Text fontSize={"sm"}>
@@ -832,7 +1022,7 @@ export const Onboarding = ({ userLanguage }) => {
                   border="1px solid #ececec"
                   // boxShadow="0px 0px 0.5px 2px #ececec"
                   boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                  value={(4 / 6) * 100}
+                  value={(5 / 7) * 100}
                   size="md"
                   colorScheme={"green"}
                   width="250px"
@@ -866,7 +1056,7 @@ export const Onboarding = ({ userLanguage }) => {
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
-                      navigate("/onboarding/5");
+                      navigate("/onboarding/6");
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
                     mb={18}
@@ -875,7 +1065,11 @@ export const Onboarding = ({ userLanguage }) => {
                   </Button>
                 </Box>
               </RiseUpAnimation>
-              <div style={{ width: "100%" }}>
+              <div
+                style={{
+                  width: "100%",
+                }}
+              >
                 <RiseUpAnimation>
                   <div
                     style={{
@@ -893,7 +1087,7 @@ export const Onboarding = ({ userLanguage }) => {
             </VStack>
           )}
           {/* Step 3: Final Step with Bitcoin Onboarding */}
-          {step === "5" && (
+          {step === "6" && (
             <VStack spacing={4}>
               <Box>
                 <Text fontSize={"sm"}>
@@ -904,7 +1098,7 @@ export const Onboarding = ({ userLanguage }) => {
                   border="1px solid #ececec"
                   // boxShadow="0px 0px 0.5px 2px #ececec"
                   boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                  value={(5 / 6) * 100}
+                  value={(6 / 7) * 100}
                   size="md"
                   colorScheme={"green"}
                   width="250px"
