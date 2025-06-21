@@ -1,24 +1,33 @@
-// src/components/CodeEditor.jsx
+// CodeEditor.jsx
 import React from "react";
 import Editor from "react-simple-code-editor";
-import { highlight, languages } from "prismjs/components/prism-core";
-import "prismjs/components/prism-javascript";
-import "prismjs/components/prism-java";
-import "prismjs/components/prism-python";
-import "prismjs/components/prism-swift";
 
-import "prismjs/components/prism-markup";
-import "prismjs/themes/prism.css";
+// 1️⃣ pull in core + only the langs you need
+import hljs from "highlight.js/lib/core";
+import js from "highlight.js/lib/languages/javascript";
+import java from "highlight.js/lib/languages/java";
+import python from "highlight.js/lib/languages/python";
+import swift from "highlight.js/lib/languages/swift";
+
+// 2️⃣ register them
+hljs.registerLanguage("javascript", js);
+hljs.registerLanguage("java", java);
+hljs.registerLanguage("python", python);
+hljs.registerLanguage("swift", swift);
+
+// 3️⃣ pick a style
+import "highlight.js/styles/github.css";
 import "./editor-scroll-fix.css";
 
 export const CodeEditor = ({ value, onChange, height = 400, userLanguage }) => {
-  const pickLanguage = {
+  const pick = {
     en: "javascript",
     es: "javascript",
     "swift-en": "swift",
     "android-en": "java",
-    "python-en": "python",
+    "py-en": "python",
   };
+
   return (
     <div
       className="code-editor-shell"
@@ -33,21 +42,17 @@ export const CodeEditor = ({ value, onChange, height = 400, userLanguage }) => {
         value={value}
         onValueChange={onChange}
         highlight={(code) =>
-          highlight(
-            code,
-            languages[pickLanguage[userLanguage]],
-            pickLanguage[userLanguage]
-          )
+          // hljs returns an object with `.value` = HTML string of <span>…</span>
+          hljs.highlight(code, { language: pick[userLanguage] }).value
         }
-        textareaId="simple-code-editor"
         padding={16}
         style={{
-          fontFamily: "Menlo, monospace",
+          fontFamily: "Menlo",
           fontSize: 16,
-          outline: 0,
-          background: "white",
           minHeight: height,
-          borderRadius: "8px",
+          backgroundColor: "white",
+          boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+          borderRadius: 8,
         }}
       />
     </div>

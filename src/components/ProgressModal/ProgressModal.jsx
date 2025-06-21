@@ -24,6 +24,65 @@ const ProgressModal = ({
   currentStep,
   userLanguage,
 }) => {
+  const transcriptDisplay = {
+    introduction: {
+      en: "Tutorial",
+      es: "Tutorial",
+      "py-en": "Tutorial",
+      "swift-en": "Tutorial",
+      "android-en": "Tutorial",
+    },
+    tutorial: {
+      en: "Tutorial",
+      es: "Tutorial",
+      "py-en": "Tutorial",
+      "swift-en": "Tutorial",
+      "android-en": "Tutorial",
+    },
+    1: {
+      en: "Basics of Coding",
+      es: "Fundamentos de la Programación",
+      "py-en": "Basics of Coding",
+      "swift-en": "Basics of Coding",
+      "android-en": "Basics of Coding",
+    },
+    2: {
+      en: "Object-Oriented Programming",
+      es: "Programación Orientada a Objetos",
+      "py-en": "Object-Oriented Programming",
+      "swift-en": "Object-Oriented Programming",
+      "android-en": "Object-Oriented Programming",
+    },
+    3: {
+      en: "Frontend Development",
+      es: "Desarrollo Frontend",
+      "py-en": "Frontend Development",
+      "swift-en": "Frontend Development",
+      "android-en": "Frontend Development",
+    },
+    4: {
+      en: "Backend Engineering Fundamentals",
+      es: "Fundamentos de Ingeniería de Backend",
+      "py-en": "Backend Engineering Fundamentals",
+      "swift-en": "Backend Engineering Fundamentals",
+      "android-en": "Backend Engineering Fundamentals",
+    },
+    5: {
+      en: "Creating Apps & Experiences",
+      es: "Creando Aplicaciones y Experiencias",
+      "py-en": "Creating Apps & Experiences",
+      "swift-en": "Creating Apps & Experiences",
+      "android-en": "Creating Apps & Experiences",
+    },
+    6: {
+      en: "Computer Science",
+      es: "Ciencias de la Computación",
+      "py-en": "Computer Science",
+      "swift-en": "Computer Science",
+      "android-en": "Computer Science",
+    },
+  };
+
   // build a list of all steps (exclude index 0 placeholder)
   const allSteps = steps[userLanguage]
     .map((step, idx) => ({ step, idx }))
@@ -79,17 +138,48 @@ const ProgressModal = ({
         </Box>
 
         <ModalBody overflowY="auto" pt={2} pb={6}>
-          <UnorderedList spacing={2} listStyleType="none">
-            {allSteps.map(({ step, idx }) => (
-              <ListItem
-                key={idx}
-                color={idx <= currentStep - 1 ? "green.600" : "gray.500"}
-              >
-                {idx}. {step.title}
-              </ListItem>
-            ))}
-          </UnorderedList>
+          {(() => {
+            const elements = [];
+            let lastGroup = null;
+
+            allSteps.forEach(({ step, idx }) => {
+              const group = step.group;
+
+              if (group !== lastGroup) {
+                const groupLabel =
+                  transcriptDisplay[group]?.[userLanguage] || group;
+
+                elements.push(
+                  <Text
+                    key={`group-${idx}`}
+                    fontSize="sm"
+                    fontWeight="bold"
+                    color="green.400"
+                    mt={4}
+                  >
+                    {group === "tutorial" ? "" : `${group + "."}`} {groupLabel}
+                  </Text>
+                );
+
+                lastGroup = group;
+              }
+
+              elements.push(
+                <Text
+                  key={`step-${idx}`}
+                  ml={2}
+                  color={idx <= currentStep - 1 ? "green.600" : "gray.500"}
+                  fontSize="sm"
+                >
+                  {idx}. {step.title}
+                </Text>
+              );
+            });
+
+            return elements;
+          })()}
         </ModalBody>
+
         <ModalFooter
           position="sticky"
           bottom="0"

@@ -590,7 +590,7 @@ const SettingsMenu = ({
               >
                 {translation[userLanguage]["settings.button.socialWallet"]}
               </Button>
-              {/* <Button
+              <Button
                 p={6}
                 style={{ width: "100%" }}
                 // as="a"
@@ -601,10 +601,10 @@ const SettingsMenu = ({
                   );
                 }}
                 variant={"outline"}
-                boxShadow={"0px 0.5px 0.5px 1px black"}
+                boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
               >
-                <b>{translation[userLanguage]["settings.button.tutorGPT"]}</b>
-              </Button> */}
+                {translation[userLanguage]["settings.button.tutorGPT"]}
+              </Button>
 
               <Button
                 p={6}
