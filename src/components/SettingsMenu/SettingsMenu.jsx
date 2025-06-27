@@ -528,7 +528,7 @@ const SettingsMenu = ({
                 {translation[userLanguage]["settings.button.adaptiveLearning"]}
               </Button> */}
 
-              {userLanguage.includes("en") ? (
+              {/* {userLanguage.includes("compsci-en") ? (
                 <Button
                   p={6}
                   colorScheme="pink"
@@ -544,7 +544,7 @@ const SettingsMenu = ({
                 >
                   {translation[userLanguage]["settings.button.algorithmHelper"]}
                 </Button>
-              ) : null}
+              ) : null} */}
               <Button
                 p={6}
                 colorScheme="pink"

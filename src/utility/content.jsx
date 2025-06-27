@@ -3,6 +3,1994 @@ export const getObjectsByGroup = (groupNumber, arrayOfObjects) => {
 };
 
 export const steps = {
+  "compsci-en": [
+    {
+      group: "introduction",
+      title: "Introduction To Computer Science",
+      isStudyGuide: true,
+      description:
+        "Expose yourself to fundamentals to improve the quality of your learning before making progress.",
+      question: {
+        questionText: (
+          <div>
+            <p style={{ marginBottom: 12 }}>
+              {" "}
+              One of the best predictors for student success is exposure to
+              course material before studying it. You're encouraged to read
+              about the fundamentals of software in the study guide before
+              starting. You can reference this study guide in the menu
+              throughout your progress too.
+            </p>
+
+            <p style={{ marginBottom: 12 }}>
+              Remember to fail faster and fail forward! The real education
+              happens when you push through a challenge. We'll start off nice
+              and easy at first, but then we'll start to level up the difficulty
+              as you collect more progress. Make sure to use the tools at your
+              disposal! You're going to need it.
+            </p>
+          </div>
+        ),
+        metaData: `
+We’ll evolve a single dataset through each core chapter to illustrate connections:
+
+1. Data Structures I — Arrays & Strings
+\`\`\`python
+# Step 1: Start with a list of numbers
+data = [3, 1, 4, 1, 5]
+print(data[2])           # O(1) access → 4
+\`\`\`
+Lists store items contiguously, allowing constant-time reads but dynamic sizing.
+
+2. Data Structures II — Linked Lists
+\`\`\`python
+# Step 2: Convert list into a singly linked list
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+
+def to_linked_list(arr):
+    head = None
+    for item in reversed(arr):
+        node = Node(item)
+        node.next = head
+        head = node
+    return head
+
+list_head = to_linked_list(data)
+print(list_head.value)   # 3 at head, traversal is O(n)
+\`\`\`
+Linked lists allow dynamic insertion but require linear traversal for access.
+
+3. Data Structures III — Trees (Array & Hash Map)
+\`\`\`python
+# 3a. Binary heap stored in an array (complete binary tree)
+heap = [None, 3, 1, 4, 1, 5]  # 1-based index: parent i, children 2i & 2i+1
+root, left, right = heap[1], heap[2], heap[3]
+print(root, left, right)      # 3 1 4
+
+# 3b. General tree with an adjacency hash map
+tree = {
+    "A": ["B", "C"],
+    "B": ["D", "E"],
+    "C": ["F"],
+    "D": [], "E": [], "F": []
+}
+
+# 3c. Depth-First Search (DFS) — preorder
+def dfs(node):
+    stack = [node]
+    while stack:
+        cur = stack.pop()
+        print(cur, end=" ")
+        # push children in reverse to visit left-to-right
+        for child in reversed(tree[cur]):
+            stack.append(child)
+
+dfs("A")   # A B D E C F  — O(n)
+
+# 3d. Breadth-First Search (BFS)
+from collections import deque
+def bfs(node):
+    q = deque([node])
+    while q:
+        cur = q.popleft()
+        print(cur, end=" ")
+        q.extend(tree[cur])
+
+bfs("A")   # A B C D E F  — O(n)
+\`\`\`
+*Array* representation offers O(1) parent/child math for complete trees (heaps);  
+a *hash-map* adjacency list provides flexible, sparse storage with O(1) add-child.  
+DFS explores depth before breadth using a stack; BFS explores level by level using a queue.
+
+4. Algorithms I — Sorting
+\`\`\`python
+# Step 4: Sort the list in-place via bubble sort
+def bubble_sort(a):
+    n = len(a)
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            if a[j] > a[j + 1]:
+                a[j], a[j + 1] = a[j + 1], a[j]
+
+bubble_sort(data)
+print(data)  # [1, 1, 3, 4, 5] • O(n²)
+\`\`\`
+Elementary sorts teach algorithmic structure; bubble sort is O(n²).
+
+5. Algorithms II — Search
+\`\`\`python
+# Step 5: Perform binary search on sorted list
+def binary_search(a, target):
+    low, high = 0, len(a) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        if a[mid] == target:
+            return mid
+        elif a[mid] < target:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return -1
+
+pos = binary_search(data, 4)
+print(pos)  # index of value 4, O(log n)
+\`\`\`
+Divide-and-conquer search runs in logarithmic time.
+
+6. Operating Systems — File I/O
+\`\`\`python
+# Step 6: Read a file with OS support
+with open('data.txt', 'r', encoding='utf-8') as f:
+    contents = f.read()
+print(contents)
+\`\`\`
+Behind the scenes: the OS schedules I/O, buffers data, and performs context switches.
+
+***Advice***
+
+***Trace manually:*** Walk through indices, pointers **and DFS/BFS orderings** on paper.  
+***Annotate:*** Mark time complexities alongside loops (# O(n²), # O(log n)).  
+***Experiment:*** Tweak each example in your REPL or editor to see real outputs.
+
+This single evolving example now links arrays, linked lists, **tree representations with DFS & BFS**, algorithms, and OS interactions—showing how each layer builds on the last.
+`,
+      },
+    },
+
+    {
+      group: "tutorial",
+      title: "OOP Basics: Class and Instance",
+      description: "Identify classes vs. instances in Python.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "In Python OOP, which of the following best describes a class?",
+        options: [
+          "A blueprint that defines attributes and behaviors",
+          "A specific object created during execution",
+          "A standalone function outside of any object",
+          "A module imported into a script",
+        ],
+        answer: "A blueprint that defines attributes and behaviors",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Defining __init__ and Methods",
+      description: "Order Python class definition steps.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps to define a Python class with an __init__ and a method:",
+        options: [
+          "Use class keyword with class name",
+          "Define __init__ method with parameters (self, ...)",
+          "Define additional methods indented at class level",
+          "Instantiate the class by calling ClassName()",
+        ],
+        answer: [
+          "Use class keyword with class name",
+          "Define __init__ method with parameters (self, ...)",
+          "Define additional methods indented at class level",
+          "Instantiate the class by calling ClassName()",
+        ],
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Creating an Instance",
+      description: "Select correct steps to instantiate a Python object.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "Select all the correct steps to create an object from a Python class:",
+        options: [
+          "Call the class with parentheses and required arguments",
+          "Assign the result to a variable",
+          "Import the class from its module",
+          "Pass arguments to __init__",
+        ],
+        answer: [
+          "Call the class with parentheses and required arguments",
+          "Assign the result to a variable",
+          "Pass arguments to __init__",
+        ],
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Code Completion: Define a Python Class",
+      description: "Choose the correct class definition snippet.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which snippet correctly defines a Python class Person with name and age?",
+        options: [
+          "class Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age",
+          "def Person(name, age):\n    return { 'name': name, 'age': age }",
+          "class Person(name, age):\n    self.name = name\n    self.age = age",
+          "class Person:\n    name = None\n    age = None",
+        ],
+        answer:
+          "class Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Implement a Method",
+      description: "Add a method to your Python class.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Extend the Person class by adding a greet(self) method that returns 'Hello, my name is ' + self.name.",
+        answer: null,
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Accessing Attributes",
+      description: "Recall Python attribute access syntax.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What syntax retrieves the age attribute from a person instance?",
+        placeholder: "Type your answer here...",
+        answer: "person.age",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Shell Practice: Initialize Python Project",
+      description:
+        "Use Bash to set up a new project directory and Python file.",
+      isCode: true,
+      isTerminal: true,
+      question: {
+        questionText:
+          "In Bash, create a directory named `project`, change into it, and then create an empty Python file called `app.py`.",
+        answer: "mkdir project && cd project && touch app.py",
+      },
+    },
+
+    {
+      group: "tutorial",
+      title: "OOP Benefit",
+      description: "Explain an advantage of Python OOP.",
+      isText: true,
+      question: {
+        questionText:
+          "In your own words, explain one advantage of using classes and objects in Python.",
+        answer: null,
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [1, 8],
+      },
+    },
+
+    // 1
+    {
+      group: "1",
+      title: "Abstract Data Types vs. Concrete Implementations",
+      description:
+        "Distinguish abstract data types (ADTs) from their concrete implementations.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "Which of the following are abstract data types?",
+        options: ["List", "Stack", "Queue", "Array", "Binary Tree"],
+        answer: ["Stack", "Queue", "Binary Tree"],
+      },
+    },
+    // 2
+    {
+      group: "1",
+      title: "Complexity Classes Ordering",
+      description:
+        "Order common complexity classes from fastest to slowest growth.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange these complexity classes from fastest (lowest growth) to slowest (highest growth):",
+        options: ["O(1)", "O(log n)", "O(n)", "O(n log n)", "O(n²)"],
+        answer: ["O(1)", "O(log n)", "O(n)", "O(n log n)", "O(n²)"],
+      },
+    },
+    // 3
+    {
+      group: "1",
+      title: "Array Access Complexity",
+      description: "Identify the time complexity of array indexing.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "What is the Big-O time complexity to access an element by index in a contiguous array?",
+        options: ["O(1)", "O(log n)", "O(n)", "O(n²)"],
+        answer: "O(1)",
+      },
+    },
+    // 4
+    {
+      group: "1",
+      title: "Contiguous vs. Non-contiguous Storage",
+      description: "Distinguish data structures by their memory layout.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which data structure stores its elements contiguously in memory?",
+        options: ["Array", "Linked List", "Binary Tree", "Hash Table"],
+        answer: "Array",
+      },
+    },
+    // 5
+    {
+      group: "1",
+      title: "Python List Indexing",
+      description: "Practice simple list indexing in Python.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Create a Python list called `nums` with values `[3, 1, 4, 1, 5]` and print the third element (index 2).",
+      },
+    },
+    // 6
+    {
+      group: "1",
+      title: "List Indexing Code Completion",
+      description: "Fill in the missing code to index a Python list.",
+      isCodeCompletion: true,
+      question: {
+        questionText: "Complete the following code:",
+        options: [
+          "nums = [3, 1, 4, 1, 5]\nprint(nums[2])",
+          "nums = [3, 1, 4, 1, 5]\nprint(nums[3])",
+          "nums = [3, 1, 4, 1, 5]\nprint(nums[len(nums)])",
+        ],
+        answer: "nums = [3, 1, 4, 1, 5]\nprint(nums[2])",
+      },
+    },
+    // 7
+    {
+      group: "1",
+      title: "Why Complexity Matters",
+      description: "Reflect on the importance of algorithmic complexity.",
+      isText: true,
+      question: {
+        questionText:
+          "In your own words, explain why understanding time complexity (Big-O) is important when choosing a data structure.",
+      },
+    },
+    // 8
+    {
+      group: "1",
+      title: "Amortized Analysis of append()",
+      description: "Identify amortized time complexity of Python list append.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "What is the amortized time complexity of `list.append()` in Python?",
+        options: ["O(1)", "O(log n)", "O(n)", "O(n²)"],
+        answer: "O(1)",
+      },
+    },
+    // 9
+    {
+      group: "1",
+      title: "Dynamic Array Resizing Steps",
+      description:
+        "Order the internal steps that a dynamic array takes when it grows.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps Python’s list takes when it needs more capacity:",
+        options: [
+          "Allocate new larger block",
+          "Copy old elements to new block",
+          "Free the old block",
+          "Update internal pointer",
+        ],
+        answer: [
+          "Allocate new larger block",
+          "Copy old elements to new block",
+          "Free the old block",
+          "Update internal pointer",
+        ],
+      },
+    },
+    // 10
+    {
+      group: "1",
+      title: "Traversing a List",
+      description: "Write code to traverse and print each element of a list.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Given `items = [10, 20, 30, 40]`, write a Python for-loop that prints each item.",
+      },
+    },
+    // 11
+    {
+      group: "1",
+      title: "List Length Operator",
+      description: "Identify the operator that returns the length of a list.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "Which Python built-in function returns the number of elements in a list?",
+        placeholder: "Type your answer here...",
+        answer: "len",
+      },
+    },
+    // 12
+    {
+      group: "1",
+      title: "Immutable vs. Mutable Sequences",
+      description: "Distinguish lists from tuples in Python.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "Which of the following statements is true?",
+        options: [
+          "Lists are immutable, tuples are mutable",
+          "Lists are mutable, tuples are immutable",
+          "Both are immutable",
+          "Both are mutable",
+        ],
+        answer: "Lists are mutable, tuples are immutable",
+      },
+    },
+    // 13
+    {
+      group: "1",
+      title: "String as Character Array",
+      description: "Convert a string into a list of its characters.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write Python code to turn the string `\"hello\"` into `['h','e','l','l','o']`.",
+      },
+    },
+    // 14
+    {
+      group: "1",
+      title: "Implementing a Simple Stack",
+      description: "Use a Python list to model a stack (LIFO).",
+      isCodeCompletion: true,
+      question: {
+        questionText: "Complete the methods to push and pop from a stack:",
+        options: [
+          `class Stack:
+    def __init__(self):
+        self.data = []
+
+    def push(self, x):
+        self.data.append(x)
+
+    def pop(self):
+        return self.data.pop()`,
+        ],
+        answer: `class Stack:
+    def __init__(self):
+        self.data = []
+
+    def push(self, x):
+        self.data.append(x)
+
+    def pop(self):
+        return self.data.pop()`,
+      },
+    },
+    // 15
+    {
+      group: "1",
+      title: "Use Cases for Different Structures",
+      description: "Reflect on where you’d use arrays vs. stacks.",
+      isText: true,
+      question: {
+        questionText:
+          "Give one real-world scenario where a stack (LIFO) is preferred over a plain list.",
+      },
+    },
+    // 16
+    {
+      group: "1",
+      title: "Pointer-Style Traversal (Conceptual)",
+      description: "Understand how a linked list differs in traversal.",
+      isText: true,
+      question: {
+        questionText:
+          "In contrast to arrays, how does a linked list traverse from one element to the next?",
+      },
+    },
+    // 17
+    {
+      group: "1",
+      title: "Implementing a Queue with deque",
+      description: "Use `collections.deque` to model a queue (FIFO).",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write Python code to import `deque`, enqueue 1,2,3, then dequeue one element.",
+      },
+    },
+    // 18
+    {
+      group: "1",
+      title: "Comparing Access Patterns",
+      description: "Discuss random vs. sequential access trade-offs.",
+      isText: true,
+      question: {
+        questionText:
+          "Why are arrays good for random access but linked lists are not?",
+      },
+    },
+    // 19
+    {
+      group: "1",
+      title: "List Initialization",
+      description: "Allocate a fixed-size list with default values.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText: "Write code to create a list of five zeros in Python.",
+      },
+    },
+    // 20
+    {
+      group: "1",
+      title: "Importance of Foundations",
+      description: "Summarize key takeaways from Chapter 1.",
+      isText: true,
+      question: {
+        questionText:
+          "In two sentences, explain why understanding data-structure foundations (ADTs, complexity, memory layout) is crucial before diving into implementations.",
+      },
+    },
+    // 21
+    {
+      group: "1",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [10, 29],
+      },
+    },
+    // 1
+    {
+      group: "2",
+      title: "Memory Layout: Array vs. Linked List",
+      description:
+        "Compare how arrays and linked lists store elements in memory.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "Which statement correctly describes memory layout?",
+        options: [
+          "Arrays use node pointers scattered in memory",
+          "Linked lists store elements contiguously",
+          "Arrays store elements contiguously, linked lists use pointers",
+          "Both use contiguous memory blocks",
+        ],
+        answer: [
+          "Arrays store elements contiguously, linked lists use pointers",
+        ],
+      },
+    },
+    // 2
+    {
+      group: "2",
+      title: "Access Time: Array Indexing vs. List Traversal",
+      description: "Identify the time complexity of accessing vs. traversing.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "What are the time complexities for accessing the 𝑖ᵗʰ element?",
+        options: [
+          "Array: O(1), Linked List: O(n)",
+          "Array: O(n), Linked List: O(1)",
+          "Array: O(log n), Linked List: O(log n)",
+          "Array: O(n), Linked List: O(n)",
+        ],
+        answer: ["Array: O(1), Linked List: O(n)"],
+      },
+    },
+    // 3
+    {
+      group: "2",
+      title: "Amortized Analysis of list.append()",
+      description:
+        "Recall the amortized time complexity of appending to a Python list.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "What is the amortized time complexity of `my_list.append(x)`?",
+        options: ["O(1)", "O(n)", "O(log n)", "O(n²)"],
+        answer: ["O(1)"],
+      },
+    },
+    // 4
+    {
+      group: "2",
+      title: "Dynamic Array Resizing Steps",
+      description:
+        "Order the steps Python’s list takes when resizing its capacity.",
+      isSelectOrder: true,
+      question: {
+        questionText: "Arrange these internal steps when capacity is exceeded:",
+        options: [
+          "Copy old elements to new block",
+          "Allocate new larger block",
+          "Update internal pointer",
+          "Free old block",
+        ],
+        answer: [
+          "Allocate new larger block",
+          "Copy old elements to new block",
+          "Free old block",
+          "Update internal pointer",
+        ],
+      },
+    },
+    // 5
+    {
+      group: "2",
+      title: "List Append in Code",
+      description: "Practice appending items and checking length.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write Python code to create `nums = [1,2,3]`, append `4`, then print its length.",
+      },
+    },
+    // 6
+    {
+      group: "2",
+      title: "Linked List Insertion Complexity",
+      description: "Identify insertion complexities at head and tail.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "What is the time complexity to insert:",
+        options: [
+          "At head: O(1), At tail (no pointer): O(n)",
+          "At head: O(n), At tail: O(1)",
+          "At head: O(1), At tail: O(1)",
+          "At head: O(n), At tail: O(n)",
+        ],
+        answer: ["At head: O(1), At tail (no pointer): O(n)"],
+      },
+    },
+    // 7
+    {
+      group: "2",
+      title: "Building a Simple Linked List",
+      description: "Link three nodes and print the second value.",
+      isCodeCompletion: true,
+      question: {
+        questionText: "Complete code so `head.next.value` prints `2`:",
+        options: [
+          `class Node:
+    def __init__(self, v):
+        self.v = v
+        self.next = None
+
+n1 = Node(1)
+n2 = Node(2)
+n3 = Node(3)
+# link
+n1.next = n2
+n2.next = n3
+
+print(head.next.v)  # 2`,
+
+          `class Node:
+    def __init__(self, v):
+        self.v = v
+        self.next = None
+
+head = Node(1)
+second = Node(2)
+third = Node(3)
+# link
+head.next = second
+second.next = third
+
+print(head.next.v)  # 2`,
+        ],
+        answer: `class Node:
+    def __init__(self, v):
+        self.v = v
+        self.next = None
+
+head = Node(1)
+second = Node(2)
+third = Node(3)
+# link
+head.next = second
+second.next = third
+
+print(head.next.v)  # 2`,
+      },
+    },
+    // 8
+    {
+      group: "2",
+      title: "Traversing a Linked List",
+      description: "Write code to retrieve the 3rd element from a list.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Given `head` of a linked list, write a loop to print the 3rd node’s value.",
+      },
+    },
+    // 9
+    {
+      group: "2",
+      title: "Stack ADT Characteristics",
+      description: "Identify the behavior of a stack.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "Which property defines a stack (LIFO)?",
+        options: [
+          "First In, First Out",
+          "Last In, First Out",
+          "Random Removal",
+          "Priority Removal",
+        ],
+        answer: ["Last In, First Out"],
+      },
+    },
+    // 10
+    {
+      group: "2",
+      title: "Stack Implementation with list",
+      description: "Complete push/pop methods using a Python list.",
+      isCodeCompletion: true,
+      question: {
+        questionText: "Fill in methods so `push` and `pop` work correctly:",
+        options: [
+          `class Stack:
+    def __init__(self):
+        self.data = []
+    def push(self, x):
+        self.data.append(x)
+    def pop(self):
+        return self.data.pop()`,
+
+          `class Stack:
+    def __init__(self):
+        self.data = []
+    def push(self, x):
+        self.data.insert(0, x)
+    def pop(self):
+        return self.data.pop(0)`,
+        ],
+        answer: `class Stack:
+    def __init__(self):
+        self.data = []
+    def push(self, x):
+        self.data.append(x)
+    def pop(self):
+        return self.data.pop()`,
+      },
+    },
+    // 11
+    {
+      group: "2",
+      title: "Queue ADT Characteristics",
+      description: "Identify the behavior of a queue.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "Which property defines a queue (FIFO)?",
+        options: [
+          "Last In, First Out",
+          "First In, First Out",
+          "Priority Insertion",
+          "Random Access",
+        ],
+        answer: ["First In, First Out"],
+      },
+    },
+    // 12
+    {
+      group: "2",
+      title: "Queue Implementation with deque",
+      description: "Use `collections.deque` for enqueue/dequeue.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write code to:\n1. `from collections import deque`\n2. `q = deque()`\n3. `q.append(5)`\n4. `print(q.popleft())`",
+      },
+    },
+    // 13
+    {
+      group: "2",
+      title: "Comparing Append vs. Insert",
+      description: "Contrast amortized append with linked-list insert.",
+      isText: true,
+      question: {
+        questionText:
+          "In two sentences, compare `list.append()` amortized O(1) vs. linked-list insertion at head.",
+      },
+    },
+    // 14
+    {
+      group: "2",
+      title: "Real-World Use of Stacks & Queues",
+      description: "Reflect on practical applications.",
+      isText: true,
+      question: {
+        questionText:
+          "Give one real-world scenario each for using a stack and a queue.",
+      },
+    },
+    // 15
+    {
+      group: "2",
+      title: "Array vs. Linked List Trade-Offs",
+      description: "Choose when to use each structure.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "Which scenario favors a linked list over an array?",
+        options: [
+          "Frequent random access",
+          "Fixed-size buffer",
+          "Frequent insertions/deletions at arbitrary positions",
+          "Contiguous memory requirement",
+        ],
+        answer: ["Frequent insertions/deletions at arbitrary positions"],
+      },
+    },
+    // 16
+    {
+      group: "2",
+      title: "Implementing Stack via Linked List",
+      description: "Use Node pointers to model a stack.",
+      isCodeCompletion: true,
+      question: {
+        questionText: "Complete push and pop using a linked-list head pointer:",
+        options: [
+          `class Node:
+    def __init__(self, v):
+        self.v = v
+        self.next = None
+
+class Stack:
+    def __init__(self):
+        self.top = None
+
+    def push(self, x):
+        node = Node(x)
+        node.next = self.top
+        self.top = node
+
+    def pop(self):
+        val = self.top.v
+        self.top = self.top.next
+        return val`,
+        ],
+        answer: `class Node:
+    def __init__(self, v):
+        self.v = v
+        self.next = None
+
+class Stack:
+    def __init__(self):
+        self.top = None
+
+    def push(self, x):
+        node = Node(x)
+        node.next = self.top
+        self.top = node
+
+    def pop(self):
+        val = self.top.v
+        self.top = self.top.next
+        return val`,
+      },
+    },
+    // 17
+    {
+      group: "2",
+      title: "Implementing Queue via Linked List",
+      description: "Use head/tail pointers to model a queue.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write Python code to implement `enqueue(x)` at tail and `dequeue()` at head using Node and head/tail pointers.",
+      },
+    },
+    // 18
+    {
+      group: "2",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [31, 47],
+      },
+    },
+    // 1
+    {
+      group: "3",
+      title: "Hierarchical vs. Associative Structures",
+      description:
+        "Identify which of these are hierarchical versus associative data structures.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which of the following are hierarchical data structures?",
+        options: ["Binary Tree", "Heap", "Hash Table", "Queue"],
+        answer: ["Binary Tree", "Heap"],
+      },
+    },
+    // 2
+    {
+      group: "3",
+      title: "Associative Structures",
+      description: "Identify which of these are associative data structures.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "Which of the following are associative data structures?",
+        options: ["List", "Hash Table", "Stack", "Graph"],
+        answer: ["Hash Table"],
+      },
+    },
+    // 3
+    {
+      group: "3",
+      title: "In-Order Traversal Sequence",
+      description: "Order the steps of in-order traversal for a binary tree.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange these actions in the correct order for in-order traversal:",
+        options: ["Visit left subtree", "Visit node", "Visit right subtree"],
+        answer: ["Visit left subtree", "Visit node", "Visit right subtree"],
+      },
+    },
+    // 4
+    {
+      group: "3",
+      title: "Pre-Order Traversal Implementation",
+      description:
+        "Fill in the blanks to implement pre-order traversal recursively.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Complete the `preorder` function so it prints values in root-left-right order:",
+        options: [
+          `def preorder(node):
+    if node is None:
+        return
+    print(node.value)
+    preorder(node.left)
+    preorder(node.right)`,
+
+          `def preorder(node):
+    if node is None:
+        return
+    preorder(node.left)
+    print(node.value)
+    preorder(node.right)`,
+
+          `def preorder(node):
+    if node is None:
+        return
+    preorder(node.right)
+    print(node.value)
+    preorder(node.left)`,
+        ],
+        answer: `def preorder(node):
+    if node is None:
+        return
+    print(node.value)
+    preorder(node.left)
+    preorder(node.right)`,
+      },
+    },
+    // 5
+    {
+      group: "3",
+      title: "Post-Order Traversal",
+      description: "Identify the sequence for post-order traversal.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "In post-order traversal, nodes are visited in which order?",
+        options: [
+          "Root, Left, Right",
+          "Left, Right, Root",
+          "Left, Root, Right",
+          "Right, Left, Root",
+        ],
+        answer: "Left, Right, Root",
+      },
+    },
+    // 6
+    {
+      group: "3",
+      title: "Level-Order (Breadth-First) Traversal",
+      description: "Write code to perform level-order traversal using a queue.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Given `root` of a binary tree, write a Python function `level_order(root)` that prints each level’s values using `collections.deque`.",
+      },
+    },
+    // 7
+    {
+      group: "3",
+      title: "Heap Property: Min vs. Max",
+      description: "Distinguish min-heap and max-heap properties.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "Which property defines a min-heap?",
+        options: [
+          "Every parent ≥ its children",
+          "Every parent ≤ its children",
+          "Complete binary tree shape only",
+          "Balanced tree only",
+        ],
+        answer: "Every parent ≤ its children",
+      },
+    },
+    // 8
+    {
+      group: "3",
+      title: "Using heapq: Push & Pop",
+      description: "Practice using Python’s `heapq` to push and pop values.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write code to import `heapq`, create a list `h = []`, push 5 and 2, then pop and print the smallest value.",
+      },
+    },
+    // 9
+    {
+      group: "3",
+      title: "Priority Queue Tuples",
+      description: "Implement a priority queue with custom priorities.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Complete code to push `(priority, task)` pairs so lowest priority is served first:",
+        options: [
+          `import heapq
+
+pq = []
+heapq.heappush(pq, (2, 'clean'))
+heapq.heappush(pq, (1, 'cook'))
+print(heapq.heappop(pq))  # (1, 'cook')`,
+
+          `import heapq
+
+pq = []
+heapq.push(pq, (2, 'clean'))
+heapq.push(pq, (1, 'cook'))
+print(heapq.pop(pq))`,
+
+          `import heapq
+
+pq = []
+heapq.heappush(pq, 'clean')
+heapq.heappush(pq, 'cook')
+print(heapq.heappop(pq))`,
+        ],
+        answer: `import heapq
+
+pq = []
+heapq.heappush(pq, (2, 'clean'))
+heapq.heappush(pq, (1, 'cook'))
+print(heapq.heappop(pq))  # (1, 'cook')`,
+      },
+    },
+    // 10
+    {
+      group: "3",
+      title: "Hash Table Collision Strategies",
+      description: "Identify common collision-resolution methods.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which of the following are valid hash table collision-resolution strategies?",
+        options: [
+          "Separate chaining",
+          "Open addressing",
+          "Binary search",
+          "Depth-first search",
+        ],
+        answer: ["Separate chaining", "Open addressing"],
+      },
+    },
+    // 11
+    {
+      group: "3",
+      title: "Python dict Operations",
+      description: "Practice basic insert and lookup in a dict.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write code to create `d = {}`, set `d['a']=1`, then print `d['a']`.",
+      },
+    },
+    // 12
+    {
+      group: "3",
+      title: "Load Factor Definition",
+      description: "Explain the load factor in a hash table.",
+      isSingleLineText: true,
+      question: {
+        questionText: "What is the load factor of a hash table?",
+        placeholder: "Type your answer here...",
+        answer: "Number of entries divided by number of buckets",
+      },
+    },
+    // 13
+    {
+      group: "3",
+      title: "Simple Hash Function",
+      description: "Fill in a basic hash function using modulo arithmetic.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Complete `hash_func` so it returns `sum(ord(c) for c in key) % size`:",
+        options: [
+          `def hash_func(key, size):
+    return sum(ord(c) for c in key) % size`,
+
+          `def hash_func(key, size):
+    return len(key) % size`,
+
+          `def hash_func(key, size):
+    return key % size`,
+        ],
+        answer: `def hash_func(key, size):
+    return sum(ord(c) for c in key) % size`,
+      },
+    },
+    // 14
+    {
+      group: "3",
+      title: "Open Addressing Loop",
+      description: "Complete code for linear probing collision resolution.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Fill in the `while` condition to probe next slot until an empty bucket:",
+        options: [
+          `def insert(table, key, size):
+    idx = hash_func(key, size)
+    while table[idx] is not None:
+        idx = (idx + 1) % size
+    table[idx] = key`,
+
+          `def insert(table, key, size):
+    idx = hash_func(key)
+    if table[idx] is None:
+        table[idx] = key`,
+
+          `def insert(table, key, size):
+    idx = hash_func(key, size)
+    for i in range(size):
+        table[idx] = key`,
+        ],
+        answer: `def insert(table, key, size):
+    idx = hash_func(key, size)
+    while table[idx] is not None:
+        idx = (idx + 1) % size
+    table[idx] = key`,
+      },
+    },
+    // 15
+    {
+      group: "3",
+      title: "Real-World Hash Use Case",
+      description: "Reflect on practical applications of hash tables.",
+      isText: true,
+      question: {
+        questionText:
+          "Provide one real-world use case where a hash table improves performance.",
+      },
+    },
+    // 16
+    {
+      group: "3",
+      title: "Tree vs. Hash Table Lookup",
+      description: "Compare lookup complexities in two structures.",
+      isText: true,
+      question: {
+        questionText:
+          "In two sentences, compare average-case lookup time for a hash table versus a balanced binary search tree.",
+      },
+    },
+    // 17
+    {
+      group: "3",
+      title: "Priority Queue Use Case",
+      description: "Identify when to use a heap-based priority queue.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "Which scenario best uses a priority queue (min-heap)?",
+        options: [
+          "Scheduling tasks by priority",
+          "Random element removal",
+          "First-come, first-served queue",
+          "Depth-first traversal",
+        ],
+        answer: ["Scheduling tasks by priority"],
+      },
+    },
+    // 18
+    {
+      group: "3",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [49, 67],
+      },
+    },
+    // 1
+    {
+      group: "4",
+      title: "What Is an Algorithm?",
+      description: "Define core concepts of algorithms and complexity.",
+      isText: true,
+      question: {
+        questionText:
+          "In your own words, what is an algorithm and why is time complexity important when evaluating one?",
+      },
+    },
+    // 2
+    {
+      group: "4",
+      title: "Comparison Sorts Complexity Ordering",
+      description:
+        "Order common comparison sorts by average-case time complexity.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange these sorting algorithms from lowest (fastest) to highest (slowest) average-case complexity:",
+        options: [
+          "Bubble Sort (O(n²))",
+          "Insertion Sort (O(n²))",
+          "Merge Sort (O(n log n))",
+          "Quick Sort (O(n log n))",
+        ],
+        answer: [
+          "Merge Sort (O(n log n))",
+          "Quick Sort (O(n log n))",
+          "Bubble Sort (O(n²))",
+          "Insertion Sort (O(n²))",
+        ],
+      },
+    },
+    // 3
+    {
+      group: "4",
+      title: "Bubble Sort Implementation",
+      description: "Write a basic bubble sort in Python.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write a Python function `bubble_sort(arr)` that sorts `arr` in-place using bubble sort.",
+      },
+    },
+    // 4
+    {
+      group: "4",
+      title: "Insertion Sort Implementation",
+      description: "Write a basic insertion sort in Python.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write a Python function `insertion_sort(arr)` that sorts `arr` in-place using insertion sort.",
+      },
+    },
+    // 5
+    {
+      group: "4",
+      title: "Merge Sort Code Completion",
+      description: "Fill in missing steps of merge sort.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Complete the Python `merge_sort` function so it correctly splits and merges:",
+        options: [
+          `def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    # merge left and right into result
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] < right[j]:
+            result.append(left[i]); i += 1
+        else:
+            result.append(right[j]); j += 1
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result`,
+        ],
+        answer: `def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    # merge left and right into result
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] < right[j]:
+            result.append(left[i]); i += 1
+        else:
+            result.append(right[j]); j += 1
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result`,
+      },
+    },
+    // 6
+    {
+      group: "4",
+      title: "Quick Sort Partition",
+      description: "Implement the Lomuto partition scheme.",
+      isCodeCompletion: true,
+      question: {
+        questionText: "Fill in the `partition` function for quick sort:",
+        options: [
+          `def partition(arr, low, high):
+    pivot = arr[high]
+    i = low - 1
+    for j in range(low, high):
+        if arr[j] <= pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i+1], arr[high] = arr[high], arr[i+1]
+    return i+1`,
+        ],
+        answer: `def partition(arr, low, high):
+    pivot = arr[high]
+    i = low - 1
+    for j in range(low, high):
+        if arr[j] <= pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i+1], arr[high] = arr[high], arr[i+1]
+    return i+1`,
+      },
+    },
+    // 7
+    {
+      group: "4",
+      title: "Sorting Stability",
+      description: "Understand stable vs. unstable sorts.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "Which of these sorting algorithms are stable?",
+        options: ["Bubble Sort", "Quick Sort", "Merge Sort", "Insertion Sort"],
+        answer: ["Bubble Sort", "Merge Sort", "Insertion Sort"],
+      },
+    },
+    // 8
+    {
+      group: "4",
+      title: "Binary Search Precondition",
+      description: "Identify the primary requirement for binary search.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which precondition must hold true before performing a binary search on an array?",
+        options: [
+          "Array must be sorted",
+          "Array must contain unique elements",
+          "Array must be linked-list",
+          "Array must be in contiguous memory",
+        ],
+        answer: "Array must be sorted",
+      },
+    },
+    // 9
+    {
+      group: "4",
+      title: "Binary Search Steps",
+      description: "Order the core steps of the binary search algorithm.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange these steps in the order a binary search would perform them:",
+        options: [
+          "Compare target to middle element",
+          "Adjust low/high bounds",
+          "Return index if match",
+          "Compute middle index",
+        ],
+        answer: [
+          "Compute middle index",
+          "Compare target to middle element",
+          "Return index if match",
+          "Adjust low/high bounds",
+        ],
+      },
+    },
+    // 10
+    {
+      group: "4",
+      title: "Implementing Binary Search",
+      description: "Write an iterative binary search in Python.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write a Python function `binary_search(arr, target)` that returns the index of `target` or -1 if not found.",
+      },
+    },
+    // 11
+    {
+      group: "4",
+      title: "Divide-and-Conquer Pattern",
+      description: "Explain the divide-and-conquer strategy in algorithms.",
+      isText: true,
+      question: {
+        questionText:
+          "In two sentences, explain how the divide-and-conquer approach is used in merge sort and quick sort.",
+      },
+    },
+    // 12
+    {
+      group: "4",
+      title: "BFS vs. DFS",
+      description: "Distinguish breadth-first from depth-first traversal.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "Which traversal explores neighbors level by level?",
+        options: [
+          "Depth-First Search (DFS)",
+          "Breadth-First Search (BFS)",
+          "Binary Search",
+          "Merge Sort",
+        ],
+        answer: "Breadth-First Search (BFS)",
+      },
+    },
+    // 13
+    {
+      group: "4",
+      title: "DFS Recursive Implementation",
+      description: "Write a recursive depth-first search on a graph.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Given `graph` as adjacency dict, write `def dfs(node, visited): …` that prints each node once.",
+      },
+    },
+    // 14
+    {
+      group: "4",
+      title: "BFS Iterative Implementation",
+      description: "Use a queue for breadth-first search.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write a Python `bfs(start)` that uses `collections.deque` to traverse `graph` level by level.",
+      },
+    },
+    // 15
+    {
+      group: "4",
+      title: "Graph Representation",
+      description: "Choose a graph representation format.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "Which Python data structure best represents a sparse graph?",
+        placeholder: "Type your answer here...",
+        answer: "Adjacency list",
+      },
+    },
+    // 16
+    {
+      group: "4",
+      title: "Traversal Complexity",
+      description: "Identify time complexity of BFS/DFS.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "What is the time complexity of BFS or DFS on a graph with V vertices and E edges?",
+        options: ["O(V + E)", "O(V²)", "O(E log V)", "O(V + E log V)"],
+        answer: "O(V + E)",
+      },
+    },
+    // 17
+    {
+      group: "4",
+      title: "Priority Queue for Dijkstra",
+      description: "Use `heapq` in Dijkstra’s algorithm.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write Python code to import `heapq`, push `(0, start)`, pop the smallest distance.",
+      },
+    },
+    // 18
+    {
+      group: "4",
+      title: "Dijkstra Steps Ordering",
+      description: "Arrange the high-level steps of Dijkstra’s algorithm.",
+      isSelectOrder: true,
+      question: {
+        questionText: "Arrange these Dijkstra steps in order:",
+        options: [
+          "Initialize distances",
+          "Extract min-distance node",
+          "Relax its edges",
+          "Repeat until all nodes visited",
+        ],
+        answer: [
+          "Initialize distances",
+          "Extract min-distance node",
+          "Relax its edges",
+          "Repeat until all nodes visited",
+        ],
+      },
+    },
+    // 19
+    {
+      group: "4",
+      title: "Implementing Dijkstra Relaxation",
+      description: "Fill in the relaxation step inside Dijkstra’s loop.",
+      isCodeCompletion: true,
+      question: {
+        questionText: "Complete the Python code to relax edges:",
+        options: [
+          `dist_u = dist[current]
+for neighbor, weight in graph[current]:
+    if dist_u + weight < dist[neighbor]:
+        dist[neighbor] = dist_u + weight
+        heapq.heappush(pq, (dist[neighbor], neighbor))`,
+        ],
+        answer: `dist_u = dist[current]
+for neighbor, weight in graph[current]:
+    if dist_u + weight < dist[neighbor]:
+        dist[neighbor] = dist_u + weight
+        heapq.heappush(pq, (dist[neighbor], neighbor))`,
+      },
+    },
+    // 20
+    {
+      group: "4",
+      title: "Real-World Graph Use Case",
+      description: "Reflect on graph algorithm applications.",
+      isText: true,
+      question: {
+        questionText:
+          "Describe one real-world problem that can be solved using BFS, DFS, or Dijkstra’s algorithm.",
+      },
+    },
+    // 21
+    {
+      group: "4",
+      title: "Graph Construction in Code",
+      description: "Build a graph adjacency list from edge list.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Given `edges = [(0,1),(1,2),(2,0)]`, write code to build `graph` as `{0:[1],1:[2],2:[0]}`.",
+      },
+    },
+    // 22
+    {
+      group: "4",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [69, 89],
+      },
+    },
+    // 1
+    {
+      group: "5",
+      title: "Processes vs. Threads",
+      description: "Distinguish processes from threads in an operating system.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which statement correctly differentiates a process from a thread?",
+        options: [
+          "A process shares memory with other processes; a thread has its own memory",
+          "A process has its own memory space; threads within a process share memory",
+          "Threads run independently of the OS; processes require kernel scheduling",
+          "Processes are lighter weight than threads",
+        ],
+        answer: [
+          "A process has its own memory space; threads within a process share memory",
+        ],
+      },
+    },
+    // 2
+    {
+      group: "5",
+      title: "Scheduling Policies Ordering",
+      description:
+        "Order common CPU scheduling policies by their typical response time fairness.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange these scheduling policies from most fair (each process gets time) to least fair:",
+        options: [
+          "Round Robin",
+          "First-Come, First-Served (FCFS)",
+          "Shortest Job Next",
+          "Priority Scheduling",
+        ],
+        answer: [
+          "Round Robin",
+          "Shortest Job Next",
+          "FCFS",
+          "Priority Scheduling",
+        ],
+      },
+    },
+    // 3
+    {
+      group: "5",
+      title: "Context Switching Steps",
+      description:
+        "Order the high-level steps the OS takes during a context switch.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange these actions in the order performed during a context switch:",
+        options: [
+          "Save current CPU registers to PCB",
+          "Load next process’s registers from PCB",
+          "Update scheduler data structures",
+          "Jump to the next process’s instruction pointer",
+        ],
+        answer: [
+          "Save current CPU registers to PCB",
+          "Update scheduler data structures",
+          "Load next process’s registers from PCB",
+          "Jump to the next process’s instruction pointer",
+        ],
+      },
+    },
+    // 4
+    {
+      group: "5",
+      title: "Memory Management Overview",
+      description: "Explain why an OS needs to manage memory.",
+      isText: true,
+      question: {
+        questionText:
+          "In your own words, why does an operating system use memory management (e.g., paging, segmentation)?",
+      },
+    },
+    // 5
+    {
+      group: "5",
+      title: "Paging Definition",
+      description: "Identify the core concept of paging.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "What does paging in memory management refer to?",
+        options: [
+          "Dividing physical memory into fixed-size frames",
+          "Grouping processes into pages for scheduling",
+          "Loading entire processes into contiguous memory",
+          "Swapping registers between processes",
+        ],
+        answer: ["Dividing physical memory into fixed-size frames"],
+      },
+    },
+    // 6
+    {
+      group: "5",
+      title: "Segmentation Definition",
+      description: "Identify the core concept of segmentation.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "What is memory segmentation?",
+        options: [
+          "Combining multiple pages into one segment",
+          "Dividing memory into variable-sized logical segments",
+          "Allocating fixed-size frames to segments",
+          "Swapping entire segments between disk and RAM",
+        ],
+        answer: ["Dividing memory into variable-sized logical segments"],
+      },
+    },
+    // 7
+    {
+      group: "5",
+      title: "Virtual Memory Benefits",
+      description: "Reflect on why virtual memory is useful.",
+      isText: true,
+      question: {
+        questionText:
+          "List two benefits that virtual memory provides to applications and the OS.",
+      },
+    },
+    // 8
+    {
+      group: "5",
+      title: "Page Replacement Algorithms",
+      description:
+        "Order common page-replacement strategies by their eviction policy.",
+      isSelectOrder: true,
+      question: {
+        questionText: "Arrange these algorithms by which page they evict:",
+        options: [
+          "FIFO (First-In, First-Out)",
+          "LRU (Least Recently Used)",
+          "Optimal (theoretical best)",
+          "Clock (second-chance)",
+        ],
+        answer: [
+          "FIFO (First-In, First-Out)",
+          "Clock (second-chance)",
+          "LRU (Least Recently Used)",
+          "Optimal (theoretical best)",
+        ],
+      },
+    },
+    // 9
+    {
+      group: "5",
+      title: "File Descriptor Basics",
+      description:
+        "Identify the role of file descriptors in UNIX-like systems.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What integer values are typically used for standard input, output, and error file descriptors?",
+        placeholder: "Type your answer here...",
+        answer: "0, 1, and 2",
+      },
+    },
+    // 10
+    {
+      group: "5",
+      title: "File Buffering Layers",
+      description: "Select which layers buffer file I/O operations.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which of the following buffer data during file operations?",
+        options: [
+          "Application-level buffers (e.g., stdio)",
+          "OS page cache",
+          "Disk controller cache",
+          "CPU register cache",
+        ],
+        answer: [
+          "Application-level buffers (e.g., stdio)",
+          "OS page cache",
+          "Disk controller cache",
+        ],
+      },
+    },
+    // 11
+    {
+      group: "5",
+      title: "Device Types",
+      description: "Distinguish block devices from character devices.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which of the following are block devices versus character devices?",
+        options: [
+          "Hard disk (block)",
+          "Serial port (char)",
+          "Keyboard (char)",
+          "USB mass storage (block)",
+        ],
+        answer: [
+          "Hard disk (block)",
+          "USB mass storage (block)",
+          "Serial port (char)",
+          "Keyboard (char)",
+        ],
+      },
+    },
+    // 12
+    {
+      group: "5",
+      title: "System Call Sequence",
+      description: "Order the steps when making a file read system call.",
+      isSelectOrder: true,
+      question: {
+        questionText: "Arrange these steps for `read()` system call:",
+        options: [
+          "User process invokes read() in libc",
+          "Mode switch to kernel",
+          "Kernel locates file and copies data",
+          "Mode switch back to user",
+        ],
+        answer: [
+          "User process invokes read() in libc",
+          "Mode switch to kernel",
+          "Kernel locates file and copies data",
+          "Mode switch back to user",
+        ],
+      },
+    },
+    // 13
+    {
+      group: "5",
+      title: "Reading a File in Python",
+      description: "Practice file I/O with Python’s built-in functions.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Write Python code to open `data.txt`, read its contents into a string, and close the file.",
+      },
+    },
+    // 14
+    {
+      group: "5",
+      title: "File Permissions Overview",
+      description: "Explain how UNIX file permissions work.",
+      isText: true,
+      question: {
+        questionText:
+          "Describe the three permission types (r, w, x) and who (owner, group, others) they apply to.",
+      },
+    },
+    // 15
+    {
+      group: "5",
+      title: "Caching Strategies",
+      description: "Select common caching strategies used by OS and hardware.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "Which of these are caching strategies?",
+        options: [
+          "Write-back",
+          "Write-through",
+          "Write-around",
+          "Write-behind",
+        ],
+        answer: ["Write-back", "Write-through", "Write-around"],
+      },
+    },
+    // 16
+    {
+      group: "5",
+      title: "Mounting Filesystems",
+      description: "Understand how filesystems are mounted in UNIX.",
+      isText: true,
+      question: {
+        questionText:
+          "In one sentence, explain what the `mount` command does in UNIX-like systems.",
+      },
+    },
+    // 17
+    {
+      group: "5",
+      title: "Syscall vs Library Call",
+      description:
+        "Differentiate system calls from library (user-space) calls.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What is the main difference between a system call and a standard library call?",
+        placeholder: "Type your answer here...",
+        answer:
+          "System calls transition to kernel mode; library calls stay in user mode",
+      },
+    },
+    // 18
+    {
+      group: "5",
+      title: "Memory Protection Mechanisms",
+      description: "Identify mechanisms the OS uses to protect process memory.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which features help protect one process’s memory from another?",
+        options: [
+          "Virtual memory paging",
+          "Segmentation",
+          "Address Space Layout Randomization (ASLR)",
+          "Process context switches",
+        ],
+        answer: [
+          "Virtual memory paging",
+          "Segmentation",
+          "Address Space Layout Randomization (ASLR)",
+        ],
+      },
+    },
+    // 19
+    {
+      group: "5",
+      title: "Journaling File Systems",
+      description: "Explain why journaling helps file-system reliability.",
+      isText: true,
+      question: {
+        questionText:
+          "In two sentences, describe how journaling in a file system prevents data corruption after a crash.",
+      },
+    },
+    // 20
+    {
+      group: "5",
+      title: "OS Logging Facilities",
+      description: "Understand how the OS logs events and errors.",
+      isText: true,
+      question: {
+        questionText:
+          "Name a common operating system logging facility and what it’s used for.",
+      },
+    },
+    // 21
+    {
+      group: "5",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [91, 110],
+      },
+    },
+  ],
   en: [
     {
       group: "introduction",
@@ -32,155 +2020,155 @@ export const steps = {
           </div>
         ),
         metaData: `### Advice
-I know this looks like ChatGPT content... 
+  I know this looks like ChatGPT content... 
 
-but it's not -_-" It's me!
+  but it's not -_-" It's me!
 
-It's important to remember this as a beginner:
+  It's important to remember this as a beginner:
 
-1. Building things with software is mostly about organizing information rather than being good at math. Programming languages use logic and computation to express ideas instead of equations and algebra.
+  1. Building things with software is mostly about organizing information rather than being good at math. Programming languages use logic and computation to express ideas instead of equations and algebra.
 
-2. Like the English language, you can express things in many different ways.
+  2. Like the English language, you can express things in many different ways.
 
-3. When something challenges you, fail faster and break the problem into more understandable steps.
-
-
-### Exposure
-The idea here is to expose you to concepts before you start to answer questions about it in the app so you aren't intimidated by it later. Don't worry about not understanding everything. In fact, try your best to make sense out of it at a glance or use AI to your advantage to create an understanding.
-
-### Code
-
-Let's observe these lists. We can see that:
-- \`my_custom_data && my_custom_list\` are equivalent.
-- \`data_set && data_object\` are also fundamentally equivalent.
+  3. When something challenges you, fail faster and break the problem into more understandable steps.
 
 
-\`\`\`js
-let my_custom_data = [1, 2, 3, 'a', 'b', 'c', null, false]
-const my_custom_list = new Array(1,2,3,'a','b','c', null, false)
-my_custom_data.push('new data')
-my_custom_list.push('new data')
+  ### Exposure
+  The idea here is to expose you to concepts before you start to answer questions about it in the app so you aren't intimidated by it later. Don't worry about not understanding everything. In fact, try your best to make sense out of it at a glance or use AI to your advantage to create an understanding.
 
-let data_set = {
-  introduction: "Welcome",
-  title: "Chapter 1",
-  is_live: true
-}
-data_set.page = 4
-data_set['book'] = 'Coding Basics'
+  ### Code
 
-let data_object = new Object()
-data_object.introduction = 'Welcome'
-data_object.title = 'Chapter 1'
-data_object.is_live = true
-data_object.page = 4
-data_object['book'] = 'Coding Basics'
+  Let's observe these lists. We can see that:
+  - \`my_custom_data && my_custom_list\` are equivalent.
+  - \`data_set && data_object\` are also fundamentally equivalent.
 
-\`\`\`
 
-Additionally, in the example above, we're exposed to variable definitions, data types, arrays, functions and objects. A lot of the software that you likely operates on those concepts under the hood. This is way \`[]\` and \`new Array\` can create the same data - it translates the same way when it comes to turning your code into signals that can be sent across the internet.
+  \`\`\`js
+  let my_custom_data = [1, 2, 3, 'a', 'b', 'c', null, false]
+  const my_custom_list = new Array(1,2,3,'a','b','c', null, false)
+  my_custom_data.push('new data')
+  my_custom_list.push('new data')
 
-Now in the example below, we take a look at creating our own custom objects. We create our own custom object, along with an interface of functions. Generally when it comes to data, you're able to create, retrieve, update or delete it in some form or another.
+  let data_set = {
+    introduction: "Welcome",
+    title: "Chapter 1",
+    is_live: true
+  }
+  data_set.page = 4
+  data_set['book'] = 'Coding Basics'
 
-\`\`\`js
-class House {
-  house_paint = null
+  let data_object = new Object()
+  data_object.introduction = 'Welcome'
+  data_object.title = 'Chapter 1'
+  data_object.is_live = true
+  data_object.page = 4
+  data_object['book'] = 'Coding Basics'
 
-  constructor(paint){
-    this.house_paint = paint
+  \`\`\`
+
+  Additionally, in the example above, we're exposed to variable definitions, data types, arrays, functions and objects. A lot of the software that you likely operates on those concepts under the hood. This is way \`[]\` and \`new Array\` can create the same data - it translates the same way when it comes to turning your code into signals that can be sent across the internet.
+
+  Now in the example below, we take a look at creating our own custom objects. We create our own custom object, along with an interface of functions. Generally when it comes to data, you're able to create, retrieve, update or delete it in some form or another.
+
+  \`\`\`js
+  class House {
+    house_paint = null
+
+    constructor(paint){
+      this.house_paint = paint
+    }
+
+    getPaint(){
+      return this.house_paint
+    }
+
+    setPaint(paint) = (paint) => {
+      this.house_paint = paint
+    }
+
+    deletePaint = () => {
+      this.house_paint = null
+    }
   }
 
-  getPaint(){
-    return this.house_paint
+  let first_home = new House("pink")
+  let next_home = new House("blue")
+
+  let first_paint = first_house.getPaint() // returns the value "pink"
+  let next_paint = new_home.house_paint // returns the value "blue"
+  next_paint = new_home['house_paint'] // still returns the value 'blue'
+
+  \`\`\`
+
+  So that's creating data and working with data. You'll find that you can usually combine ideas depending on what you need to create. For example, the above component can also be written the following way:
+
+  \`\`\`js
+  function createHouse(paint = null) {
+    return {
+      house_paint: paint,
+
+      getPaint() {
+        return this.house_paint;
+      },
+
+      setPaint(paint) {
+        this.house_paint = paint;
+      },
+
+      deletePaint() {
+        this.house_paint = null;
+      },
+    };
   }
 
-  setPaint(paint) = (paint) => {
-    this.house_paint = paint
+  //what is the value of the result by the end of the program?
+  const myHouse = createHouse('blue');
+  let paint = myHouse.house_paint;
+
+  myHouse.house_paint = 'red'; 
+  paint = myHouse.getPaint()
+
+  myHouse.setPaint('green'); 
+  paint = myHouse.house_paint
+
+  myHouse.deletePaint(); 
+
+  let result = myHouse['house_paint']
+  \`\`\`
+
+
+  Finally, we combine this to work with some code that renders the following screen
+  \`\`\`jsx
+  const CelebrationMessage = ({ name }) => {
+    const styling_data = {
+      textAlign: 'center'
+    }
+    
+    return <div style={styling_data}>{name}</div>
   }
 
-  deletePaint = () => {
-    this.house_paint = null
+  const App = () => {
+    return (
+      <section style={{ border: '3px solid black' }}>
+        <header>
+          <h2>Good job!</h2>
+        </header>
+        
+        <CelebrationMessage name="You created a small app!" />
+      </section>
+    )
   }
-}
-
-let first_home = new House("pink")
-let next_home = new House("blue")
-
-let first_paint = first_house.getPaint() // returns the value "pink"
-let next_paint = new_home.house_paint // returns the value "blue"
-next_paint = new_home['house_paint'] // still returns the value 'blue'
-
-\`\`\`
-
-So that's creating data and working with data. You'll find that you can usually combine ideas depending on what you need to create. For example, the above component can also be written the following way:
-
-\`\`\`js
-function createHouse(paint = null) {
-  return {
-    house_paint: paint,
-
-    getPaint() {
-      return this.house_paint;
-    },
-
-    setPaint(paint) {
-      this.house_paint = paint;
-    },
-
-    deletePaint() {
-      this.house_paint = null;
-    },
-  };
-}
-
-//what is the value of the result by the end of the program?
-const myHouse = createHouse('blue');
-let paint = myHouse.house_paint;
-
-myHouse.house_paint = 'red'; 
-paint = myHouse.getPaint()
-
-myHouse.setPaint('green'); 
-paint = myHouse.house_paint
-
-myHouse.deletePaint(); 
-
-let result = myHouse['house_paint']
-\`\`\`
+  \`\`\`
 
 
-Finally, we combine this to work with some code that renders the following screen
-\`\`\`jsx
-const CelebrationMessage = ({ name }) => {
-  const styling_data = {
-    textAlign: 'center'
-  }
-  
-  return <div style={styling_data}>{name}</div>
-}
+  And that's all! In the last example, we've used a library called React, which gives us access to special functions that are specialized for rendering elements on a screen. But it follows the same thought process as the stuff before it.
 
-const App = () => {
-  return (
-    <section style={{ border: '3px solid black' }}>
-      <header>
-        <h2>Good job!</h2>
-      </header>
-      
-      <CelebrationMessage name="You created a small app!" />
-     </section>
-  )
-}
-\`\`\`
+  ### Conclusion
+  Remember that failing faster is in your best interest when learning new skills with software. This one pager document will be available inside of the app. There are also many other features to help your journey along the way, but I'll leave that to your exploration of the platform and everything it has to offer.
 
+  Stay focused and best of luck with the rest!
 
-And that's all! In the last example, we've used a library called React, which gives us access to special functions that are specialized for rendering elements on a screen. But it follows the same thought process as the stuff before it.
-
-### Conclusion
-Remember that failing faster is in your best interest when learning new skills with software. This one pager document will be available inside of the app. There are also many other features to help your journey along the way, but I'll leave that to your exploration of the platform and everything it has to offer.
-
-Stay focused and best of luck with the rest!
-
-        `,
+          `,
       },
     },
     {
@@ -2338,601 +4326,6 @@ await addDoc(collection(db, 'users'), {
       question: {
         questionText: "Let's chat about the questions we've worked on so far.",
         range: [91, 110], // Indices of steps to review
-      },
-    },
-    {
-      group: "6",
-      title: "Introduction to Data Structures and Algorithms",
-      description:
-        "Understand the importance and challenges of learning data structures and algorithms.",
-      isText: true,
-      question: {
-        questionText:
-          "Why do data structures and algorithms often push people away from computer science?",
-      },
-    },
-    {
-      group: "6",
-      title: "Programming Languages and Autocorrect Technology",
-      description:
-        "Explore how programming languages work and how computers understand code.",
-      isCode: true,
-      question: {
-        questionText: `Write a simple program, without any libraries, to demonstrate how autocorrect technology might identify and correct a misspelled word.`,
-      },
-    },
-    {
-      group: "6",
-      title: "Tokens in Code",
-      description:
-        "Break down code into tokens to understand how computers interpret information.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which of the following is an example of a token in a programming language?",
-        options: [
-          "An entire function",
-          "A single character like ';'",
-          "A variable definition like 'let apples = 10'",
-          "A block of HTML code",
-          "An object defined by 'class Object { ... }'",
-          "A JavaScript library",
-        ],
-        answer: "A single character like ';'",
-      },
-    },
-
-    {
-      group: "6",
-      title: "Breaking Down Strings into Characters",
-      description:
-        "Understand how strings are broken down into characters and further into machine code.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write the code to break down the string 'Kendrick' into an array and then into an object mapping.",
-      },
-    },
-    {
-      group: "6",
-      title: "Understanding Data Structures",
-      description:
-        "Convert a string into an array of key-value pair objects that map characters to their ASCII codes.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Convert the string 'Kendrick' into an array of key-value pair objects where each character maps to its ASCII code.",
-        options: [
-          "{ 'K': 75 }",
-          "{ 'e': 101 }",
-          "{ 'n': 110 }",
-          "{ 'd': 100 }",
-          "{ 'r': 114 }",
-          "{ 'i': 105 }",
-          "{ 'c': 99 }",
-          "{ 'k': 107 }",
-        ],
-        answer: [
-          "{ 'K': 75 }",
-          "{ 'e': 101 }",
-          "{ 'n': 110 }",
-          "{ 'd': 100 }",
-          "{ 'r': 114 }",
-          "{ 'i': 105 }",
-          "{ 'c': 99 }",
-          "{ 'k': 107 }",
-        ],
-      },
-    },
-
-    {
-      group: "6",
-      title: "Binary Conversion",
-      description: "Convert characters to their binary representation.",
-      isCode: true,
-      question: {
-        questionText:
-          "Convert the object mapping of the ascii codes representing 'Kendrick' into a mapping of binary code.",
-      },
-    },
-    {
-      group: "6",
-      title: "Understanding Data Structures",
-      description: "Learn how data structures store and reference information.",
-      isText: true,
-      question: {
-        questionText:
-          "Why is it important to understand how computers reserve space and create addresses to reference information? What are some real world examples of this operating at scale?",
-      },
-    },
-    {
-      group: "6",
-      title: "Introduction to Linked Lists",
-      description: "Learn about the basic concepts of linked lists.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which of the following is a characteristic of linked lists?",
-        options: [
-          "Fixed-size arrays",
-          "Dynamic memory allocation",
-          "Constant time access to elements",
-          "Data is stored in contiguous memory",
-        ],
-        answer: "Dynamic memory allocation",
-      },
-    },
-    {
-      group: "6",
-      title: "Building a Linked List",
-      description:
-        "Construct a simple linked list in JavaScript with the values 'meta', 'instagram', 'reels'.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which of the following code snippets correctly creates a linked list with the values 'meta', 'instagram', and 'reels' in JavaScript?",
-        options: [
-          // Option 1: Correct linked list implementation
-          `class Node {
-  constructor(value) {
-    this.value = value;
-    this.next = null;
-  }
-}
-
-class LinkedList {
-  constructor() {
-    this.head = null;
-  }
-
-  add(value) {
-    const newNode = new Node(value);
-    if (!this.head) {
-      this.head = newNode;
-    } else {
-      let current = this.head;
-      while (current.next) {
-        current = current.next;
-      }
-      current.next = newNode;
-    }
-  }
-}
-
-const list = new LinkedList();
-list.add('meta');
-list.add('instagram');
-list.add('reels');`,
-
-          // Option 2: Incorrect - Uses arrays instead of linked list
-          `class Node {
-  constructor(value) {
-    this.value = value;
-  }
-}
-
-class LinkedList {
-  constructor() {
-    this.head = null;
-  }
-
-  add(value) {
-    const newNode = new Node(value);
-    if (!this.head) {
-      this.head = newNode;
-    } else {
-      let current = this.head;
-      while (current.next) {
-        current = current.next;
-      }
-      current.next = newNode;
-    }
-  }
-}
-
-const list = new LinkedList();
-list.add('reels');
-list.add('instagram');
-list.add('meta');`,
-
-          // Option 3: Incorrect - Missing `next` pointer in Node class
-          `class Node {
-  constructor(value) {
-    this.value = value;
-  }
-}
-
-class LinkedList {
-  constructor() {
-    this.head = null;
-  }
-
-  add(value) {
-    const newNode = new Node(value);
-    if (!this.head) {
-      this.head = newNode;
-    } else {
-      let current = this.head;
-      while (current.next) {
-        current = current.next;
-      }
-      current.next = newNode;
-    }
-  }
-}
-
-const list = new LinkedList();
-list.add('meta');
-list.add('instagram');
-list.add('reels');`,
-
-          // Option 4: Incorrect - Circular linked list without terminating
-          `class Node {
-  constructor(value) {
-    this.value = value;
-    this.next = null;
-  }
-}
-
-class LinkedList {
-  constructor() {
-    this.head = null;
-  }
-
-  add(value) {
-    const newNode = new Node(value);
-    if (!this.head) {
-      this.head = newNode;
-      newNode.next = this.head; 
-    } else {
-      let current = this.head;
-      while (current.next) {
-        current = current.next;
-      }
-      current.next = newNode;
-      newNode.next = this.head; 
-    }
-  }
-}
-
-const list = new LinkedList();
-list.add('meta');
-list.add('instagram');
-list.add('reels');`,
-        ],
-        answer: `class Node {
-  constructor(value) {
-    this.value = value;
-    this.next = null;
-  }
-}
-
-class LinkedList {
-  constructor() {
-    this.head = null;
-  }
-
-  add(value) {
-    const newNode = new Node(value);
-    if (!this.head) {
-      this.head = newNode;
-    } else {
-      let current = this.head;
-      while (current.next) {
-        current = current.next;
-      }
-      current.next = newNode;
-    }
-  }
-}
-
-const list = new LinkedList();
-list.add('meta');
-list.add('instagram');
-list.add('reels');`,
-      },
-    },
-    {
-      group: "6",
-      title: "Practical Linked List Application",
-      description: "Apply the LinkedList class to a real-world scenario.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write the code to create a linked list of Google's company departments and traverse through it.",
-      },
-    },
-    {
-      group: "6",
-      title: "Traversing a Linked List",
-      description:
-        "Implement a method to traverse a linked list and return the last item.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write a method in the LinkedList class that traverses the list and returns the last item.",
-      },
-    },
-    {
-      group: "6",
-      title: "Linked List Class Implementation",
-      description:
-        "Implement the LinkedList and ListItem classes in JavaScript.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which method would you use to add a new item to the end of a linked list?",
-        options: ["addAtIndex()", "append()", "insert()", "push()", "create()"],
-        answer: "append()",
-      },
-    },
-
-    {
-      group: "6",
-      title: "Reversing a Linked List",
-      description: "Reverse the direction of a linked list.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "What is the time complexity of reversing a linked list?",
-        options: ["O(1)", "O(log n)", "O(n)", "O(n^2)", "O(n log n)", "O(2^n)"],
-        answer: "O(n)",
-      },
-    },
-    {
-      group: "6",
-      title: "Depth-First Search Algorithm (Recursion)",
-      description:
-        "Understand and implement a depth-first search algorithm using recursion.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps with drag-and-drop to correctly implement a depth-first search algorithm using recursion.",
-        options: [
-          "Start at the root node",
-          "Mark the current node as visited",
-          "Process the node (e.g., print or store its value)",
-          "Recursively call the DFS function on each unvisited neighbor",
-          "Backtrack once all neighbors are visited",
-          "Repeat until all nodes are visited",
-        ],
-        answer: [
-          "Start at the root node",
-          "Mark the current node as visited",
-          "Process the node (e.g., print or store its value)",
-          "Recursively call the DFS function on each unvisited neighbor",
-          "Backtrack once all neighbors are visited",
-          "Repeat until all nodes are visited",
-        ],
-      },
-    },
-    {
-      group: "6",
-      title: "Creating a Tree Structure",
-      description:
-        "Build a simple tree structure to practice depth-first search.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write the JavaScript code to create the following tree structure that's 3 levels deep with Alphabet and Meta's companies.",
-      },
-    },
-
-    {
-      group: "6",
-      title: "Understanding Depth-First and Breadth-First Search",
-      description:
-        "Learn the differences between depth-first search and breadth-first search.",
-      isText: true,
-      question: {
-        questionText:
-          "Explain the difference between depth-first search and breadth-first search algorithms.",
-      },
-    },
-    {
-      group: "6",
-      title: "Implementing Depth-First Search with Recursion",
-      description:
-        "Complete the implementation of a depth-first search (DFS) using recursion to traverse a binary tree.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which of the following code snippets correctly implements DFS using recursion on a binary tree in JavaScript?",
-        options: [
-          // Option 1: Correct DFS implementation with recursion (pre-order traversal)
-
-          // Option 2: Incorrect - Missing the base case check for null nodes
-          `class TreeNode {
-    constructor(value) {
-      this.value = value;
-      this.left = null;
-      this.right = null;
-    }
-  }
-
-  function dfs(node) {
-    console.log(node.value);
-    dfs(node.left);
-    dfs(node.right);
-  }
-
-  const root = new TreeNode(1);
-  root.left = new TreeNode(2);
-  root.right = new TreeNode(3);
-  root.left.left = new TreeNode(4);
-  root.left.right = new TreeNode(5);
-  dfs(root);`,
-
-          // Option 3: Incorrect - Swapped traversal order (in-order instead of pre-order)
-          `class TreeNode {
-    constructor(value) {
-      this.value = value;
-      this.left = null;
-      this.right = null;
-    }
-  }
-
-  function dfs(node) {
-    if (node === null) {
-      return;
-    }
-    dfs(node.left);
-    console.log(node.value);
-    dfs(node.right);
-  }
-
-  const root = new TreeNode(1);
-  root.left = new TreeNode(2);
-  root.right = new TreeNode(3);
-  root.left.left = new TreeNode(4);
-  root.left.right = new TreeNode(5);
-  dfs(root);`,
-
-          // Option 4: Incorrect - Infinite loop due to incorrect recursive call
-          `class TreeNode {
-    constructor(value) {
-      this.value = value;
-      this.left = null;
-      this.right = null;
-    }
-  }
-
-  function dfs(node) {
-    if (node === null) {
-      return;
-    }
-    console.log(node.value);
-    dfs(node);
-  }
-
-  const root = new TreeNode(1);
-  root.left = new TreeNode(2);
-  root.right = new TreeNode(3);
-  root.left.left = new TreeNode(4);
-  root.left.right = new TreeNode(5);
-  dfs(root);`,
-          `class TreeNode {
-    constructor(value) {
-      this.value = value;
-      this.left = null;
-      this.right = null;
-    }
-  }
-
-  function dfs(node) {
-    if (node === null) {
-      return;
-    }
-    console.log(node.value);
-    dfs(node.left);
-    dfs(node.right);
-  }
-
-  const root = new TreeNode(1);
-  root.left = new TreeNode(2);
-  root.right = new TreeNode(3);
-  root.left.left = new TreeNode(4);
-  root.left.right = new TreeNode(5);
-  dfs(root);`,
-        ],
-        answer: `class TreeNode {
-    constructor(value) {
-      this.value = value;
-      this.left = null;
-      this.right = null;
-    }
-  }
-
-  function dfs(node) {
-    if (node === null) {
-      return;
-    }
-    console.log(node.value);
-    dfs(node.left);
-    dfs(node.right);
-  }
-
-  const root = new TreeNode(1);
-  root.left = new TreeNode(2);
-  root.right = new TreeNode(3);
-  root.left.left = new TreeNode(4);
-  root.left.right = new TreeNode(5);
-  dfs(root);`,
-      },
-    },
-
-    {
-      group: "6",
-      title: "Algorithm Optimization",
-      description:
-        "Explore ways to optimize algorithms for better performance.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write an optimized version of the bubble sort algorithm in JavaScript without using recursion.",
-      },
-    },
-
-    {
-      group: "6",
-      title: "Exploring the N-Queens Problem",
-      description: "Understand the N-Queens problem and its complexity.",
-      isText: true,
-      question: {
-        questionText:
-          "What is the N-Queens problem, and why is it considered complex?",
-      },
-    },
-    {
-      group: "6",
-      title: "Implementing Backtracking",
-      description: "Implement a backtracking algorithm to solve a problem.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps with drag-and-drop to implement backtracking for a 4x4 N-Queens problem.",
-        options: [
-          "Start with an empty board",
-          "Place a queen in the current row",
-          "Check if it's safe to place the queen",
-          "If safe, move to the next row",
-          "If not safe, try the next column in the current row",
-          "If all columns are unsafe, backtrack to the previous row",
-          "If the board is fully filled with safe placements, return the solution",
-          "If the previous row has no safe columns left, backtrack further",
-          "Continue this process until all possible solutions are found",
-        ],
-        answer: [
-          "Start with an empty board",
-          "Place a queen in the current row",
-          "Check if it's safe to place the queen",
-          "If safe, move to the next row",
-          "If not safe, try the next column in the current row",
-          "If all columns are unsafe, backtrack to the previous row",
-          "If the previous row has no safe columns left, backtrack further",
-          "If the board is fully filled with safe placements, return the solution",
-          "Continue this process until all possible solutions are found",
-        ],
-      },
-    },
-    {
-      group: "6",
-      title: "Implementing Backtracking for 4x4 N-Queens",
-      description:
-        "Implement a backtracking algorithm to solve the 4x4 N-Queens problem.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write the code to implement backtracking for solving the 4x4 N-Queens problem in JavaScript.",
-      },
-    },
-    {
-      group: "6",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [112, 132], // Indices of steps to review
       },
     },
   ],
@@ -5172,410 +6565,6 @@ console.log(arr);
         range: [91, 110],
       },
     },
-    {
-      group: "6",
-      title: "Introducción a Estructuras de Datos y Algoritmos",
-      description:
-        "Comprende la importancia y los desafíos de aprender estructuras de datos y algoritmos.",
-      isText: true,
-      question: {
-        questionText:
-          "¿Por qué las estructuras de datos y los algoritmos suelen alejar a las personas de la informática?",
-      },
-    },
-    {
-      group: "6",
-      title: "Lenguajes de Programación y Tecnología de Autocorrección",
-      description:
-        "Explora cómo funcionan los lenguajes de programación y cómo las computadoras entienden el código.",
-      isCode: true,
-      question: {
-        questionText:
-          "Escribe un programa simple, sin usar bibliotecas, que demuestre cómo la tecnología de autocorrección puede identificar y corregir una palabra mal escrita.",
-      },
-    },
-    {
-      group: "6",
-      title: "Tokens en el Código",
-      description:
-        "Descompón el código en tokens para entender cómo las computadoras interpretan la información.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "¿Cuál de los siguientes es un ejemplo de un token en un lenguaje de programación?",
-        options: [
-          "Una función completa",
-          "Un solo carácter como ';'",
-          "Una definición de variable como 'let manzanas = 10'",
-          "Un bloque de código HTML",
-          "Un objeto definido por 'class Object { ... }'",
-          "Una biblioteca de JavaScript",
-        ],
-        answer: "Un solo carácter como ';'",
-      },
-    },
-    {
-      group: "6",
-      title: "Descomponiendo Cadenas en Caracteres",
-      description:
-        "Comprende cómo se descomponen las cadenas en caracteres y luego en código máquina.",
-      isCode: true,
-      question: {
-        questionText:
-          "Escribe el código para descomponer la cadena 'Kendrick' en un array y luego en un mapeo de objetos.",
-      },
-    },
-    {
-      group: "6",
-      title: "Comprendiendo las Estructuras de Datos",
-      description:
-        "Convierte una cadena en un array de objetos clave-valor que asignen caracteres a sus códigos ASCII.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Convierte la cadena 'Kendrick' en un array de objetos clave-valor donde cada carácter se asigne a su código ASCII.",
-        options: [
-          "{ 'K': 75 }",
-          "{ 'e': 101 }",
-          "{ 'n': 110 }",
-          "{ 'd': 100 }",
-          "{ 'r': 114 }",
-          "{ 'i': 105 }",
-          "{ 'c': 99 }",
-          "{ 'k': 107 }",
-        ],
-        answer: [
-          "{ 'K': 75 }",
-          "{ 'e': 101 }",
-          "{ 'n': 110 }",
-          "{ 'd': 100 }",
-          "{ 'r': 114 }",
-          "{ 'i': 105 }",
-          "{ 'c': 99 }",
-          "{ 'k': 107 }",
-        ],
-      },
-    },
-    {
-      group: "6",
-      title: "Conversión Binaria",
-      description: "Convierte caracteres a su representación binaria.",
-      isCode: true,
-      question: {
-        questionText:
-          "Convierte el mapeo de los códigos ASCII que representan 'Kendrick' en un mapeo de código binario.",
-      },
-    },
-    {
-      group: "6",
-      title: "Comprendiendo las Estructuras de Datos",
-      description:
-        "Aprende cómo las estructuras de datos almacenan y referencian información.",
-      isText: true,
-      question: {
-        questionText:
-          "¿Por qué es importante entender cómo las computadoras reservan espacio y crean direcciones para referenciar información? ¿Cuáles son algunos ejemplos en el mundo real de esto a gran escala?",
-      },
-    },
-    {
-      group: "6",
-      title: "Introducción a Listas Enlazadas",
-      description:
-        "Aprende sobre los conceptos básicos de las listas enlazadas.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "¿Cuál de las siguientes es una característica de las listas enlazadas?",
-        options: [
-          "Arreglos de tamaño fijo",
-          "Asignación dinámica de memoria",
-          "Acceso en tiempo constante a los elementos",
-          "Los datos se almacenan en memoria contigua",
-        ],
-        answer: "Asignación dinámica de memoria",
-      },
-    },
-    {
-      group: "6",
-      title: "Construyendo una Lista Enlazada",
-      description:
-        "Construye una lista enlazada simple en JavaScript con los valores 'meta', 'instagram', 'reels'.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "¿Cuál de los siguientes fragmentos de código crea correctamente una lista enlazada con los valores 'meta', 'instagram' y 'reels' en JavaScript?",
-        options: [
-          // Opción 1: Implementación correcta de lista enlazada
-          `class Node {
-            constructor(value) {
-              this.value = value;
-              this.next = null;
-            }
-          }
-          
-          class LinkedList {
-            constructor() {
-              this.head = null;
-            }
-    
-            add(value) {
-              const newNode = new Node(value);
-              if (!this.head) {
-                this.head = newNode;
-              } else {
-                let current = this.head;
-                while (current.next) {
-                  current = current.next;
-                }
-                current.next = newNode;
-              }
-            }
-          }
-    
-          const list = new LinkedList();
-          list.add('meta');
-          list.add('instagram');
-          list.add('reels');`,
-        ],
-        answer: `class Node {
-          constructor(value) {
-            this.value = value;
-            this.next = null;
-          }
-        }
-    
-        class LinkedList {
-          constructor() {
-            this.head = null;
-          }
-    
-          add(value) {
-            const newNode = new Node(value);
-            if (!this.head) {
-              this.head = newNode;
-            } else {
-              let current = this.head;
-              while (current.next) {
-                current = current.next;
-              }
-              current.next = newNode;
-            }
-          }
-        }
-    
-        const list = new LinkedList();
-        list.add('meta');
-        list.add('instagram');
-        list.add('reels');`,
-      },
-    },
-    {
-      group: "6",
-      title: "Aplicación Práctica de una Lista Enlazada",
-      description: "Aplica la clase LinkedList a un escenario del mundo real.",
-      isCode: true,
-      question: {
-        questionText:
-          "Escribe el código para crear una lista enlazada con los departamentos de la empresa Google y recórrela.",
-      },
-    },
-    {
-      group: "6",
-      title: "Recorriendo una Lista Enlazada",
-      description:
-        "Implementa un método para recorrer una lista enlazada y devolver el último elemento.",
-      isCode: true,
-      question: {
-        questionText:
-          "Escribe un método en la clase LinkedList que recorra la lista y devuelva el último elemento.",
-      },
-    },
-    {
-      group: "6",
-      title: "Implementación de la Clase Lista Enlazada",
-      description: "Implementa las clases LinkedList y ListItem en JavaScript.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "¿Qué método usarías para agregar un nuevo elemento al final de una lista enlazada?",
-        options: ["addAtIndex()", "append()", "insert()", "push()", "create()"],
-        answer: "append()",
-      },
-    },
-    {
-      group: "6",
-      title: "Invertir una Lista Enlazada",
-      description: "Invierte la dirección de una lista enlazada.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "¿Cuál es la complejidad temporal de invertir una lista enlazada?",
-        options: ["O(1)", "O(log n)", "O(n)", "O(n^2)", "O(n log n)", "O(2^n)"],
-        answer: "O(n)",
-      },
-    },
-    {
-      group: "6",
-      title: "Algoritmo de Búsqueda en Profundidad (Recursión)",
-      description:
-        "Entiende e implementa un algoritmo de búsqueda en profundidad usando recursión.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Ordena los pasos arrastrando y soltando para implementar correctamente un algoritmo de búsqueda en profundidad usando recursión.",
-        options: [
-          "Comienza en el nodo raíz",
-          "Marca el nodo actual como visitado",
-          "Procesa el nodo (por ejemplo, imprime o almacena su valor)",
-          "Llama recursivamente a la función DFS en cada vecino no visitado",
-          "Retrocede una vez que todos los vecinos hayan sido visitados",
-          "Repite hasta que todos los nodos hayan sido visitados",
-        ],
-        answer: [
-          "Comienza en el nodo raíz",
-          "Marca el nodo actual como visitado",
-          "Procesa el nodo (por ejemplo, imprime o almacena su valor)",
-          "Llama recursivamente a la función DFS en cada vecino no visitado",
-          "Retrocede una vez que todos los vecinos hayan sido visitados",
-          "Repite hasta que todos los nodos hayan sido visitados",
-        ],
-      },
-    },
-    {
-      group: "6",
-      title: "Creando una Estructura de Árbol",
-      description:
-        "Construye una estructura de árbol simple para practicar la búsqueda en profundidad.",
-      isCode: true,
-      question: {
-        questionText:
-          "Escribe el código en JavaScript para crear la siguiente estructura de árbol con 3 niveles de profundidad, con las empresas Alphabet y Meta.",
-      },
-    },
-    {
-      group: "6",
-      title: "Entendiendo la Búsqueda en Profundidad y en Anchura",
-      description:
-        "Aprende las diferencias entre los algoritmos de búsqueda en profundidad y en anchura.",
-      isText: true,
-      question: {
-        questionText:
-          "Explica la diferencia entre los algoritmos de búsqueda en profundidad y en anchura.",
-      },
-    },
-    {
-      group: "6",
-      title: "Implementando Búsqueda en Profundidad con Recursión",
-      description:
-        "Completa la implementación de una búsqueda en profundidad (DFS) usando recursión para recorrer un árbol binario.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "¿Cuál de los siguientes fragmentos de código implementa correctamente DFS usando recursión en un árbol binario en JavaScript?",
-        options: [
-          // Opción correcta de DFS con recursión (recorrido preorden)
-        ],
-        answer: `class TreeNode {
-          constructor(value) {
-            this.value = value;
-            this.left = null;
-            this.right = null;
-          }
-        }
-    
-        function dfs(node) {
-          if (node === null) {
-            return;
-          }
-          console.log(node.value);
-          dfs(node.left);
-          dfs(node.right);
-        }
-    
-        const root = new TreeNode(1);
-        root.left = new TreeNode(2);
-        root.right = new TreeNode(3);
-        root.left.left = new TreeNode(4);
-        root.left.right = new TreeNode(5);
-        dfs(root);`,
-      },
-    },
-    {
-      group: "6",
-      title: "Optimización de Algoritmos",
-      description:
-        "Explora formas de optimizar algoritmos para un mejor rendimiento.",
-      isCode: true,
-      question: {
-        questionText:
-          "Escribe una versión optimizada del algoritmo de ordenamiento de burbuja en JavaScript sin usar recursión.",
-      },
-    },
-    {
-      group: "6",
-      title: "Explorando el Problema de las N-Reinas",
-      description: "Entiende el problema de las N-Reinas y su complejidad.",
-      isText: true,
-      question: {
-        questionText:
-          "¿Qué es el problema de las N-Reinas y por qué se considera complejo?",
-      },
-    },
-    {
-      group: "6",
-      title: "Implementando Algoritmo de Retroceso",
-      description:
-        "Implementa un algoritmo de retroceso para resolver un problema.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Ordena los pasos arrastrando y soltando para implementar retroceso para un problema de N-Reinas en un tablero de 4x4.",
-        options: [
-          "Comienza con un tablero vacío",
-          "Coloca una reina en la fila actual",
-          "Verifica si es seguro colocar la reina",
-          "Si es seguro, pasa a la siguiente fila",
-          "Si no es seguro, intenta la siguiente columna en la fila actual",
-          "Si todas las columnas son inseguras, retrocede a la fila anterior",
-          "Si la fila anterior no tiene columnas seguras, retrocede más",
-          "Si el tablero está lleno de colocaciones seguras, devuelve la solución",
-          "Continúa este proceso hasta encontrar todas las soluciones posibles",
-        ],
-        answer: [
-          "Comienza con un tablero vacío",
-          "Coloca una reina en la fila actual",
-          "Verifica si es seguro colocar la reina",
-          "Si es seguro, pasa a la siguiente fila",
-          "Si no es seguro, intenta la siguiente columna en la fila actual",
-          "Si todas las columnas son inseguras, retrocede a la fila anterior",
-          "Si la fila anterior no tiene columnas seguras, retrocede más",
-          "Si el tablero está lleno de colocaciones seguras, devuelve la solución",
-          "Continúa este proceso hasta encontrar todas las soluciones posibles",
-        ],
-      },
-    },
-    {
-      group: "6",
-      title: "Implementando Retroceso para N-Reinas de 4x4",
-      description:
-        "Implementa un algoritmo de retroceso para resolver el problema de N-Reinas en un tablero de 4x4.",
-      isCode: true,
-      question: {
-        questionText:
-          "Escribe el código para implementar retroceso para resolver el problema de N-Reinas de 4x4 en JavaScript.",
-      },
-    },
-    {
-      group: "6",
-      title: "Revisión con Conversación de IA",
-      isConversationReview: true,
-      description: "Revisa los temas que has contestado.",
-      question: {
-        questionText:
-          "Hablemos sobre las preguntas en las que hemos trabajado hasta ahora.",
-        range: [112, 132],
-      },
-    },
   ],
 
   "py-en": [
@@ -7533,425 +8522,6 @@ doc_ref.delete()`,
         range: [91, 110],
       },
     },
-    // 1
-    {
-      group: "6",
-      title: "Introduction to Data Structures and Algorithms",
-      description:
-        "Understand the importance and challenges of learning data structures and algorithms.",
-      isText: true,
-      question: {
-        questionText:
-          "Why do data structures and algorithms often push people away from computer science?",
-      },
-    },
-    // 2
-    {
-      group: "6",
-      title: "Programming Languages and Autocorrect Technology",
-      description:
-        "Explore how programming languages work and how computers understand code.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write a simple Python program, without any external libraries, to demonstrate how autocorrect might identify and correct a misspelled word.",
-      },
-    },
-    // 3
-    {
-      group: "6",
-      title: "Tokens in Code",
-      description:
-        "Break down code into tokens to understand how computers interpret information.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which of the following is an example of a token in a programming language?",
-        options: [
-          "An entire function",
-          "A single character like ':'",
-          "A variable definition like `x = 10`",
-          "A block of HTML code",
-          "A Python module",
-          "A library imported with `import`",
-        ],
-        answer: "A single character like ':'",
-      },
-    },
-    // 4
-    {
-      group: "6",
-      title: "Breaking Down Strings into Characters",
-      description:
-        "Understand how strings are broken down into characters and further into mappings.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write the Python code to break down the string `'Kendrick'` into a list of characters and then into a dictionary mapping each character to its position in the string.",
-      },
-    },
-    // 5
-    {
-      group: "6",
-      title: "Understanding Data Structures",
-      description:
-        "Convert a string into a list of key-value pair dictionaries that map characters to their ASCII codes.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Convert the string `'Kendrick'` into a list of dictionaries where each character maps to its ASCII code.",
-        options: [
-          `{'K': 75}`,
-          `{'e': 101}`,
-          `{'n': 110}`,
-          `{'d': 100}`,
-          `{'r': 114}`,
-          `{'i': 105}`,
-          `{'c': 99}`,
-          `{'k': 107}`,
-        ],
-        answer: [
-          `{'K': 75}`,
-          `{'e': 101}`,
-          `{'n': 110}`,
-          `{'d': 100}`,
-          `{'r': 114}`,
-          `{'i': 105}`,
-          `{'c': 99}`,
-          `{'k': 107}`,
-        ],
-      },
-    },
-    // 6
-    {
-      group: "6",
-      title: "Binary Conversion",
-      description: "Convert characters to their binary representation.",
-      isCode: true,
-      question: {
-        questionText:
-          "Convert the dictionary mapping of ASCII codes for `'Kendrick'` into a mapping of binary strings.",
-      },
-    },
-    // 7
-    {
-      group: "6",
-      title: "Understanding Data Structures",
-      description: "Learn how data structures store and reference information.",
-      isText: true,
-      question: {
-        questionText:
-          "Why is it important to understand how computers reserve space and create addresses to reference information? What are some real-world examples at scale?",
-      },
-    },
-    // 8
-    {
-      group: "6",
-      title: "Introduction to Linked Lists",
-      description: "Learn about the basic concepts of linked lists.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which of the following is a characteristic of linked lists?",
-        options: [
-          "Fixed-size arrays",
-          "Dynamic memory allocation",
-          "Constant time random access",
-          "Elements stored in contiguous memory",
-        ],
-        answer: "Dynamic memory allocation",
-      },
-    },
-    // 9
-    {
-      group: "6",
-      title: "Building a Linked List",
-      description:
-        "Construct a simple linked list in Python with the values 'meta', 'instagram', 'reels'.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which of the following code snippets correctly creates a linked list with 'meta', 'instagram', and 'reels' in Python?",
-        options: [
-          `class Node:
-    def __init__(self, value):
-        self.value = value
-        self.next = None
-
-class LinkedList:
-    def __init__(self):
-        self.head = None
-
-    def add(self, value):
-        node = Node(value)
-        if not self.head:
-            self.head = node
-        else:
-            curr = self.head
-            while curr.next:
-                curr = curr.next
-            curr.next = node
-
-lst = LinkedList()
-lst.add('meta')
-lst.add('instagram')
-lst.add('reels')`,
-          `# Uses Python list instead of linked list
-lst = ['meta', 'instagram', 'reels']`,
-          `class Node:
-    def __init__(self, value):
-        self.value = value
-
-class LinkedList:
-    def __init__(self):
-        self.head = None`,
-          `# Circular linked list implementation (incorrect for this task)`,
-        ],
-        answer: `class Node:
-    def __init__(self, value):
-        self.value = value
-        self.next = None
-
-class LinkedList:
-    def __init__(self):
-        self.head = None
-
-    def add(self, value):
-        node = Node(value)
-        if not self.head:
-            self.head = node
-        else:
-            curr = self.head
-            while curr.next:
-                curr = curr.next
-            curr.next = node
-
-lst = LinkedList()
-lst.add('meta')
-lst.add('instagram')
-lst.add('reels')`,
-      },
-    },
-    // 10
-    {
-      group: "6",
-      title: "Practical Linked List Application",
-      description: "Apply the LinkedList class to a real-world scenario.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write Python code to create a linked list of Google's departments (e.g., 'Search', 'Ads', 'Cloud') and print each value.",
-      },
-    },
-    // 11
-    {
-      group: "6",
-      title: "Traversing a Linked List",
-      description:
-        "Implement a method to traverse a linked list and return the last item.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write a method in the LinkedList class that traverses the list and returns the last node's value.",
-      },
-    },
-    // 12
-    {
-      group: "6",
-      title: "Linked List Class Implementation",
-      description: "Implement the LinkedList and Node classes in Python.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which method name is most Pythonic to add a new item to the end of a linked list?",
-        options: ["add_at_index", "append", "insert", "push", "create"],
-        answer: "append",
-      },
-    },
-    // 13
-    {
-      group: "6",
-      title: "Reversing a Linked List",
-      description: "Reverse the direction of a linked list.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "What is the time complexity of reversing a linked list?",
-        options: ["O(1)", "O(log n)", "O(n)", "O(n²)", "O(n log n)", "O(2ⁿ)"],
-        answer: "O(n)",
-      },
-    },
-    // 14
-    {
-      group: "6",
-      title: "Depth-First Search Algorithm (Recursion)",
-      description:
-        "Understand and implement a depth-first search algorithm using recursion.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps to implement a recursive DFS on a graph in Python.",
-        options: [
-          "Start at the root node",
-          "Mark the current node as visited",
-          "Process the node (e.g., print or store its value)",
-          "Recursively visit each unvisited neighbor",
-          "Backtrack once all neighbors are visited",
-          "Repeat until all nodes are visited",
-        ],
-        answer: [
-          "Start at the root node",
-          "Mark the current node as visited",
-          "Process the node (e.g., print or store its value)",
-          "Recursively visit each unvisited neighbor",
-          "Backtrack once all neighbors are visited",
-          "Repeat until all nodes are visited",
-        ],
-      },
-    },
-    // 15
-    {
-      group: "6",
-      title: "Creating a Tree Structure",
-      description:
-        "Build a simple tree structure to practice depth-first search.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write Python code to create a binary tree three levels deep representing company divisions.",
-      },
-    },
-    // 16
-    {
-      group: "6",
-      title: "Understanding Depth-First and Breadth-First Search",
-      description:
-        "Learn the differences between depth-first search and breadth-first search.",
-      isText: true,
-      question: {
-        questionText: "Explain the difference between DFS and BFS algorithms.",
-      },
-    },
-    // 17
-    {
-      group: "6",
-      title: "Implementing Depth-First Search with Recursion",
-      description:
-        "Complete the implementation of DFS using recursion to traverse a binary tree.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which Python snippet correctly implements pre-order DFS on a binary tree?",
-        options: [
-          `class Node:
-    def __init__(self, value):
-        self.value = value
-        self.left = None
-        self.right = None
-
-def dfs(node):
-    if not node:
-        return
-    print(node.value)
-    dfs(node.left)
-    dfs(node.right)
-
-# build tree...
-dfs(root)`,
-        ],
-        answer: `class Node:
-    def __init__(self, value):
-        self.value = value
-        self.left = None
-        self.right = None
-
-def dfs(node):
-    if not node:
-        return
-    print(node.value)
-    dfs(node.left)
-    dfs(node.right)
-
-# build tree...
-dfs(root)`,
-      },
-    },
-    // 18
-    {
-      group: "6",
-      title: "Algorithm Optimization",
-      description:
-        "Explore ways to optimize algorithms for better performance.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write an optimized Python implementation of bubble sort that stops early if no swaps occur.",
-      },
-    },
-    // 19
-    {
-      group: "6",
-      title: "Exploring the N-Queens Problem",
-      description: "Understand the N-Queens problem and its complexity.",
-      isText: true,
-      question: {
-        questionText:
-          "What is the N-Queens problem, and why is it considered complex?",
-      },
-    },
-    // 20
-    {
-      group: "6",
-      title: "Implementing Backtracking",
-      description: "Implement a backtracking algorithm to solve a problem.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps to apply backtracking for the 4×4 N-Queens problem in Python.",
-        options: [
-          "Start with an empty board",
-          "Place a queen in the current row",
-          "Check if placement is safe",
-          "If safe, move to the next row",
-          "If not, try next column",
-          "If no columns left, backtrack up",
-          "If board full, record solution",
-          "Continue until all solutions found",
-        ],
-        answer: [
-          "Start with an empty board",
-          "Place a queen in the current row",
-          "Check if placement is safe",
-          "If safe, move to the next row",
-          "If not, try next column",
-          "If no columns left, backtrack up",
-          "If board full, record solution",
-          "Continue until all solutions found",
-        ],
-      },
-    },
-    // 21
-    {
-      group: "6",
-      title: "Implementing Backtracking for 4×4 N-Queens",
-      description:
-        "Implement a backtracking algorithm to solve the 4×4 N-Queens problem.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write Python code to solve the 4×4 N-Queens problem using backtracking.",
-      },
-    },
-    // 22
-    {
-      group: "6",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [112, 132],
-      },
-    },
   ],
 
   ["swift-en"]: [
@@ -9897,404 +10467,6 @@ doc.delete()`,
       question: {
         questionText: "Let's chat about the questions we've worked on so far.",
         range: [91, 110],
-      },
-    },
-    // 1
-    {
-      group: "6",
-      title: "Introduction to Data Structures and Algorithms",
-      description:
-        "Understand the importance and challenges of learning data structures and algorithms.",
-      isText: true,
-      question: {
-        questionText:
-          "Why do data structures and algorithms often push people away from computer science?",
-      },
-    },
-    // 2
-    {
-      group: "6",
-      title: "Programming Languages and Autocorrect Technology",
-      description:
-        "Explore how programming languages work and how apps might implement autocorrect.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write a simple Swift program, without any external libraries, to demonstrate how autocorrect might identify and correct a misspelled word.",
-      },
-    },
-    // 3
-    {
-      group: "6",
-      title: "Tokens in Code",
-      description:
-        "Break down code into tokens to understand how compilers interpret information.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which of the following is an example of a token in a programming language?",
-        options: [
-          "An entire function",
-          "A single character like ':'",
-          "A variable declaration like `var apples = 10`",
-          "A block of HTML code",
-          "A Swift struct definition",
-          "A Swift module",
-        ],
-        answer: "A single character like ':'",
-      },
-    },
-    // 4
-    {
-      group: "6",
-      title: "Breaking Down Strings into Characters",
-      description:
-        "Understand how strings are broken down into characters and mapped.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write the Swift code to break down the string “Kendrick” into an array of characters and then into a dictionary mapping each character to its index.",
-      },
-    },
-    // 5
-    {
-      group: "6",
-      title: "Understanding Data Structures",
-      description:
-        "Convert a string into an array of key-value pair dictionaries that map characters to their ASCII codes.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Convert the string “Kendrick” into an array of dictionaries where each character maps to its ASCII code.",
-        options: [
-          `["K": 75]`,
-          `["e": 101]`,
-          `["n": 110]`,
-          `["d": 100]`,
-          `["r": 114]`,
-          `["i": 105]`,
-          `["c": 99]`,
-          `["k": 107]`,
-        ],
-        answer: `["K": 75], ["e": 101], ["n": 110], ["d": 100], ["r": 114], ["i": 105], ["c": 99], ["k": 107]`,
-      },
-    },
-    // 6
-    {
-      group: "6",
-      title: "Binary Conversion",
-      description: "Convert characters to their binary representation.",
-      isCode: true,
-      question: {
-        questionText:
-          "Convert the dictionary mapping of ASCII codes for “Kendrick” into a dictionary mapping of binary strings in Swift.",
-      },
-    },
-    // 7
-    {
-      group: "6",
-      title: "Understanding Data Structures",
-      description:
-        "Learn how data structures reserve space and create references.",
-      isText: true,
-      question: {
-        questionText:
-          "Why is it important to understand how computers reserve space and create addresses to reference information? What are real-world examples at scale?",
-      },
-    },
-    // 8
-    {
-      group: "6",
-      title: "Introduction to Linked Lists",
-      description: "Learn about the basic concepts of linked lists.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which of the following is a characteristic of linked lists?",
-        options: [
-          "Fixed-size arrays",
-          "Dynamic memory allocation",
-          "O(1) random access",
-          "Elements in contiguous memory",
-        ],
-        answer: "Dynamic memory allocation",
-      },
-    },
-    // 9
-    {
-      group: "6",
-      title: "Building a Linked List",
-      description:
-        "Construct a simple linked list in Swift with the values “meta”, “instagram”, “reels”.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which Swift code snippet correctly creates a linked list with “meta”, “instagram”, and “reels”?",
-        options: [
-          `class Node {
-    var value: String
-    var next: Node?
-    init(_ value: String) { self.value = value }
-}
-
-class LinkedList {
-    var head: Node?
-    func add(_ val: String) {
-        let node = Node(val)
-        if head == nil { head = node }
-        else {
-            var curr = head
-            while curr?.next != nil { curr = curr?.next }
-            curr?.next = node
-        }
-    }
-}
-
-let list = LinkedList()
-list.add("meta")
-list.add("instagram")
-list.add("reels")`,
-          `// Uses Swift Array instead of linked list
-let list = ["meta", "instagram", "reels"]`,
-          `class Node {
-    var value: String
-    init(_ value: String) { self.value = value }
-}
-
-class LinkedList {
-    var head: Node?
-}`,
-          `// Circular linked list (not correct here)`,
-        ],
-        answer: `class Node {
-    var value: String
-    var next: Node?
-    init(_ value: String) { self.value = value }
-}
-
-class LinkedList {
-    var head: Node?
-    func add(_ val: String) {
-        let node = Node(val)
-        if head == nil { head = node }
-        else {
-            var curr = head
-            while curr?.next != nil { curr = curr?.next }
-            curr?.next = node
-        }
-    }
-}
-
-let list = LinkedList()
-list.add("meta")
-list.add("instagram")
-list.add("reels")`,
-      },
-    },
-    // 10
-    {
-      group: "6",
-      title: "Practical Linked List Application",
-      description: "Apply the LinkedList class to a real-world scenario.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write Swift code to create a linked list of Google’s departments (e.g., “Search”, “Ads”, “Cloud”) and print each value.",
-      },
-    },
-    // 11
-    {
-      group: "6",
-      title: "Traversing a Linked List",
-      description:
-        "Implement a method to traverse a linked list and return the last item.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write a Swift method in the LinkedList class that traverses the list and returns the last node’s value.",
-      },
-    },
-    // 12
-    {
-      group: "6",
-      title: "Linked List Class Implementation",
-      description: "Implement the LinkedList and Node classes in Swift.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which method name is most Swifty to add a new item to the end of a linked list?",
-        options: ["add(at:)", "append", "insert", "push", "create"],
-        answer: "append",
-      },
-    },
-    // 13
-    {
-      group: "6",
-      title: "Reversing a Linked List",
-      description: "Reverse the direction of a linked list.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "What is the time complexity of reversing a linked list?",
-        options: ["O(1)", "O(log n)", "O(n)", "O(n²)", "O(n log n)", "O(2ⁿ)"],
-        answer: "O(n)",
-      },
-    },
-    // 14
-    {
-      group: "6",
-      title: "Depth-First Search Algorithm (Recursion)",
-      description: "Understand and implement a DFS algorithm using recursion.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps to implement recursive DFS on a graph in Swift.",
-        options: [
-          "Start at the root node",
-          "Mark the current node as visited",
-          "Process the node (e.g., print its value)",
-          "Recursively visit each unvisited neighbor",
-          "Backtrack once all neighbors are visited",
-          "Repeat until all nodes are visited",
-        ],
-        answer:
-          "Start at the root node, Mark the current node as visited, Process the node (e.g., print its value), Recursively visit each unvisited neighbor, Backtrack once all neighbors are visited, Repeat until all nodes are visited",
-      },
-    },
-    // 15
-    {
-      group: "6",
-      title: "Creating a Tree Structure",
-      description: "Build a simple tree structure to practice DFS.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write Swift code to create a binary tree three levels deep representing company divisions.",
-      },
-    },
-    // 16
-    {
-      group: "6",
-      title: "Understanding Depth-First and Breadth-First Search",
-      description: "Learn the differences between DFS and BFS.",
-      isText: true,
-      question: {
-        questionText:
-          "Explain the difference between depth-first search and breadth-first search algorithms.",
-      },
-    },
-    // 17
-    {
-      group: "6",
-      title: "Implementing Depth-First Search with Recursion",
-      description:
-        "Complete the implementation of DFS using recursion to traverse a binary tree.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which Swift snippet correctly implements pre-order DFS on a binary tree?",
-        options: [
-          `class Node {
-    var value: Int
-    var left: Node?
-    var right: Node?
-    init(_ v: Int) { value = v }
-}
-
-func dfs(_ node: Node?) {
-    guard let n = node else { return }
-    print(n.value)
-    dfs(n.left)
-    dfs(n.right)
-}
-
-// build tree...
-dfs(root)`,
-        ],
-        answer: `class Node {
-    var value: Int
-    var left: Node?
-    var right: Node?
-    init(_ v: Int) { value = v }
-}
-
-func dfs(_ node: Node?) {
-    guard let n = node else { return }
-    print(n.value)
-    dfs(n.left)
-    dfs(n.right)
-}
-
-// build tree...
-dfs(root)`,
-      },
-    },
-    // 18
-    {
-      group: "6",
-      title: "Algorithm Optimization",
-      description:
-        "Explore ways to optimize algorithms for better performance.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write an optimized Swift implementation of bubble sort that stops early if no swaps occur.",
-      },
-    },
-    // 19
-    {
-      group: "6",
-      title: "Exploring the N-Queens Problem",
-      description: "Understand the N-Queens problem and its complexity.",
-      isText: true,
-      question: {
-        questionText:
-          "What is the N-Queens problem, and why is it considered complex?",
-      },
-    },
-    // 20
-    {
-      group: "6",
-      title: "Implementing Backtracking",
-      description: "Implement a backtracking algorithm to solve a problem.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps to apply backtracking for the 4×4 N-Queens problem in Swift.",
-        options: [
-          "Start with an empty board",
-          "Place a queen in the current row",
-          "Check if placement is safe",
-          "If safe, move to the next row",
-          "If not safe, try next column",
-          "If no columns left, backtrack up",
-          "If board full, record solution",
-          "Continue until all solutions are found",
-        ],
-        answer:
-          "Start with an empty board, Place a queen in the current row, Check if placement is safe, If safe, move to the next row, If not safe, try next column, If no columns left, backtrack up, If board full, record solution, Continue until all solutions are found",
-      },
-    },
-    // 21
-    {
-      group: "6",
-      title: "Implementing Backtracking for 4×4 N-Queens",
-      description:
-        "Implement a backtracking algorithm to solve the 4×4 N-Queens problem.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write Swift code to solve the 4×4 N-Queens problem using backtracking.",
-      },
-    },
-    // 22
-    {
-      group: "6",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [112, 132],
       },
     },
   ],
@@ -12281,422 +12453,6 @@ doc.delete();`,
         range: [91, 110],
       },
     },
-    // 1
-    {
-      group: "6",
-      title: "Introduction to Data Structures and Algorithms",
-      description:
-        "Understand the importance and challenges of learning data structures and algorithms.",
-      isText: true,
-      question: {
-        questionText:
-          "Why do data structures and algorithms often push people away from computer science?",
-      },
-    },
-    // 2
-    {
-      group: "6",
-      title: "Programming Languages and Autocorrect Technology",
-      description:
-        "Explore how programming languages work and how applications might implement autocorrect.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write a simple Java program (without external libraries) that demonstrates how autocorrect might identify and correct a misspelled word.",
-      },
-    },
-    // 3
-    {
-      group: "6",
-      title: "Tokens in Code",
-      description:
-        "Break down code into tokens to understand how compilers interpret information.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which of the following is an example of a token in a programming language?",
-        options: [
-          "An entire function",
-          "A single character like ';'",
-          "A variable declaration like `int x = 10;`",
-          "A block of HTML code",
-          "A Java class definition",
-          "A Java library",
-        ],
-        answer: "A single character like ';'",
-      },
-    },
-    // 4
-    {
-      group: "6",
-      title: "Breaking Down Strings into Characters",
-      description:
-        "Understand how strings are broken down into characters and mapped.",
-      isCode: true,
-      question: {
-        questionText:
-          'Write the Java code to break down the string "Kendrick" into a character array and then into a `Map<Character,Integer>` mapping each character to its index.',
-      },
-    },
-    // 5
-    {
-      group: "6",
-      title: "Understanding Data Structures",
-      description:
-        "Convert a string into a list of key-value pair maps that map characters to their ASCII codes.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          'Convert the string "Kendrick" into a `List<Map<Character,Integer>>` where each entry maps a character to its ASCII code.',
-        options: [
-          "{ 'K': 75 }",
-          "{ 'e': 101 }",
-          "{ 'n': 110 }",
-          "{ 'd': 100 }",
-          "{ 'r': 114 }",
-          "{ 'i': 105 }",
-          "{ 'c': 99 }",
-          "{ 'k': 107 }",
-        ],
-        answer: [
-          "{ 'K': 75 }",
-          "{ 'e': 101 }",
-          "{ 'n': 110 }",
-          "{ 'd': 100 }",
-          "{ 'r': 114 }",
-          "{ 'i': 105 }",
-          "{ 'c': 99 }",
-          "{ 'k': 107 }",
-        ],
-      },
-    },
-    // 6
-    {
-      group: "6",
-      title: "Binary Conversion",
-      description: "Convert characters to their binary representation.",
-      isCode: true,
-      question: {
-        questionText:
-          'Write Java code to take the ASCII mapping of "Kendrick" and produce a `Map<Character,String>` of binary strings using `Integer.toBinaryString(...)`.',
-      },
-    },
-    // 7
-    {
-      group: "6",
-      title: "Understanding Memory and Addresses",
-      description:
-        "Learn how data structures reserve space and reference information.",
-      isText: true,
-      question: {
-        questionText:
-          "Why is it important to understand how computers reserve space and create addresses to reference information? Give real-world examples at scale.",
-      },
-    },
-    // 8
-    {
-      group: "6",
-      title: "Introduction to Linked Lists",
-      description: "Learn about the basic concepts of linked lists in Java.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which of the following is a characteristic of linked lists?",
-        options: [
-          "Fixed-size arrays",
-          "Dynamic memory allocation",
-          "Constant-time random access",
-          "Elements stored contiguously",
-        ],
-        answer: "Dynamic memory allocation",
-      },
-    },
-    // 9
-    {
-      group: "6",
-      title: "Building a Linked List",
-      description:
-        'Construct a simple linked list in Java with the values "meta", "instagram", "reels".',
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          'Which of the following Java snippets correctly creates a linked list with "meta", "instagram", and "reels"?',
-        options: [
-          `class Node {
-    String value;
-    Node next;
-    Node(String v) { value = v; }
-}
-
-class LinkedList {
-    Node head;
-    void add(String v) {
-        Node n = new Node(v);
-        if (head == null) head = n;
-        else {
-            Node curr = head;
-            while (curr.next != null) curr = curr.next;
-            curr.next = n;
-        }
-    }
-}
-
-LinkedList list = new LinkedList();
-list.add("meta");
-list.add("instagram");
-list.add("reels");`,
-          `// Uses ArrayList instead of linked list
-List<String> list = Arrays.asList("meta","instagram","reels");`,
-          `class Node {
-    String value;
-    Node(String v) { value = v; }
-}`,
-        ],
-        answer: `class Node {
-    String value;
-    Node next;
-    Node(String v) { value = v; }
-}
-
-class LinkedList {
-    Node head;
-    void add(String v) {
-        Node n = new Node(v);
-        if (head == null) head = n;
-        else {
-            Node curr = head;
-            while (curr.next != null) curr = curr.next;
-            curr.next = n;
-        }
-    }
-}
-
-LinkedList list = new LinkedList();
-list.add("meta");
-list.add("instagram");
-list.add("reels");`,
-      },
-    },
-    // 10
-    {
-      group: "6",
-      title: "Practical Linked List Application",
-      description: "Apply the LinkedList class to a real-world scenario.",
-      isCode: true,
-      question: {
-        questionText:
-          'Write Java code to create a linked list of Google\'s departments ("Search","Ads","Cloud") and print each value.',
-      },
-    },
-    // 11
-    {
-      group: "6",
-      title: "Traversing a Linked List",
-      description:
-        "Implement a method to traverse a linked list and return the last item.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write a method `String getLast()` in your LinkedList class that traverses and returns the last node's value.",
-      },
-    },
-    // 12
-    {
-      group: "6",
-      title: "Linked List API Design",
-      description:
-        "Learn which method name is most idiomatic in Java to append elements.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which method name would you choose to add an item to the end of a linked list?",
-        options: ["addAtIndex", "append", "insert", "push", "create"],
-        answer: "append",
-      },
-    },
-    // 13
-    {
-      group: "6",
-      title: "Reversing a Linked List",
-      description: "Reverse the direction of a linked list.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "What is the time complexity of reversing a linked list?",
-        options: ["O(1)", "O(log n)", "O(n)", "O(n^2)", "O(n log n)", "O(2^n)"],
-        answer: "O(n)",
-      },
-    },
-    // 14
-    {
-      group: "6",
-      title: "Depth-First Search Algorithm (Recursion)",
-      description:
-        "Understand and implement a DFS algorithm using recursion in Java.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps to implement recursive DFS on a graph in Java.",
-        options: [
-          "Start at the root node",
-          "Mark the current node as visited",
-          "Process the node (e.g., print or store its value)",
-          "Recursively visit each unvisited neighbor",
-          "Backtrack once all neighbors are visited",
-          "Repeat until all nodes are visited",
-        ],
-        answer: [
-          "Start at the root node",
-          "Mark the current node as visited",
-          "Process the node (e.g., print or store its value)",
-          "Recursively visit each unvisited neighbor",
-          "Backtrack once all neighbors are visited",
-          "Repeat until all nodes are visited",
-        ],
-      },
-    },
-    // 15
-    {
-      group: "6",
-      title: "Creating a Tree Structure",
-      description: "Build a simple tree structure to practice DFS in Java.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write Java code to create a binary tree three levels deep representing company divisions.",
-      },
-    },
-    // 16
-    {
-      group: "6",
-      title: "Understanding DFS vs BFS",
-      description:
-        "Learn the differences between depth-first search and breadth-first search.",
-      isText: true,
-      question: {
-        questionText: "Explain the difference between DFS and BFS algorithms.",
-      },
-    },
-    // 17
-    {
-      group: "6",
-      title: "Implementing DFS with Recursion",
-      description:
-        "Complete the implementation of pre-order DFS using recursion.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which Java snippet correctly implements pre-order DFS on a binary tree?",
-        options: [
-          `class Node {
-    int value;
-    Node left, right;
-    Node(int v) { value = v; }
-}
-
-void dfs(Node node) {
-    if (node == null) return;
-    System.out.println(node.value);
-    dfs(node.left);
-    dfs(node.right);
-}
-
-// build tree...
-dfs(root);`,
-        ],
-        answer: `class Node {
-    int value;
-    Node left, right;
-    Node(int v) { value = v; }
-}
-
-void dfs(Node node) {
-    if (node == null) return;
-    System.out.println(node.value);
-    dfs(node.left);
-    dfs(node.right);
-}
-
-// build tree...
-dfs(root);`,
-      },
-    },
-    // 18
-    {
-      group: "6",
-      title: "Algorithm Optimization",
-      description:
-        "Explore ways to optimize algorithms for better performance.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write an optimized Java implementation of bubble sort that stops early if no swaps occur.",
-      },
-    },
-    // 19
-    {
-      group: "6",
-      title: "Exploring the N-Queens Problem",
-      description: "Understand the N-Queens problem and its complexity.",
-      isText: true,
-      question: {
-        questionText:
-          "What is the N-Queens problem, and why is it considered complex?",
-      },
-    },
-    // 20
-    {
-      group: "6",
-      title: "Implementing Backtracking",
-      description: "Implement a backtracking algorithm to solve a problem.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps to apply backtracking for the 4×4 N-Queens problem in Java.",
-        options: [
-          "Start with an empty board",
-          "Place a queen in the current row",
-          "Check if placement is safe",
-          "If safe, move to the next row",
-          "If not, try next column",
-          "If no columns left, backtrack up",
-          "If board full, record solution",
-          "Continue until all solutions are found",
-        ],
-        answer: [
-          "Start with an empty board",
-          "Place a queen in the current row",
-          "Check if placement is safe",
-          "If safe, move to the next row",
-          "If not, try next column",
-          "If no columns left, backtrack up",
-          "If board full, record solution",
-          "Continue until all solutions are found",
-        ],
-      },
-    },
-    // 21
-    {
-      group: "6",
-      title: "Implementing Backtracking for 4×4 N-Queens",
-      description:
-        "Implement a backtracking algorithm to solve the 4×4 N-Queens problem in Java.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write Java code to solve the 4×4 N-Queens problem using backtracking.",
-      },
-    },
-    // 22
-    {
-      group: "6",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [112, 132],
-      },
-    },
   ],
   // ['py-en']: [
 
@@ -12753,6 +12509,19 @@ export const lectureSummaries = {
     6: {},
   },
   "android-en": {
+    tutorial: {
+      videoSrc: "", //string url
+      content: <div>Hello world</div>, //jsx
+      challengeQuestion: "",
+    },
+    1: {},
+    2: {},
+    3: {},
+    4: {},
+    5: {},
+    6: {},
+  },
+  "compsci-en": {
     tutorial: {
       videoSrc: "", //string url
       content: <div>Hello world</div>, //jsx
@@ -13436,6 +13205,148 @@ export const celebrationMessages = {
     "You're unstoppable today! 🚀✨",
   ],
   "android-en": [
+    "You're doing amazing! 🎉✨",
+    "Fantastic job! Keep it up! 🚀🎈",
+    "You're crushing it! 💪😄",
+    "Awesome work! 👏🥳",
+    "Impressive progress! 🌠🙌",
+    "Way to go! 🥳🔥",
+    "Outstanding performance! 🥇👏",
+    "You're incredible! 🤩✨",
+    "Keep up the fantastic work! 🎈🙌",
+    "You've got this! 💪🎉",
+    "Bravo! 👏🎊",
+    "So proud of you! 🌟😊",
+    "Keep up the amazing effort! 🙌🔥",
+    "You're a total champion! 🏆😄",
+    "Great job, keep rocking! 🤘🎉",
+    "You're unstoppable today! 🚀💥",
+    "Absolutely fantastic! 🌟🎉",
+    "You're making waves! 🌊😄",
+    "Keep being awesome! 😎✨",
+    "Epic job! 🚀🥳",
+    "You're flying high! ✈️😊",
+    "Outstanding job! 🌟🎈",
+    "You nailed it! 🎯😄",
+    "Keep soaring! 🦅✨",
+    "You're incredible! 🤩🙌",
+    "You're on fire! 🔥🥳",
+    "Amazing job, keep it up! 🚀😄",
+    "You're thriving! 🌱😊",
+    "Extraordinary effort! 🎖️👏",
+    "Keep shining bright! ✨😄",
+    "Magnificent performance! 🌟🙌",
+    "You're unstoppable! 🚀💪",
+    "You're a powerhouse! 💥🥳",
+    "You're a true superstar! 🤩🌟",
+    "Epic performance! 🚀🎉",
+    "You're doing wonderfully! 😊👏",
+    "Great momentum! Keep it going! 🌟🚀",
+    "Keep dazzling! ✨😄",
+    "You're making magic happen! ✨🪄",
+    "You're unstoppable! 🚀🔥",
+    "Incredible progress! 🙌😄",
+    "You're phenomenal! 🌟🥳",
+    "Keep shining bright! ✨🌞",
+    "You're slaying! 🔥👏",
+    "You're positively radiant! 😊✨",
+    "You're unstoppable today! 🚀🎊",
+    "Outstanding performance! 👏😊",
+    "Keep being fabulous! 🌟🎈",
+    "You're rocking this! 🎸🥳",
+    "You're amazing! Keep going! 🌟✨",
+    "You're absolutely brilliant! 💡🎉",
+    "Keep conquering! 🏅🚀",
+    "Fantastic work! Keep soaring! ✈️🌟",
+    "You're truly impressive! 👏✨",
+    "You're extraordinary! 🌟😊",
+    "Great job! Keep thriving! 🌱🎉",
+    "You're exceptional! 🎉🌟",
+    "Keep up the awesome work! 🙌🥳",
+    "You're fantastic! ✨😄",
+    "You're truly inspirational! 🌈👏",
+    "You're absolutely smashing it! 🚀💥",
+    "You're outstanding! 🌟🎉",
+    "Keep making us proud! 😊🙌",
+    "You're truly unstoppable! 🚀🎈",
+    "You're amazing! Keep pushing! 💪🥳",
+    "You're a legend! 🏅😄",
+    "Keep lighting it up! 🔥✨",
+    "You're doing incredible! 🎉👏",
+    "You're truly spectacular! 🌠😊",
+    "Keep it going! You're doing great! 💪✨",
+    "You're wonderful! 🌟😄",
+    "You're unstoppable brilliance! 🚀✨",
+    "You're absolutely rocking it! 🎸😊",
+    "Keep reaching new heights! 🏔️🎉",
+    "You're superb! ✨🙌",
+    "You're on a fantastic roll! 🎲🥳",
+    "Keep crushing those goals! 🎯😄",
+    "You're brilliant! 💡✨",
+    "You're fantastic beyond words! 🎉👏",
+    "You're totally rocking it! 🤘😎",
+    "Keep it up, superstar! 🌟😊",
+    "You're shining bright today! ✨😄",
+    "Keep smashing it! 🚀💥",
+    "You're truly unstoppable! 🚀🎊",
+    "Outstanding effort! 🎖️✨",
+    "You're awesome, keep it going! 🎉😄",
+    "Keep breaking barriers! 🚧💪",
+    "You're extraordinary every day! 🎉😊",
+    "Keep achieving greatness! 🏆✨",
+    "You're a shining example! ✨😊",
+    "You're a total winner! 🏅😄",
+    "Keep shining, you're amazing! ✨🌞",
+    "You're absolutely crushing it! 💪🔥",
+    "You're fantastic today! 🎉😄",
+    "Keep the greatness coming! 🚀✨",
+    "You're inspirational! 🌈😊",
+    "You're lighting it up! 🔥🎈",
+    "Keep soaring high! 🦅✨",
+    "You're doing an awesome job! 🎉😊",
+    "You're unstoppable greatness! 🚀🌟",
+    "Keep going strong! 💪😄",
+    "You're absolutely remarkable! 🎖️✨",
+    "Keep being amazing! 🌟😊",
+    "You're thriving wonderfully! 🌱🎉",
+    "You're absolutely incredible! 🌠😄",
+    "Keep shining! ✨🎈",
+    "You're exceptional! 🌟👏",
+    "You're unstoppable brilliance today! 🚀😄",
+    "Keep up the excellent work! 🎉🙌",
+    "You're extraordinary! Keep going! 🌟😊",
+    "Keep pushing forward! 🚀🎉",
+    "You're making fantastic progress! 🎈😊",
+    "You're an absolute champion! 🏆😄",
+    "Keep slaying your goals! 🔥👏",
+    "You're fantastic! Keep going strong! 🎉💪",
+    "You're totally impressive! 🌟😄",
+    "Keep rocking! 🎸✨",
+    "You're absolutely magnificent! 🎉🌟",
+    "You're on a roll! Keep it up! 🎲😄",
+    "You're exceptional today! 🎉👏",
+    "Keep shining brightly! ✨😊",
+    "You're totally unstoppable! 🚀🥳",
+    "You're thriving and inspiring! 🌱😊",
+    "Keep excelling! 🎖️😄",
+    "You're doing wonderfully today! 🌟🎉",
+    "You're making it happen! 🚀✨",
+    "Keep being unstoppable! 🔥💪",
+    "You're spectacular! 🎉🌠",
+    "Keep achieving greatness! 🏆✨",
+    "You're positively radiant today! 😊✨",
+    "Keep being fantastic! 🌟😄",
+    "You're crushing everything! 💥💪",
+    "Keep up the amazing work! 🎉🙌",
+    "You're totally epic! 🚀😄",
+    "You're remarkable! 🌟👏",
+    "Keep shining, you're a star! ✨😊",
+    "You're truly magnificent! 🎉😄",
+    "You're on fire! 🔥🚀",
+    "Keep being incredible! 🌟😄",
+    "You're unstoppable today! 🚀✨",
+  ],
+  "compsci-en": [
     "You're doing amazing! 🎉✨",
     "Fantastic job! Keep it up! 🚀🎈",
     "You're crushing it! 💪😄",

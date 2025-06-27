@@ -22,6 +22,7 @@ export const TechOverview = ({ userLanguage }) => {
     "android-en": 2,
     "swift-en": 2,
     es: 1,
+    "compsci-en": 4,
   };
 
   const currentDifficulty = difficultyMap[userLanguage] || 0;
@@ -409,6 +410,58 @@ export const TechOverview = ({ userLanguage }) => {
       },
     },
 
+    /** ─────── Computer Science Track (compsci-en) ─────── */
+    "compsci-en": {
+      heading: "Why Python for Computer Science?",
+      description:
+        "Practice and learn the foundations of computer science to gain a deeper understanding of how software systems work.",
+      core: "Python, Data Structures, Algorithms, Operating Systems",
+      lists: {
+        languages: [
+          {
+            name: "Python",
+            description:
+              "High-level language used throughout the course for lists, trees, sorting, searching, graph traversals and file I/O.",
+          },
+        ],
+        frameworks: [
+          {
+            name: "Foundations of Data Structures",
+            description:
+              "Understand what data structures are, why Big-O matters, and how memory layout drives performance.",
+          },
+          {
+            name: "Linear Structures: Arrays, Lists, Stacks & Queues",
+            description:
+              "Learn the go-to ways of storing items in order and build stacks and queues while weighing time-space trade-offs.",
+          },
+          {
+            name: "Hierarchical & Associative Structures: Trees, Heaps & Hash Tables",
+            description:
+              "Organize data for fast lookups and prioritization using trees, heaps, and hash tables.",
+          },
+          {
+            name: "Core Algorithms: Sorting, Searching & Graph Traversal",
+            description:
+              "Practice the classic searching, sorting, and graph-traversal techniques that power real-world software.",
+          },
+          {
+            name: "Operating Systems Essentials",
+            description:
+              "Peek under the hood to see how processes, memory, and file I/O are managed so your programs run smoothly and securely.",
+          },
+        ],
+
+        // devTools: [
+        //   {
+        //     name: "Python REPL",
+        //     description:
+        //       "Interactive shell for stepping through your code snippets and inspecting data structures.",
+        //   },
+        // ],
+      },
+    },
+
     /** ───────────────────────── JavaScript Track – Spanish (es) ─────────────── */
     es: {
       heading: "¿Por qué JavaScript? (Recomendado)",
@@ -577,18 +630,22 @@ export const TechOverview = ({ userLanguage }) => {
           </UnorderedList>
 
           {/* Developer Tools */}
-          <Text fontWeight={"bold"} fontSize="md" mb={1}>
-            {translation[userLanguage]["languages.header.devTools"]}
-          </Text>
-          <UnorderedList display="inline-block" fontSize="md">
-            {data.lists.devTools.map((item) => (
-              <ListItem key={item} mb={3}>
-                {" "}
-                <Text>{item.name}</Text>
-                <Text fontSize="sm">{item.description}</Text>
-              </ListItem>
-            ))}
-          </UnorderedList>
+          {data.lists?.devTools ? (
+            <>
+              <Text fontWeight={"bold"} fontSize="md" mb={1}>
+                {translation[userLanguage]["languages.header.devTools"]}
+              </Text>
+              <UnorderedList display="inline-block" fontSize="md">
+                {data.lists.devTools.map((item) => (
+                  <ListItem key={item} mb={3}>
+                    {" "}
+                    <Text>{item.name}</Text>
+                    <Text fontSize="sm">{item.description}</Text>
+                  </ListItem>
+                ))}
+              </UnorderedList>
+            </>
+          ) : null}
         </Box>
       )}
     </Box>

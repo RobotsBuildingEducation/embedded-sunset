@@ -52,6 +52,7 @@ const AwardModalOnboarding = ({
       onClose={onClose}
       size="4xl"
       scrollBehavior={"inside"}
+      closeOnOverlayClick={false}
     >
       <ModalOverlay></ModalOverlay>
       <ModalContent

@@ -259,7 +259,25 @@ export const Onboarding = ({ userLanguage, setUserLanguage }) => {
   };
 
   return (
-    <Box display="flex" justifyContent="center" mt={16}>
+    <Box
+      display="flex"
+      alignItems="center"
+      flexDirection="column"
+      mt={16}
+      p={4}
+      pb={12}
+    >
+      <Button
+        variant={"ghost"}
+        backgroundColor="#fcf3eb"
+        size="sm"
+        mb={3}
+        boxShadow={"0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"}
+        onClick={handleActuallyLaunchApp}
+      >
+        Skip Account Setup
+      </Button>
+
       {step === "1" ? (
         <Box
           textAlign="center"
@@ -270,8 +288,9 @@ export const Onboarding = ({ userLanguage, setUserLanguage }) => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            // maxWidth: 600,
-            width: "100%",
+            width: "95%",
+            maxWidth: 600,
+            // width: "100%",
           }}
           spacing={4}
         >
@@ -915,6 +934,115 @@ export const Onboarding = ({ userLanguage, setUserLanguage }) => {
                             translation[userLanguage][
                               "language.android.english"
                             ],
+                          "compsci-en":
+                            translation[userLanguage][
+                              "language.compsci.english"
+                            ],
+                        }[userLanguage]
+                      }
+                    </MenuButton>
+                    <MenuList boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)">
+                      <MenuItem
+                        p={6}
+                        borderBottom="1px solid #ececec"
+                        onClick={() =>
+                          handleLanguageSelect({ target: { value: "en" } })
+                        }
+                      >
+                        {
+                          translation[userLanguage][
+                            "language.javascript.english"
+                          ]
+                        }
+                      </MenuItem>
+                      <MenuItem
+                        p={6}
+                        borderBottom="1px solid #ececec"
+                        onClick={() =>
+                          handleLanguageSelect({ target: { value: "es" } })
+                        }
+                      >
+                        {
+                          translation[userLanguage][
+                            "language.javascript.spanish"
+                          ]
+                        }
+                      </MenuItem>
+                      <MenuItem
+                        p={6}
+                        borderBottom="1px solid #ececec"
+                        onClick={() =>
+                          handleLanguageSelect({ target: { value: "py-en" } })
+                        }
+                      >
+                        {translation[userLanguage]["language.python.english"]}
+                      </MenuItem>
+                      <MenuItem
+                        p={6}
+                        borderBottom="1px solid #ececec"
+                        onClick={() =>
+                          handleLanguageSelect({
+                            target: { value: "swift-en" },
+                          })
+                        }
+                      >
+                        {translation[userLanguage]["language.swift.english"]}
+                      </MenuItem>
+                      <MenuItem
+                        p={6}
+                        onClick={() =>
+                          handleLanguageSelect({
+                            target: { value: "android-en" },
+                          })
+                        }
+                      >
+                        {translation[userLanguage]["language.android.english"]}
+                      </MenuItem>
+
+                      <MenuItem
+                        p={6}
+                        onClick={() =>
+                          handleLanguageSelect({
+                            target: { value: "compsci-en" },
+                          })
+                        }
+                      >
+                        {translation[userLanguage]["language.compsci.english"]}
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
+
+                  <TechOverview userLanguage={userLanguage} />
+
+                  <Menu width="100%" mb={6}>
+                    <MenuButton
+                      as={Button}
+                      rightIcon={<ChevronDownIcon />}
+                      width="250px"
+                      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                    >
+                      {
+                        {
+                          en: translation[userLanguage][
+                            "language.javascript.english"
+                          ],
+                          es: translation[userLanguage][
+                            "language.javascript.spanish"
+                          ],
+                          "py-en":
+                            translation[userLanguage][
+                              "language.python.english"
+                            ],
+                          "swift-en":
+                            translation[userLanguage]["language.swift.english"],
+                          "android-en":
+                            translation[userLanguage][
+                              "language.android.english"
+                            ],
+                          "compsci-en":
+                            translation[userLanguage][
+                              "language.compsci.english"
+                            ],
                         }[userLanguage]
                       }
                     </MenuButton>
@@ -977,9 +1105,9 @@ export const Onboarding = ({ userLanguage, setUserLanguage }) => {
                       </MenuItem>
                     </MenuList>
                   </Menu>
-
-                  <TechOverview userLanguage={userLanguage} />
-
+                  <br />
+                  <br />
+                  <br />
                   <Button
                     onClick={() => {
                       incrementUserOnboardingStep(

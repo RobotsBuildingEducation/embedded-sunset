@@ -61,7 +61,7 @@ export let videoTranscript = {
       "naddr1qqd5jmn5wfhkgatrw35k7m3dw3hj63twva5kuet9wf5kueczyz4jzmqy47mfpc82q62p2fecq8r0karfc2x73sgpuj0tqvwqpl3dwqcyqqq82wg6gh4ut",
     name: "Introduction to Engineering",
     imgSrc:
-      "https://image.nostr.build/a36df6f86d72b93b3ba9f146975ccf05ece4f313c2476b0ec9cb8ece5077a517.gif",
+      "https://res.cloudinary.com/dtkeyccga/image/upload/v1691640391/ROBE_assets/Module_Buttons_1_ixnitr_scjfyk.gif",
     videoSrc:
       "https://res.cloudinary.com/dqykr1jh0/video/upload/v1711495708/symr6pztmtpkzn5aqq2r.mp4",
     practice: {
@@ -780,7 +780,7 @@ return <div style={gradientStyle}>
       "naddr1qqwyyctrddjkuepd2dhkvarhv9ex2t29denkjmn9v4exjmn8qy28wumn8ghj7un9d3shjtnyv9kh2uewd9hsyg9ty9kqftakjrsw5p55z5nnsqwxld6xns5darqsrey7kqcuqrlz6upsgqqqw5usmqzt5r",
     name: "Backend Software Engineering",
     imgSrc:
-      "https://image.nostr.build/4203b4522c200d03046169d67dafa65b43414ff1a4481e7390ac4bad17d4a267.gif",
+      "https://res.cloudinary.com/dtkeyccga/image/upload/v1691640379/ROBE_assets/Module_Buttons_5_vulvwr_oymbfb.gif",
     videoSrc:
       "https://res.cloudinary.com/dtkeyccga/video/upload/v1691637319/v3/CODING_LESSON_3_BACKEND_COMPRESSED_qzpnwg.mov",
     practice: {
@@ -1817,7 +1817,60 @@ export let onboardingTranscript = {
     "py-en": "New Student",
     "swift-en": "New Student",
     "android-en": "New Student",
+    "compsci-en": "New Student",
   },
   imgSrc:
     "https://res.cloudinary.com/dtkeyccga/image/upload/v1745250135/bevfqeqakogfxrxn3pia.png",
+};
+
+export const computerScienceTranscript = {
+  tutorial: {
+    address:
+      "naddr1qq84xatwwdjhgt25w46x7unfv9kqyg9ty9kqftakjrsw5p55z5nnsqwxld6xns5darqsrey7kqcuqrlz6upsgqqqw5usc665uz",
+    name: "Sunset Tutorial",
+    imgSrc:
+      "https://res.cloudinary.com/dtkeyccga/image/upload/v1743209424/FFFEF5_d4weow.png",
+  },
+  1: {
+    address:
+      "naddr1qq0yvmm4dejxzarfdah8xtt0vck5gct5vyk4xarjw43hgatjv4esyg9ty9kqftakjrsw5p55z5nnsqwxld6xns5darqsrey7kqcuqrlz6upsgqqqw5us9rwzuz",
+    name: "Foundations of Data Structures",
+    imgSrc:
+      "https://res.cloudinary.com/dtkeyccga/image/upload/v1751002201/paupyh0zktyippmr2cip.png",
+  },
+  2: {
+    address:
+      "naddr1qqtyc6twv4shyt2yv96xzt2nw3e82cm5w4ex2uczyz4jzmqy47mfpc82q62p2fecq8r0karfc2x73sgpuj0tqvwqpl3dwqcyqqq82wgk4m709",
+    name: "Linear Data Structures",
+    imgSrc:
+      "https://res.cloudinary.com/dtkeyccga/image/upload/v1751002201/on6ho8qyvcafrdkhqc3n.png",
+  },
+  3: {
+    address:
+      "naddr1qqkys6t9wfshycmgd93kzmpdv9hxgt2pwdek7cmfv96xjan994zxzarp94fhgun4vd682un9wvpzp2epdsz2ld5sur4qd9q4yuuqr3hmw35u9r0gcyq7f84sx8qqlckhqvzqqqr48y8wp94d",
+    name: "Hierarchical & Associative Data Structures",
+    imgSrc:
+      "https://res.cloudinary.com/dtkeyccga/image/upload/v1751002201/wgut7x4im1dlqjl4u3bo.png",
+  },
+  4: {
+    address:
+      "naddr1qqs9xmmjw35kueedv9hxgt2nv4shycmgd9hxwt2pd3nk7unfw35x6uczyz4jzmqy47mfpc82q62p2fecq8r0karfc2x73sgpuj0tqvwqpl3dwqcyqqq82wgth20th",
+    name: "Sorting & Searching Algorithms",
+    imgSrc:
+      "https://res.cloudinary.com/dtkeyccga/image/upload/v1751002201/imrujm1fquuixyoi0rta.png",
+  },
+  5: {
+    address:
+      "naddr1qqwy7ur9wfshg6twvuk4x7tnw3jk6uedg4ehxetww35kzmrnqgs2kgtvqjhmdy8qagrfg9f88qqud7m5d8pgm6xpq8jfavp3cq8794crqsqqqafeuutaa8",
+    name: "Operating Systems Essentials",
+    imgSrc:
+      "https://res.cloudinary.com/dtkeyccga/image/upload/v1751002201/j1eghlaqnlppqkfx1cem.png",
+  },
+  6: {
+    address:
+      "naddr1qqwy7ur9wfshg6twvuk4x7tnw3jk6uedg4ehxetww35kzmrnqgs2kgtvqjhmdy8qagrfg9f88qqud7m5d8pgm6xpq8jfavp3cq8794crqsqqqafeuutaa8",
+    name: "Computer Science",
+    imgSrc:
+      "https://res.cloudinary.com/dtkeyccga/image/upload/v1751002201/j1eghlaqnlppqkfx1cem.png",
+  },
 };

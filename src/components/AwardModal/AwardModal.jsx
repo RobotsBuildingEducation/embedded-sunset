@@ -26,11 +26,18 @@ import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
 import { translation } from "../../utility/translation";
-import { transcript, videoTranscript } from "../../utility/transcript";
+import {
+  transcript,
+  videoTranscript,
+  computerScienceTranscript,
+} from "../../utility/transcript";
 import ReactConfetti from "react-confetti";
 import { useSharedNostr } from "../../hooks/useNOSTR";
 
 const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
+  let transcriptset =
+    userLanguage === "compsci-en" ? computerScienceTranscript : transcript;
+
   const [badges, setBadges] = useState([]);
   const [areBadgesLoading, setAreBadgesLoading] = useState(true);
   const { getUserBadges } = useSharedNostr(
@@ -77,12 +84,15 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
     });
   };
 
+  console.log("transcriptset", transcriptset);
+  console.log(translation[userLanguage][transcriptset[step.group]?.name], "x");
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       size="4xl"
       scrollBehavior={"inside"}
+      closeOnOverlayClick={false}
     >
       <ModalOverlay></ModalOverlay>
       <ModalContent
@@ -120,18 +130,18 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
           {translation[userLanguage]["modal.decentralizedTranscript.youEarned"]}
           <br />
           <Text fontSize={"large"} fontWeight={"bold"} mb={2}>
-            {translation[userLanguage][transcript[step.group]?.name]}
+            {translation[userLanguage][transcriptset[step.group]?.name]}
           </Text>
           <a
             target="_blank"
             href={`https://badges.page/a/${
-              transcript[step.group]?.["address"] || ""
+              transcriptset[step.group]?.["address"] || ""
             }`}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 window.open(
                   `https://badges.page/a/${
-                    transcript[step.group]?.["address"] || ""
+                    transcriptset[step.group]?.["address"] || ""
                   }`
                 );
               }
@@ -139,7 +149,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
           >
             <Image
               loading="eager"
-              src={transcript[step.group]?.["imgSrc"]}
+              src={transcriptset[step.group]?.["imgSrc"]}
               width={150}
               style={{
                 borderRadius: "33%",
@@ -234,13 +244,24 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
                         return entry.name.replace(/\s+/g, "-") === badgeName;
                       });
 
+                      const matchingComputerScienceTranscript = Object.values(
+                        computerScienceTranscript
+                      ).find((entry) => {
+                        console.log("entry.name", entry.name);
+                        return entry.name.replace(/\s+/g, "-") === badgeName;
+                      });
+
                       console.log(
                         "matchingTranscript",
-                        matchingTranscript || matchingVideoTranscript
+                        matchingTranscript ||
+                          matchingVideoTranscript ||
+                          matchingComputerScienceTranscript
                       );
                       let result =
                         matchingTranscript?.address ||
-                        matchingVideoTranscript?.address;
+                        matchingVideoTranscript?.address ||
+                        matchingComputerScienceTranscript?.address;
+
                       return result;
                     })()}`}
                     target="_blank"
@@ -268,13 +289,27 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
                               );
                             });
 
+                            const matchingComputerScienceTranscript =
+                              Object.values(computerScienceTranscript).find(
+                                (entry) => {
+                                  console.log("entry.name", entry.name);
+                                  return (
+                                    entry.name.replace(/\s+/g, "-") ===
+                                    badgeName
+                                  );
+                                }
+                              );
                             console.log(
                               "matchingTranscript",
-                              matchingTranscript || matchingVideoTranscript
+                              matchingTranscript ||
+                                matchingVideoTranscript ||
+                                matchingComputerScienceTranscript
                             );
                             let result =
                               matchingTranscript?.address ||
-                              matchingVideoTranscript?.address;
+                              matchingVideoTranscript?.address ||
+                              matchingComputerScienceTranscript?.address;
+
                             return result;
                           })()}`
                         );

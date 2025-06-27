@@ -20,7 +20,11 @@ import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
 import ReactConfetti from "react-confetti";
 
-import { transcript, videoTranscript } from "../../../utility/transcript";
+import {
+  computerScienceTranscript,
+  transcript,
+  videoTranscript,
+} from "../../../utility/transcript";
 
 import { useSharedNostr } from "../../../hooks/useNOSTR";
 import { CloudCanvas, SunsetCanvas } from "../../../elements/SunsetCanvas";
@@ -28,6 +32,8 @@ import { translation } from "../../../utility/translation";
 import { CopyButtonIcon } from "../../../elements/CopyButtonIcon";
 
 const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
+  let transcriptset =
+    userLanguage === "compsci-en" ? computerScienceTranscript : transcript;
   const toast = useToast();
 
   const [badges, setBadges] = useState([]);
@@ -265,13 +271,23 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
                           return entry.name.replace(/\s+/g, "-") === badgeName;
                         });
 
+                        const matchingComputerScienceTranscript = Object.values(
+                          computerScienceTranscript
+                        ).find((entry) => {
+                          console.log("entry.name", entry.name);
+                          return entry.name.replace(/\s+/g, "-") === badgeName;
+                        });
+
                         console.log(
                           "matchingTranscript",
-                          matchingTranscript || matchingVideoTranscript
+                          matchingTranscript ||
+                            matchingVideoTranscript ||
+                            matchingComputerScienceTranscript
                         );
                         let result =
                           matchingTranscript?.address ||
-                          matchingVideoTranscript?.address;
+                          matchingVideoTranscript?.address ||
+                          matchingComputerScienceTranscript?.address;
                         return result;
                       })()}`}
                       target="_blank"
@@ -300,13 +316,27 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
                                 );
                               });
 
+                              const matchingComputerScienceTranscript =
+                                Object.values(computerScienceTranscript).find(
+                                  (entry) => {
+                                    console.log("entry.name", entry.name);
+                                    return (
+                                      entry.name.replace(/\s+/g, "-") ===
+                                      badgeName
+                                    );
+                                  }
+                                );
+
                               console.log(
                                 "matchingTranscript",
-                                matchingTranscript || matchingVideoTranscript
+                                matchingTranscript ||
+                                  matchingVideoTranscript ||
+                                  matchingComputerScienceTranscript
                               );
                               let result =
                                 matchingTranscript?.address ||
-                                matchingVideoTranscript?.address;
+                                matchingVideoTranscript?.address ||
+                                matchingComputerScienceTranscript?.address;
                               return result;
                             })()}`
                           );

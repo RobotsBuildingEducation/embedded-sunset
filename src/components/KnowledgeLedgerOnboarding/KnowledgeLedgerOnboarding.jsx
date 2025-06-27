@@ -34,6 +34,7 @@ export const transcriptDisplay = {
     "py-en": "Tutorial",
     "swift-en": "Tutorial",
     "android-en": "Tutorial",
+    "compsci-en": "Tutorial",
   },
   1: {
     en: "Basics of Coding",
@@ -41,13 +42,15 @@ export const transcriptDisplay = {
     "py-en": "Basics of Coding",
     "swift-en": "Basics of Coding",
     "android-en": "Basics of Coding",
+    "compsci-en": "Foundations of Data Structures", // ✅ fixed
   },
   2: {
-    en: "Object‑Oriented Programming",
+    en: "Object-Oriented Programming",
     es: "Programación Orientada a Objetos",
-    "py-en": "Object‑Oriented Programming",
-    "swift-en": "Object‑Oriented Programming",
-    "android-en": "Object‑Oriented Programming",
+    "py-en": "Object-Oriented Programming",
+    "swift-en": "Object-Oriented Programming",
+    "android-en": "Object-Oriented Programming",
+    "compsci-en": "Linear Structures", // ✅ fixed
   },
   3: {
     en: "Frontend Development",
@@ -55,6 +58,7 @@ export const transcriptDisplay = {
     "py-en": "Frontend Development",
     "swift-en": "Frontend Development",
     "android-en": "Frontend Development",
+    "compsci-en": "Hierarchical & Associative Structures", // ✅ fixed
   },
   4: {
     en: "Backend Engineering Fundamentals",
@@ -62,6 +66,7 @@ export const transcriptDisplay = {
     "py-en": "Backend Engineering Fundamentals",
     "swift-en": "Backend Engineering Fundamentals",
     "android-en": "Backend Engineering Fundamentals",
+    "compsci-en": "Sorting & Searching Algorithms", // ✅ fixed
   },
   5: {
     en: "Creating Apps & Experiences",
@@ -69,6 +74,7 @@ export const transcriptDisplay = {
     "py-en": "Creating Apps & Experiences",
     "swift-en": "Creating Apps & Experiences",
     "android-en": "Creating Apps & Experiences",
+    "compsci-en": "Operating Systems Essentials", // ✅ fixed
   },
   6: {
     en: "Computer Science",
@@ -76,6 +82,7 @@ export const transcriptDisplay = {
     "py-en": "Computer Science",
     "swift-en": "Computer Science",
     "android-en": "Computer Science",
+    "compsci-en": "Computer Science",
   },
 };
 

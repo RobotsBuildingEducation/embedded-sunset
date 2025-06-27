@@ -51,30 +51,45 @@ function hexToHSL(H) {
 
 export const SunsetCanvas = ({
   alternativeSpeed = null,
+  changeIntervalMs = 3000, // how often to pick a new random target
+  transitionDurationMs = 0, // how long to interpolate between shapes
   isLoader = false,
   hasAnimation = true,
   hasInitialFade = true,
   regulateWidth = true,
-  // New props for outline customization
   outlineColor = "#000",
   outlineWidth = 0.75,
 }) => {
   const canvasRef = useRef(null);
+
+  // current “old” and “target” pairs:
+  const oldRef = useRef({ trx: 1, numPoints: 2 });
+  const targetRef = useRef({ trx: 1, numPoints: 2 });
+
+  // timers
+  const lastChangeRef = useRef(Date.now());
+  const transitionStartRef = useRef(Date.now());
+
+  // exponent ranges
+  const minTrxExp = 0; // 2**0 = 1
+  const maxNumExp = 10; // 2**10 = 1024
+  const maxTrxExp = maxNumExp - 4;
+  const minNumExp = 1; // 2**1 = 2
+
+  const randomInt = (min, max) =>
+    Math.floor(Math.random() * (max - min + 1)) + min;
+
   let requestId;
 
-  const draw = (ctx, frameCount) => {
-    const oscillationSpeed = 0.0025;
-    const time = Date.now() * oscillationSpeed;
-    const colors = ["#f2dcfa", "#f9d4fa", "#fca4b3", "#fcb7a4", "#fcd4a4"];
-
+  const draw = (ctx, time, trx, numPoints) => {
     ctx.beginPath();
-    const numPoints = 16;
-    const angleStep = (Math.PI * 2) / numPoints;
-    const minRadius = 50;
-    const maxRadius = 200;
-    const smoothingFactor = 0.65;
-    let prevX = 0;
-    let prevY = 0;
+    const angleStep = (Math.PI * trx) / numPoints;
+    const minRadius = 25,
+      maxRadius = 100,
+      smoothing = 0.3;
+    let prevX = 0,
+      prevY = 0;
+
     for (let i = 0; i <= numPoints; i++) {
       const angle = i * angleStep;
       const radius =
@@ -84,94 +99,129 @@ export const SunsetCanvas = ({
           Math.sin(time * 0.5);
       const x = ctx.canvas.width / 2 + radius * Math.cos(angle);
       const y = ctx.canvas.height / 2 + radius * Math.sin(angle);
+
       if (i === 0) {
         ctx.moveTo(x, y);
-        prevX = x;
-        prevY = y;
       } else {
         const midX = (prevX + x) / 2;
         const midY = (prevY + y) / 2;
-        const controlX = prevX + (midX - prevX) * smoothingFactor;
-        const controlY = prevY + (midY - y) * smoothingFactor;
-        ctx.quadraticCurveTo(controlX, controlY, midX, midY);
-        prevX = x;
-        prevY = y;
+        const cx = prevX + (midX - prevX) * smoothing;
+        const cy = prevY + (midY - y) * smoothing;
+        ctx.quadraticCurveTo(cx, cy, midX, midY);
       }
+      prevX = x;
+      prevY = y;
     }
     ctx.closePath();
 
-    const gradient = ctx.createLinearGradient(
+    // gradient fill
+    const colors = ["#f2dcfa", "#f9d4fa", "#fca4b3", "#fcb7a4", "#fcd4a4"];
+    const grad = ctx.createLinearGradient(
       0,
       0,
       ctx.canvas.width,
       ctx.canvas.height
     );
-
-    for (let i = 0; i < colors.length; i++) {
-      const colorHSL = hexToHSL(colors[i]);
-      const stopPosition = i / (colors.length - 1);
-      gradient.addColorStop(
-        stopPosition,
-        `hsl(${colorHSL.hue}, ${colorHSL.saturation}%, ${
-          colorHSL.lightness + Math.sin(time + i * 2) * 10
-        }%)`
+    colors.forEach((hex, i) => {
+      const { hue, saturation, lightness } = hexToHSL(hex);
+      const stop = i / (colors.length - 1);
+      grad.addColorStop(
+        stop,
+        `hsl(${hue}, ${saturation}%, ${lightness + Math.sin(time + i * 2) * 10}%)`
       );
-    }
+    });
 
-    // Fill the shape with the gradient
-    ctx.fillStyle = gradient;
-    ctx.fill();
-
-    // Draw the outline around the shape
+    ctx.fillStyle = grad;
     ctx.lineWidth = outlineWidth;
     ctx.strokeStyle = outlineColor;
+    ctx.fill();
     ctx.stroke();
   };
 
   const animate = (ctx) => {
     requestId = requestAnimationFrame(() => animate(ctx));
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    draw(ctx, requestId * 0.08);
+
+    const now = Date.now();
+
+    // 1) Time to pick a new random target?
+    if (now - lastChangeRef.current >= changeIntervalMs) {
+      // record old = whatever was current target
+      oldRef.current = { ...targetRef.current };
+
+      // pick new exponents
+      const trxExp = randomInt(minTrxExp, maxTrxExp);
+      const numExp = randomInt(Math.max(trxExp + 1, minNumExp), maxNumExp);
+
+      // set new target
+      targetRef.current = {
+        trx: 2 ** trxExp,
+        numPoints: 2 ** numExp,
+      };
+
+      transitionStartRef.current = now;
+      lastChangeRef.current = now;
+    }
+
+    // 2) interpolate between old → target
+    const tRaw = (now - transitionStartRef.current) / transitionDurationMs;
+    const t = Math.min(Math.max(tRaw, 0), 1); // clamp 0…1
+
+    // optional: apply ease-in-out: t = t*t*(3 - 2*t);
+    const easeT = t;
+
+    const currTrxF =
+      oldRef.current.trx + (targetRef.current.trx - oldRef.current.trx) * easeT;
+    const currNumF =
+      oldRef.current.numPoints +
+      (targetRef.current.numPoints - oldRef.current.numPoints) * easeT;
+
+    // we round numPoints to an integer ≥ 2
+    const trx = currTrxF;
+    const numPoints = Math.max(2, Math.round(currNumF));
+
+    // time base for the wiggly radius
+    const oscillationSpeed = alternativeSpeed ?? 0.0025;
+    const time = now * oscillationSpeed;
+
+    draw(ctx, time, trx, numPoints);
   };
 
   useEffect(() => {
-    if (hasAnimation) {
-      const canvas = canvasRef.current;
-      const context = canvas.getContext("2d");
-      canvas.width = 75;
-      canvas.height = 75;
-      animate(context);
-      return () => {
-        cancelAnimationFrame(requestId);
-      };
-    }
-  }, []);
+    if (!hasAnimation) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    canvas.width = 200;
+    canvas.height = 200;
+
+    animate(ctx);
+    return () => cancelAnimationFrame(requestId);
+  }, [
+    hasAnimation,
+    alternativeSpeed,
+    outlineWidth,
+    outlineColor,
+    changeIntervalMs,
+    transitionDurationMs,
+  ]);
 
   return (
     <FadeInComponent speed={hasInitialFade ? "1s" : "0s"}>
       <div
         style={{
-          width: regulateWidth ? null : "100%",
-          minWidth: regulateWidth ? null : "300px",
-          maxWidth: regulateWidth ? null : "600px",
-          display: isLoader ? "flex" : null,
-          flexDirection: isLoader ? "column" : "",
-          alignItems: isLoader ? "center" : "",
-          textAlign: regulateWidth ? "left" : null,
+          width: regulateWidth ? undefined : "100%",
+          minWidth: regulateWidth ? undefined : "300px",
+          maxWidth: regulateWidth ? undefined : "600px",
+          display: isLoader ? "flex" : undefined,
+          flexDirection: isLoader ? "column" : undefined,
+          alignItems: isLoader ? "center" : undefined,
+          textAlign: regulateWidth ? "left" : undefined,
         }}
       >
-        {hasAnimation ? (
-          <div>
-            <canvas
-              style={{
-                borderRadius: "45%",
-              }}
-              ref={canvasRef}
-            ></canvas>
-          </div>
-        ) : null}
-
-        {isLoader === true ? <StreamLoader /> : null}
+        {hasAnimation && (
+          <canvas ref={canvasRef} style={{ borderRadius: "45%" }} />
+        )}
+        {isLoader && <StreamLoader />}
       </div>
     </FadeInComponent>
   );

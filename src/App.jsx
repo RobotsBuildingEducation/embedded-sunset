@@ -33,6 +33,7 @@ import {
   MenuList,
   MenuItem,
   Tooltip,
+  Center,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
@@ -169,6 +170,9 @@ import { Delaunay } from "d3-delaunay";
 import StudyGuideModal from "./components/StudyGuideModal/StudyGuideModal";
 import { CodeEditor } from "./components/CodeEditor/CodeEditor";
 import ProgressModal from "./components/ProgressModal/ProgressModal";
+import { RoleCanvas } from "./components/RoleCanvas/RoleCanvas";
+import { AlgorithmHelper } from "./components/AlgorithmHelper/AlgorithmHelper";
+import { TbBinaryTreeFilled } from "react-icons/tb";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -2573,7 +2577,7 @@ const Step = ({
       import.meta.env.VITE_PATREON_PASSCODE || hasSubmittedPasscode;
 
   return (
-    <VStack spacing={4} width="100%" mt={6}>
+    <VStack spacing={4} width="100%" mt={6} p={4}>
       {/* <OrbCanvas width={500} height={500} /> */}
 
       {newQuestionMessages.length > 0 && isEmpty(generatedQuestion) ? (
@@ -2691,28 +2695,53 @@ const Step = ({
                   }}
                 />
 
-                <IconButton
-                  width="24px"
-                  height="30px"
-                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                  background="pink.100"
-                  opacity="0.75"
-                  color="pink.600"
-                  icon={<FaMagic padding="4px" fontSize="14px" />}
-                  mr={5}
-                  onMouseDown={() => {
-                    //open modal
-                    onKnowledgeLedgerOpen();
-                    return;
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      onKnowledgeLedgerOpen();
+                {userLanguage === "compsci-en" ? (
+                  <IconButton
+                    width="24px"
+                    height="30px"
+                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                    background="pink.100"
+                    opacity="0.75"
+                    color="pink.600"
+                    icon={<TbBinaryTreeFilled padding="4px" fontSize="14px" />}
+                    mr={5}
+                    onMouseDown={() => {
                       //open modal
+                      onKnowledgeLedgerOpen();
                       return;
-                    }
-                  }}
-                />
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        onKnowledgeLedgerOpen();
+                        //open modal
+                        return;
+                      }
+                    }}
+                  />
+                ) : (
+                  <IconButton
+                    width="24px"
+                    height="30px"
+                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                    background="pink.100"
+                    opacity="0.75"
+                    color="pink.600"
+                    icon={<FaMagic padding="4px" fontSize="14px" />}
+                    mr={5}
+                    onMouseDown={() => {
+                      //open modal
+                      onKnowledgeLedgerOpen();
+                      return;
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        onKnowledgeLedgerOpen();
+                        //open modal
+                        return;
+                      }
+                    }}
+                  />
+                )}
 
                 {/* <IconButton
                   width="18px"
@@ -3456,7 +3485,7 @@ const Step = ({
             />
           ) : null}
 
-          {isKnowledgeLedgerOpen ? (
+          {isKnowledgeLedgerOpen && userLanguage !== "compsci-en" ? (
             <KnowledgeLedgerModal
               userLanguage={userLanguage}
               isOpen={isKnowledgeLedgerOpen}
@@ -3464,7 +3493,15 @@ const Step = ({
               steps={steps}
               currentStep={currentStep}
             />
-          ) : null}
+          ) : (
+            <AlgorithmHelper
+              userLanguage={userLanguage}
+              isOpen={isKnowledgeLedgerOpen}
+              onClose={onKnowledgeLedgerClose}
+              steps={steps}
+              currentStep={currentStep}
+            />
+          )}
 
           {isProgressModalOpen ? (
             <ProgressModal
@@ -3679,6 +3716,16 @@ const Home = ({
   view,
   setView,
 }) => {
+  const roles = [
+    "chores",
+    "sphere",
+    "plan",
+    "meals",
+    "finance",
+    "sleep",
+    "emotions",
+    "counselor",
+  ];
   const [showSplash, setShowSplash] = useState(false);
   // const [view, setView] = useState("buttons");
   const [loadingMessage, setLoadingMessage] = useState(
@@ -3695,6 +3742,20 @@ const Home = ({
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [isColorSchema, setIColorSchema] = useState(false);
   const socket = "socket";
+  const [role, setRole] = useState("chores");
+  const topRef = useRef();
+
+  useEffect(() => {
+    let index = 0;
+    const interval = setInterval(() => {
+      console.log("x");
+      index = (index + 1) % roles.length;
+      setRole(roles[index]);
+    }, 2500);
+
+    topRef.current?.scrollIntoView();
+    return () => clearInterval(interval);
+  }, []);
 
   // localStorage.getItem("local_npub"),
   // localStorage.getItem("local_nsec")
@@ -3972,6 +4033,7 @@ const Home = ({
 
   return (
     <Box
+      ref={topRef}
       textAlign="center"
       p={0}
       style={{
@@ -3979,53 +4041,48 @@ const Home = ({
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
+        // justifyContent: "center",
+        paddingTop: 16,
       }}
     >
       {view === "buttons" && (
         <>
-          <VStack spacing={4}>
+          <VStack spacing={4} height="90vh">
             <VStack spacing={4} width="95%" maxWidth="600px" mb={4}>
-              <HStack spacing={2} alignItems="center">
-                <CloudCanvas />{" "}
-                {isCreatingAccount ? (
+              <HStack spacing={2} alignItems="center" pt={8}>
+                <CloudCanvas />
+                {isCreatingAccount && (
                   <Text
-                    fontSize={"smaller"}
+                    fontSize="smaller"
                     backgroundColor="white"
                     color="black"
-                    fontWeight={"bold"}
+                    fontWeight="bold"
                     borderRadius="8px"
                     padding="10px"
                     width="250px"
                     height="110px"
                     display="flex"
-                    alignItems={"center"}
-                    textAlign={"left"}
-                    justifyContent={"center"}
+                    alignItems="center"
+                    textAlign="left"
+                    justifyContent="center"
                   >
                     {translation[userLanguage][loadingMessage]}
                   </Text>
-                ) : null}
+                )}
               </HStack>
 
-              <Text fontSize="xl">
-                {/* {translation[userLanguage]["landing.welcome"]} */}
-                {renderContentBasedOnURL()}
-              </Text>
-              <Text fontSize="sm" mt={"-5"}>
+              <Text fontSize="xl">{renderContentBasedOnURL()}</Text>
+              <Text fontSize="sm" mt="-5">
                 {translation[userLanguage]["landing.introduction"]}
               </Text>
             </VStack>
 
-            {/* 
-              <div>{isCreatingAccount ? <SunsetCanvas /> : null}</div> */}
-            <Text fontSize="md" maxWidth={"600px"} c pt={0} mb={0}>
-              {" "}
-              <b>{translation[userLanguage]["createAccount.instructions"]} </b>
+            <Text fontSize="md" maxWidth="600px" pt={0} mb={0}>
+              <b>{translation[userLanguage]["createAccount.instructions"]}</b>
             </Text>
 
             <Input
-              mt={"-3"}
+              mt="-3"
               pt={0}
               style={{
                 maxWidth: 300,
@@ -4038,16 +4095,15 @@ const Home = ({
               onChange={(e) => setUserName(e.target.value)}
               backgroundColor="white"
             />
+
             <VStack>
               <Button
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    televise();
-                  }
-                }}
+                onKeyDown={(e) =>
+                  (e.key === "Enter" || e.key === " ") && televise()
+                }
                 onMouseDown={televise}
                 colorScheme="purple"
-                variant={"outline"}
+                variant="outline"
                 isDisabled={userName.length < 2}
                 style={{ width: "150px" }}
               >
@@ -4057,62 +4113,176 @@ const Home = ({
               <Button
                 colorScheme="pink"
                 backgroundColor="pink.50"
-                variant={"outline"}
+                variant="outline"
                 border="1px solid rgb(254,224,232)"
                 style={{ width: "150px" }}
                 onMouseDown={() => setView("signIn")}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    setView("signIn");
-                  }
-                }}
+                onKeyDown={(e) =>
+                  (e.key === "Enter" || e.key === " ") && setView("signIn")
+                }
               >
-                {translation[userLanguage]["landing.button.signIn"]}{" "}
+                {translation[userLanguage]["landing.button.signIn"]}
               </Button>
 
-              <br />
-              <br />
               <FormControl
                 display="flex"
                 alignItems="center"
-                style={{ justifyContent: "center" }}
+                justifyContent="center"
                 m={2}
               >
                 <FormLabel htmlFor="language-toggle" mb="0">
-                  {userLanguage.includes("en") ? "English" : "Español"}
+                  {
+                    translation[userLanguage][
+                      userLanguage === "en"
+                        ? "languageToggle.english"
+                        : "languageToggle.spanish"
+                    ]
+                  }
                 </FormLabel>
                 <Switch
                   colorScheme="pink"
                   id="language-toggle"
                   isChecked={userLanguage === "es"}
                   onChange={handleToggle}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleToggle();
-                    }
-                  }}
+                  onKeyDown={(e) => e.key === "Enter" && handleToggle()}
                 />
               </FormControl>
-
-              <Button
-                variant="ghost"
-                onMouseDown={() => navigate("/about")}
-                textDecoration={"underline"}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    navigate("/about"); // Select the option on Enter or Space key
-                  }
-                }}
-              >
-                {translation[userLanguage]["button.about"]}
-              </Button>
             </VStack>
+          </VStack>
+
+          {/* First slide: Why Learn */}
+          <Box
+            height="100%"
+            scrollSnapAlign="start"
+            p={8}
+            bg="white"
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            pb={24}
+          >
+            <RoleCanvas role={role} width={400} height={400} color="#FF69B4" />
+            <VStack spacing={6} alignItems="flex-start">
+              <Text fontSize="2xl" textAlign="center" width="100%" mt={4}>
+                {translation[userLanguage]["landing.whyLearn.title"]}
+              </Text>
+
+              <Text fontSize="md" fontWeight="bold">
+                {translation[userLanguage]["landing.whyLearn.section1.title"]}
+              </Text>
+              <Text fontSize="md" maxWidth="650px" textAlign="left">
+                {translation[userLanguage]["landing.whyLearn.section1.content"]}
+              </Text>
+
+              <Text fontSize="md" fontWeight="bold">
+                {translation[userLanguage]["landing.whyLearn.section2.title"]}
+              </Text>
+              <Text fontSize="md" maxWidth="675px" textAlign="left">
+                {translation[userLanguage]["landing.whyLearn.section2.content"]}
+              </Text>
+
+              <Text fontSize="md" fontWeight="bold">
+                {translation[userLanguage]["landing.whyLearn.section3.title"]}
+              </Text>
+              <Text fontSize="md" maxWidth="675px" textAlign="left">
+                {translation[userLanguage]["landing.whyLearn.section3.content"]}
+              </Text>
+            </VStack>
+          </Box>
+
+          {/* Second slide: The Mission */}
+          <Box
+            height="100%"
+            scrollSnapAlign="start"
+            p={8}
+            bg="white"
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            backgroundColor="#f0efed"
+            pb={24}
+          >
+            <VStack spacing={6} alignItems="flex-start">
+              <Box width="100%">
+                <SunsetCanvas />
+              </Box>
+              <Text fontSize="2xl" textAlign="center" width="100%" mt={4}>
+                {translation[userLanguage]["landing.mission.title"]}
+              </Text>
+
+              <Text fontSize="md" maxWidth="675px" textAlign="left">
+                {translation[userLanguage]["landing.mission.paragraph1"]}
+              </Text>
+              <Text fontSize="md" maxWidth="675px" textAlign="left">
+                {translation[userLanguage]["landing.mission.paragraph2"]}
+              </Text>
+              <Text fontSize="md" maxWidth="675px" textAlign="left">
+                {translation[userLanguage]["landing.mission.paragraph3"]}
+              </Text>
+            </VStack>
+          </Box>
+
+          {/* Start Learning */}
+          <VStack display="flex" justifyContent="center" alignItems="center">
+            <RandomCharacter notSoRandomCharacter="9" />
+            <Text mt={0}>
+              {translation[userLanguage]["landing.startLearning"]}
+            </Text>
+            <Box width="100%" mt={4}>
+              <Input
+                mt="-3"
+                pt={0}
+                style={{
+                  maxWidth: 300,
+                  boxShadow: "0.5px 0.5px 1px rgba(0,0,0,0.75)",
+                }}
+                placeholder={
+                  translation[userLanguage]["createAccount.input.placeholder"]
+                }
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                backgroundColor="white"
+              />
+            </Box>
+            <HStack w="100%" mt={4} mb={12} justifyContent="center">
+              <Button
+                onKeyDown={(e) =>
+                  (e.key === "Enter" || e.key === " ") && televise()
+                }
+                onMouseDown={televise}
+                colorScheme="purple"
+                variant="outline"
+                isDisabled={userName.length < 2}
+                style={{ width: "150px" }}
+              >
+                {translation[userLanguage]["landing.button.telemetry"]}
+              </Button>
+              <Button
+                colorScheme="pink"
+                backgroundColor="pink.50"
+                variant="outline"
+                border="1px solid rgb(254,224,232)"
+                style={{ width: "150px" }}
+                onMouseDown={() => setView("signIn")}
+                onKeyDown={(e) =>
+                  (e.key === "Enter" || e.key === " ") && setView("signIn")
+                }
+              >
+                {translation[userLanguage]["landing.button.signIn"]}
+              </Button>
+            </HStack>
           </VStack>
         </>
       )}
 
       {view === "signIn" && (
-        <VStack spacing={4}>
+        <VStack
+          spacing={4}
+          height="95vh"
+          display="flex"
+          flexDirection={"column"}
+          justifyContent={"center"}
+        >
           <div>{isSigningIn ? <CloudCanvas /> : null}</div>
 
           <Text fontSize="sm">
@@ -4165,7 +4335,13 @@ const Home = ({
         </VStack>
       )}
       {view === "created" && keys && (
-        <VStack spacing={4}>
+        <VStack
+          spacing={4}
+          height="95vh"
+          display="flex"
+          flexDirection={"column"}
+          justifyContent={"center"}
+        >
           {/* <Confetti
             // gravity={0.75}
             numberOfPieces={100}
@@ -4487,53 +4663,64 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
   }, []);
 
   if (isLoading) {
-    return <CloudCanvas />;
+    return (
+      <Box>
+        <CloudCanvas />
+      </Box>
+    );
   }
   return (
-    <Box
-      minHeight="90vh"
-      display="flex"
-      flexDirection={"column"}
-      alignItems={"center"}
-      justifyContent={"center"}
-    >
-      <div
-        style={{
-          marginLeft: "120px",
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-        }}
+    <Box width="100%" display="flex" justifyContent={"center"}>
+      <Box
+        minHeight="90vh"
+        display="flex"
+        flexDirection={"column"}
+        alignItems={"center"}
+        justifyContent={"center"}
+        width="100%"
+        maxWidth="680px"
+        padding={4}
+        marginTop={12}
+        paddingBottom={12}
       >
-        <CloudCanvas />
-      </div>{" "}
-      <div style={{ marginTop: "-32px" }}>
-        <RandomCharacter />
-      </div>
-      <br />
-      <Text maxWidth="600px">
-        <div style={{ textAlign: "left" }}>
-          {translation[userLanguage]["passcode.instructions"]}
-
-          <br />
-
-          <Text fontSize={"smaller"}>
-            {" "}
-            {translation[userLanguage]["passcode.label"]}
-          </Text>
-          <Input
-            backgroundColor="white"
-            style={{
-              boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
-            }}
-            value={input}
-            onChange={(e) => setInput(e.target.value.toUpperCase())}
-          />
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            marginLeft: 120,
+          }}
+        >
+          <CloudCanvas />
+        </div>{" "}
+        <div style={{ marginTop: "-32px" }}>
+          <RandomCharacter />
         </div>
-      </Text>
-      <Button onClick={() => navigate(`/q/9`)} mt={4}>
-        {translation[userLanguage]["backToQuestion9"]}
-      </Button>
+        <br />
+        <Text maxWidth="600px">
+          <div style={{ textAlign: "left" }}>
+            {translation[userLanguage]["passcode.instructions"]}
+
+            <br />
+
+            <Text fontSize={"smaller"}>
+              {" "}
+              {translation[userLanguage]["passcode.label"]}
+            </Text>
+            <Input
+              backgroundColor="white"
+              style={{
+                boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+              }}
+              value={input}
+              onChange={(e) => setInput(e.target.value.toUpperCase())}
+            />
+          </div>
+        </Text>
+        <Button onClick={() => navigate(`/q/9`)} mt={4}>
+          {translation[userLanguage]["backToQuestion9"]}
+        </Button>
+      </Box>
     </Box>
   );
 };
@@ -4829,7 +5016,7 @@ function App({ isShutDown }) {
           />
         </Alert>
       )}
-      <Box textAlign="center" fontSize="xl" p={4} ref={topRef}>
+      <Box textAlign="center" fontSize="xl" p={0} pt={0} ref={topRef}>
         {isSignedIn && (
           <SettingsMenu
             testIsMatch={testIsMatch}
