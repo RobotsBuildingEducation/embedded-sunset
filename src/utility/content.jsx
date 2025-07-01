@@ -490,12 +490,46 @@ This single evolving example now links arrays, linked lists, **tree representati
       question: {
         questionText: "Complete the methods to push and pop from a stack:",
         options: [
+          // Correct: uses append and pop(), returns the popped value
           `class Stack:
     def __init__(self):
         self.data = []
 
     def push(self, x):
         self.data.append(x)
+
+    def pop(self):
+        return self.data.pop()`,
+
+          // Wrong: forgets to return the popped value
+          `class Stack:
+    def __init__(self):
+        self.data = []
+
+    def push(self, x):
+        self.data.append(x)
+
+    def pop(self):
+        self.data.pop()`,
+
+          // Wrong: uses FIFO pop(0) instead of LIFO
+          `class Stack:
+    def __init__(self):
+        self.data = []
+
+    def push(self, x):
+        self.data.append(x)
+
+    def pop(self):
+        return self.data.pop(0)`,
+
+          // Wrong: inserts at the front, reversing the order
+          `class Stack:
+    def __init__(self):
+        self.data = []
+
+    def push(self, x):
+        self.data.insert(0, x)
 
     def pop(self):
         return self.data.pop()`,
@@ -700,22 +734,9 @@ This single evolving example now links arrays, linked lists, **tree representati
       description: "Link three nodes and print the second value.",
       isCodeCompletion: true,
       question: {
-        questionText: "Complete code so `head.next.value` prints `2`:",
+        questionText: "Complete code so `head.next.v` prints `2`:",
         options: [
-          `class Node:
-    def __init__(self, v):
-        self.v = v
-        self.next = None
-
-n1 = Node(1)
-n2 = Node(2)
-n3 = Node(3)
-# link
-n1.next = n2
-n2.next = n3
-
-print(head.next.v)  # 2`,
-
+          //# 1) Correct definition, linking, and print
           `class Node:
     def __init__(self, v):
         self.v = v
@@ -729,6 +750,51 @@ head.next = second
 second.next = third
 
 print(head.next.v)  # 2`,
+
+          //# 2) `head` is never assigned (NameError)
+          `class Node:
+    def __init__(self, v):
+        self.v = v
+        self.next = None
+
+n1 = Node(1)
+second = Node(2)
+third = Node(3)
+# link
+n1.next = second
+second.next = third
+
+print(head.next.v)  # 2`,
+
+          // # 3) Linked to the wrong node (prints 3 instead of 2)
+          `class Node:
+    def __init__(self, v):
+        self.v = v
+        self.next = None
+
+head = Node(1)
+second = Node(2)
+third = Node(3)
+# incorrect link
+head.next = third
+third.next = second
+
+print(head.next.v)  # 2`,
+
+          //# 4) Using wrong attribute name (AttributeError)
+          `class Node:
+    def __init__(self, v):
+        self.v = v
+        self.next = None
+
+head = Node(1)
+second = Node(2)
+third = Node(3)
+# link
+head.next = second
+second.next = third
+
+print(head.next.value)  # 2`,
         ],
         answer: `class Node:
     def __init__(self, v):
@@ -795,9 +861,25 @@ print(head.next.v)  # 2`,
     def __init__(self):
         self.data = []
     def push(self, x):
-        self.data.insert(0, x)
+        self.data.append(x)
     def pop(self):
         return self.data.pop(0)`,
+
+          `class Stack:
+    def __init__(self):
+        self.data = []
+    def push(self, x):
+        self.data.insert(0, x)
+    def pop(self):
+        return self.data.pop()`,
+
+          `class Stack:
+    def __init__(self):
+        self.data = []
+    def push(self, x):
+        self.data.append(x)
+    def pop(self):
+        self.data.pop()`,
         ],
         answer: `class Stack:
     def __init__(self):
@@ -897,6 +979,61 @@ class Stack:
     def push(self, x):
         node = Node(x)
         node.next = self.top
+        self.top = node
+
+    def pop(self):
+        val = self.top.v
+        self.top = self.top.next
+        return val`,
+
+          `class Node:
+    def __init__(self, v):
+        self.v = v
+        self.next = None
+
+class Stack:
+    def __init__(self):
+        self.top = None
+
+    def push(self, x):
+        node = Node(x)
+        node.next = self.top
+        self.top = node
+
+    def pop(self):
+        val = self.top.v
+        return val`,
+
+          `class Node:
+    def __init__(self, v):
+        self.v = v
+        self.next = None
+
+class Stack:
+    def __init__(self):
+        self.top = None
+
+    def push(self, x):
+        node = Node(x)
+        node.next = self.top
+        self.top = node
+
+    def pop(self):
+        self.top = self.top.next
+        return self.top.v`,
+
+          `class Node:
+    def __init__(self, v):
+        self.v = v
+        self.next = None
+
+class Stack:
+    def __init__(self):
+        self.top = None
+
+    def push(self, x):
+        node = Node(x)
+        self.top.next = node
         self.top = node
 
     def pop(self):
@@ -1347,15 +1484,70 @@ print(heapq.heappop(pq))  # (1, 'cook')`,
     mid = len(arr) // 2
     left = merge_sort(arr[:mid])
     right = merge_sort(arr[mid:])
-    # merge left and right into result
     result = []
     i = j = 0
     while i < len(left) and j < len(right):
         if left[i] < right[j]:
-            result.append(left[i]); i += 1
+            result.append(left[i])
+            i += 1
         else:
-            result.append(right[j]); j += 1
+            result.append(right[j])
+            j += 1
     result.extend(left[i:])
+    result.extend(right[j:])
+    return result`,
+
+          `def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] < right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result`,
+
+          `def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] < right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    result.extend(left[i:])
+    return result`,
+
+          `def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] < right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
     result.extend(right[j:])
     return result`,
         ],
@@ -1365,14 +1557,15 @@ print(heapq.heappop(pq))  # (1, 'cook')`,
     mid = len(arr) // 2
     left = merge_sort(arr[:mid])
     right = merge_sort(arr[mid:])
-    # merge left and right into result
     result = []
     i = j = 0
     while i < len(left) and j < len(right):
         if left[i] < right[j]:
-            result.append(left[i]); i += 1
+            result.append(left[i])
+            i += 1
         else:
-            result.append(right[j]); j += 1
+            result.append(right[j])
+            j += 1
     result.extend(left[i:])
     result.extend(right[j:])
     return result`,
@@ -1396,6 +1589,45 @@ print(heapq.heappop(pq))  # (1, 'cook')`,
             arr[i], arr[j] = arr[j], arr[i]
     arr[i+1], arr[high] = arr[high], arr[i+1]
     return i+1`,
+
+          `def partition(arr, low, high):
+    pivot = arr[high]
+    i = low - 1
+    for j in range(low, high):
+        if arr[j] <= pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    return i+1`,
+
+          `def partition(arr, low, high):
+    pivot = arr[low]
+    i = low - 1
+    for j in range(low, high):
+        if arr[j] <= pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i+1], arr[high] = arr[high], arr[i+1]
+    return i+1`,
+
+          `def partition(arr, low, high):
+    pivot = arr[high]
+    i = low - 1
+    for j in range(low, high):
+        if arr[j] < pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i+1], arr[high] = arr[high], arr[i+1]
+    return i+1`,
+
+          `def partition(arr, low, high):
+    pivot = arr[high]
+    i = low
+    for j in range(low, high):
+        if arr[j] <= pivot:
+            arr[i], arr[j] = arr[j], arr[i]
+            i += 1
+    arr[i], arr[high] = arr[high], arr[i]
+    return i`,
         ],
         answer: `def partition(arr, low, high):
     pivot = arr[high]
@@ -1599,6 +1831,30 @@ for neighbor, weight in graph[current]:
     if dist_u + weight < dist[neighbor]:
         dist[neighbor] = dist_u + weight
         heapq.heappush(pq, (dist[neighbor], neighbor))`,
+
+          `dist_u = dist[current]
+for neighbor, weight in graph[current]:
+    if dist_u + weight < dist[neighbor]:
+        dist[neighbor] = dist_u + weight
+        # forgot to push to the queue`,
+
+          `dist_u = dist[current]
+for neighbor, weight in graph[current]:
+    if dist_u + weight <= dist[neighbor]:
+        dist[neighbor] = dist_u + weight
+        heapq.heappush(pq, (dist[neighbor], neighbor))`,
+
+          `dist_u = dist[neighbor]
+for neighbor, weight in graph[current]:
+    if dist_u + weight < dist[neighbor]:
+        dist[neighbor] = dist_u + weight
+        heapq.heappush(pq, (dist[neighbor], neighbor))`,
+
+          `dist_u = dist[current]
+for neighbor, weight in graph[current]:
+    if dist_u + weight < dist[neighbor]:
+        dist[neighbor] = dist_u + weight
+        heapq.heappush(pq, (neighbor, dist[neighbor]))`,
         ],
         answer: `dist_u = dist[current]
 for neighbor, weight in graph[current]:
@@ -8025,6 +8281,7 @@ return (
         questionText:
           "Complete the code to initialize SQLAlchemy with a Flask app and add a new User record.",
         options: [
+          // 1) Correct initialization & commit
           `from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
@@ -8040,6 +8297,54 @@ class User(db.Model):
 new_user = User(username='alice')
 db.session.add(new_user)
 db.session.commit()`,
+          // 2) Forgot to call commit()
+          `from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@localhost/db'
+db = SQLAlchemy(app)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String, unique=True)
+
+# Add user
+new_user = User(username='alice')
+db.session.add(new_user)  # forgot db.session.commit()`,
+          // 3) Used create_all instead of binding to app
+          `from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@localhost/db'
+db = SQLAlchemy()
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String, unique=True)
+
+db.create_all()  # missing db.init_app(app)
+
+# Add user
+new_user = User(username='alice')
+db.session.add(new_user)
+db.session.commit()`,
+          // 4) Incorrect URI key and missing session.add
+          `from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+app.config['DATABASE_URI'] = 'postgres://user:pass@localhost/db'  # wrong config key
+db = SQLAlchemy(app)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String, unique=True)
+
+# Add user
+new_user = User(username='alice')
+db.commit()  # wrong call: should be db.session.commit()`,
         ],
         answer: `from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -8393,6 +8698,7 @@ db.session.commit()`,
         questionText:
           "Complete the Python code to add, get, update, and delete a document in Firestore.",
         options: [
+          // 1) Correct sequence of calls
           `# assume db is a Firestore client
 doc_ref = db.collection('users').document('alice')
 # create
@@ -8403,6 +8709,41 @@ user = doc_ref.get().to_dict()
 doc_ref.update({'age': 31})
 # delete
 doc_ref.delete()`,
+
+          // 2) Forgot to delete the document
+          `# assume db is a Firestore client
+doc_ref = db.collection('users').document('alice')
+# create
+doc_ref.set({'email': 'alice@example.com', 'age': 30})
+# read
+user = doc_ref.get().to_dict()
+# update
+doc_ref.update({'age': 31})
+# (missing delete step)`,
+
+          // 3) Used add() on a collection instead of document()
+          `# assume db is a Firestore client
+users_col = db.collection('users')
+# create
+new_ref = users_col.add({'email': 'alice@example.com', 'age': 30})
+# read
+user = new_ref.get().to_dict()
+# update
+new_ref.update({'age': 31})
+# delete
+new_ref.delete()`,
+
+          // 4) Read without converting to dict, and wrong delete call
+          `# assume db is a Firestore client
+doc_ref = db.collection('users').document('alice')
+# create
+doc_ref.set({'email': 'alice@example.com', 'age': 30})
+# read
+user = doc_ref.get()             # forgot .to_dict()
+# update
+doc_ref.update({'age': 31})
+# delete
+db.collection('users').delete()   # invalid: delete on collection`,
         ],
         answer: `# assume db is a Firestore client
 doc_ref = db.collection('users').document('alice')
@@ -8861,9 +9202,47 @@ Failing fast is in your best interest when learning a new language. This one-pag
         questionText:
           "Complete the following Swift code to check if `x` is greater than 10, equal to 10, or less than 10.",
         options: [
-          `if x > 10 {\n    print("x is greater than 10")\n} else if x == 10 {\n    print("x is equal to 10")\n} else {\n    print("x is less than 10")\n}`,
+          // 1) Correct order and operators
+          `if x > 10 {
+    print("x is greater than 10")
+} else if x == 10 {
+    print("x is equal to 10")
+} else {
+    print("x is less than 10")
+}`,
+
+          // 2) Swapped the first two checks (wrong logic)
+          `if x == 10 {
+    print("x is equal to 10")
+} else if x > 10 {
+    print("x is greater than 10")
+} else {
+    print("x is less than 10")
+}`,
+
+          // 3) Missing the else-if branch entirely
+          `if x > 10 {
+    print("x is greater than 10")
+} else {
+    print("x is not greater than 10")
+}`,
+
+          // 4) Used >= instead of == for equality check
+          `if x > 10 {
+    print("x is greater than 10")
+} else if x >= 10 {
+    print("x is equal to 10")
+} else {
+    print("x is less than 10")
+}`,
         ],
-        answer: `if x > 10 {\n    print("x is greater than 10")\n} else if x == 10 {\n    print("x is equal to 10")\n} else {\n    print("x is less than 10")\n}`,
+        answer: `if x > 10 {
+    print("x is greater than 10")
+} else if x == 10 {
+    print("x is equal to 10")
+} else {
+    print("x is less than 10")
+}`,
       },
     },
     // 7
@@ -9016,9 +9395,33 @@ Failing fast is in your best interest when learning a new language. This one-pag
         questionText:
           "Complete the code to declare an array, add an element to it, remove the first element, and then access an element.",
         options: [
-          `var fruits = ["apple", "banana"]\nfruits.append("pink")\nfruits.removeFirst()\nprint(fruits[0])`,
+          // 1) Correct sequence
+          `var fruits = ["apple", "banana"]
+fruits.append("pink")
+fruits.removeFirst()
+print(fruits[0])`,
+
+          // 2) Missing the removal step
+          `var fruits = ["apple", "banana"]
+fruits.append("pink")
+print(fruits[0])`,
+
+          // 3) Operations in the wrong order
+          `var fruits = ["apple", "banana"]
+fruits.removeFirst()
+fruits.append("pink")
+print(fruits[0])`,
+
+          // 4) Accessing the wrong index
+          `var fruits = ["apple", "banana"]
+fruits.append("pink")
+fruits.removeFirst()
+print(fruits[1])`,
         ],
-        answer: `var fruits = ["apple", "banana"]\nfruits.append("pink")\nfruits.removeFirst()\nprint(fruits[0])`,
+        answer: `var fruits = ["apple", "banana"]
+fruits.append("pink")
+fruits.removeFirst()
+print(fruits[0])`,
       },
     },
     // 17
@@ -9980,6 +10383,7 @@ myCar.showBrand()`,
         questionText:
           "Complete the code to configure PostgreSQL and register a User migration in Vapor.",
         options: [
+          // 1) Correct configuration, migration registration, and await
           `import Fluent
 import FluentPostgresDriver
 import Vapor
@@ -9993,6 +10397,53 @@ public func configure(_ app: Application) throws {
     ), as: .psql)
     app.migrations.add(CreateUser())
     try app.autoMigrate().wait()
+}`,
+
+          // 2) Missing the .wait() on autoMigrate
+          `import Fluent
+import FluentPostgresDriver
+import Vapor
+
+public func configure(_ app: Application) throws {
+    app.databases.use(.postgres(
+        hostname: "localhost",
+        username: "user",
+        password: "pass",
+        database: "db"
+    ), as: .psql)
+    app.migrations.add(CreateUser())
+    try app.autoMigrate()  // forgot .wait()
+}`,
+
+          // 3) Wrong driver (MySQL) instead of Postgres
+          `import Fluent
+import FluentMySQLDriver
+import Vapor
+
+public func configure(_ app: Application) throws {
+    app.databases.use(.mysql(
+        hostname: "localhost",
+        username: "user",
+        password: "pass",
+        database: "db"
+    ), as: .mysql)
+    app.migrations.add(CreateUser())
+    try app.autoMigrate().wait()
+}`,
+
+          // 4) Registered database but forgot to add the migration
+          `import Fluent
+import FluentPostgresDriver
+import Vapor
+
+public func configure(_ app: Application) throws {
+    app.databases.use(.postgres(
+        hostname: "localhost",
+        username: "user",
+        password: "pass",
+        database: "db"
+    ), as: .psql)
+    try app.autoMigrate().wait()  // missing app.migrations.add(CreateUser())
 }`,
         ],
         answer: `import Fluent
@@ -10343,6 +10794,7 @@ public func configure(_ app: Application) throws {
         questionText:
           "Complete the Swift code to create, read, update, and delete a document in Firestore.",
         options: [
+          // 1) Correct sequence and syntax
           `let db = Firestore.firestore()
 let doc = db.collection("users").document("alice")
 // create
@@ -10350,10 +10802,52 @@ doc.setData(["email": "alice@example.com", "age": 30])
 // read
 doc.getDocument { snapshot, error in
   let data = snapshot?.data()
+}
 // update
 doc.updateData(["age": 31])
 // delete
 doc.delete()`,
+
+          // 2) Mis-uses setData for update (overwrites entire document)
+          `let db = Firestore.firestore()
+let doc = db.collection("users").document("alice")
+// create
+doc.setData(["email": "alice@example.com", "age": 30])
+// read
+doc.getDocument { snapshot, error in
+  let data = snapshot?.data()
+}
+// update
+doc.setData(["age": 31])  // should use updateData
+// delete
+doc.delete()`,
+
+          // 3) Incorrect read method and missing closure brace
+          `let db = Firestore.firestore()
+let doc = db.collection("users").document("alice")
+// create
+doc.setData(["email": "alice@example.com", "age": 30])
+// read
+doc.getDocuments { snapshot, error in
+  let data = snapshot?.documents.first?.data()
+// update
+doc.updateData(["age": 31])
+// delete
+doc.delete()`,
+
+          // 4) Wrong delete call on collection instead of document
+          `let db = Firestore.firestore()
+let doc = db.collection("users").document("alice")
+// create
+doc.setData(["email": "alice@example.com", "age": 30])
+// read
+doc.getDocument { snapshot, error in
+  let data = snapshot?.data()
+}
+// update
+doc.updateData(["age": 31])
+// delete
+db.collection("users").delete()  // invalid: must call delete() on document`,
         ],
         answer: `let db = Firestore.firestore()
 let doc = db.collection("users").document("alice")
@@ -10829,9 +11323,47 @@ Failing fast is in your best interest when learning a new language. This one-pag
         questionText:
           "Complete the following code to check if `x` is greater than 10, equal to 10, or less than 10.",
         options: [
-          `if (x > 10) {\n    System.out.println("x is greater than 10");\n} else if (x == 10) {\n    System.out.println("x is equal to 10");\n} else {\n    System.out.println("x is less than 10");\n}`,
+          // 1) Correct logic and operators
+          `if (x > 10) {
+    System.out.println("x is greater than 10");
+} else if (x == 10) {
+    System.out.println("x is equal to 10");
+} else {
+    System.out.println("x is less than 10");
+}`,
+
+          // 2) Swapped first two checks (wrong logic order)
+          `if (x == 10) {
+    System.out.println("x is equal to 10");
+} else if (x > 10) {
+    System.out.println("x is greater than 10");
+} else {
+    System.out.println("x is less than 10");
+}`,
+
+          // 3) Missing the else-if branch entirely
+          `if (x > 10) {
+    System.out.println("x is greater than 10");
+} else {
+    System.out.println("x is not greater than 10");
+}`,
+
+          // 4) Used >= for the second check (treats 10 as greater-than)
+          `if (x > 10) {
+    System.out.println("x is greater than 10");
+} else if (x >= 10) {
+    System.out.println("x is equal to 10");
+} else {
+    System.out.println("x is less than 10");
+}`,
         ],
-        answer: `if (x > 10) {\n    System.out.println("x is greater than 10");\n} else if (x == 10) {\n    System.out.println("x is equal to 10");\n} else {\n    System.out.println("x is less than 10");\n}`,
+        answer: `if (x > 10) {
+    System.out.println("x is greater than 10");
+} else if (x == 10) {
+    System.out.println("x is equal to 10");
+} else {
+    System.out.println("x is less than 10");
+}`,
       },
     },
     // 7
@@ -10975,9 +11507,39 @@ Failing fast is in your best interest when learning a new language. This one-pag
         questionText:
           "Complete the code to declare an array, add an element, remove the last element, and then access an element.",
         options: [
-          `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));\nfruits.add("pink");\nfruits.remove(fruits.size() - 1);\nSystem.out.println(fruits.get(0));`,
+          // 1) Correct sequence
+          `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
+fruits.add("pink");
+fruits.remove(fruits.size() - 1);
+System.out.println(fruits.get(0));`,
+
+          // 2) Missing the removal step
+          `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
+fruits.add("pink");
+System.out.println(fruits.get(0));`,
+
+          // 3) Removed the first element instead of the last
+          `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
+fruits.add("pink");
+fruits.remove(0);
+System.out.println(fruits.get(0));`,
+
+          // 4) Accessing the wrong index after removal
+          `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
+fruits.add("pink");
+fruits.remove(fruits.size() - 1);
+System.out.println(fruits.get(1));`,
+
+          // 5) Operations in the wrong order (remove before add)
+          `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
+fruits.remove(fruits.size() - 1);
+fruits.add("pink");
+System.out.println(fruits.get(0));`,
         ],
-        answer: `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));\nfruits.add("pink");\nfruits.remove(fruits.size() - 1);\nSystem.out.println(fruits.get(0));`,
+        answer: `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
+fruits.add("pink");
+fruits.remove(fruits.size() - 1);
+System.out.println(fruits.get(0));`,
       },
     },
     // 17
@@ -11946,12 +12508,13 @@ btn.setOnClickListener(v -> {
       group: "4",
       title: "Configuring JPA and Saving an Entity",
       description:
-        "In this step, you will learn how to initialize JPA and save an entity.",
+        "In this step, you will learn how to initialize Spring Data JPA and save a User entity.",
       isCodeCompletion: true,
       question: {
         questionText:
           "Complete the code to configure Spring Data JPA and save a User entity.",
         options: [
+          // 1) Correct configuration with JPA annotations and repository usage
           `@Entity
 public class User {
     @Id @GeneratedValue
@@ -11972,6 +12535,77 @@ public class UserService {
         User u = new User();
         u.setUsername(name);
         repo.save(u);
+    }
+}`,
+
+          // 2) Missing @GeneratedValue, so IDs won’t be auto-generated
+          `@Entity
+public class User {
+    @Id
+    private Long id;            // @GeneratedValue omitted
+    private String username;
+    // getters/setters
+}
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {}
+
+@Service
+public class UserService {
+    @Autowired
+    private UserRepository repo;
+
+    public void addUser(String name) {
+        User u = new User();
+        u.setUsername(name);
+        repo.save(u);
+    }
+}`,
+
+          // 3) Repository extends CrudRepository instead of JpaRepository
+          `@Entity
+public class User {
+    @Id @GeneratedValue
+    private Long id;
+    private String username;
+    // getters/setters
+}
+
+@Repository
+public interface UserRepository extends CrudRepository<User, Long> {}  // wrong interface
+
+@Service
+public class UserService {
+    @Autowired
+    private UserRepository repo;
+
+    public void addUser(String name) {
+        User u = new User();
+        u.setUsername(name);
+        repo.save(u);
+    }
+}`,
+
+          // 4) Service missing @Autowired injection, so repo is null
+          `@Entity
+public class User {
+    @Id @GeneratedValue
+    private Long id;
+    private String username;
+    // getters/setters
+}
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {}
+
+@Service
+public class UserService {
+    private UserRepository repo;  // forgot @Autowired
+
+    public void addUser(String name) {
+        User u = new User();
+        u.setUsername(name);
+        repo.save(u);             // NullPointerException at runtime
     }
 }`,
         ],
@@ -12334,14 +12968,72 @@ public class UserService {
         questionText:
           "Complete the Java code to create, read, update, and delete a Firestore document.",
         options: [
+          // 1) Correct sequence and syntax
           `FirebaseFirestore db = FirebaseFirestore.getInstance();
 DocumentReference doc = db.collection("users").document("alice");
 // create
 doc.set(new User("alice@example.com", 30));
 // read
-doc.get().addOnSuccessListener(snapshot -> { User u = snapshot.toObject(User.class); });
+doc.get().addOnSuccessListener(snapshot -> {
+    User u = snapshot.toObject(User.class);
+});
 // update
 doc.update("age", 31);
+// delete
+doc.delete();`,
+
+          // 2) Forgot to handle asynchronous read success
+          `FirebaseFirestore db = FirebaseFirestore.getInstance();
+DocumentReference doc = db.collection("users").document("alice");
+// create
+doc.set(new User("alice@example.com", 30));
+// read
+User u = doc.get().toObject(User.class);  // missing addOnSuccessListener
+// update
+doc.update("age", 31);
+// delete
+doc.delete();`,
+
+          // 3) Used add() instead of set(), creating a new doc ID
+          `FirebaseFirestore db = FirebaseFirestore.getInstance();
+CollectionReference users = db.collection("users");
+// create
+users.add(new User("alice@example.com", 30));  // wrong: adds new auto-ID doc
+// read
+DocumentReference doc = users.document("alice");
+doc.get().addOnSuccessListener(snapshot -> {
+    User u = snapshot.toObject(User.class);
+});
+// update
+doc.update("age", 31);
+// delete
+doc.delete();`,
+
+          // 4) Deleted the entire collection instead of the document
+          `FirebaseFirestore db = FirebaseFirestore.getInstance();
+DocumentReference doc = db.collection("users").document("alice");
+// create
+doc.set(new User("alice@example.com", 30));
+// read
+doc.get().addOnSuccessListener(snapshot -> {
+    User u = snapshot.toObject(User.class);
+});
+// update
+doc.update("age", 31);
+// delete
+db.collection("users").delete();  // invalid: delete() not on CollectionReference`,
+
+          // 5) Misused update call with wrong field name
+          `FirebaseFirestore db = FirebaseFirestore.getInstance();
+DocumentReference doc = db.collection("users").document("alice");
+// create
+doc.set(new User("alice@example.com", 30));
+// read
+doc.get().addOnSuccessListener(snapshot -> {
+    User u = snapshot.toObject(User.class);
+});
+// update
+doc.update("username", "alice");  // wrong field key: should be "age"
 // delete
 doc.delete();`,
         ],
@@ -12350,7 +13042,9 @@ DocumentReference doc = db.collection("users").document("alice");
 // create
 doc.set(new User("alice@example.com", 30));
 // read
-doc.get().addOnSuccessListener(snapshot -> { User u = snapshot.toObject(User.class); });
+doc.get().addOnSuccessListener(snapshot -> {
+    User u = snapshot.toObject(User.class);
+});
 // update
 doc.update("age", 31);
 // delete
