@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { keyframes } from "@emotion/react";
 
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { MiniKitContextProvider } from "./providers/MiniKitProvider.jsx";
 
 import { AppWrapper } from "./App.jsx";
 import "./index.css";
@@ -89,6 +90,8 @@ localStorage.setItem("CANARY_KEY", "Y2FuYXJ5");
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ChakraProvider theme={theme}>
-    <AppWrapper />
+    <MiniKitContextProvider>
+      <AppWrapper />
+    </MiniKitContextProvider>
   </ChakraProvider>
 );

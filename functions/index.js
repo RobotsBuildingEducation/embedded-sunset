@@ -651,4 +651,45 @@ app.post("/sendTestPush", verifyAppCheckToken, (req, res) => {
   res.status(200).send({ message: "Push notification scheduled" });
 });
 
+function withValidProperties(properties) {
+  return Object.fromEntries(
+    Object.entries(properties).filter(([key, value]) => {
+      if (Array.isArray(value)) {
+        return value.length > 0;
+      }
+      return !!value;
+    })
+  );
+}
+
+app.get("/.well-known/farcaster.json", (req, res) => {
+  const URL = process.env.VITE_URL;
+  res.json({
+    accountAssociation: {
+      header: process.env.FARCASTER_HEADER,
+      payload: process.env.FARCASTER_PAYLOAD,
+      signature: process.env.FARCASTER_SIGNATURE,
+    },
+    frame: withValidProperties({
+      version: "1",
+      name: process.env.VITE_ONCHAINKIT_PROJECT_NAME,
+      subtitle: process.env.VITE_APP_SUBTITLE,
+      description: process.env.VITE_APP_DESCRIPTION,
+      screenshotUrls: [],
+      iconUrl: process.env.VITE_APP_ICON,
+      splashImageUrl: process.env.VITE_APP_SPLASH_IMAGE,
+      splashBackgroundColor: process.env.VITE_SPLASH_BACKGROUND_COLOR,
+      homeUrl: URL,
+      webhookUrl: `${URL}/api/webhook`,
+      primaryCategory: process.env.VITE_APP_PRIMARY_CATEGORY,
+      tags: [],
+      heroImageUrl: process.env.VITE_APP_HERO_IMAGE,
+      tagline: process.env.VITE_APP_TAGLINE,
+      ogTitle: process.env.VITE_APP_OG_TITLE,
+      ogDescription: process.env.VITE_APP_OG_DESCRIPTION,
+      ogImageUrl: process.env.VITE_APP_OG_IMAGE,
+    }),
+  });
+});
+
 exports.app = fireFunctions.https.onRequest(app);
