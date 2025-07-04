@@ -173,6 +173,7 @@ import ProgressModal from "./components/ProgressModal/ProgressModal";
 import { RoleCanvas } from "./components/RoleCanvas/RoleCanvas";
 import { AlgorithmHelper } from "./components/AlgorithmHelper/AlgorithmHelper";
 import { TbBinaryTreeFilled } from "react-icons/tb";
+import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -1912,6 +1913,19 @@ const Step = ({
           role: "user",
         },
       ]);
+    } else if (step.isPromptWriting) {
+      // we delegate most grading to the component, but you could:
+      await submitPrompt([
+        {
+          role: "user",
+          content: `
+        The user’s prompt: "${inputValue}"
+        Requirement: "${step.question.questionText}"
+        Grade this prompt’s clarity and completeness. 
+        Return JSON { isCorrect: bool, feedback: string }.
+      `,
+        },
+      ]);
     } else if (step.isSingleLineText) {
       await submitPrompt(
         [
@@ -3166,6 +3180,15 @@ const Step = ({
                 userLanguage={userLanguage}
                 step={step}
                 handleModalCheck={handleModalCheck}
+              />
+            )}
+            {step.isPromptWriting && (
+              <PromptWritingQuestion
+                question={step.question}
+                userLanguage={userLanguage}
+                handleModalCheck={handleModalCheck}
+                onLearnClick={handleLearnClick}
+                onSubmitPrompt={handleAnswerClick}
               />
             )}
             {step.isConversationReview && (

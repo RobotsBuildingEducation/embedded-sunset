@@ -2427,6 +2427,20 @@ for neighbor, weight in graph[current]:
           `,
       },
     },
+    //     {
+    //   group: "tutorial",
+    //   title: "Writing Effective Prompts",
+    //   description: "Learn to craft AI prompts that get the right answer.",
+    //   isPromptWriting: true,
+    //   question: {
+    //     questionText:
+    //       "Write a prompt that asks the AI to summarize your day in three bullet points.",
+    //     // you could optionally include a rubric or example in metadata
+    //     metaData: {
+    //       rubric: "Great prompts are clear about: task, format, length, tone.",
+    //     },
+    //   },
+    // },
     {
       group: "tutorial",
       title: "Understanding Coding",
