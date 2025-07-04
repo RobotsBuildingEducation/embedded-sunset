@@ -7,6 +7,7 @@ import { MiniKitContextProvider } from "./providers/MiniKitProvider.jsx";
 
 import { AppWrapper } from "./App.jsx";
 import "./index.css";
+import "@coinbase/onchainkit/styles.css";
 // localStorage.clear();
 
 if ("serviceWorker" in navigator) {

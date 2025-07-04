@@ -9,6 +9,9 @@ export default defineConfig({
   server: {
     port: parseInt(process.env.npm_config_port),
   },
+  define: {
+    "process.env": process.env,
+  },
   plugins: [
     visualizer({ open: true }),
     react(),

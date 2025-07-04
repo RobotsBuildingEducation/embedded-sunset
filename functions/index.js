@@ -675,7 +675,11 @@ app.get("/.well-known/farcaster.json", (req, res) => {
       name: process.env.VITE_ONCHAINKIT_PROJECT_NAME,
       subtitle: process.env.VITE_APP_SUBTITLE,
       description: process.env.VITE_APP_DESCRIPTION,
-      screenshotUrls: [],
+      screenshotUrls: [
+        "https://res.cloudinary.com/dtkeyccga/image/upload/v1751082997/65EDD17C-62CD-4D7E-9BC4-B443D6EA1AF3_ozotcr.png",
+        "https://res.cloudinary.com/dtkeyccga/image/upload/v1751082997/95A2D2E2-F130-4C66-A025-917C9406C531_szv5zn.png",
+        "https://res.cloudinary.com/dtkeyccga/image/upload/v1751082997/9B83B418-69DA-4ABB-BD53-C6A2DB4387CD_vzgsra.png",
+      ],
       iconUrl: process.env.VITE_APP_ICON,
       splashImageUrl: process.env.VITE_APP_SPLASH_IMAGE,
       splashBackgroundColor: process.env.VITE_SPLASH_BACKGROUND_COLOR,

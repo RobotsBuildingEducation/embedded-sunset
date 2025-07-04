@@ -3772,7 +3772,6 @@ const Home = ({
   useEffect(() => {
     let index = 0;
     const interval = setInterval(() => {
-      console.log("x");
       index = (index + 1) % roles.length;
       setRole(roles[index]);
     }, 2500);

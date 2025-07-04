@@ -1,6 +1,6 @@
-import React from 'react';
-import { MiniKitProvider } from '@coinbase/onchainkit/minikit';
-import { base } from 'wagmi/chains';
+import React from "react";
+import { MiniKitProvider } from "@coinbase/onchainkit/minikit";
+import { base } from "wagmi/chains";
 
 export function MiniKitContextProvider({ children }) {
   return (
