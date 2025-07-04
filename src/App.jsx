@@ -158,6 +158,7 @@ import { logEvent } from "firebase/analytics";
 import BitcoinOnboarding from "./components/BitcoinOnboarding/BitcoinOnboarding";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { FaBitcoin, FaMagic } from "react-icons/fa";
+import MiniKitInitializer from "./MiniKitInitializer";
 
 import BitcoinModeModal from "./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal";
 import SelfPacedModal from "./components/SettingsMenu/SelfPacedModal/SelfPacedModal";
@@ -3771,7 +3772,6 @@ const Home = ({
   useEffect(() => {
     let index = 0;
     const interval = setInterval(() => {
-      console.log("x");
       index = (index + 1) % roles.length;
       setRole(roles[index]);
     }, 2500);
@@ -5271,6 +5271,7 @@ export const AppWrapper = () => {
   }
   return (
     <Router>
+      <MiniKitInitializer />
       <App isShutDown={isShutDown} />
     </Router>
   );

@@ -9,12 +9,15 @@ export default defineConfig({
   server: {
     port: parseInt(process.env.npm_config_port),
   },
+  define: {
+    "process.env": process.env,
+  },
   plugins: [
     visualizer({ open: true }),
     react(),
     VitePWA({
       workbox: {
-        maximumFileSizeToCacheInBytes: 6100000, // Set to 4MB or any higher value
+        maximumFileSizeToCacheInBytes: 6500000, // Set to 4MB or any higher value
       },
       manifest: {
         name: "Robots Building Education",
