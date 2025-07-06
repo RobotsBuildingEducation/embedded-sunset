@@ -1,11 +1,144 @@
 import React, { useEffect, useState } from "react";
-import { Box, Button, Input, Text, VStack, Heading } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Input,
+  Text,
+  VStack,
+  Heading,
+  UnorderedList,
+  ListItem,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+} from "@chakra-ui/react";
 import Markdown from "react-markdown";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { database } from "../../database/firebaseResources";
 import { useSimpleGeminiChat } from "../../hooks/useGeminiChat";
 import { translation } from "../../utility/translation";
+import LiveReactEditorModal from "../LiveCodeEditor/LiveCodeEditor";
+
+export const transcriptDisplay = {
+  tutorial: {
+    en: "Tutorial",
+    es: "Tutorial",
+    "py-en": "Tutorial",
+    "swift-en": "Tutorial",
+    "android-en": "Tutorial",
+    "compsci-en": "Tutorial",
+  },
+  1: {
+    en: "Basics of Coding",
+    es: "Fundamentos de la Programación",
+    "py-en": "Basics of Coding",
+    "swift-en": "Basics of Coding",
+    "android-en": "Basics of Coding",
+    "compsci-en": "Foundations of Data Structures",
+  },
+  2: {
+    en: "Object-Oriented Programming",
+    es: "Programación Orientada a Objetos",
+    "py-en": "Object-Oriented Programming",
+    "swift-en": "Object-Oriented Programming",
+    "android-en": "Object-Oriented Programming",
+    "compsci-en": "Linear Structures",
+  },
+  3: {
+    en: "Frontend Development",
+    es: "Desarrollo Frontend",
+    "py-en": "Frontend Development",
+    "swift-en": "Frontend Development",
+    "android-en": "Frontend Development",
+    "compsci-en": "Hierarchical & Associative Structures",
+  },
+  4: {
+    en: "Backend Engineering Fundamentals",
+    es: "Fundamentos de Ingeniería de Backend",
+    "py-en": "Backend Engineering Fundamentals",
+    "swift-en": "Backend Engineering Fundamentals",
+    "android-en": "Backend Engineering Fundamentals",
+    "compsci-en": "Sorting & Searching Algorithms",
+  },
+  5: {
+    en: "Creating Apps & Experiences",
+    es: "Creando Aplicaciones y Experiencias",
+    "py-en": "Creating Apps & Experiences",
+    "swift-en": "Creating Apps & Experiences",
+    "android-en": "Creating Apps & Experiences",
+    "compsci-en": "Operating Systems Essentials",
+  },
+  6: {
+    en: "Computer Science",
+    es: "Ciencias de la Computación",
+    "py-en": "Computer Science",
+    "swift-en": "Computer Science",
+    "android-en": "Computer Science",
+    "compsci-en": "Computer Science",
+  },
+};
+
+const newTheme = {
+  p: (props) => <Text mb={2} lineHeight="1.6" {...props} />,
+  ul: (props) => <UnorderedList pl={6} spacing={2} {...props} />,
+  ol: (props) => <UnorderedList as="ol" pl={6} spacing={2} {...props} />,
+  li: (props) => <ListItem mb={1} {...props} />,
+  h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  code: ({ inline, className, children, ...props }) => {
+    const match = /language-(\w+)/.exec(className || "");
+    return !inline && match ? (
+      <LiveReactEditorModal code={String(children).replace(/\n$/, "")} />
+    ) : (
+      <Box
+        as="code"
+        backgroundColor="gray.100"
+        p={1}
+        borderRadius="md"
+        fontSize="sm"
+        {...props}
+      >
+        {children}
+      </Box>
+    );
+  },
+};
+
+const renderGroupedSteps = (steps, currentStep, userLanguage) => {
+  const stepElements = [];
+  let lastGroup = null;
+  steps[userLanguage].forEach((s, index) => {
+    if (s.group !== lastGroup) {
+      stepElements.push(
+        s.group === "introduction" ? null : (
+          <Heading
+            as="h5"
+            size="sm"
+            mt={4}
+            key={`group-${index}`}
+            color="green.400"
+          >
+            {transcriptDisplay[s.group]?.[userLanguage] || ""}
+          </Heading>
+        )
+      );
+      lastGroup = s.group;
+    }
+    stepElements.push(
+      <Text
+        key={`step-${index}`}
+        color={index <= currentStep - 1 ? "green.500" : "gray.500"}
+      >
+        {index !== 0 ? index + ". " + s.title : ""}
+      </Text>
+    );
+  });
+  return stepElements;
+};
 
 const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
   const [idea, setIdea] = useState("");
@@ -100,11 +233,29 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
   };
 
 
+  const currentIdx = steps[userLanguage].indexOf(step);
   return (
     <VStack spacing={6} alignItems="flex-start" width="100%" maxWidth="600px">
       <Heading size="md">
         {translation[userLanguage]["modal.adaptiveLearning.title"]}
       </Heading>
+
+      <Accordion allowToggle width="100%">
+        <AccordionItem>
+          <AccordionButton p={6} justifyContent="space-between">
+            <Box flex="1" textAlign="left">
+              {translation[userLanguage]["modal.adaptiveLearning.stepsTaken"]}
+            </Box>
+            <AccordionIcon />
+          </AccordionButton>
+          <AccordionPanel pb={4}>
+            <VStack align="stretch">
+              {renderGroupedSteps(steps, currentIdx, userLanguage)}
+            </VStack>
+          </AccordionPanel>
+        </AccordionItem>
+      </Accordion>
+
       <Input
         placeholder={translation[userLanguage]["buildYourApp.input.label"]}
         value={idea}
@@ -126,7 +277,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
       {isLoading && <Text>{translation[userLanguage]["loading.suggestion"]}</Text>}
       {code && (
         <Box width="100%" border="1px solid" p={4} borderRadius="md">
-          <Markdown components={ChakraUIRenderer()} children={code} />
+          <Markdown components={ChakraUIRenderer(newTheme)} children={code} />
         </Box>
       )}
       <Button onClick={handleSave} isDisabled={!code.trim()}>
