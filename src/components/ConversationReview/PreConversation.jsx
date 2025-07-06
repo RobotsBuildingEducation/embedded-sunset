@@ -109,35 +109,37 @@ const newTheme = {
 };
 
 const renderGroupedSteps = (steps, currentStep, userLanguage) => {
-  const stepElements = [];
-  let lastGroup = null;
+  const groups = {};
   steps[userLanguage].forEach((s, index) => {
-    if (s.group !== lastGroup) {
-      stepElements.push(
-        s.group === "introduction" ? null : (
-          <Heading
-            as="h5"
-            size="sm"
-            mt={4}
-            key={`group-${index}`}
-            color="green.400"
-          >
-            {transcriptDisplay[s.group]?.[userLanguage] || ""}
-          </Heading>
-        )
-      );
-      lastGroup = s.group;
-    }
-    stepElements.push(
-      <Text
-        key={`step-${index}`}
-        color={index <= currentStep - 1 ? "green.500" : "gray.500"}
-      >
-        {index !== 0 ? index + ". " + s.title : ""}
-      </Text>
+    if (!groups[s.group]) groups[s.group] = [];
+    groups[s.group].push({ ...s, index });
+  });
+
+  return Object.entries(groups).map(([group, items]) => {
+    if (group === "introduction") return null;
+    return (
+      <AccordionItem key={group}>
+        <AccordionButton p={6} justifyContent="space-between">
+          <Box flex="1" textAlign="left">
+            {transcriptDisplay[group]?.[userLanguage] || group}
+          </Box>
+          <AccordionIcon />
+        </AccordionButton>
+        <AccordionPanel pb={4}>
+          <VStack align="stretch">
+            {items.map(({ title, index }) => (
+              <Text
+                key={`step-${index}`}
+                color={index <= currentStep - 1 ? "green.500" : "gray.500"}
+              >
+                {index !== 0 ? index + ". " + title : ""}
+              </Text>
+            ))}
+          </VStack>
+        </AccordionPanel>
+      </AccordionItem>
     );
   });
-  return stepElements;
 };
 
 const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
@@ -202,15 +204,17 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
     submitPrompt(prompt).then(() => setIsLoading(false));
   };
 
-  const handleSaveIdea = async () => {
+  const handleSaveIdeaAndGenerate = async () => {
     try {
       const userId = localStorage.getItem("local_npub");
-      if (!userId) return;
-      await updateDoc(doc(database, "users", userId), { userBuild: idea });
-      setSavedIdea(idea);
+      if (userId) {
+        await updateDoc(doc(database, "users", userId), { userBuild: idea });
+        setSavedIdea(idea);
+      }
     } catch (err) {
       console.error("Error saving build idea", err);
     }
+    handleGenerate();
   };
 
   const handleSave = async () => {
@@ -249,9 +253,9 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
             <AccordionIcon />
           </AccordionButton>
           <AccordionPanel pb={4}>
-            <VStack align="stretch">
+            <Accordion allowToggle width="100%">
               {renderGroupedSteps(steps, currentIdx, userLanguage)}
-            </VStack>
+            </Accordion>
           </AccordionPanel>
         </AccordionItem>
       </Accordion>
@@ -261,7 +265,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
         value={idea}
         onChange={(e) => setIdea(e.target.value)}
       />
-      <Button onClick={handleSaveIdea} isDisabled={!idea.trim()}>
+      <Button onClick={handleSaveIdeaAndGenerate} isDisabled={isLoading}>
         {savedIdea
           ? translation[userLanguage]["buildYourApp.button.label.2"]
           : translation[userLanguage]["buildYourApp.button.label.1"]}
@@ -271,9 +275,6 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
           {translation[userLanguage]["buildYourApp.idea.label"]} {savedIdea}
         </Box>
       )}
-      <Button onClick={handleGenerate} isDisabled={isLoading} variant="outline">
-        {translation[userLanguage]["modal.adaptiveLearning.recommendButton"]}
-      </Button>
       {isLoading && <Text>{translation[userLanguage]["loading.suggestion"]}</Text>}
       {code && (
         <Box width="100%" border="1px solid" p={4} borderRadius="md">
