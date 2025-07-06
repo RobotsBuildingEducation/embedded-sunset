@@ -30,6 +30,8 @@ import { getObjectsByGroup } from "../../utility/content";
 import ReactConfetti from "react-confetti";
 import { useSimpleGeminiChat } from "../../hooks/useGeminiChat";
 
+import PreConversation from "./PreConversation";
+
 import SyntaxHighlighter from "react-syntax-highlighter";
 
 const newTheme = {
@@ -92,6 +94,7 @@ const ConversationReview = ({
   const [storedRequest, setStoredRequest] = useState("");
   const chatboxRef = useRef(null);
   const chatContainerRef = useRef(null);
+  const [showIntro, setShowIntro] = useState(true);
 
   // Gather the steps within the range
   //   const relevantSteps = steps[userLanguage].slice(
@@ -182,6 +185,17 @@ const ConversationReview = ({
       });
     }
   }, [conversation]);
+
+  if (showIntro) {
+    return (
+      <PreConversation
+        steps={steps}
+        step={step}
+        userLanguage={userLanguage}
+        onContinue={() => setShowIntro(false)}
+      />
+    );
+  }
 
   return (
     <VStack spacing={4} align="center" width="100%" maxWidth="600px">
