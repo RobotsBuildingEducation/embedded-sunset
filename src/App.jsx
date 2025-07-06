@@ -4245,6 +4245,163 @@ const Home = ({
             </VStack>
           </Box>
 
+          {/* FAQs */}
+          <Box
+            height="100%"
+            scrollSnapAlign="start"
+            p={8}
+            bg="white"
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            pb={24}
+          >
+            <VStack spacing={6} alignItems="flex-start" width="100%">
+              <Text fontSize="2xl" textAlign="center" width="100%" mt={4}>
+                FAQs
+              </Text>
+
+              <Accordion allowMultiple width="100%">
+                <AccordionItem>
+                  <AccordionButton padding={6}>
+                    <Box flex="1" textAlign="left">
+                      {translation[userLanguage]["faq_1_question"]}
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4}>
+                    <Text textAlign="left" fontSize="sm">
+                      {translation[userLanguage]["faq_1_item_1"]}
+                      <br />
+                      <br />
+                      {translation[userLanguage]["faq_1_item_2"]}
+                      <br />
+                      <br />
+                      {translation[userLanguage]["faq_1_item_3"]}
+                    </Text>
+                  </AccordionPanel>
+                </AccordionItem>
+
+                <AccordionItem>
+                  <AccordionButton padding={6}>
+                    <Box flex="1" textAlign="left">
+                      {translation[userLanguage]["faq_2_question"]}
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4}>
+                    <Text textAlign="left" fontSize="sm">
+                      {translation[userLanguage]["faq_2_item_1"]}
+                      <br />
+                      <br />
+                      {translation[userLanguage]["faq_2_item_2"]}
+                      <br />
+                      <br />
+                      {translation[userLanguage]["faq_2_item_3"]}
+                    </Text>
+                  </AccordionPanel>
+                </AccordionItem>
+
+                <AccordionItem>
+                  <AccordionButton padding={6}>
+                    <Box flex="1" textAlign="left">
+                      {translation[userLanguage]["faq_3_question"]}
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4}>
+                    <Text textAlign="left" fontSize="sm">
+                      {translation[userLanguage]["faq_3_item_1"]}
+                      <br />
+                      <br />
+                      {translation[userLanguage]["faq_3_item_2"]}
+                      <br />
+                      <br />
+                      {translation[userLanguage]["faq_3_item_3"]}
+                      <br />
+                      <br />
+                      {translation[userLanguage]["faq_3_item_4"]}
+                    </Text>
+                  </AccordionPanel>
+                </AccordionItem>
+
+                <AccordionItem>
+                  <AccordionButton padding={6}>
+                    <Box flex="1" textAlign="left">
+                      {translation[userLanguage]["faq_4_question"]}
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4}>
+                    <Text textAlign="left" fontSize="sm">
+                      {translation[userLanguage]["faq_4_item_1"]}
+                      <br />
+                      <br />
+                      {translation[userLanguage]["faq_4_item_2"]}
+                      <br />
+                      <br />
+                      {translation[userLanguage]["faq_4_item_3"]}
+                    </Text>
+                  </AccordionPanel>
+                </AccordionItem>
+
+                <AccordionItem>
+                  <AccordionButton padding={6}>
+                    <Box flex="1" textAlign="left">
+                      {translation[userLanguage]["faq_5_question"]}
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4}>
+                    <Text textAlign="left" fontSize="sm">
+                      {translation[userLanguage]["faq_5_item_1"]}
+                      <br />
+                      <br />
+                      {translation[userLanguage]["faq_5_item_2"]}
+                      <br />
+                      <br />
+                      {translation[userLanguage]["faq_5_item_3"]}
+                    </Text>
+                  </AccordionPanel>
+                </AccordionItem>
+
+                <AccordionItem>
+                  <AccordionButton padding={6}>
+                    <Box flex="1" textAlign="left">
+                      {translation[userLanguage]["faq_6_question"]}
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4}>
+                    <Text textAlign="left" fontSize="sm">
+                      {translation[userLanguage]["faq_6_item_1"]}
+                      <br />
+                      <br />
+                      {translation[userLanguage]["faq_6_item_2"]}
+                    </Text>
+                  </AccordionPanel>
+                </AccordionItem>
+
+                <AccordionItem>
+                  <AccordionButton padding={6}>
+                    <Box flex="1" textAlign="left">
+                      {translation[userLanguage]["faq_7_question"]}
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4}>
+                    <Text textAlign="left" fontSize="sm">
+                      {translation[userLanguage]["faq_7_item_1"]}
+                      <br />
+                      <br />
+                      {translation[userLanguage]["faq_7_item_2"]}
+                    </Text>
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
+            </VStack>
+          </Box>
+
           {/* Start Learning */}
           <VStack display="flex" justifyContent="center" alignItems="center">
             <RandomCharacter notSoRandomCharacter="9" />
