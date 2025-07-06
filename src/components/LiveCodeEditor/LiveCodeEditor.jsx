@@ -211,7 +211,7 @@ const LiveReactEditorModal = ({ code, isOnboarding = false }) => {
       >
         Run Code
       </Button>
-      {!isOnboarding && (
+      {/* {!isOnboarding && (
         <>
           {" "}
           &nbsp;
@@ -241,7 +241,7 @@ const LiveReactEditorModal = ({ code, isOnboarding = false }) => {
                 ]}
           </Link>
         </>
-      )}
+      )} */}
       <Box display="flex" flexDirection={"column"} width="100%" mt={4}>
         <Box
           width={"100%"}
