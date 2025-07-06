@@ -82,7 +82,7 @@ export const transcriptDisplay = {
   },
 };
 
-const newTheme = {
+const createTheme = (hideRunButton) => ({
   p: (props) => <Text mb={2} lineHeight="1.6" {...props} />,
   ul: (props) => <UnorderedList pl={6} spacing={2} {...props} />,
   ol: (props) => <UnorderedList as="ol" pl={6} spacing={2} {...props} />,
@@ -93,7 +93,10 @@ const newTheme = {
   code: ({ inline, className, children, ...props }) => {
     const match = /language-(\w+)/.exec(className || "");
     return !inline && match ? (
-      <LiveReactEditorModal code={String(children).replace(/\n$/, "")} />
+      <LiveReactEditorModal
+        code={String(children).replace(/\n$/, "")}
+        hideRunButton={hideRunButton}
+      />
     ) : (
       <Box
         as="code"
@@ -107,7 +110,7 @@ const newTheme = {
       </Box>
     );
   },
-};
+});
 
 const renderGroupedSteps = (steps, currentStep, userLanguage) => {
   const groups = {};
@@ -290,7 +293,10 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
       )}
       {code && (
         <Box width="100%" p={4} borderRadius="md">
-          <Markdown components={ChakraUIRenderer(newTheme)} children={code} />
+          <Markdown
+            components={ChakraUIRenderer(createTheme(isLoading))}
+            children={code}
+          />
         </Box>
       )}
     </VStack>

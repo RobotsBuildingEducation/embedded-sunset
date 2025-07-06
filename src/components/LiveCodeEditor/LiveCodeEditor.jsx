@@ -85,7 +85,11 @@ import { translation } from "../../utility/translation";
 // ;
 // `;
 
-const LiveReactEditorModal = ({ code, isOnboarding = false }) => {
+const LiveReactEditorModal = ({
+  code,
+  isOnboarding = false,
+  hideRunButton = false,
+}) => {
   const [editorCode, setEditorCode] = useState(code);
   const { hasCopied, onCopy } = useClipboard(
     editorCode +
@@ -202,15 +206,17 @@ const LiveReactEditorModal = ({ code, isOnboarding = false }) => {
   console.log("isreact", isReactCode(editorCode));
   return (
     <>
-      <Button
-        variant="outline"
-        mt={4}
-        onClick={runCode}
-        mb={4}
-        boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-      >
-        Run Code
-      </Button>
+      {!hideRunButton && (
+        <Button
+          variant="outline"
+          mt={4}
+          onClick={runCode}
+          mb={4}
+          boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+        >
+          Run Code
+        </Button>
+      )}
       {/* {!isOnboarding && (
         <>
           {" "}
