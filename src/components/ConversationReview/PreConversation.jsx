@@ -82,7 +82,35 @@ export const transcriptDisplay = {
   },
 };
 
-const createTheme = (hideRunButton) => ({
+const LiveEditorContext = React.createContext({
+  hideRunButton: false,
+  autoRun: false,
+});
+
+const CodeBlock = ({ inline, className, children, ...props }) => {
+  const { hideRunButton, autoRun } = React.useContext(LiveEditorContext);
+  const match = /language-(\w+)/.exec(className || "");
+  return !inline && match ? (
+    <LiveReactEditorModal
+      code={String(children).replace(/\n$/, "")}
+      hideRunButton={hideRunButton}
+      autoRun={autoRun}
+    />
+  ) : (
+    <Box
+      as="code"
+      backgroundColor="gray.100"
+      p={1}
+      borderRadius="md"
+      fontSize="sm"
+      {...props}
+    >
+      {children}
+    </Box>
+  );
+};
+
+const newTheme = {
   p: (props) => <Text mb={2} lineHeight="1.6" {...props} />,
   ul: (props) => <UnorderedList pl={6} spacing={2} {...props} />,
   ol: (props) => <UnorderedList as="ol" pl={6} spacing={2} {...props} />,
@@ -90,27 +118,8 @@ const createTheme = (hideRunButton) => ({
   h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  code: ({ inline, className, children, ...props }) => {
-    const match = /language-(\w+)/.exec(className || "");
-    return !inline && match ? (
-      <LiveReactEditorModal
-        code={String(children).replace(/\n$/, "")}
-        hideRunButton={hideRunButton}
-      />
-    ) : (
-      <Box
-        as="code"
-        backgroundColor="gray.100"
-        p={1}
-        borderRadius="md"
-        fontSize="sm"
-        {...props}
-      >
-        {children}
-      </Box>
-    );
-  },
-});
+  code: CodeBlock,
+};
 
 const renderGroupedSteps = (steps, currentStep, userLanguage) => {
   const groups = {};
@@ -292,12 +301,13 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
         <Text>{translation[userLanguage]["loading.suggestion"]}</Text>
       )}
       {code && (
-        <Box width="100%" p={4} borderRadius="md">
-          <Markdown
-            components={ChakraUIRenderer(createTheme(isLoading))}
-            children={code}
-          />
-        </Box>
+        <LiveEditorContext.Provider
+          value={{ hideRunButton: isLoading, autoRun: !isLoading }}
+        >
+          <Box width="100%" p={4} borderRadius="md">
+            <Markdown components={ChakraUIRenderer(newTheme)} children={code} />
+          </Box>
+        </LiveEditorContext.Provider>
       )}
     </VStack>
   );

@@ -89,6 +89,7 @@ const LiveReactEditorModal = ({
   code,
   isOnboarding = false,
   hideRunButton = false,
+  autoRun = false,
 }) => {
   const [editorCode, setEditorCode] = useState(code);
   const { hasCopied, onCopy } = useClipboard(
@@ -106,6 +107,13 @@ const LiveReactEditorModal = ({
     }
     setEditorCode(code);
   }, [code]);
+
+  useEffect(() => {
+    if (autoRun && editorCode.trim()) {
+      runCode();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoRun]);
 
   const isReactCode = (code) =>
     /(ReactDOM\s*\.\s*)?render\s*\(\s*<\s*[A-Z][\w]*\s*\/?>/.test(code);
