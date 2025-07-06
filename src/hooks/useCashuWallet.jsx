@@ -74,7 +74,7 @@ export const useProofStorage = () => {
 
 export const useCashuWallet = (isUnactivated, isModalOpen = null) => {
   const [formData, setFormData] = useState({
-    mintUrl: "https://stablenut.umint.cash",
+    mintUrl: "https://mint.minibits.cash/Bitcoin",
     mintAmount: "25",
     meltInvoice: "",
     swapAmount: "1",

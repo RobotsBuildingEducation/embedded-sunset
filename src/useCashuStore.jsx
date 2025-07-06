@@ -16,7 +16,7 @@ const useCashuStore = create((set, get) => ({
   cashuToken: null,
   lightningAddress: "",
   formData: JSON.parse(localStorage.getItem("formData")) || {
-    mintUrl: "https://stablenut.umint.cash",
+    mintUrl: "https://mint.minibits.cash/Bitcoin",
     mintAmount: "25",
     meltInvoice: "",
     swapAmount: "1",

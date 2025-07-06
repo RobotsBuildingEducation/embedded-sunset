@@ -889,10 +889,7 @@ reverse(head) {
     "landing.introduction": (
       <div>
         {/* Create scholarships with learning */}
-        A better alternative to Codecademy.
-        <br />
-        <br /> Work smart and learn what you need to know to code and build your
-        ideas with AI quickly.
+        Use AI to learn how to code better and faster than any other platform.
         {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
       </div>
     ),
@@ -4030,10 +4027,7 @@ reverse(head) {
     "landing.introduction": (
       <div>
         {/* Create scholarships with learning */}
-        A better alternative to Codecademy.
-        <br />
-        <br /> Work smart and learn what you need to know to code and build your
-        ideas with AI quickly.
+        Use AI to learn how to code better and faster than any other platform.
         {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
       </div>
     ),
@@ -5620,10 +5614,7 @@ reverse(head) {
     "landing.introduction": (
       <div>
         {/* Create scholarships with learning */}
-        A better alternative to Codecademy.
-        <br />
-        <br /> Work smart and learn what you need to know to code and build your
-        ideas with AI quickly.
+        Use AI to learn how to code better and faster than any other platform.
         {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
       </div>
     ),
@@ -7210,10 +7201,7 @@ reverse(head) {
     "landing.introduction": (
       <div>
         {/* Create scholarships with learning */}
-        A better alternative to Codecademy.
-        <br />
-        <br /> Work smart and learn what you need to know to code and build your
-        ideas with AI quickly.
+        Use AI to learn how to code better and faster than any other platform.
         {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
       </div>
     ),
@@ -8800,11 +8788,7 @@ reverse(head) {
     "landing.introduction": (
       <div>
         {/* Create scholarships with learning */}
-        A better alternative to Codecademy.
-        <br />
-        <br /> Work smart and learn what you need to know to code and build your
-        ideas with AI quickly.
-        {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
+        Use AI to learn how to code better and faster than any other platform.
       </div>
     ),
     "landing.button.telemetry": "Create Account",
