@@ -20,7 +20,6 @@ import {
   HStack,
   Textarea,
   Select,
-  Checkbox,
 } from "@chakra-ui/react";
 
 import { CodeEditor } from "../CodeEditor/CodeEditor";
@@ -91,22 +90,15 @@ const LiveReactEditorModal = ({
   isOnboarding = false,
   hideRunButton = false,
   autoRun = false,
-  forceJavaScript = false,
 }) => {
   const [editorCode, setEditorCode] = useState(code);
-  const [forceJS, setForceJS] = useState(forceJavaScript);
   const { hasCopied, onCopy } = useClipboard(
     editorCode +
       " using mock data rather than real config data if necessary. Given that we're using v0, use supabase to replce firebase if firebase is discussed."
   ); // Copy functionality
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [error, setError] = useState("");
-  const [consoleLogs, setConsoleLogs] = useState([]);
   const iframeRef = useRef(null);
-
-  useEffect(() => {
-    setForceJS(forceJavaScript);
-  }, [forceJavaScript]);
 
   useEffect(() => {
     if (isPreviewing) {
@@ -131,36 +123,6 @@ const LiveReactEditorModal = ({
     return inputCode.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, "").trim();
   };
 
-  const runJavaScriptCode = (sanitizedCode) => {
-    try {
-      const htmlContent = `
-       <!DOCTYPE html>
-       <html lang="en">
-         <head>
-           <meta charset="UTF-8" />
-           <title>Live JavaScript Preview</title>
-         </head>
-         <body>
-           <script>
-             window.console = {
-               log: (...args) => window.parent.postMessage({ type: 'console', message: args.join(" ") }, '*'),
-               error: (...args) => window.parent.postMessage({ type: 'console', message: 'Error: ' + args.join(" ") }, '*')
-             };
-             try {
-               ${sanitizedCode}
-             } catch (err) {
-               console.error(err);
-             }
-           <\/script>
-         </body>
-       </html>
-     `;
-      iframeRef.current.srcdoc = htmlContent;
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
   const runHTMLCode = (sanitizedCode) => {
     try {
       iframeRef.current.srcdoc = `
@@ -183,27 +145,15 @@ const LiveReactEditorModal = ({
   const runCode = () => {
     setIsPreviewing(true);
     setError("");
-    setConsoleLogs([]);
     const sanitizedCode = cleanCode(editorCode);
-
-    if (!forceJS && isReactCode(sanitizedCode)) {
-      // runReactCode(sanitizedCode);
-    } else if (!forceJS && isHTMLCode(sanitizedCode)) {
+    if (isReactCode(sanitizedCode)) {
+      // React preview handled by LiveProvider
+    } else if (isHTMLCode(sanitizedCode)) {
       runHTMLCode(editorCode);
     } else {
-      runJavaScriptCode(sanitizedCode);
+      setError("Unsupported code format");
     }
   };
-
-  useEffect(() => {
-    const handleConsoleMessage = (event) => {
-      if (event.data.type === "console") {
-        setConsoleLogs((prevLogs) => [...prevLogs, event.data.message]);
-      }
-    };
-    window.addEventListener("message", handleConsoleMessage);
-    return () => window.removeEventListener("message", handleConsoleMessage);
-  }, []);
 
   // const flexDirection = useBreakpointValue({
   //   base: "column",
@@ -276,9 +226,6 @@ const LiveReactEditorModal = ({
               isHTMLCode(editorCode) ? "en" : localStorage.getItem("userLanguage") || "en"
             }
           />
-          <Checkbox mt={2} isChecked={forceJS} onChange={(e) => setForceJS(e.target.checked)}>
-            Force JavaScript
-          </Checkbox>
         </Box>
 
         <Box
@@ -287,7 +234,7 @@ const LiveReactEditorModal = ({
           marginTop="8px"
           border="1px solid black"
         >
-          {isReactCode(editorCode) && !forceJS && isPreviewing ? (
+          {isReactCode(editorCode) && isPreviewing ? (
             <ChakraProvider>
               <LiveProvider
                 code={editorCode}
@@ -331,7 +278,7 @@ const LiveReactEditorModal = ({
               </LiveProvider>
             </ChakraProvider>
           ) : null}
-          {isHTMLCode(editorCode) && !forceJS && !isReactCode(editorCode) ? (
+          {isHTMLCode(editorCode) && !isReactCode(editorCode) ? (
             <Box width="50%" borderRadius="md" ml={4}>
               <iframe
                 ref={iframeRef}
@@ -344,28 +291,14 @@ const LiveReactEditorModal = ({
               />
             </Box>
           ) : null}
-          {(forceJS || (!isReactCode(editorCode) && !isHTMLCode(editorCode))) &&
-          isPreviewing ? (
-            <VStack
-              align="start"
-              width="80%"
-              mt={4}
-              p={2}
-              border="1px solid #ccc"
-              borderRadius="md"
-              bg="blackAlpha.800"
-              color="white"
-              maxHeight="200px"
-              overflowY="auto"
-            >
-              {consoleLogs.map((log, index) => (
-                <Text key={index}>{log}</Text>
-              ))}
-            </VStack>
-          ) : null}
+          {isPreviewing && error && (
+            <Text color="red.500" mt={2}>
+              {error}
+            </Text>
+          )}
         </Box>
       </Box>
-      {error && <Text color="red.500">{error}</Text>}
+      {error && !isPreviewing && <Text color="red.500">{error}</Text>}
     </>
   );
 };
