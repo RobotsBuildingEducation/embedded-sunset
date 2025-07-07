@@ -22,7 +22,7 @@ import {
   Select,
 } from "@chakra-ui/react";
 
-import { CodeEditor } from "../CodeEditor/CodeEditor";
+import Editor from "@monaco-editor/react";
 
 import { LiveError, LivePreview, LiveProvider } from "react-live";
 import { database } from "../../database/firebaseResources";
@@ -98,6 +98,7 @@ const LiveReactEditorModal = ({
   ); // Copy functionality
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [error, setError] = useState("");
+  const [consoleLogs, setConsoleLogs] = useState([]);
   const iframeRef = useRef(null);
 
   useEffect(() => {
@@ -123,6 +124,36 @@ const LiveReactEditorModal = ({
     return inputCode.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, "").trim();
   };
 
+  const runJavaScriptCode = (sanitizedCode) => {
+    try {
+      const htmlContent = `
+       <!DOCTYPE html>
+       <html lang="en">
+         <head>
+           <meta charset="UTF-8" />
+           <title>Live JavaScript Preview</title>
+         </head>
+         <body>
+           <script>
+             window.console = {
+               log: (...args) => window.parent.postMessage({ type: 'console', message: args.join(" ") }, '*'),
+               error: (...args) => window.parent.postMessage({ type: 'console', message: 'Error: ' + args.join(" ") }, '*')
+             };
+             try {
+               ${sanitizedCode}
+             } catch (err) {
+               console.error(err);
+             }
+           <\/script>
+         </body>
+       </html>
+     `;
+      iframeRef.current.srcdoc = htmlContent;
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   const runHTMLCode = (sanitizedCode) => {
     try {
       iframeRef.current.srcdoc = `
@@ -145,15 +176,27 @@ const LiveReactEditorModal = ({
   const runCode = () => {
     setIsPreviewing(true);
     setError("");
+    setConsoleLogs([]);
     const sanitizedCode = cleanCode(editorCode);
+
     if (isReactCode(sanitizedCode)) {
-      // React preview handled by LiveProvider
+      // runReactCode(sanitizedCode);
     } else if (isHTMLCode(sanitizedCode)) {
       runHTMLCode(editorCode);
     } else {
-      setError("Unsupported code format");
+      runJavaScriptCode(sanitizedCode);
     }
   };
+
+  useEffect(() => {
+    const handleConsoleMessage = (event) => {
+      if (event.data.type === "console") {
+        setConsoleLogs((prevLogs) => [...prevLogs, event.data.message]);
+      }
+    };
+    window.addEventListener("message", handleConsoleMessage);
+    return () => window.removeEventListener("message", handleConsoleMessage);
+  }, []);
 
   // const flexDirection = useBreakpointValue({
   //   base: "column",
@@ -218,13 +261,24 @@ const LiveReactEditorModal = ({
           mb={{ base: 4, md: 0 }}
           boxShadow="0.5px 0.5px 1px 0px rgba(0, 0, 0, 0.75)"
         >
-          <CodeEditor
+          <Editor
+            height="400px"
+            defaultLanguage={isHTMLCode(editorCode) ? "html" : "javascript"}
+            language={isHTMLCode(editorCode) ? "html" : "javascript"}
             value={editorCode}
             onChange={(value) => setEditorCode(value)}
-            height={400}
-            userLanguage={
-              isHTMLCode(editorCode) ? "en" : localStorage.getItem("userLanguage") || "en"
-            }
+            // theme="vs-dark"
+            theme="light"
+            // maxWidth="100%"
+            width="100%"
+            options={{
+              minimap: { enabled: false },
+              fontFamily: "initial",
+              fontSize: "16px",
+              // wordWrap: "on",
+              automaticLayout: true,
+              tabIndex: 0, // Make the editor focusable
+            }}
           />
         </Box>
 
@@ -291,14 +345,29 @@ const LiveReactEditorModal = ({
               />
             </Box>
           ) : null}
-          {isPreviewing && error && (
-            <Text color="red.500" mt={2}>
-              {error}
-            </Text>
-          )}
+          {!isReactCode(editorCode) &&
+          !isHTMLCode(editorCode) &&
+          isPreviewing ? (
+            <VStack
+              align="start"
+              width="80%"
+              mt={4}
+              p={2}
+              border="1px solid #ccc"
+              borderRadius="md"
+              bg="blackAlpha.800"
+              color="white"
+              maxHeight="200px"
+              overflowY="auto"
+            >
+              {consoleLogs.map((log, index) => (
+                <Text key={index}>{log}</Text>
+              ))}
+            </VStack>
+          ) : null}
         </Box>
       </Box>
-      {error && !isPreviewing && <Text color="red.500">{error}</Text>}
+      {error && <Text color="red.500">{error}</Text>}
     </>
   );
 };
