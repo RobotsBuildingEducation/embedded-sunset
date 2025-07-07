@@ -211,10 +211,9 @@ const LiveReactEditorModal = ({
   //   md: isOnboarding ? "100%" : "100%",
   // });
 
-  console.log("isreact", isReactCode(editorCode));
   return (
     <>
-      {!hideRunButton && (
+      {/* {!hideRunButton && (
         <Button
           variant="outline"
           mt={4}
@@ -224,7 +223,7 @@ const LiveReactEditorModal = ({
         >
           Run Code
         </Button>
-      )}
+      )} */}
       {/* {!isOnboarding && (
         <>
           {" "}
@@ -283,7 +282,12 @@ const LiveReactEditorModal = ({
           />
         </Box>
 
-        <Box width={"100%"} borderRadius="md">
+        <Box
+          width={"100%"}
+          borderRadius="2xl"
+          marginTop="8px"
+          border="1px solid black"
+        >
           {isReactCode(editorCode) && isPreviewing ? (
             <ChakraProvider>
               <LiveProvider
