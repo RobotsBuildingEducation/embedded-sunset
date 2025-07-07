@@ -99,7 +99,7 @@ export default function KnowledgeLedgerOnboarding({
   const { showAlert } = useAlertStore();
   const { openPasscodeModal } = usePasscodeModalStore();
   const { hasCopied, onCopy } = useClipboard(
-    userIdea + " (using mock data if necessary)"
+    userIdea + " (using mock data if necessary)",
   );
 
   // -- Editor state arrays, one slot per message --
@@ -122,6 +122,21 @@ export default function KnowledgeLedgerOnboarding({
     setErrors(messages.map(() => ""));
     setConsoleLogs(messages.map(() => []));
   }, [messages]);
+
+  // reset run state when generating new code
+  useEffect(() => {
+    if (isLoading) {
+      setHasRunCode(false);
+    }
+  }, [isLoading]);
+
+  // automatically run the generated code once loading is finished
+  useEffect(() => {
+    if (!isLoading && messages.length > 0 && !hasRunCode) {
+      runCode(0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, messages]);
 
   // handle console messages from iframes
   useEffect(() => {
