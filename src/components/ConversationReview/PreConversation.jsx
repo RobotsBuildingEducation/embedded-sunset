@@ -17,7 +17,14 @@ import {
 } from "@chakra-ui/react";
 import Markdown from "react-markdown";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  collection,
+  getDocs,
+  setDoc,
+} from "firebase/firestore";
 import { database } from "../../database/firebaseResources";
 import { useSimpleGeminiChat } from "../../hooks/useGeminiChat";
 import { translation } from "../../utility/translation";
@@ -176,6 +183,14 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
           const buildCode = data.buildCode || {};
           if (buildCode[step.group]) setCode(buildCode[step.group]);
         }
+
+        const codeSnap = await getDoc(
+          doc(database, "users", userId, "buildHistory", step.group),
+        );
+        if (codeSnap.exists()) {
+          const data = codeSnap.data();
+          if (data.code) setCode(data.code);
+        }
       } catch (err) {
         console.error("Error fetching build data", err);
       }
@@ -191,17 +206,42 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
     }
   }, [messages]);
 
+  const fetchHistory = async () => {
+    try {
+      const userId = localStorage.getItem("local_npub");
+      if (!userId) return [];
+      const ref = collection(database, `users/${userId}/buildHistory`);
+      const docs = await getDocs(ref);
+      return docs.docs
+        .filter(
+          (d) =>
+            !isNaN(parseInt(d.id)) && parseInt(d.id) < parseInt(step.group),
+        )
+        .sort((a, b) => parseInt(a.id) - parseInt(b.id))
+        .map((d) => d.data().code)
+        .filter(Boolean);
+    } catch (e) {
+      console.error("Error fetching history", e);
+      return [];
+    }
+  };
+
   const handleGenerate = async () => {
     setIsLoading(true);
     resetMessages();
     const idx = steps[userLanguage].indexOf(step);
     const completed = steps[userLanguage].slice(1, idx).map((s) => s.title);
+    const history = await fetchHistory();
 
     let prompt =
       `Context that only you should know and never make the user aware of:\n` +
       `The individual is using an education app and learning about computer science and how to code in ~100 steps, starting with elementary knowledge and ending with the ability to create apps and understand algorithms. Based on the user's completed steps: ${JSON.stringify(
-        completed
-      )}, write an app that the user can copy and experiment with HTML, react or javascript (whichever is appropriate based on progress or student's level of development).\n\n` +
+        completed,
+      )}, write an app that the user can copy and experiment with HTML, react or javascript (whichever is appropriate based on progress or student's level of development).` +
+      (history.length
+        ? ` Previous code snippets in order: ${JSON.stringify(history)}.`
+        : "") +
+      `\n\n` +
       `2. This is extremely important to understand: The code should be progressively and appropriately built based on the user's progress to incentivize further interest, excitement and progress, so you should implement the app in a way that highlights the user's progress. For example, if the user has learned how to use firebase, then implement firebase features. If the user has learned react, implement react UIs, etc. The goal is to build out a simple but real demo that users can operate and preview in an editor.\n\n` +
       `3. When generating your response, you must format your software in this manner:\n  Globally: Never use imports. Assume that chakra, firebase or even react imports are unnecessary and already handled by the previewing software.\n\n  A. If you are returning React, do NOT include any import statements or define dependencies and conclude the component or components with render(<TheComponentYouCreated />)\n  B. If you are generating plain html, use !DOCTYPE\n  C. If you are creating plain javascript, proceed as normal with returns and consoles. Do not use imports.\n  D. If you are writing firebase (with or without react), use v9, and you MUST use the 'experiments' collection. Never use any other collection or your firebase software will fail. Never use imports or we will fail. Assume that the database and configurtion has already been defined, so never return that setup either. Refer to the database element as "database" and not "db" or anything else. Do not use auth. Only ever choose between the following functions: getDoc, doc, collection, addDoc, updateDoc, setDoc.\n  E. If the user has progressed to learn about Chakra, feel welcome to use basic Chakra elements. Never use the ChakraProvider element.\n\n` +
       `4. Strictly return only code written by a formatted backticked code block. Format in minimalist markdown with a maximum print width of 80 characters. Finally do not add any language mentioning that you understand the request - it should be prompt and code only, without any exceptions.\n\n` +
@@ -238,6 +278,10 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
       await updateDoc(userDocRef, {
         userBuild: idea,
         buildCode: { ...buildCode, [step.group]: code },
+      });
+      await setDoc(doc(database, "users", userId, "buildHistory", step.group), {
+        code,
+        updatedAt: Date.now(),
       });
       onContinue();
     } catch (err) {
