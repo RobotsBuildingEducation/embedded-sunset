@@ -178,10 +178,29 @@ export const KnowledgeLedgerModal = ({
     }
   }, [isOpen]);
 
+  const saveBuild = async (content) => {
+    try {
+      const userId = localStorage.getItem("local_npub");
+      if (!userId) return;
+      const group = steps[userLanguage][currentStep].group;
+      await setDoc(
+        doc(database, "users", userId, "buildHistory", group),
+        {
+          code: content,
+          updatedAt: Date.now(),
+        },
+      );
+    } catch (err) {
+      console.error("Error saving build", err);
+    }
+  };
+
   useEffect(() => {
     if (messages?.length > 0) {
       console.log("true..", messages);
       setIsAnimating(false);
+      const last = messages[messages.length - 1];
+      saveBuild(last.content);
       // try {
       //   const lastMessage = messages[messages.length - 1];
       //   const isLastMessage =
