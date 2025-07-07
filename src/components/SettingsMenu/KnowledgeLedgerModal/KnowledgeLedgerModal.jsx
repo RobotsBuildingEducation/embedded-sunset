@@ -178,7 +178,7 @@ export const KnowledgeLedgerModal = ({
     }
   }, [isOpen]);
 
-  const saveBuild = async (content) => {
+  const saveBuild = async (content, stage = "build") => {
     try {
       const userId = localStorage.getItem("local_npub");
       if (!userId) return;
@@ -188,7 +188,9 @@ export const KnowledgeLedgerModal = ({
         {
           code: content,
           updatedAt: Date.now(),
+          stage,
         },
+        { merge: true },
       );
     } catch (err) {
       console.error("Error saving build", err);
@@ -200,7 +202,7 @@ export const KnowledgeLedgerModal = ({
       console.log("true..", messages);
       setIsAnimating(false);
       const last = messages[messages.length - 1];
-      saveBuild(last.content);
+      saveBuild(last.content, "build");
       // try {
       //   const lastMessage = messages[messages.length - 1];
       //   const isLastMessage =

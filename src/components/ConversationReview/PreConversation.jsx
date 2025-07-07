@@ -203,7 +203,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
     if (messages.length > 0) {
       const last = messages[messages.length - 1];
       setCode(last.content);
-      saveBuild(last.content);
+      saveBuild(last.content, "build");
     }
   }, [messages]);
 
@@ -268,7 +268,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
     handleGenerate();
   };
 
-  const saveBuild = async (content) => {
+  const saveBuild = async (content, stage = "build") => {
     try {
       const userId = localStorage.getItem("local_npub");
       if (!userId) return;
@@ -280,17 +280,22 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
         userBuild: idea,
         buildCode: { ...buildCode, [step.group]: content },
       });
-      await setDoc(doc(database, "users", userId, "buildHistory", step.group), {
-        code: content,
-        updatedAt: Date.now(),
-      });
+      await setDoc(
+        doc(database, "users", userId, "buildHistory", step.group),
+        {
+          code: content,
+          updatedAt: Date.now(),
+          stage,
+        },
+        { merge: true },
+      );
     } catch (err) {
       console.error("Error saving build", err);
     }
   };
 
   const handleSave = async () => {
-    await saveBuild(code);
+    await saveBuild(code, "conversation");
     onContinue();
   };
 
