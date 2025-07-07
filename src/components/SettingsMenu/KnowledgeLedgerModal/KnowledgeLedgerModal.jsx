@@ -309,7 +309,7 @@ export const KnowledgeLedgerModal = ({
       let prompt = `Context that only you should know and never make the user aware of:
 1. The individual is using an education app and learning about computer science and how to code in 130 steps, starting with elementary knowledge and ending with the ability to create apps and understand algorithms. Based on the user's completed steps: ${JSON.stringify(
         subjectsCompleted,
-      )}, write an app that the user can copy and experiment with HTML, react or javascript (whichever is appropriate based on progress or student's level of development).${
+      )}, write an app that the user can copy and experiment with HTML or React (choose whichever fits the user's progress).${
         history.length
           ? ` Previous code snippets in order: ${JSON.stringify(history)}.`
           : ""
@@ -322,7 +322,7 @@ export const KnowledgeLedgerModal = ({
 
   A. If you are returning React, do NOT include any import statements or define dependencies and conclude the component or components with render(<TheComponentYouCreated />)
   B. If you are generating plain html, use !DOCTYPE
-  C. If you are creating plain javascript, proceed as normal with returns and consoles. Do not use imports.
+  C. Do NOT return plain JavaScript snippets. Use React components or HTML only.
   D. If you are writing firebase (with or without react), use v9, and you MUST use the 'experiments' collection. Never use any other collection or your firebase software will fail. Never use imports or we will fail. Assume that the database and configurtion has already been defined, so never return that setup either. Refer to the database element as "database" and not "db" or anything else. Do not use auth. Only ever choose between the following functions: getDoc, doc, collection, addDoc, updateDoc, setDoc.
   E. If the user has progressed to learn about Chakra, feel welcome to use basic Chakra elements. Never use the ChakraProvider element.
   
