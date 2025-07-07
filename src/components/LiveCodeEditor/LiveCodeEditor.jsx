@@ -22,7 +22,7 @@ import {
   Select,
 } from "@chakra-ui/react";
 
-import Editor from "@monaco-editor/react";
+import { CodeEditor } from "../CodeEditor/CodeEditor";
 
 import { LiveError, LivePreview, LiveProvider } from "react-live";
 import { database } from "../../database/firebaseResources";
@@ -90,6 +90,7 @@ const LiveReactEditorModal = ({
   isOnboarding = false,
   hideRunButton = false,
   autoRun = false,
+  forceJavaScript = false,
 }) => {
   const [editorCode, setEditorCode] = useState(code);
   const { hasCopied, onCopy } = useClipboard(
@@ -179,9 +180,9 @@ const LiveReactEditorModal = ({
     setConsoleLogs([]);
     const sanitizedCode = cleanCode(editorCode);
 
-    if (isReactCode(sanitizedCode)) {
+    if (!forceJavaScript && isReactCode(sanitizedCode)) {
       // runReactCode(sanitizedCode);
-    } else if (isHTMLCode(sanitizedCode)) {
+    } else if (!forceJavaScript && isHTMLCode(sanitizedCode)) {
       runHTMLCode(editorCode);
     } else {
       runJavaScriptCode(sanitizedCode);
@@ -261,24 +262,13 @@ const LiveReactEditorModal = ({
           mb={{ base: 4, md: 0 }}
           boxShadow="0.5px 0.5px 1px 0px rgba(0, 0, 0, 0.75)"
         >
-          <Editor
-            height="400px"
-            defaultLanguage={isHTMLCode(editorCode) ? "html" : "javascript"}
-            language={isHTMLCode(editorCode) ? "html" : "javascript"}
+          <CodeEditor
             value={editorCode}
             onChange={(value) => setEditorCode(value)}
-            // theme="vs-dark"
-            theme="light"
-            // maxWidth="100%"
-            width="100%"
-            options={{
-              minimap: { enabled: false },
-              fontFamily: "initial",
-              fontSize: "16px",
-              // wordWrap: "on",
-              automaticLayout: true,
-              tabIndex: 0, // Make the editor focusable
-            }}
+            height={400}
+            userLanguage={
+              isHTMLCode(editorCode) ? "en" : localStorage.getItem("userLanguage") || "en"
+            }
           />
         </Box>
 
@@ -288,7 +278,7 @@ const LiveReactEditorModal = ({
           marginTop="8px"
           border="1px solid black"
         >
-          {isReactCode(editorCode) && isPreviewing ? (
+          {isReactCode(editorCode) && !forceJavaScript && isPreviewing ? (
             <ChakraProvider>
               <LiveProvider
                 code={editorCode}
@@ -332,7 +322,7 @@ const LiveReactEditorModal = ({
               </LiveProvider>
             </ChakraProvider>
           ) : null}
-          {isHTMLCode(editorCode) && !isReactCode(editorCode) ? (
+          {isHTMLCode(editorCode) && !forceJavaScript && !isReactCode(editorCode) ? (
             <Box width="50%" borderRadius="md" ml={4}>
               <iframe
                 ref={iframeRef}
@@ -345,8 +335,7 @@ const LiveReactEditorModal = ({
               />
             </Box>
           ) : null}
-          {!isReactCode(editorCode) &&
-          !isHTMLCode(editorCode) &&
+          {(forceJavaScript || (!isReactCode(editorCode) && !isHTMLCode(editorCode))) &&
           isPreviewing ? (
             <VStack
               align="start"
