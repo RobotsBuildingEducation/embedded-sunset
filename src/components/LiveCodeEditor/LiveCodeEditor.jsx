@@ -20,6 +20,7 @@ import {
   HStack,
   Textarea,
   Select,
+  Checkbox,
 } from "@chakra-ui/react";
 
 import { CodeEditor } from "../CodeEditor/CodeEditor";
@@ -93,6 +94,7 @@ const LiveReactEditorModal = ({
   forceJavaScript = false,
 }) => {
   const [editorCode, setEditorCode] = useState(code);
+  const [forceJS, setForceJS] = useState(forceJavaScript);
   const { hasCopied, onCopy } = useClipboard(
     editorCode +
       " using mock data rather than real config data if necessary. Given that we're using v0, use supabase to replce firebase if firebase is discussed."
@@ -101,6 +103,10 @@ const LiveReactEditorModal = ({
   const [error, setError] = useState("");
   const [consoleLogs, setConsoleLogs] = useState([]);
   const iframeRef = useRef(null);
+
+  useEffect(() => {
+    setForceJS(forceJavaScript);
+  }, [forceJavaScript]);
 
   useEffect(() => {
     if (isPreviewing) {
@@ -180,9 +186,9 @@ const LiveReactEditorModal = ({
     setConsoleLogs([]);
     const sanitizedCode = cleanCode(editorCode);
 
-    if (!forceJavaScript && isReactCode(sanitizedCode)) {
+    if (!forceJS && isReactCode(sanitizedCode)) {
       // runReactCode(sanitizedCode);
-    } else if (!forceJavaScript && isHTMLCode(sanitizedCode)) {
+    } else if (!forceJS && isHTMLCode(sanitizedCode)) {
       runHTMLCode(editorCode);
     } else {
       runJavaScriptCode(sanitizedCode);
@@ -270,6 +276,9 @@ const LiveReactEditorModal = ({
               isHTMLCode(editorCode) ? "en" : localStorage.getItem("userLanguage") || "en"
             }
           />
+          <Checkbox mt={2} isChecked={forceJS} onChange={(e) => setForceJS(e.target.checked)}>
+            Force JavaScript
+          </Checkbox>
         </Box>
 
         <Box
@@ -278,7 +287,7 @@ const LiveReactEditorModal = ({
           marginTop="8px"
           border="1px solid black"
         >
-          {isReactCode(editorCode) && !forceJavaScript && isPreviewing ? (
+          {isReactCode(editorCode) && !forceJS && isPreviewing ? (
             <ChakraProvider>
               <LiveProvider
                 code={editorCode}
@@ -322,7 +331,7 @@ const LiveReactEditorModal = ({
               </LiveProvider>
             </ChakraProvider>
           ) : null}
-          {isHTMLCode(editorCode) && !forceJavaScript && !isReactCode(editorCode) ? (
+          {isHTMLCode(editorCode) && !forceJS && !isReactCode(editorCode) ? (
             <Box width="50%" borderRadius="md" ml={4}>
               <iframe
                 ref={iframeRef}
@@ -335,7 +344,7 @@ const LiveReactEditorModal = ({
               />
             </Box>
           ) : null}
-          {(forceJavaScript || (!isReactCode(editorCode) && !isHTMLCode(editorCode))) &&
+          {(forceJS || (!isReactCode(editorCode) && !isHTMLCode(editorCode))) &&
           isPreviewing ? (
             <VStack
               align="start"
