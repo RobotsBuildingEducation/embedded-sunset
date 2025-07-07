@@ -99,7 +99,7 @@ export default function KnowledgeLedgerOnboarding({
   const { showAlert } = useAlertStore();
   const { openPasscodeModal } = usePasscodeModalStore();
   const { hasCopied, onCopy } = useClipboard(
-    userIdea + " (using mock data if necessary)",
+    userIdea + " (using mock data if necessary)"
   );
 
   // -- Editor state arrays, one slot per message --
@@ -306,13 +306,12 @@ export default function KnowledgeLedgerOnboarding({
           </Button>
         </HStack>
         <br />
-        <br />
+
         {isLoading && (
           <>
             <CloudCanvas />
             {translation[userLanguage]["generatingCode"]}
 
-            <br />
             <br />
           </>
         )}
@@ -321,7 +320,7 @@ export default function KnowledgeLedgerOnboarding({
         <VStack spacing={6} align="stretch">
           {messages.map((msg, idx) => (
             <Box key={idx}>
-              {isLoading ? null : (
+              {/* {isLoading ? null : (
                 <>
                   <br />
                   <Button
@@ -333,7 +332,7 @@ export default function KnowledgeLedgerOnboarding({
                     {translation[userLanguage]["runCode"]}
                   </Button>
                 </>
-              )}{" "}
+              )}{" "} */}
               <div
                 style={{
                   border: "1px solid #444",
@@ -359,7 +358,6 @@ export default function KnowledgeLedgerOnboarding({
               {hasRunCode ? (
                 <>
                   <br />
-                  <br />
                   <Text> {translation[userLanguage]["goodJob"]}</Text>
                   <Button
                     onClick={moveToNext}
@@ -370,8 +368,7 @@ export default function KnowledgeLedgerOnboarding({
                   </Button>
                 </>
               ) : null}
-              <br />
-              <br />
+
               {/* React preview */}
               {isReactCode(editorCodes[idx]) && isPreviewings[idx] && (
                 <ChakraProvider>
