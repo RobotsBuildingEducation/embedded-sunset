@@ -123,6 +123,21 @@ export default function KnowledgeLedgerOnboarding({
     setConsoleLogs(messages.map(() => []));
   }, [messages]);
 
+  // reset run state when generating new code
+  useEffect(() => {
+    if (isLoading) {
+      setHasRunCode(false);
+    }
+  }, [isLoading]);
+
+  // automatically run the generated code once loading is finished
+  useEffect(() => {
+    if (!isLoading && messages.length > 0 && !hasRunCode) {
+      runCode(0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading, messages]);
+
   // handle console messages from iframes
   useEffect(() => {
     const handler = (e) => {
@@ -291,13 +306,12 @@ export default function KnowledgeLedgerOnboarding({
           </Button>
         </HStack>
         <br />
-        <br />
+
         {isLoading && (
           <>
             <CloudCanvas />
             {translation[userLanguage]["generatingCode"]}
 
-            <br />
             <br />
           </>
         )}
@@ -306,7 +320,7 @@ export default function KnowledgeLedgerOnboarding({
         <VStack spacing={6} align="stretch">
           {messages.map((msg, idx) => (
             <Box key={idx}>
-              {isLoading ? null : (
+              {/* {isLoading ? null : (
                 <>
                   <br />
                   <Button
@@ -318,7 +332,7 @@ export default function KnowledgeLedgerOnboarding({
                     {translation[userLanguage]["runCode"]}
                   </Button>
                 </>
-              )}{" "}
+              )}{" "} */}
               <div
                 style={{
                   border: "1px solid #444",
@@ -344,7 +358,6 @@ export default function KnowledgeLedgerOnboarding({
               {hasRunCode ? (
                 <>
                   <br />
-                  <br />
                   <Text> {translation[userLanguage]["goodJob"]}</Text>
                   <Button
                     onClick={moveToNext}
@@ -355,8 +368,7 @@ export default function KnowledgeLedgerOnboarding({
                   </Button>
                 </>
               ) : null}
-              <br />
-              <br />
+
               {/* React preview */}
               {isReactCode(editorCodes[idx]) && isPreviewings[idx] && (
                 <ChakraProvider>
