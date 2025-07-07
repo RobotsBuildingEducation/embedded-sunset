@@ -85,7 +85,12 @@ import { translation } from "../../utility/translation";
 // ;
 // `;
 
-const LiveReactEditorModal = ({ code, isOnboarding = false }) => {
+const LiveReactEditorModal = ({
+  code,
+  isOnboarding = false,
+  hideRunButton = false,
+  autoRun = false,
+}) => {
   const [editorCode, setEditorCode] = useState(code);
   const { hasCopied, onCopy } = useClipboard(
     editorCode +
@@ -102,6 +107,13 @@ const LiveReactEditorModal = ({ code, isOnboarding = false }) => {
     }
     setEditorCode(code);
   }, [code]);
+
+  useEffect(() => {
+    if (autoRun && editorCode.trim()) {
+      runCode();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoRun]);
 
   const isReactCode = (code) =>
     /(ReactDOM\s*\.\s*)?render\s*\(\s*<\s*[A-Z][\w]*\s*\/?>/.test(code);
@@ -199,18 +211,19 @@ const LiveReactEditorModal = ({ code, isOnboarding = false }) => {
   //   md: isOnboarding ? "100%" : "100%",
   // });
 
-  console.log("isreact", isReactCode(editorCode));
   return (
     <>
-      <Button
-        variant="outline"
-        mt={4}
-        onClick={runCode}
-        mb={4}
-        boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-      >
-        Run Code
-      </Button>
+      {/* {!hideRunButton && (
+        <Button
+          variant="outline"
+          mt={4}
+          onClick={runCode}
+          mb={4}
+          boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+        >
+          Run Code
+        </Button>
+      )} */}
       {/* {!isOnboarding && (
         <>
           {" "}
@@ -269,7 +282,12 @@ const LiveReactEditorModal = ({ code, isOnboarding = false }) => {
           />
         </Box>
 
-        <Box width={"100%"} borderRadius="md">
+        <Box
+          width={"100%"}
+          borderRadius="2xl"
+          marginTop="8px"
+          border="1px solid black"
+        >
           {isReactCode(editorCode) && isPreviewing ? (
             <ChakraProvider>
               <LiveProvider
