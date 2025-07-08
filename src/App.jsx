@@ -3951,11 +3951,23 @@ const Home = ({
       const currentStep = await getUserStep(npub).catch((error) => {
         setIsSigningIn(false);
         setErrorMessage(JSON.stringify(error));
-      }); // Retrieve the current step
+      }); // Retrieve the current tutorial step
+
+      const onboardingProgress = await getOnboardingStep(npub);
+
       setIsSigningIn(false);
       setIsSignedIn(true);
+      setCurrentStep(currentStep);
 
-      navigate(`/q/${currentStep}`); // Navigate to the user's current step
+      if (
+        onboardingProgress !== "done" &&
+        parseInt(onboardingProgress, 10) <= 6 &&
+        parseInt(onboardingProgress, 10) === currentStep + 1
+      ) {
+        navigate(`/onboarding/${parseInt(onboardingProgress, 10)}`);
+      } else {
+        navigate(`/q/${currentStep}`);
+      }
     } catch (error) {
       // const err = error.error;
       setIsSigningIn(false);
