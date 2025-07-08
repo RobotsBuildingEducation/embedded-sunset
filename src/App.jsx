@@ -3747,6 +3747,7 @@ const Home = ({
   auth,
   view,
   setView,
+  setCurrentStep,
 }) => {
   const roles = [
     "chores",
@@ -5257,6 +5258,7 @@ function App({ isShutDown }) {
                 auth={auth}
                 view={view}
                 setView={setView}
+                setCurrentStep={setCurrentStep}
               />
             }
           />
