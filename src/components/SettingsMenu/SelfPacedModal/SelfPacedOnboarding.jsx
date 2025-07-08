@@ -153,19 +153,20 @@ const SelfPacedOnboarding = ({
     setEndTime(newEndTime);
     setNextGoalExpiration(newNextGoalExpiration);
 
-    await updateUserData(
-      userId,
-      interval,
-      streak,
-      currentTime,
-      newEndTime,
-      dailyGoals,
-      newNextGoalExpiration,
-      dailyProgress,
-      goalCount
-    );
-
-    await incrementUserOnboardingStep(userId);
+    await Promise.all([
+      updateUserData(
+        userId,
+        interval,
+        streak,
+        currentTime,
+        newEndTime,
+        dailyGoals,
+        newNextGoalExpiration,
+        dailyProgress,
+        goalCount
+      ),
+      incrementUserOnboardingStep(userId),
+    ]);
 
     navigate("/q/2");
   };

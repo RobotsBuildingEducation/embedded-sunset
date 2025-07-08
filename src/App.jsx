@@ -2221,8 +2221,10 @@ const Step = ({
         setIsPostingWithNostr(true);
 
         try {
-          await incrementUserStep(npub, currentStep);
-          await storeCorrectAnswer(step, feedback);
+          await Promise.all([
+            incrementUserStep(npub, currentStep),
+            storeCorrectAnswer(step, feedback),
+          ]);
 
           setIsPostingWithNostr(false);
 
@@ -2246,10 +2248,11 @@ const Step = ({
 
       try {
         const npub = localStorage.getItem("local_npub");
-        await incrementUserStep(npub, currentStep);
+        const promises = [incrementUserStep(npub, currentStep)];
         if (currentStep > 0) {
-          await storeCorrectAnswer(step, feedback);
+          promises.push(storeCorrectAnswer(step, feedback));
         }
+        await Promise.all(promises);
 
         setIsPostingWithNostr(false);
 
