@@ -2228,7 +2228,11 @@ const Step = ({
 
           console.log("step.......", step);
           console.log("currentStep.......", currentStep);
-          navigate(`/q/${currentStep + 1}`);
+          if (currentStep <= 4) {
+            navigate(`/onboarding/${currentStep + 2}`);
+          } else {
+            navigate(`/q/${currentStep + 1}`);
+          }
         } catch (error) {
           setIsPostingWithNostr(false);
         }
@@ -2249,7 +2253,11 @@ const Step = ({
 
         setIsPostingWithNostr(false);
 
-        navigate(`/q/${currentStep + 1}`);
+        if (currentStep <= 4) {
+          navigate(`/onboarding/${currentStep + 2}`);
+        } else {
+          navigate(`/q/${currentStep + 1}`);
+        }
       } catch (error) {
         setIsPostingWithNostr(false);
       }
