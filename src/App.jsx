@@ -5073,7 +5073,16 @@ function App({ isShutDown }) {
 
               topRef.current?.scrollIntoView();
 
-              navigate(`/q/${step}`);
+              const onboardingProgress = await getOnboardingStep(npub);
+              if (
+                onboardingProgress !== "done" &&
+                parseInt(onboardingProgress, 10) <= 6 &&
+                parseInt(onboardingProgress, 10) === step
+              ) {
+                navigate(`/onboarding/${parseInt(onboardingProgress, 10) + 1}`);
+              } else {
+                navigate(`/q/${step}`);
+              }
               // }
             }
           } else {
