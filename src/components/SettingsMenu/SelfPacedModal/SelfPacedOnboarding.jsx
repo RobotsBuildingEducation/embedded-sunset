@@ -91,6 +91,7 @@ const SelfPacedOnboarding = ({
   setInterval,
   userId,
   userLanguage,
+  setCurrentStep,
 }) => {
   const navigate = useNavigate();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
@@ -153,21 +154,23 @@ const SelfPacedOnboarding = ({
     setEndTime(newEndTime);
     setNextGoalExpiration(newNextGoalExpiration);
 
-    await updateUserData(
-      userId,
-      interval,
-      streak,
-      currentTime,
-      newEndTime,
-      dailyGoals,
-      newNextGoalExpiration,
-      dailyProgress,
-      goalCount
-    );
+    Promise.all([
+      updateUserData(
+        userId,
+        interval,
+        streak,
+        currentTime,
+        newEndTime,
+        dailyGoals,
+        newNextGoalExpiration,
+        dailyProgress,
+        goalCount
+      ),
+      incrementUserOnboardingStep(userId),
+    ]).catch(console.error);
 
-    await incrementUserOnboardingStep(userId);
-
-    navigate("/onboarding/4");
+    setCurrentStep(2);
+    navigate("/q/2");
   };
 
   // Build the label for the streak timer slider.
