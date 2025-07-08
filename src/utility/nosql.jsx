@@ -109,14 +109,14 @@ export const incrementUserOnboardingStep = async (npub) => {
   }
 };
 
-export const setOnboardingToDone = async (npub) => {
+export const setOnboardingToDone = async (npub, stepNumber = 0) => {
   const userDoc = doc(database, "users", npub);
   const userSnapshot = await getDoc(userDoc);
 
   if (userSnapshot.exists()) {
     await updateDoc(userDoc, {
       onboardingStep: "done",
-      step: 0,
+      step: stepNumber,
     });
   }
 };

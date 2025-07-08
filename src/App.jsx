@@ -1334,6 +1334,7 @@ const Step = ({
   allowPosts,
   setAllowPosts,
   hasSubmittedPasscode,
+  setCurrentStep,
 }) => {
   const { stepIndex } = useParams();
   const currentStepIndex = parseInt(stepIndex, 10);
@@ -2221,15 +2222,20 @@ const Step = ({
         setIsPostingWithNostr(true);
 
         try {
-          incrementUserStep(npub, currentStep);
-          storeCorrectAnswer(step, feedback);
+          if (currentStep <= 4) {
+            await incrementUserStep(npub, currentStep);
+          } else {
+            incrementUserStep(npub, currentStep).catch(console.error);
+          }
+          storeCorrectAnswer(step, feedback).catch(console.error);
+          setCurrentStep(currentStep + 1);
 
-          setIsPostingWithNostr(false);
-
-          console.log("step.......", step);
-          console.log("currentStep.......", currentStep);
-          navigate(`/q/${currentStep + 1}`);
-        } catch (error) {
+          if (currentStep <= 4) {
+            navigate(`/onboarding/${currentStep + 2}`);
+          } else {
+            navigate(`/q/${currentStep + 1}`);
+          }
+        } finally {
           setIsPostingWithNostr(false);
         }
       }
@@ -2240,17 +2246,25 @@ const Step = ({
     } else {
       setIsPostingWithNostr(true);
 
+      const npub = localStorage.getItem("local_npub");
+
       try {
-        const npub = localStorage.getItem("local_npub");
-        incrementUserStep(npub, currentStep);
-        if (currentStep > 0) {
-          storeCorrectAnswer(step, feedback);
+        if (currentStep <= 4) {
+          await incrementUserStep(npub, currentStep);
+        } else {
+          incrementUserStep(npub, currentStep).catch(console.error);
         }
+        if (currentStep > 0) {
+          storeCorrectAnswer(step, feedback).catch(console.error);
+        }
+        setCurrentStep(currentStep + 1);
 
-        setIsPostingWithNostr(false);
-
-        navigate(`/q/${currentStep + 1}`);
-      } catch (error) {
+        if (currentStep <= 4) {
+          navigate(`/onboarding/${currentStep + 2}`);
+        } else {
+          navigate(`/q/${currentStep + 1}`);
+        }
+      } finally {
         setIsPostingWithNostr(false);
       }
     }
@@ -3739,6 +3753,7 @@ const Home = ({
   auth,
   view,
   setView,
+  setCurrentStep,
 }) => {
   const roles = [
     "chores",
@@ -3943,11 +3958,23 @@ const Home = ({
       const currentStep = await getUserStep(npub).catch((error) => {
         setIsSigningIn(false);
         setErrorMessage(JSON.stringify(error));
-      }); // Retrieve the current step
+      }); // Retrieve the current tutorial step
+
+      const onboardingProgress = await getOnboardingStep(npub);
+
       setIsSigningIn(false);
       setIsSignedIn(true);
+      setCurrentStep(currentStep);
 
-      navigate(`/q/${currentStep}`); // Navigate to the user's current step
+      if (
+        onboardingProgress !== "done" &&
+        parseInt(onboardingProgress, 10) <= 6 &&
+        parseInt(onboardingProgress, 10) === currentStep + 1
+      ) {
+        navigate(`/onboarding/${parseInt(onboardingProgress, 10)}`);
+      } else {
+        navigate(`/q/${currentStep}`);
+      }
     } catch (error) {
       // const err = error.error;
       setIsSigningIn(false);
@@ -5065,7 +5092,16 @@ function App({ isShutDown }) {
 
               topRef.current?.scrollIntoView();
 
-              navigate(`/q/${step}`);
+              const onboardingProgress = await getOnboardingStep(npub);
+              if (
+                onboardingProgress !== "done" &&
+                parseInt(onboardingProgress, 10) <= 6 &&
+                parseInt(onboardingProgress, 10) === step + 1
+              ) {
+                navigate(`/onboarding/${parseInt(onboardingProgress, 10)}`);
+              } else {
+                navigate(`/q/${step}`);
+              }
               // }
             }
           } else {
@@ -5093,7 +5129,7 @@ function App({ isShutDown }) {
               }
 
               if (step > 6) {
-                setOnboardingToDone(localStorage.getItem("local_npub"));
+                setOnboardingToDone(localStorage.getItem("local_npub"), 0);
 
                 navigate("/q/0");
               } else {
@@ -5228,6 +5264,7 @@ function App({ isShutDown }) {
                 auth={auth}
                 view={view}
                 setView={setView}
+                setCurrentStep={setCurrentStep}
               />
             }
           />
@@ -5243,6 +5280,7 @@ function App({ isShutDown }) {
                 auth={auth}
                 view={view}
                 setView={setView}
+                setCurrentStep={setCurrentStep}
               />
             }
           />
@@ -5276,6 +5314,7 @@ function App({ isShutDown }) {
                       assignExistingBadgeToNpub={assignExistingBadgeToNpub}
                       emailStep={clonedStep}
                       hasSubmittedPasscode={hasSubmittedPasscode}
+                      setCurrentStep={setCurrentStep}
                     />
                   </PrivateRoute>
                 }
