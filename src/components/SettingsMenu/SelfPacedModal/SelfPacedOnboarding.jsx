@@ -91,6 +91,7 @@ const SelfPacedOnboarding = ({
   setInterval,
   userId,
   userLanguage,
+  setCurrentStep,
 }) => {
   const navigate = useNavigate();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
@@ -168,6 +169,7 @@ const SelfPacedOnboarding = ({
       incrementUserOnboardingStep(userId),
     ]).catch(console.error);
 
+    setCurrentStep(2);
     navigate("/q/2");
   };
 

@@ -1334,6 +1334,7 @@ const Step = ({
   allowPosts,
   setAllowPosts,
   hasSubmittedPasscode,
+  setCurrentStep,
 }) => {
   const { stepIndex } = useParams();
   const currentStepIndex = parseInt(stepIndex, 10);
@@ -2220,23 +2221,18 @@ const Step = ({
       } else {
         setIsPostingWithNostr(true);
 
-        (async () => {
-          try {
-            await Promise.all([
-              incrementUserStep(npub, currentStep),
-              storeCorrectAnswer(step, feedback),
-            ]);
-          } finally {
-            setIsPostingWithNostr(false);
-          }
-        })().catch(console.error);
+        try {
+          await incrementUserStep(npub, currentStep);
+          storeCorrectAnswer(step, feedback).catch(console.error);
+          setCurrentStep(currentStep + 1);
 
-        console.log("step.......", step);
-        console.log("currentStep.......", currentStep);
-        if (currentStep <= 4) {
-          navigate(`/onboarding/${currentStep + 2}`);
-        } else {
-          navigate(`/q/${currentStep + 1}`);
+          if (currentStep <= 4) {
+            navigate(`/onboarding/${currentStep + 2}`);
+          } else {
+            navigate(`/q/${currentStep + 1}`);
+          }
+        } finally {
+          setIsPostingWithNostr(false);
         }
       }
     } else if (currentStep >= steps[userLanguage].length - 1) {
@@ -2248,22 +2244,20 @@ const Step = ({
 
       const npub = localStorage.getItem("local_npub");
 
-      (async () => {
-        try {
-          const promises = [incrementUserStep(npub, currentStep)];
-          if (currentStep > 0) {
-            promises.push(storeCorrectAnswer(step, feedback));
-          }
-          await Promise.all(promises);
-        } finally {
-          setIsPostingWithNostr(false);
+      try {
+        await incrementUserStep(npub, currentStep);
+        if (currentStep > 0) {
+          storeCorrectAnswer(step, feedback).catch(console.error);
         }
-      })().catch(console.error);
+        setCurrentStep(currentStep + 1);
 
-      if (currentStep <= 4) {
-        navigate(`/onboarding/${currentStep + 2}`);
-      } else {
-        navigate(`/q/${currentStep + 1}`);
+        if (currentStep <= 4) {
+          navigate(`/onboarding/${currentStep + 2}`);
+        } else {
+          navigate(`/q/${currentStep + 1}`);
+        }
+      } finally {
+        setIsPostingWithNostr(false);
       }
     }
   };
@@ -5278,6 +5272,7 @@ function App({ isShutDown }) {
                 auth={auth}
                 view={view}
                 setView={setView}
+                setCurrentStep={setCurrentStep}
               />
             }
           />
@@ -5311,6 +5306,7 @@ function App({ isShutDown }) {
                       assignExistingBadgeToNpub={assignExistingBadgeToNpub}
                       emailStep={clonedStep}
                       hasSubmittedPasscode={hasSubmittedPasscode}
+                      setCurrentStep={setCurrentStep}
                     />
                   </PrivateRoute>
                 }

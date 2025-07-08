@@ -58,7 +58,7 @@ import { useSharedNostr } from "./hooks/useNOSTR";
 import { TechOverview } from "./components/TechOverview/TechOverview";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
-export const Onboarding = ({ userLanguage, setUserLanguage }) => {
+export const Onboarding = ({ userLanguage, setUserLanguage, setCurrentStep }) => {
   const { assignExistingBadgeToNpub } = useSharedNostr(
     localStorage.getItem("local_npub"),
     localStorage.getItem("local_nsec")
@@ -88,6 +88,7 @@ export const Onboarding = ({ userLanguage, setUserLanguage }) => {
   const handleActuallyReallySeriouslyLaunchApp = () => {
     setOnboardingToDone(localStorage.getItem("local_npub"), 5);
 
+    setCurrentStep(5);
     navigate("/q/5");
   };
 
@@ -300,6 +301,7 @@ export const Onboarding = ({ userLanguage, setUserLanguage }) => {
               incrementUserOnboardingStep(
                 localStorage.getItem("local_npub")
               );
+              setCurrentStep(0);
               navigate("/q/0");
             }}
           />
@@ -758,6 +760,7 @@ export const Onboarding = ({ userLanguage, setUserLanguage }) => {
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
+                      setCurrentStep(1);
                       navigate("/q/1");
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
@@ -841,6 +844,7 @@ export const Onboarding = ({ userLanguage, setUserLanguage }) => {
                     setInterval={setInterval}
                     userId={localStorage.getItem("local_npub")}
                     userLanguage={userLanguage}
+                    setCurrentStep={setCurrentStep}
                   />
                 </Box>
               </FadeInComponent>
@@ -1116,6 +1120,7 @@ export const Onboarding = ({ userLanguage, setUserLanguage }) => {
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
+                      setCurrentStep(3);
                       navigate("/q/3");
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
@@ -1187,6 +1192,7 @@ export const Onboarding = ({ userLanguage, setUserLanguage }) => {
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
+                      setCurrentStep(4);
                       navigate("/q/4");
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
