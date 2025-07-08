@@ -86,9 +86,9 @@ export const Onboarding = ({ userLanguage, setUserLanguage }) => {
   };
 
   const handleActuallyReallySeriouslyLaunchApp = () => {
-    setOnboardingToDone(localStorage.getItem("local_npub"));
+    setOnboardingToDone(localStorage.getItem("local_npub"), 5);
 
-    navigate("/q/0");
+    navigate("/q/5");
   };
 
   // Scroll to top on step change
@@ -297,7 +297,10 @@ export const Onboarding = ({ userLanguage, setUserLanguage }) => {
           <KnowledgeLedgerOnboarding
             userLanguage={userLanguage}
             moveToNext={() => {
-              navigate("/onboarding/2");
+              incrementUserOnboardingStep(
+                localStorage.getItem("local_npub")
+              );
+              navigate("/q/0");
             }}
           />
         </Box>
@@ -755,7 +758,7 @@ export const Onboarding = ({ userLanguage, setUserLanguage }) => {
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
-                      navigate("/onboarding/3");
+                      navigate("/q/1");
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
                     mb={18}
@@ -1113,7 +1116,7 @@ export const Onboarding = ({ userLanguage, setUserLanguage }) => {
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
-                      navigate("/onboarding/5");
+                      navigate("/q/3");
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
                     mb={18}
@@ -1184,7 +1187,7 @@ export const Onboarding = ({ userLanguage, setUserLanguage }) => {
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
-                      navigate("/onboarding/6");
+                      navigate("/q/4");
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
                     mb={18}

@@ -167,7 +167,7 @@ const SelfPacedOnboarding = ({
 
     await incrementUserOnboardingStep(userId);
 
-    navigate("/onboarding/4");
+    navigate("/q/2");
   };
 
   // Build the label for the streak timer slider.

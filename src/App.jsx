@@ -5093,7 +5093,7 @@ function App({ isShutDown }) {
               }
 
               if (step > 6) {
-                setOnboardingToDone(localStorage.getItem("local_npub"));
+                setOnboardingToDone(localStorage.getItem("local_npub"), 0);
 
                 navigate("/q/0");
               } else {
