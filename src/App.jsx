@@ -2220,23 +2220,23 @@ const Step = ({
       } else {
         setIsPostingWithNostr(true);
 
-        try {
-          await Promise.all([
-            incrementUserStep(npub, currentStep),
-            storeCorrectAnswer(step, feedback),
-          ]);
-
-          setIsPostingWithNostr(false);
-
-          console.log("step.......", step);
-          console.log("currentStep.......", currentStep);
-          if (currentStep <= 4) {
-            navigate(`/onboarding/${currentStep + 2}`);
-          } else {
-            navigate(`/q/${currentStep + 1}`);
+        (async () => {
+          try {
+            await Promise.all([
+              incrementUserStep(npub, currentStep),
+              storeCorrectAnswer(step, feedback),
+            ]);
+          } finally {
+            setIsPostingWithNostr(false);
           }
-        } catch (error) {
-          setIsPostingWithNostr(false);
+        })().catch(console.error);
+
+        console.log("step.......", step);
+        console.log("currentStep.......", currentStep);
+        if (currentStep <= 4) {
+          navigate(`/onboarding/${currentStep + 2}`);
+        } else {
+          navigate(`/q/${currentStep + 1}`);
         }
       }
     } else if (currentStep >= steps[userLanguage].length - 1) {
@@ -2246,23 +2246,24 @@ const Step = ({
     } else {
       setIsPostingWithNostr(true);
 
-      try {
-        const npub = localStorage.getItem("local_npub");
-        const promises = [incrementUserStep(npub, currentStep)];
-        if (currentStep > 0) {
-          promises.push(storeCorrectAnswer(step, feedback));
-        }
-        await Promise.all(promises);
+      const npub = localStorage.getItem("local_npub");
 
-        setIsPostingWithNostr(false);
-
-        if (currentStep <= 4) {
-          navigate(`/onboarding/${currentStep + 2}`);
-        } else {
-          navigate(`/q/${currentStep + 1}`);
+      (async () => {
+        try {
+          const promises = [incrementUserStep(npub, currentStep)];
+          if (currentStep > 0) {
+            promises.push(storeCorrectAnswer(step, feedback));
+          }
+          await Promise.all(promises);
+        } finally {
+          setIsPostingWithNostr(false);
         }
-      } catch (error) {
-        setIsPostingWithNostr(false);
+      })().catch(console.error);
+
+      if (currentStep <= 4) {
+        navigate(`/onboarding/${currentStep + 2}`);
+      } else {
+        navigate(`/q/${currentStep + 1}`);
       }
     }
   };

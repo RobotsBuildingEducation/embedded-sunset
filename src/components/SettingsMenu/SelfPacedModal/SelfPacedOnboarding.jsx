@@ -153,7 +153,7 @@ const SelfPacedOnboarding = ({
     setEndTime(newEndTime);
     setNextGoalExpiration(newNextGoalExpiration);
 
-    await Promise.all([
+    Promise.all([
       updateUserData(
         userId,
         interval,
@@ -166,7 +166,7 @@ const SelfPacedOnboarding = ({
         goalCount
       ),
       incrementUserOnboardingStep(userId),
-    ]);
+    ]).catch(console.error);
 
     navigate("/q/2");
   };
