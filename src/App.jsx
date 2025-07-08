@@ -3210,49 +3210,49 @@ const Step = ({
                 handleModalCheck={handleModalCheck}
               />
             )}
-            {isPostingWithNostr ? (
+            {/* {isPostingWithNostr ? (
               <CloudCanvas />
-            ) : (
-              <>
-                {localStorage.getItem("incorrectAttempts") &&
-                parseInt(localStorage.getItem("incorrectAttempts")) > 0 ? (
-                  <Text
-                    fontSize={"smaller"}
-                    background={"#ececec"}
-                    borderRadius={12}
-                    padding={4}
-                  >
-                    {translation[userLanguage]["lockout.attempts"]} &nbsp;
-                    {localStorage.getItem("incorrectAttempts")} / 5{" "}
-                    {
-                      emojiMap[
-                        parseInt(localStorage.getItem("incorrectAttempts")) - 1
-                      ]
-                    }
-                  </Text>
-                ) : null}
-                {parseInt(localStorage.getItem("incorrectAttempts")) >= 5 &&
-                !isTimerExpired ? (
-                  <>
-                    <div style={{ maxWidth: 600 }}>
-                      <Text
-                        fontSize="smaller"
-                        background={"white"}
-                        borderRadius={12}
-                        padding={4}
-                      >
-                        {translation[userLanguage]["lockout.message"]} <br />
-                        <br />
-                        <CountdownTimer
-                          onTimerExpire={handleTimerExpire}
-                          userLanguage={userLanguage}
-                        />
-                      </Text>
-                    </div>
-                    <RandomCharacter />
-                  </>
-                ) : null}
-                {/* {messages.length > 0 && !feedback && (
+            ) : ( */}
+            <>
+              {localStorage.getItem("incorrectAttempts") &&
+              parseInt(localStorage.getItem("incorrectAttempts")) > 0 ? (
+                <Text
+                  fontSize={"smaller"}
+                  background={"#ececec"}
+                  borderRadius={12}
+                  padding={4}
+                >
+                  {translation[userLanguage]["lockout.attempts"]} &nbsp;
+                  {localStorage.getItem("incorrectAttempts")} / 5{" "}
+                  {
+                    emojiMap[
+                      parseInt(localStorage.getItem("incorrectAttempts")) - 1
+                    ]
+                  }
+                </Text>
+              ) : null}
+              {parseInt(localStorage.getItem("incorrectAttempts")) >= 5 &&
+              !isTimerExpired ? (
+                <>
+                  <div style={{ maxWidth: 600 }}>
+                    <Text
+                      fontSize="smaller"
+                      background={"white"}
+                      borderRadius={12}
+                      padding={4}
+                    >
+                      {translation[userLanguage]["lockout.message"]} <br />
+                      <br />
+                      <CountdownTimer
+                        onTimerExpire={handleTimerExpire}
+                        userLanguage={userLanguage}
+                      />
+                    </Text>
+                  </div>
+                  <RandomCharacter />
+                </>
+              ) : null}
+              {/* {messages.length > 0 && !feedback && (
                   <Box
                     mt={0}
                     p={4}
@@ -3265,162 +3265,160 @@ const Step = ({
                     </Text>
                   </Box>
                 )} */}
-                {feedback && (
-                  <RiseUpAnimation>
-                    <Box
-                      mt={0}
-                      p={4}
-                      borderRadius="3xl"
-                      width="100%"
-                      maxWidth="600px"
-                      background={isCorrect ? "orange.100" : "#fcdcdc"}
-                      transition="0.2s all ease-in-out"
-                      borderBottomRightRadius={"0px"}
-                    >
-                      {isCorrect ? (
-                        <VStack spacing={1} align="center" mb={2}>
+              {feedback && (
+                <RiseUpAnimation>
+                  <Box
+                    mt={0}
+                    p={4}
+                    borderRadius="3xl"
+                    width="100%"
+                    maxWidth="600px"
+                    background={isCorrect ? "orange.100" : "#fcdcdc"}
+                    transition="0.2s all ease-in-out"
+                    borderBottomRightRadius={"0px"}
+                  >
+                    {isCorrect ? (
+                      <VStack spacing={1} align="center" mb={2}>
+                        <Text
+                          fontSize="md"
+                          color="orange.500"
+                          fontWeight="bold"
+                        >
+                          {translation[userLanguage]["dailyGoal"]}:{" "}
+                          {dailyProgress + 1 > dailyGoals
+                            ? dailyGoals
+                            : dailyProgress + 1}{" "}
+                          / {dailyGoals || 5}{" "}
+                          {translation[userLanguage]["questions"]}
+                        </Text>
+
+                        <CircularProgress
+                          trackColor="#bfb49b"
+                          color="#82EBAC"
+                          value={
+                            ((dailyProgress + 1) / (dailyGoals || 5)) * 100
+                          }
+                          size={8}
+                        />
+
+                        {dailyProgress + 1 > dailyGoals ||
+                        dailyProgress + 1 === dailyGoals ? (
                           <Text
                             fontSize="md"
                             color="orange.500"
                             fontWeight="bold"
+                            mb={2}
                           >
-                            {translation[userLanguage]["dailyGoal"]}:{" "}
-                            {dailyProgress + 1 > dailyGoals
-                              ? dailyGoals
-                              : dailyProgress + 1}{" "}
-                            / {dailyGoals || 5}{" "}
-                            {translation[userLanguage]["questions"]}
+                            {/* {translation[userLanguage]["celebrateMessage"]} */}
+                            {celebrationMessage}
                           </Text>
-
-                          <CircularProgress
-                            trackColor="#bfb49b"
-                            color="#82EBAC"
-                            value={
-                              ((dailyProgress + 1) / (dailyGoals || 5)) * 100
-                            }
-                            size={8}
-                          />
-
-                          {dailyProgress + 1 > dailyGoals ||
-                          dailyProgress + 1 === dailyGoals ? (
-                            <Text
-                              fontSize="md"
-                              color="orange.500"
-                              fontWeight="bold"
-                              mb={2}
-                            >
-                              {/* {translation[userLanguage]["celebrateMessage"]} */}
-                              {celebrationMessage}
-                            </Text>
-                          ) : null}
-                        </VStack>
-                      ) : null}
-                      <Text
-                        textAlign={"left"}
-                        color={isCorrect ? "orange.500" : "red.500"}
-                      >
-                        {feedback}{" "}
-                        {grade ? (
-                          <DataTags
-                            userLanguage={userLanguage}
-                            grade={
-                              translation[userLanguage]["tags.grade"] + grade
-                            }
-                          />
                         ) : null}
-                      </Text>{" "}
-                    </Box>
+                      </VStack>
+                    ) : null}
+                    <Text
+                      textAlign={"left"}
+                      color={isCorrect ? "orange.500" : "red.500"}
+                    >
+                      {feedback}{" "}
+                      {grade ? (
+                        <DataTags
+                          userLanguage={userLanguage}
+                          grade={
+                            translation[userLanguage]["tags.grade"] + grade
+                          }
+                        />
+                      ) : null}
+                    </Text>{" "}
+                  </Box>
+                </RiseUpAnimation>
+              )}{" "}
+              {feedback && (
+                <div
+                  style={{
+                    width: "100%",
+                    maxWidth: "600px",
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    padding: 0,
+                    marginTop: "-36px",
+                  }}
+                >
+                  <RiseUpAnimation speed="0.1s">
+                    <RandomCharacter />
                   </RiseUpAnimation>
-                )}{" "}
-                {feedback && (
+                </div>
+              )}
+              <HStack spacing={4} width="100%" justifyContent={"center"}>
+                {step.question &&
+                currentStep > 0 &&
+                !isCorrect &&
+                !isSending &&
+                !(parseInt(localStorage.getItem("incorrectAttempts")) >= "5") &&
+                isTimerExpired ? (
+                  <Button
+                    fontSize="sm"
+                    onMouseDown={handleAnswerClick}
+                    isLoading={isSending}
+                    mb={4}
+                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        handleAnswerClick();
+                      }
+                    }}
+                  >
+                    {step.isConversationReview
+                      ? translation[userLanguage]["app.button.complete"]
+                      : translation[userLanguage]["app.button.answer"]}
+                  </Button>
+                ) : null}
+
+                {isSending ? (
                   <div
                     style={{
                       width: "100%",
                       maxWidth: "600px",
-                      display: "flex",
-                      justifyContent: "flex-end",
-                      padding: 0,
-                      marginTop: "-36px",
+                      textAlign: "left",
                     }}
                   >
-                    <RiseUpAnimation speed="0.1s">
-                      <RandomCharacter />
-                    </RiseUpAnimation>
+                    <CloudCanvas
+                      speed={"0.25"}
+                      isLoader={true}
+                      regulateWidth={false}
+                    />
                   </div>
-                )}
-                <HStack spacing={4} width="100%" justifyContent={"center"}>
-                  {step.question &&
-                  currentStep > 0 &&
-                  !isCorrect &&
-                  !isSending &&
-                  !(
-                    parseInt(localStorage.getItem("incorrectAttempts")) >= "5"
-                  ) &&
-                  isTimerExpired ? (
+                ) : null}
+                {isCorrect && (
+                  <>
                     <Button
-                      fontSize="sm"
-                      onMouseDown={handleAnswerClick}
-                      isLoading={isSending}
+                      variant={"outline"}
+                      mb={3}
+                      onClick={onProgressModalOpen}
+                    >
+                      View progress
+                    </Button>
+
+                    <Button
+                      background="white"
+                      variant={"outline"}
+                      onMouseDown={handleNextClick}
                       mb={4}
-                      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                      boxShadow={"0.5px 0.5px 1px 0px black"}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
-                          handleAnswerClick();
+                          handleNextClick();
                         }
                       }}
                     >
-                      {step.isConversationReview
-                        ? translation[userLanguage]["app.button.complete"]
-                        : translation[userLanguage]["app.button.answer"]}
+                      {
+                        translation[userLanguage]["app.button.nextQuestion"]
+                      }{" "}
                     </Button>
-                  ) : null}
-
-                  {isSending ? (
-                    <div
-                      style={{
-                        width: "100%",
-                        maxWidth: "600px",
-                        textAlign: "left",
-                      }}
-                    >
-                      <CloudCanvas
-                        speed={"0.25"}
-                        isLoader={true}
-                        regulateWidth={false}
-                      />
-                    </div>
-                  ) : null}
-                  {isCorrect && (
-                    <>
-                      <Button
-                        variant={"outline"}
-                        mb={3}
-                        onClick={onProgressModalOpen}
-                      >
-                        View progress
-                      </Button>
-
-                      <Button
-                        background="white"
-                        variant={"outline"}
-                        onMouseDown={handleNextClick}
-                        mb={4}
-                        boxShadow={"0.5px 0.5px 1px 0px black"}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            handleNextClick();
-                          }
-                        }}
-                      >
-                        {
-                          translation[userLanguage]["app.button.nextQuestion"]
-                        }{" "}
-                      </Button>
-                    </>
-                  )}
-                </HStack>
-              </>
-            )}
+                  </>
+                )}
+              </HStack>
+            </>
+            {/* )} */}
           </>
 
           {!step.isTerminal && (
