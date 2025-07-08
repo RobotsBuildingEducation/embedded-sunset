@@ -2221,8 +2221,8 @@ const Step = ({
         setIsPostingWithNostr(true);
 
         try {
-          incrementUserStep(npub, currentStep);
-          storeCorrectAnswer(step, feedback);
+          await incrementUserStep(npub, currentStep);
+          await storeCorrectAnswer(step, feedback);
 
           setIsPostingWithNostr(false);
 
@@ -2246,9 +2246,9 @@ const Step = ({
 
       try {
         const npub = localStorage.getItem("local_npub");
-        incrementUserStep(npub, currentStep);
+        await incrementUserStep(npub, currentStep);
         if (currentStep > 0) {
-          storeCorrectAnswer(step, feedback);
+          await storeCorrectAnswer(step, feedback);
         }
 
         setIsPostingWithNostr(false);
