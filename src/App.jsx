@@ -5077,9 +5077,9 @@ function App({ isShutDown }) {
               if (
                 onboardingProgress !== "done" &&
                 parseInt(onboardingProgress, 10) <= 6 &&
-                parseInt(onboardingProgress, 10) === step
+                parseInt(onboardingProgress, 10) === step + 1
               ) {
-                navigate(`/onboarding/${parseInt(onboardingProgress, 10) + 1}`);
+                navigate(`/onboarding/${parseInt(onboardingProgress, 10)}`);
               } else {
                 navigate(`/q/${step}`);
               }
