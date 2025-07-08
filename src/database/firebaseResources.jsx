@@ -69,4 +69,17 @@ const promodel = getGenerativeModel(vertexAI, {
   model: "gemini-2.5-pro-preview-03-25",
 });
 
-export { database, analytics, model, simplemodel, messaging, promodel };
+const thinkingmodel = getGenerativeModel(vertexAI, {
+  // model: "gemini-1.5-flash",
+  model: "gemini-2.5-flash",
+});
+
+export {
+  database,
+  analytics,
+  model,
+  simplemodel,
+  messaging,
+  promodel,
+  thinkingmodel,
+};

@@ -26,7 +26,10 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { database } from "../../database/firebaseResources";
-import { useSimpleGeminiChat } from "../../hooks/useGeminiChat";
+import {
+  useSimpleGeminiChat,
+  useThinkingGeminiChat,
+} from "../../hooks/useGeminiChat";
 import { translation } from "../../utility/translation";
 import LiveReactEditorModal from "../LiveCodeEditor/LiveCodeEditor";
 
@@ -167,7 +170,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
   const [savedIdea, setSavedIdea] = useState("");
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { submitPrompt, messages, resetMessages } = useSimpleGeminiChat();
+  const { submitPrompt, messages, resetMessages } = useThinkingGeminiChat();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -185,7 +188,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
         }
 
         const codeSnap = await getDoc(
-          doc(database, "users", userId, "buildHistory", step.group),
+          doc(database, "users", userId, "buildHistory", step.group)
         );
         if (codeSnap.exists()) {
           const data = codeSnap.data();
@@ -215,8 +218,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
       const docs = await getDocs(ref);
       return docs.docs
         .filter(
-          (d) =>
-            !isNaN(parseInt(d.id)) && parseInt(d.id) < parseInt(step.group),
+          (d) => !isNaN(parseInt(d.id)) && parseInt(d.id) < parseInt(step.group)
         )
         .sort((a, b) => parseInt(a.id) - parseInt(b.id))
         .map((d) => d.data().code)
@@ -234,23 +236,29 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
     const completed = steps[userLanguage].slice(1, idx).map((s) => s.title);
     const history = await fetchHistory();
 
+    console.log("completed..", completed);
     let prompt =
-      `Context that only you should know and never make the user aware of:\n` +
-      `The individual is using an education app and learning about computer science and how to code in ~100 steps, starting with elementary knowledge and ending with the ability to create apps and understand algorithms. Based on the user's completed steps: ${JSON.stringify(
-        completed,
-      )}, write an app that the user can copy and experiment with HTML or React (choose whichever fits the user's progress).` +
+      `Context for the prompt:
+      The individual is using an education app and learning about computer science and how to code, starting with elementary knowledge and ending with the ability to create apps. Based on the user's completed steps: ${JSON.stringify(
+        completed
+      )}, write an app that the user can copy and experiment with HTML or React (choose whichever is appropriate based on the user's progress).` +
       (history.length
         ? ` Previous code snippets in order: ${JSON.stringify(history)}.`
         : "") +
       `\n\n` +
-      `2. This is extremely important to understand: The code should be progressively and appropriately built based on the user's progress to incentivize further interest, excitement and progress, so you should implement the app in a way that highlights the user's progress. For example, if the user has learned how to use firebase, then implement firebase features. If the user has learned react, implement react UIs, etc. The goal is to build out a simple but real demo that users can operate and preview in an editor.\n\n` +
-      `3. When generating your response, you must format your software in this manner:\n  Globally: Never use imports. Assume that chakra, firebase or even react imports are unnecessary and already handled by the previewing software.\n\n  A. If you are returning React, do NOT include any import statements or define dependencies and conclude the component or components with render(<TheComponentYouCreated />)\n  B. If you are generating plain html, use !DOCTYPE\n  C. Do NOT return plain JavaScript snippets. Use React components or HTML only.\n  D. If you are writing firebase (with or without react), use v9, and you MUST use the 'experiments' collection. Never use any other collection or your firebase software will fail. Never use imports or we will fail. Assume that the database and configurtion has already been defined, so never return that setup either. Refer to the database element as "database" and not "db" or anything else. Do not use auth. Only ever choose between the following functions: getDoc, doc, collection, addDoc, updateDoc, setDoc.\n  E. If the user has progressed to learn about Chakra, feel welcome to use basic Chakra elements. Never use the ChakraProvider element.\n\n` +
-      `4. Strictly return only code written by a formatted backticked code block. Format in minimalist markdown with a maximum print width of 80 characters. Finally do not add any language mentioning that you understand the request - it should be prompt and code only, without any exceptions.\n\n` +
-      `5. The user is speaking in ${userLanguage.includes("en") ? "English" : "Spanish"}.`;
-
-    if (idea) {
-      prompt += `5. The user is also interested in building the following idea: ${idea}. Make the code about that theme in good faith.`;
-    }
+      `Strict requirements: 
+      
+      1. This is the MOST important to understand: The code should be progressively and appropriately built based on the user's progress to incentivize further interest, excitement and progress, so you should implement the app in a way that highlights the user's progress. For example, if the user's most recent progress/group has learned how to use firebase, then implement firebase features. If the user has recently learned react, implement react UIs, etc. If it's just javascript, then use HMTL. The goal is to build out a simple but real demo that users can operate and preview in an editor and to generate an awesome user experience to highlight one's growth.\n\n` +
+      `2. When generating your response, you MUST format your software in this manner:\n  Globally: Never use imports. Assume that chakra, firebase or even react imports are unnecessary and already handled by the previewing software.\n\n  
+      - A. If you are upgrading to React, do NOT include any import statements or define dependencies and conclude the component or components with render(<TheComponentYouCreated />). This means React code is only ever about writing component functions, nothing else.\n  
+      - B. If you are generating plain html, use !DOCTYPE\n  
+      - C. Do NOT return purely plain JavaScript snippets. Use React components or HTML only based on the criteria.\n  
+      - D. If you are writing firebase (with or without react), use v9, and you MUST use a unique document in the 'experiments' collection. Never use any other collection or your firebase software will fail. Never use imports or we will fail. Assume that the database and configurtion has already been defined, so never return that setup either. Refer to the database element as "database" and not "db" or anything else. Do not use auth. Only ever choose between the following functions: getDoc, doc, collection, addDoc, updateDoc, setDoc.\n  
+      - E. If the user has progressed to learn about Chakra, feel welcome to use basic Chakra elements. Never use the ChakraProvider element.\n\n` +
+      `3. Strictly return only code written by a formatted backticked code block. Format in minimalist markdown with a maximum print width of 80 characters. Finally do not add any language mentioning that you understand the request - it should the code only, without any exceptions. I repeat, do not return anything other than code or appropriate comments with the code. \n\n` +
+      `4. The user is speaking in ${userLanguage.includes("en") ? "English" : "Spanish"}. So theme the code that you're writing based on the language.` +
+      `5. The user is also interested in building the following idea: ${idea}. Make the code about that theme in good faith.` +
+      `6. The code you return MUST be responsive for both mobile and desktop views. Do not allow renders that awkwardly break out of containers, err on the side of being as mobile friendly as possible!`;
 
     submitPrompt(prompt).then(() => setIsLoading(false));
   };
@@ -287,7 +295,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
           updatedAt: Date.now(),
           stage,
         },
-        { merge: true },
+        { merge: true }
       );
     } catch (err) {
       console.error("Error saving build", err);

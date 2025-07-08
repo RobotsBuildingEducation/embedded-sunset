@@ -2222,7 +2222,7 @@ const Step = ({
         setIsPostingWithNostr(true);
 
         try {
-          await incrementUserStep(npub, currentStep);
+          incrementUserStep(npub, currentStep);
           storeCorrectAnswer(step, feedback).catch(console.error);
           setCurrentStep(currentStep + 1);
 
@@ -2245,7 +2245,10 @@ const Step = ({
       const npub = localStorage.getItem("local_npub");
 
       try {
-        await incrementUserStep(npub, currentStep);
+        if (currentStep > 4) incrementUserStep(npub, currentStep);
+        else {
+          await incrementUserStep(npub, currentStep);
+        }
         if (currentStep > 0) {
           storeCorrectAnswer(step, feedback).catch(console.error);
         }
