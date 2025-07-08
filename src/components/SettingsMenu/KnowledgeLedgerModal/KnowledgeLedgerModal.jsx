@@ -33,6 +33,7 @@ import {
   getDoc,
   getDocs,
   updateDoc,
+  setDoc,
 } from "firebase/firestore";
 import { database } from "../../../database/firebaseResources";
 import { translation } from "../../../utility/translation";
@@ -168,7 +169,7 @@ export const KnowledgeLedgerModal = ({
   // user input
 
   const { hasCopied, onCopy } = useClipboard(
-    suggestion + " using mock data rather than real config data if necessary."
+    suggestion + " using mock data rather than real config data if necessary.",
   ); // Copy functionality
 
   useEffect(() => {
@@ -177,10 +178,31 @@ export const KnowledgeLedgerModal = ({
     }
   }, [isOpen]);
 
+  const saveBuild = async (content, stage = "build") => {
+    try {
+      const userId = localStorage.getItem("local_npub");
+      if (!userId) return;
+      const group = steps[userLanguage][currentStep].group;
+      await setDoc(
+        doc(database, "users", userId, "buildHistory", group),
+        {
+          code: content,
+          updatedAt: Date.now(),
+          stage,
+        },
+        { merge: true },
+      );
+    } catch (err) {
+      console.error("Error saving build", err);
+    }
+  };
+
   useEffect(() => {
     if (messages?.length > 0) {
       console.log("true..", messages);
       setIsAnimating(false);
+      const last = messages[messages.length - 1];
+      saveBuild(last.content, "build");
       // try {
       //   const lastMessage = messages[messages.length - 1];
       //   const isLastMessage =
@@ -252,6 +274,27 @@ export const KnowledgeLedgerModal = ({
     }
   };
 
+  const fetchHistory = async () => {
+    try {
+      const userId = localStorage.getItem("local_npub");
+      if (!userId) return [];
+      const ref = collection(database, `users/${userId}/buildHistory`);
+      const docs = await getDocs(ref);
+      return docs.docs
+        .filter(
+          (d) =>
+            !isNaN(parseInt(d.id)) &&
+            parseInt(d.id) < parseInt(steps[userLanguage][currentStep].group),
+        )
+        .sort((a, b) => parseInt(a.id) - parseInt(b.id))
+        .map((d) => d.data().code)
+        .filter(Boolean);
+    } catch (e) {
+      console.error("Error fetching history", e);
+      return [];
+    }
+  };
+
   const handleSuggestNext = async () => {
     resetMessages();
     setIsAnimating(true);
@@ -268,6 +311,7 @@ export const KnowledgeLedgerModal = ({
     // localStorage.setItem("knwldctrl", knwldctrl);
     setIsLoading(true);
     setSuggestion("");
+    const history = await fetchHistory();
 
     try {
       // const userAnswers = await fetchUserAnswers();
@@ -283,11 +327,15 @@ export const KnowledgeLedgerModal = ({
       console.log("user prog", subjectsCompleted);
       console.log("total ANSWERS", totalSteps);
 
-      let prompt = `Context that only you should know and never make the user aware of: 
+      let prompt = `Context that only you should know and never make the user aware of:
 1. The individual is using an education app and learning about computer science and how to code in 130 steps, starting with elementary knowledge and ending with the ability to create apps and understand algorithms. Based on the user's completed steps: ${JSON.stringify(
-        subjectsCompleted
-      )}, write an app that the user can copy and experiment with HTML, react or javascript (whichever is appropriate based on progress or student's level of development).
-
+        subjectsCompleted,
+      )}, write an app that the user can copy and experiment with HTML or React (choose whichever fits the user's progress).${
+        history.length
+          ? ` Previous code snippets in order: ${JSON.stringify(history)}.`
+          : ""
+      }
+      
   2. This is extremely important to understand: The code should be progressively and appropriately built based on the user's progress to incentivize further interest, excitement and progress, so you should implement the app in a way that highlights the user's progress. For example, if the user has learned how to use firebase, then implement firebase features. If the user has learned react, implement react UIs, etc. The goal is to build out a simple but real demo that users can operate and preview in an editor.
 
   3. When generating your response, you must format your software in this manner:
@@ -295,7 +343,7 @@ export const KnowledgeLedgerModal = ({
 
   A. If you are returning React, do NOT include any import statements or define dependencies and conclude the component or components with render(<TheComponentYouCreated />)
   B. If you are generating plain html, use !DOCTYPE
-  C. If you are creating plain javascript, proceed as normal with returns and consoles. Do not use imports.
+  C. Do NOT return plain JavaScript snippets. Use React components or HTML only.
   D. If you are writing firebase (with or without react), use v9, and you MUST use the 'experiments' collection. Never use any other collection or your firebase software will fail. Never use imports or we will fail. Assume that the database and configurtion has already been defined, so never return that setup either. Refer to the database element as "database" and not "db" or anything else. Do not use auth. Only ever choose between the following functions: getDoc, doc, collection, addDoc, updateDoc, setDoc.
   E. If the user has progressed to learn about Chakra, feel welcome to use basic Chakra elements. Never use the ChakraProvider element.
   
@@ -352,7 +400,7 @@ export const KnowledgeLedgerModal = ({
             >
               {transcriptDisplay[step.group]?.[userLanguage] || ""}
             </Heading>
-          )
+          ),
         );
         lastGroup = step.group;
       }
@@ -362,7 +410,7 @@ export const KnowledgeLedgerModal = ({
           color={index <= currentStep - 1 ? "green.500" : "gray.500"}
         >
           {index !== 0 ? index + ". " + step.title : ""}
-        </Text>
+        </Text>,
       );
     });
     return stepElements;

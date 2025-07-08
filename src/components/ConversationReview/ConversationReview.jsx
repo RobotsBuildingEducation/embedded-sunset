@@ -18,6 +18,8 @@ import { useChatCompletion } from "../../hooks/useChatCompletion";
 import { VoiceInput } from "../../App";
 import { CloudCanvas, SunsetCanvas } from "../../elements/SunsetCanvas";
 import Markdown from "react-markdown";
+import { doc, getDoc } from "firebase/firestore";
+import { database } from "../../database/firebaseResources";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import "./ConversationReview.css";
 
@@ -95,6 +97,28 @@ const ConversationReview = ({
   const chatboxRef = useRef(null);
   const chatContainerRef = useRef(null);
   const [showIntro, setShowIntro] = useState(true);
+
+  useEffect(() => {
+    const checkStage = async () => {
+      try {
+        const userId = localStorage.getItem("local_npub");
+        if (!userId) return;
+        const snap = await getDoc(
+          doc(database, "users", userId, "buildHistory", step.group),
+        );
+        if (snap.exists()) {
+          const data = snap.data();
+          if (data.stage === "conversation") {
+            setShowIntro(false);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching progress", err);
+      }
+    };
+    checkStage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step.group]);
 
   // Gather the steps within the range
   //   const relevantSteps = steps[userLanguage].slice(
