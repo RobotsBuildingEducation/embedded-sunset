@@ -3453,7 +3453,17 @@ const Step = ({
           isEmpty(suggestionMessage) &&
           !step?.isTerminal ? (
             <Box mt={4} p={4} textAlign="center">
-              <CloudCanvas isLoader={true} />
+              {/* <CloudCanvas isLoader={true} /> */}
+              <Box marginTop={"-52px"}>
+                <RoleCanvas
+                  role={"sphere"}
+                  width={400}
+                  height={400}
+                  color="#FF69B4"
+                  backgroundColorX="247,245,239"
+                />
+              </Box>
+
               <Text mt={2}>
                 {translation[userLanguage]["loading.suggestion"]}
               </Text>

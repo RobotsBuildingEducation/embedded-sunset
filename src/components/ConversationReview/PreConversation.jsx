@@ -32,6 +32,7 @@ import {
 } from "../../hooks/useGeminiChat";
 import { translation } from "../../utility/translation";
 import LiveReactEditorModal from "../LiveCodeEditor/LiveCodeEditor";
+import { CloudCanvas, SunsetCanvas } from "../../elements/SunsetCanvas";
 
 export const transcriptDisplay = {
   tutorial: {
@@ -339,6 +340,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
           onClick={handleSaveIdeaAndGenerate}
           isDisabled={isLoading || idea.length < 1}
           boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+          colorScheme="pink"
         >
           {savedIdea
             ? translation[userLanguage]["buildYourApp.button.label.2"]
@@ -361,7 +363,10 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
         </Box>
       )} */}
       {isLoading && (
-        <Text>{translation[userLanguage]["loading.suggestion"]}</Text>
+        <>
+          <CloudCanvas />
+          <Text>{translation[userLanguage]["loading.suggestion"]}</Text>
+        </>
       )}
       {code && (
         <Box
