@@ -365,6 +365,11 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
       {isLoading && (
         <>
           <CloudCanvas />
+          {messages.length > 0 && (
+            <Text fontSize="sm" whiteSpace="pre-wrap">
+              {messages[messages.length - 1].thought}
+            </Text>
+          )}
           <Text>{translation[userLanguage]["loading.suggestion"]}</Text>
         </>
       )}
