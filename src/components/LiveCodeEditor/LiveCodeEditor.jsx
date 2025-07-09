@@ -287,6 +287,7 @@ const LiveReactEditorModal = ({
           borderRadius="2xl"
           marginTop="8px"
           border="1px solid black"
+          boxSizing="border-box"
         >
           {isReactCode(editorCode) && isPreviewing ? (
             <ChakraProvider>
@@ -333,7 +334,7 @@ const LiveReactEditorModal = ({
             </ChakraProvider>
           ) : null}
           {isHTMLCode(editorCode) && !isReactCode(editorCode) ? (
-            <Box width="100%" borderRadius="md" ml={4}>
+            <Box width="100%" borderRadius="md">
               <iframe
                 ref={iframeRef}
                 title="Live Preview"

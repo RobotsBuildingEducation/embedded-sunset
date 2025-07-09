@@ -364,6 +364,10 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
       )} */}
       {isLoading && (
         <>
+          <Text>
+            Thinking and using a more expensive and slower model so I don't mess
+            this up 🥲
+          </Text>
           <CloudCanvas />
           <Text>{translation[userLanguage]["loading.suggestion"]}</Text>
         </>
