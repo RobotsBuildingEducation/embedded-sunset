@@ -5156,8 +5156,8 @@ function App({ isShutDown }) {
           // Catch permission denied errors and handle them accordingly
           if (error.code === "permission-denied") {
             console.error("Permission Denied: ", error);
-            localStorage.clear(); // Clear any local state or authentication
-            navigate("/"); // Redirect to the root route or any other route
+            // localStorage.clear(); // Clear any local state or authentication
+            // navigate("/"); // Redirect to the root route or any other route
           } else {
             console.error("Unexpected Error: ", error);
           }
