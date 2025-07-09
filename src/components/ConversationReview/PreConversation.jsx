@@ -339,8 +339,8 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
         <Button
           onClick={handleSaveIdeaAndGenerate}
           isDisabled={isLoading || idea.length < 1}
-          boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
           colorScheme="pink"
+          background="pink.300"
         >
           {savedIdea
             ? translation[userLanguage]["buildYourApp.button.label.2"]
