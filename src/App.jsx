@@ -1691,6 +1691,8 @@ const Step = ({
               The user is speaking ${
                 userLanguage.includes("en") ? "English" : "Spanish"
               }.
+
+              The user is using the following programming language: ${pickProgrammingLanguage(userLanguage)}
             `,
             role: "user",
           },
