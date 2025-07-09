@@ -58,7 +58,11 @@ import { useSharedNostr } from "./hooks/useNOSTR";
 import { TechOverview } from "./components/TechOverview/TechOverview";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
-export const Onboarding = ({ userLanguage, setUserLanguage, setCurrentStep }) => {
+export const Onboarding = ({
+  userLanguage,
+  setUserLanguage,
+  setCurrentStep,
+}) => {
   const { assignExistingBadgeToNpub } = useSharedNostr(
     localStorage.getItem("local_npub"),
     localStorage.getItem("local_nsec")
@@ -268,7 +272,7 @@ export const Onboarding = ({ userLanguage, setUserLanguage, setCurrentStep }) =>
       p={4}
       pb={12}
     >
-      <Button
+      {/* <Button
         variant={"ghost"}
         backgroundColor="#fcf3eb"
         size="sm"
@@ -277,7 +281,7 @@ export const Onboarding = ({ userLanguage, setUserLanguage, setCurrentStep }) =>
         onClick={handleActuallyLaunchApp}
       >
         Skip Account Setup
-      </Button>
+      </Button> */}
 
       {step === "1" ? (
         <Box
@@ -298,9 +302,7 @@ export const Onboarding = ({ userLanguage, setUserLanguage, setCurrentStep }) =>
           <KnowledgeLedgerOnboarding
             userLanguage={userLanguage}
             moveToNext={() => {
-              incrementUserOnboardingStep(
-                localStorage.getItem("local_npub")
-              );
+              incrementUserOnboardingStep(localStorage.getItem("local_npub"));
               setCurrentStep(0);
               navigate("/q/0");
             }}

@@ -15,6 +15,8 @@ export const pickProgrammingLanguage = (language) => {
 
 export let translation = {
   en: {
+    startTutorialAndOnboarding:
+      "Let's start the tutorial and account setup next.",
     "language.compsci.english": "Computer Science (Python)",
     "languageToggle.english": "English",
     "languageToggle.spanish": "Español",
@@ -1601,6 +1603,8 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   es: {
+    startTutorialAndOnboarding:
+      "Comencemos con el tutorial y la configuración de la cuenta a continuación.",
     "Foundations of Data Structures": "Fundamentos de Estructuras de Datos",
     "Linear Data Structures": "Estructuras de Datos Lineales",
     "Hierarchical & Associative Data Structures":
@@ -3147,6 +3151,8 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "congrats.connect": "Conéctate con todos los que han terminado",
   },
   "py-en": {
+    startTutorialAndOnboarding:
+      "Let's start the tutorial and account setup next.",
     "Foundations of Data Structures": "Foundations of Data Structures",
     "Linear Data Structures": "Linear Data Structures",
     "Hierarchical & Associative Data Structures":
@@ -4732,6 +4738,8 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "swift-en": {
+    startTutorialAndOnboarding:
+      "Let's start the tutorial and account setup next.",
     "Foundations of Data Structures": "Foundations of Data Structures",
     "Linear Data Structures": "Linear Data Structures",
     "Hierarchical & Associative Data Structures":
@@ -6319,6 +6327,8 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "android-en": {
+    startTutorialAndOnboarding:
+      "Let's start the tutorial and account setup next.",
     "Foundations of Data Structures": "Foundations of Data Structures",
     "Linear Data Structures": "Linear Data Structures",
     "Hierarchical & Associative Data Structures":
@@ -7906,6 +7916,8 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "compsci-en": {
+    startTutorialAndOnboarding:
+      "Let's start the tutorial and account setup next.",
     "Foundations of Data Structures": "Foundations of Data Structures",
     "Linear Data Structures": "Linear Data Structures",
     "Hierarchical & Associative Data Structures":

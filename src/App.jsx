@@ -2742,30 +2742,29 @@ const Step = ({
                       }
                     }}
                   />
-                ) : (
-                  <IconButton
-                    width="24px"
-                    height="30px"
-                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                    background="pink.100"
-                    opacity="0.75"
-                    color="pink.600"
-                    icon={<FaMagic padding="4px" fontSize="14px" />}
-                    mr={5}
-                    onMouseDown={() => {
-                      //open modal
-                      onKnowledgeLedgerOpen();
-                      return;
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        onKnowledgeLedgerOpen();
-                        //open modal
-                        return;
-                      }
-                    }}
-                  />
-                )}
+                ) : // <IconButton
+                //   width="24px"
+                //   height="30px"
+                //   boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                //   background="pink.100"
+                //   opacity="0.75"
+                //   color="pink.600"
+                //   icon={<FaMagic padding="4px" fontSize="14px" />}
+                //   mr={5}
+                //   onMouseDown={() => {
+                //     //open modal
+                //     onKnowledgeLedgerOpen();
+                //     return;
+                //   }}
+                //   onKeyDown={(e) => {
+                //     if (e.key === "Enter" || e.key === " ") {
+                //       onKnowledgeLedgerOpen();
+                //       //open modal
+                //       return;
+                //     }
+                //   }}
+                // />
+                null}
 
                 {/* <IconButton
                   width="18px"
@@ -3040,41 +3039,46 @@ const Step = ({
 
           <>
             {step.isStudyGuide && (
-              <div>
-                <Button
-                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                  onMouseDown={onStudyGuideModalOpen}
-                  mb={4}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      onStudyGuideModalOpen();
-                    }
-                  }}
-                >
-                  {translation[userLanguage]["settings.button.studyGuide"]}
-                </Button>
-                &nbsp;&nbsp; &nbsp;&nbsp;
-                <Button
-                  background="white"
-                  variant={"outline"}
-                  onMouseDown={handleNextClick}
-                  mb={4}
-                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      handleNextClick();
-                    }
-                  }}
-                >
-                  {translation[userLanguage]["app.button.nextQuestion"]}{" "}
-                </Button>
+              <VStack>
+                <Text>
+                  {translation[userLanguage]["startTutorialAndOnboarding"]}
+                </Text>
+
+                <HStack>
+                  <Button
+                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                    onMouseDown={onStudyGuideModalOpen}
+                    mb={4}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        onStudyGuideModalOpen();
+                      }
+                    }}
+                    variant={"outline"}
+                  >
+                    {translation[userLanguage]["settings.button.studyGuide"]}
+                  </Button>
+                  &nbsp;&nbsp; &nbsp;&nbsp;
+                  <Button
+                    onMouseDown={handleNextClick}
+                    mb={4}
+                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        handleNextClick();
+                      }
+                    }}
+                  >
+                    {translation[userLanguage]["app.button.nextQuestion"]}{" "}
+                  </Button>
+                </HStack>
                 <StudyGuideModal
                   isOpen={isStudyGuideModalOpen}
                   onClose={onStudyGuideModalClose}
                   content={step.question.metaData}
                   userLanguage={userLanguage}
                 />
-              </div>
+              </VStack>
             )}
 
             {step.isSingleLineText && (
