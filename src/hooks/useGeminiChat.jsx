@@ -195,11 +195,19 @@ export const useThinkingGeminiChat = () => {
 
     try {
       // 1) Make the streaming request
-      const result = await thinkingmodel.generateContentStream(prompt);
+      const result = await thinkingmodel.generateContentStream({
+        contents: prompt,
+        config: {
+          thinkingConfig: {
+            includeThoughts: true,
+          },
+        },
+      });
 
       // 2) Create a new message object to store partial text
       const newMessage = {
         content: "",
+        thought: "",
         meta: {
           loading: true, // Whether the streaming is ongoing
           chunks: [], // We’ll store each chunk of text here
@@ -211,10 +219,21 @@ export const useThinkingGeminiChat = () => {
 
       // 4) Accumulate partial text in a local variable, updating state after each chunk
       let fullResponse = "";
+      let fullThought = "";
 
       for await (const chunk of result.stream) {
-        const chunkText = chunk.text();
-        fullResponse += chunkText;
+        const parts =
+          chunk.candidates?.[0]?.content?.parts || [];
+        let chunkText = "";
+        for (const part of parts) {
+          if (!part.text) continue;
+          chunkText += part.text;
+          if (part.thought) {
+            fullThought += part.text;
+          } else {
+            fullResponse += part.text;
+          }
+        }
 
         // 5) Update the last message with partial text
         setMessages((prev) => {
@@ -222,6 +241,7 @@ export const useThinkingGeminiChat = () => {
           const currentMessage = updatedMessages[updatedMessages.length - 1];
 
           currentMessage.content = fullResponse;
+          currentMessage.thought = fullThought;
           currentMessage.meta.chunks.push({
             content: chunkText,
             final: false, // We’ll mark it final after the loop ends
