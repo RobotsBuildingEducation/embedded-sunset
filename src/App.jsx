@@ -3070,6 +3070,7 @@ const Step = ({
                         handleNextClick();
                       }
                     }}
+                    disabled={isPostingWithNostr}
                   >
                     {translation[userLanguage]["app.button.nextQuestion"]}{" "}
                   </Button>
@@ -3418,6 +3419,7 @@ const Step = ({
                           handleNextClick();
                         }
                       }}
+                      disabled={isPostingWithNostr}
                     >
                       {
                         translation[userLanguage]["app.button.nextQuestion"]
