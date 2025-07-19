@@ -277,7 +277,10 @@ const SettingsMenu = ({
           style={{ backgroundColor: "white", zIndex: 1000 }}
           aria-label="Settings"
         />
-        <Box position="fixed" top={4} right={12} zIndex={1000}><ThemeMenu /></Box>
+      ) : null}
+      <Box position="fixed" top={4} right={12} zIndex={1000}>
+        <ThemeMenu />
+      </Box>
       {/* {isSignedIn && testIsMatch ? (
         <IconButton
           ref={btnRef}
