@@ -33,6 +33,7 @@ import RoxModal from "./RoxModal/RoxModal";
 import SocialWalletModal from "./SocialWalletModal/SocialWalletModal";
 
 import FeedbackModal from "./FeedbackModal/FeedbackModal";
+import ThemeMenu from "../ThemeMenu";
 import { translation } from "../../utility/translation";
 import { database } from "../../database/firebaseResources";
 import { doc, updateDoc } from "firebase/firestore";
@@ -276,7 +277,7 @@ const SettingsMenu = ({
           style={{ backgroundColor: "white", zIndex: 1000 }}
           aria-label="Settings"
         />
-      ) : null}
+        <Box position="fixed" top={4} right={12} zIndex={1000}><ThemeMenu /></Box>
       {/* {isSignedIn && testIsMatch ? (
         <IconButton
           ref={btnRef}
