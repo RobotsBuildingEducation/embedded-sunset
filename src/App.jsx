@@ -58,6 +58,7 @@ import {
 } from "./elements/SunsetCanvas";
 import EducationalModal from "./components/LearnModal/EducationalModal";
 import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
+import ThemeMenu from "./components/ThemeMenu";
 
 import {
   createUser,
@@ -2718,6 +2719,19 @@ const Step = ({
                       //open modal
                       return;
                     }
+                  }}
+                />
+
+                <ThemeMenu
+                  userLanguage={userLanguage}
+                  buttonProps={{
+                    width: "24px",
+                    height: "30px",
+                    boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+                    background: "pink.100",
+                    opacity: "0.75",
+                    color: "pink.600",
+                    mr: 5,
                   }}
                 />
 

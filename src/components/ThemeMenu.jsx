@@ -5,34 +5,41 @@ import {
   MenuList,
   MenuItem,
   IconButton,
+  Button,
   HStack,
   Box,
 } from "@chakra-ui/react";
 import { FaPaintBrush } from "react-icons/fa";
 import { useThemeStore } from "../useThemeStore";
+import { ChevronDownIcon } from "@chakra-ui/icons";
+import { translation } from "../utility/translation";
 
 const colors = ["purple", "orange", "green", "blue"];
 
-const ThemeMenu = () => {
+const ThemeMenu = ({ userLanguage, isIcon = true, buttonProps = {} }) => {
   const themeColor = useThemeStore((s) => s.themeColor);
   const setThemeColor = useThemeStore((s) => s.setThemeColor);
 
   return (
     <Menu>
       <MenuButton
-        as={IconButton}
-        aria-label="Choose theme"
+        as={isIcon ? IconButton : Button}
+        aria-label={translation[userLanguage]["settings.theme.select"]}
         icon={<FaPaintBrush />}
-        variant="outline"
-        colorScheme={themeColor}
+        variant={isIcon ? "outline" : "solid"}
+        colorScheme={isIcon ? themeColor : "pink"}
         m={2}
-      />
+        rightIcon={isIcon ? undefined : <ChevronDownIcon />}
+        {...buttonProps}
+      >
+        {isIcon ? null : translation[userLanguage]["settings.theme.select"]}
+      </MenuButton>
       <MenuList>
         {colors.map((c) => (
           <MenuItem key={c} onClick={() => setThemeColor(c)}>
             <HStack>
               <Box w={3} h={3} borderRadius="full" bg={`${c}.400`} />
-              {c.charAt(0).toUpperCase() + c.slice(1)}
+              {translation[userLanguage][`settings.theme.${c}`]}
             </HStack>
           </MenuItem>
         ))}
