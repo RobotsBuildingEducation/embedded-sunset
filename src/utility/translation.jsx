@@ -54,6 +54,13 @@ export let translation = {
     "language.swift.english": "Swift & iOS (English)",
     "language.android.english": "Java & Android (English)",
     "settings.button.changeLanguage": "Change App Language",
+    "settings.theme.select": "Select Theme",
+    "settings.theme.purple": "Purple",
+    "settings.theme.orange": "Orange",
+    "settings.theme.green": "Green",
+    "settings.theme.blue": "Blue",
+    "settings.theme.pink": "Pink",
+    "settings.theme.yellow": "Yellow",
     "search...": "Search…",
     backToQuestion9: "Go back to question 9",
     completeTutorialFirst: "You have to finish the tutorial first.",
@@ -1603,6 +1610,9 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   es: {
+    "settings.theme.yellow": "Amarillo",
+    "settings.theme.pink": "Rosa",
+    "settings.theme.select": "Seleccionar tema",
     startTutorialAndOnboarding:
       "Comencemos con el tutorial y la configuración de la cuenta a continuación.",
     "Foundations of Data Structures": "Fundamentos de Estructuras de Datos",
@@ -1653,6 +1663,11 @@ reverse(head) {
     "language.swift.english": "Swift e iOS (inglés)",
     "language.android.english": "Java y Android (inglés)",
     "settings.button.changeLanguage": "Cambiar idioma de app",
+    "settings.theme.select": "Seleccionar tema",
+    "settings.theme.purple": "Morado",
+    "settings.theme.orange": "Naranja",
+    "settings.theme.green": "Verde",
+    "settings.theme.blue": "Azul",
     "onboarding.languages.title": "Elige tu idioma",
     "onboarding.languages.description":
       "Elige los lenguajes de programación y las herramientas que quieras usar. ¡No lo pienses demasiado, también puedes cambiar de idioma cuando quieras desde el menú! Recomendamos Javascript para principiantes y para la mejor experiencia posible.",
@@ -3151,6 +3166,10 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "congrats.connect": "Conéctate con todos los que han terminado",
   },
   "py-en": {
+    "settings.theme.yellow": "Yellow",
+    "settings.theme.pink": "Pink",
+    "settings.theme.select": "Select Theme",
+
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
     "Foundations of Data Structures": "Foundations of Data Structures",
@@ -4738,6 +4757,10 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "swift-en": {
+    "settings.theme.yellow": "Yellow",
+    "settings.theme.pink": "Pink",
+    "settings.theme.select": "Select Theme",
+
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
     "Foundations of Data Structures": "Foundations of Data Structures",
@@ -6327,6 +6350,10 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "android-en": {
+    "settings.theme.yellow": "Yellow",
+    "settings.theme.pink": "Pink",
+    "settings.theme.select": "Select Theme",
+
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
     "Foundations of Data Structures": "Foundations of Data Structures",
@@ -7916,6 +7943,9 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "compsci-en": {
+    "settings.theme.yellow": "Yellow",
+    "settings.theme.pink": "Pink",
+    "settings.theme.select": "Select Theme",
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
     "Foundations of Data Structures": "Foundations of Data Structures",

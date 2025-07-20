@@ -84,8 +84,6 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
     });
   };
 
-  console.log("transcriptset", transcriptset);
-  console.log(translation[userLanguage][transcriptset[step.group]?.name], "x");
   return (
     <Modal
       isOpen={isOpen}

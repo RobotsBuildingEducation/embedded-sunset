@@ -33,6 +33,7 @@ import RoxModal from "./RoxModal/RoxModal";
 import SocialWalletModal from "./SocialWalletModal/SocialWalletModal";
 
 import FeedbackModal from "./FeedbackModal/FeedbackModal";
+import ThemeMenu from "../ThemeMenu";
 import { translation } from "../../utility/translation";
 import { database } from "../../database/firebaseResources";
 import { doc, updateDoc } from "firebase/firestore";
@@ -486,6 +487,16 @@ const SettingsMenu = ({
               >
                 {translation[userLanguage]["settings.button.changeLanguage"]}
               </Button>
+              <ThemeMenu
+                userLanguage={userLanguage}
+                isIcon={false}
+                buttonProps={{
+                  width: "100%",
+                  colorScheme: "pink",
+                  background: "pink.300",
+                  boxShadow: "1px 1px 2px 0px rgba(207, 128, 197,0.75)",
+                }}
+              />
               <Button
                 ref={firstButtonRef} // Assign the ref to the first button
                 colorScheme="pink"
