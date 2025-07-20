@@ -59,6 +59,8 @@ export let translation = {
     "settings.theme.orange": "Orange",
     "settings.theme.green": "Green",
     "settings.theme.blue": "Blue",
+    "settings.theme.pink": "Pink",
+    "settings.theme.yellow": "Yellow",
     "search...": "Search…",
     backToQuestion9: "Go back to question 9",
     completeTutorialFirst: "You have to finish the tutorial first.",
@@ -1608,6 +1610,9 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   es: {
+    "settings.theme.yellow": "Amarillo",
+    "settings.theme.pink": "Rosa",
+    "settings.theme.select": "Seleccionar tema",
     startTutorialAndOnboarding:
       "Comencemos con el tutorial y la configuración de la cuenta a continuación.",
     "Foundations of Data Structures": "Fundamentos de Estructuras de Datos",
@@ -3161,6 +3166,10 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "congrats.connect": "Conéctate con todos los que han terminado",
   },
   "py-en": {
+    "settings.theme.yellow": "Yellow",
+    "settings.theme.pink": "Pink",
+    "settings.theme.select": "Select Theme",
+
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
     "Foundations of Data Structures": "Foundations of Data Structures",
@@ -4748,6 +4757,10 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "swift-en": {
+    "settings.theme.yellow": "Yellow",
+    "settings.theme.pink": "Pink",
+    "settings.theme.select": "Select Theme",
+
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
     "Foundations of Data Structures": "Foundations of Data Structures",
@@ -6337,6 +6350,10 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "android-en": {
+    "settings.theme.yellow": "Yellow",
+    "settings.theme.pink": "Pink",
+    "settings.theme.select": "Select Theme",
+
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
     "Foundations of Data Structures": "Foundations of Data Structures",
@@ -7926,6 +7943,9 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "compsci-en": {
+    "settings.theme.yellow": "Yellow",
+    "settings.theme.pink": "Pink",
+    "settings.theme.select": "Select Theme",
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
     "Foundations of Data Structures": "Foundations of Data Structures",
