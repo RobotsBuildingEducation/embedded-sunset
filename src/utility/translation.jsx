@@ -61,6 +61,8 @@ export let translation = {
     "settings.theme.blue": "Blue",
     "settings.theme.pink": "Pink",
     "settings.theme.yellow": "Yellow",
+    "settings.theme.black": "Black",
+    "settings.theme.white": "White/Outline",
     "search...": "Search…",
     backToQuestion9: "Go back to question 9",
     completeTutorialFirst: "You have to finish the tutorial first.",
@@ -1612,6 +1614,8 @@ reverse(head) {
   es: {
     "settings.theme.yellow": "Amarillo",
     "settings.theme.pink": "Rosa",
+    "settings.theme.black": "Negro",
+    "settings.theme.white": "Blanco/Contorno",
     "settings.theme.select": "Seleccionar tema",
     startTutorialAndOnboarding:
       "Comencemos con el tutorial y la configuración de la cuenta a continuación.",
@@ -3168,6 +3172,8 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
   "py-en": {
     "settings.theme.yellow": "Yellow",
     "settings.theme.pink": "Pink",
+    "settings.theme.black": "Black",
+    "settings.theme.white": "White/Outline",
     "settings.theme.select": "Select Theme",
 
     startTutorialAndOnboarding:
@@ -4759,6 +4765,8 @@ reverse(head) {
   "swift-en": {
     "settings.theme.yellow": "Yellow",
     "settings.theme.pink": "Pink",
+    "settings.theme.black": "Black",
+    "settings.theme.white": "White/Outline",
     "settings.theme.select": "Select Theme",
 
     startTutorialAndOnboarding:
@@ -6352,6 +6360,8 @@ reverse(head) {
   "android-en": {
     "settings.theme.yellow": "Yellow",
     "settings.theme.pink": "Pink",
+    "settings.theme.black": "Black",
+    "settings.theme.white": "White/Outline",
     "settings.theme.select": "Select Theme",
 
     startTutorialAndOnboarding:
@@ -7945,6 +7955,8 @@ reverse(head) {
   "compsci-en": {
     "settings.theme.yellow": "Yellow",
     "settings.theme.pink": "Pink",
+    "settings.theme.black": "Black",
+    "settings.theme.white": "White/Outline",
     "settings.theme.select": "Select Theme",
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",

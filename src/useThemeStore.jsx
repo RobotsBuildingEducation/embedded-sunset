@@ -14,6 +14,11 @@ const shades = [
   "800",
   "900",
 ];
+const colorMap = {
+  black: "blackAlpha",
+  white: "whiteAlpha",
+};
+
 const applyTheme = (color) => {
   if (color === "pink") {
     // Remove overrides so default pink values are restored
@@ -26,15 +31,17 @@ const applyTheme = (color) => {
     return;
   }
 
+  const target = colorMap[color] || color;
+
   shades.forEach((s) => {
     document.documentElement.style.setProperty(
       `--chakra-colors-pink-${s}`,
-      `var(--chakra-colors-${color}-${s})`
+      `var(--chakra-colors-${target}-${s})`
     );
   });
   document.documentElement.style.setProperty(
     "--chakra-colors-pink",
-    `var(--chakra-colors-${color})`
+    `var(--chakra-colors-${target})`
   );
 };
 

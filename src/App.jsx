@@ -773,7 +773,7 @@ export const VoiceInput = ({
               }
             }}
             background="pink.400"
-            boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
+            boxShadow="1px 1px 2px 0px var(--chakra-colors-pink-300)"
           >
             <IoChatbubblesOutline />
             &nbsp;
