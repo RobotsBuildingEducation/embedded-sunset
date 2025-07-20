@@ -16,6 +16,15 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import { translation } from "../utility/translation";
 
 const colors = ["purple", "orange", "green", "blue", "yellow", "pink"];
+// Map each color to its base hex so menu swatches don't change with theme
+const bubbleColors = {
+  purple: "#9f7aea",
+  orange: "#ed8936",
+  green: "#48bb78",
+  blue: "#4299e1",
+  yellow: "#ecc94b",
+  pink: "#ed64a6",
+};
 
 const ThemeMenu = ({ userLanguage, isIcon = true, buttonProps = {} }) => {
   const themeColor = useThemeStore((s) => s.themeColor);
@@ -45,7 +54,7 @@ const ThemeMenu = ({ userLanguage, isIcon = true, buttonProps = {} }) => {
             }}
           >
             <HStack>
-              <Box w={3} h={3} borderRadius="full" bg={`${c}.400`} />
+              <Box w={3} h={3} borderRadius="full" bg={bubbleColors[c]} />
               <Text>{translation[userLanguage][`settings.theme.${c}`]}</Text>
             </HStack>
           </MenuItem>
