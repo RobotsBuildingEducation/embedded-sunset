@@ -15,6 +15,17 @@ const shades = [
   "900",
 ];
 const applyTheme = (color) => {
+  if (color === "pink") {
+    // Remove overrides so default pink values are restored
+    shades.forEach((s) =>
+      document.documentElement.style.removeProperty(
+        `--chakra-colors-pink-${s}`
+      )
+    );
+    document.documentElement.style.removeProperty("--chakra-colors-pink");
+    return;
+  }
+
   shades.forEach((s) => {
     document.documentElement.style.setProperty(
       `--chakra-colors-pink-${s}`,
