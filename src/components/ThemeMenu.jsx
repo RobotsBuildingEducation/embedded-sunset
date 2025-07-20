@@ -36,7 +36,7 @@ const ThemeMenu = ({ userLanguage, isIcon = true, buttonProps = {} }) => {
         as={isIcon ? IconButton : Button}
         aria-label={translation[userLanguage]["settings.theme.select"]}
         icon={<FaPaintBrush />}
-        variant={isIcon ? "outline" : "solid"}
+        variant={"ghost"}
         colorScheme={isIcon ? themeColor : "pink"}
         // m={2}
         rightIcon={isIcon ? undefined : <ChevronDownIcon />}
