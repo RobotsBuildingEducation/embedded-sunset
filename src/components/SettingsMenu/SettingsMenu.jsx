@@ -479,11 +479,11 @@ const SettingsMenu = ({
               </Button> */}
 
               <Button
-                colorScheme="pink"
+                background="pink.300"
+                color="white"
                 width="100%"
                 onClick={onLangOpen}
                 ref={firstButtonRef}
-                rightIcon={<ChevronDownIcon />}
               >
                 {translation[userLanguage]["settings.button.changeLanguage"]}
               </Button>
@@ -494,14 +494,14 @@ const SettingsMenu = ({
                   width: "100%",
                   colorScheme: "pink",
                   background: "pink.300",
-                  boxShadow: "1px 1px 2px 0px rgba(207, 128, 197,0.75)",
+                  boxShadow: "1px 1px 2px 0px rgba(0, 0, 0,0.75)",
                 }}
               />
               <Button
                 ref={firstButtonRef} // Assign the ref to the first button
                 colorScheme="pink"
                 background="pink.300"
-                boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
+                boxShadow="1px 1px 2px 0px rgba(0, 0, 0,0.75)"
                 style={{ width: "100%" }}
                 onMouseDown={onSocialFeedModalOpen}
                 onKeyDown={(e) => {
@@ -519,7 +519,7 @@ const SettingsMenu = ({
                 p={6}
                 colorScheme="pink"
                 background="pink.300"
-                boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
+                boxShadow="1px 1px 2px 0px rgba(0, 0, 0,0.75)"
                 style={{ width: "100%" }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
@@ -560,7 +560,7 @@ const SettingsMenu = ({
                 p={6}
                 colorScheme="pink"
                 background="pink.300"
-                boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
+                boxShadow="1px 1px 2px 0px rgba(0, 0, 0,0.75)"
                 style={{ width: "100%" }}
                 onMouseDown={onTranscriptOpen}
                 onKeyDown={(e) => {
@@ -576,7 +576,7 @@ const SettingsMenu = ({
                 p={6}
                 colorScheme="pink"
                 background="pink.300"
-                boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
+                boxShadow="1px 1px 2px 0px rgba(0, 0, 0,0.75)"
                 style={{ width: "100%" }}
                 onMouseDown={onInstallModalOpen}
                 onKeyDown={(e) => {
@@ -631,10 +631,10 @@ const SettingsMenu = ({
                   }
                 }}
                 variant={"outline"}
-                boxShadow={"0px 0.5px 0.5px 1px black"}
+                // boxShadow={"0px 0.5px 0.5px 1px black"}
                 border="2px solid gold"
               >
-                <b> {translation[userLanguage]["settings.button.patreon"]}</b>
+                {translation[userLanguage]["settings.button.patreon"]}
               </Button>
 
               <Button

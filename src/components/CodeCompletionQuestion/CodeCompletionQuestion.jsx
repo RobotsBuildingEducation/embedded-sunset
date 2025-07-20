@@ -121,7 +121,7 @@ const CodeCompletionQuestion = ({
         colorScheme="pink"
         // Removed tabIndex={0} as Button is focusable by default
         background="pink.400"
-        boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
+        boxShadow="1px 1px 1px 0px rgba(0, 0, 0,0.75)"
       >
         <IoChatbubblesOutline />
         &nbsp;

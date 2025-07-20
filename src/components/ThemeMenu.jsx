@@ -15,14 +15,14 @@ import { useThemeStore } from "../useThemeStore";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { translation } from "../utility/translation";
 
-const colors = ["purple", "orange", "green", "blue", "yellow", "pink"];
+const colors = ["purple", "orange", "green", "blue", "pink"];
 // Map each color to its base hex so menu swatches don't change with theme
 const bubbleColors = {
   purple: "#9f7aea",
   orange: "#ed8936",
   green: "#48bb78",
   blue: "#4299e1",
-  yellow: "#ecc94b",
+
   pink: "#ed64a6",
 };
 
@@ -35,12 +35,17 @@ const ThemeMenu = ({ userLanguage, isIcon = true, buttonProps = {} }) => {
       <MenuButton
         as={isIcon ? IconButton : Button}
         aria-label={translation[userLanguage]["settings.theme.select"]}
-        icon={<FaPaintBrush />}
+        icon={<FaPaintBrush padding="4px" fontSize="14px" />}
         variant={"ghost"}
         colorScheme={isIcon ? themeColor : "pink"}
         // m={2}
         rightIcon={isIcon ? undefined : <ChevronDownIcon />}
+        color="white"
         {...buttonProps}
+        width="24px"
+        height="30px"
+        padding="4px"
+        fontSize="14px"
       >
         {isIcon ? null : translation[userLanguage]["settings.theme.select"]}
       </MenuButton>
@@ -49,7 +54,6 @@ const ThemeMenu = ({ userLanguage, isIcon = true, buttonProps = {} }) => {
           <MenuItem
             key={c}
             onClick={() => {
-              console.log("color...", c);
               setThemeColor(c);
             }}
           >
