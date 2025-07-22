@@ -3164,6 +3164,8 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "congrats.message":
       "Has completado el cuestionario. Deberías estar orgulloso porque la mayoría de las personas no llegan tan lejos. Eres genuinamente excepcional. ¡Bien hecho!",
     "congrats.connect": "Conéctate con todos los que han terminado",
+
+    "language.compsci.english": "Ciencias de la Computación (Python)",
   },
   "py-en": {
     "settings.theme.yellow": "Yellow",

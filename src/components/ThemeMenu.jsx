@@ -42,8 +42,8 @@ const ThemeMenu = ({ userLanguage, isIcon = true, buttonProps = {} }) => {
         rightIcon={isIcon ? undefined : <ChevronDownIcon />}
         color="white"
         {...buttonProps}
-        width="24px"
-        height="30px"
+        // width="24px"
+        // height="30px"
         padding="4px"
         fontSize="14px"
       >
