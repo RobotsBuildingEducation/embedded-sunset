@@ -3781,6 +3781,8 @@ const Home = ({
   setIsSignedIn,
   userLanguage,
   setUserLanguage,
+  userCourse,
+  setUserCourse,
   generateNostrKeys,
   auth,
   view,
@@ -3815,6 +3817,12 @@ const Home = ({
   const socket = "socket";
   const [role, setRole] = useState("chores");
   const topRef = useRef();
+
+  const handleCourseChange = (e) => {
+    const value = e.target.value;
+    setUserCourse(value);
+    localStorage.setItem("userCourse", value);
+  };
 
   useEffect(() => {
     let index = 0;
@@ -3873,6 +3881,7 @@ const Home = ({
     const startTime = Date.now();
 
     setShowSplash(true);
+    localStorage.setItem("userCourse", userCourse);
     let accs = parseInt(localStorage.getItem("accs") || "0", 10);
 
     // Check if the user has already generated 3 questions
@@ -3937,6 +3946,7 @@ const Home = ({
   const handleSignIn = async () => {
     try {
       setIsSigningIn(true);
+      localStorage.setItem("userCourse", userCourse);
       try {
         await auth(secretKey);
       } catch (error) {
@@ -4177,6 +4187,24 @@ const Home = ({
               onChange={(e) => setUserName(e.target.value)}
               backgroundColor="white"
             />
+
+            <Select
+              value={userCourse}
+              onChange={handleCourseChange}
+              maxWidth={300}
+              backgroundColor="white"
+              boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+            >
+              <option value="coding">
+                {translation[userLanguage]["course.coding"]}
+              </option>
+              <option value="maya">
+                {translation[userLanguage]["course.maya"]}
+              </option>
+              <option value="civics">
+                {translation[userLanguage]["course.civics"]}
+              </option>
+            </Select>
 
             <VStack>
               <Button
@@ -5296,6 +5324,8 @@ function App({ isShutDown }) {
                 setIsSignedIn={setIsSignedIn}
                 userLanguage={userLanguage}
                 setUserLanguage={setUserLanguage}
+                userCourse={userCourse}
+                setUserCourse={setUserCourse}
                 generateNostrKeys={generateNostrKeys}
                 auth={auth}
                 view={view}
