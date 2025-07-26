@@ -570,7 +570,7 @@ export const VoiceInput = ({
       if (step.isConversationReview) {
         const relevantSteps = getObjectsByGroup(
           step?.group,
-          steps[stepKey]
+          steps[userCourse][userLanguage]
         );
 
         submitPrompt(
@@ -659,7 +659,7 @@ export const VoiceInput = ({
         }`
       );
     } else {
-      const relevantSteps = getObjectsByGroup(step?.group, steps[stepKey]);
+      const relevantSteps = getObjectsByGroup(step?.group, steps[userCourse][userLanguage]);
 
       submitEducationalPrompt(
         `Generate educational material about ${JSON.stringify(
@@ -1373,8 +1373,7 @@ const Step = ({
   const [grade, setGrade] = useState("");
   const [isTimerExpired, setIsTimerExpired] = useState(true);
 
-  const stepKey = `${userCourse}-${userLanguage}`;
-  const [step, setStep] = useState(steps[stepKey][currentStep]);
+  const [step, setStep] = useState(steps[userCourse][userLanguage][currentStep]);
 
   const { resetMessages, messages, submitPrompt } = useChatCompletion({
     response_format: { type: "json_object" },
@@ -1494,7 +1493,7 @@ const Step = ({
   } = useChatCompletion({});
 
   useEffect(() => {
-    setStep(steps[stepKey][currentStep]);
+    setStep(steps[userCourse][userLanguage][currentStep]);
     const generateSuggestionForNewStep = async () => {
       setSuggestionLoading(true);
       try {
@@ -1507,7 +1506,7 @@ const Step = ({
         };
 
         // const userAnswers = await fetchUserAnswers();
-        const subjectsCompleted = steps[stepKey]
+        const subjectsCompleted = steps[userCourse][userLanguage]
           .slice(1, currentStep) // All completed steps
           .map((step) => step.title);
 
@@ -1665,7 +1664,7 @@ const Step = ({
     // console.log("generatedQuestion", generatedQuestion);
 
     if (isEmpty(generatedQuestion) && isEmpty(newQuestionMessages)) {
-      const stepContent = steps[stepKey][currentStep];
+      const stepContent = steps[userCourse][userLanguage][currentStep];
       setStep(stepContent);
     }
 
@@ -1681,7 +1680,7 @@ const Step = ({
         };
 
         const userAnswers = await fetchUserAnswers();
-        const subjectsCompleted = steps[stepKey]
+        const subjectsCompleted = steps[userCourse][userLanguage]
           .slice(1, currentStep) // All completed steps
           .map((step) => step.title);
 
@@ -1726,7 +1725,7 @@ const Step = ({
         };
 
         const userAnswers = await fetchUserAnswers();
-        const subjectsCompleted = steps[stepKey]
+        const subjectsCompleted = steps[userCourse][userLanguage]
           .slice(1, currentStep) // All completed steps
           .map((step) => step.title);
 
@@ -1819,7 +1818,7 @@ const Step = ({
 
   // Calculate progress through the steps
   const calculateProgress = () => {
-    let result = ((currentStep - 1) / (steps[stepKey].length - 1)) * 100;
+    let result = ((currentStep - 1) / (steps[userCourse][userLanguage].length - 1)) * 100;
     if (result < 0) return 0;
     return result;
   };
@@ -1871,7 +1870,7 @@ const Step = ({
 
     if (step.isConversationReview) {
       // console.log("review");
-      const relevantSteps = getObjectsByGroup(step?.group, steps[stepKey]);
+      const relevantSteps = getObjectsByGroup(step?.group, steps[userCourse][userLanguage]);
 
       await submitPrompt(
         [
@@ -2241,7 +2240,7 @@ const Step = ({
           setIsPostingWithNostr(false);
         }
       }
-    } else if (currentStep >= steps[stepKey].length - 1) {
+    } else if (currentStep >= steps[userCourse][userLanguage].length - 1) {
       const npub = localStorage.getItem("local_npub");
       await incrementToFinalAward(npub);
       navigate("/award");
@@ -2532,7 +2531,7 @@ const Step = ({
     };
 
     const getUserAnsweredSubjects = () => {
-      let list = steps[stepKey];
+      let list = steps[userCourse][userLanguage];
       let subjects = [];
       for (let i = 1; i < list.length; i++) {
         if (i <= currentStep - 1) {
@@ -2555,7 +2554,7 @@ const Step = ({
         )},
 
 
-        The request: Create/invent a completely new and custom adaptive question and feel free to explore creativity using the same interface with group, title, description, <question_type> and the custom question object interface. Here are the types of question_types (e.g isMultipleChoice, isCodeCompletion) and their respective question objects that we've used in the tutorial group, so that you can understand how questions are designed to encourage variance in learning: ${JSON.stringify(getObjectsByGroup("tutorial", steps[stepKey]))}. It is extremely important to understand that the data types used in the "answer" field are specific and must not change under any circumstance, or else the request will fail due to unexpected data type.
+        The request: Create/invent a completely new and custom adaptive question and feel free to explore creativity using the same interface with group, title, description, <question_type> and the custom question object interface. Here are the types of question_types (e.g isMultipleChoice, isCodeCompletion) and their respective question objects that we've used in the tutorial group, so that you can understand how questions are designed to encourage variance in learning: ${JSON.stringify(getObjectsByGroup("tutorial", steps[userCourse][userLanguage]))}. It is extremely important to understand that the data types used in the "answer" field are specific and must not change under any circumstance, or else the request will fail due to unexpected data type.
         
         Remember to design and inspire a new question, you must select a different but valid question_type than the one you've received, strictly based on the interfaces ive provided with the tutorials. Do not deviate and create a new question type or else the UI will fail with your response. 
         
@@ -2964,7 +2963,7 @@ const Step = ({
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                           />
-                          {steps[stepKey]
+                          {steps[userCourse][userLanguage]
                             .map((s, idx) => ({ s, idx }))
                             .filter(({ s, idx }) => {
                               const term = searchTerm.toLowerCase();
@@ -5276,7 +5275,7 @@ function App({ isShutDown }) {
             currentStep={currentStep} // Pass current step to SettingsMenu
             view={view}
             setView={setView}
-            step={steps?.[stepKey]?.[currentStep]}
+            step={steps?.[userCourse]?.[userLanguage]?.[currentStep]}
             allowPosts={allowPosts}
             setAllowPosts={setAllowPosts}
           />
@@ -5330,7 +5329,7 @@ function App({ isShutDown }) {
             }
           />
           {location.pathname !== "/about" &&
-            steps?.[stepKey]?.map((_, index) => (
+            steps?.[userCourse]?.[userLanguage]?.map((_, index) => (
               <Route
                 key={index}
                 path={`/q/${index}`}

@@ -2,7 +2,7 @@ export const getObjectsByGroup = (groupNumber, arrayOfObjects) => {
   return arrayOfObjects.filter((obj) => obj.group === groupNumber);
 };
 
-export const steps = {
+export const flatSteps = {
   "compsci-en": [
     {
       group: "introduction",
@@ -13237,6 +13237,7 @@ doc.delete();`,
 
   // ],
 };
+export const steps = Object.entries(flatSteps).reduce((acc,[key,val])=>{const [course,lang]=key.split("-");acc[course]=acc[course]||{};acc[course][lang]=val;return acc;},{});
 
 export const lectureSummaries = {
   en: {

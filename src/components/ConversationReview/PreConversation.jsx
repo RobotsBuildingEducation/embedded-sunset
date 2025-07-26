@@ -134,7 +134,7 @@ const newTheme = {
 
 const renderGroupedSteps = (steps, currentStep, userLanguage) => {
   const groups = {};
-  steps[userLanguage].forEach((s, index) => {
+  steps[userCourse][userLanguage].forEach((s, index) => {
     if (!groups[s.group]) groups[s.group] = [];
     groups[s.group].push({ ...s, index });
   });
@@ -166,7 +166,7 @@ const renderGroupedSteps = (steps, currentStep, userLanguage) => {
   });
 };
 
-const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
+const PreConversation = ({ steps, step, userLanguage, userCourse, onContinue }) => {
   const [idea, setIdea] = useState("");
   const [savedIdea, setSavedIdea] = useState("");
   const [code, setCode] = useState("");
@@ -233,8 +233,8 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
   const handleGenerate = async () => {
     setIsLoading(true);
     resetMessages();
-    const idx = steps[userLanguage].indexOf(step);
-    const completed = steps[userLanguage].slice(1, idx).map((s) => s.title);
+    const idx = steps[userCourse][userLanguage].indexOf(step);
+    const completed = steps[userCourse][userLanguage].slice(1, idx).map((s) => s.title);
     const history = await fetchHistory();
 
     console.log("completed..", completed);
@@ -308,7 +308,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
     onContinue();
   };
 
-  const currentIdx = steps[userLanguage].indexOf(step);
+  const currentIdx = steps[userCourse][userLanguage].indexOf(step);
   return (
     <VStack
       spacing={4}

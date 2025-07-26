@@ -23,9 +23,8 @@ const ProgressModal = ({
   steps,
   currentStep,
   userLanguage,
+  userCourse,
 }) => {
-  const transcriptDisplay = {
-    introduction: {
       en: "Tutorial",
       es: "Tutorial",
       "py-en": "Tutorial",
@@ -91,7 +90,7 @@ const ProgressModal = ({
   };
 
   // build a list of all steps (exclude index 0 placeholder)
-  const allSteps = steps[userLanguage]
+  const allSteps = steps[userCourse][userLanguage]
     .map((step, idx) => ({ step, idx }))
     .filter(({ idx }) => idx > 0);
 

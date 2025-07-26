@@ -799,7 +799,7 @@ const SettingsMenu = ({
         <StudyGuideModal
           isOpen={isStudyGuideModalOpen}
           onClose={onStudyGuideModalClose}
-          content={steps[`${userCourse}-${userLanguage}`][0].question.metaData}
+          content={steps[userCourse][userLanguage][0].question.metaData}
           userLanguage={userLanguage}
         />
       ) : null}

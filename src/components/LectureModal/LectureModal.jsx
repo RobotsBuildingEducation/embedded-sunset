@@ -130,7 +130,7 @@ const ProgressDisplay = ({
   );
 };
 
-const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
+const LectureModal = ({ isOpen, onClose, currentStep, userLanguage, userCourse }) => {
   const { getLastNotesByNpub, assignExistingBadgeToNpub } = useSharedNostr(
     localStorage.getItem("local_npub"),
     localStorage.getItem("local_nsec")
@@ -150,7 +150,7 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
   const videoRef = useRef(null);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
-  const step = steps[userLanguage][currentStep];
+  const step = steps[userCourse][userLanguage][currentStep];
 
   const transcriptObject =
     step.group === "introduction"
