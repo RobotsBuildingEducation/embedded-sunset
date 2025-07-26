@@ -13,7 +13,7 @@ export const pickProgrammingLanguage = (language) => {
   return languages[language];
 };
 
-export let translation = {
+const baseTranslation = {
   en: {
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
@@ -9542,3 +9542,16 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
 };
+
+export const translations = {
+  compsci: baseTranslation,
+  maya: baseTranslation,
+  civics: baseTranslation,
+};
+
+export const translation = new Proxy({}, {
+  get(_, lang) {
+    const course = typeof localStorage !== "undefined" ? localStorage.getItem("userCourse") || "compsci" : "compsci";
+    return translations[course][lang];
+  },
+});
