@@ -25,6 +25,8 @@ const ProgressModal = ({
   userLanguage,
   userCourse,
 }) => {
+  const transcriptDisplay = {
+    introduction: {
       en: "Tutorial",
       es: "Tutorial",
       "py-en": "Tutorial",
