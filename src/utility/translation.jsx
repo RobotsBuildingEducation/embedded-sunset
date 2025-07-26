@@ -13,11 +13,14 @@ export const pickProgrammingLanguage = (language) => {
   return languages[language];
 };
 
-export let translation = {
+const baseTranslation = {
   en: {
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
     "language.compsci.english": "Computer Science (Python)",
+    "course.coding": "Coding",
+    "course.maya": "Maya Language & History",
+    "course.civics": "Civics Exam Prep",
     "languageToggle.english": "English",
     "languageToggle.spanish": "Español",
     "landing.whyLearn.title": "Why Learn With Robots Building Education?",
@@ -1632,6 +1635,9 @@ reverse(head) {
     "Sorting & Searching Algorithms": "Algoritmos de Ordenamiento y Búsqueda",
     "Operating Systems Essentials": "Fundamentos de Sistemas Operativos",
     "language.compsci.spanish": "Ciencias de la Computación (Python en Inglés)",
+    "course.coding": "Programación",
+    "course.maya": "Idioma e Historia Maya",
+    "course.civics": "Preparación para el examen cívico",
 
     "languageToggle.english": "Inglés",
     "languageToggle.spanish": "Español",
@@ -9546,3 +9552,19 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
 };
+
+export const translations = {
+  coding: baseTranslation,
+  maya: baseTranslation,
+  civics: baseTranslation,
+};
+
+export const translation = new Proxy({}, {
+  get(_, lang) {
+    const course =
+      typeof localStorage !== "undefined"
+        ? localStorage.getItem("userCourse") || "coding"
+        : "coding";
+    return translations[course][lang];
+  },
+});

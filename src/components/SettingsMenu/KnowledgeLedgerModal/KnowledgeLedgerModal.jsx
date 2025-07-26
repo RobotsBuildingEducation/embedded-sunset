@@ -155,6 +155,7 @@ export const KnowledgeLedgerModal = ({
   steps,
   currentStep,
   userLanguage,
+  userCourse,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [suggestion, setSuggestion] = useState("");
@@ -182,7 +183,7 @@ export const KnowledgeLedgerModal = ({
     try {
       const userId = localStorage.getItem("local_npub");
       if (!userId) return;
-      const group = steps[userLanguage][currentStep].group;
+      const group = steps[userCourse][userLanguage][currentStep].group;
       await setDoc(
         doc(database, "users", userId, "buildHistory", group),
         {
@@ -284,7 +285,7 @@ export const KnowledgeLedgerModal = ({
         .filter(
           (d) =>
             !isNaN(parseInt(d.id)) &&
-            parseInt(d.id) < parseInt(steps[userLanguage][currentStep].group),
+            parseInt(d.id) < parseInt(steps[userCourse][userLanguage][currentStep].group),
         )
         .sort((a, b) => parseInt(a.id) - parseInt(b.id))
         .map((d) => d.data().code)
@@ -316,11 +317,11 @@ export const KnowledgeLedgerModal = ({
     try {
       // const userAnswers = await fetchUserAnswers();
 
-      const subjectsCompleted = steps[userLanguage]
+      const subjectsCompleted = steps[userCourse][userLanguage]
         .slice(1, currentStep) // All completed steps
         .map((step) => step.title);
 
-      const totalSteps = steps[userLanguage].map((step) => step.title);
+      const totalSteps = steps[userCourse][userLanguage].map((step) => step.title);
 
       console.log("json completed", JSON.stringify(subjectsCompleted, null, 2));
 
@@ -387,7 +388,7 @@ export const KnowledgeLedgerModal = ({
   const renderGroupedSteps = () => {
     const stepElements = [];
     let lastGroup = null;
-    steps[userLanguage].forEach((step, index) => {
+    steps[userCourse][userLanguage].forEach((step, index) => {
       if (step.group !== lastGroup) {
         stepElements.push(
           step.group === "introduction" ? null : (

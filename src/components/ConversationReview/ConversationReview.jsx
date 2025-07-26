@@ -83,13 +83,13 @@ const ConversationReview = ({
   question,
   userLanguage,
   steps,
+  userCourse,
   onSubmit,
   step,
   setFinalConversation,
   finalConversation,
   handleModalCheck,
 }) => {
-  const [response, setResponse] = useState("");
   const [conversation, setConversation] = useState([]);
   const [streamingResponse, setStreamingResponse] = useState("");
   const { resetMessages, messages, submitPrompt } = useSimpleGeminiChat();
@@ -129,7 +129,7 @@ const ConversationReview = ({
   // console.log("step", step);
   // console.log("step.group", step?.group);
 
-  const relevantSteps = getObjectsByGroup(step?.group, steps[userLanguage]);
+  const relevantSteps = getObjectsByGroup(step?.group, steps[userCourse][userLanguage]);
 
   // console.log("relevant steps", relevantSteps);
 
@@ -216,6 +216,7 @@ const ConversationReview = ({
         steps={steps}
         step={step}
         userLanguage={userLanguage}
+        userCourse={userCourse}
         onContinue={() => setShowIntro(false)}
       />
     );
