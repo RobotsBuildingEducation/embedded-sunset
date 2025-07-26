@@ -773,7 +773,7 @@ export const VoiceInput = ({
               }
             }}
             background="pink.400"
-            boxShadow="1px 1px 1px 0px rgba(0, 0, 0,0.75)"
+            boxShadow="0.5px 0.5px 0px 0px rgba(0, 0, 0,0.75)"
           >
             <IoChatbubblesOutline />
             &nbsp;
@@ -4450,6 +4450,23 @@ const Home = ({
                     </Text>
                   </AccordionPanel>
                 </AccordionItem>
+
+                {/* <AccordionItem>
+                  <AccordionButton padding={6}>
+                    <Box flex="1" textAlign="left">
+                      {translation[userLanguage]["faq_8_question"]}
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4}>
+                    <Text textAlign="left" fontSize="sm">
+                      {translation[userLanguage]["faq_8_item_1"]}
+                      <br />
+                      <br />
+                      {translation[userLanguage]["faq_8_item_2"]}
+                    </Text>
+                  </AccordionPanel>
+                </AccordionItem> */}
               </Accordion>
             </VStack>
           </Box>
@@ -5109,13 +5126,15 @@ function App({ isShutDown }) {
                 translation[userLanguage]["completeTutorialFirst"]
               );
 
-              topRef.current?.scrollIntoView();
+              // topRef.current?.scrollIntoView();
+              window.scrollTo(0, 0);
 
               navigate(`/q/${step}`);
             } else {
               // if (step !== 0) {
 
-              topRef.current?.scrollIntoView();
+              // topRef.current?.scrollIntoView();
+              window.scrollTo(0, 0);
 
               const onboardingProgress = await getOnboardingStep(npub);
               if (
@@ -5223,7 +5242,7 @@ function App({ isShutDown }) {
   const testIsMatch = /\/q\/\d+$/.test(testurl);
 
   return (
-    <>
+    <Box ref={topRef}>
       {alert.isOpen && (
         <Alert
           status={alert.status}
@@ -5257,7 +5276,7 @@ function App({ isShutDown }) {
           />
         </Alert>
       )}
-      <Box textAlign="center" fontSize="xl" p={0} pt={0} ref={topRef}>
+      <Box textAlign="center" fontSize="xl" p={0} pt={0}>
         {isSignedIn && (
           <SettingsMenu
             testIsMatch={testIsMatch}
@@ -5358,7 +5377,7 @@ function App({ isShutDown }) {
           />
         </Routes>
       </Box>
-    </>
+    </Box>
   );
 }
 

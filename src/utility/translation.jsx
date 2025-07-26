@@ -135,6 +135,16 @@ export let translation = {
       "Notifications aren't supported on this browser. Follow installation instructions in the menu to access all features",
     "modal.selfPace.notificationDescription":
       "Send a positive and encouraging notification daily",
+
+    faq_8_question: "Am I too old to learn?",
+    faq_8_item_1:
+      "No. Simply put, your brain doesn't work that way. You may experience some 'rustyness' if you haven't done deep learning of a subject in some time, but that's not too different than a college student realizing that they need to learn how to learn. Maybe you already know how to learn or you understand what works for you. Now suddenly you have an advantage.",
+    faq_8_item_2:
+      "As one of my directors say, slow is smooth and smooth is fast. This isn't to create any sense of superiority or inferiority - you're just in a competitive market and it's usually better to take the productive outlook.",
+    "modal.selfPace.notificationsUnavailable":
+      "Notifications aren't supported on this browser. Follow installation instructions in the menu to access all features",
+    "modal.selfPace.notificationDescription":
+      "Send a positive and encouraging notification daily",
     notificationsEnabled: "Notifications Enabled",
     notificationsDisabled: "Notifications Disabled",
 
