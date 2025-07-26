@@ -18,7 +18,7 @@ const baseTranslation = {
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
     "language.compsci.english": "Computer Science (Python)",
-    "course.compsci": "Coding",
+    "course.coding": "Coding",
     "course.maya": "Maya Language & History",
     "course.civics": "Civics Exam Prep",
     "languageToggle.english": "English",
@@ -1625,7 +1625,7 @@ reverse(head) {
     "Sorting & Searching Algorithms": "Algoritmos de Ordenamiento y Búsqueda",
     "Operating Systems Essentials": "Fundamentos de Sistemas Operativos",
     "language.compsci.spanish": "Ciencias de la Computación (Python en Inglés)",
-    "course.compsci": "Programación",
+    "course.coding": "Programación",
     "course.maya": "Idioma e Historia Maya",
     "course.civics": "Preparación para el examen cívico",
 
@@ -9544,14 +9544,17 @@ reverse(head) {
 };
 
 export const translations = {
-  compsci: baseTranslation,
+  coding: baseTranslation,
   maya: baseTranslation,
   civics: baseTranslation,
 };
 
 export const translation = new Proxy({}, {
   get(_, lang) {
-    const course = typeof localStorage !== "undefined" ? localStorage.getItem("userCourse") || "compsci" : "compsci";
+    const course =
+      typeof localStorage !== "undefined"
+        ? localStorage.getItem("userCourse") || "coding"
+        : "coding";
     return translations[course][lang];
   },
 });

@@ -13237,7 +13237,20 @@ doc.delete();`,
 
   // ],
 };
-export const steps = Object.entries(flatSteps).reduce((acc,[key,val])=>{const [course,lang]=key.split("-");acc[course]=acc[course]||{};acc[course][lang]=val;return acc;},{});
+export const steps = Object.entries(flatSteps).reduce((acc, [key, val]) => {
+  let [rawCourse] = key.split("-");
+  const courseMap = {
+    compsci: "coding",
+    py: "coding",
+    swift: "coding",
+    android: "coding",
+  };
+
+  const course = courseMap[rawCourse] || rawCourse;
+  acc[course] = acc[course] || {};
+  acc[course][key] = val;
+  return acc;
+}, {});
 
 export const lectureSummaries = {
   en: {

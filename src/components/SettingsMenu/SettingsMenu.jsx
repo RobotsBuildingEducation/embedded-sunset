@@ -387,7 +387,7 @@ const SettingsMenu = ({
                       <MenuItem
                         p={6}
                         onClick={() =>
-                          handleLanguageSelect({ target: { value: "java-en" } })
+                          handleLanguageSelect({ target: { value: "android-en" } })
                         }
                       >
                         Java & Android (English)

@@ -2215,7 +2215,12 @@ const Step = ({
     //
     if (currentStep === 9) {
       const npub = localStorage.getItem("local_npub");
-      setUserCourse(localStorage.getItem("userCourse") || "compsci");
+      setUserCourse(
+        (localStorage.getItem("userCourse") || "coding").replace(
+          "compsci",
+          "coding"
+        )
+      );
 
       if (
         localStorage.getItem("passcode") !==
@@ -4966,7 +4971,7 @@ function App({ isShutDown }) {
   const [currentStep, setCurrentStep] = useState(0); // State to store current step
   const [userLanguage, setUserLanguage] = useState("en"); // State to store user language preference
   const [userCourse, setUserCourse] = useState(
-    localStorage.getItem("userCourse") || "compsci"
+    (localStorage.getItem("userCourse") || "coding").replace("compsci", "coding")
   );
   const navigate = useNavigate();
   const location = useLocation();

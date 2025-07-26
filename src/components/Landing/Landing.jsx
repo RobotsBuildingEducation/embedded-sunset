@@ -38,7 +38,7 @@ export const Landing = ({
     "createAccount.isCreating"
   );
   const [selectedCourse, setSelectedCourse] = useState(
-    localStorage.getItem("userCourse") || "compsci"
+    (localStorage.getItem("userCourse") || "coding").replace("compsci", "coding")
   );
 
   const handleCourseChange = (e) => {
@@ -89,8 +89,8 @@ export const Landing = ({
         backgroundColor="white"
         boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
       >
-        <option value="compsci">
-          {translation[userLanguage]["course.compsci"]}
+        <option value="coding">
+          {translation[userLanguage]["course.coding"]}
         </option>
         <option value="maya">
           {translation[userLanguage]["course.maya"]}
