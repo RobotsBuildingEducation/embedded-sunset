@@ -56,6 +56,7 @@ const SettingsMenu = ({
   isSignedIn,
   setIsSignedIn,
   steps,
+  userCourse,
   currentStep,
   userLanguage,
   setUserLanguage,
@@ -798,7 +799,7 @@ const SettingsMenu = ({
         <StudyGuideModal
           isOpen={isStudyGuideModalOpen}
           onClose={onStudyGuideModalClose}
-          content={steps[userLanguage][0].question.metaData}
+          content={steps[`${userCourse}-${userLanguage}`][0].question.metaData}
           userLanguage={userLanguage}
         />
       ) : null}

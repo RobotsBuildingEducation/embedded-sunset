@@ -6837,6 +6837,77 @@ console.log(arr);
     },
   ],
 
+  "maya-en": [
+    {
+      group: "introduction",
+      title: "Maya History Overview",
+      description: "When did the Classic period of Maya history begin?",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which region is most closely associated with the ancient Maya?",
+        options: [
+          "Andes Mountains",
+          "Mesoamerica",
+          "Sahara Desert",
+          "Mesopotamia",
+        ],
+        answer: ["Mesoamerica"],
+      },
+    },
+    {
+      group: "language",
+      title: "Maya Writing",
+      description: "Recognize the nature of Maya script.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "The Maya writing system is best described as:",
+        options: [
+          "Alphabetic",
+          "Hieroglyphic",
+          "Numeric",
+          "Phoenician",
+        ],
+        answer: ["Hieroglyphic"],
+      },
+    },
+  ],
+
+  "civics-en": [
+    {
+      group: "introduction",
+      title: "U.S. Civics Basics",
+      description: "Prepare for the U.S. citizenship civics test.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "What is the supreme law of the land?",
+        options: [
+          "The President",
+          "The Constitution",
+          "Congress",
+          "The States",
+        ],
+        answer: ["The Constitution"],
+      },
+    },
+    {
+      group: "government",
+      title: "Branches of Government",
+      description: "Identify a branch of the U.S. government.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "Which of the following is one branch of the U.S. government?",
+        options: [
+          "Economic",
+          "Legislative",
+          "Technological",
+          "Educational",
+        ],
+        answer: ["Legislative"],
+      },
+    },
+  ],
+
   "py-en": [
     {
       group: "introduction",

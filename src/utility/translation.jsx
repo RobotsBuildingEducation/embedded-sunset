@@ -18,6 +18,9 @@ export let translation = {
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
     "language.compsci.english": "Computer Science (Python)",
+    "course.compsci": "Coding",
+    "course.maya": "Maya Language & History",
+    "course.civics": "Civics Exam Prep",
     "languageToggle.english": "English",
     "languageToggle.spanish": "Español",
     "landing.whyLearn.title": "Why Learn With Robots Building Education?",
@@ -1622,6 +1625,9 @@ reverse(head) {
     "Sorting & Searching Algorithms": "Algoritmos de Ordenamiento y Búsqueda",
     "Operating Systems Essentials": "Fundamentos de Sistemas Operativos",
     "language.compsci.spanish": "Ciencias de la Computación (Python en Inglés)",
+    "course.compsci": "Programación",
+    "course.maya": "Idioma e Historia Maya",
+    "course.civics": "Preparación para el examen cívico",
 
     "languageToggle.english": "Inglés",
     "languageToggle.spanish": "Español",

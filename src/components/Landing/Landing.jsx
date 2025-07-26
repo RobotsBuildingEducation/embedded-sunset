@@ -8,6 +8,7 @@ import {
   Button,
   FormControl,
   FormLabel,
+  Select,
   Switch,
   useToast,
 } from "@chakra-ui/react";
@@ -36,6 +37,15 @@ export const Landing = ({
   const [loadingMessage, setLoadingMessage] = useState(
     "createAccount.isCreating"
   );
+  const [selectedCourse, setSelectedCourse] = useState(
+    localStorage.getItem("userCourse") || "compsci"
+  );
+
+  const handleCourseChange = (e) => {
+    const value = e.target.value;
+    setSelectedCourse(value);
+    localStorage.setItem("userCourse", value);
+  };
 
   const toast = useToast();
   const navigate = useNavigate();
@@ -71,6 +81,24 @@ export const Landing = ({
         backgroundColor="white"
         boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
       />
+
+      <Select
+        value={selectedCourse}
+        onChange={handleCourseChange}
+        maxWidth={300}
+        backgroundColor="white"
+        boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+      >
+        <option value="compsci">
+          {translation[userLanguage]["course.compsci"]}
+        </option>
+        <option value="maya">
+          {translation[userLanguage]["course.maya"]}
+        </option>
+        <option value="civics">
+          {translation[userLanguage]["course.civics"]}
+        </option>
+      </Select>
 
       <HStack spacing={4}>
         <Button

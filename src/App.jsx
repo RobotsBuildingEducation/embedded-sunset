@@ -570,7 +570,7 @@ export const VoiceInput = ({
       if (step.isConversationReview) {
         const relevantSteps = getObjectsByGroup(
           step?.group,
-          steps[userLanguage]
+          steps[stepKey]
         );
 
         submitPrompt(
@@ -659,7 +659,7 @@ export const VoiceInput = ({
         }`
       );
     } else {
-      const relevantSteps = getObjectsByGroup(step?.group, steps[userLanguage]);
+      const relevantSteps = getObjectsByGroup(step?.group, steps[stepKey]);
 
       submitEducationalPrompt(
         `Generate educational material about ${JSON.stringify(
@@ -1328,6 +1328,7 @@ function TerminalComponent({
 const Step = ({
   currentStep,
   userLanguage,
+  userCourse,
   setUserLanguage,
   postNostrContent,
   assignExistingBadgeToNpub,
@@ -1372,7 +1373,8 @@ const Step = ({
   const [grade, setGrade] = useState("");
   const [isTimerExpired, setIsTimerExpired] = useState(true);
 
-  const [step, setStep] = useState(steps[userLanguage][currentStep]);
+  const stepKey = `${userCourse}-${userLanguage}`;
+  const [step, setStep] = useState(steps[stepKey][currentStep]);
 
   const { resetMessages, messages, submitPrompt } = useChatCompletion({
     response_format: { type: "json_object" },
@@ -1492,7 +1494,7 @@ const Step = ({
   } = useChatCompletion({});
 
   useEffect(() => {
-    setStep(steps[userLanguage][currentStep]);
+    setStep(steps[stepKey][currentStep]);
     const generateSuggestionForNewStep = async () => {
       setSuggestionLoading(true);
       try {
@@ -1505,7 +1507,7 @@ const Step = ({
         };
 
         // const userAnswers = await fetchUserAnswers();
-        const subjectsCompleted = steps[userLanguage]
+        const subjectsCompleted = steps[stepKey]
           .slice(1, currentStep) // All completed steps
           .map((step) => step.title);
 
@@ -1533,7 +1535,7 @@ const Step = ({
     if (isAdaptiveLearning && isEmpty(suggestionMessage)) {
       generateSuggestionForNewStep();
     }
-  }, [userLanguage]);
+  }, [userLanguage, userCourse]);
 
   // Fetch user data and manage streaks and timers
   useEffect(() => {
@@ -1663,7 +1665,7 @@ const Step = ({
     // console.log("generatedQuestion", generatedQuestion);
 
     if (isEmpty(generatedQuestion) && isEmpty(newQuestionMessages)) {
-      const stepContent = steps[userLanguage][currentStep];
+      const stepContent = steps[stepKey][currentStep];
       setStep(stepContent);
     }
 
@@ -1679,7 +1681,7 @@ const Step = ({
         };
 
         const userAnswers = await fetchUserAnswers();
-        const subjectsCompleted = steps[userLanguage]
+        const subjectsCompleted = steps[stepKey]
           .slice(1, currentStep) // All completed steps
           .map((step) => step.title);
 
@@ -1724,7 +1726,7 @@ const Step = ({
         };
 
         const userAnswers = await fetchUserAnswers();
-        const subjectsCompleted = steps[userLanguage]
+        const subjectsCompleted = steps[stepKey]
           .slice(1, currentStep) // All completed steps
           .map((step) => step.title);
 
@@ -1817,7 +1819,7 @@ const Step = ({
 
   // Calculate progress through the steps
   const calculateProgress = () => {
-    let result = ((currentStep - 1) / (steps[userLanguage].length - 1)) * 100;
+    let result = ((currentStep - 1) / (steps[stepKey].length - 1)) * 100;
     if (result < 0) return 0;
     return result;
   };
@@ -1869,7 +1871,7 @@ const Step = ({
 
     if (step.isConversationReview) {
       // console.log("review");
-      const relevantSteps = getObjectsByGroup(step?.group, steps[userLanguage]);
+      const relevantSteps = getObjectsByGroup(step?.group, steps[stepKey]);
 
       await submitPrompt(
         [
@@ -2214,6 +2216,7 @@ const Step = ({
     //
     if (currentStep === 9) {
       const npub = localStorage.getItem("local_npub");
+      setUserCourse(localStorage.getItem("userCourse") || "compsci");
 
       if (
         localStorage.getItem("passcode") !==
@@ -2238,7 +2241,7 @@ const Step = ({
           setIsPostingWithNostr(false);
         }
       }
-    } else if (currentStep >= steps[userLanguage].length - 1) {
+    } else if (currentStep >= steps[stepKey].length - 1) {
       const npub = localStorage.getItem("local_npub");
       await incrementToFinalAward(npub);
       navigate("/award");
@@ -2529,7 +2532,7 @@ const Step = ({
     };
 
     const getUserAnsweredSubjects = () => {
-      let list = steps[userLanguage];
+      let list = steps[stepKey];
       let subjects = [];
       for (let i = 1; i < list.length; i++) {
         if (i <= currentStep - 1) {
@@ -2552,7 +2555,7 @@ const Step = ({
         )},
 
 
-        The request: Create/invent a completely new and custom adaptive question and feel free to explore creativity using the same interface with group, title, description, <question_type> and the custom question object interface. Here are the types of question_types (e.g isMultipleChoice, isCodeCompletion) and their respective question objects that we've used in the tutorial group, so that you can understand how questions are designed to encourage variance in learning: ${JSON.stringify(getObjectsByGroup("tutorial", steps[userLanguage]))}. It is extremely important to understand that the data types used in the "answer" field are specific and must not change under any circumstance, or else the request will fail due to unexpected data type.
+        The request: Create/invent a completely new and custom adaptive question and feel free to explore creativity using the same interface with group, title, description, <question_type> and the custom question object interface. Here are the types of question_types (e.g isMultipleChoice, isCodeCompletion) and their respective question objects that we've used in the tutorial group, so that you can understand how questions are designed to encourage variance in learning: ${JSON.stringify(getObjectsByGroup("tutorial", steps[stepKey]))}. It is extremely important to understand that the data types used in the "answer" field are specific and must not change under any circumstance, or else the request will fail due to unexpected data type.
         
         Remember to design and inspire a new question, you must select a different but valid question_type than the one you've received, strictly based on the interfaces ive provided with the tutorials. Do not deviate and create a new question type or else the UI will fail with your response. 
         
@@ -2961,7 +2964,7 @@ const Step = ({
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                           />
-                          {steps[userLanguage]
+                          {steps[stepKey]
                             .map((s, idx) => ({ s, idx }))
                             .filter(({ s, idx }) => {
                               const term = searchTerm.toLowerCase();
@@ -4963,6 +4966,9 @@ function App({ isShutDown }) {
   const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(0); // State to store current step
   const [userLanguage, setUserLanguage] = useState("en"); // State to store user language preference
+  const [userCourse, setUserCourse] = useState(
+    localStorage.getItem("userCourse") || "compsci"
+  );
   const navigate = useNavigate();
   const location = useLocation();
   const topRef = useRef();
@@ -5265,11 +5271,12 @@ function App({ isShutDown }) {
             setIsSignedIn={setIsSignedIn}
             steps={steps}
             userLanguage={userLanguage}
+            userCourse={userCourse}
             setUserLanguage={setUserLanguage}
             currentStep={currentStep} // Pass current step to SettingsMenu
             view={view}
             setView={setView}
-            step={steps?.[userLanguage]?.[currentStep]}
+            step={steps?.[stepKey]?.[currentStep]}
             allowPosts={allowPosts}
             setAllowPosts={setAllowPosts}
           />
@@ -5323,7 +5330,7 @@ function App({ isShutDown }) {
             }
           />
           {location.pathname !== "/about" &&
-            steps?.[userLanguage]?.map((_, index) => (
+            steps?.[stepKey]?.map((_, index) => (
               <Route
                 key={index}
                 path={`/q/${index}`}
@@ -5334,6 +5341,7 @@ function App({ isShutDown }) {
                       setAllowPosts={setAllowPosts}
                       currentStep={index}
                       userLanguage={userLanguage}
+                      userCourse={userCourse}
                       setUserLanguage={setUserLanguage}
                       postNostrContent={postNostrContent}
                       assignExistingBadgeToNpub={assignExistingBadgeToNpub}
