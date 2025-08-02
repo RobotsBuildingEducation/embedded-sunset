@@ -76,6 +76,7 @@ import {
 import {
   getObjectsByGroup,
   getRandomCelebrationMessage,
+  buildSuperLoot,
   steps,
 } from "./utility/content";
 import { PrivateRoute } from "./PrivateRoute";
@@ -1337,6 +1338,9 @@ const Step = ({
   hasSubmittedPasscode,
   setCurrentStep,
 }) => {
+  let loot = buildSuperLoot();
+
+  // console.log(loot);
   const { stepIndex } = useParams();
   const currentStepIndex = parseInt(stepIndex, 10);
 
@@ -2603,6 +2607,10 @@ const Step = ({
     localStorage.getItem("passcode") ===
       import.meta.env.VITE_PATREON_PASSCODE || hasSubmittedPasscode;
 
+  console.log(
+    "               {loot[currentStep][userLanguage]}",
+    loot[currentStep][userLanguage]
+  );
   return (
     <VStack spacing={4} width="100%" mt={6} p={4}>
       {/* <OrbCanvas width={500} height={500} /> */}
@@ -2837,17 +2845,30 @@ const Step = ({
             </span>
             <Progress
               opacity="0.8"
-              border="1px solid #ececec"
-              // boxShadow="0px 0px 0.5px 2px #ececec"
-              boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
               value={calculateProgress()}
               size="md"
               colorScheme={getColorScheme(step.group)}
               width="80%"
-              mb={4}
+              // mb={4}
               borderRadius="4px"
+              border="1px solid #ececec"
+              // boxShadow="0px 0px 0.5px 2px #ececec"
+              boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
               background={getBackgroundScheme(step.group)}
+              mb={userLanguage !== "compsci-en" ? 0 : 4}
             />
+            {userLanguage !== "compsci-en" ? (
+              <Text
+                color="yellow.600"
+                fontWeight={"bold"}
+                style={{ fontSize: "50%", marginBottom: "4px" }}
+              >
+                {translation[userLanguage]["skillValue"]}$
+                {currentStep === 0 || currentStep === 1
+                  ? 0
+                  : loot[currentStep - 1]["monetaryValue"]}
+              </Text>
+            ) : null}
 
             {/* {calculateBalance() > 0 ? (
               <HStack
@@ -3343,6 +3364,41 @@ const Step = ({
                       textAlign={"left"}
                       color={isCorrect ? "orange.500" : "red.500"}
                     >
+                      {userLanguage !== "compsci-en" && isCorrect ? (
+                        <Box
+                          color={"orange.500"}
+                          mt={4}
+                          display="flex"
+                          flexDirection={"column"}
+                          alignItems={"center"}
+                        >
+                          <Text
+                            fontSize={"md"}
+                            color="green.400"
+                            fontWeight={"bold"}
+                          >
+                            {translation[userLanguage]["skillValue"]}$
+                            {loot[currentStep]["monetaryValue"]}
+                          </Text>
+                          <Progress
+                            width="50%"
+                            value={
+                              (loot[currentStep]["monetaryValue"] / 120000) *
+                              100
+                            }
+                            colorScheme="green"
+                            borderRadius="4px"
+                            border="1px solid #ececec"
+                            // boxShadow="0px 0px 0.5px 2px #ececec"
+                            boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                            mb={3}
+                          />
+                          <Text fontSize={"sm"}>
+                            {loot[currentStep][userLanguage]}
+                          </Text>
+                          <br />
+                        </Box>
+                      ) : null}
                       {feedback}{" "}
                       {grade ? (
                         <DataTags

@@ -477,16 +477,6 @@ const SettingsMenu = ({
                 &nbsp;
                 {translation[userLanguage]["settings.button.bitcoinMode"]}
               </Button> */}
-
-              <Button
-                background="pink.300"
-                color="white"
-                width="100%"
-                onClick={onLangOpen}
-                ref={firstButtonRef}
-              >
-                {translation[userLanguage]["settings.button.changeLanguage"]}
-              </Button>
               <ThemeMenu
                 userLanguage={userLanguage}
                 isIcon={false}
@@ -497,6 +487,16 @@ const SettingsMenu = ({
                   boxShadow: "1px 1px 2px 0px rgba(0, 0, 0,0.75)",
                 }}
               />
+              <Button
+                background="pink.300"
+                color="white"
+                width="100%"
+                onClick={onLangOpen}
+                ref={firstButtonRef}
+              >
+                {translation[userLanguage]["settings.button.changeLanguage"]}
+              </Button>
+
               <Button
                 ref={firstButtonRef} // Assign the ref to the first button
                 colorScheme="pink"

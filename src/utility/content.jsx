@@ -13167,6 +13167,2401 @@ doc.delete();`,
   // ],
 };
 
+export const loot = [
+  {},
+  {
+    monetaryValue: 0,
+    en: "Purely conceptual—understanding what coding is doesn’t create billable skill.",
+    es: "Puramente conceptual: entender qué es la programación no genera habilidades vendibles.",
+  },
+  {
+    monetaryValue: 0,
+    en: "Knowing the program‑execution flow is still theory, so earnings remain unchanged.",
+    es: "Conocer el flujo de ejecución de un programa sigue siendo teoría, por lo que las ganancias no cambian.",
+  },
+  {
+    monetaryValue: 250,
+    en: "Declaring a basic variable lets the learner tweak tiny scripts or config files.",
+    es: "Declarar una variable básica permite al estudiante ajustar pequeños scripts o archivos de configuración.",
+  },
+  {
+    monetaryValue: 500,
+    en: "Recognising primitive data types enables safe edits to JSON or environment files.",
+    es: "Reconocer los tipos de datos primitivos permite editar de forma segura archivos JSON o de entorno.",
+  },
+  {
+    monetaryValue: 750,
+    en: "Creating an array makes simple data‑entry automations (lists, CSV tweaks) possible.",
+    es: "Crear un arreglo hace posibles automatizaciones simples de ingreso de datos (listas, ajustes de CSV).",
+  },
+  {
+    monetaryValue: 1000,
+    en: "Writing a working code snippet shows executable output—sellable micro‑tasks begin here.",
+    es: "Escribir un fragmento de código funcional demuestra resultados ejecutables; aquí empiezan las micro‑tareas comercializables.",
+  },
+  {
+    monetaryValue: 1100,
+    en: "Reflecting on the purpose of variables adds communication value but only a slight pay bump.",
+    es: "Reflexionar sobre el propósito de las variables añade valor comunicativo pero solo incrementa ligeramente el sueldo.",
+  },
+  {
+    monetaryValue: 1300,
+    en: "Navigating the CLI with `cd` unlocks basic terminal chores and version‑control operations.",
+    es: "Navegar por la CLI con `cd` habilita tareas básicas de terminal y operaciones de control de versiones.",
+  },
+  {
+    monetaryValue: 1500,
+    en: "Using AI to self‑review reduces mentorship overhead, making the learner more hireable.",
+    es: "Usar IA para auto‑revisarse reduce la necesidad de mentoría, lo que hace al estudiante más empleable.",
+  },
+  {
+    monetaryValue: 1600,
+    en: "Recognizing primitive vs. object types helps debug JSON and config issues.",
+    es: "Reconocer tipos primitivos y objetos ayuda a depurar JSON y archivos de configuración.",
+  },
+  {
+    monetaryValue: 1800,
+    en: "Understanding the lifecycle of a function enables safer edits to existing code.",
+    es: "Entender el ciclo de vida de una función permite modificar código existente con seguridad.",
+  },
+  {
+    monetaryValue: 2200,
+    en: "Writing and invoking a custom function shows executable logic—micro‑automation work begins.",
+    es: "Escribir e invocar una función propia demuestra lógica ejecutable; empiezan las micro‑automatizaciones.",
+  },
+  {
+    monetaryValue: 2300,
+    en: "Articulating the purpose of functions improves team communication and documentation.",
+    es: "Articular la finalidad de las funciones mejora la comunicación y la documentación del equipo.",
+  },
+  {
+    monetaryValue: 2700,
+    en: "Knowing the intent of an `if` statement is essential for QA test cases and bug fixes.",
+    es: "Conocer el propósito de una sentencia `if` es esencial para pruebas de QA y corrección de errores.",
+  },
+  {
+    monetaryValue: 3000,
+    en: "Completing a full `if … else if … else` block lets you repair simple decision bugs.",
+    es: "Completar un bloque `if … else if … else` permite corregir errores sencillos de decisión.",
+  },
+  {
+    monetaryValue: 3500,
+    en: "Writing conditional code independently enables input‑validation and business‑rule tasks.",
+    es: "Escribir código condicional de forma independiente habilita tareas de validación y reglas de negocio.",
+  },
+  {
+    monetaryValue: 3700,
+    en: "Using the `&&` operator correctly prevents edge‑case failures in compound conditions.",
+    es: "Usar correctamente el operador `&&` evita fallos en casos límite con condiciones compuestas.",
+  },
+  {
+    monetaryValue: 4000,
+    en: "Relating conditionals to real scenarios demonstrates applied problem‑solving skills.",
+    es: "Relacionar condicionales con escenarios reales demuestra habilidades de resolución aplicada de problemas.",
+  },
+  {
+    monetaryValue: 4300,
+    en: "Using `help` in Bash increases self‑sufficiency on Unix systems and servers.",
+    es: "Usar `help` en Bash aumenta la autosuficiencia en sistemas y servidores Unix.",
+  },
+  {
+    monetaryValue: 4600,
+    en: "Selecting the right loop structure is key for efficient data iteration.",
+    es: "Elegir la estructura de bucle correcta es clave para iteraciones de datos eficientes.",
+  },
+  {
+    monetaryValue: 4900,
+    en: "Understanding the phases of a `for` loop aids in spotting off‑by‑one errors.",
+    es: "Comprender las fases de un bucle `for` ayuda a detectar errores de desbordamiento.",
+  },
+  {
+    monetaryValue: 5300,
+    en: "Writing a loop that prints 1‑5 automates repetitive tasks like batch data cleanup.",
+    es: "Escribir un bucle que imprime del 1 al 5 automatiza tareas repetitivas como la limpieza de datos por lotes.",
+  },
+  {
+    monetaryValue: 5500,
+    en: "Explaining practical loop use cases shows awareness of common software patterns.",
+    es: "Explicar casos prácticos de uso de bucles muestra conocimiento de patrones comunes de software.",
+  },
+  {
+    monetaryValue: 5800,
+    en: "Listing array‑manipulation methods speeds up everyday JavaScript development.",
+    es: "Enumerar métodos de manipulación de arrays agiliza el desarrollo diario en JavaScript.",
+  },
+  {
+    monetaryValue: 6100,
+    en: "Debugging push/pop issues proves capability to maintain front‑end array code.",
+    es: "Depurar problemas de push/pop demuestra capacidad para mantener código de arrays en front‑end.",
+  },
+  {
+    monetaryValue: 6500,
+    en: "Mutating arrays programmatically enables dynamic lists and real UI features.",
+    es: "Mutar arrays de forma programática habilita listas dinámicas y funciones reales de UI.",
+  },
+  {
+    monetaryValue: 6700,
+    en: "Connecting arrays to real application data flows sharpens design reasoning.",
+    es: "Conectar arrays con flujos de datos reales afina el razonamiento de diseño.",
+  },
+  {
+    monetaryValue: 6900,
+    en: "Scaffolding a project directory with `mkdir` shows comfort with CLI workflows.",
+    es: "Crear un directorio de proyecto con `mkdir` demuestra comodidad con flujos de trabajo en CLI.",
+  },
+  {
+    monetaryValue: 7000,
+    en: "Mentally predicting mixed‑logic output demonstrates readiness for technical interviews.",
+    es: "Predecir mentalmente la salida de lógica combinada demuestra preparación para entrevistas técnicas.",
+  },
+  {
+    monetaryValue: 7000,
+    en: "Using AI feedback for self‑review lowers supervision costs and boosts hireability.",
+    es: "Utilizar retroalimentación de IA para auto‑revisión reduce costos de supervisión y mejora la empleabilidad.",
+  },
+  {
+    monetaryValue: 7500,
+    en: "Creating an object with the `new` keyword shows you can follow SDK samples and start modeling data.",
+    es: "Crear un objeto con la palabra clave `new` demuestra que puedes seguir ejemplos de SDK y empezar a modelar datos.",
+  },
+  {
+    monetaryValue: 8200,
+    en: "Choosing the correct `constructor` syntax means you can write ES6 classes other code can reuse.",
+    es: "Elegir la sintaxis correcta de `constructor` significa que puedes escribir clases ES6 que otro código pueda reutilizar.",
+  },
+  {
+    monetaryValue: 8500,
+    en: "Explaining the purpose of a constructor shows you grasp an object's lifecycle and initialization.",
+    es: "Explicar el propósito de un constructor indica que entiendes el ciclo de vida e inicialización de un objeto.",
+  },
+  {
+    monetaryValue: 8800,
+    en: "Listing every step to instantiate a class proves you can follow vendor quick‑starts without guidance.",
+    es: "Enumerar cada paso para instanciar una clase demuestra que puedes seguir guías de inicio rápido sin ayuda.",
+  },
+  {
+    monetaryValue: 9600,
+    en: "Declaring a method inside a class lets you extend existing codebases and tackle real feature tickets.",
+    es: "Declarar un método dentro de una clase te permite extender bases de código existentes y abordar funciones reales.",
+  },
+  {
+    monetaryValue: 10400,
+    en: "Using `this` correctly prevents classic bugs (`undefined is not a function`) and speeds up reviews.",
+    es: "Usar `this` correctamente evita errores clásicos (`undefined is not a function`) y agiliza las revisiones.",
+  },
+  {
+    monetaryValue: 10800,
+    en: "Adding a new property (`year`) shows you can safely evolve domain models as requirements change.",
+    es: "Añadir una nueva propiedad (`year`) demuestra que puedes evolucionar modelos de dominio conforme cambian los requisitos.",
+  },
+  {
+    monetaryValue: 11200,
+    en: "Identifying all valid get/set patterns proves you can build and maintain clean CRUD APIs.",
+    es: "Identificar todos los patrones válidos de get/set demuestra que puedes crear y mantener APIs CRUD limpias.",
+  },
+  {
+    monetaryValue: 11700,
+    en: "Mutating a property at runtime enables admin scripts and one‑off data migrations.",
+    es: "Mutar una propiedad en tiempo de ejecución habilita scripts de administración y migraciones de datos puntuales.",
+  },
+  {
+    monetaryValue: 12000,
+    en: "Defining inheritance conceptually shows readiness for frameworks that rely on `extends`.",
+    es: "Definir la herencia de forma conceptual muestra preparación para frameworks que dependen de `extends`.",
+  },
+  {
+    monetaryValue: 13000,
+    en: "Implementing a subclass (`ElectricCar`) demonstrates real OOP design and hierarchy modeling.",
+    es: "Implementar una subclase (`ElectricCar`) demuestra diseño POO real y modelado de jerarquías.",
+  },
+  {
+    monetaryValue: 13300,
+    en: "Describing method overriding means you can safely customize inherited behavior.",
+    es: "Describir la sobrescritura de métodos significa que puedes personalizar el comportamiento heredado de forma segura.",
+  },
+  {
+    monetaryValue: 13600,
+    en: "Defining encapsulation shows you understand information hiding and API boundaries.",
+    es: "Definir encapsulamiento muestra que entiendes el ocultamiento de información y los límites de la API.",
+  },
+  {
+    monetaryValue: 14000,
+    en: "Adding getters/setters for `batteryLife` safeguards data integrity and business rules.",
+    es: "Agregar getters/setters para `batteryLife` protege la integridad de datos y las reglas de negocio.",
+  },
+  {
+    monetaryValue: 14100,
+    en: "Passing the one‑word quiz reinforces key terminology but only nudges pay slightly.",
+    es: "Aprobar el cuestionario de una palabra refuerza la terminología clave pero solo aumenta un poco el salario.",
+  },
+  {
+    monetaryValue: 14800,
+    en: "Completing the mini‑project (`Person` → `Student`) provides a portfolio‑ready OOP module.",
+    es: "Completar el mini‑proyecto (`Person` → `Student`) aporta un módulo POO listo para el portafolio.",
+  },
+  {
+    monetaryValue: 14900,
+    en: "Printing a message with `echo` shows CLI comfort useful for deployment scripts.",
+    es: "Imprimir un mensaje con `echo` demuestra comodidad con la CLI, útil para scripts de despliegue.",
+  },
+  {
+    monetaryValue: 15000,
+    en: "Using AI to self‑review and refactor lowers supervision costs and boosts independence.",
+    es: "Usar IA para auto‑revisar y refactorizar reduce los costos de supervisión y aumenta la independencia.",
+  },
+  {
+    monetaryValue: 15500,
+    en: "Defining what a React component is proves knowledge of modern UI building blocks.",
+    es: "Definir qué es un componente React demuestra conocimiento de los bloques de construcción de interfaces modernas.",
+  },
+  {
+    monetaryValue: 16200,
+    en: "Listing core ideas (props, state, events, styles) shows readiness to read real React code.",
+    es: "Enumerar ideas clave (props, state, eventos, estilos) indica preparación para leer código React real.",
+  },
+  {
+    monetaryValue: 16900,
+    en: "Explaining how state triggers re‑renders reveals an essential mental model for debugging.",
+    es: "Explicar cómo el estado provoca re‑renders revela un modelo mental esencial para depurar.",
+  },
+  {
+    monetaryValue: 18900,
+    en: "Coding a component that returns JSX produces tangible UI—first portfolio material.",
+    es: "Codificar un componente que devuelve JSX produce una UI tangible—primer material de portafolio.",
+  },
+  {
+    monetaryValue: 20400,
+    en: "Handling a button click with `onClick` adds real interactivity for product features.",
+    es: "Manejar un clic de botón con `onClick` agrega interactividad real para funciones de producto.",
+  },
+  {
+    monetaryValue: 22400,
+    en: "Using `useState` to toggle a like button delivers dynamic behavior clients pay for.",
+    es: "Usar `useState` para alternar un botón de like aporta comportamiento dinámico que los clientes pagan.",
+  },
+  {
+    monetaryValue: 22800,
+    en: "Recalling the term props cements vocabulary; a minor but useful credibility boost.",
+    es: "Recordar el término props consolida vocabulario; aumento menor pero útil de credibilidad.",
+  },
+  {
+    monetaryValue: 24300,
+    en: "Accepting and displaying props enables reusable, data‑driven UI components.",
+    es: "Aceptar y mostrar props permite componentes de UI reutilizables y orientados a datos.",
+  },
+  {
+    monetaryValue: 25000,
+    en: "Distinguishing props vs. state is a common junior‑interview hurdle—now cleared.",
+    es: "Distinguir props de state es un obstáculo común en entrevistas junior—ahora superado.",
+  },
+  {
+    monetaryValue: 25500,
+    en: "Running `ls` in the terminal shows CLI comfort for front‑end build tooling.",
+    es: "Ejecutar `ls` en la terminal muestra comodidad con la CLI para herramientas de construcción front‑end.",
+  },
+  {
+    monetaryValue: 27000,
+    en: "Styling the Tweet component with CSS proves you can meet design requirements.",
+    es: "Estilizar el componente Tweet con CSS demuestra que puedes cumplir requisitos de diseño.",
+  },
+  {
+    monetaryValue: 27800,
+    en: "Ordering Flexbox rules illustrates layout mastery for responsive pages.",
+    es: "Ordenar reglas de Flexbox ilustra dominio de diseño para páginas responsivas.",
+  },
+  {
+    monetaryValue: 29800,
+    en: "Lifting state up coordinates child components—step toward full app architecture.",
+    es: "Elevar el estado coordina componentes hijos—paso hacia la arquitectura de apps completas.",
+  },
+  {
+    monetaryValue: 31300,
+    en: "Adding `useEffect` for side effects equips you to handle timers, logs and more.",
+    es: "Agregar `useEffect` para efectos secundarios te capacita para manejar temporizadores, registros y más.",
+  },
+  {
+    monetaryValue: 32000,
+    en: "Explaining the component lifecycle shows architectural awareness recruiters like.",
+    es: "Explicar el ciclo de vida del componente muestra conciencia arquitectónica que valoran los reclutadores.",
+  },
+  {
+    monetaryValue: 33500,
+    en: "Sequencing fetch‑data steps means you can call real APIs from the browser safely.",
+    es: "Secuenciar los pasos de obtención de datos implica que puedes llamar APIs reales desde el navegador de forma segura.",
+  },
+  {
+    monetaryValue: 38300,
+    en: "Building the mini Tweet app (API, likes, retweets) adds a showcase project employers can click.",
+    es: "Construir la mini app de Tweets (API, likes, retweets) añade un proyecto demostrable que los empleadores pueden probar.",
+  },
+  {
+    monetaryValue: 39000,
+    en: "Knowing the command to scaffold React/Vite lets you spin up new projects instantly.",
+    es: "Conocer el comando para crear un proyecto React/Vite te permite iniciar proyectos nuevos al instante.",
+  },
+  {
+    monetaryValue: 40000,
+    en: "Ordering every Vite setup step proves end‑to‑end scaffolding autonomy.",
+    es: "Ordenar cada paso de configuración de Vite demuestra autonomía total en el arranque de proyectos.",
+  },
+  {
+    monetaryValue: 40000,
+    en: "AI conversation review boosts self‑debugging but doesn’t change earnings further.",
+    es: "La revisión con IA mejora la auto‑depuración pero no modifica más los ingresos.",
+  },
+  {
+    monetaryValue: 40500,
+    en: "Explaining what backend engineering is shows you understand the server side of apps.",
+    es: "Explicar qué es la ingeniería backend demuestra que entiendes el lado servidor de las aplicaciones.",
+  },
+  {
+    monetaryValue: 41000,
+    en: "Picking a core backend lesson proves you can identify real server responsibilities.",
+    es: "Elegir una lección fundamental de backend prueba que puedes identificar responsabilidades reales del servidor.",
+  },
+  {
+    monetaryValue: 42000,
+    en: "Listing key backend duties shows awareness of performance, data and security tasks.",
+    es: "Enumerar deberes clave de backend muestra conciencia de tareas de rendimiento, datos y seguridad.",
+  },
+  {
+    monetaryValue: 42500,
+    en: "Describing why the terminal matters signals comfort with command‑line operations.",
+    es: "Describir por qué importa la terminal indica comodidad con operaciones de línea de comandos.",
+  },
+  {
+    monetaryValue: 43000,
+    en: "Writing the command to install npm proves you can prepare a fresh environment.",
+    es: "Escribir el comando para instalar npm demuestra que puedes preparar un entorno nuevo.",
+  },
+  {
+    monetaryValue: 44000,
+    en: "Installing an npm package shows you can pull external libraries into a project.",
+    es: "Instalar un paquete con npm demuestra que puedes incorporar librerías externas en un proyecto.",
+  },
+  {
+    monetaryValue: 46000,
+    en: "Defining authentication during user creation shows security vocabulary and focus.",
+    es: "Definir autenticación durante la creación de usuarios muestra vocabulario y enfoque en seguridad.",
+  },
+  {
+    monetaryValue: 47000,
+    en: "Outlining database types indicates you can choose the right store for the job.",
+    es: "Explicar los tipos de bases de datos indica que puedes elegir el almacén adecuado para la tarea.",
+  },
+  {
+    monetaryValue: 50000,
+    en: "Connecting an app to Firebase demonstrates a working cloud data integration.",
+    es: "Conectar una app a Firebase demuestra una integración de datos en la nube funcional.",
+  },
+  {
+    monetaryValue: 51000,
+    en: "Recalling `firebase init` shows you can bootstrap a backend project from the CLI.",
+    es: "Recordar `firebase init` muestra que puedes iniciar un proyecto backend desde la CLI.",
+  },
+  {
+    monetaryValue: 52000,
+    en: "Listing responsible storage practices signals attention to encryption and backup.",
+    es: "Enumerar prácticas de almacenamiento responsable indica atención al cifrado y las copias de seguridad.",
+  },
+  {
+    monetaryValue: 55000,
+    en: "Initializing Firebase and adding a document proves full CRUD path knowledge.",
+    es: "Inicializar Firebase y añadir un documento demuestra conocimiento completo del flujo CRUD.",
+  },
+  {
+    monetaryValue: 57000,
+    en: "Handling user data with auth objects shows you can tie identity to database rows.",
+    es: "Gestionar datos de usuario con objetos de autenticación muestra que puedes vincular identidad y datos.",
+  },
+  {
+    monetaryValue: 59000,
+    en: "Retrieving a user doc after login completes the real‑world auth‑data loop.",
+    es: "Recuperar un documento de usuario tras iniciar sesión completa el ciclo real de autenticación y datos.",
+  },
+  {
+    monetaryValue: 61000,
+    en: "Ordering a typical auth flow proves you grasp token lifecycle and access control.",
+    es: "Ordenar un flujo típico de autenticación demuestra que comprendes el ciclo de tokens y el control de acceso.",
+  },
+  {
+    monetaryValue: 62000,
+    en: "Naming OAuth as the protocol shows you’re ready to add social sign‑ins.",
+    es: "Nombrar OAuth como protocolo muestra que estás listo para añadir inicios de sesión sociales.",
+  },
+  {
+    monetaryValue: 63000,
+    en: "Explaining environment variables proves you can protect secrets in production.",
+    es: "Explicar las variables de entorno demuestra que puedes proteger secretos en producción.",
+  },
+  {
+    monetaryValue: 65000,
+    en: "Defining a one‑to‑many relationship models users and posts or similar data chains.",
+    es: "Definir una relación uno‑a‑muchos modela usuarios y publicaciones u otras cadenas de datos.",
+  },
+  {
+    monetaryValue: 66000,
+    en: "Choosing correct HTTP verbs shows you can design RESTful APIs that clients expect.",
+    es: "Elegir los verbos HTTP correctos muestra que puedes diseñar APIs RESTful que esperan los clientes.",
+  },
+  {
+    monetaryValue: 68000,
+    en: "Ordering JWT auth steps proves you can create secure, stateless sessions.",
+    es: "Ordenar los pasos de autenticación JWT demuestra que puedes crear sesiones seguras y sin estado.",
+  },
+  {
+    monetaryValue: 70000,
+    en: "Writing the deploy command for Firebase shows you can launch to the cloud alone.",
+    es: "Escribir el comando de despliegue para Firebase muestra que puedes lanzar a la nube por tu cuenta.",
+  },
+  {
+    monetaryValue: 70000,
+    en: "Using AI for self‑review increases autonomy but doesn’t raise pay further.",
+    es: "Usar IA para auto‑revisión aumenta la autonomía, pero no incrementa más el salario.",
+  },
+  {
+    monetaryValue: 70000,
+    en: "Explaining the benefits of serverless platforms is useful context but doesn’t add hands‑on earning power.",
+    es: "Explicar los beneficios de las plataformas serverless es contexto útil pero no aumenta habilidades facturables.",
+  },
+  {
+    monetaryValue: 70000,
+    en: "Describing why VS Code is popular is tool awareness with no direct market premium.",
+    es: "Describir por qué VS Code es popular refleja conocimiento de herramientas sin prima salarial directa.",
+  },
+  {
+    monetaryValue: 70000,
+    en: "Stating the purpose of Node.js and npm is still theory, so pay stays flat.",
+    es: "Indicar el propósito de Node.js y npm sigue siendo teoría, por lo que el salario se mantiene.",
+  },
+  {
+    monetaryValue: 71000,
+    en: "Running `npm install` proves you can bootstrap any JavaScript project locally.",
+    es: "Ejecutar `npm install` demuestra que puedes iniciar cualquier proyecto JavaScript de forma local.",
+  },
+  {
+    monetaryValue: 72000,
+    en: "Installing the Firebase CLI shows readiness to deploy from the command line.",
+    es: "Instalar Firebase CLI demuestra preparación para desplegar desde la línea de comandos.",
+  },
+  {
+    monetaryValue: 75000,
+    en: "Ordering every step to scaffold React + Firebase signals end‑to‑end project setup skills.",
+    es: "Ordenar cada paso para crear React + Firebase indica habilidades de configuración de proyectos de principio a fin.",
+  },
+  {
+    monetaryValue: 80000,
+    en: "Writing code that initializes Firebase services delivers a live cloud backend—big real‑world value.",
+    es: "Escribir código que inicializa servicios de Firebase aporta un backend en la nube listo—gran valor práctico.",
+  },
+  {
+    monetaryValue: 80000,
+    en: "Knowing that GitHub hosts code is baseline knowledge with no salary bump.",
+    es: "Saber que GitHub aloja código es conocimiento básico sin aumento salarial.",
+  },
+  {
+    monetaryValue: 81000,
+    en: "Cloning a repo from the terminal lets you pull sprint tasks unassisted.",
+    es: "Clonar un repositorio desde la terminal te permite tomar tareas de sprint sin ayuda.",
+  },
+  {
+    monetaryValue: 82000,
+    en: "Comparing Firebase to rivals shows platform judgment—small compensation lift.",
+    es: "Comparar Firebase con rivales muestra criterio de plataforma—pequeño aumento de compensación.",
+  },
+  {
+    monetaryValue: 83000,
+    en: "Identifying core Firebase products proves you can navigate its ecosystem solo.",
+    es: "Identificar los productos clave de Firebase demuestra que puedes moverte solo por su ecosistema.",
+  },
+  {
+    monetaryValue: 84000,
+    en: "Using `git pull` to sync branches prevents merge pain on team projects.",
+    es: "Usar `git pull` para sincronizar ramas evita dolores de cabeza de merge en proyectos de equipo.",
+  },
+  {
+    monetaryValue: 88000,
+    en: "Choosing `react‑firebaseui` for auth avoids weeks of custom login work.",
+    es: "Elegir `react‑firebaseui` para autenticación evita semanas de trabajo de login a medida.",
+  },
+  {
+    monetaryValue: 92000,
+    en: "Enabling Google Sign‑In completes an OAuth flow that production apps need.",
+    es: "Habilitar Google Sign‑In completa un flujo OAuth que requieren las apps en producción.",
+  },
+  {
+    monetaryValue: 94000,
+    en: "Injecting Firebase config keys securely shows you can protect secrets in prod.",
+    es: "Inyectar claves de configuración de Firebase de forma segura demuestra que puedes proteger secretos en producción.",
+  },
+  {
+    monetaryValue: 97000,
+    en: "Rendering a Firebase sign‑in button delivers a usable login screen.",
+    es: "Renderizar un botón de inicio de sesión de Firebase ofrece una pantalla de login utilizable.",
+  },
+  {
+    monetaryValue: 100000,
+    en: "Displaying user data with `useEffect` adds personalized dashboards—core SaaS value.",
+    es: "Mostrar datos de usuario con `useEffect` añade paneles personalizados—valor clave para SaaS.",
+  },
+  {
+    monetaryValue: 105000,
+    en: "Updating the user profile in Firestore closes the CRUD loop across auth and DB.",
+    es: "Actualizar el perfil de usuario en Firestore cierra el ciclo CRUD entre autenticación y base de datos.",
+  },
+  {
+    monetaryValue: 107000,
+    en: "Chaining `git add && commit && push` shows an efficient, professional workflow.",
+    es: "Encadenar `git add && commit && push` muestra un flujo de trabajo eficiente y profesional.",
+  },
+  {
+    monetaryValue: 120000,
+    en: "Ordering all Git commands to create and push a new repo proves you can launch green‑field projects autonomously—mid‑level salary territory.",
+    es: "Ordenar todos los comandos Git para crear y subir un repositorio nuevo demuestra que puedes lanzar proyectos desde cero de forma autónoma—territorio salarial de nivel medio.",
+  },
+  {
+    monetaryValue: 120000,
+    en: "AI conversation review boosts self‑debugging but doesn’t increase pay further.",
+    es: "La revisión con IA mejora la auto‑depuración, pero no aumenta más el salario.",
+  },
+];
+
+// Tutorial-only loot meter for the Python track
+export const pythonLoot = [
+  {}, // 0 – Introduction placeholder (no monetary movement yet)
+
+  // 1 – Understanding Coding
+  {
+    monetaryValue: 0,
+    "py-en": "Pure theory—no immediate billable skill.",
+  },
+
+  // 2 – Sequence of Program Execution
+  {
+    monetaryValue: 0,
+    "py-en": "Execution-flow insight is still unpaid groundwork.",
+  },
+
+  // 3 – Introduction to Variables
+  {
+    monetaryValue: 125,
+    "py-en": "Variable basics open tiny scripting gigs (~$125).",
+  },
+
+  // 4 – Understanding List Declarations
+  {
+    monetaryValue: 250,
+    "py-en": "List handling enables simple automation scripts.",
+  },
+
+  // 5 – Variable Assignment in Python
+  {
+    monetaryValue: 250,
+    "py-en": "Confident assignment lets you edit configs safely.",
+  },
+
+  // 6 – Understanding Data Types
+  {
+    monetaryValue: 300,
+    "py-en": "Type awareness prevents bugs—marketable skill bump.",
+  },
+
+  // 7 – Purpose of Variables
+  {
+    monetaryValue: 300,
+    "py-en": "Explaining variable intent shows code clarity to employers.",
+  },
+
+  // 8 – Bash Terminal Practice: Changing Directories
+  {
+    monetaryValue: 375,
+    "py-en": "CLI navigation preps you for junior DevOps chores.",
+  },
+
+  // 9 – Review With AI Conversation (optional)
+  {
+    monetaryValue: 375,
+    "py-en": "Conversation recap cements knowledge—earnings hold steady.",
+  },
+  /* 1 */ {
+    monetaryValue: 375,
+    "py-en": "Primitive-type fluency lands basic data-cleanup gigs.",
+  },
+  /* 2 */ {
+    monetaryValue: 425,
+    "py-en": "Function workflow qualifies you for tiny utility scripts.",
+  },
+  /* 3 */ {
+    monetaryValue: 500,
+    "py-en": "Authoring functions opens low-stakes automation work.",
+  },
+  /* 4 */ {
+    monetaryValue: 500,
+    "py-en": "Explaining functions shows architectural awareness.",
+  },
+  /* 5 */ {
+    monetaryValue: 625,
+    "py-en": "Branching logic unlocks decision-making code tasks.",
+  },
+  /* 6 */ {
+    monetaryValue: 750,
+    "py-en": "Flow-control precision reduces QA time for small apps.",
+  },
+  /* 7 */ {
+    monetaryValue: 875,
+    "py-en": "Hands-on conditionals prove practical coding ability.",
+  },
+  /* 8 */ {
+    monetaryValue: 1000,
+    "py-en": "Operator insight tightens code correctness.",
+  },
+  /* 9 */ {
+    monetaryValue: 1000,
+    "py-en": "Applying conditionals to business logic adds value.",
+  },
+  /*10 */ {
+    monetaryValue: 1125,
+    "py-en": "CLI help skills prep you for DevOps workflows.",
+  },
+  /*11 */ {
+    monetaryValue: 1250,
+    "py-en": "Loop mastery automates repetitive data tasks.",
+  },
+  /*12 */ {
+    monetaryValue: 1375,
+    "py-en": "Understanding loop order trims runtime errors.",
+  },
+  /*13 */ {
+    monetaryValue: 1500,
+    "py-en": "Writing loops nets entry-level data-wrangling jobs.",
+  },
+  /*14 */ {
+    monetaryValue: 1500,
+    "py-en": "Articulating loop use cases shows system thinking.",
+  },
+  /*15 */ {
+    monetaryValue: 1625,
+    "py-en": "List methods speed up ETL and small-scale tooling.",
+  },
+  /*16 */ {
+    monetaryValue: 1750,
+    "py-en": "Sequencing list ops improves data-pipeline quality.",
+  },
+  /*17 */ {
+    monetaryValue: 1875,
+    "py-en": "Fluent list manipulation boosts productivity rates.",
+  },
+  /*18 */ {
+    monetaryValue: 1875,
+    "py-en": "Mapping list use cases to products signals insight.",
+  },
+  /*19 */ {
+    monetaryValue: 2000,
+    "py-en": "Directory commands add deploy-script credibility.",
+  },
+  /*20 */ {
+    monetaryValue: 2250,
+    "py-en": "Predicting complex output shows mental-model mastery.",
+  },
+  /*21 */ {
+    monetaryValue: 2250,
+    "py-en": "AI recap consolidates gains—value steadies here.",
+  },
+  {
+    monetaryValue: 2500,
+    "py-en": "Basic OOP concepts spark entry-level maintenance gigs.",
+  },
+  {
+    monetaryValue: 3750,
+    "py-en": "Constructor mastery scaffolds clean, reusable classes.",
+  },
+  {
+    monetaryValue: 3875,
+    "py-en": "Articulating __init__ shows design-pattern awareness.",
+  },
+  {
+    monetaryValue: 4250,
+    "py-en": "Instance creation enables API-client & SDK tasks.",
+  },
+  {
+    monetaryValue: 4500,
+    "py-en": "Methods demonstrate behavior encapsulation.",
+  },
+  {
+    monetaryValue: 4625,
+    "py-en": "Proper self usage signals readiness for code reviews.",
+  },
+  {
+    monetaryValue: 4750,
+    "py-en": "Attribute modeling improves data-layer flexibility.",
+  },
+  {
+    monetaryValue: 4875,
+    "py-en": "Safe property access reduces production-bug risk.",
+  },
+  {
+    monetaryValue: 5000,
+    "py-en": "Confident attribute updates unlock CRUD feature work.",
+  },
+  {
+    monetaryValue: 6000,
+    "py-en": "Inheritance insight opens framework customization.",
+  },
+  {
+    monetaryValue: 6750,
+    "py-en": "Subclassing skills qualify you for component libraries.",
+  },
+  {
+    monetaryValue: 7500,
+    "py-en": "Polymorphic overrides raise solid junior-dev salaries.",
+  },
+  {
+    monetaryValue: 7625,
+    "py-en": "Encapsulation theory guards data integrity.",
+  },
+  {
+    monetaryValue: 8250,
+    "py-en": "Getters/setters show production-ready design.",
+  },
+  { monetaryValue: 8250, "py-en": "Terminology locked in—value holds steady." },
+  {
+    monetaryValue: 9500,
+    "py-en": "Capstone project proves deliverable-ready OOP skills.",
+  },
+  {
+    monetaryValue: 9500,
+    "py-en": "Shell output practice reinforces value—no bump.",
+  },
+  {
+    monetaryValue: 9500,
+    "py-en": "AI recap solidifies OOP foundation—earnings level off.",
+  },
+  {
+    monetaryValue: 20000,
+    "py-en": "React component basics expand full-stack horizons.",
+  },
+  { monetaryValue: 21000, "py-en": "Props & state boost UI salary potential." },
+  {
+    monetaryValue: 22000,
+    "py-en": "State-driven rendering marks you as front-end capable.",
+  },
+  {
+    monetaryValue: 23000,
+    "py-en": "Building a component proves hands-on UI delivery.",
+  },
+  {
+    monetaryValue: 24000,
+    "py-en": "Event handling shows interactive UI chops.",
+  },
+  {
+    monetaryValue: 25000,
+    "py-en": "useState mastery qualifies you for junior React roles.",
+  },
+  {
+    monetaryValue: 26000,
+    "py-en": "Prop passing skills enhance component reusability.",
+  },
+  {
+    monetaryValue: 27000,
+    "py-en": "Dynamic props implementation sharpens architecture.",
+  },
+  {
+    monetaryValue: 28000,
+    "py-en": "Distinguishing props vs state signals design maturity.",
+  },
+  {
+    monetaryValue: 29000,
+    "py-en": "CLI file ops prep build-workflow automation.",
+  },
+  {
+    monetaryValue: 30000,
+    "py-en": "Styling components showcases product-ready polish.",
+  },
+  {
+    monetaryValue: 31000,
+    "py-en": "Flexbox layout fluency speeds responsive design.",
+  },
+  {
+    monetaryValue: 32000,
+    "py-en": "Lifting state enables multi-component orchestration.",
+  },
+  {
+    monetaryValue: 33000,
+    "py-en": "useEffect usage signals side-effect competence.",
+  },
+  {
+    monetaryValue: 34000,
+    "py-en": "Lifecycle awareness supports performance tuning.",
+  },
+  {
+    monetaryValue: 35000,
+    "py-en": "Async data fetching demonstrates API integration.",
+  },
+  {
+    monetaryValue: 37500,
+    "py-en": "Complete Tweet app exhibits full-stack delivery.",
+  },
+  {
+    monetaryValue: 40000,
+    "py-en": "Project setup mastery shows dev-environment autonomy.",
+  },
+  {
+    monetaryValue: 42500,
+    "py-en": "Vite workflow accelerates modern build pipelines.",
+  },
+  {
+    monetaryValue: 45000,
+    "py-en": "Comprehensive review cements senior-track value.",
+  },
+  /* 1 */ {
+    monetaryValue: 46000,
+    "py-en": "Backend fundamentals introduce server-side logic know-how.",
+  },
+  /* 2 */ {
+    monetaryValue: 48000,
+    "py-en": "Spotting core duties sharpens your roadmap to employment.",
+  },
+  /* 3 */ {
+    monetaryValue: 50000,
+    "py-en": "Multi-responsibility insight boosts junior-dev readiness.",
+  },
+  /* 4 */ {
+    monetaryValue: 51000,
+    "py-en": "Terminal fluency powers everyday backend tasks.",
+  },
+  /* 5 */ {
+    monetaryValue: 52000,
+    "py-en": "Upgrading pip keeps environments modern and secure.",
+  },
+  /* 6 */ {
+    monetaryValue: 53000,
+    "py-en": "Package installs unlock framework experimentation.",
+  },
+  /* 7 */ {
+    monetaryValue: 54000,
+    "py-en": "Auth terminology safeguards future user data.",
+  },
+  /* 8 */ {
+    monetaryValue: 55000,
+    "py-en": "Database-type literacy guides sound architecture choices.",
+  },
+  /* 9 */ {
+    monetaryValue: 56000,
+    "py-en": "PostgreSQL connection skills impress hiring managers.",
+  },
+  /*10*/ {
+    monetaryValue: 57000,
+    "py-en": "Django bootstrap showcases rapid project setup.",
+  },
+  /*11*/ {
+    monetaryValue: 59000,
+    "py-en": "Data-storage best practices prove reliability mindset.",
+  },
+  /*12*/ {
+    monetaryValue: 61000,
+    "py-en": "SQLAlchemy CRUD shows ORM proficiency in action.",
+  },
+  /*13*/ {
+    monetaryValue: 62000,
+    "py-en": "User-lookup code demonstrates practical DB use.",
+  },
+  /*14*/ {
+    monetaryValue: 63000,
+    "py-en": "Secure queries highlight credential-handling care.",
+  },
+  /*15*/ {
+    monetaryValue: 64000,
+    "py-en": "JWT flow maps modern authentication pipelines.",
+  },
+  /*16*/ {
+    monetaryValue: 65000,
+    "py-en": "OAuth know-how enables third-party sign-ins.",
+  },
+  /*17*/ {
+    monetaryValue: 66000,
+    "py-en": "Environment variables keep secrets safe in code.",
+  },
+  /*18*/ {
+    monetaryValue: 67000,
+    "py-en": "Model relationships design scalable data schemas.",
+  },
+  /*19*/ {
+    monetaryValue: 68000,
+    "py-en": "REST method insight preps you for API work.",
+  },
+  /*20*/ {
+    monetaryValue: 69000,
+    "py-en": "Building a JWT system shows end-to-end security chops.",
+  },
+  /*21*/ {
+    monetaryValue: 70000,
+    "py-en": "Deploying with Gunicorn caps senior-track salary bands.",
+  },
+  /*22 – Review (optional)*/ {
+    monetaryValue: 70000,
+    "py-en": "AI recap locks in knowledge—value plateaus here.",
+  },
+  /* 1  */ {
+    monetaryValue: 75000,
+    "py-en": "Serverless benefits raise your market ceiling immediately.",
+  },
+  /* 2  */ {
+    monetaryValue: 76000,
+    "py-en": "VSCode workflow fluency boosts day-one productivity value.",
+  },
+  /* 3  */ {
+    monetaryValue: 77000,
+    "py-en": "Node + npm installs unlock cross-stack tooling jobs.",
+  },
+  /* 4  */ {
+    monetaryValue: 78000,
+    "py-en": "Dependency installs prove environment-setup competence.",
+  },
+  /* 5  */ {
+    monetaryValue: 79000,
+    "py-en": "Firebase CLI install shows command-line confidence.",
+  },
+  /* 6  */ {
+    monetaryValue: 81000,
+    "py-en": "Project init demonstrates cloud project bootstrapping.",
+  },
+  /* 7  */ {
+    monetaryValue: 83000,
+    "py-en": "Choosing services reveals solution-architecture judgment.",
+  },
+  /* 8  */ {
+    monetaryValue: 86000,
+    "py-en": "Admin-SDK config signals secure credential handling.",
+  },
+  /* 9  */ {
+    monetaryValue: 88000,
+    "py-en": "Firestore client setup proves NoSQL ready-for-prod skill.",
+  },
+  /* 10 */ {
+    monetaryValue: 90000,
+    "py-en": "Auth concepts mark you as user-management capable.",
+  },
+  /* 11 */ {
+    monetaryValue: 92000,
+    "py-en": "Programmatic user-creation meets SaaS onboarding needs.",
+  },
+  /* 12 */ {
+    monetaryValue: 94000,
+    "py-en": "ID-token verification shows secure session handling.",
+  },
+  /* 13 */ {
+    monetaryValue: 97000,
+    "py-en": "CRUD mastery enables full data-layer ownership.",
+  },
+  /* 14 */ {
+    monetaryValue: 100000,
+    "py-en": "Cloud Functions coding pushes you into six-figure tier.",
+  },
+  /* 15 */ {
+    monetaryValue: 103000,
+    "py-en": "Local emulation shortens dev cycles—high ROI for teams.",
+  },
+  /* 16 */ {
+    monetaryValue: 108000,
+    "py-en": "Production deploy proficiency justifies senior rates.",
+  },
+  /* 17 */ {
+    monetaryValue: 110000,
+    "py-en": "Storage uploads add scalable asset-handling expertise.",
+  },
+  /* 18 */ {
+    monetaryValue: 112000,
+    "py-en": "Security-rules insight protects data at enterprise scale.",
+  },
+  /* 19 */ {
+    monetaryValue: 115000,
+    "py-en": "Monitoring & analytics drive performance optimization value.",
+  },
+  /* 20 */ {
+    monetaryValue: 118000,
+    "py-en": "Extension know-how speeds feature delivery for clients.",
+  },
+  /* 21 – Review */ {
+    monetaryValue: 120000,
+    "py-en": "Comprehensive review crowns you at senior-full-stack tier.",
+  },
+];
+
+// Swift Tutorial loot meter
+export const swiftLoot = [
+  {}, // 0 – Introduction placeholder (no monetary movement)
+
+  // 1 – Understanding Coding
+  {
+    monetaryValue: 0,
+    "swift-en": "Pure theory—no immediate billable skill.",
+  },
+
+  // 2 – Sequence of Program Execution
+  {
+    monetaryValue: 0,
+    "swift-en": "Execution-flow insight is still unpaid groundwork.",
+  },
+
+  // 3 – Introduction to Variables
+  {
+    monetaryValue: 125,
+    "swift-en": "Variable basics open tiny scripting gigs (~$125).",
+  },
+
+  // 4 – Understanding List (Array) Declarations
+  {
+    monetaryValue: 250,
+    "swift-en": "Array handling enables simple automation scripts.",
+  },
+
+  // 5 – Variable Assignment in Swift
+  {
+    monetaryValue: 250,
+    "swift-en": "Confident assignment lets you tweak configs safely.",
+  },
+
+  // 6 – Understanding Data Types
+  {
+    monetaryValue: 300,
+    "swift-en": "Type awareness prevents bugs—marketable skill bump.",
+  },
+
+  // 7 – Purpose of Variables
+  {
+    monetaryValue: 300,
+    "swift-en": "Explaining variable intent shows code clarity to employers.",
+  },
+
+  // 8 – Bash Terminal Practice: cd
+  {
+    monetaryValue: 375,
+    "swift-en": "CLI navigation preps you for junior DevOps chores.",
+  },
+
+  // 9 – Review With AI Conversation (optional)
+  {
+    monetaryValue: 375,
+    "swift-en": "Conversation recap cements knowledge—earnings hold steady.",
+  },
+  // 1 – Data Types in Programming
+  {
+    monetaryValue: 375,
+    "swift-en": "Primitive-type fluency lands basic data-cleanup gigs.",
+  },
+
+  // 2 – Steps to Create a Function
+  {
+    monetaryValue: 425,
+    "swift-en": "Function workflow qualifies you for tiny utility scripts.",
+  },
+
+  // 3 – Writing a Simple Function
+  {
+    monetaryValue: 500,
+    "swift-en": "Authoring functions opens low-stakes automation work.",
+  },
+
+  // 4 – Functions in Programming (concept question)
+  {
+    monetaryValue: 500,
+    "swift-en": "Explaining functions shows architectural awareness.",
+  },
+
+  // 5 – Conditional Statements
+  {
+    monetaryValue: 625,
+    "swift-en": "Branching logic unlocks decision-making code tasks.",
+  },
+
+  // 6 – Order of Conditional Checks
+  {
+    monetaryValue: 750,
+    "swift-en": "Flow-control precision reduces QA time for small apps.",
+  },
+
+  // 7 – Implementing Conditional Logic
+  {
+    monetaryValue: 875,
+    "swift-en": "Hands-on conditionals prove practical coding ability.",
+  },
+
+  // 8 – Logical Operator (single-line answer)
+  {
+    monetaryValue: 1000,
+    "swift-en": "Operator insight tightens code correctness.",
+  },
+
+  // 9 – Real-world Use of Conditionals
+  {
+    monetaryValue: 1000,
+    "swift-en": "Applying conditionals to business logic adds value.",
+  },
+
+  // 10 – Terminal Practice: help
+  {
+    monetaryValue: 1125,
+    "swift-en": "CLI help skills prep you for DevOps workflows.",
+  },
+
+  // 11 – Loops in Programming
+  {
+    monetaryValue: 1250,
+    "swift-en": "Loop mastery automates repetitive data tasks.",
+  },
+
+  // 12 – Sequence of Loop Execution
+  {
+    monetaryValue: 1375,
+    "swift-en": "Understanding loop order trims runtime errors.",
+  },
+
+  // 13 – Creating a Loop (code)
+  {
+    monetaryValue: 1500,
+    "swift-en": "Writing loops nets entry-level data-wrangling jobs.",
+  },
+
+  // 14 – Applications of Loops (text)
+  {
+    monetaryValue: 1500,
+    "swift-en": "Articulating loop use cases shows system thinking.",
+  },
+
+  // 15 – Arrays in Swift (methods quiz)
+  {
+    monetaryValue: 1625,
+    "swift-en": "Array methods speed up ETL and small-scale tooling.",
+  },
+
+  // 16 – Order of Array Operations
+  {
+    monetaryValue: 1750,
+    "swift-en": "Sequencing array ops improves data-pipeline quality.",
+  },
+
+  // 17 – Manipulating Arrays (code)
+  {
+    monetaryValue: 1875,
+    "swift-en": "Fluent array manipulation boosts productivity rates.",
+  },
+
+  // 18 – Use Cases for Arrays (text)
+  {
+    monetaryValue: 1875,
+    "swift-en": "Mapping array use cases to apps signals insight.",
+  },
+
+  // 19 – Terminal Practice: mkdir
+  {
+    monetaryValue: 2000,
+    "swift-en": "Directory commands add deploy-script credibility.",
+  },
+
+  // 20 – Advanced Coding Output (array comprehension logic)
+  {
+    monetaryValue: 2250,
+    "swift-en": "Predicting complex output shows mental-model mastery.",
+  },
+
+  // 21 – Review With AI Conversation (optional)
+  {
+    monetaryValue: 2250,
+    "swift-en": "AI recap consolidates gains—value steadies here.",
+  },
+  /* 1 – Introduction to Objects */
+  {
+    monetaryValue: 2500,
+    "swift-en": "Object basics spark entry-level MVC maintenance gigs.",
+  },
+
+  /* 2 – Understanding the init Method */
+  {
+    monetaryValue: 3750,
+    "swift-en": "init mastery scaffolds reusable Swift classes.",
+  },
+
+  /* 3 – Purpose of the init Method */
+  {
+    monetaryValue: 3875,
+    "swift-en": "Explaining init shows design-pattern awareness.",
+  },
+
+  /* 4 – Creating an Instance of a Class */
+  {
+    monetaryValue: 4250,
+    "swift-en": "Instantiating objects enables model-layer tasks.",
+  },
+
+  /* 5 – Declaring a Method in a Class */
+  {
+    monetaryValue: 4500,
+    "swift-en": "Custom methods demonstrate behavior encapsulation.",
+  },
+
+  /* 6 – Using self Correctly */
+  {
+    monetaryValue: 4625,
+    "swift-en": "Proper use of self signals context mastery.",
+  },
+
+  /* 7 – Adding Properties to an Object */
+  {
+    monetaryValue: 4750,
+    "swift-en": "Property modeling improves data flexibility.",
+  },
+
+  /* 8 – Accessing & Modifying Properties */
+  {
+    monetaryValue: 4875,
+    "swift-en": "Safe property access reduces runtime errors.",
+  },
+
+  /* 9 – Modifying Object Properties */
+  {
+    monetaryValue: 5000,
+    "swift-en": "Dynamic updates unlock CRUD feature work.",
+  },
+
+  /* 10 – Understanding Inheritance */
+  {
+    monetaryValue: 6000,
+    "swift-en": "Inheritance insight opens framework customization.",
+  },
+
+  /* 11 – Implementing Inheritance */
+  {
+    monetaryValue: 6750,
+    "swift-en": "Subclassing skills qualify you for SDK extensions.",
+  },
+
+  /* 12 – Overriding Methods */
+  {
+    monetaryValue: 7500,
+    "swift-en": "Polymorphic overrides elevate junior-dev salaries.",
+  },
+
+  /* 13 – Understanding Encapsulation */
+  {
+    monetaryValue: 7625,
+    "swift-en": "Encapsulation theory guards state integrity.",
+  },
+
+  /* 14 – Implementing Encapsulation */
+  {
+    monetaryValue: 8250,
+    "swift-en": "Computed properties show production-ready design.",
+  },
+
+  /* 15 – Encapsulation Concept (one-word recall) */
+  {
+    monetaryValue: 8250,
+    "swift-en": "Term recall keeps value steady here.",
+  },
+
+  /* 16 – Combining Concepts Mini-Project */
+  {
+    monetaryValue: 9500,
+    "swift-en": "Capstone OOP project proves deliverable-ready skills.",
+  },
+
+  /* 17 – Printing in Code */
+  {
+    monetaryValue: 9500,
+    "swift-en": "Print practice reinforces fundamentals—value holds.",
+  },
+
+  /* 18 – Review With AI Conversation */
+  {
+    monetaryValue: 9500,
+    "swift-en": "AI recap solidifies OOP foundation—earnings level off.",
+  },
+  /* 1 – Introduction to SwiftUI Views */
+  {
+    monetaryValue: 20000,
+    "swift-en": "SwiftUI view basics unlock modern iOS UI gigs.",
+  },
+
+  /* 2 – Key Concepts in SwiftUI */
+  {
+    monetaryValue: 21000,
+    "swift-en": "State & modifiers boost UI architecture value.",
+  },
+
+  /* 3 – Effect of State Changes on a View */
+  {
+    monetaryValue: 22000,
+    "swift-en": "Reactive rendering marks you as SwiftUI-ready.",
+  },
+
+  /* 4 – Creating a Simple SwiftUI View */
+  {
+    monetaryValue: 23000,
+    "swift-en": "Hands-on view building shows deliverable skills.",
+  },
+
+  /* 5 – Handling Tap Gestures */
+  {
+    monetaryValue: 24000,
+    "swift-en": "Gesture handling demonstrates interactive chops.",
+  },
+
+  /* 6 – Managing State with @State */
+  {
+    monetaryValue: 25000,
+    "swift-en": "@State mastery qualifies you for junior iOS roles.",
+  },
+
+  /* 7 – View Properties */
+  {
+    monetaryValue: 26000,
+    "swift-en": "Data-injection patterns enhance component reuse.",
+  },
+
+  /* 8 – Passing and Using Properties */
+  {
+    monetaryValue: 27000,
+    "swift-en": "Dynamic props sharpen app architecture.",
+  },
+
+  /* 9 – Working with Properties and State Together */
+  {
+    monetaryValue: 28000,
+    "swift-en": "Distinguishing props vs state shows design maturity.",
+  },
+
+  /* 10 – Terminal Practice: ls */
+  {
+    monetaryValue: 29000,
+    "swift-en": "CLI file ops prep build-workflow automation.",
+  },
+
+  /* 11 – Styling SwiftUI Views */
+  {
+    monetaryValue: 30000,
+    "swift-en": "View styling proves product-ready polish.",
+  },
+
+  /* 12 – Using Stacks for Layout */
+  {
+    monetaryValue: 31000,
+    "swift-en": "Stack layouts speed responsive design.",
+  },
+
+  /* 13 – Lifting State Up */
+  {
+    monetaryValue: 32000,
+    "swift-en": "State sharing enables multi-view orchestration.",
+  },
+
+  /* 14 – Using onAppear for Side Effects */
+  {
+    monetaryValue: 33000,
+    "swift-en": "Lifecycle hooks signal side-effect competence.",
+  },
+
+  /* 15 – Understanding View Lifecycle */
+  {
+    monetaryValue: 34000,
+    "swift-en": "Lifecycle insight supports performance tuning.",
+  },
+
+  /* 16 – Fetching Data with async/await */
+  {
+    monetaryValue: 35000,
+    "swift-en": "Async data fetching shows API integration skill.",
+  },
+
+  /* 17 – Building a Complete Tweet App */
+  {
+    monetaryValue: 37500,
+    "swift-en": "End-to-end app showcases full-stack delivery.",
+  },
+
+  /* 18 – Terminal Practice: Swift Package */
+  {
+    monetaryValue: 40000,
+    "swift-en": "SwiftPM workflow demonstrates dev-environment autonomy.",
+  },
+
+  /* 19 – Creating a New SwiftUI Project */
+  {
+    monetaryValue: 42500,
+    "swift-en": "Xcode project setup accelerates shipping velocity.",
+  },
+
+  /* 20 – Review With AI Conversation (optional) */
+  {
+    monetaryValue: 45000,
+    "swift-en": "Comprehensive review cements senior-track value.",
+  },
+  /* 1 – Introduction to Swift Backend Engineering */
+  {
+    monetaryValue: 46000,
+    "swift-en": "Backend basics introduce server-side logic know-how.",
+  },
+
+  /* 2 – Main Lessons Overview (core duty) */
+  {
+    monetaryValue: 48000,
+    "swift-en": "Spotting core duties sharpens your employment roadmap.",
+  },
+
+  /* 3 – Key Responsibilities of Backend Engineering */
+  {
+    monetaryValue: 50000,
+    "swift-en": "Multi-responsibility insight boosts junior‐dev readiness.",
+  },
+
+  /* 4 – Interfacing with the Terminal */
+  {
+    monetaryValue: 51000,
+    "swift-en": "Terminal fluency powers everyday backend tasks.",
+  },
+
+  /* 5 – Installing the Vapor Toolbox */
+  {
+    monetaryValue: 52000,
+    "swift-en": "Vapor CLI install shows command-line confidence.",
+  },
+
+  /* 6 – Adding a Swift Package with SwiftPM */
+  {
+    monetaryValue: 53000,
+    "swift-en": "SwiftPM mastery unlocks dependency management skills.",
+  },
+
+  /* 7 – User Creation and Authentication (concept) */
+  {
+    monetaryValue: 54000,
+    "swift-en": "Auth terminology safeguards future user data.",
+  },
+
+  /* 8 – Database Foundations */
+  {
+    monetaryValue: 55000,
+    "swift-en": "DB-type literacy guides sound architecture choices.",
+  },
+
+  /* 9 – Connecting to PostgreSQL with Fluent */
+  {
+    monetaryValue: 56000,
+    "swift-en": "Postgres connection skills impress hiring managers.",
+  },
+
+  /*10 – Initiating a Vapor Project */
+  {
+    monetaryValue: 57000,
+    "swift-en": "Project bootstrap showcases rapid API setup.",
+  },
+
+  /*11 – Advanced Data-Storage Practices */
+  {
+    monetaryValue: 59000,
+    "swift-en": "Storage best-practices prove reliability mindset.",
+  },
+
+  /*12 – Configuring Fluent & Running Migrations */
+  {
+    monetaryValue: 61000,
+    "swift-en": "Fluent migrations show ORM proficiency in action.",
+  },
+
+  /*13 – Handling User Data */
+  {
+    monetaryValue: 62000,
+    "swift-en": "User-lookup code demonstrates practical DB use.",
+  },
+
+  /*14 – Retrieving User After Authentication */
+  {
+    monetaryValue: 63000,
+    "swift-en": "Secure queries highlight credential-handling care.",
+  },
+
+  /*15 – Understanding the Authentication Flow */
+  {
+    monetaryValue: 64000,
+    "swift-en": "JWT flow maps modern authentication pipelines.",
+  },
+
+  /*16 – OAuth Authentication */
+  {
+    monetaryValue: 65000,
+    "swift-en": "OAuth know-how enables third-party sign-ins.",
+  },
+
+  /*17 – Using Environment Variables */
+  {
+    monetaryValue: 66000,
+    "swift-en": "Environment variables keep secrets safe in code.",
+  },
+
+  /*18 – Database Relationships with Fluent */
+  {
+    monetaryValue: 67000,
+    "swift-en": "Model relationships design scalable data schemas.",
+  },
+
+  /*19 – Interfacing with an API */
+  {
+    monetaryValue: 68000,
+    "swift-en": "REST method insight preps you for API work.",
+  },
+
+  /*20 – Creating a JWT Authentication System */
+  {
+    monetaryValue: 69000,
+    "swift-en": "Building a JWT system shows end-to-end security chops.",
+  },
+
+  /*21 – Deploying a Vapor Application */
+  {
+    monetaryValue: 70000,
+    "swift-en": "Production deployment caps senior-track salary bands.",
+  },
+
+  /*22 – Review With AI Conversation (optional) */
+  {
+    monetaryValue: 70000,
+    "swift-en": "AI recap locks in knowledge—value plateaus here.",
+  },
+
+  /* 1 – Benefits of Serverless Cloud Platforms */
+  {
+    monetaryValue: 75000,
+    "swift-en": "Serverless know-how unlocks higher-margin app builds.",
+  },
+
+  /* 2 – Understanding Xcode */
+  {
+    monetaryValue: 76000,
+    "swift-en": "Xcode mastery speeds day-one productivity on iOS teams.",
+  },
+
+  /* 3 – Installing Swift & SwiftPM */
+  {
+    monetaryValue: 77000,
+    "swift-en": "SwiftPM fluency streamlines dependency management.",
+  },
+
+  /* 4 – Installing CocoaPods */
+  {
+    monetaryValue: 78000,
+    "swift-en": "CocoaPods install preps Firebase SDK integration.",
+  },
+
+  /* 5 – Adding Firebase via CocoaPods */
+  {
+    monetaryValue: 79000,
+    "swift-en": "Podfile wiring proves multi-module setup skills.",
+  },
+
+  /* 6 – Initializing a Firebase Project */
+  {
+    monetaryValue: 81000,
+    "swift-en": "Config-file onboarding shows cloud-project bootstrap.",
+  },
+
+  /* 7 – Selecting Firebase Modules */
+  {
+    monetaryValue: 83000,
+    "swift-en": "Service selection reveals solution-architecture sense.",
+  },
+
+  /* 8 – Configuring Firebase in AppDelegate */
+  {
+    monetaryValue: 86000,
+    "swift-en": "Runtime config signals secure SDK initialization.",
+  },
+
+  /* 9 – Setting Up Firestore */
+  {
+    monetaryValue: 88000,
+    "swift-en": "Firestore setup proves NoSQL data-layer chops.",
+  },
+
+  /* 10 – Understanding Authentication */
+  {
+    monetaryValue: 90000,
+    "swift-en": "Auth concepts mark you as user-management capable.",
+  },
+
+  /* 11 – Creating a User with FirebaseAuth */
+  {
+    monetaryValue: 92000,
+    "swift-en": "Programmatic sign-up enables SaaS onboarding flows.",
+  },
+
+  /* 12 – Verifying ID Tokens */
+  {
+    monetaryValue: 94000,
+    "swift-en": "Token verification shows secure session handling.",
+  },
+
+  /* 13 – CRUD with Firestore */
+  {
+    monetaryValue: 97000,
+    "swift-en": "CRUD mastery enables full data-layer ownership.",
+  },
+
+  /* 14 – Calling Cloud Functions */
+  {
+    monetaryValue: 100000,
+    "swift-en": "Function calls push you into six-figure tier.",
+  },
+
+  /* 15 – Local Emulation */
+  {
+    monetaryValue: 103000,
+    "swift-en": "Emulator workflow shortens dev cycles—high ROI.",
+  },
+
+  /* 16 – Deploying to Firebase */
+  {
+    monetaryValue: 108000,
+    "swift-en": "Production deploy proficiency justifies senior rates.",
+  },
+
+  /* 17 – Uploading to Storage */
+  {
+    monetaryValue: 110000,
+    "swift-en": "Storage uploads add scalable asset-handling expertise.",
+  },
+
+  /* 18 – Security Rules Basics */
+  {
+    monetaryValue: 112000,
+    "swift-en": "Security-rules insight protects data at enterprise scale.",
+  },
+
+  /* 19 – Performance Monitoring */
+  {
+    monetaryValue: 115000,
+    "swift-en": "Monitoring skills drive performance-optimization value.",
+  },
+
+  /* 20 – Popular Firebase Extensions */
+  {
+    monetaryValue: 118000,
+    "swift-en": "Extension know-how accelerates feature delivery.",
+  },
+
+  /* 21 – Review With AI Conversation (optional) */
+  {
+    monetaryValue: 120000,
+    "swift-en": "Comprehensive review crowns you at senior iOS tier.",
+  },
+];
+
+/* ---------- Android Tutorial loot meter ---------- */
+export const androidLoot = [
+  {}, // 0 – Introduction placeholder (no monetary gain yet)
+
+  // 1 – Understanding Coding
+  {
+    monetaryValue: 0,
+    "android-en": "Pure theory—no immediate billable skill.",
+  },
+
+  // 2 – Sequence of Program Execution
+  {
+    monetaryValue: 0,
+    "android-en": "Execution-flow insight is still unpaid groundwork.",
+  },
+
+  // 3 – Introduction to Variables
+  {
+    monetaryValue: 125,
+    "android-en": "Variable basics open tiny scripting gigs (~$125).",
+  },
+
+  // 4 – Understanding List Declarations
+  {
+    monetaryValue: 250,
+    "android-en": "Array/List handling enables simple automation tasks.",
+  },
+
+  // 5 – Variable Assignment in Java
+  {
+    monetaryValue: 250,
+    "android-en": "Confident assignment lets you tweak configs safely.",
+  },
+
+  // 6 – Understanding Data Types
+  {
+    monetaryValue: 300,
+    "android-en": "Type awareness prevents bugs—marketable skill bump.",
+  },
+
+  // 7 – Purpose of Variables
+  {
+    monetaryValue: 300,
+    "android-en": "Explaining variable intent shows code clarity to employers.",
+  },
+
+  // 8 – Bash Terminal Practice: cd
+  {
+    monetaryValue: 375,
+    "android-en": "CLI navigation preps you for junior DevOps chores.",
+  },
+
+  // 9 – Review With AI Conversation (optional)
+  {
+    monetaryValue: 375,
+    "android-en": "Conversation recap cements knowledge—earnings hold steady.",
+  },
+  /* 1 – Data Types in Programming */
+  {
+    monetaryValue: 375,
+    "android-en": "Primitive-type fluency lands basic data-cleanup gigs.",
+  },
+
+  /* 2 – Steps to Create a Function */
+  {
+    monetaryValue: 425,
+    "android-en": "Method workflow qualifies you for tiny utility scripts.",
+  },
+
+  /* 3 – Writing a Simple Function */
+  {
+    monetaryValue: 500,
+    "android-en": "Authoring methods opens low-stakes automation work.",
+  },
+
+  /* 4 – Functions in Programming (concept) */
+  {
+    monetaryValue: 500,
+    "android-en": "Explaining methods shows architectural awareness.",
+  },
+
+  /* 5 – Conditional Statements */
+  {
+    monetaryValue: 625,
+    "android-en": "Branching logic unlocks decision-making code tasks.",
+  },
+
+  /* 6 – Order of Conditional Checks */
+  {
+    monetaryValue: 750,
+    "android-en": "Flow-control precision reduces QA time for small apps.",
+  },
+
+  /* 7 – Implementing Conditional Logic */
+  {
+    monetaryValue: 875,
+    "android-en": "Hands-on conditionals prove practical coding ability.",
+  },
+
+  /* 8 – Logical Operator (single-line answer) */
+  {
+    monetaryValue: 1000,
+    "android-en": "Operator insight tightens code correctness.",
+  },
+
+  /* 9 – Real-world Use of Conditionals */
+  {
+    monetaryValue: 1000,
+    "android-en": "Applying conditionals to business logic adds value.",
+  },
+
+  /* 10 – Terminal Practice: help */
+  {
+    monetaryValue: 1125,
+    "android-en": "CLI help skills prep you for DevOps workflows.",
+  },
+
+  /* 11 – Loops in Programming */
+  {
+    monetaryValue: 1250,
+    "android-en": "Loop mastery automates repetitive data tasks.",
+  },
+
+  /* 12 – Sequence of Loop Execution */
+  {
+    monetaryValue: 1375,
+    "android-en": "Understanding loop order trims runtime errors.",
+  },
+
+  /* 13 – Creating a Loop (code) */
+  {
+    monetaryValue: 1500,
+    "android-en": "Writing loops nets entry-level data-wrangling jobs.",
+  },
+
+  /* 14 – Applications of Loops */
+  {
+    monetaryValue: 1500,
+    "android-en": "Articulating loop use cases shows system thinking.",
+  },
+
+  /* 15 – Arrays in Java (methods quiz) */
+  {
+    monetaryValue: 1625,
+    "android-en": "Array utilities speed up ETL and tooling.",
+  },
+
+  /* 16 – Order of Array Operations */
+  {
+    monetaryValue: 1750,
+    "android-en": "Sequencing array ops improves data-pipeline quality.",
+  },
+
+  /* 17 – Manipulating Arrays (code) */
+  {
+    monetaryValue: 1875,
+    "android-en": "Fluent array manipulation boosts productivity rates.",
+  },
+
+  /* 18 – Use Cases for Arrays (text) */
+  {
+    monetaryValue: 1875,
+    "android-en": "Mapping array use cases to apps signals insight.",
+  },
+
+  /* 19 – Terminal Practice: mkdir */
+  {
+    monetaryValue: 2000,
+    "android-en": "Directory commands add build-script credibility.",
+  },
+
+  /* 20 – Advanced Coding Output */
+  {
+    monetaryValue: 2250,
+    "android-en": "Predicting complex output shows mental-model mastery.",
+  },
+
+  /* 21 – Review With AI Conversation (optional) */
+  {
+    monetaryValue: 2250,
+    "android-en": "AI recap consolidates gains—value steadies here.",
+  },
+
+  /* 1 – Introduction to Objects */
+  {
+    monetaryValue: 2500,
+    "android-en": "Object basics spark entry-level MVC maintenance gigs.",
+  },
+
+  /* 2 – Understanding the Constructor Method */
+  {
+    monetaryValue: 3750,
+    "android-en": "Constructor mastery scaffolds clean, reusable classes.",
+  },
+
+  /* 3 – Purpose of the Constructor Method */
+  {
+    monetaryValue: 3875,
+    "android-en": "Explaining constructors shows design-pattern awareness.",
+  },
+
+  /* 4 – Creating an Instance of a Class */
+  {
+    monetaryValue: 4250,
+    "android-en": "Instantiating objects enables model-layer tasks.",
+  },
+
+  /* 5 – Declaring a Method in a Class */
+  {
+    monetaryValue: 4500,
+    "android-en": "Custom methods demonstrate behavior encapsulation.",
+  },
+
+  /* 6 – Using the this Keyword Correctly */
+  {
+    monetaryValue: 4625,
+    "android-en": "Proper use of this signals context mastery.",
+  },
+
+  /* 7 – Adding Properties to an Object */
+  {
+    monetaryValue: 4750,
+    "android-en": "Property modeling improves data flexibility.",
+  },
+
+  /* 8 – Accessing & Modifying Object Properties */
+  {
+    monetaryValue: 4875,
+    "android-en": "Safe property access reduces runtime errors.",
+  },
+
+  /* 9 – Modifying Object Properties */
+  {
+    monetaryValue: 5000,
+    "android-en": "Dynamic updates unlock CRUD feature work.",
+  },
+
+  /* 10 – Understanding Inheritance */
+  {
+    monetaryValue: 6000,
+    "android-en": "Inheritance insight opens framework customization.",
+  },
+
+  /* 11 – Implementing Inheritance */
+  {
+    monetaryValue: 6750,
+    "android-en": "Subclassing skills qualify you for SDK extensions.",
+  },
+
+  /* 12 – Overriding Methods */
+  {
+    monetaryValue: 7500,
+    "android-en": "Polymorphic overrides elevate junior-dev salaries.",
+  },
+
+  /* 13 – Understanding Encapsulation */
+  {
+    monetaryValue: 7625,
+    "android-en": "Encapsulation theory guards state integrity.",
+  },
+
+  /* 14 – Implementing Encapsulation */
+  {
+    monetaryValue: 8250,
+    "android-en": "Getters/setters show production-ready design.",
+  },
+
+  /* 15 – Encapsulation Concept (one-word recall) */
+  { monetaryValue: 8250, "android-en": "Term recall keeps value steady here." },
+
+  /* 16 – Combining Concepts Mini-Project */
+  {
+    monetaryValue: 9500,
+    "android-en": "Capstone OOP project proves deliverable-ready skills.",
+  },
+
+  /* 17 – Printing in the Terminal */
+  {
+    monetaryValue: 9500,
+    "android-en": "Shell output reinforces fundamentals—value holds.",
+  },
+
+  /* 18 – Review With AI Conversation (optional) */
+  {
+    monetaryValue: 9500,
+    "android-en": "AI recap solidifies OOP foundation—earnings level off.",
+  },
+  {
+    monetaryValue: 20000,
+    "android-en": "View fundamentals unlock modern Android UI gigs.",
+  },
+
+  /* 2 – Key Concepts in Android UI */
+  {
+    monetaryValue: 21000,
+    "android-en": "Activity + Fragment mastery boosts architecture value.",
+  },
+
+  /* 3 – Effect of LiveData Changes on UI */
+  {
+    monetaryValue: 22000,
+    "android-en": "Reactive updates mark you as MVVM-ready.",
+  },
+
+  /* 4 – Creating a Simple Activity */
+  {
+    monetaryValue: 23000,
+    "android-en": "Hands-on Activity building shows deliverable skills.",
+  },
+
+  /* 5 – Handling Button Clicks */
+  {
+    monetaryValue: 24000,
+    "android-en": "Click listeners demonstrate interactive chops.",
+  },
+
+  /* 6 – Managing State with ViewModel */
+  {
+    monetaryValue: 25000,
+    "android-en": "ViewModel + LiveData qualify you for junior Android roles.",
+  },
+
+  /* 7 – Intent Extras */
+  {
+    monetaryValue: 26000,
+    "android-en": "Intent data-passing enhances component reuse.",
+  },
+
+  /* 8 – Passing and Using Extras */
+  {
+    monetaryValue: 27000,
+    "android-en": "Dynamic extras sharpen navigation architecture.",
+  },
+
+  /* 9 – Props vs State in Android */
+  {
+    monetaryValue: 28000,
+    "android-en": "Distinguishing extras vs LiveData shows design maturity.",
+  },
+
+  /* 10 – Terminal Practice: ls */
+  {
+    monetaryValue: 29000,
+    "android-en": "CLI file ops prep build-workflow automation.",
+  },
+
+  /* 11 – Styling Android Views */
+  {
+    monetaryValue: 30000,
+    "android-en": "XML styling proves product-ready polish.",
+  },
+
+  /* 12 – ConstraintLayout Basics */
+  {
+    monetaryValue: 31000,
+    "android-en": "ConstraintLayout fluency speeds responsive design.",
+  },
+
+  /* 13 – Sharing ViewModel Between Fragments */
+  {
+    monetaryValue: 32000,
+    "android-en": "Shared state enables multi-fragment orchestration.",
+  },
+
+  /* 14 – Observing LiveData for Side Effects */
+  {
+    monetaryValue: 33000,
+    "android-en": "Lifecycle hooks signal side-effect competence.",
+  },
+
+  /* 15 – Understanding Activity Lifecycle */
+  {
+    monetaryValue: 34000,
+    "android-en": "Lifecycle insight supports performance tuning.",
+  },
+
+  /* 16 – Fetching Data with Retrofit & LiveData */
+  {
+    monetaryValue: 35000,
+    "android-en": "Async Retrofit calls show API-integration skill.",
+  },
+
+  /* 17 – Building a Complete Tweet App */
+  {
+    monetaryValue: 37500,
+    "android-en": "End-to-end app showcases full-stack delivery.",
+  },
+
+  /* 18 – Terminal Practice: Gradle build */
+  {
+    monetaryValue: 40000,
+    "android-en": "Gradle CLI workflow demonstrates dev-env autonomy.",
+  },
+
+  /* 19 – Creating a New Android Project */
+  {
+    monetaryValue: 42500,
+    "android-en": "Android-Studio setup accelerates shipping velocity.",
+  },
+
+  /* 20 – Review With AI Conversation (optional) */
+  {
+    monetaryValue: 45000,
+    "android-en": "Comprehensive review cements senior-track value.",
+  },
+  /* 1 – Intro to Java Backend Engineering */
+  {
+    monetaryValue: 46000,
+    "android-en": "Backend basics introduce server-side logic know-how.",
+  },
+
+  /* 2 – Main Lessons Overview (core duty) */
+  {
+    monetaryValue: 48000,
+    "android-en": "Spotting core duties sharpens your employment roadmap.",
+  },
+
+  /* 3 – Key Responsibilities of Backend Engineering */
+  {
+    monetaryValue: 50000,
+    "android-en": "Multi-responsibility insight boosts junior-dev readiness.",
+  },
+
+  /* 4 – Interfacing with the Terminal */
+  {
+    monetaryValue: 51000,
+    "android-en": "Terminal fluency powers everyday backend tasks.",
+  },
+
+  /* 5 – Installing Maven */
+  {
+    monetaryValue: 52000,
+    "android-en": "Maven install shows dependency-management confidence.",
+  },
+
+  /* 6 – Adding a Maven Dependency */
+  {
+    monetaryValue: 53000,
+    "android-en": "POM wiring proves build-tool mastery.",
+  },
+
+  /* 7 – User Creation & Authentication (concept) */
+  {
+    monetaryValue: 54000,
+    "android-en": "Auth terminology safeguards future user data.",
+  },
+
+  /* 8 – Database Foundations */
+  {
+    monetaryValue: 55000,
+    "android-en": "DB-type literacy guides sound architecture choices.",
+  },
+
+  /* 9 – Connecting to DB with Spring Data JPA */
+  {
+    monetaryValue: 56000,
+    "android-en": "PostgreSQL hookup skills impress hiring managers.",
+  },
+
+  /*10 – Initiating a Spring Boot Project */
+  {
+    monetaryValue: 57000,
+    "android-en": "Project bootstrap showcases rapid API setup.",
+  },
+
+  /*11 – Advanced Data-Storage Practices */
+  {
+    monetaryValue: 59000,
+    "android-en": "Storage best-practices prove reliability mindset.",
+  },
+
+  /*12 – Configuring JPA & Saving Entity */
+  {
+    monetaryValue: 61000,
+    "android-en": "JPA CRUD shows ORM proficiency in action.",
+  },
+
+  /*13 – Handling User Data */
+  {
+    monetaryValue: 62000,
+    "android-en": "User-lookup code demonstrates practical DB use.",
+  },
+
+  /*14 – Retrieving User After Authentication */
+  {
+    monetaryValue: 63000,
+    "android-en": "Secure queries highlight credential-handling care.",
+  },
+
+  /*15 – Understanding the Authentication Flow */
+  {
+    monetaryValue: 64000,
+    "android-en": "JWT flow maps modern authentication pipelines.",
+  },
+
+  /*16 – OAuth Authentication */
+  {
+    monetaryValue: 65000,
+    "android-en": "OAuth know-how enables third-party sign-ins.",
+  },
+
+  /*17 – Using Environment Variables */
+  {
+    monetaryValue: 66000,
+    "android-en": "Environment vars keep secrets safe in code.",
+  },
+
+  /*18 – Database Relationships with JPA */
+  {
+    monetaryValue: 67000,
+    "android-en": "Entity relationships design scalable schemas.",
+  },
+
+  /*19 – Interfacing with an API */
+  {
+    monetaryValue: 68000,
+    "android-en": "REST method insight preps you for API work.",
+  },
+
+  /*20 – Creating a JWT Auth System */
+  {
+    monetaryValue: 69000,
+    "android-en": "Building JWT security shows end-to-end chops.",
+  },
+
+  /*21 – Deploying Spring Boot App */
+  {
+    monetaryValue: 70000,
+    "android-en": "Production deployment caps senior-track salary bands.",
+  },
+
+  /*22 – Review With AI Conversation (optional) */
+  {
+    monetaryValue: 70000,
+    "android-en": "AI recap locks in knowledge—value plateaus here.",
+  },
+
+  /* 1 – Benefits of Serverless Cloud Platforms */
+  {
+    monetaryValue: 75000,
+    "android-en": "Serverless savvy raises your market ceiling instantly.",
+  },
+  /* 2 – Understanding Android Studio */
+  {
+    monetaryValue: 76000,
+    "android-en":
+      "Studio mastery speeds day-one productivity on Android teams.",
+  },
+  /* 3 – Installing JDK & Android SDK */
+  {
+    monetaryValue: 77000,
+    "android-en": "Proper tool-chain setup unlocks cross-stack development.",
+  },
+  /* 4 – Adding Firebase to Gradle */
+  {
+    monetaryValue: 78000,
+    "android-en": "Gradle BOM wiring proves build-script competence.",
+  },
+  /* 5 – Applying Google Services Plugin */
+  {
+    monetaryValue: 79000,
+    "android-en": "Plugin config shows dependency-injection confidence.",
+  },
+  /* 6 – Initializing a Firebase Project */
+  {
+    monetaryValue: 81000,
+    "android-en":
+      "google-services.json onboarding shows cloud bootstrap skill.",
+  },
+  /* 7 – Selecting Firebase Modules */
+  {
+    monetaryValue: 83000,
+    "android-en": "Service selection reveals solution-architecture judgment.",
+  },
+  /* 8 – Configuring FirebaseApp */
+  {
+    monetaryValue: 86000,
+    "android-en": "Runtime init signals secure SDK integration.",
+  },
+  /* 9 – Setting Up Firestore */
+  {
+    monetaryValue: 88000,
+    "android-en": "Firestore setup proves NoSQL data-layer chops.",
+  },
+  /* 10 – Understanding Authentication */
+  {
+    monetaryValue: 90000,
+    "android-en": "Auth concepts mark you as user-management capable.",
+  },
+  /* 11 – Creating a User with FirebaseAuth */
+  {
+    monetaryValue: 92000,
+    "android-en": "Programmatic sign-up enables SaaS onboarding flows.",
+  },
+  /* 12 – Retrieving the ID Token */
+  {
+    monetaryValue: 94000,
+    "android-en": "ID-token handling shows secure session logic.",
+  },
+  /* 13 – CRUD with Firestore */
+  {
+    monetaryValue: 97000,
+    "android-en": "CRUD mastery enables full data-layer ownership.",
+  },
+  /* 14 – Calling Cloud Functions */
+  {
+    monetaryValue: 100000,
+    "android-en": "Function calls push you into six-figure territory.",
+  },
+  /* 15 – Local Emulation */
+  {
+    monetaryValue: 103000,
+    "android-en": "Emulator workflow shortens dev cycles—high ROI for teams.",
+  },
+  /* 16 – Deploying to Firebase */
+  {
+    monetaryValue: 108000,
+    "android-en": "Production deploy proficiency justifies senior rates.",
+  },
+  /* 17 – Uploading to Storage */
+  {
+    monetaryValue: 110000,
+    "android-en": "Storage uploads add scalable asset-handling expertise.",
+  },
+  /* 18 – Security Rules Basics */
+  {
+    monetaryValue: 112000,
+    "android-en": "Security-rules insight protects data at enterprise scale.",
+  },
+  /* 19 – Performance Monitoring */
+  {
+    monetaryValue: 115000,
+    "android-en": "Monitoring skills drive performance-optimization value.",
+  },
+  /* 20 – Popular Firebase Extensions */
+  {
+    monetaryValue: 118000,
+    "android-en": "Extension know-how accelerates feature delivery.",
+  },
+  /* 21 – Review With AI Conversation (optional) */
+  {
+    monetaryValue: 120000,
+    "android-en": "Comprehensive review crowns you at senior Android tier.",
+  },
+];
+
+export let buildSuperLoot = () => {
+  const maxLen = Math.max(
+    loot.length,
+    pythonLoot.length,
+    androidLoot.length,
+    swiftLoot.length
+  );
+
+  const superLoot = [];
+
+  for (let i = 0; i < maxLen; i++) {
+    // base object with all expected keys
+    const entry = {
+      monetaryValue: 0,
+      en: "",
+      es: "",
+      "python-en": "",
+      "android-en": "",
+      "swift-en": "",
+    };
+
+    /* ------------------------  LOOT  ------------------------ */
+    if (loot[i]) {
+      entry.monetaryValue = loot[i].monetaryValue ?? 0;
+      entry.en = loot[i].en ?? "";
+      entry.es = loot[i].es ?? "";
+    }
+
+    /* ----------------------  PYTHON  ------------------------ */
+    if (pythonLoot[i]) {
+      entry["python-en"] = pythonLoot[i]["py-en"] ?? "";
+      // if the base loot row was empty, use python’s money
+      entry.monetaryValue = Math.max(
+        entry.monetaryValue,
+        pythonLoot[i].monetaryValue ?? 0
+      );
+    }
+
+    /* ---------------------  ANDROID  ------------------------ */
+    if (androidLoot[i]) {
+      entry["android-en"] = androidLoot[i]["android-en"] ?? "";
+      entry.monetaryValue = Math.max(
+        entry.monetaryValue,
+        androidLoot[i].monetaryValue ?? 0
+      );
+    }
+
+    /* -----------------------  SWIFT  ------------------------ */
+    if (swiftLoot[i]) {
+      entry["swift-en"] = swiftLoot[i]["swift-en"] ?? "";
+      entry.monetaryValue = Math.max(
+        entry.monetaryValue,
+        swiftLoot[i].monetaryValue ?? 0
+      );
+    }
+
+    superLoot.push(entry);
+  }
+
+  return superLoot;
+};
+
 export const lectureSummaries = {
   en: {
     tutorial: {

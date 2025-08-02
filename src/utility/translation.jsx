@@ -15,6 +15,7 @@ export const pickProgrammingLanguage = (language) => {
 
 export let translation = {
   en: {
+    skillValue: "Your skill value: ",
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
     "language.compsci.english": "Computer Science (Python)",
@@ -1620,6 +1621,8 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   es: {
+    skillValue: "Tu valor de habilidad: ",
+
     "settings.theme.yellow": "Amarillo",
     "settings.theme.pink": "Rosa",
     "settings.theme.select": "Seleccionar tema",
@@ -3178,8 +3181,13 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "language.compsci.english": "Ciencias de la Computación (Python)",
   },
   "py-en": {
-    "settings.theme.yellow": "Yellow",
+    skillValue: "Your skill value: ",
+    "settings.theme.purple": "Purple",
+    "settings.theme.orange": "Orange",
+    "settings.theme.green": "Green",
+    "settings.theme.blue": "Blue",
     "settings.theme.pink": "Pink",
+    "settings.theme.yellow": "Yellow",
     "settings.theme.select": "Select Theme",
 
     startTutorialAndOnboarding:
@@ -4769,8 +4777,13 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "swift-en": {
-    "settings.theme.yellow": "Yellow",
+    skillValue: "Your skill value: ",
+    "settings.theme.purple": "Purple",
+    "settings.theme.orange": "Orange",
+    "settings.theme.green": "Green",
+    "settings.theme.blue": "Blue",
     "settings.theme.pink": "Pink",
+    "settings.theme.yellow": "Yellow",
     "settings.theme.select": "Select Theme",
 
     startTutorialAndOnboarding:
@@ -6362,8 +6375,13 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "android-en": {
-    "settings.theme.yellow": "Yellow",
+    skillValue: "Your skill value: ",
+    "settings.theme.purple": "Purple",
+    "settings.theme.orange": "Orange",
+    "settings.theme.green": "Green",
+    "settings.theme.blue": "Blue",
     "settings.theme.pink": "Pink",
+    "settings.theme.yellow": "Yellow",
     "settings.theme.select": "Select Theme",
 
     startTutorialAndOnboarding:
@@ -7955,8 +7973,13 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "compsci-en": {
-    "settings.theme.yellow": "Yellow",
+    "settings.theme.purple": "Purple",
+    "settings.theme.orange": "Orange",
+    "settings.theme.green": "Green",
+    "settings.theme.blue": "Blue",
     "settings.theme.pink": "Pink",
+    "settings.theme.yellow": "Yellow",
+
     "settings.theme.select": "Select Theme",
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",

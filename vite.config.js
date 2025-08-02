@@ -17,7 +17,7 @@ export default defineConfig({
     react(),
     VitePWA({
       workbox: {
-        maximumFileSizeToCacheInBytes: 6550000, // Set to 4MB or any higher value
+        maximumFileSizeToCacheInBytes: 6650000, // Set to 4MB or any higher value
       },
       manifest: {
         name: "Robots Building Education",
