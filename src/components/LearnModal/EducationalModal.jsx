@@ -66,8 +66,11 @@ export const newTheme = {
   h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   strong: (props) => {
-    const color =
-      highlightColors[Math.floor(Math.random() * highlightColors.length)];
+    const content = React.Children.toArray(props.children).join("");
+    const hash = content
+      .split("")
+      .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const color = highlightColors[hash % highlightColors.length];
     return (
       <Text
         as="span"
