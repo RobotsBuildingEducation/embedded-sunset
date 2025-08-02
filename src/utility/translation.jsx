@@ -1040,9 +1040,9 @@ reverse(head) {
     "modal.openSocialWallet.instructions":
       "Don't forget your keys before leaving!",
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
-    "modal.learn.title": "Learn",
+    "modal.learn.title": "Level Up!",
     "modal.learn.instructions":
-      "Give us a few seconds to create quick lesson notes.",
+      "🎮 Gear up! We're forging your **quest notes**. Key concepts will shine for extra **XP**!",
     "modal.feedback.title": "Submit Feedback",
     "modal.feedback.contactLabel": "Contact",
     "modal.feedback.contactPlaceholder": "Enter your contact info",
@@ -2785,9 +2785,9 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "modal.openSocialWallet.instructions":
       "¡No olvides tus claves antes de irte!",
     "modal.openSocialWallet.startButton": "Ir a la Billetera Social",
-    "modal.learn.title": "Aprender",
+    "modal.learn.title": "¡Sube de nivel!",
     "modal.learn.instructions":
-      "Danos unos segundos para crear notas rápidas de la lección.",
+      "🎮 ¡Prepárate! Estamos forjando tus **notas de misión**. Los conceptos clave brillarán para ganar **XP** extra!",
     "modal.feedback.title": "Enviar comentarios",
     "modal.feedback.contactLabel": "Contacto",
     "modal.feedback.contactPlaceholder": "Ingrese su información de contacto",
@@ -4203,9 +4203,9 @@ reverse(head) {
     "modal.openSocialWallet.instructions":
       "Don't forget your keys before leaving!",
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
-    "modal.learn.title": "Learn",
+    "modal.learn.title": "Level Up!",
     "modal.learn.instructions":
-      "Give us a few seconds to create quick lesson notes.",
+      "🎮 Gear up! We're forging your **quest notes**. Key concepts will shine for extra **XP**!",
     "modal.feedback.title": "Submit Feedback",
     "modal.feedback.contactLabel": "Contact",
     "modal.feedback.contactPlaceholder": "Enter your contact info",
@@ -5801,9 +5801,9 @@ reverse(head) {
     "modal.openSocialWallet.instructions":
       "Don't forget your keys before leaving!",
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
-    "modal.learn.title": "Learn",
+    "modal.learn.title": "Level Up!",
     "modal.learn.instructions":
-      "Give us a few seconds to create quick lesson notes.",
+      "🎮 Gear up! We're forging your **quest notes**. Key concepts will shine for extra **XP**!",
     "modal.feedback.title": "Submit Feedback",
     "modal.feedback.contactLabel": "Contact",
     "modal.feedback.contactPlaceholder": "Enter your contact info",
@@ -7399,9 +7399,9 @@ reverse(head) {
     "modal.openSocialWallet.instructions":
       "Don't forget your keys before leaving!",
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
-    "modal.learn.title": "Learn",
+    "modal.learn.title": "Level Up!",
     "modal.learn.instructions":
-      "Give us a few seconds to create quick lesson notes.",
+      "🎮 Gear up! We're forging your **quest notes**. Key concepts will shine for extra **XP**!",
     "modal.feedback.title": "Submit Feedback",
     "modal.feedback.contactLabel": "Contact",
     "modal.feedback.contactPlaceholder": "Enter your contact info",
@@ -8995,9 +8995,9 @@ reverse(head) {
     "modal.openSocialWallet.instructions":
       "Don't forget your keys before leaving!",
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
-    "modal.learn.title": "Learn",
+    "modal.learn.title": "Level Up!",
     "modal.learn.instructions":
-      "Give us a few seconds to create quick lesson notes.",
+      "🎮 Gear up! We're forging your **quest notes**. Key concepts will shine for extra **XP**!",
     "modal.feedback.title": "Submit Feedback",
     "modal.feedback.contactLabel": "Contact",
     "modal.feedback.contactPlaceholder": "Enter your contact info",
