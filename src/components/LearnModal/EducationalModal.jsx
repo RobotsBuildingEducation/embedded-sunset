@@ -55,15 +55,17 @@ export const newTheme = {
   ol: (props) => <UnorderedList as="ol" pl={6} spacing={2} {...props} />, 
   li: (props) => <ListItem mb={1} {...props} />, 
   h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />, 
-  h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />, 
+  h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   strong: (props) => (
     <Text
       as="span"
-      bg="yellow.200"
+      bgGradient="linear(to-r, purple.600, cyan.400)"
+      color="white"
       px={1}
       borderRadius="md"
-      fontWeight="bold"
+      fontWeight="extrabold"
+      textShadow="0 0 6px rgba(0,0,0,0.6)"
       {...props}
     />
   ),
@@ -402,9 +404,13 @@ const EducationalModal = ({
                   )}
                 </div>
                 &nbsp;
-                <div style={{ color: "white" }}>
+                <Text
+                  bgGradient="linear(to-r, purple.400, cyan.300)"
+                  bgClip="text"
+                  fontWeight="extrabold"
+                >
                   {translation[userLanguage]["modal.learn.title"]}
-                </div>
+                </Text>
               </HStack>
             </ModalHeader>
 
@@ -486,7 +492,13 @@ const EducationalModal = ({
                   {/* // )} */}
                 </div>
                 &nbsp;
-                <div>{translation[userLanguage]["modal.learn.title"]}</div>
+                <Text
+                  bgGradient="linear(to-r, purple.400, cyan.300)"
+                  bgClip="text"
+                  fontWeight="extrabold"
+                >
+                  {translation[userLanguage]["modal.learn.title"]}
+                </Text>
               </HStack>
             </ModalHeader>
 
