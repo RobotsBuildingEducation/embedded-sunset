@@ -169,7 +169,7 @@ import { Onboarding } from "./Onboarding";
 import { newTheme } from "./App.theme";
 import { InstallAppModal } from "./components/InstallModal/InstallModal";
 
-import { motion, animate } from "framer-motion";
+import { motion, animate, useAnimation } from "framer-motion";
 import { Delaunay } from "d3-delaunay";
 import StudyGuideModal from "./components/StudyGuideModal/StudyGuideModal";
 import { CodeEditor } from "./components/CodeEditor/CodeEditor";
@@ -1836,6 +1836,7 @@ const Step = ({
 
   const [animatedProgress, setAnimatedProgress] = useState(calculateProgress());
   const previousProgressRef = useRef(calculateProgress());
+  const progressControls = useAnimation();
 
   useEffect(() => {
     const newProgress = calculateProgress();
@@ -1847,6 +1848,18 @@ const Step = ({
     previousProgressRef.current = newProgress;
     return () => controls.stop();
   }, [currentStep]);
+
+  useEffect(() => {
+    progressControls.start({
+      scale: [1, 1.1, 1],
+      boxShadow: [
+        "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+        "0 0 8px rgba(255,215,0,0.8)",
+        "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+      ],
+      transition: { duration: 0.6 },
+    });
+  }, [currentStep, progressControls]);
 
   // Handle input change
   const handleInputChange = (value, resetter = null) => {
@@ -2866,17 +2879,8 @@ const Step = ({
               &nbsp;
             </span>
             <MotionProgress
-              key={currentStep}
               initial={{ scale: 1 }}
-              animate={{
-                scale: [1, 1.1, 1],
-                boxShadow: [
-                  "0 0 0px rgba(255,215,0,0)",
-                  "0 0 8px rgba(255,215,0,0.8)",
-                  "0 0 0px rgba(255,215,0,0)",
-                ],
-              }}
-              transition={{ duration: 0.6 }}
+              animate={progressControls}
               opacity="0.8"
               value={animatedProgress}
               size="md"
