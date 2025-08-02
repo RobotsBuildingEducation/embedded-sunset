@@ -1842,7 +1842,7 @@ const Step = ({
     const newProgress = calculateProgress();
     const controls = animate(previousProgressRef.current, newProgress, {
       duration: 0.8,
-      ease: "easeOut",
+      ease: "easeInOut",
       onUpdate: (v) => setAnimatedProgress(v),
     });
     previousProgressRef.current = newProgress;
@@ -1851,7 +1851,7 @@ const Step = ({
 
   useEffect(() => {
     progressControls.start({
-      scale: [1, 1.1, 1],
+      scale: [1, 1.025, 1],
       boxShadow: [
         "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
         "0 0 8px rgba(255,215,0,0.8)",
@@ -2642,10 +2642,6 @@ const Step = ({
     localStorage.getItem("passcode") ===
       import.meta.env.VITE_PATREON_PASSCODE || hasSubmittedPasscode;
 
-  console.log(
-    "               {loot[currentStep][userLanguage]}",
-    loot[currentStep][userLanguage]
-  );
   return (
     <VStack spacing={4} width="100%" mt={6} p={4}>
       {/* <OrbCanvas width={500} height={500} /> */}
@@ -2869,51 +2865,55 @@ const Step = ({
               </Box>
               <br />
             </span>
-            <span style={{ fontSize: "50%" }}>
-              {translation[userLanguage]["app.progress"]}:{" "}
-              {animatedProgress.toFixed(2)}% |{" "}
-              {translation[userLanguage]["chapter"]}: {step.group}&nbsp;|&nbsp;
-              {translation[userLanguage]["app.streak"]}: {streak}
-              &nbsp;|&nbsp;{translation[userLanguage]["goal"] + "s"}:{" "}
-              {String(goalCount) || "0"}
-              &nbsp;
-            </span>
-            <MotionProgress
-              initial={{ scale: 1 }}
-              animate={progressControls}
-              opacity="0.8"
-              value={animatedProgress}
-              size="md"
-              colorScheme={getColorScheme(step.group)}
-              width="80%"
-              hasStripe
-              isAnimated
-              borderRadius="4px"
-              border="1px solid #ececec"
-              boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-              background={getBackgroundScheme(step.group)}
-              mb={userLanguage !== "compsci-en" ? 0 : 4}
-              sx={{
-                "& > div": {
-                  background: "linear-gradient(270deg, #f6ad55, #fbd38d, #f6ad55)",
-                  backgroundSize: "200% 200%",
-                  animation: `${progressGradient} 60s linear infinite`,
-                },
-              }}
-            />
-            {userLanguage !== "compsci-en" ? (
-              <Text
-                color="yellow.600"
-                fontWeight={"bold"}
-                style={{ fontSize: "50%", marginBottom: "4px" }}
-              >
-                {translation[userLanguage]["skillValue"]}$
-                {currentStep === 0 || currentStep === 1
-                  ? 0
-                  : loot[currentStep - 1]["monetaryValue"]}
-              </Text>
-            ) : null}
-
+            <VStack width="100%">
+              <span style={{ fontSize: "50%" }}>
+                {translation[userLanguage]["app.progress"]}:{" "}
+                {animatedProgress.toFixed(2)}% |{" "}
+                {translation[userLanguage]["chapter"]}: {step.group}
+                &nbsp;|&nbsp;
+                {translation[userLanguage]["app.streak"]}: {streak}
+                &nbsp;|&nbsp;{translation[userLanguage]["goal"] + "s"}:{" "}
+                {String(goalCount) || "0"}
+                &nbsp;
+              </span>
+              <MotionProgress
+                height="20px"
+                initial={{ scale: 1 }}
+                animate={progressControls}
+                opacity="0.8"
+                value={animatedProgress}
+                size="md"
+                colorScheme={getColorScheme(step.group)}
+                width="80%"
+                hasStripe
+                isAnimated
+                borderRadius="4px"
+                border="1px solid #ececec"
+                boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                background={getBackgroundScheme(step.group)}
+                mb={userLanguage !== "compsci-en" ? 0 : 4}
+                sx={{
+                  "& > div": {
+                    background:
+                      "linear-gradient(270deg, #f6ad55, #fbd38d, #f6ad55)",
+                    backgroundSize: "200% 200%",
+                    animation: `${progressGradient} 7s ease-in-out  infinite`,
+                  },
+                }}
+              />
+              {userLanguage !== "compsci-en" ? (
+                <Text
+                  color="yellow.600"
+                  fontWeight={"bold"}
+                  style={{ fontSize: "50%", marginBottom: "4px" }}
+                >
+                  {translation[userLanguage]["skillValue"]}$
+                  {currentStep === 0 || currentStep === 1
+                    ? 0
+                    : loot[currentStep - 1]["monetaryValue"]}
+                </Text>
+              ) : null}
+            </VStack>
             {/* {calculateBalance() > 0 ? (
               <HStack
                 style={{ marginTop: "-12px", width: "100%" }}
