@@ -49,26 +49,37 @@ import { LuSend } from "react-icons/lu";
 import { isUnsupportedBrowser } from "../../utility/browser";
 import { InstallAppModal } from "../InstallModal/InstallModal";
 
+const highlightColors = [
+  "green.300",
+  "yellow.300",
+  "purple.300",
+  "orange.300",
+  "blue.300",
+];
+
 export const newTheme = {
-  p: (props) => <Text mb={2} lineHeight="1.6" {...props} />, 
-  ul: (props) => <UnorderedList pl={6} spacing={2} {...props} />, 
-  ol: (props) => <UnorderedList as="ol" pl={6} spacing={2} {...props} />, 
-  li: (props) => <ListItem mb={1} {...props} />, 
-  h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />, 
+  p: (props) => <Text mb={2} lineHeight="1.6" {...props} />,
+  ul: (props) => <UnorderedList pl={6} spacing={2} {...props} />,
+  ol: (props) => <UnorderedList as="ol" pl={6} spacing={2} {...props} />,
+  li: (props) => <ListItem mb={1} {...props} />,
+  h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  strong: (props) => (
-    <Text
-      as="span"
-      bgGradient="linear(to-r, purple.600, cyan.400)"
-      color="white"
-      px={1}
-      borderRadius="md"
-      fontWeight="extrabold"
-      textShadow="0 0 6px rgba(0,0,0,0.6)"
-      {...props}
-    />
-  ),
+  strong: (props) => {
+    const color =
+      highlightColors[Math.floor(Math.random() * highlightColors.length)];
+    return (
+      <Text
+        as="span"
+        bg={color}
+        color="black"
+        px={1}
+        borderRadius="md"
+        fontWeight="extrabold"
+        {...props}
+      />
+    );
+  },
   code: ({ inline, className, children, ...props }) => {
     const match = /language-(\w+)/.exec(className || "");
 
@@ -404,13 +415,9 @@ const EducationalModal = ({
                   )}
                 </div>
                 &nbsp;
-                <Text
-                  bgGradient="linear(to-r, purple.400, cyan.300)"
-                  bgClip="text"
-                  fontWeight="extrabold"
-                >
+                <div style={{ color: "white" }}>
                   {translation[userLanguage]["modal.learn.title"]}
-                </Text>
+                </div>
               </HStack>
             </ModalHeader>
 
@@ -492,13 +499,7 @@ const EducationalModal = ({
                   {/* // )} */}
                 </div>
                 &nbsp;
-                <Text
-                  bgGradient="linear(to-r, purple.400, cyan.300)"
-                  bgClip="text"
-                  fontWeight="extrabold"
-                >
-                  {translation[userLanguage]["modal.learn.title"]}
-                </Text>
+                <div>{translation[userLanguage]["modal.learn.title"]}</div>
               </HStack>
             </ModalHeader>
 

@@ -1040,7 +1040,7 @@ reverse(head) {
     "modal.openSocialWallet.instructions":
       "Don't forget your keys before leaving!",
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
-    "modal.learn.title": "Level Up!",
+    "modal.learn.title": "Learn",
     "modal.learn.instructions":
       "🛡️ Ready up, hero! Your **quest log** is loading in epic colors. Watch key spells glow with **legendary** hues for bonus **XP**!",
     "modal.feedback.title": "Submit Feedback",
@@ -2785,7 +2785,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "modal.openSocialWallet.instructions":
       "¡No olvides tus claves antes de irte!",
     "modal.openSocialWallet.startButton": "Ir a la Billetera Social",
-    "modal.learn.title": "¡Sube de nivel!",
+    "modal.learn.title": "Aprender",
     "modal.learn.instructions":
       "🛡️ ¡Prepárate, héroe! Tu **registro de misión** se está cargando con colores épicos. Observa cómo los hechizos clave brillan con tonos **legendarios** para obtener **XP** extra!",
     "modal.feedback.title": "Enviar comentarios",
@@ -4203,7 +4203,7 @@ reverse(head) {
     "modal.openSocialWallet.instructions":
       "Don't forget your keys before leaving!",
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
-    "modal.learn.title": "Level Up!",
+    "modal.learn.title": "Learn",
     "modal.learn.instructions":
       "🛡️ Ready up, hero! Your **quest log** is loading in epic colors. Watch key spells glow with **legendary** hues for bonus **XP**!",
     "modal.feedback.title": "Submit Feedback",
@@ -5801,7 +5801,7 @@ reverse(head) {
     "modal.openSocialWallet.instructions":
       "Don't forget your keys before leaving!",
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
-    "modal.learn.title": "Level Up!",
+    "modal.learn.title": "Learn",
     "modal.learn.instructions":
       "🛡️ Ready up, hero! Your **quest log** is loading in epic colors. Watch key spells glow with **legendary** hues for bonus **XP**!",
     "modal.feedback.title": "Submit Feedback",
@@ -7399,7 +7399,7 @@ reverse(head) {
     "modal.openSocialWallet.instructions":
       "Don't forget your keys before leaving!",
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
-    "modal.learn.title": "Level Up!",
+    "modal.learn.title": "Learn",
     "modal.learn.instructions":
       "🛡️ Ready up, hero! Your **quest log** is loading in epic colors. Watch key spells glow with **legendary** hues for bonus **XP**!",
     "modal.feedback.title": "Submit Feedback",
@@ -8995,7 +8995,7 @@ reverse(head) {
     "modal.openSocialWallet.instructions":
       "Don't forget your keys before leaving!",
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
-    "modal.learn.title": "Level Up!",
+    "modal.learn.title": "Learn",
     "modal.learn.instructions":
       "🛡️ Ready up, hero! Your **quest log** is loading in epic colors. Watch key spells glow with **legendary** hues for bonus **XP**!",
     "modal.feedback.title": "Submit Feedback",
