@@ -34,7 +34,6 @@ import {
   MenuItem,
   Tooltip,
   Center,
-  keyframes,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
@@ -170,6 +169,7 @@ import { newTheme } from "./App.theme";
 import { InstallAppModal } from "./components/InstallModal/InstallModal";
 
 import { motion, animate, useAnimation } from "framer-motion";
+import { keyframes } from "@emotion/react";
 import { Delaunay } from "d3-delaunay";
 import StudyGuideModal from "./components/StudyGuideModal/StudyGuideModal";
 import { CodeEditor } from "./components/CodeEditor/CodeEditor";
@@ -210,7 +210,7 @@ const applySymbolMappings = (text) => {
 
 const progressGradient = keyframes`
   0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
+  100% { background-position: 200% 50%; }
 `;
 
 const MotionProgress = motion(Progress);
@@ -2897,7 +2897,7 @@ const Step = ({
                 "& > div": {
                   background: "linear-gradient(270deg, #f6ad55, #fbd38d, #f6ad55)",
                   backgroundSize: "200% 200%",
-                  animation: `${progressGradient} 2s linear infinite`,
+                  animation: `${progressGradient} 60s linear infinite`,
                 },
               }}
             />
