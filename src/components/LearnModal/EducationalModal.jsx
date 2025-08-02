@@ -49,6 +49,14 @@ import { LuSend } from "react-icons/lu";
 import { isUnsupportedBrowser } from "../../utility/browser";
 import { InstallAppModal } from "../InstallModal/InstallModal";
 
+const highlightColors = [
+  "green.300",
+  "yellow.300",
+  "purple.300",
+  "orange.300",
+  "blue.300",
+];
+
 export const newTheme = {
   p: (props) => <Text mb={2} lineHeight="1.6" {...props} />,
   ul: (props) => <UnorderedList pl={6} spacing={2} {...props} />,
@@ -57,6 +65,24 @@ export const newTheme = {
   h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  strong: (props) => {
+    const content = React.Children.toArray(props.children).join("");
+    const hash = content
+      .split("")
+      .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const color = highlightColors[hash % highlightColors.length];
+    return (
+      <Text
+        as="span"
+        bg={color}
+        color="black"
+        px={1}
+        borderRadius="md"
+        fontWeight="extrabold"
+        {...props}
+      />
+    );
+  },
   code: ({ inline, className, children, ...props }) => {
     const match = /language-(\w+)/.exec(className || "");
 
@@ -415,16 +441,12 @@ const EducationalModal = ({
                   <OrbCanvas
                     hasStreamedText={false}
                     instructions={
-                      <Text fontWeight={"bold"} fontSize="xl">
-                        {" "}
-                        {translation[userLanguage]["modal.learn.instructions"]}
-                        <br />
-                        <br />
-                        {
+                      <Markdown components={ChakraUIRenderer(newTheme)}>
+                        {`${translation[userLanguage]["modal.learn.instructions"]}\n\n${
                           educationalMessages[educationalMessages.length - 1]
-                            ?.content
-                        }
-                      </Text>
+                            ?.content || ""
+                        }`}
+                      </Markdown>
                     }
                   />
                   {/* // ) : ( // )}  */}
