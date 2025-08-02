@@ -51,71 +51,71 @@ import { InstallAppModal } from "../InstallModal/InstallModal";
 
 const highlightColors = [
   "green.300",
-  "yellow.300",
-  "purple.300",
-  "orange.300",
   "blue.300",
+  "yellow.300",
+  "orange.300",
+  "purple.300",
 ];
+export const newTheme = () => {
+  let highlightIndex = 0;
+  return {
+    p: (props) => <Text mb={2} lineHeight="1.6" {...props} />,
+    ul: (props) => <UnorderedList pl={6} spacing={2} {...props} />,
+    ol: (props) => <UnorderedList as="ol" pl={6} spacing={2} {...props} />,
+    li: (props) => <ListItem mb={1} {...props} />,
+    h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+    h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+    h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+    strong: (props) => {
+      const color =
+        highlightColors[Math.min(highlightIndex, highlightColors.length - 1)];
+      highlightIndex += 1;
+      return (
+        <Text
+          as="span"
+          bg={color}
+          color="black"
+          px={1}
+          borderRadius="md"
+          fontWeight="extrabold"
+          {...props}
+        />
+      );
+    },
+    code: ({ inline, className, children, ...props }) => {
+      const match = /language-(\w+)/.exec(className || "");
 
-export const newTheme = {
-  p: (props) => <Text mb={2} lineHeight="1.6" {...props} />,
-  ul: (props) => <UnorderedList pl={6} spacing={2} {...props} />,
-  ol: (props) => <UnorderedList as="ol" pl={6} spacing={2} {...props} />,
-  li: (props) => <ListItem mb={1} {...props} />,
-  h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  strong: (props) => {
-    const content = React.Children.toArray(props.children).join("");
-    const hash = content
-      .split("")
-      .reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const color = highlightColors[hash % highlightColors.length];
-    return (
-      <Text
-        as="span"
-        bg={color}
-        color="black"
-        px={1}
-        borderRadius="md"
-        fontWeight="extrabold"
-        {...props}
-      />
-    );
-  },
-  code: ({ inline, className, children, ...props }) => {
-    const match = /language-(\w+)/.exec(className || "");
-
-    return !inline && match ? (
-      <SyntaxHighlighter
-        // backgroundColor="white"
-        // style={"light"}
-        language={match[1]}
-        PreTag="div"
-        customStyle={{
-          backgroundColor: "white", // Match this with the desired color
-          color: "black", // Ensure the text matches the background
-          padding: "1rem",
-          borderRadius: "8px",
-          fontSize: 12,
-        }}
-        {...props}
-      >
-        {String(children).replace(/\n$/, "")}
-      </SyntaxHighlighter>
-    ) : (
-      <Box
-        as="code"
-        backgroundColor="gray.100"
-        p={1}
-        borderRadius="md"
-        fontSize="sm"
-        {...props}
-      >
-        {children}
-      </Box>
-    );
-  },
+      return !inline && match ? (
+        <SyntaxHighlighter
+          // backgroundColor="white"
+          // style={"light"}
+          language={match[1]}
+          PreTag="div"
+          customStyle={{
+            backgroundColor: "white", // Match this with the desired color
+            color: "black", // Ensure the text matches the background
+            padding: "1rem",
+            borderRadius: "8px",
+            fontSize: 12,
+          }}
+          {...props}
+        >
+          {String(children).replace(/\n$/, "")}
+        </SyntaxHighlighter>
+      ) : (
+        <Box
+          as="code"
+          backgroundColor="gray.100"
+          p={1}
+          borderRadius="md"
+          fontSize="sm"
+          {...props}
+        >
+          {children}
+        </Box>
+      );
+    },
+  };
 };
 
 const EducationalModal = ({
@@ -441,7 +441,7 @@ const EducationalModal = ({
                   <OrbCanvas
                     hasStreamedText={false}
                     instructions={
-                      <Markdown components={ChakraUIRenderer(newTheme)}>
+                      <Markdown components={ChakraUIRenderer(newTheme())}>
                         {`${translation[userLanguage]["modal.learn.instructions"]}\n\n${
                           educationalMessages[educationalMessages.length - 1]
                             ?.content || ""
@@ -535,7 +535,7 @@ const EducationalModal = ({
                       width="100%"
                     >
                       <Markdown
-                        components={ChakraUIRenderer(newTheme)}
+                        components={ChakraUIRenderer(newTheme())}
                         children={content.content}
                       />
                     </Box>
@@ -559,7 +559,7 @@ const EducationalModal = ({
                           borderRadius="16px"
                           boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                         >
-                          <Markdown components={ChakraUIRenderer(newTheme)}>
+                          <Markdown components={ChakraUIRenderer(newTheme())}>
                             {msg.content}
                           </Markdown>
                         </Box>
@@ -572,7 +572,7 @@ const EducationalModal = ({
                         borderRadius="md"
                         width="100%"
                       >
-                        <Markdown components={ChakraUIRenderer(newTheme)}>
+                        <Markdown components={ChakraUIRenderer(newTheme())}>
                           {msg?.response?.content}
                         </Markdown>
                       </Box>

@@ -68,7 +68,7 @@ export default function PromptWritingQuestion({
       {aiMessages && (
         <Box p={4} bg="gray.50" w="100%" maxW="600px">
           <Markdown
-            components={ChakraUIRenderer(newTheme)}
+            components={ChakraUIRenderer(newTheme())}
             children={`${aiMessages}`}
           />
         </Box>
