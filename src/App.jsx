@@ -168,7 +168,8 @@ import { Onboarding } from "./Onboarding";
 import { newTheme } from "./App.theme";
 import { InstallAppModal } from "./components/InstallModal/InstallModal";
 
-import { motion } from "framer-motion";
+import { motion, animate, useAnimation } from "framer-motion";
+import { keyframes } from "@emotion/react";
 import { Delaunay } from "d3-delaunay";
 import StudyGuideModal from "./components/StudyGuideModal/StudyGuideModal";
 import { CodeEditor } from "./components/CodeEditor/CodeEditor";
@@ -206,6 +207,13 @@ const applySymbolMappings = (text) => {
   });
   return modifiedText;
 };
+
+const progressGradient = keyframes`
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+`;
+
+const MotionProgress = motion(Progress);
 
 const getBoxShadow = (group) => {
   switch (group) {
@@ -1826,6 +1834,33 @@ const Step = ({
     return result;
   };
 
+  const [animatedProgress, setAnimatedProgress] = useState(calculateProgress());
+  const previousProgressRef = useRef(calculateProgress());
+  const progressControls = useAnimation();
+
+  useEffect(() => {
+    const newProgress = calculateProgress();
+    const controls = animate(previousProgressRef.current, newProgress, {
+      duration: 0.8,
+      ease: "easeInOut",
+      onUpdate: (v) => setAnimatedProgress(v),
+    });
+    previousProgressRef.current = newProgress;
+    return () => controls.stop();
+  }, [currentStep]);
+
+  useEffect(() => {
+    progressControls.start({
+      scale: [1, 1.025, 1],
+      boxShadow: [
+        "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+        "0 0 8px rgba(255,215,0,0.8)",
+        "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+      ],
+      transition: { duration: 0.6 },
+    });
+  }, [currentStep, progressControls]);
+
   // Handle input change
   const handleInputChange = (value, resetter = null) => {
     setInputValue(value);
@@ -2607,10 +2642,6 @@ const Step = ({
     localStorage.getItem("passcode") ===
       import.meta.env.VITE_PATREON_PASSCODE || hasSubmittedPasscode;
 
-  console.log(
-    "               {loot[currentStep][userLanguage]}",
-    loot[currentStep][userLanguage]
-  );
   return (
     <VStack spacing={4} width="100%" mt={6} p={4}>
       {/* <OrbCanvas width={500} height={500} /> */}
@@ -2834,42 +2865,55 @@ const Step = ({
               </Box>
               <br />
             </span>
-            <span style={{ fontSize: "50%" }}>
-              {translation[userLanguage]["app.progress"]}:{" "}
-              {calculateProgress().toFixed(2)}% |{" "}
-              {translation[userLanguage]["chapter"]}: {step.group}&nbsp;|&nbsp;
-              {translation[userLanguage]["app.streak"]}: {streak}
-              &nbsp;|&nbsp;{translation[userLanguage]["goal"] + "s"}:{" "}
-              {String(goalCount) || "0"}
-              &nbsp;
-            </span>
-            <Progress
-              opacity="0.8"
-              value={calculateProgress()}
-              size="md"
-              colorScheme={getColorScheme(step.group)}
-              width="80%"
-              // mb={4}
-              borderRadius="4px"
-              border="1px solid #ececec"
-              // boxShadow="0px 0px 0.5px 2px #ececec"
-              boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-              background={getBackgroundScheme(step.group)}
-              mb={userLanguage !== "compsci-en" ? 0 : 4}
-            />
-            {userLanguage !== "compsci-en" ? (
-              <Text
-                color="yellow.600"
-                fontWeight={"bold"}
-                style={{ fontSize: "50%", marginBottom: "4px" }}
-              >
-                {translation[userLanguage]["skillValue"]}$
-                {currentStep === 0 || currentStep === 1
-                  ? 0
-                  : loot[currentStep - 1]["monetaryValue"]}
-              </Text>
-            ) : null}
-
+            <VStack width="100%">
+              <span style={{ fontSize: "50%" }}>
+                {translation[userLanguage]["app.progress"]}:{" "}
+                {animatedProgress.toFixed(2)}% |{" "}
+                {translation[userLanguage]["chapter"]}: {step.group}
+                &nbsp;|&nbsp;
+                {translation[userLanguage]["app.streak"]}: {streak}
+                &nbsp;|&nbsp;{translation[userLanguage]["goal"] + "s"}:{" "}
+                {String(goalCount) || "0"}
+                &nbsp;
+              </span>
+              <MotionProgress
+                height="20px"
+                initial={{ scale: 1 }}
+                animate={progressControls}
+                opacity="0.8"
+                value={animatedProgress}
+                size="md"
+                colorScheme={getColorScheme(step.group)}
+                width="80%"
+                hasStripe
+                isAnimated
+                borderRadius="4px"
+                border="1px solid #ececec"
+                boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                background={getBackgroundScheme(step.group)}
+                mb={userLanguage !== "compsci-en" ? 0 : 4}
+                sx={{
+                  "& > div": {
+                    background:
+                      "linear-gradient(270deg, #f6ad55, #fbd38d, #f6ad55)",
+                    backgroundSize: "200% 200%",
+                    animation: `${progressGradient} 7s ease-in-out  infinite`,
+                  },
+                }}
+              />
+              {userLanguage !== "compsci-en" ? (
+                <Text
+                  color="yellow.600"
+                  fontWeight={"bold"}
+                  style={{ fontSize: "50%", marginBottom: "4px" }}
+                >
+                  {translation[userLanguage]["skillValue"]}$
+                  {currentStep === 0 || currentStep === 1
+                    ? 0
+                    : loot[currentStep - 1]["monetaryValue"]}
+                </Text>
+              ) : null}
+            </VStack>
             {/* {calculateBalance() > 0 ? (
               <HStack
                 style={{ marginTop: "-12px", width: "100%" }}
