@@ -168,7 +168,7 @@ import { Onboarding } from "./Onboarding";
 import { newTheme } from "./App.theme";
 import { InstallAppModal } from "./components/InstallModal/InstallModal";
 
-import { motion } from "framer-motion";
+import { motion, animate } from "framer-motion";
 import { Delaunay } from "d3-delaunay";
 import StudyGuideModal from "./components/StudyGuideModal/StudyGuideModal";
 import { CodeEditor } from "./components/CodeEditor/CodeEditor";
@@ -1826,6 +1826,20 @@ const Step = ({
     return result;
   };
 
+  const [animatedProgress, setAnimatedProgress] = useState(calculateProgress());
+  const previousProgressRef = useRef(calculateProgress());
+
+  useEffect(() => {
+    const newProgress = calculateProgress();
+    const controls = animate(previousProgressRef.current, newProgress, {
+      duration: 0.8,
+      ease: "easeOut",
+      onUpdate: (v) => setAnimatedProgress(v),
+    });
+    previousProgressRef.current = newProgress;
+    return () => controls.stop();
+  }, [currentStep]);
+
   // Handle input change
   const handleInputChange = (value, resetter = null) => {
     setInputValue(value);
@@ -2836,27 +2850,34 @@ const Step = ({
             </span>
             <span style={{ fontSize: "50%" }}>
               {translation[userLanguage]["app.progress"]}:{" "}
-              {calculateProgress().toFixed(2)}% |{" "}
+              {animatedProgress.toFixed(2)}% |{" "}
               {translation[userLanguage]["chapter"]}: {step.group}&nbsp;|&nbsp;
               {translation[userLanguage]["app.streak"]}: {streak}
               &nbsp;|&nbsp;{translation[userLanguage]["goal"] + "s"}:{" "}
               {String(goalCount) || "0"}
               &nbsp;
             </span>
-            <Progress
-              opacity="0.8"
-              value={calculateProgress()}
-              size="md"
-              colorScheme={getColorScheme(step.group)}
-              width="80%"
-              // mb={4}
-              borderRadius="4px"
-              border="1px solid #ececec"
-              // boxShadow="0px 0px 0.5px 2px #ececec"
-              boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-              background={getBackgroundScheme(step.group)}
-              mb={userLanguage !== "compsci-en" ? 0 : 4}
-            />
+            <motion.div
+              key={currentStep}
+              initial={{ scale: 1 }}
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 0.6 }}
+            >
+              <Progress
+                opacity="0.8"
+                value={animatedProgress}
+                size="md"
+                colorScheme={getColorScheme(step.group)}
+                width="80%"
+                hasStripe
+                isAnimated
+                borderRadius="4px"
+                border="1px solid #ececec"
+                boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                background={getBackgroundScheme(step.group)}
+                mb={userLanguage !== "compsci-en" ? 0 : 4}
+              />
+            </motion.div>
             {userLanguage !== "compsci-en" ? (
               <Text
                 color="yellow.600"
