@@ -1042,7 +1042,7 @@ reverse(head) {
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
     "modal.learn.title": "Learn",
     "modal.learn.instructions":
-      "🛡️ Ready up, hero! Your **quest log** is loading in epic colors. Watch key spells glow with **legendary** hues for bonus **XP**!",
+      "Give us a few seconds to generate notes based on your progress.",
     "modal.feedback.title": "Submit Feedback",
     "modal.feedback.contactLabel": "Contact",
     "modal.feedback.contactPlaceholder": "Enter your contact info",
@@ -2787,7 +2787,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "modal.openSocialWallet.startButton": "Ir a la Billetera Social",
     "modal.learn.title": "Aprender",
     "modal.learn.instructions":
-      "🛡️ ¡Prepárate, héroe! Tu **registro de misión** se está cargando con colores épicos. Observa cómo los hechizos clave brillan con tonos **legendarios** para obtener **XP** extra!",
+      "Danos unos segundos para generar notas basadas en tu progreso.",
     "modal.feedback.title": "Enviar comentarios",
     "modal.feedback.contactLabel": "Contacto",
     "modal.feedback.contactPlaceholder": "Ingrese su información de contacto",
@@ -4205,7 +4205,7 @@ reverse(head) {
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
     "modal.learn.title": "Learn",
     "modal.learn.instructions":
-      "🛡️ Ready up, hero! Your **quest log** is loading in epic colors. Watch key spells glow with **legendary** hues for bonus **XP**!",
+      "Give us a few seconds to generate notes based on your progress.",
     "modal.feedback.title": "Submit Feedback",
     "modal.feedback.contactLabel": "Contact",
     "modal.feedback.contactPlaceholder": "Enter your contact info",
@@ -5803,7 +5803,7 @@ reverse(head) {
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
     "modal.learn.title": "Learn",
     "modal.learn.instructions":
-      "🛡️ Ready up, hero! Your **quest log** is loading in epic colors. Watch key spells glow with **legendary** hues for bonus **XP**!",
+      "Give us a few seconds to generate notes based on your progress.",
     "modal.feedback.title": "Submit Feedback",
     "modal.feedback.contactLabel": "Contact",
     "modal.feedback.contactPlaceholder": "Enter your contact info",
@@ -7401,7 +7401,7 @@ reverse(head) {
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
     "modal.learn.title": "Learn",
     "modal.learn.instructions":
-      "🛡️ Ready up, hero! Your **quest log** is loading in epic colors. Watch key spells glow with **legendary** hues for bonus **XP**!",
+      "Give us a few seconds to generate notes based on your progress.",
     "modal.feedback.title": "Submit Feedback",
     "modal.feedback.contactLabel": "Contact",
     "modal.feedback.contactPlaceholder": "Enter your contact info",
@@ -8997,7 +8997,7 @@ reverse(head) {
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
     "modal.learn.title": "Learn",
     "modal.learn.instructions":
-      "🛡️ Ready up, hero! Your **quest log** is loading in epic colors. Watch key spells glow with **legendary** hues for bonus **XP**!",
+      "Give us a few seconds to generate notes based on your progress.",
     "modal.feedback.title": "Submit Feedback",
     "modal.feedback.contactLabel": "Contact",
     "modal.feedback.contactPlaceholder": "Enter your contact info",
