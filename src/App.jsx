@@ -34,6 +34,7 @@ import {
   MenuItem,
   Tooltip,
   Center,
+  keyframes,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
@@ -206,6 +207,13 @@ const applySymbolMappings = (text) => {
   });
   return modifiedText;
 };
+
+const progressGradient = keyframes`
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+`;
+
+const MotionProgress = motion(Progress);
 
 const getBoxShadow = (group) => {
   switch (group) {
@@ -2857,27 +2865,38 @@ const Step = ({
               {String(goalCount) || "0"}
               &nbsp;
             </span>
-            <motion.div
+            <MotionProgress
               key={currentStep}
               initial={{ scale: 1 }}
-              animate={{ scale: [1, 1.1, 1] }}
+              animate={{
+                scale: [1, 1.1, 1],
+                boxShadow: [
+                  "0 0 0px rgba(255,215,0,0)",
+                  "0 0 8px rgba(255,215,0,0.8)",
+                  "0 0 0px rgba(255,215,0,0)",
+                ],
+              }}
               transition={{ duration: 0.6 }}
-            >
-              <Progress
-                opacity="0.8"
-                value={animatedProgress}
-                size="md"
-                colorScheme={getColorScheme(step.group)}
-                width="80%"
-                hasStripe
-                isAnimated
-                borderRadius="4px"
-                border="1px solid #ececec"
-                boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                background={getBackgroundScheme(step.group)}
-                mb={userLanguage !== "compsci-en" ? 0 : 4}
-              />
-            </motion.div>
+              opacity="0.8"
+              value={animatedProgress}
+              size="md"
+              colorScheme={getColorScheme(step.group)}
+              width="80%"
+              hasStripe
+              isAnimated
+              borderRadius="4px"
+              border="1px solid #ececec"
+              boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+              background={getBackgroundScheme(step.group)}
+              mb={userLanguage !== "compsci-en" ? 0 : 4}
+              sx={{
+                "& > div": {
+                  background: "linear-gradient(270deg, #f6ad55, #fbd38d, #f6ad55)",
+                  backgroundSize: "200% 200%",
+                  animation: `${progressGradient} 2s linear infinite`,
+                },
+              }}
+            />
             {userLanguage !== "compsci-en" ? (
               <Text
                 color="yellow.600"
