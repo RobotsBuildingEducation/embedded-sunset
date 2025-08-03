@@ -3,8 +3,6 @@ import { VStack, Textarea, Button, Box } from "@chakra-ui/react";
 import Markdown from "react-markdown";
 import { useSimpleGeminiChat } from "../../hooks/useGeminiChat";
 import { useChatCompletion } from "../../hooks/useChatCompletion";
-import { newTheme } from "../LearnModal/EducationalModal";
-import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 
 export default function PromptWritingQuestion({
   question,
@@ -14,7 +12,7 @@ export default function PromptWritingQuestion({
   onSubmitPrompt, // we'll hook into Step’s submit logic
 }) {
   const [promptText, setPromptText] = useState("");
-  const [aiMessages, setAiMessages] = useState([]);
+  const [aiMessages, setAiMessages] = useState("");
   const { messages: streamMsgs, submitPrompt: runPrompt } =
     useSimpleGeminiChat();
   const { submitPrompt: gradePrompt } = useChatCompletion({
@@ -30,7 +28,8 @@ export default function PromptWritingQuestion({
   // collect streaming output
   useEffect(() => {
     if (streamMsgs.length) {
-      setAiMessages(streamMsgs.map((m) => m.content).join(""));
+      const combined = streamMsgs.map((m) => m.content).join("");
+      setAiMessages(combined.trimStart());
     }
   }, [streamMsgs]);
 
@@ -67,10 +66,7 @@ export default function PromptWritingQuestion({
       </Button>
       {aiMessages && (
         <Box p={4} bg="gray.50" w="100%" maxW="600px">
-          <Markdown
-            components={ChakraUIRenderer(newTheme)}
-            children={`${aiMessages}`}
-          />
+          <Markdown>{aiMessages}</Markdown>
         </Box>
       )}
       <Button onClick={handleSubmit} colorScheme="green">

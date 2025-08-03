@@ -304,6 +304,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
   };
 
   const handleSave = async () => {
+    window.scrollTo(0, 0);
     await saveBuild(code, "conversation");
     onContinue();
   };
