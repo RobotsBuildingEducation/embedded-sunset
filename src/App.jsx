@@ -2503,6 +2503,21 @@ const Step = ({
     return lightenColor(color, 0.9); // Lighten by 50%
   };
 
+  const getBorderColor = (group) => {
+    const colorMap = {
+      introduction: "#808080", // Gray
+      tutorial: "#808080", // Gray
+      1: "#ff69b4", // Pink
+      2: "#800080", // Purple
+      3: "#00ffff", // Cyan
+      4: "#0000ff", // Blue
+      5: "#008080", // Teal
+      6: "#008000", // Green
+    };
+
+    return colorMap[group] || "#800080"; // Fallback to pink
+  };
+
   let emailText = emailStep;
   if (emailText) {
     if (emailText?.question?.answer) {
@@ -2717,7 +2732,8 @@ const Step = ({
                     width="24px"
                     height="30px"
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                    // border="1px solid #ececec"
+                    border="1px solid"
+                    borderColor={getBorderColor(step.group)}
                     background="pink.100"
                     opacity="0.75"
                     color="pink.600"
