@@ -443,9 +443,9 @@ const EducationalModal = ({
                     instructions={
                       <Markdown components={ChakraUIRenderer(newTheme())}>
                         {`${translation[userLanguage]["modal.learn.instructions"]}\n\n${
-                          educationalMessages[educationalMessages.length - 1]
-                            ?.content || ""
-                        }`}
+                          educationalMessages[educationalMessages.length - 1]?.content ||
+                          ""
+                        }`.trimStart()}
                       </Markdown>
                     }
                   />
@@ -536,7 +536,7 @@ const EducationalModal = ({
                     >
                       <Markdown
                         components={ChakraUIRenderer(newTheme())}
-                        children={content.content}
+                        children={content.content.trimStart()}
                       />
                     </Box>
                   ))}
@@ -560,7 +560,7 @@ const EducationalModal = ({
                           boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                         >
                           <Markdown components={ChakraUIRenderer(newTheme())}>
-                            {msg.content}
+                            {msg.content.trimStart()}
                           </Markdown>
                         </Box>
                       </Box>
@@ -573,7 +573,7 @@ const EducationalModal = ({
                         width="100%"
                       >
                         <Markdown components={ChakraUIRenderer(newTheme())}>
-                          {msg?.response?.content}
+                          {(msg?.response?.content || "").trimStart()}
                         </Markdown>
                       </Box>
                     </>
