@@ -2518,7 +2518,7 @@ const Step = ({
   const getBorderColor = (group) => {
     const colorMap = {
       introduction: "#808080", // Gray
-      tutorial: "#008000", // Gray
+      tutorial: "#efg321", // Gray
       1: "#0000ff", // Pink
       2: "#800080", // Purple
       3: "#f7bc78", // Gold
