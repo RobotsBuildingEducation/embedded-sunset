@@ -1827,9 +1827,21 @@ const Step = ({
     return (totalBalance / 10) * 100;
   };
 
-  // Calculate progress through the steps
+  // Calculate progress within the current chapter
   const calculateProgress = () => {
-    let result = ((currentStep - 1) / (steps[userLanguage].length - 1)) * 100;
+    const stepList = steps[userLanguage];
+    const current = stepList[currentStep];
+    if (!current) return 0;
+
+    const group = current.group;
+    const groupIndices = stepList
+      .map((s, idx) => (s.group === group ? idx : null))
+      .filter((idx) => idx !== null);
+    const groupLength = groupIndices.length;
+    if (groupLength <= 1) return 0;
+
+    const indexInGroup = groupIndices.indexOf(currentStep);
+    let result = (indexInGroup / (groupLength - 1)) * 100;
     if (result < 0) return 0;
     return result;
   };
@@ -2506,7 +2518,7 @@ const Step = ({
   const getBorderColor = (group) => {
     const colorMap = {
       introduction: "#808080", // Gray
-      tutorial: "#008000", // Gray
+      tutorial: "#efg321", // Gray
       1: "#0000ff", // Pink
       2: "#800080", // Purple
       3: "#f7bc78", // Gold
