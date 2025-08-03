@@ -50,11 +50,11 @@ import { isUnsupportedBrowser } from "../../utility/browser";
 import { InstallAppModal } from "../InstallModal/InstallModal";
 
 const highlightColors = [
-  "green.300",
-  "blue.300",
-  "yellow.300",
-  "orange.300",
-  "purple.300",
+  "green.100",
+  "blue.100",
+  "yellow.100",
+  "orange.100",
+  "purple.100",
 ];
 export const newTheme = () => {
   let highlightIndex = 0;
@@ -336,7 +336,8 @@ const EducationalModal = ({
         const trimmed = { ...msg, content: msg.content.trimStart() };
         setConversation((prev) => {
           const updatedConversation = [...prev];
-          updatedConversation[updatedConversation.length - 1].response = trimmed;
+          updatedConversation[updatedConversation.length - 1].response =
+            trimmed;
           return updatedConversation;
         });
       });
@@ -443,8 +444,8 @@ const EducationalModal = ({
                     instructions={
                       <Markdown components={ChakraUIRenderer(newTheme())}>
                         {`${translation[userLanguage]["modal.learn.instructions"]}\n\n${
-                          educationalMessages[educationalMessages.length - 1]?.content ||
-                          ""
+                          educationalMessages[educationalMessages.length - 1]
+                            ?.content || ""
                         }`.trimStart()}
                       </Markdown>
                     }
