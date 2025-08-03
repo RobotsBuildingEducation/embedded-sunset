@@ -332,11 +332,11 @@ const EducationalModal = ({
 
   useEffect(() => {
     if (messages.length > 0) {
-      messages.forEach((msg, i) => {
+      messages.forEach((msg) => {
+        const trimmed = { ...msg, content: msg.content.trimStart() };
         setConversation((prev) => {
           const updatedConversation = [...prev];
-          updatedConversation[updatedConversation.length - 1].response = msg;
-
+          updatedConversation[updatedConversation.length - 1].response = trimmed;
           return updatedConversation;
         });
       });
