@@ -2939,6 +2939,7 @@ const Step = ({
                   {currentStep === 0 || currentStep === 1
                     ? 0
                     : loot[currentStep - 1]["monetaryValue"]}
+                  /{translation[userLanguage]["year"]}
                 </Text>
               ) : null}
             </VStack>
@@ -3450,7 +3451,8 @@ const Step = ({
                             fontWeight={"bold"}
                           >
                             {translation[userLanguage]["skillValue"]}$
-                            {loot[currentStep]["monetaryValue"]}
+                            {loot[currentStep]["monetaryValue"]}/
+                            {translation[userLanguage]["year"]}
                           </Text>
                           <Progress
                             width="50%"

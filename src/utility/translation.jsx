@@ -15,6 +15,7 @@ export const pickProgrammingLanguage = (language) => {
 
 export let translation = {
   en: {
+    year: "year",
     skillValue: "Your skill value: ",
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
@@ -1621,6 +1622,8 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   es: {
+    year: "año",
+
     skillValue: "Tu valor de habilidad: ",
 
     "settings.theme.yellow": "Amarillo",
@@ -3181,6 +3184,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "language.compsci.english": "Ciencias de la Computación (Python)",
   },
   "py-en": {
+    year: "year",
     skillValue: "Your skill value: ",
     "settings.theme.purple": "Purple",
     "settings.theme.orange": "Orange",
@@ -4777,6 +4781,7 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "swift-en": {
+    year: "year",
     skillValue: "Your skill value: ",
     "settings.theme.purple": "Purple",
     "settings.theme.orange": "Orange",
@@ -6375,6 +6380,7 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "android-en": {
+    year: "year",
     skillValue: "Your skill value: ",
     "settings.theme.purple": "Purple",
     "settings.theme.orange": "Orange",
@@ -7973,6 +7979,7 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "compsci-en": {
+    year: "year",
     "settings.theme.purple": "Purple",
     "settings.theme.orange": "Orange",
     "settings.theme.green": "Green",
