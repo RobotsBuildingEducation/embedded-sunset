@@ -27,6 +27,8 @@ const CloudTransition = ({
 }) => {
   const canvasRef = useRef(null);
   const [canContinue, setCanContinue] = useState(false);
+  const [displaySalary, setDisplaySalary] = useState(salary);
+  const prevSalary = useRef(salary);
 
   // Prevent the click that opens the overlay from immediately
   // triggering the Continue action by enabling the button only
@@ -39,6 +41,32 @@ const CloudTransition = ({
     }
     setCanContinue(false);
   }, [isActive]);
+
+  useEffect(() => {
+    const start = prevSalary.current || 0;
+    const end = salary || 0;
+    if (start === end) {
+      setDisplaySalary(end);
+      return;
+    }
+    let startTime;
+    let frameId;
+
+    const step = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / 800, 1);
+      const value = Math.floor(start + (end - start) * progress);
+      setDisplaySalary(value);
+      if (progress < 1) {
+        frameId = requestAnimationFrame(step);
+      } else {
+        prevSalary.current = end;
+      }
+    };
+
+    frameId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frameId);
+  }, [salary]);
 
   useEffect(() => {
     if (!isActive) return;
@@ -161,7 +189,7 @@ const CloudTransition = ({
                   transition={{ duration: 0.6 }}
                   color="#05f569"
                 >
-                  +${salary}/yr
+                  +${displaySalary.toLocaleString()}/yr
                 </Text>
                 {detail && (
                   <Text
@@ -183,7 +211,7 @@ const CloudTransition = ({
                   </Text>
                   <Box
                     h="8px"
-                    bg="whiteAlpha.600"
+                    bg="gray.200"
                     borderRadius="full"
                     overflow="hidden"
                   >
@@ -193,7 +221,7 @@ const CloudTransition = ({
                       transition={{ duration: 0.6 }}
                       style={{
                         height: "100%",
-                        background: "linear-gradient(90deg,#FFDEE9,#B5FFFC)",
+                        background: "linear-gradient(90deg,#ff7e5f,#feb47b)",
                       }}
                     />
                   </Box>
@@ -204,7 +232,7 @@ const CloudTransition = ({
                   </Text>
                   <Box
                     h="8px"
-                    bg="whiteAlpha.600"
+                    bg="gray.200"
                     borderRadius="full"
                     overflow="hidden"
                   >
@@ -214,7 +242,7 @@ const CloudTransition = ({
                       transition={{ duration: 0.6, delay: 0.1 }}
                       style={{
                         height: "100%",
-                        background: "linear-gradient(90deg,#C3E4FD,#EFD3FF)",
+                        background: "linear-gradient(90deg,#6a11cb,#2575fc)",
                       }}
                     />
                   </Box>
@@ -225,7 +253,7 @@ const CloudTransition = ({
                   </Text>
                   <Box
                     h="8px"
-                    bg="whiteAlpha.600"
+                    bg="gray.200"
                     borderRadius="full"
                     overflow="hidden"
                     border="1px solid #ededed"
@@ -236,7 +264,7 @@ const CloudTransition = ({
                       transition={{ duration: 0.6, delay: 0.2 }}
                       style={{
                         height: "100%",
-                        background: "linear-gradient(90deg,#FFFBCC,#D5F0FF)",
+                        background: "linear-gradient(90deg,#43e97b,#38f9d7)",
                       }}
                     />
                   </Box>
