@@ -26,7 +26,6 @@ import {
   AccordionPanel,
   AccordionIcon,
   UnorderedList,
-  CircularProgress,
   Select,
   MenuButton,
   Menu,
@@ -2270,10 +2269,18 @@ const Step = ({
     const totalSteps = steps[userLanguage].length;
     const stepProgress = ((currentStep + 1) / totalSteps) * 100;
     const salaryText = loot[currentStep][userLanguage];
+    const dailyGoalPercent = Math.min(
+      (dailyProgress / (dailyGoals || 5)) * 100,
+      100
+    );
     setTransitionStats({
       salary: salaryVal,
       salaryProgress,
       stepProgress,
+      dailyGoalProgress: dailyGoalPercent,
+      dailyProgress: Math.min(dailyProgress, dailyGoals || 5),
+      dailyGoals: dailyGoals || 5,
+      dailyGoalLabel: translation[userLanguage]["dailyGoal"],
       message: salaryText,
     });
 
@@ -3410,44 +3417,6 @@ const Step = ({
                     transition="0.2s all ease-in-out"
                     borderBottomRightRadius={"0px"}
                   >
-                    {isCorrect ? (
-                      <VStack spacing={1} align="center" mb={2}>
-                        <Text
-                          fontSize="md"
-                          color="orange.500"
-                          fontWeight="bold"
-                        >
-                          {translation[userLanguage]["dailyGoal"]}:{" "}
-                          {dailyProgress + 1 > dailyGoals
-                            ? dailyGoals
-                            : dailyProgress + 1}{" "}
-                          / {dailyGoals || 5}{" "}
-                          {translation[userLanguage]["questions"]}
-                        </Text>
-
-                        <CircularProgress
-                          trackColor="#bfb49b"
-                          color="#82EBAC"
-                          value={
-                            ((dailyProgress + 1) / (dailyGoals || 5)) * 100
-                          }
-                          size={8}
-                        />
-
-                        {dailyProgress + 1 > dailyGoals ||
-                        dailyProgress + 1 === dailyGoals ? (
-                          <Text
-                            fontSize="md"
-                            color="orange.500"
-                            fontWeight="bold"
-                            mb={2}
-                          >
-                            {/* {translation[userLanguage]["celebrateMessage"]} */}
-                            {celebrationMessage}
-                          </Text>
-                        ) : null}
-                      </VStack>
-                    ) : null}
                     <Text
                       textAlign={"left"}
                       color={isCorrect ? "orange.500" : "red.500"}
@@ -3461,7 +3430,12 @@ const Step = ({
                           }
                         />
                       ) : null}
-                    </Text>{" "}
+                    </Text>
+                    {isCorrect && celebrationMessage && (
+                      <Text mt={2} fontSize="sm" color="orange.400">
+                        {celebrationMessage}
+                      </Text>
+                    )}
                   </Box>
                 </RiseUpAnimation>
               )}{" "}
@@ -5106,6 +5080,10 @@ function App({ isShutDown }) {
     salary: 0,
     salaryProgress: 0,
     stepProgress: 0,
+    dailyGoalProgress: 0,
+    dailyProgress: 0,
+    dailyGoals: 0,
+    dailyGoalLabel: "",
     message: "",
   });
 
@@ -5119,6 +5097,10 @@ function App({ isShutDown }) {
           salary: 0,
           salaryProgress: 0,
           stepProgress: 0,
+          dailyGoalProgress: 0,
+          dailyProgress: 0,
+          dailyGoals: 0,
+          dailyGoalLabel: "",
           message: "",
         });
       }, 800);
@@ -5385,6 +5367,10 @@ function App({ isShutDown }) {
         salary={transitionStats.salary}
         salaryProgress={transitionStats.salaryProgress}
         stepProgress={transitionStats.stepProgress}
+        dailyGoalProgress={transitionStats.dailyGoalProgress}
+        dailyProgress={transitionStats.dailyProgress}
+        dailyGoals={transitionStats.dailyGoals}
+        dailyGoalLabel={transitionStats.dailyGoalLabel}
         message={transitionStats.message}
       />
       {alert.isOpen && (
