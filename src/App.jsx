@@ -26,7 +26,6 @@ import {
   AccordionPanel,
   AccordionIcon,
   UnorderedList,
-  CircularProgress,
   Select,
   MenuButton,
   Menu,
@@ -1347,6 +1346,7 @@ const Step = ({
   hasSubmittedPasscode,
   setCurrentStep,
   navigateWithTransition,
+  setTransitionStats,
 }) => {
   let loot = buildSuperLoot();
 
@@ -2264,6 +2264,28 @@ const Step = ({
     resetSuggestionMessages();
     resetEducationalMessages();
     setEducationalContent([]);
+    const salaryVal = loot[currentStep]["monetaryValue"] || 0;
+    const salaryProgress = (salaryVal / 120000) * 100;
+    const totalSteps = steps[userLanguage].length;
+    const stepProgress = ((currentStep + 1) / totalSteps) * 100;
+    const salaryText = loot[currentStep][userLanguage];
+    const dailyGoalPercent = Math.min(
+      (dailyProgress / (dailyGoals || 5)) * 100,
+      100
+    );
+    const nextStep = currentStep + 1;
+    setTransitionStats({
+      salary: salaryVal,
+      salaryProgress,
+      stepProgress,
+      dailyGoalProgress: dailyGoalPercent,
+      dailyProgress: Math.min(dailyProgress, dailyGoals || 5),
+      dailyGoals: dailyGoals || 5,
+      dailyGoalLabel: translation[userLanguage]["dailyGoal"],
+      message: celebrationMessage,
+      detail: salaryText,
+    });
+
     //
     if (currentStep === 9) {
       const npub = localStorage.getItem("local_npub");
@@ -2273,19 +2295,17 @@ const Step = ({
         import.meta.env.VITE_PATREON_PASSCODE
       ) {
         await incrementToSubscription(npub, currentStep);
-        navigateWithTransition("/subscription");
+        navigateWithTransition("/subscription", nextStep);
       } else {
         setIsPostingWithNostr(true);
 
         try {
           incrementUserStep(npub, currentStep);
           storeCorrectAnswer(step, feedback).catch(console.error);
-          setCurrentStep(currentStep + 1);
-
           if (currentStep <= 4) {
-            navigateWithTransition(`/onboarding/${currentStep + 2}`);
+            navigateWithTransition(`/onboarding/${currentStep + 2}`, nextStep);
           } else {
-            navigateWithTransition(`/q/${currentStep + 1}`);
+            navigateWithTransition(`/q/${currentStep + 1}`, nextStep);
           }
         } finally {
           setIsPostingWithNostr(false);
@@ -2294,7 +2314,7 @@ const Step = ({
     } else if (currentStep >= steps[userLanguage].length - 1) {
       const npub = localStorage.getItem("local_npub");
       await incrementToFinalAward(npub);
-      navigateWithTransition("/award");
+      navigateWithTransition("/award", nextStep);
     } else {
       setIsPostingWithNostr(true);
 
@@ -2308,12 +2328,11 @@ const Step = ({
         if (currentStep > 0) {
           storeCorrectAnswer(step, feedback).catch(console.error);
         }
-        setCurrentStep(currentStep + 1);
 
         if (currentStep <= 4) {
-          navigateWithTransition(`/onboarding/${currentStep + 2}`);
+          navigateWithTransition(`/onboarding/${currentStep + 2}`, nextStep);
         } else {
-          navigateWithTransition(`/q/${currentStep + 1}`);
+          navigateWithTransition(`/q/${currentStep + 1}`, nextStep);
         }
       } finally {
         setIsPostingWithNostr(false);
@@ -3172,7 +3191,7 @@ const Step = ({
                   </Button>
                   &nbsp;&nbsp; &nbsp;&nbsp;
                   <Button
-                    onMouseDown={handleNextClick}
+                    onClick={handleNextClick}
                     mb={4}
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                     onKeyDown={(e) => {
@@ -3397,99 +3416,25 @@ const Step = ({
                     transition="0.2s all ease-in-out"
                     borderBottomRightRadius={"0px"}
                   >
-                    {isCorrect ? (
-                      <VStack spacing={1} align="center" mb={2}>
-                        <Text
-                          fontSize="md"
-                          color="orange.500"
-                          fontWeight="bold"
-                        >
-                          {translation[userLanguage]["dailyGoal"]}:{" "}
-                          {dailyProgress + 1 > dailyGoals
-                            ? dailyGoals
-                            : dailyProgress + 1}{" "}
-                          / {dailyGoals || 5}{" "}
-                          {translation[userLanguage]["questions"]}
-                        </Text>
-
-                        <CircularProgress
-                          trackColor="#bfb49b"
-                          color="#82EBAC"
-                          value={
-                            ((dailyProgress + 1) / (dailyGoals || 5)) * 100
-                          }
-                          size={8}
-                        />
-
-                        {dailyProgress + 1 > dailyGoals ||
-                        dailyProgress + 1 === dailyGoals ? (
-                          <Text
-                            fontSize="md"
-                            color="orange.500"
-                            fontWeight="bold"
-                            mb={2}
-                          >
-                            {/* {translation[userLanguage]["celebrateMessage"]} */}
-                            {celebrationMessage}
-                          </Text>
-                        ) : null}
-                      </VStack>
-                    ) : null}
                     <Text
                       textAlign={"left"}
                       color={isCorrect ? "orange.500" : "red.500"}
                     >
-                      {userLanguage !== "compsci-en" && isCorrect ? (
-                        <Box
-                          color={"orange.500"}
-                          mt={4}
-                          display="flex"
-                          flexDirection={"column"}
-                          alignItems={"center"}
-                        >
-                          <Text
-                            fontSize={"md"}
-                            color="green.400"
-                            fontWeight={"bold"}
-                          >
-                            {translation[userLanguage]["skillValue"]}$
-                            {loot[currentStep]["monetaryValue"]}/
-                            {translation[userLanguage]["year"]}
-                          </Text>
-                          <Progress
-                            width="50%"
-                            value={
-                              (loot[currentStep]["monetaryValue"] / 120000) *
-                              100
-                            }
-                            colorScheme="green"
-                            borderRadius="4px"
-                            border="1px solid #ececec"
-                            // boxShadow="0px 0px 0.5px 2px #ececec"
-                            boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                            mb={3}
-                          />
-                          <Text fontSize={"sm"}>
-                            {loot[currentStep][userLanguage]}
-                          </Text>
-                          <br />
-                        </Box>
-                      ) : null}
-                      {feedback}{" "}
-                      {grade ? (
-                        <DataTags
-                          userLanguage={userLanguage}
-                          grade={
-                            translation[userLanguage]["tags.grade"] + grade
-                          }
-                        />
-                      ) : null}
-                    </Text>{" "}
-                  </Box>
-                </RiseUpAnimation>
-              )}{" "}
-              {feedback && (
-                <div
+                    {feedback}{" "}
+                    {grade ? (
+                      <DataTags
+                        userLanguage={userLanguage}
+                        grade={
+                          translation[userLanguage]["tags.grade"] + grade
+                        }
+                      />
+                    ) : null}
+                  </Text>
+                </Box>
+              </RiseUpAnimation>
+            )}{" "}
+            {feedback && (
+              <div
                   style={{
                     width: "100%",
                     maxWidth: "600px",
@@ -3557,7 +3502,7 @@ const Step = ({
                     <Button
                       background="white"
                       variant={"outline"}
-                      onMouseDown={handleNextClick}
+                      onClick={handleNextClick}
                       mb={4}
                       boxShadow={"0.5px 0.5px 1px 0px black"}
                       onKeyDown={(e) => {
@@ -5125,14 +5070,55 @@ function App({ isShutDown }) {
   const [allowPosts, setAllowPosts] = useState(false);
 
   const [showClouds, setShowClouds] = useState(false);
+  const [pendingPath, setPendingPath] = useState(null);
+  const [pendingStep, setPendingStep] = useState(null);
+  const [transitionStats, setTransitionStats] = useState({
+    salary: 0,
+    salaryProgress: 0,
+    stepProgress: 0,
+    dailyGoalProgress: 0,
+    dailyProgress: 0,
+    dailyGoals: 0,
+    dailyGoalLabel: "",
+    message: "",
+    detail: "",
+  });
 
-  const navigateWithTransition = (path) => {
-    setShowClouds(true);
-    setTimeout(() => {
-      navigate(path);
-      setTimeout(() => setShowClouds(false), 800);
-    }, 400);
+  const navigateWithTransition = (path, nextStep = null) => {
+    setPendingPath(path);
+    setPendingStep(nextStep);
+    // Defer showing the overlay to avoid the original click
+    // event immediately triggering the continue button
+    setTimeout(() => setShowClouds(true), 50);
   };
+
+  const handleTransitionContinue = () => {
+    if (pendingPath) {
+      navigate(pendingPath);
+    }
+    if (pendingStep !== null) {
+      setCurrentStep(pendingStep);
+    }
+    setShowClouds(false);
+    setPendingPath(null);
+    setPendingStep(null);
+  };
+
+  useEffect(() => {
+    if (!showClouds) {
+      setTransitionStats({
+        salary: 0,
+        salaryProgress: 0,
+        stepProgress: 0,
+        dailyGoalProgress: 0,
+        dailyProgress: 0,
+        dailyGoals: 0,
+        dailyGoalLabel: "",
+        message: "",
+        detail: "",
+      });
+    }
+  }, [showClouds]);
 
   // const {
   //   generateNostrKeys,
@@ -5389,7 +5375,19 @@ function App({ isShutDown }) {
 
   return (
     <Box ref={topRef}>
-      <CloudTransition isActive={showClouds} />
+      <CloudTransition
+        isActive={showClouds}
+        salary={transitionStats.salary}
+        salaryProgress={transitionStats.salaryProgress}
+        stepProgress={transitionStats.stepProgress}
+        dailyGoalProgress={transitionStats.dailyGoalProgress}
+        dailyProgress={transitionStats.dailyProgress}
+        dailyGoals={transitionStats.dailyGoals}
+        dailyGoalLabel={transitionStats.dailyGoalLabel}
+        message={transitionStats.message}
+        detail={transitionStats.detail}
+        onContinue={handleTransitionContinue}
+      />
       {alert.isOpen && (
         <Alert
           status={alert.status}
@@ -5507,6 +5505,7 @@ function App({ isShutDown }) {
                       hasSubmittedPasscode={hasSubmittedPasscode}
                       setCurrentStep={setCurrentStep}
                       navigateWithTransition={navigateWithTransition}
+                      setTransitionStats={setTransitionStats}
                     />
                   </PrivateRoute>
                 }

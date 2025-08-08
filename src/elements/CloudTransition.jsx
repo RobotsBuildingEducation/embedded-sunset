@@ -1,17 +1,44 @@
-import React, { useEffect, useRef } from "react";
-import { Box, Text } from "@chakra-ui/react";
+import React, { useEffect, useRef, useState } from "react";
+import { Box, Text, Button } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const colors = [
-  "rgba(255,215,0,0.6)", // gold
-  "rgba(255,105,180,0.6)", // pink
-  "rgba(186,85,211,0.6)", // purple
-  "rgba(255,165,0,0.6)", // orange
-  "rgba(255,140,0,0.6)", // sunset orange
+  "rgba(255,255,255,0.8)", // soft white
+  "rgba(224,240,255,0.6)", // powder blue
+  "rgba(245,224,255,0.6)", // lavender
+  "rgba(255,240,245,0.6)", // pink blush
+  "rgba(255,255,224,0.6)", // light gold
 ];
 
-const CloudTransition = ({ isActive }) => {
+const MotionBox = motion(Box);
+
+const CloudTransition = ({
+  isActive,
+  salary,
+  salaryProgress,
+  stepProgress,
+  dailyGoalProgress,
+  dailyProgress,
+  dailyGoals,
+  dailyGoalLabel,
+  message,
+  detail,
+  onContinue,
+}) => {
   const canvasRef = useRef(null);
+  const [canContinue, setCanContinue] = useState(false);
+
+  // Prevent the click that opens the overlay from immediately
+  // triggering the Continue action by enabling the button only
+  // after a short delay
+  useEffect(() => {
+    if (isActive) {
+      setCanContinue(false);
+      const id = setTimeout(() => setCanContinue(true), 200);
+      return () => clearTimeout(id);
+    }
+    setCanContinue(false);
+  }, [isActive]);
 
   useEffect(() => {
     if (!isActive) return;
@@ -23,26 +50,19 @@ const CloudTransition = ({ isActive }) => {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    // Larger cloud blobs
-    const clouds = Array.from({ length: 25 }, () => ({
+    const clouds = Array.from({ length: 20 }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      radius: 60 + Math.random() * 120,
-      speed: 0.5 + Math.random() * 0.5,
-      color: colors[Math.floor(Math.random() * colors.length)],
-    }));
-
-    // Smaller noisy wisps to add more visual texture
-    const noise = Array.from({ length: 80 }, () => ({
-      x: Math.random() * width,
-      y: Math.random() * height,
-      radius: 10 + Math.random() * 20,
-      speed: 0.3 + Math.random() * 0.7,
+      radius: 80 + Math.random() * 140,
+      speed: 0.2 + Math.random() * 0.3,
       color: colors[Math.floor(Math.random() * colors.length)],
     }));
 
     const draw = () => {
-      ctx.fillStyle = "#FFFFFF";
+      const sky = ctx.createLinearGradient(0, 0, 0, height);
+      sky.addColorStop(0, "#e3f2fd");
+      sky.addColorStop(1, "#ffffff");
+      ctx.fillStyle = sky;
       ctx.fillRect(0, 0, width, height);
 
       clouds.forEach((cloud) => {
@@ -65,30 +85,6 @@ const CloudTransition = ({ isActive }) => {
         if (cloud.y + cloud.radius < 0) {
           cloud.y = height + cloud.radius;
           cloud.x = Math.random() * width;
-        }
-      });
-
-      // Draw noisy wisps
-      noise.forEach((wisp) => {
-        const grad = ctx.createRadialGradient(
-          wisp.x,
-          wisp.y,
-          0,
-          wisp.x,
-          wisp.y,
-          wisp.radius
-        );
-        grad.addColorStop(0, wisp.color);
-        grad.addColorStop(1, "rgba(255,255,255,0)");
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(wisp.x, wisp.y, wisp.radius, 0, Math.PI * 2);
-        ctx.fill();
-
-        wisp.y -= wisp.speed;
-        if (wisp.y + wisp.radius < 0) {
-          wisp.y = height + wisp.radius;
-          wisp.x = Math.random() * width;
         }
       });
 
@@ -124,6 +120,9 @@ const CloudTransition = ({ isActive }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
         >
           <Box
             as="canvas"
@@ -134,18 +133,129 @@ const CloudTransition = ({ isActive }) => {
             w="100%"
             h="100%"
           />
-          <Text
-            position="absolute"
-            top="50%"
-            left="50%"
-            transform="translate(-50%, -50%)"
-            fontSize="4xl"
-            fontWeight="bold"
+          <MotionBox
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            textAlign="center"
             color="purple.600"
-            textShadow="0 0 10px rgba(255,215,0,0.8)"
+            w="90%"
+            maxW="400px"
           >
-            Level Up!
-          </Text>
+            <Text
+              as={motion.p}
+              fontSize="3xl"
+              fontWeight="bold"
+              mb={4}
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.6 }}
+            >
+              +${salary}/yr
+            </Text>
+            <Box w="100%" mx="auto" mb={6}>
+              <Text fontSize="sm" mb={1} color="purple.500">
+                Salary
+              </Text>
+              <Box
+                h="8px"
+                bg="whiteAlpha.600"
+                borderRadius="full"
+                overflow="hidden"
+              >
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${salaryProgress}%` }}
+                  transition={{ duration: 1.2 }}
+                  style={{
+                    height: "100%",
+                    background: "linear-gradient(90deg,#FFDEE9,#B5FFFC)",
+                  }}
+                />
+              </Box>
+            </Box>
+            <Box w="100%" mx="auto" mb={6}>
+              <Text fontSize="sm" mb={1} color="purple.500">
+                Progress
+              </Text>
+              <Box
+                h="8px"
+                bg="whiteAlpha.600"
+                borderRadius="full"
+                overflow="hidden"
+              >
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${stepProgress}%` }}
+                  transition={{ duration: 1.2, delay: 0.2 }}
+                  style={{
+                    height: "100%",
+                    background: "linear-gradient(90deg,#C3E4FD,#EFD3FF)",
+                  }}
+                />
+              </Box>
+            </Box>
+            <Box w="100%" mx="auto">
+              <Text fontSize="sm" mb={1} color="purple.500">
+                {dailyGoalLabel} {dailyProgress}/{dailyGoals}
+              </Text>
+              <Box
+                h="8px"
+                bg="whiteAlpha.600"
+                borderRadius="full"
+                overflow="hidden"
+              >
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${dailyGoalProgress}%` }}
+                  transition={{ duration: 1.2, delay: 0.4 }}
+                  style={{
+                    height: "100%",
+                    background: "linear-gradient(90deg,#FFFBCC,#D5F0FF)",
+                  }}
+                />
+              </Box>
+            </Box>
+            {message && (
+              <Text
+                as={motion.p}
+                fontSize="md"
+                mt={6}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 0.8, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+              >
+                {message}
+              </Text>
+            )}
+            {detail && (
+              <Text
+                as={motion.p}
+                fontSize="sm"
+                mt={2}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 0.8, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.7 }}
+              >
+                {detail}
+              </Text>
+            )}
+            <Button
+              as={motion.button}
+              mt={8}
+              colorScheme="purple"
+              variant="outline"
+              borderRadius="full"
+              px={6}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+              onClick={onContinue}
+              disabled={!canContinue}
+            >
+              Continue
+            </Button>
+          </MotionBox>
         </Box>
       )}
     </AnimatePresence>
