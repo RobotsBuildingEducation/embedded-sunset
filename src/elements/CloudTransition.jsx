@@ -159,6 +159,7 @@ const CloudTransition = ({
                   initial={{ scale: 0.9 }}
                   animate={{ scale: 1 }}
                   transition={{ duration: 0.6 }}
+                  color="#05f569"
                 >
                   +${salary}/yr
                 </Text>
@@ -249,7 +250,7 @@ const CloudTransition = ({
             <Button
               as={motion.button}
               mt={8}
-              colorScheme="purple"
+              colorScheme="yellow"
               variant="outline"
               borderRadius="full"
               px={6}

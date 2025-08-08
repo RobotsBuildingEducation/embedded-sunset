@@ -63,15 +63,15 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
         }}
       >
         <ModalBody p={6} textAlign="center" color="gray.800">
-          <ReactConfetti
+          {/* <ReactConfetti
             numberOfPieces={100}
             recycle={false}
             colors={["#f2dcfa", "#f9d4fa", "#fca4b3", "#fcb7a4", "#fcd4a4"]}
-          />
+          /> */}
           <HStack justifyContent="space-between" mb={4}>
-            <Text fontSize="xl" fontWeight="bold">
+            {/* <Text fontSize="xl" fontWeight="bold">
               {translation[userLanguage][badge.name] || badge.name}
-            </Text>
+            </Text> */}
             <Text fontSize="xl" fontWeight="bold">
               {translation[userLanguage][badge.name] || badge.name}
             </Text>
