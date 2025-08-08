@@ -5072,7 +5072,7 @@ function App({ isShutDown }) {
   const [showClouds, setShowClouds] = useState(false);
   const [pendingPath, setPendingPath] = useState(null);
   const [pendingStep, setPendingStep] = useState(null);
-  const [transitionStats, setTransitionStats] = useState({
+  const defaultTransitionStats = {
     salary: 0,
     salaryProgress: 0,
     stepProgress: 0,
@@ -5082,7 +5082,10 @@ function App({ isShutDown }) {
     dailyGoalLabel: "",
     message: "",
     detail: "",
-  });
+  };
+  const [transitionStats, setTransitionStats] = useState(
+    defaultTransitionStats
+  );
 
   const navigateWithTransition = (path, nextStep = null) => {
     setPendingPath(path);
@@ -5102,20 +5105,14 @@ function App({ isShutDown }) {
     setShowClouds(false);
     setPendingPath(null);
     setPendingStep(null);
-    setTimeout(() => {
-      setTransitionStats({
-        salary: 0,
-        salaryProgress: 0,
-        stepProgress: 0,
-        dailyGoalProgress: 0,
-        dailyProgress: 0,
-        dailyGoals: 0,
-        dailyGoalLabel: "",
-        message: "",
-        detail: "",
-      });
-    }, 300);
   };
+
+  useEffect(() => {
+    if (!showClouds) {
+      const id = setTimeout(() => setTransitionStats(defaultTransitionStats), 1000);
+      return () => clearTimeout(id);
+    }
+  }, [showClouds]);
 
   // const {
   //   generateNostrKeys,
