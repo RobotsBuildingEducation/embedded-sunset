@@ -122,18 +122,16 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
       onClose={onClose}
       size="4xl"
       scrollBehavior={"inside"}
+      isCentered
     >
-      <ModalOverlay></ModalOverlay>
+      <ModalOverlay bg="rgba(0,0,0,0.6)" backdropFilter="blur(4px)" />
       <ModalContent
-        // background={"gray.500"}
-        background={"#38628D"}
-        // color="white"
-        borderRadius="lg"
+        bg="whiteAlpha.900"
+        borderRadius="2xl"
         boxShadow="2xl"
-        p={0}
+        p={6}
         width="100%"
-
-        // style={{ fontFamily: "Roboto Serif, serif" }}
+        backdropFilter="blur(10px)"
       >
         <ModalHeader
           fontSize="3xl"
@@ -141,16 +139,17 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
           marginTop={0}
           paddingTop={0}
           padding={3}
+          color="gray.800"
         >
           <HStack>
-            <div style={{ color: "white" }}>
+            <div style={{ color: "gray.800" }}>
               {/* {translation[userLanguage]["modal.learn.title"]} */}
               {translation[userLanguage]["modal.title.decentralizedTranscript"]}
             </div>
           </HStack>
         </ModalHeader>
 
-        <ModalBody p={8} style={{ width: "100%", color: "white" }}>
+        <ModalBody p={8} style={{ width: "100%", color: "gray.800" }}>
           {/* <Button
             style={{
               display: "flex",
