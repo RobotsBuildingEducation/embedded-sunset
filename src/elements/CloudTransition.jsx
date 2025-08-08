@@ -214,6 +214,7 @@ const CloudTransition = ({
                     bg="gray.200"
                     borderRadius="full"
                     overflow="hidden"
+                    height="30px"
                   >
                     <motion.div
                       initial={{ width: 0 }}
@@ -221,7 +222,7 @@ const CloudTransition = ({
                       transition={{ duration: 0.6 }}
                       style={{
                         height: "100%",
-                        background: "linear-gradient(90deg,#ff7e5f,#feb47b)",
+                        background: "linear-gradient(90deg,#fcf39d,#fef37b)",
                       }}
                     />
                   </Box>
@@ -235,6 +236,7 @@ const CloudTransition = ({
                     bg="gray.200"
                     borderRadius="full"
                     overflow="hidden"
+                    height="30px"
                   >
                     <motion.div
                       initial={{ width: 0 }}
@@ -242,7 +244,7 @@ const CloudTransition = ({
                       transition={{ duration: 0.6, delay: 0.1 }}
                       style={{
                         height: "100%",
-                        background: "linear-gradient(90deg,#6a11cb,#2575fc)",
+                        background: "linear-gradient(90deg,#6a11cb,#72a2f2)",
                       }}
                     />
                   </Box>
@@ -257,6 +259,7 @@ const CloudTransition = ({
                     borderRadius="full"
                     overflow="hidden"
                     border="1px solid #ededed"
+                    height="30px"
                   >
                     <motion.div
                       initial={{ width: 0 }}
