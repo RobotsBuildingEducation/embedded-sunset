@@ -1,49 +1,84 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Box } from "@chakra-ui/react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const MatrixTransition = ({ isActive }) => {
-  if (!isActive) return null;
+  const canvasRef = useRef(null);
 
-  const columns = new Array(20).fill(0);
+  useEffect(() => {
+    if (!isActive) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    let animationId;
+
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+    const fontSize = 16;
+    const columns = Math.floor(width / fontSize);
+    const drops = Array(columns).fill(0);
+
+    ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+    ctx.fillRect(0, 0, width, height);
+
+    const draw = () => {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = "#0F0";
+      ctx.font = `${fontSize}px monospace`;
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = String.fromCharCode(0x30a0 + Math.random() * 96);
+        const x = i * fontSize;
+        const y = drops[i] * fontSize;
+        ctx.fillText(text, x, y);
+
+        if (y > height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+
+        drops[i]++;
+      }
+
+      animationId = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    const handleResize = () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      cancelAnimationFrame(animationId);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isActive]);
 
   return (
-    <Box
-      as={motion.div}
-      position="fixed"
-      top={0}
-      left={0}
-      w="100vw"
-      h="100vh"
-      bg="black"
-      zIndex={2000}
-      overflow="hidden"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      {columns.map((_, i) => (
+    <AnimatePresence>
+      {isActive && (
         <Box
-          as={motion.div}
-          key={i}
-          position="absolute"
-          left={`${(i / columns.length) * 100}%`}
-          top="-100%"
-          color="#00ff41"
-          fontFamily="monospace"
-          fontSize="20px"
-          whiteSpace="nowrap"
-          initial={{ y: "-100%" }}
-          animate={{ y: "100%" }}
-          transition={{ duration: 1.2, delay: i * 0.1 }}
-        >
-          {Array(40)
-            .fill("01")
-            .join("")}
-        </Box>
-      ))}
-    </Box>
+          as={motion.canvas}
+          ref={canvasRef}
+          position="fixed"
+          top={0}
+          left={0}
+          w="100vw"
+          h="100vh"
+          zIndex={2000}
+          bg="transparent"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        />
+      )}
+    </AnimatePresence>
   );
 };
 
 export default MatrixTransition;
+

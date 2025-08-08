@@ -5126,8 +5126,8 @@ function App({ isShutDown }) {
     setShowMatrix(true);
     setTimeout(() => {
       navigate(path);
-      setTimeout(() => setShowMatrix(false), 700);
-    }, 300);
+      setTimeout(() => setShowMatrix(false), 800);
+    }, 400);
   };
 
   // const {
