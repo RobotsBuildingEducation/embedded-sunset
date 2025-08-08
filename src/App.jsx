@@ -5100,20 +5100,25 @@ function App({ isShutDown }) {
       setCurrentStep(pendingStep);
     }
     setShowClouds(false);
-    setTransitionStats({
-      salary: 0,
-      salaryProgress: 0,
-      stepProgress: 0,
-      dailyGoalProgress: 0,
-      dailyProgress: 0,
-      dailyGoals: 0,
-      dailyGoalLabel: "",
-      message: "",
-      detail: "",
-    });
     setPendingPath(null);
     setPendingStep(null);
   };
+
+  useEffect(() => {
+    if (!showClouds) {
+      setTransitionStats({
+        salary: 0,
+        salaryProgress: 0,
+        stepProgress: 0,
+        dailyGoalProgress: 0,
+        dailyProgress: 0,
+        dailyGoals: 0,
+        dailyGoalLabel: "",
+        message: "",
+        detail: "",
+      });
+    }
+  }, [showClouds]);
 
   // const {
   //   generateNostrKeys,
