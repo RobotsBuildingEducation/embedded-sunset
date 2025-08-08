@@ -5086,8 +5086,13 @@ function App({ isShutDown }) {
   const [transitionStats, setTransitionStats] = useState(
     defaultTransitionStats
   );
+  const resetStatsTimeoutRef = useRef(null);
 
   const navigateWithTransition = (path, nextStep = null) => {
+    if (resetStatsTimeoutRef.current) {
+      clearTimeout(resetStatsTimeoutRef.current);
+      resetStatsTimeoutRef.current = null;
+    }
     setPendingPath(path);
     setPendingStep(nextStep);
     // Defer showing the overlay to avoid the original click
@@ -5105,14 +5110,14 @@ function App({ isShutDown }) {
     setShowClouds(false);
     setPendingPath(null);
     setPendingStep(null);
-  };
-
-  useEffect(() => {
-    if (!showClouds) {
-      const id = setTimeout(() => setTransitionStats(defaultTransitionStats), 1000);
-      return () => clearTimeout(id);
+    if (resetStatsTimeoutRef.current) {
+      clearTimeout(resetStatsTimeoutRef.current);
     }
-  }, [showClouds]);
+    resetStatsTimeoutRef.current = setTimeout(
+      () => setTransitionStats(defaultTransitionStats),
+      1000
+    );
+  };
 
   // const {
   //   generateNostrKeys,
