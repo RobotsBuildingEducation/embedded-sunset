@@ -22,7 +22,7 @@ import {
   MenuItem,
   Menu,
 } from "@chakra-ui/react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { GiBullseye } from "react-icons/gi";
 import { TbBellHeart } from "react-icons/tb";
 
@@ -62,12 +62,14 @@ export const Onboarding = ({
   userLanguage,
   setUserLanguage,
   setCurrentStep,
+  step,
+  setStep,
+  onClose,
 }) => {
   const { assignExistingBadgeToNpub } = useSharedNostr(
     localStorage.getItem("local_npub"),
     localStorage.getItem("local_nsec")
   );
-  const { step } = useParams();
   const [interval, setInterval] = useState(2880);
   const navigate = useNavigate();
   const toast = useToast();
@@ -86,6 +88,9 @@ export const Onboarding = ({
     );
 
     // navigate("/q/0");
+    if (onClose) {
+      onClose();
+    }
     onAwardModalOpen();
   };
 
@@ -93,6 +98,10 @@ export const Onboarding = ({
     setOnboardingToDone(localStorage.getItem("local_npub"), 5);
 
     setCurrentStep(5);
+    setStep("done");
+    if (onClose) {
+      onClose();
+    }
     navigate("/q/5");
   };
 
@@ -303,7 +312,11 @@ export const Onboarding = ({
             userLanguage={userLanguage}
             moveToNext={() => {
               incrementUserOnboardingStep(localStorage.getItem("local_npub"));
+              setStep("2");
               setCurrentStep(0);
+              if (onClose) {
+                onClose();
+              }
               navigate("/q/0");
             }}
           />
@@ -762,7 +775,11 @@ export const Onboarding = ({
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
+                      setStep("3");
                       setCurrentStep(1);
+                      if (onClose) {
+                        onClose();
+                      }
                       navigate("/q/1");
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
@@ -1122,7 +1139,11 @@ export const Onboarding = ({
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
+                      setStep("5");
                       setCurrentStep(3);
+                      if (onClose) {
+                        onClose();
+                      }
                       navigate("/q/3");
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
@@ -1194,7 +1215,11 @@ export const Onboarding = ({
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
+                      setStep("6");
                       setCurrentStep(4);
+                      if (onClose) {
+                        onClose();
+                      }
                       navigate("/q/4");
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"

@@ -163,7 +163,7 @@ import MiniKitInitializer from "./MiniKitInitializer";
 
 import BitcoinModeModal from "./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal";
 import SelfPacedModal from "./components/SettingsMenu/SelfPacedModal/SelfPacedModal";
-import { Onboarding } from "./Onboarding";
+import { OnboardingDrawer } from "./components/OnboardingDrawer/OnboardingDrawer";
 import { newTheme } from "./App.theme";
 import { InstallAppModal } from "./components/InstallModal/InstallModal";
 
@@ -2275,7 +2275,6 @@ const Step = ({
         setIsPostingWithNostr(false);
       }
       setCurrentStep(nextStep);
-      navigate(`/onboarding/${currentStep + 2}`);
       return;
     }
 
@@ -2317,11 +2316,7 @@ const Step = ({
         try {
           incrementUserStep(npub, currentStep);
           storeCorrectAnswer(step, feedback).catch(console.error);
-          if (currentStep <= 4) {
-            navigateWithTransition(`/onboarding/${currentStep + 2}`, nextStep);
-          } else {
-            navigateWithTransition(`/q/${currentStep + 1}`, nextStep);
-          }
+          navigateWithTransition(`/q/${currentStep + 1}`, nextStep);
         } finally {
           setIsPostingWithNostr(false);
         }
@@ -2344,11 +2339,7 @@ const Step = ({
           storeCorrectAnswer(step, feedback).catch(console.error);
         }
 
-        if (currentStep <= 4) {
-          navigateWithTransition(`/onboarding/${currentStep + 2}`, nextStep);
-        } else {
-          navigateWithTransition(`/q/${currentStep + 1}`, nextStep);
-        }
+        navigateWithTransition(`/q/${currentStep + 1}`, nextStep);
       } finally {
         setIsPostingWithNostr(false);
       }
@@ -4092,7 +4083,7 @@ const Home = ({
         parseInt(onboardingProgress, 10) <= 6 &&
         parseInt(onboardingProgress, 10) === currentStep + 1
       ) {
-        navigate(`/onboarding/${parseInt(onboardingProgress, 10)}`);
+        navigate(`/q/${currentStep}`);
       } else {
         navigate(`/q/${currentStep}`);
       }
@@ -4111,7 +4102,7 @@ const Home = ({
     if (isCheckboxChecked) {
       // navigate("/q/0");
       // setView("wallet");
-      navigate("/onboarding/1");
+      navigate("/q/0");
     }
   };
 
@@ -5282,57 +5273,16 @@ function App({ isShutDown }) {
               // topRef.current?.scrollIntoView();
               window.scrollTo(0, 0);
 
-              const onboardingProgress = await getOnboardingStep(npub);
-              if (
-                onboardingProgress !== "done" &&
-                parseInt(onboardingProgress, 10) <= 6 &&
-                parseInt(onboardingProgress, 10) === step + 1
-              ) {
-                navigate(`/onboarding/${parseInt(onboardingProgress, 10)}`);
-              } else {
-                navigate(`/q/${step}`);
-              }
+              await getOnboardingStep(npub);
+              navigate(`/q/${step}`);
               // }
             }
           } else {
             //step is probably onboarding?
             if (step === "subscription") {
               navigate("/subscription");
-            } else if (step === "onboarding") {
-              const matchnumber = windowurl.match(/\/onboarding\/(\d+)$/);
-
-              let step = matchnumber ? matchnumber[1] : null;
-              const userDoc = doc(
-                database,
-                "users",
-                localStorage.getItem("local_npub")
-              );
-              const userSnapshot = await getDoc(userDoc);
-              if (userSnapshot.exists()) {
-                const userData = userSnapshot.data();
-
-                setUserLanguage(
-                  userData.userLanguage ||
-                    localStorage.getItem("userLanguage") ||
-                    "en"
-                );
-              }
-
-              if (step > 6) {
-                setOnboardingToDone(localStorage.getItem("local_npub"), 0);
-
-                navigate("/q/0");
-              } else {
-                // navigate("q/0");
-                if (!step) {
-                  step = await getOnboardingStep(npub); // Fetch the current step
-                }
-
-                setIsSignedIn(true);
-                navigate(`/onboarding/${step}`);
-              }
-            }
           }
+        }
         } catch (error) {
           // Catch permission denied errors and handle them accordingly
           if (error.code === "permission-denied") {
@@ -5453,28 +5403,20 @@ function App({ isShutDown }) {
           />
         )}
 
+        {isSignedIn && (
+          <OnboardingDrawer
+            userLanguage={userLanguage}
+            setUserLanguage={setUserLanguage}
+            setCurrentStep={setCurrentStep}
+          />
+        )}
+
         <Routes>
           {/* <Route path="/experiment" element={<TestFeed />} /> */}
           <Route
             path="/"
             element={
               <Home
-                isSignedIn={isSignedIn}
-                setIsSignedIn={setIsSignedIn}
-                userLanguage={userLanguage}
-                setUserLanguage={setUserLanguage}
-                generateNostrKeys={generateNostrKeys}
-                auth={auth}
-                view={view}
-                setView={setView}
-                setCurrentStep={setCurrentStep}
-              />
-            }
-          />
-          <Route
-            path="/onboarding/:step"
-            element={
-              <Onboarding
                 isSignedIn={isSignedIn}
                 setIsSignedIn={setIsSignedIn}
                 userLanguage={userLanguage}
