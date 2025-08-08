@@ -41,7 +41,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
       }
     }
     fetchBadges();
-  }, [isOpen, getUserBadges]);
+  }, [isOpen]);
 
   const getNaddr = (address) => {
     if (address.startsWith("naddr")) return address;
@@ -137,9 +137,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
             {badges.map((bdge) => (
               <Box key={bdge.badgeAddress} m={2} textAlign="center">
                 <Link
-                  href={`https://badges.page/a/${getNaddr(
-                    bdge.badgeAddress
-                  )}`}
+                  href={`https://badges.page/a/${getNaddr(bdge.badgeAddress)}`}
                   target="_blank"
                 >
                   <Image

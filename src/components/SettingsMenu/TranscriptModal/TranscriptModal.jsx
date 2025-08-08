@@ -36,11 +36,12 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
     async function fetchBadges() {
       if (isOpen) {
         const data = await getUserBadges();
+        console.log("data", data);
         setBadges(Array.isArray(data) ? data : []);
       }
     }
     fetchBadges();
-  }, [isOpen, getUserBadges]);
+  }, [isOpen]);
 
   const getNaddr = (address) => {
     if (address.startsWith("naddr")) return address;
@@ -95,26 +96,27 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
             </Text>
           </HStack>
           <Box display="flex" justifyContent="center" mb={4}>
-            {cardImage ? (
-              cardLink ? (
-                <Link href={cardLink} target="_blank">
+            {
+              cardImage ? (
+                cardLink ? (
+                  <Link href={cardLink} target="_blank">
+                    <Image
+                      src={cardImage}
+                      width={150}
+                      borderRadius="33%"
+                      boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+                    />
+                  </Link>
+                ) : (
                   <Image
                     src={cardImage}
                     width={150}
                     borderRadius="33%"
                     boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
                   />
-                </Link>
-              ) : (
-                <Image
-                  src={cardImage}
-                  width={150}
-                  borderRadius="33%"
-                  boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
-                />
-              )
-            ) : null
-            // <ReactConfetti numberOfPieces={80} recycle={false} />
+                )
+              ) : null
+              // <ReactConfetti numberOfPieces={80} recycle={false} />
             }
           </Box>
           <Text mb={4}>
