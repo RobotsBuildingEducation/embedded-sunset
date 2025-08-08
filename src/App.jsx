@@ -178,6 +178,7 @@ import { RoleCanvas } from "./components/RoleCanvas/RoleCanvas";
 import { AlgorithmHelper } from "./components/AlgorithmHelper/AlgorithmHelper";
 import { TbBinaryTreeFilled } from "react-icons/tb";
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
+import CloudTransition from "./elements/CloudTransition";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -1345,6 +1346,7 @@ const Step = ({
   setAllowPosts,
   hasSubmittedPasscode,
   setCurrentStep,
+  navigateWithTransition,
 }) => {
   let loot = buildSuperLoot();
 
@@ -2271,7 +2273,7 @@ const Step = ({
         import.meta.env.VITE_PATREON_PASSCODE
       ) {
         await incrementToSubscription(npub, currentStep);
-        navigate("/subscription");
+        navigateWithTransition("/subscription");
       } else {
         setIsPostingWithNostr(true);
 
@@ -2281,9 +2283,9 @@ const Step = ({
           setCurrentStep(currentStep + 1);
 
           if (currentStep <= 4) {
-            navigate(`/onboarding/${currentStep + 2}`);
+            navigateWithTransition(`/onboarding/${currentStep + 2}`);
           } else {
-            navigate(`/q/${currentStep + 1}`);
+            navigateWithTransition(`/q/${currentStep + 1}`);
           }
         } finally {
           setIsPostingWithNostr(false);
@@ -2292,7 +2294,7 @@ const Step = ({
     } else if (currentStep >= steps[userLanguage].length - 1) {
       const npub = localStorage.getItem("local_npub");
       await incrementToFinalAward(npub);
-      navigate("/award");
+      navigateWithTransition("/award");
     } else {
       setIsPostingWithNostr(true);
 
@@ -2309,9 +2311,9 @@ const Step = ({
         setCurrentStep(currentStep + 1);
 
         if (currentStep <= 4) {
-          navigate(`/onboarding/${currentStep + 2}`);
+          navigateWithTransition(`/onboarding/${currentStep + 2}`);
         } else {
-          navigate(`/q/${currentStep + 1}`);
+          navigateWithTransition(`/q/${currentStep + 1}`);
         }
       } finally {
         setIsPostingWithNostr(false);
@@ -3620,15 +3622,19 @@ const Step = ({
             step.isTerminal ? null : suggestionMessage.length > 0 ? (
             <Box maxWidth="600px" width="100%">
               <Box
+                as={motion.div}
                 mt={4}
                 mb={0}
                 p={4}
                 borderRadius="24px"
                 borderBottomLeftRadius={"0px"}
-                // background="gray.100"
+                background="white"
                 border="1px solid black"
                 textAlign={"left"}
                 width="100%"
+                initial={{ scale: 0.8 }}
+                animate={{ scale: [1, 1.08, 0.96, 1.04, 1] }}
+                transition={{ duration: 0.8 }}
               >
                 <Markdown
                   components={ChakraUIRenderer(newTheme)}
@@ -5118,6 +5124,16 @@ function App({ isShutDown }) {
 
   const [allowPosts, setAllowPosts] = useState(false);
 
+  const [showClouds, setShowClouds] = useState(false);
+
+  const navigateWithTransition = (path) => {
+    setShowClouds(true);
+    setTimeout(() => {
+      navigate(path);
+      setTimeout(() => setShowClouds(false), 800);
+    }, 400);
+  };
+
   // const {
   //   generateNostrKeys,
   //   auth,
@@ -5373,6 +5389,7 @@ function App({ isShutDown }) {
 
   return (
     <Box ref={topRef}>
+      <CloudTransition isActive={showClouds} />
       {alert.isOpen && (
         <Alert
           status={alert.status}
@@ -5489,6 +5506,7 @@ function App({ isShutDown }) {
                       emailStep={clonedStep}
                       hasSubmittedPasscode={hasSubmittedPasscode}
                       setCurrentStep={setCurrentStep}
+                      navigateWithTransition={navigateWithTransition}
                     />
                   </PrivateRoute>
                 }

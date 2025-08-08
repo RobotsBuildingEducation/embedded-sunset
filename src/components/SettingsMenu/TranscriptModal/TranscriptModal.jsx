@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import isEmpty from "lodash/isEmpty";
-import get from "lodash/get";
 import {
   Box,
   Button,
@@ -8,368 +6,117 @@ import {
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
+  ModalFooter,
   HStack,
-  useToast,
+  Image,
 } from "@chakra-ui/react";
-
-import "prismjs/components/prism-clike";
-import "prismjs/components/prism-javascript";
-import "prismjs/themes/prism.css";
+import { motion } from "framer-motion";
 import ReactConfetti from "react-confetti";
-
+import { translation } from "../../../utility/translation";
 import {
-  computerScienceTranscript,
   transcript,
   videoTranscript,
+  computerScienceTranscript,
 } from "../../../utility/transcript";
-
 import { useSharedNostr } from "../../../hooks/useNOSTR";
-import { CloudCanvas, SunsetCanvas } from "../../../elements/SunsetCanvas";
-import { translation } from "../../../utility/translation";
-import { CopyButtonIcon } from "../../../elements/CopyButtonIcon";
 
 const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
-  let transcriptset =
+  const transcriptset =
     userLanguage === "compsci-en" ? computerScienceTranscript : transcript;
-  const toast = useToast();
-
   const [badges, setBadges] = useState([]);
-  const [areBadgesLoading, setAreBadgesLoading] = useState(true);
   const { getUserBadges } = useSharedNostr(
     localStorage.getItem("local_npub"),
     localStorage.getItem("local_nsec")
   );
-  useEffect(() => {
-    async function getBadges() {
-      let data = await getUserBadges();
-      setBadges(data);
-      setAreBadgesLoading(false);
-    }
 
-    if (isOpen) {
-      getBadges();
-    } else {
-      setAreBadgesLoading(true);
+  useEffect(() => {
+    async function fetchBadges() {
+      if (isOpen) {
+        const data = await getUserBadges();
+        setBadges(data || []);
+      }
     }
+    fetchBadges();
   }, [isOpen]);
 
-  const handleCopyKeys = (id) => {
-    if (id) {
-      const keys = id; // replace with actual keys
-      navigator.clipboard.writeText(keys);
-      toast({
-        title: translation[userLanguage]["toast.title.keysCopied"],
-        description: translation[userLanguage]["toast.description.keysCopied"],
-        status: "info",
-        duration: 1500,
-        isClosable: true,
-        position: "top",
-        render: () => (
-          <Box
-            color="black"
-            p={3}
-            bg="#FEEBC8" // Custom background color here!
-            borderRadius="md"
-            boxShadow="lg"
-          >
-            <Text fontWeight="bold">
-              {translation[userLanguage]["toast.title.keysCopied"]}
-            </Text>
-            <Text>
-              {translation[userLanguage]["toast.description.keysCopied"]}
-            </Text>
-          </Box>
-        ),
-      });
-    } else {
-      const keys = localStorage.getItem("local_nsec"); // replace with actual keys
-      navigator.clipboard.writeText(keys);
-      toast({
-        title: translation[userLanguage]["toast.title.keysCopied"],
-        description: translation[userLanguage]["toast.description.keysCopied"],
-        status: "info",
-        duration: 1500,
-        isClosable: true,
-        position: "top",
-        render: () => (
-          <Box
-            color="black"
-            p={3}
-            bg="#FEEBC8" // Custom background color here!
-            borderRadius="md"
-            boxShadow="lg"
-          >
-            <Text fontWeight="bold">
-              {translation[userLanguage]["toast.title.keysCopied"]}
-            </Text>
-            <Text>
-              {translation[userLanguage]["toast.description.keysCopied"]}
-            </Text>
-          </Box>
-        ),
-      });
-    }
-  };
-
-  console.log("badges", badges);
+  const cardImage = badges[0]?.image;
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      size="4xl"
-      scrollBehavior={"inside"}
-    >
-      <ModalOverlay></ModalOverlay>
+    <Modal isOpen={isOpen} onClose={onClose} size="lg" isCentered>
+      <ModalOverlay bg="rgba(255,255,255,0.8)" backdropFilter="blur(8px)" />
       <ModalContent
-        // background={"gray.500"}
-        background={"#38628D"}
-        // color="white"
-        borderRadius="lg"
-        boxShadow="2xl"
+        as={motion.div}
+        initial={{ y: 80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 80, opacity: 0 }}
+        transition={{ duration: 0.4 }}
+        bg="white"
+        borderRadius="xl"
+        boxShadow="xl"
         p={0}
-        width="100%"
-
-        // style={{ fontFamily: "Roboto Serif, serif" }}
+        sx={{
+          position: "relative",
+          border: "8px solid transparent",
+          background:
+            "linear-gradient(white, white) padding-box, linear-gradient(135deg,#FFD700,#FF69B4,#DA70D6,#FFA500) border-box",
+          '&::before': {
+            content: '""',
+            position: "absolute",
+            top: "8px",
+            left: "8px",
+            right: "8px",
+            bottom: "8px",
+            border: "2px solid #FFD700",
+            borderRadius: "calc(var(--chakra-radii-xl) - 8px)",
+            pointerEvents: "none",
+          },
+        }}
       >
-        <ModalHeader
-          fontSize="3xl"
-          fontWeight="bold"
-          marginTop={0}
-          paddingTop={0}
-          padding={3}
-        >
-          <HStack>
-            <div style={{ color: "white" }}>
-              {/* {translation[userLanguage]["modal.learn.title"]} */}
+        <ModalBody p={6} color="gray.800">
+          <HStack justifyContent="space-between" mb={4}>
+            <Text fontSize="xl" fontWeight="bold">
               {translation[userLanguage]["modal.title.decentralizedTranscript"]}
-            </div>
+            </Text>
+            <Text fontSize="xl" fontWeight="bold">
+              {translation[userLanguage]["modal.title.decentralizedTranscript"]}
+            </Text>
           </HStack>
-        </ModalHeader>
-
-        <ModalBody p={8} style={{ width: "100%", color: "white" }}>
-          {/* <Button
-            style={{
-              display: "flex",
-            }}
-            tabIndex={0}
-            onMouseDown={() => {
-              handleCopyKeys(localStorage.getItem("local_npub") || "");
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                handleCopyKeys(localStorage.getItem("local_npub") || "");
-              }
-            }}
-          >
-            <div style={{ width: "min-content" }}>
-              <CopyButtonIcon color="black" />
-            </div>
-            &nbsp;
-            <div>
-              <b>{translation[userLanguage]["yourID"]}</b>
-              &nbsp;
-              {localStorage?.getItem("local_npub")?.substr(0, 16) || ""}
-            </div>
-          </Button>
-
-          <br />
-          <br /> */}
-
-          <div>
-            {
-              translation[userLanguage][
-                "modal.decentralizedTranscript.awareness"
-              ]
-            }
-            {/* &nbsp;
-            <span>
-              <a
-                target="_blank"
-                href="https://embedded-rox.app"
-                style={{ textDecoration: "underline", fontWeight: "bold" }}
-                onKeyDown={() => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    window.open("embedded-rox.app");
-                  }
-                }}
-              >
-                {translation[userLanguage][
-                  "settings.button.yourTutor"
-                ].toLowerCase()}
-              </a>
-              &nbsp;
-            </span>
-            <Button
-              width="fit-content"
-              onMouseDown={() =>
-                handleCopyKeys(localStorage.getItem("local_nsec"))
-              }
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  handleCopyKeys(localStorage.getItem("local_nsec"));
-                }
-              }}
-              fontSize={"smaller"}
-            >
-              🔑 {translation[userLanguage]["button.copyKey"]}
-            </Button> */}
-          </div>
-          <br />
-          <b>
-            {
-              translation[userLanguage][
-                "modal.decentralizedTranscript.awardsEarned"
-              ]
-            }
-          </b>
-          {areBadgesLoading ? (
-            <div style={{ width: "fit-content" }}>
-              <br />
-              <CloudCanvas /> {translation[userLanguage]["loading"]}
-            </div>
-          ) : badges.length < 1 ? (
-            <div>{translation[userLanguage]["noTranscriptFound"]}</div>
-          ) : (
-            <Box
-              display="flex"
-              m={2}
-              width="fit-content"
-              flexWrap="wrap"
-              height="min-content"
-            >
-              {badges.map((badge) => {
-                console.log("BDGE!!!!!@@@", badge);
-                return (
-                  <div
-                    style={{
-                      margin: 6,
-
-                      width: "250px",
-                      height: "100px",
-                      display: "flex",
-                    }}
-                  >
-                    <a
-                      href={`https://badges.page/a/${(() => {
-                        const badgeName = badge.badgeAddress.split(":")[2];
-
-                        const matchingTranscript = Object.values(
-                          transcript
-                        ).find((entry) => {
-                          console.log("entry.name", entry.name);
-                          return entry.name.replace(/\s+/g, "-") === badgeName;
-                        });
-
-                        const matchingVideoTranscript = Object.values(
-                          videoTranscript
-                        ).find((entry) => {
-                          console.log("entry.name", entry.name);
-                          return entry.name.replace(/\s+/g, "-") === badgeName;
-                        });
-
-                        const matchingComputerScienceTranscript = Object.values(
-                          computerScienceTranscript
-                        ).find((entry) => {
-                          console.log("entry.name", entry.name);
-                          return entry.name.replace(/\s+/g, "-") === badgeName;
-                        });
-
-                        console.log(
-                          "matchingTranscript",
-                          matchingTranscript ||
-                            matchingVideoTranscript ||
-                            matchingComputerScienceTranscript
-                        );
-                        let result =
-                          matchingTranscript?.address ||
-                          matchingVideoTranscript?.address ||
-                          matchingComputerScienceTranscript?.address;
-                        return result;
-                      })()}`}
-                      target="_blank"
-                      onKeyDown={() => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          window.open(
-                            `https://badges.page/a/${(() => {
-                              const badgeName =
-                                badge.badgeAddress.split(":")[2];
-
-                              const matchingTranscript = Object.values(
-                                transcript
-                              ).find((entry) => {
-                                console.log("entry.name", entry.name);
-                                return (
-                                  entry.name.replace(/\s+/g, "-") === badgeName
-                                );
-                              });
-
-                              const matchingVideoTranscript = Object.values(
-                                videoTranscript
-                              ).find((entry) => {
-                                console.log("entry.name", entry.name);
-                                return (
-                                  entry.name.replace(/\s+/g, "-") === badgeName
-                                );
-                              });
-
-                              const matchingComputerScienceTranscript =
-                                Object.values(computerScienceTranscript).find(
-                                  (entry) => {
-                                    console.log("entry.name", entry.name);
-                                    return (
-                                      entry.name.replace(/\s+/g, "-") ===
-                                      badgeName
-                                    );
-                                  }
-                                );
-
-                              console.log(
-                                "matchingTranscript",
-                                matchingTranscript ||
-                                  matchingVideoTranscript ||
-                                  matchingComputerScienceTranscript
-                              );
-                              let result =
-                                matchingTranscript?.address ||
-                                matchingVideoTranscript?.address ||
-                                matchingComputerScienceTranscript?.address;
-                              return result;
-                            })()}`
-                          );
-                        }
-                      }}
-                    >
-                      <img
-                        src={badge.image}
-                        width={100}
-                        style={{
-                          borderRadius: "33%",
-                          boxShadow: "0px 1px 1px 2px black",
-                          marginBottom: 4,
-                        }}
-                      />
-                    </a>
-                    <div style={{ padding: 6 }}>
-                      <Text fontSize={"sm"}>
-                        {translation[userLanguage][badge.name] || badge.name}
-                      </Text>
-                    </div>
-                  </div>
-                );
-              })}
-            </Box>
-          )}
+          <Box display="flex" justifyContent="center" mb={4}>
+            {cardImage ? (
+              <Image
+                src={cardImage}
+                width={150}
+                borderRadius="33%"
+                boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+              />
+            ) : (
+              <ReactConfetti numberOfPieces={80} recycle={false} />
+            )}
+          </Box>
+          <Text mb={4}>
+            {translation[userLanguage]["modal.decentralizedTranscript.awareness"]}
+          </Text>
+          <Box display="flex" flexWrap="wrap" justifyContent="center">
+            {badges.map((badge) => (
+              <Box key={badge.id} m={2} textAlign="center">
+                <Image
+                  src={badge.image}
+                  width={100}
+                  borderRadius="33%"
+                  boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+                  mb={2}
+                />
+                <Text fontSize="sm">
+                  {translation[userLanguage][badge.name] || badge.name}
+                </Text>
+              </Box>
+            ))}
+          </Box>
         </ModalBody>
-        <ModalFooter margin={0} padding={3}>
+        <ModalFooter justifyContent="center">
           <Button
             onMouseDown={onClose}
-            variant="solid"
-            size="md"
-            boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 onClose();
