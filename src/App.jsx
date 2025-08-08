@@ -2284,10 +2284,7 @@ const Step = ({
     const totalSteps = steps[userLanguage].length;
     const stepProgress = ((currentStep + 1) / totalSteps) * 100;
     const salaryText = loot[currentStep][userLanguage];
-    const updatedDailyProgress = Math.min(
-      dailyProgress + 1,
-      dailyGoals || 5
-    );
+    const updatedDailyProgress = Math.min(dailyProgress + 1, dailyGoals || 5);
     const dailyGoalPercent = Math.min(
       (updatedDailyProgress / (dailyGoals || 5)) * 100,
       100
@@ -3438,21 +3435,21 @@ const Step = ({
                       textAlign={"left"}
                       color={isCorrect ? "orange.500" : "red.500"}
                     >
-                    {feedback}{" "}
-                    {grade ? (
-                      <DataTags
-                        userLanguage={userLanguage}
-                        grade={
-                          translation[userLanguage]["tags.grade"] + grade
-                        }
-                      />
-                    ) : null}
-                  </Text>
-                </Box>
-              </RiseUpAnimation>
-            )}{" "}
-            {feedback && (
-              <div
+                      {feedback}{" "}
+                      {grade ? (
+                        <DataTags
+                          userLanguage={userLanguage}
+                          grade={
+                            translation[userLanguage]["tags.grade"] + grade
+                          }
+                        />
+                      ) : null}
+                    </Text>
+                  </Box>
+                </RiseUpAnimation>
+              )}{" "}
+              {feedback && (
+                <div
                   style={{
                     width: "100%",
                     maxWidth: "600px",
@@ -3596,8 +3593,8 @@ const Step = ({
                 textAlign={"left"}
                 width="100%"
                 initial={{ scale: 0.8 }}
-                animate={{ scale: [1, 1.08, 0.96, 1.04, 1] }}
-                transition={{ duration: 0.8 }}
+                animate={{ scale: [1, 0.96] }}
+                transition={{ duration: 0.2 }}
               >
                 <Markdown
                   components={ChakraUIRenderer(newTheme)}
