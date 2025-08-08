@@ -10,6 +10,7 @@ import {
   ModalFooter,
   HStack,
   Image,
+  Link,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import ReactConfetti from "react-confetti";
@@ -20,6 +21,7 @@ import {
   computerScienceTranscript,
 } from "../../../utility/transcript";
 import { useSharedNostr } from "../../../hooks/useNOSTR";
+import { nip19 } from "nostr-tools";
 
 const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
   const transcriptset =
@@ -34,13 +36,27 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
     async function fetchBadges() {
       if (isOpen) {
         const data = await getUserBadges();
-        setBadges(data || []);
+        console.log("data", data);
+        setBadges(Array.isArray(data) ? data : []);
       }
     }
     fetchBadges();
   }, [isOpen]);
 
+  const getNaddr = (address) => {
+    if (address.startsWith("naddr")) return address;
+    const [kind, pubkey, identifier] = address.split(":");
+    return nip19.naddrEncode({
+      kind: parseInt(kind),
+      pubkey,
+      identifier,
+    });
+  };
+
   const cardImage = badges[0]?.image;
+  const cardLink = badges[0]?.badgeAddress
+    ? `https://badges.page/a/${getNaddr(badges[0].badgeAddress)}`
+    : null;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg" isCentered>
@@ -80,15 +96,27 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
             </Text>
           </HStack>
           <Box display="flex" justifyContent="center" mb={4}>
-            {cardImage ? (
-              <Image
-                src={cardImage}
-                width={150}
-                borderRadius="33%"
-                boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
-              />
-            ) : null
-            // <ReactConfetti numberOfPieces={80} recycle={false} />
+            {
+              cardImage ? (
+                cardLink ? (
+                  <Link href={cardLink} target="_blank">
+                    <Image
+                      src={cardImage}
+                      width={150}
+                      borderRadius="33%"
+                      boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+                    />
+                  </Link>
+                ) : (
+                  <Image
+                    src={cardImage}
+                    width={150}
+                    borderRadius="33%"
+                    boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+                  />
+                )
+              ) : null
+              // <ReactConfetti numberOfPieces={80} recycle={false} />
             }
           </Box>
           <Text mb={4}>
@@ -100,14 +128,19 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
           </Text>
           <Box display="flex" flexWrap="wrap" justifyContent="center">
             {badges.map((badge) => (
-              <Box key={badge.id} m={2} textAlign="center">
-                <Image
-                  src={badge.image}
-                  width={100}
-                  borderRadius="33%"
-                  boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
-                  mb={2}
-                />
+              <Box key={badge.badgeAddress} m={2} textAlign="center">
+                <Link
+                  href={`https://badges.page/a/${getNaddr(badge.badgeAddress)}`}
+                  target="_blank"
+                >
+                  <Image
+                    src={badge.image}
+                    width={100}
+                    borderRadius="33%"
+                    boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+                    mb={2}
+                  />
+                </Link>
                 <Text fontSize="sm">
                   {translation[userLanguage][badge.name] || badge.name}
                 </Text>

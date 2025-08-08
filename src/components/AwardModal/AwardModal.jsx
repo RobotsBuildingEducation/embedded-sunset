@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -10,6 +10,7 @@ import {
   ModalFooter,
   HStack,
   Image,
+  Link,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import ReactConfetti from "react-confetti";
@@ -19,11 +20,38 @@ import {
   videoTranscript,
   computerScienceTranscript,
 } from "../../utility/transcript";
+import { useSharedNostr } from "../../hooks/useNOSTR";
+import { nip19 } from "nostr-tools";
 
 const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
   const transcriptset =
     userLanguage === "compsci-en" ? computerScienceTranscript : transcript;
   const badge = transcriptset[step.group] || {};
+  const [badges, setBadges] = useState([]);
+  const { getUserBadges } = useSharedNostr(
+    localStorage.getItem("local_npub"),
+    localStorage.getItem("local_nsec")
+  );
+
+  useEffect(() => {
+    async function fetchBadges() {
+      if (isOpen) {
+        const data = await getUserBadges();
+        setBadges(Array.isArray(data) ? data : []);
+      }
+    }
+    fetchBadges();
+  }, [isOpen]);
+
+  const getNaddr = (address) => {
+    if (address.startsWith("naddr")) return address;
+    const [kind, pubkey, identifier] = address.split(":");
+    return nip19.naddrEncode({
+      kind: parseInt(kind),
+      pubkey,
+      identifier,
+    });
+  };
 
   return (
     <Modal
@@ -77,12 +105,26 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
             </Text>
           </HStack>
           <Box display="flex" justifyContent="center" mb={4}>
-            <Image
-              src={badge.imgSrc}
-              width={150}
-              borderRadius="33%"
-              boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
-            />
+            {badge.address ? (
+              <Link
+                href={`https://badges.page/a/${getNaddr(badge.address)}`}
+                target="_blank"
+              >
+                <Image
+                  src={badge.imgSrc}
+                  width={150}
+                  borderRadius="33%"
+                  boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+                />
+              </Link>
+            ) : (
+              <Image
+                src={badge.imgSrc}
+                width={150}
+                borderRadius="33%"
+                boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+              />
+            )}
           </Box>
           <Text>
             {
@@ -91,6 +133,27 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
               ]
             }
           </Text>
+          <Box display="flex" flexWrap="wrap" justifyContent="center" mt={4}>
+            {badges.map((bdge) => (
+              <Box key={bdge.badgeAddress} m={2} textAlign="center">
+                <Link
+                  href={`https://badges.page/a/${getNaddr(bdge.badgeAddress)}`}
+                  target="_blank"
+                >
+                  <Image
+                    src={bdge.image}
+                    width={100}
+                    borderRadius="33%"
+                    boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+                    mb={2}
+                  />
+                </Link>
+                <Text fontSize="sm">
+                  {translation[userLanguage][bdge.name] || bdge.name}
+                </Text>
+              </Box>
+            ))}
+          </Box>
         </ModalBody>
         <ModalFooter justifyContent="center">
           <Button

@@ -178,7 +178,7 @@ const CloudTransition = ({
                 <br />
                 <br />
                 <Box w="100%" mx="auto" mb={6}>
-                  <Text fontSize="sm" mb={1} color="purple.500">
+                  <Text fontSize="sm" mb={1} color="purple.800">
                     Salary
                   </Text>
                   <Box
@@ -186,6 +186,8 @@ const CloudTransition = ({
                     bg="whiteAlpha.600"
                     borderRadius="full"
                     overflow="hidden"
+                    height="30px"
+                    border="1px solid #ededed"
                   >
                     <motion.div
                       initial={{ width: 0 }}
@@ -199,7 +201,7 @@ const CloudTransition = ({
                   </Box>
                 </Box>
                 <Box w="100%" mx="auto" mb={6}>
-                  <Text fontSize="sm" mb={1} color="purple.500">
+                  <Text fontSize="sm" mb={1} color="purple.800">
                     Progress
                   </Text>
                   <Box
@@ -207,6 +209,8 @@ const CloudTransition = ({
                     bg="whiteAlpha.600"
                     borderRadius="full"
                     overflow="hidden"
+                    height="30px"
+                    border="1px solid #ededed"
                   >
                     <motion.div
                       initial={{ width: 0 }}
@@ -214,13 +218,14 @@ const CloudTransition = ({
                       transition={{ duration: 0.6, delay: 0.1 }}
                       style={{
                         height: "100%",
+
                         background: "linear-gradient(90deg,#C3E4FD,#EFD3FF)",
                       }}
                     />
                   </Box>
                 </Box>
                 <Box w="100%" mx="auto">
-                  <Text fontSize="sm" mb={1} color="purple.500">
+                  <Text fontSize="sm" mb={1} color="purple.800">
                     {dailyGoalLabel} {dailyProgress}/{dailyGoals}
                   </Text>
                   <Box
@@ -229,6 +234,7 @@ const CloudTransition = ({
                     borderRadius="full"
                     overflow="hidden"
                     border="1px solid #ededed"
+                    height="30px"
                   >
                     <motion.div
                       initial={{ width: 0 }}
