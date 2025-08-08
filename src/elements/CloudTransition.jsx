@@ -142,80 +142,6 @@ const CloudTransition = ({
             w="90%"
             maxW="400px"
           >
-            <Text
-              as={motion.p}
-              fontSize="3xl"
-              fontWeight="bold"
-              mb={4}
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.6 }}
-            >
-              +${salary}/yr
-            </Text>
-            <Box w="100%" mx="auto" mb={6}>
-              <Text fontSize="sm" mb={1} color="purple.500">
-                Salary
-              </Text>
-              <Box
-                h="8px"
-                bg="whiteAlpha.600"
-                borderRadius="full"
-                overflow="hidden"
-              >
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${salaryProgress}%` }}
-                  transition={{ duration: 1.2 }}
-                  style={{
-                    height: "100%",
-                    background: "linear-gradient(90deg,#FFDEE9,#B5FFFC)",
-                  }}
-                />
-              </Box>
-            </Box>
-            <Box w="100%" mx="auto" mb={6}>
-              <Text fontSize="sm" mb={1} color="purple.500">
-                Progress
-              </Text>
-              <Box
-                h="8px"
-                bg="whiteAlpha.600"
-                borderRadius="full"
-                overflow="hidden"
-              >
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${stepProgress}%` }}
-                  transition={{ duration: 1.2, delay: 0.2 }}
-                  style={{
-                    height: "100%",
-                    background: "linear-gradient(90deg,#C3E4FD,#EFD3FF)",
-                  }}
-                />
-              </Box>
-            </Box>
-            <Box w="100%" mx="auto">
-              <Text fontSize="sm" mb={1} color="purple.500">
-                {dailyGoalLabel} {dailyProgress}/{dailyGoals}
-              </Text>
-              <Box
-                h="8px"
-                bg="whiteAlpha.600"
-                borderRadius="full"
-                overflow="hidden"
-              >
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${dailyGoalProgress}%` }}
-                  transition={{ duration: 1.2, delay: 0.4 }}
-                  style={{
-                    height: "100%",
-                    background: "linear-gradient(90deg,#FFFBCC,#D5F0FF)",
-                  }}
-                />
-              </Box>
-            </Box>
             {message && (
               <Text
                 as={motion.p}
@@ -225,21 +151,101 @@ const CloudTransition = ({
                 animate={{ opacity: 0.8, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.6 }}
               >
+                <Text
+                  as={motion.p}
+                  fontSize="3xl"
+                  fontWeight="bold"
+                  mb={4}
+                  initial={{ scale: 0.9 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  +${salary}/yr
+                </Text>
+                {detail && (
+                  <Text
+                    as={motion.p}
+                    fontSize="sm"
+                    mt={2}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 0.8, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.7 }}
+                  >
+                    {detail}
+                  </Text>
+                )}
+                <br />
+                <br />
+                <Box w="100%" mx="auto" mb={6}>
+                  <Text fontSize="sm" mb={1} color="purple.500">
+                    Salary
+                  </Text>
+                  <Box
+                    h="8px"
+                    bg="whiteAlpha.600"
+                    borderRadius="full"
+                    overflow="hidden"
+                  >
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${salaryProgress}%` }}
+                      transition={{ duration: 1.2 }}
+                      style={{
+                        height: "100%",
+                        background: "linear-gradient(90deg,#FFDEE9,#B5FFFC)",
+                      }}
+                    />
+                  </Box>
+                </Box>
+                <Box w="100%" mx="auto" mb={6}>
+                  <Text fontSize="sm" mb={1} color="purple.500">
+                    Progress
+                  </Text>
+                  <Box
+                    h="8px"
+                    bg="whiteAlpha.600"
+                    borderRadius="full"
+                    overflow="hidden"
+                  >
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${stepProgress}%` }}
+                      transition={{ duration: 1.2, delay: 0.2 }}
+                      style={{
+                        height: "100%",
+                        background: "linear-gradient(90deg,#C3E4FD,#EFD3FF)",
+                      }}
+                    />
+                  </Box>
+                </Box>
+                <Box w="100%" mx="auto">
+                  <Text fontSize="sm" mb={1} color="purple.500">
+                    {dailyGoalLabel} {dailyProgress}/{dailyGoals}
+                  </Text>
+                  <Box
+                    h="8px"
+                    bg="whiteAlpha.600"
+                    borderRadius="full"
+                    overflow="hidden"
+                    border="1px solid #ededed"
+                  >
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${dailyGoalProgress}%` }}
+                      transition={{ duration: 1.2, delay: 0.4 }}
+                      style={{
+                        height: "100%",
+                        background: "linear-gradient(90deg,#FFFBCC,#D5F0FF)",
+                      }}
+                    />
+                  </Box>
+                </Box>
+                <br />
+                <br />
                 {message}
               </Text>
             )}
-            {detail && (
-              <Text
-                as={motion.p}
-                fontSize="sm"
-                mt={2}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 0.8, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.7 }}
-              >
-                {detail}
-              </Text>
-            )}
+
             <Button
               as={motion.button}
               mt={8}
@@ -263,4 +269,3 @@ const CloudTransition = ({
 };
 
 export default CloudTransition;
-
