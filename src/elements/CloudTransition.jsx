@@ -3,11 +3,11 @@ import { Box, Text, Button } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const colors = [
-  "rgba(255,255,255,0.8)", // soft white
-  "rgba(224,240,255,0.6)", // powder blue
-  "rgba(245,224,255,0.6)", // lavender
-  "rgba(255,240,245,0.6)", // pink blush
-  "rgba(255,255,224,0.6)", // light gold
+  "rgba(255,255,255,0.3)", // soft white
+  "rgba(224,240,255,0.25)", // powder blue
+  "rgba(245,224,255,0.25)", // lavender
+  "rgba(255,240,245,0.25)", // pink blush
+  "rgba(255,255,224,0.25)", // light gold
 ];
 
 const MotionBox = motion(Box);
@@ -34,7 +34,7 @@ const CloudTransition = ({
   useEffect(() => {
     if (isActive) {
       setCanContinue(false);
-      const id = setTimeout(() => setCanContinue(true), 200);
+      const id = setTimeout(() => setCanContinue(true), 100);
       return () => clearTimeout(id);
     }
     setCanContinue(false);
@@ -50,11 +50,11 @@ const CloudTransition = ({
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    const clouds = Array.from({ length: 20 }, () => ({
+    const clouds = Array.from({ length: 6 }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      radius: 80 + Math.random() * 140,
-      speed: 0.2 + Math.random() * 0.3,
+      radius: 20 + Math.random() * 40,
+      speed: 0.6 + Math.random() * 0.6,
       color: colors[Math.floor(Math.random() * colors.length)],
     }));
 
@@ -134,9 +134,9 @@ const CloudTransition = ({
             h="100%"
           />
           <MotionBox
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.3 }}
             textAlign="center"
             color="purple.600"
             w="90%"
@@ -145,20 +145,20 @@ const CloudTransition = ({
             {message && (
               <Text
                 as={motion.p}
-                fontSize="md"
-                mt={6}
-                initial={{ opacity: 0, y: 10 }}
+                fontSize="sm"
+                mt={4}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 0.8, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
+                transition={{ duration: 0.3, delay: 0.15 }}
               >
                 <Text
                   as={motion.p}
-                  fontSize="3xl"
+                  fontSize="2xl"
                   fontWeight="bold"
-                  mb={4}
-                  initial={{ scale: 0.9 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 0.6 }}
+                  mb={2}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
                 >
                   +${salary}/yr
                 </Text>
@@ -166,17 +166,15 @@ const CloudTransition = ({
                   <Text
                     as={motion.p}
                     fontSize="sm"
-                    mt={2}
-                    initial={{ opacity: 0, y: 10 }}
+                    mt={1}
+                    initial={{ opacity: 0, y: 6 }}
                     animate={{ opacity: 0.8, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.7 }}
+                    transition={{ duration: 0.3, delay: 0.2 }}
                   >
                     {detail}
                   </Text>
                 )}
-                <br />
-                <br />
-                <Box w="100%" mx="auto" mb={6}>
+                <Box w="100%" mx="auto" my={4}>
                   <Text fontSize="sm" mb={1} color="purple.500">
                     Salary
                   </Text>
@@ -189,15 +187,15 @@ const CloudTransition = ({
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${salaryProgress}%` }}
-                      transition={{ duration: 1.2 }}
+                      transition={{ duration: 0.3 }}
                       style={{
                         height: "100%",
-                        background: "linear-gradient(90deg,#FFDEE9,#B5FFFC)",
+                        backgroundColor: "#E9D8FD",
                       }}
                     />
                   </Box>
                 </Box>
-                <Box w="100%" mx="auto" mb={6}>
+                <Box w="100%" mx="auto" mb={4}>
                   <Text fontSize="sm" mb={1} color="purple.500">
                     Progress
                   </Text>
@@ -210,10 +208,10 @@ const CloudTransition = ({
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${stepProgress}%` }}
-                      transition={{ duration: 1.2, delay: 0.2 }}
+                      transition={{ duration: 0.3, delay: 0.05 }}
                       style={{
                         height: "100%",
-                        background: "linear-gradient(90deg,#C3E4FD,#EFD3FF)",
+                        backgroundColor: "#BEE3F8",
                       }}
                     />
                   </Box>
@@ -232,30 +230,28 @@ const CloudTransition = ({
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${dailyGoalProgress}%` }}
-                      transition={{ duration: 1.2, delay: 0.4 }}
+                      transition={{ duration: 0.3, delay: 0.1 }}
                       style={{
                         height: "100%",
-                        background: "linear-gradient(90deg,#FFFBCC,#D5F0FF)",
+                        backgroundColor: "#FEEBC8",
                       }}
                     />
                   </Box>
                 </Box>
-                <br />
-                <br />
                 {message}
               </Text>
             )}
 
             <Button
               as={motion.button}
-              mt={8}
+              mt={6}
               colorScheme="purple"
               variant="outline"
               borderRadius="full"
               px={6}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
               onClick={onContinue}
               disabled={!canContinue}
             >
