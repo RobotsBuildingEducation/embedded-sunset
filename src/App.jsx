@@ -2267,10 +2267,13 @@ const Step = ({
     setEducationalContent([]);
     const salaryVal = loot[currentStep]["monetaryValue"] || 0;
     const salaryProgress = (salaryVal / 120000) * 100;
+    const totalSteps = steps[userLanguage].length;
+    const stepProgress = ((currentStep + 1) / totalSteps) * 100;
     const salaryText = loot[currentStep][userLanguage];
     setTransitionStats({
       salary: salaryVal,
-      progress: salaryProgress,
+      salaryProgress,
+      stepProgress,
       message: salaryText,
     });
 
@@ -5101,7 +5104,8 @@ function App({ isShutDown }) {
   const [showClouds, setShowClouds] = useState(false);
   const [transitionStats, setTransitionStats] = useState({
     salary: 0,
-    progress: 0,
+    salaryProgress: 0,
+    stepProgress: 0,
     message: "",
   });
 
@@ -5111,7 +5115,12 @@ function App({ isShutDown }) {
       navigate(path);
       setTimeout(() => {
         setShowClouds(false);
-        setTransitionStats({ salary: 0, progress: 0, message: "" });
+        setTransitionStats({
+          salary: 0,
+          salaryProgress: 0,
+          stepProgress: 0,
+          message: "",
+        });
       }, 800);
     }, 400);
   };
@@ -5374,7 +5383,8 @@ function App({ isShutDown }) {
       <CloudTransition
         isActive={showClouds}
         salary={transitionStats.salary}
-        progress={transitionStats.progress}
+        salaryProgress={transitionStats.salaryProgress}
+        stepProgress={transitionStats.stepProgress}
         message={transitionStats.message}
       />
       {alert.isOpen && (

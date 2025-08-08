@@ -12,7 +12,13 @@ const colors = [
 
 const MotionBox = motion(Box);
 
-const CloudTransition = ({ isActive, salary, progress, message }) => {
+const CloudTransition = ({
+  isActive,
+  salary,
+  salaryProgress,
+  stepProgress,
+  message,
+}) => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -116,22 +122,31 @@ const CloudTransition = ({ isActive, salary, progress, message }) => {
             textAlign="center"
             color="purple.600"
           >
-            {salary ? (
-              <>
-                <Text fontSize="3xl" fontWeight="bold" mb={4}>
-                  +${salary}/yr
+            <>
+              <Text
+                as={motion.p}
+                fontSize="3xl"
+                fontWeight="bold"
+                mb={4}
+                initial={{ scale: 0.8 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.6 }}
+              >
+                +${salary}/yr
+              </Text>
+              <Box w="60%" mx="auto" mb={6}>
+                <Text fontSize="sm" mb={1} color="purple.500">
+                  Salary
                 </Text>
                 <Box
-                  w="60%"
                   h="8px"
                   bg="whiteAlpha.600"
                   borderRadius="full"
                   overflow="hidden"
-                  mx="auto"
                 >
                   <motion.div
                     initial={{ width: 0 }}
-                    animate={{ width: `${progress}%` }}
+                    animate={{ width: `${salaryProgress}%` }}
                     transition={{ duration: 1.2 }}
                     style={{
                       height: "100%",
@@ -139,21 +154,34 @@ const CloudTransition = ({ isActive, salary, progress, message }) => {
                     }}
                   />
                 </Box>
-                {message && (
-                  <Text fontSize="md" mt={4}>
-                    {message}
-                  </Text>
-                )}
-              </>
-            ) : (
-              <Text
-                fontSize="4xl"
-                fontWeight="bold"
-                textShadow="0 0 10px rgba(255,255,255,0.8)"
-              >
-                Level Up!
-              </Text>
-            )}
+              </Box>
+              <Box w="60%" mx="auto">
+                <Text fontSize="sm" mb={1} color="purple.500">
+                  Progress
+                </Text>
+                <Box
+                  h="8px"
+                  bg="whiteAlpha.600"
+                  borderRadius="full"
+                  overflow="hidden"
+                >
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${stepProgress}%` }}
+                    transition={{ duration: 1.2, delay: 0.2 }}
+                    style={{
+                      height: "100%",
+                      background: "linear-gradient(90deg,#C3E4FD,#EFD3FF)",
+                    }}
+                  />
+                </Box>
+              </Box>
+              {message && (
+                <Text fontSize="md" mt={6}>
+                  {message}
+                </Text>
+              )}
+            </>
           </MotionBox>
         </Box>
       )}
