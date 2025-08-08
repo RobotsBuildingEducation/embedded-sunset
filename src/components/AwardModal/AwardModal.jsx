@@ -37,11 +37,11 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
     async function fetchBadges() {
       if (isOpen) {
         const data = await getUserBadges();
-        setBadges(data || []);
+        setBadges(Array.isArray(data) ? data : []);
       }
     }
     fetchBadges();
-  }, [isOpen]);
+  }, [isOpen, getUserBadges]);
 
   const getNaddr = (address) => {
     if (address.startsWith("naddr")) return address;
@@ -105,12 +105,26 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
             </Text>
           </HStack>
           <Box display="flex" justifyContent="center" mb={4}>
-            <Image
-              src={badge.imgSrc}
-              width={150}
-              borderRadius="33%"
-              boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
-            />
+            {badge.address ? (
+              <Link
+                href={`https://badges.page/a/${getNaddr(badge.address)}`}
+                target="_blank"
+              >
+                <Image
+                  src={badge.imgSrc}
+                  width={150}
+                  borderRadius="33%"
+                  boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+                />
+              </Link>
+            ) : (
+              <Image
+                src={badge.imgSrc}
+                width={150}
+                borderRadius="33%"
+                boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+              />
+            )}
           </Box>
           <Text>
             {

@@ -36,11 +36,11 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
     async function fetchBadges() {
       if (isOpen) {
         const data = await getUserBadges();
-        setBadges(data || []);
+        setBadges(Array.isArray(data) ? data : []);
       }
     }
     fetchBadges();
-  }, [isOpen]);
+  }, [isOpen, getUserBadges]);
 
   const getNaddr = (address) => {
     if (address.startsWith("naddr")) return address;
@@ -53,6 +53,9 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
   };
 
   const cardImage = badges[0]?.image;
+  const cardLink = badges[0]?.badgeAddress
+    ? `https://badges.page/a/${getNaddr(badges[0].badgeAddress)}`
+    : null;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg" isCentered>
@@ -93,12 +96,23 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
           </HStack>
           <Box display="flex" justifyContent="center" mb={4}>
             {cardImage ? (
-              <Image
-                src={cardImage}
-                width={150}
-                borderRadius="33%"
-                boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
-              />
+              cardLink ? (
+                <Link href={cardLink} target="_blank">
+                  <Image
+                    src={cardImage}
+                    width={150}
+                    borderRadius="33%"
+                    boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+                  />
+                </Link>
+              ) : (
+                <Image
+                  src={cardImage}
+                  width={150}
+                  borderRadius="33%"
+                  boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+                />
+              )
             ) : null
             // <ReactConfetti numberOfPieces={80} recycle={false} />
             }
