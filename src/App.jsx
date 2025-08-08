@@ -158,7 +158,13 @@ import { KnowledgeLedgerModal } from "./components/SettingsMenu/KnowledgeLedgerM
 import { logEvent } from "firebase/analytics";
 import BitcoinOnboarding from "./components/BitcoinOnboarding/BitcoinOnboarding";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import { FaBitcoin, FaMagic } from "react-icons/fa";
+import {
+  FaBitcoin,
+  FaMagic,
+  FaHeart,
+  FaRegHeart,
+  FaHeartBroken,
+} from "react-icons/fa";
 import MiniKitInitializer from "./MiniKitInitializer";
 
 import BitcoinModeModal from "./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal";
@@ -2699,7 +2705,8 @@ const Step = ({
     functionCall();
     // }
   };
-  const emojiMap = ["😖", "😩", "😅", "😱", "🪦"];
+  const incorrectAttempts =
+    parseInt(localStorage.getItem("incorrectAttempts"), 10) || 0;
 
   const hasPasscode =
     localStorage.getItem("passcode") ===
@@ -3368,26 +3375,8 @@ const Step = ({
             {/* {isPostingWithNostr ? (
               <CloudCanvas />
             ) : ( */}
-            <>
-              {localStorage.getItem("incorrectAttempts") &&
-              parseInt(localStorage.getItem("incorrectAttempts")) > 0 ? (
-                <Text
-                  fontSize={"smaller"}
-                  background={"#ececec"}
-                  borderRadius={12}
-                  padding={4}
-                >
-                  {translation[userLanguage]["lockout.attempts"]} &nbsp;
-                  {localStorage.getItem("incorrectAttempts")} / 5{" "}
-                  {
-                    emojiMap[
-                      parseInt(localStorage.getItem("incorrectAttempts")) - 1
-                    ]
-                  }
-                </Text>
-              ) : null}
-              {parseInt(localStorage.getItem("incorrectAttempts")) >= 5 &&
-              !isTimerExpired ? (
+            <> 
+              {incorrectAttempts >= 5 && !isTimerExpired ? (
                 <>
                   <div style={{ maxWidth: 600 }}>
                     <Text
@@ -3396,6 +3385,13 @@ const Step = ({
                       borderRadius={12}
                       padding={4}
                     >
+                      <FaHeartBroken
+                        style={{
+                          display: "inline",
+                          marginRight: 4,
+                          color: "red",
+                        }}
+                      />
                       {translation[userLanguage]["lockout.message"]} <br />
                       <br />
                       <CountdownTimer
@@ -3446,6 +3442,17 @@ const Step = ({
                         />
                       ) : null}
                     </Text>
+                    {!isCorrect && incorrectAttempts > 0 && incorrectAttempts < 5 && (
+                      <HStack mt={2} spacing={1}>
+                        {Array.from({ length: 5 }, (_, i) =>
+                          i < 5 - incorrectAttempts ? (
+                            <FaHeart key={i} color="red" />
+                          ) : (
+                            <FaRegHeart key={i} color="red" />
+                          )
+                        )}
+                      </HStack>
+                    )}
                   </Box>
                 </RiseUpAnimation>
               )}{" "}
@@ -3470,7 +3477,7 @@ const Step = ({
                 currentStep > 0 &&
                 !isCorrect &&
                 !isSending &&
-                !(parseInt(localStorage.getItem("incorrectAttempts")) >= "5") &&
+                !(incorrectAttempts >= 5) &&
                 isTimerExpired ? (
                   <Button
                     fontSize="sm"
