@@ -3,11 +3,11 @@ import { Box, Text, Button } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const colors = [
-  "rgba(255,255,255,0.8)", // soft white
-  "rgba(224,240,255,0.6)", // powder blue
-  "rgba(245,224,255,0.6)", // lavender
-  "rgba(255,240,245,0.6)", // pink blush
-  "rgba(255,255,224,0.6)", // light gold
+  "rgba(255,255,255,0.6)", // soft white
+  "rgba(224,240,255,0.4)", // powder blue
+  "rgba(245,224,255,0.4)", // lavender
+  "rgba(255,240,245,0.4)", // pink blush
+  "rgba(255,255,224,0.4)", // light gold
 ];
 
 const MotionBox = motion(Box);
@@ -50,11 +50,11 @@ const CloudTransition = ({
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    const clouds = Array.from({ length: 20 }, () => ({
+    const clouds = Array.from({ length: 10 }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      radius: 80 + Math.random() * 140,
-      speed: 0.2 + Math.random() * 0.3,
+      radius: 40 + Math.random() * 80,
+      speed: 0.4 + Math.random() * 0.4,
       color: colors[Math.floor(Math.random() * colors.length)],
     }));
 
@@ -136,7 +136,7 @@ const CloudTransition = ({
           <MotionBox
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.4 }}
             textAlign="center"
             color="purple.600"
             w="90%"
@@ -149,7 +149,7 @@ const CloudTransition = ({
                 mt={6}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 0.8, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
+                transition={{ duration: 0.4, delay: 0.2 }}
               >
                 <Text
                   as={motion.p}
@@ -169,7 +169,7 @@ const CloudTransition = ({
                     mt={2}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 0.8, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.7 }}
+                    transition={{ duration: 0.4, delay: 0.3 }}
                   >
                     {detail}
                   </Text>
@@ -189,7 +189,7 @@ const CloudTransition = ({
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${salaryProgress}%` }}
-                      transition={{ duration: 1.2 }}
+                      transition={{ duration: 0.6 }}
                       style={{
                         height: "100%",
                         background: "linear-gradient(90deg,#FFDEE9,#B5FFFC)",
@@ -210,7 +210,7 @@ const CloudTransition = ({
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${stepProgress}%` }}
-                      transition={{ duration: 1.2, delay: 0.2 }}
+                      transition={{ duration: 0.6, delay: 0.1 }}
                       style={{
                         height: "100%",
                         background: "linear-gradient(90deg,#C3E4FD,#EFD3FF)",
@@ -232,7 +232,7 @@ const CloudTransition = ({
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${dailyGoalProgress}%` }}
-                      transition={{ duration: 1.2, delay: 0.4 }}
+                      transition={{ duration: 0.6, delay: 0.2 }}
                       style={{
                         height: "100%",
                         background: "linear-gradient(90deg,#FFFBCC,#D5F0FF)",
@@ -255,7 +255,7 @@ const CloudTransition = ({
               px={6}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
+              transition={{ duration: 0.4, delay: 0.4 }}
               onClick={onContinue}
               disabled={!canContinue}
             >

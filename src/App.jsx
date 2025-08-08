@@ -2264,22 +2264,40 @@ const Step = ({
     resetSuggestionMessages();
     resetEducationalMessages();
     setEducationalContent([]);
+    const nextStep = currentStep + 1;
+
+    if (currentStep === 0) {
+      setIsPostingWithNostr(true);
+      const npub = localStorage.getItem("local_npub");
+      try {
+        await incrementUserStep(npub, currentStep);
+      } finally {
+        setIsPostingWithNostr(false);
+      }
+      setCurrentStep(nextStep);
+      navigate(`/onboarding/${currentStep + 2}`);
+      return;
+    }
+
     const salaryVal = loot[currentStep]["monetaryValue"] || 0;
     const salaryProgress = (salaryVal / 120000) * 100;
     const totalSteps = steps[userLanguage].length;
     const stepProgress = ((currentStep + 1) / totalSteps) * 100;
     const salaryText = loot[currentStep][userLanguage];
+    const updatedDailyProgress = Math.min(
+      dailyProgress + 1,
+      dailyGoals || 5
+    );
     const dailyGoalPercent = Math.min(
-      (dailyProgress / (dailyGoals || 5)) * 100,
+      (updatedDailyProgress / (dailyGoals || 5)) * 100,
       100
     );
-    const nextStep = currentStep + 1;
     setTransitionStats({
       salary: salaryVal,
       salaryProgress,
       stepProgress,
       dailyGoalProgress: dailyGoalPercent,
-      dailyProgress: Math.min(dailyProgress, dailyGoals || 5),
+      dailyProgress: updatedDailyProgress,
       dailyGoals: dailyGoals || 5,
       dailyGoalLabel: translation[userLanguage]["dailyGoal"],
       message: celebrationMessage,
