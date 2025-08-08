@@ -3622,15 +3622,19 @@ const Step = ({
             step.isTerminal ? null : suggestionMessage.length > 0 ? (
             <Box maxWidth="600px" width="100%">
               <Box
+                as={motion.div}
                 mt={4}
                 mb={0}
                 p={4}
                 borderRadius="24px"
                 borderBottomLeftRadius={"0px"}
-                // background="gray.100"
+                background="white"
                 border="1px solid black"
                 textAlign={"left"}
                 width="100%"
+                initial={{ scale: 0.8 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 260, damping: 20 }}
               >
                 <Markdown
                   components={ChakraUIRenderer(newTheme)}
