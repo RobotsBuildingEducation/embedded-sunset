@@ -178,7 +178,7 @@ import { RoleCanvas } from "./components/RoleCanvas/RoleCanvas";
 import { AlgorithmHelper } from "./components/AlgorithmHelper/AlgorithmHelper";
 import { TbBinaryTreeFilled } from "react-icons/tb";
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
-import MatrixTransition from "./elements/MatrixTransition";
+import CloudTransition from "./elements/CloudTransition";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -5120,13 +5120,13 @@ function App({ isShutDown }) {
 
   const [allowPosts, setAllowPosts] = useState(false);
 
-  const [showMatrix, setShowMatrix] = useState(false);
+  const [showClouds, setShowClouds] = useState(false);
 
   const navigateWithTransition = (path) => {
-    setShowMatrix(true);
+    setShowClouds(true);
     setTimeout(() => {
       navigate(path);
-      setTimeout(() => setShowMatrix(false), 800);
+      setTimeout(() => setShowClouds(false), 800);
     }, 400);
   };
 
@@ -5385,7 +5385,7 @@ function App({ isShutDown }) {
 
   return (
     <Box ref={topRef}>
-      <MatrixTransition isActive={showMatrix} />
+      <CloudTransition isActive={showClouds} />
       {alert.isOpen && (
         <Alert
           status={alert.status}

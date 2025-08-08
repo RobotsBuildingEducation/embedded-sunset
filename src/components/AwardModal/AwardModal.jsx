@@ -92,16 +92,18 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
       scrollBehavior={"inside"}
       closeOnOverlayClick={false}
     >
-      <ModalOverlay></ModalOverlay>
+      <ModalOverlay bg="rgba(255,255,255,0.8)" backdropFilter="blur(8px)" />
       <ModalContent
-        background={"#38628D"}
-        // color="white"
-        borderRadius="lg"
+        bg="white"
+        borderRadius="xl"
         boxShadow="2xl"
         p={0}
         width="100%"
-
-        // style={{ fontFamily: "Roboto Serif, serif" }}
+        sx={{
+          border: "4px solid transparent",
+          background:
+            "linear-gradient(white, white) padding-box, linear-gradient(135deg,#FFD700,#FF69B4,#DA70D6,#FFA500) border-box",
+        }}
       >
         <ModalHeader
           fontSize="3xl"
@@ -109,16 +111,17 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
           marginTop={0}
           paddingTop={0}
           padding={3}
+          color="gray.800"
         >
           <HStack>
-            <div style={{ color: "white" }}>
+            <div style={{ color: "gray.800" }}>
               {/* {translation[userLanguage]["modal.learn.title"]} */}
               {translation[userLanguage]["modal.title.decentralizedTranscript"]}
             </div>
           </HStack>
         </ModalHeader>
 
-        <ModalBody p={8} style={{ width: "100%", color: "white" }}>
+        <ModalBody p={8} style={{ width: "100%", color: "gray.800" }}>
           <ReactConfetti
             // gravity={0.75}
             numberOfPieces={100}

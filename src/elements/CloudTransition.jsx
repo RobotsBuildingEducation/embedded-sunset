@@ -2,7 +2,15 @@ import React, { useEffect, useRef } from "react";
 import { Box } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const MatrixTransition = ({ isActive }) => {
+const colors = [
+  "rgba(255,215,0,0.6)", // gold
+  "rgba(255,105,180,0.6)", // pink
+  "rgba(186,85,211,0.6)", // purple
+  "rgba(255,165,0,0.6)", // orange
+  "rgba(255,140,0,0.6)", // sunset orange
+];
+
+const CloudTransition = ({ isActive }) => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -14,31 +22,41 @@ const MatrixTransition = ({ isActive }) => {
 
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
-    const fontSize = 16;
-    const columns = Math.floor(width / fontSize);
-    const drops = Array(columns).fill(0);
 
-    ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
-    ctx.fillRect(0, 0, width, height);
+    const clouds = Array.from({ length: 20 }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      radius: 60 + Math.random() * 120,
+      speed: 0.5 + Math.random() * 0.5,
+      color: colors[Math.floor(Math.random() * colors.length)],
+    }));
 
     const draw = () => {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillStyle = "#FFFFFF";
       ctx.fillRect(0, 0, width, height);
-      ctx.fillStyle = "#0F0";
-      ctx.font = `${fontSize}px monospace`;
 
-      for (let i = 0; i < drops.length; i++) {
-        const text = String.fromCharCode(0x30a0 + Math.random() * 96);
-        const x = i * fontSize;
-        const y = drops[i] * fontSize;
-        ctx.fillText(text, x, y);
+      clouds.forEach((cloud) => {
+        const grad = ctx.createRadialGradient(
+          cloud.x,
+          cloud.y,
+          0,
+          cloud.x,
+          cloud.y,
+          cloud.radius
+        );
+        grad.addColorStop(0, cloud.color);
+        grad.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(cloud.x, cloud.y, cloud.radius, 0, Math.PI * 2);
+        ctx.fill();
 
-        if (y > height && Math.random() > 0.975) {
-          drops[i] = 0;
+        cloud.y -= cloud.speed;
+        if (cloud.y + cloud.radius < 0) {
+          cloud.y = height + cloud.radius;
+          cloud.x = Math.random() * width;
         }
-
-        drops[i]++;
-      }
+      });
 
       animationId = requestAnimationFrame(draw);
     };
@@ -80,5 +98,5 @@ const MatrixTransition = ({ isActive }) => {
   );
 };
 
-export default MatrixTransition;
+export default CloudTransition;
 

@@ -124,14 +124,19 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
       scrollBehavior={"inside"}
       isCentered
     >
-      <ModalOverlay bg="rgba(0,0,0,0.6)" backdropFilter="blur(4px)" />
+      <ModalOverlay bg="rgba(255,255,255,0.8)" backdropFilter="blur(8px)" />
       <ModalContent
-        bg="whiteAlpha.900"
-        borderRadius="2xl"
+        bg="white"
+        borderRadius="xl"
         boxShadow="2xl"
         p={6}
         width="100%"
-        backdropFilter="blur(10px)"
+        maxWidth="600px"
+        sx={{
+          border: "4px solid transparent",
+          background:
+            "linear-gradient(white, white) padding-box, linear-gradient(135deg,#FFD700,#FF69B4,#DA70D6,#FFA500) border-box",
+        }}
       >
         <ModalHeader
           fontSize="3xl"
