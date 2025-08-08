@@ -3191,7 +3191,7 @@ const Step = ({
                   </Button>
                   &nbsp;&nbsp; &nbsp;&nbsp;
                   <Button
-                    onMouseDown={handleNextClick}
+                    onClick={handleNextClick}
                     mb={4}
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                     onKeyDown={(e) => {
@@ -3502,7 +3502,7 @@ const Step = ({
                     <Button
                       background="white"
                       variant={"outline"}
-                      onMouseDown={handleNextClick}
+                      onClick={handleNextClick}
                       mb={4}
                       boxShadow={"0.5px 0.5px 1px 0px black"}
                       onKeyDown={(e) => {
