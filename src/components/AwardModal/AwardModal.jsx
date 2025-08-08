@@ -19,6 +19,7 @@ import {
   useToast,
   Image,
 } from "@chakra-ui/react";
+import { motion } from "framer-motion";
 import { CloudCanvas, SunsetCanvas } from "../../elements/SunsetCanvas";
 
 import { highlight, languages } from "prismjs/components/prism-core";
@@ -94,9 +95,14 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
     >
       <ModalOverlay bg="rgba(255,255,255,0.8)" backdropFilter="blur(8px)" />
       <ModalContent
+        as={motion.div}
+        initial={{ y: 80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 80, opacity: 0 }}
+        transition={{ duration: 0.4 }}
         bg="white"
         borderRadius="xl"
-        boxShadow="2xl"
+        boxShadow="xl"
         p={0}
         width="100%"
         sx={{
@@ -115,10 +121,12 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
         >
           <HStack>
             <div style={{ color: "gray.800" }}>
-              {/* {translation[userLanguage]["modal.learn.title"]} */}
               {translation[userLanguage]["modal.title.decentralizedTranscript"]}
             </div>
           </HStack>
+          <Text fontSize="sm" color="gray.500">
+            Achievement Unlocked!
+          </Text>
         </ModalHeader>
 
         <ModalBody p={8} style={{ width: "100%", color: "gray.800" }}>

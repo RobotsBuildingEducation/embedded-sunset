@@ -14,6 +14,7 @@ import {
   HStack,
   useToast,
 } from "@chakra-ui/react";
+import { motion } from "framer-motion";
 
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
@@ -126,9 +127,14 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
     >
       <ModalOverlay bg="rgba(255,255,255,0.8)" backdropFilter="blur(8px)" />
       <ModalContent
+        as={motion.div}
+        initial={{ y: 80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 80, opacity: 0 }}
+        transition={{ duration: 0.4 }}
         bg="white"
         borderRadius="xl"
-        boxShadow="2xl"
+        boxShadow="xl"
         p={6}
         width="100%"
         maxWidth="600px"
@@ -148,10 +154,12 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
         >
           <HStack>
             <div style={{ color: "gray.800" }}>
-              {/* {translation[userLanguage]["modal.learn.title"]} */}
               {translation[userLanguage]["modal.title.decentralizedTranscript"]}
             </div>
           </HStack>
+          <Text fontSize="sm" color="gray.500">
+            Trainer Transcript
+          </Text>
         </ModalHeader>
 
         <ModalBody p={8} style={{ width: "100%", color: "gray.800" }}>

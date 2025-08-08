@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Box } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const colors = [
@@ -23,11 +23,21 @@ const CloudTransition = ({ isActive }) => {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    const clouds = Array.from({ length: 20 }, () => ({
+    // Larger cloud blobs
+    const clouds = Array.from({ length: 25 }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
       radius: 60 + Math.random() * 120,
       speed: 0.5 + Math.random() * 0.5,
+      color: colors[Math.floor(Math.random() * colors.length)],
+    }));
+
+    // Smaller noisy wisps to add more visual texture
+    const noise = Array.from({ length: 80 }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      radius: 10 + Math.random() * 20,
+      speed: 0.3 + Math.random() * 0.7,
       color: colors[Math.floor(Math.random() * colors.length)],
     }));
 
@@ -58,6 +68,30 @@ const CloudTransition = ({ isActive }) => {
         }
       });
 
+      // Draw noisy wisps
+      noise.forEach((wisp) => {
+        const grad = ctx.createRadialGradient(
+          wisp.x,
+          wisp.y,
+          0,
+          wisp.x,
+          wisp.y,
+          wisp.radius
+        );
+        grad.addColorStop(0, wisp.color);
+        grad.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(wisp.x, wisp.y, wisp.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        wisp.y -= wisp.speed;
+        if (wisp.y + wisp.radius < 0) {
+          wisp.y = height + wisp.radius;
+          wisp.x = Math.random() * width;
+        }
+      });
+
       animationId = requestAnimationFrame(draw);
     };
 
@@ -80,19 +114,39 @@ const CloudTransition = ({ isActive }) => {
     <AnimatePresence>
       {isActive && (
         <Box
-          as={motion.canvas}
-          ref={canvasRef}
+          as={motion.div}
           position="fixed"
           top={0}
           left={0}
           w="100vw"
           h="100vh"
           zIndex={2000}
-          bg="transparent"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-        />
+        >
+          <Box
+            as="canvas"
+            ref={canvasRef}
+            position="absolute"
+            top={0}
+            left={0}
+            w="100%"
+            h="100%"
+          />
+          <Text
+            position="absolute"
+            top="50%"
+            left="50%"
+            transform="translate(-50%, -50%)"
+            fontSize="4xl"
+            fontWeight="bold"
+            color="purple.600"
+            textShadow="0 0 10px rgba(255,215,0,0.8)"
+          >
+            Level Up!
+          </Text>
+        </Box>
       )}
     </AnimatePresence>
   );
