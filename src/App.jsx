@@ -1654,6 +1654,7 @@ const Step = ({
         // Expiry has passed, reset attempts
         localStorage.removeItem("incorrectExpiry");
         localStorage.setItem("incorrectAttempts", 0);
+        setIncorrectAttempts(0);
       }
     }
 
@@ -1800,6 +1801,7 @@ const Step = ({
   useEffect(() => {
     if (isCorrect) {
       localStorage.setItem("incorrectAttempts", 0);
+      setIncorrectAttempts(0);
       let getRecipient = async () => {
         const userData = await getUserData(localStorage.getItem("local_npub"));
 
@@ -2097,6 +2099,7 @@ const Step = ({
   const resetAttempts = () => {
     localStorage.removeItem("incorrectAttempts");
     localStorage.removeItem("incorrectExpiry");
+    setIncorrectAttempts(0);
   };
 
   // Store correct answers in the database
@@ -2186,12 +2189,11 @@ const Step = ({
           if (jsonResponse.isCorrect) {
             setGrade(jsonResponse.grade);
           } else {
-            localStorage.setItem(
-              "incorrectAttempts",
-              parseInt(localStorage.getItem("incorrectAttempts")) + 1 || 1
-            );
+            const newAttempts = incorrectAttempts + 1;
+            setIncorrectAttempts(newAttempts);
+            localStorage.setItem("incorrectAttempts", newAttempts);
 
-            if (localStorage.getItem("incorrectAttempts") >= 5) {
+            if (newAttempts >= 5) {
               // Set expiration time 15 minutes ahead
               setIsTimerExpired(false);
               const expiryTime = new Date().getTime() + 15 * 60 * 1000;
@@ -2694,6 +2696,7 @@ const Step = ({
   const handleTimerExpire = () => {
     localStorage.removeItem("incorrectAttempts");
     localStorage.removeItem("incorrectExpiry");
+    setIncorrectAttempts(0);
     setIsTimerExpired(true); // Update state or perform any action
   };
 
@@ -2705,9 +2708,6 @@ const Step = ({
     functionCall();
     // }
   };
-  const incorrectAttempts =
-    parseInt(localStorage.getItem("incorrectAttempts"), 10) || 0;
-
   const hasPasscode =
     localStorage.getItem("passcode") ===
       import.meta.env.VITE_PATREON_PASSCODE || hasSubmittedPasscode;
@@ -3428,6 +3428,17 @@ const Step = ({
                     transition="0.2s all ease-in-out"
                     borderBottomRightRadius={"0px"}
                   >
+                    {!isCorrect && incorrectAttempts > 0 && incorrectAttempts < 5 && (
+                      <HStack mb={2} spacing={1} justify="center" width="100%">
+                        {Array.from({ length: 5 }, (_, i) =>
+                          i < 5 - incorrectAttempts ? (
+                            <FaHeart key={i} color="red" />
+                          ) : (
+                            <FaRegHeart key={i} color="red" />
+                          )
+                        )}
+                      </HStack>
+                    )}
                     <Text
                       textAlign={"left"}
                       color={isCorrect ? "orange.500" : "red.500"}
@@ -3442,17 +3453,6 @@ const Step = ({
                         />
                       ) : null}
                     </Text>
-                    {!isCorrect && incorrectAttempts > 0 && incorrectAttempts < 5 && (
-                      <HStack mt={2} spacing={1}>
-                        {Array.from({ length: 5 }, (_, i) =>
-                          i < 5 - incorrectAttempts ? (
-                            <FaHeart key={i} color="red" />
-                          ) : (
-                            <FaRegHeart key={i} color="red" />
-                          )
-                        )}
-                      </HStack>
-                    )}
                   </Box>
                 </RiseUpAnimation>
               )}{" "}
@@ -5095,6 +5095,9 @@ function App({ isShutDown }) {
   const [showClouds, setShowClouds] = useState(false);
   const [pendingPath, setPendingPath] = useState(null);
   const [pendingStep, setPendingStep] = useState(null);
+  const [incorrectAttempts, setIncorrectAttempts] = useState(
+    parseInt(localStorage.getItem("incorrectAttempts"), 10) || 0
+  );
   const defaultTransitionStats = {
     salary: 0,
     salaryProgress: 0,
