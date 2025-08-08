@@ -5102,10 +5102,7 @@ function App({ isShutDown }) {
     setShowClouds(false);
     setPendingPath(null);
     setPendingStep(null);
-  };
-
-  useEffect(() => {
-    if (!showClouds) {
+    setTimeout(() => {
       setTransitionStats({
         salary: 0,
         salaryProgress: 0,
@@ -5117,8 +5114,8 @@ function App({ isShutDown }) {
         message: "",
         detail: "",
       });
-    }
-  }, [showClouds]);
+    }, 300);
+  };
 
   // const {
   //   generateNostrKeys,
