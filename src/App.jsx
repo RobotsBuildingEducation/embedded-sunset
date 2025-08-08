@@ -1347,6 +1347,7 @@ const Step = ({
   hasSubmittedPasscode,
   setCurrentStep,
   navigateWithTransition,
+  setTransitionStats,
 }) => {
   let loot = buildSuperLoot();
 
@@ -5493,6 +5494,7 @@ function App({ isShutDown }) {
                       hasSubmittedPasscode={hasSubmittedPasscode}
                       setCurrentStep={setCurrentStep}
                       navigateWithTransition={navigateWithTransition}
+                      setTransitionStats={setTransitionStats}
                     />
                   </PrivateRoute>
                 }
