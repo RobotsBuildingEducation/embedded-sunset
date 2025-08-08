@@ -5076,6 +5076,7 @@ function App({ isShutDown }) {
   const [allowPosts, setAllowPosts] = useState(false);
 
   const [showClouds, setShowClouds] = useState(false);
+  const [pendingPath, setPendingPath] = useState(null);
   const [transitionStats, setTransitionStats] = useState({
     salary: 0,
     salaryProgress: 0,
@@ -5088,23 +5089,26 @@ function App({ isShutDown }) {
   });
 
   const navigateWithTransition = (path) => {
+    setPendingPath(path);
     setShowClouds(true);
-    setTimeout(() => {
-      navigate(path);
-      setTimeout(() => {
-        setShowClouds(false);
-        setTransitionStats({
-          salary: 0,
-          salaryProgress: 0,
-          stepProgress: 0,
-          dailyGoalProgress: 0,
-          dailyProgress: 0,
-          dailyGoals: 0,
-          dailyGoalLabel: "",
-          message: "",
-        });
-      }, 800);
-    }, 400);
+  };
+
+  const handleTransitionContinue = () => {
+    if (pendingPath) {
+      navigate(pendingPath);
+    }
+    setShowClouds(false);
+    setTransitionStats({
+      salary: 0,
+      salaryProgress: 0,
+      stepProgress: 0,
+      dailyGoalProgress: 0,
+      dailyProgress: 0,
+      dailyGoals: 0,
+      dailyGoalLabel: "",
+      message: "",
+    });
+    setPendingPath(null);
   };
 
   // const {
@@ -5372,6 +5376,7 @@ function App({ isShutDown }) {
         dailyGoals={transitionStats.dailyGoals}
         dailyGoalLabel={transitionStats.dailyGoalLabel}
         message={transitionStats.message}
+        onContinue={handleTransitionContinue}
       />
       {alert.isOpen && (
         <Alert

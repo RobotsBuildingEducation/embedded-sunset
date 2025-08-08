@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Text, Button } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const colors = [
@@ -22,6 +22,7 @@ const CloudTransition = ({
   dailyGoals,
   dailyGoalLabel,
   message,
+  onContinue,
 }) => {
   const canvasRef = useRef(null);
 
@@ -213,6 +214,20 @@ const CloudTransition = ({
                 {message}
               </Text>
             )}
+            <Button
+              as={motion.button}
+              mt={8}
+              colorScheme="purple"
+              variant="outline"
+              borderRadius="full"
+              px={6}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+              onClick={onContinue}
+            >
+              Continue
+            </Button>
           </MotionBox>
         </Box>
       )}
