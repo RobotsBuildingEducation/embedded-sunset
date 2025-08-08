@@ -56,9 +56,21 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
         boxShadow="xl"
         p={0}
         sx={{
-          border: "4px solid transparent",
+          position: "relative",
+          border: "8px solid transparent",
           background:
             "linear-gradient(white, white) padding-box, linear-gradient(135deg,#FFD700,#FF69B4,#DA70D6,#FFA500) border-box",
+          '&::before': {
+            content: '""',
+            position: "absolute",
+            top: "8px",
+            left: "8px",
+            right: "8px",
+            bottom: "8px",
+            border: "2px solid #FFD700",
+            borderRadius: "calc(var(--chakra-radii-xl) - 8px)",
+            pointerEvents: "none",
+          },
         }}
       >
         <ModalBody p={6} color="gray.800">

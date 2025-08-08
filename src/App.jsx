@@ -3633,8 +3633,8 @@ const Step = ({
                 textAlign={"left"}
                 width="100%"
                 initial={{ scale: 0.8 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                animate={{ scale: [1, 1.08, 0.96, 1.04, 1] }}
+                transition={{ duration: 0.8 }}
               >
                 <Markdown
                   components={ChakraUIRenderer(newTheme)}
