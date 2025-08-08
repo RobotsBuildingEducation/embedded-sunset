@@ -2273,6 +2273,7 @@ const Step = ({
       (dailyProgress / (dailyGoals || 5)) * 100,
       100
     );
+    const nextStep = currentStep + 1;
     setTransitionStats({
       salary: salaryVal,
       salaryProgress,
@@ -2281,7 +2282,8 @@ const Step = ({
       dailyProgress: Math.min(dailyProgress, dailyGoals || 5),
       dailyGoals: dailyGoals || 5,
       dailyGoalLabel: translation[userLanguage]["dailyGoal"],
-      message: salaryText,
+      message: celebrationMessage,
+      detail: salaryText,
     });
 
     //
@@ -2293,19 +2295,17 @@ const Step = ({
         import.meta.env.VITE_PATREON_PASSCODE
       ) {
         await incrementToSubscription(npub, currentStep);
-        navigateWithTransition("/subscription");
+        navigateWithTransition("/subscription", nextStep);
       } else {
         setIsPostingWithNostr(true);
 
         try {
           incrementUserStep(npub, currentStep);
           storeCorrectAnswer(step, feedback).catch(console.error);
-          setCurrentStep(currentStep + 1);
-
           if (currentStep <= 4) {
-            navigateWithTransition(`/onboarding/${currentStep + 2}`);
+            navigateWithTransition(`/onboarding/${currentStep + 2}`, nextStep);
           } else {
-            navigateWithTransition(`/q/${currentStep + 1}`);
+            navigateWithTransition(`/q/${currentStep + 1}`, nextStep);
           }
         } finally {
           setIsPostingWithNostr(false);
@@ -2314,7 +2314,7 @@ const Step = ({
     } else if (currentStep >= steps[userLanguage].length - 1) {
       const npub = localStorage.getItem("local_npub");
       await incrementToFinalAward(npub);
-      navigateWithTransition("/award");
+      navigateWithTransition("/award", nextStep);
     } else {
       setIsPostingWithNostr(true);
 
@@ -2328,12 +2328,11 @@ const Step = ({
         if (currentStep > 0) {
           storeCorrectAnswer(step, feedback).catch(console.error);
         }
-        setCurrentStep(currentStep + 1);
 
         if (currentStep <= 4) {
-          navigateWithTransition(`/onboarding/${currentStep + 2}`);
+          navigateWithTransition(`/onboarding/${currentStep + 2}`, nextStep);
         } else {
-          navigateWithTransition(`/q/${currentStep + 1}`);
+          navigateWithTransition(`/q/${currentStep + 1}`, nextStep);
         }
       } finally {
         setIsPostingWithNostr(false);
@@ -3421,26 +3420,21 @@ const Step = ({
                       textAlign={"left"}
                       color={isCorrect ? "orange.500" : "red.500"}
                     >
-                      {feedback}{" "}
-                      {grade ? (
-                        <DataTags
-                          userLanguage={userLanguage}
-                          grade={
-                            translation[userLanguage]["tags.grade"] + grade
-                          }
-                        />
-                      ) : null}
-                    </Text>
-                    {isCorrect && celebrationMessage && (
-                      <Text mt={2} fontSize="sm" color="orange.400">
-                        {celebrationMessage}
-                      </Text>
-                    )}
-                  </Box>
-                </RiseUpAnimation>
-              )}{" "}
-              {feedback && (
-                <div
+                    {feedback}{" "}
+                    {grade ? (
+                      <DataTags
+                        userLanguage={userLanguage}
+                        grade={
+                          translation[userLanguage]["tags.grade"] + grade
+                        }
+                      />
+                    ) : null}
+                  </Text>
+                </Box>
+              </RiseUpAnimation>
+            )}{" "}
+            {feedback && (
+              <div
                   style={{
                     width: "100%",
                     maxWidth: "600px",
@@ -5077,6 +5071,7 @@ function App({ isShutDown }) {
 
   const [showClouds, setShowClouds] = useState(false);
   const [pendingPath, setPendingPath] = useState(null);
+  const [pendingStep, setPendingStep] = useState(null);
   const [transitionStats, setTransitionStats] = useState({
     salary: 0,
     salaryProgress: 0,
@@ -5086,16 +5081,21 @@ function App({ isShutDown }) {
     dailyGoals: 0,
     dailyGoalLabel: "",
     message: "",
+    detail: "",
   });
 
-  const navigateWithTransition = (path) => {
+  const navigateWithTransition = (path, nextStep = null) => {
     setPendingPath(path);
+    setPendingStep(nextStep);
     setShowClouds(true);
   };
 
   const handleTransitionContinue = () => {
     if (pendingPath) {
       navigate(pendingPath);
+    }
+    if (pendingStep !== null) {
+      setCurrentStep(pendingStep);
     }
     setShowClouds(false);
     setTransitionStats({
@@ -5107,8 +5107,10 @@ function App({ isShutDown }) {
       dailyGoals: 0,
       dailyGoalLabel: "",
       message: "",
+      detail: "",
     });
     setPendingPath(null);
+    setPendingStep(null);
   };
 
   // const {
@@ -5376,6 +5378,7 @@ function App({ isShutDown }) {
         dailyGoals={transitionStats.dailyGoals}
         dailyGoalLabel={transitionStats.dailyGoalLabel}
         message={transitionStats.message}
+        detail={transitionStats.detail}
         onContinue={handleTransitionContinue}
       />
       {alert.isOpen && (

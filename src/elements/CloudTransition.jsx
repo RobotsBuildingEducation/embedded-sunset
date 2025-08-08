@@ -22,6 +22,7 @@ const CloudTransition = ({
   dailyGoals,
   dailyGoalLabel,
   message,
+  detail,
   onContinue,
 }) => {
   const canvasRef = useRef(null);
@@ -212,6 +213,18 @@ const CloudTransition = ({
                 transition={{ duration: 0.8, delay: 0.6 }}
               >
                 {message}
+              </Text>
+            )}
+            {detail && (
+              <Text
+                as={motion.p}
+                fontSize="sm"
+                mt={2}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 0.8, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.7 }}
+              >
+                {detail}
               </Text>
             )}
             <Button
