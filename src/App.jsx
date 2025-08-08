@@ -3377,7 +3377,7 @@ const Step = ({
             {/* {isPostingWithNostr ? (
               <CloudCanvas />
             ) : ( */}
-            <> 
+            <>
               {incorrectAttempts >= 5 && !isTimerExpired ? (
                 <>
                   <div style={{ maxWidth: 600 }}>
@@ -3430,17 +3430,24 @@ const Step = ({
                     transition="0.2s all ease-in-out"
                     borderBottomRightRadius={"0px"}
                   >
-                    {!isCorrect && incorrectAttempts > 0 && incorrectAttempts < 5 && (
-                      <HStack mb={2} spacing={1} justify="center" width="100%">
-                        {Array.from({ length: 5 }, (_, i) =>
-                          i < 5 - incorrectAttempts ? (
-                            <FaHeart key={i} color="red" />
-                          ) : (
-                            <FaRegHeart key={i} color="red" />
-                          )
-                        )}
-                      </HStack>
-                    )}
+                    {!isCorrect &&
+                      incorrectAttempts > 0 &&
+                      incorrectAttempts < 5 && (
+                        <HStack
+                          mb={2}
+                          spacing={1}
+                          justify="center"
+                          width="100%"
+                        >
+                          {Array.from({ length: 5 }, (_, i) =>
+                            i < 5 - incorrectAttempts ? (
+                              <FaHeart key={i} color="red" />
+                            ) : (
+                              <FaRegHeart key={i} color="red" />
+                            )
+                          )}
+                        </HStack>
+                      )}
                     <Text
                       textAlign={"left"}
                       color={isCorrect ? "orange.500" : "red.500"}

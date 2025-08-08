@@ -96,31 +96,39 @@ const AwardModalOnboarding = ({
           {translation[userLanguage]["modal.decentralizedTranscript.youEarned"]}
           <br />
           <Text mb={2}>{onboardingTranscript.name[userLanguage]}</Text>
-          <a
-            target="_blank"
-            href={`https://badges.page/a/${
-              onboardingTranscript["address"] || ""
-            }`}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                window.open(
-                  `https://badges.page/a/${
-                    onboardingTranscript["address"] || ""
-                  }`
-                );
-              }
+          <Box
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
             }}
           >
-            <Image
-              loading="eager"
-              src={onboardingTranscript["imgSrc"]}
-              width={150}
-              style={{
-                borderRadius: "33%",
-                boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+            <a
+              target="_blank"
+              href={`https://badges.page/a/${
+                onboardingTranscript["address"] || ""
+              }`}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  window.open(
+                    `https://badges.page/a/${
+                      onboardingTranscript["address"] || ""
+                    }`
+                  );
+                }
               }}
-            />
-          </a>
+            >
+              <Image
+                loading="eager"
+                src={onboardingTranscript["imgSrc"]}
+                width={150}
+                style={{
+                  borderRadius: "33%",
+                  boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+                }}
+              />
+            </a>
+          </Box>
           <br />
           <br />
           {/* <Button
