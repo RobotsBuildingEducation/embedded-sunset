@@ -26,7 +26,13 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
   const badge = transcriptset[step.group] || {};
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="md" isCentered closeOnOverlayClick={false}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="md"
+      isCentered
+      closeOnOverlayClick={false}
+    >
       <ModalOverlay bg="rgba(255,255,255,0.8)" backdropFilter="blur(8px)" />
       <ModalContent
         as={motion.div}
@@ -43,7 +49,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
           border: "8px solid transparent",
           background:
             "linear-gradient(white, white) padding-box, linear-gradient(135deg,#FFD700,#FF69B4,#DA70D6,#FFA500) border-box",
-          '&::before': {
+          "&::before": {
             content: '""',
             position: "absolute",
             top: "8px",
@@ -79,7 +85,11 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
             />
           </Box>
           <Text>
-            {translation[userLanguage]["modal.decentralizedTranscript.awareness"]}
+            {
+              translation[userLanguage][
+                "modal.decentralizedTranscript.awareness"
+              ]
+            }
           </Text>
         </ModalBody>
         <ModalFooter justifyContent="center">
