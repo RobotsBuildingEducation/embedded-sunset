@@ -48,8 +48,7 @@ const AwardModalOnboarding = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="4xl"
-      scrollBehavior={"inside"}
+      size="lg"
       closeOnOverlayClick={false}
       isCentered
     >
@@ -64,7 +63,6 @@ const AwardModalOnboarding = ({
         borderRadius="xl"
         boxShadow="xl"
         p={0}
-        width="100%"
         sx={{
           position: "relative",
           border: "8px solid transparent",
@@ -83,7 +81,7 @@ const AwardModalOnboarding = ({
           },
         }}
       >
-        <ModalBody p={6} color="gray.800" style={{ width: "100%" }}>
+        <ModalBody p={6} color="gray.800" textAlign="center">
           <HStack justifyContent="center" mb={4}>
             <Text fontSize="xl" fontWeight="bold">
               {translation[userLanguage]["modal.title.decentralizedTranscript"]}
@@ -97,9 +95,7 @@ const AwardModalOnboarding = ({
           /> */}
           {translation[userLanguage]["modal.decentralizedTranscript.youEarned"]}
           <br />
-          <Text fontSize={"large"} fontWeight={"bold"} mb={2}>
-            {onboardingTranscript.name[userLanguage]}
-          </Text>
+          <Text mb={2}>{onboardingTranscript.name[userLanguage]}</Text>
           <a
             target="_blank"
             href={`https://badges.page/a/${

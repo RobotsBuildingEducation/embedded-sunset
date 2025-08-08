@@ -74,10 +74,7 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
         }}
       >
         <ModalBody p={6} color="gray.800">
-          <HStack justifyContent="space-between" mb={4}>
-            <Text fontSize="xl" fontWeight="bold">
-              {translation[userLanguage]["modal.title.decentralizedTranscript"]}
-            </Text>
+          <HStack justifyContent="center" mb={4}>
             <Text fontSize="xl" fontWeight="bold">
               {translation[userLanguage]["modal.title.decentralizedTranscript"]}
             </Text>
