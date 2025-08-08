@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, Text, Button } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -26,6 +26,19 @@ const CloudTransition = ({
   onContinue,
 }) => {
   const canvasRef = useRef(null);
+  const [canContinue, setCanContinue] = useState(false);
+
+  // Prevent the click that opens the overlay from immediately
+  // triggering the Continue action by enabling the button only
+  // after a short delay
+  useEffect(() => {
+    if (isActive) {
+      setCanContinue(false);
+      const id = setTimeout(() => setCanContinue(true), 200);
+      return () => clearTimeout(id);
+    }
+    setCanContinue(false);
+  }, [isActive]);
 
   useEffect(() => {
     if (!isActive) return;
@@ -238,6 +251,7 @@ const CloudTransition = ({
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.8 }}
               onClick={onContinue}
+              disabled={!canContinue}
             >
               Continue
             </Button>

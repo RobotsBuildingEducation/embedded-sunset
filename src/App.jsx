@@ -5087,7 +5087,9 @@ function App({ isShutDown }) {
   const navigateWithTransition = (path, nextStep = null) => {
     setPendingPath(path);
     setPendingStep(nextStep);
-    setShowClouds(true);
+    // Defer showing the overlay to avoid the original click
+    // event immediately triggering the continue button
+    setTimeout(() => setShowClouds(true), 50);
   };
 
   const handleTransitionContinue = () => {
