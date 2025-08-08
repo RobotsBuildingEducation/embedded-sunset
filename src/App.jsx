@@ -2964,8 +2964,9 @@ const Step = ({
                     animation: `${progressGradient} 7s ease-in-out  infinite`,
                   },
                 }}
+                mb={4}
               />
-              {userLanguage !== "compsci-en" ? (
+              {/* {userLanguage !== "compsci-en" ? (
                 <Text
                   color="yellow.600"
                   fontWeight={"bold"}
@@ -2977,7 +2978,7 @@ const Step = ({
                     : loot[currentStep - 1]["monetaryValue"]}
                   /{translation[userLanguage]["year"]}
                 </Text>
-              ) : null}
+              ) : null} */}
             </VStack>
             {/* {calculateBalance() > 0 ? (
               <HStack
