@@ -28,12 +28,12 @@ const AwardModalOnboarding = ({
   userLanguage,
   handleActuallyReallySeriouslyLaunchApp,
 }) => {
-  const [badges, setBadges] = useState([]);
   const [areBadgesLoading, setAreBadgesLoading] = useState(true);
   const { getUserBadges } = useSharedNostr(
     localStorage.getItem("local_npub"),
     localStorage.getItem("local_nsec")
   );
+  const [badges, setBadges] = useState([]);
   useEffect(() => {
     async function getBadges() {
       let data = await getUserBadges();
