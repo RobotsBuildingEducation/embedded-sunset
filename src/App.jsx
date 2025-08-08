@@ -1353,6 +1353,8 @@ const Step = ({
   setCurrentStep,
   navigateWithTransition,
   setTransitionStats,
+  incorrectAttempts,
+  setIncorrectAttempts,
 }) => {
   let loot = buildSuperLoot();
 
@@ -5531,6 +5533,8 @@ function App({ isShutDown }) {
                       setCurrentStep={setCurrentStep}
                       navigateWithTransition={navigateWithTransition}
                       setTransitionStats={setTransitionStats}
+                      incorrectAttempts={incorrectAttempts}
+                      setIncorrectAttempts={setIncorrectAttempts}
                     />
                   </PrivateRoute>
                 }
