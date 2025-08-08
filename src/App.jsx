@@ -2264,6 +2264,15 @@ const Step = ({
     resetSuggestionMessages();
     resetEducationalMessages();
     setEducationalContent([]);
+    const salaryVal = loot[currentStep]["monetaryValue"] || 0;
+    const salaryProgress = (salaryVal / 120000) * 100;
+    const salaryText = loot[currentStep][userLanguage];
+    setTransitionStats({
+      salary: salaryVal,
+      progress: salaryProgress,
+      message: salaryText,
+    });
+
     //
     if (currentStep === 9) {
       const npub = localStorage.getItem("local_npub");
@@ -3439,42 +3448,6 @@ const Step = ({
                       textAlign={"left"}
                       color={isCorrect ? "orange.500" : "red.500"}
                     >
-                      {userLanguage !== "compsci-en" && isCorrect ? (
-                        <Box
-                          color={"orange.500"}
-                          mt={4}
-                          display="flex"
-                          flexDirection={"column"}
-                          alignItems={"center"}
-                        >
-                          <Text
-                            fontSize={"md"}
-                            color="green.400"
-                            fontWeight={"bold"}
-                          >
-                            {translation[userLanguage]["skillValue"]}$
-                            {loot[currentStep]["monetaryValue"]}/
-                            {translation[userLanguage]["year"]}
-                          </Text>
-                          <Progress
-                            width="50%"
-                            value={
-                              (loot[currentStep]["monetaryValue"] / 120000) *
-                              100
-                            }
-                            colorScheme="green"
-                            borderRadius="4px"
-                            border="1px solid #ececec"
-                            // boxShadow="0px 0px 0.5px 2px #ececec"
-                            boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                            mb={3}
-                          />
-                          <Text fontSize={"sm"}>
-                            {loot[currentStep][userLanguage]}
-                          </Text>
-                          <br />
-                        </Box>
-                      ) : null}
                       {feedback}{" "}
                       {grade ? (
                         <DataTags
@@ -5125,12 +5098,20 @@ function App({ isShutDown }) {
   const [allowPosts, setAllowPosts] = useState(false);
 
   const [showClouds, setShowClouds] = useState(false);
+  const [transitionStats, setTransitionStats] = useState({
+    salary: 0,
+    progress: 0,
+    message: "",
+  });
 
   const navigateWithTransition = (path) => {
     setShowClouds(true);
     setTimeout(() => {
       navigate(path);
-      setTimeout(() => setShowClouds(false), 800);
+      setTimeout(() => {
+        setShowClouds(false);
+        setTransitionStats({ salary: 0, progress: 0, message: "" });
+      }, 800);
     }, 400);
   };
 
@@ -5389,7 +5370,12 @@ function App({ isShutDown }) {
 
   return (
     <Box ref={topRef}>
-      <CloudTransition isActive={showClouds} />
+      <CloudTransition
+        isActive={showClouds}
+        salary={transitionStats.salary}
+        progress={transitionStats.progress}
+        message={transitionStats.message}
+      />
       {alert.isOpen && (
         <Alert
           status={alert.status}
