@@ -17,7 +17,6 @@ const TOTAL_STEPS = 6;
 export const OnboardingDrawer = ({
   userLanguage,
   setUserLanguage,
-  setCurrentStep,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [step, setStep] = useState(null);
@@ -52,6 +51,12 @@ export const OnboardingDrawer = ({
         onClick={onOpen}
         zIndex={1000}
         aria-label="Onboarding"
+        bgGradient="linear(to-r, teal.400, green.400)"
+        color="white"
+        boxShadow="0 0 12px rgba(0, 0, 0, 0.6)"
+        _hover={{ bgGradient: "linear(to-r, teal.500, green.500)" }}
+        boxSize={14}
+        border="2px solid white"
       />
       {remaining > 0 && (
         <Badge
@@ -73,10 +78,8 @@ export const OnboardingDrawer = ({
             <Onboarding
               userLanguage={userLanguage}
               setUserLanguage={setUserLanguage}
-              setCurrentStep={setCurrentStep}
               step={String(step)}
               setStep={setStep}
-              onClose={onClose}
             />
           </DrawerBody>
         </DrawerContent>

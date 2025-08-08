@@ -25,7 +25,6 @@ import {
   updateUserData,
 } from "../../../utility/nosql";
 import { translation } from "../../../utility/translation";
-import { useNavigate } from "react-router-dom";
 import {
   database,
   // messaging
@@ -91,9 +90,7 @@ const SelfPacedOnboarding = ({
   setInterval,
   userId,
   userLanguage,
-  setCurrentStep,
 }) => {
-  const navigate = useNavigate();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const [goalCount, setGoalCount] = useState(0);
@@ -168,9 +165,6 @@ const SelfPacedOnboarding = ({
       ),
       incrementUserOnboardingStep(userId),
     ]).catch(console.error);
-
-    setCurrentStep(2);
-    navigate("/q/2");
   };
 
   // Build the label for the streak timer slider.

@@ -5407,7 +5407,6 @@ function App({ isShutDown }) {
           <OnboardingDrawer
             userLanguage={userLanguage}
             setUserLanguage={setUserLanguage}
-            setCurrentStep={setCurrentStep}
           />
         )}
 
