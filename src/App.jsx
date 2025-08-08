@@ -158,7 +158,13 @@ import { KnowledgeLedgerModal } from "./components/SettingsMenu/KnowledgeLedgerM
 import { logEvent } from "firebase/analytics";
 import BitcoinOnboarding from "./components/BitcoinOnboarding/BitcoinOnboarding";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import { FaBitcoin, FaMagic } from "react-icons/fa";
+import {
+  FaBitcoin,
+  FaMagic,
+  FaHeart,
+  FaRegHeart,
+  FaHeartBroken,
+} from "react-icons/fa";
 import MiniKitInitializer from "./MiniKitInitializer";
 
 import BitcoinModeModal from "./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal";
@@ -1347,6 +1353,8 @@ const Step = ({
   setCurrentStep,
   navigateWithTransition,
   setTransitionStats,
+  incorrectAttempts,
+  setIncorrectAttempts,
 }) => {
   let loot = buildSuperLoot();
 
@@ -1648,6 +1656,7 @@ const Step = ({
         // Expiry has passed, reset attempts
         localStorage.removeItem("incorrectExpiry");
         localStorage.setItem("incorrectAttempts", 0);
+        setIncorrectAttempts(0);
       }
     }
 
@@ -1794,6 +1803,7 @@ const Step = ({
   useEffect(() => {
     if (isCorrect) {
       localStorage.setItem("incorrectAttempts", 0);
+      setIncorrectAttempts(0);
       let getRecipient = async () => {
         const userData = await getUserData(localStorage.getItem("local_npub"));
 
@@ -2091,6 +2101,7 @@ const Step = ({
   const resetAttempts = () => {
     localStorage.removeItem("incorrectAttempts");
     localStorage.removeItem("incorrectExpiry");
+    setIncorrectAttempts(0);
   };
 
   // Store correct answers in the database
@@ -2180,12 +2191,11 @@ const Step = ({
           if (jsonResponse.isCorrect) {
             setGrade(jsonResponse.grade);
           } else {
-            localStorage.setItem(
-              "incorrectAttempts",
-              parseInt(localStorage.getItem("incorrectAttempts")) + 1 || 1
-            );
+            const newAttempts = incorrectAttempts + 1;
+            setIncorrectAttempts(newAttempts);
+            localStorage.setItem("incorrectAttempts", newAttempts);
 
-            if (localStorage.getItem("incorrectAttempts") >= 5) {
+            if (newAttempts >= 5) {
               // Set expiration time 15 minutes ahead
               setIsTimerExpired(false);
               const expiryTime = new Date().getTime() + 15 * 60 * 1000;
@@ -2688,6 +2698,7 @@ const Step = ({
   const handleTimerExpire = () => {
     localStorage.removeItem("incorrectAttempts");
     localStorage.removeItem("incorrectExpiry");
+    setIncorrectAttempts(0);
     setIsTimerExpired(true); // Update state or perform any action
   };
 
@@ -2699,8 +2710,6 @@ const Step = ({
     functionCall();
     // }
   };
-  const emojiMap = ["😖", "😩", "😅", "😱", "🪦"];
-
   const hasPasscode =
     localStorage.getItem("passcode") ===
       import.meta.env.VITE_PATREON_PASSCODE || hasSubmittedPasscode;
@@ -3369,25 +3378,7 @@ const Step = ({
               <CloudCanvas />
             ) : ( */}
             <>
-              {localStorage.getItem("incorrectAttempts") &&
-              parseInt(localStorage.getItem("incorrectAttempts")) > 0 ? (
-                <Text
-                  fontSize={"smaller"}
-                  background={"#ececec"}
-                  borderRadius={12}
-                  padding={4}
-                >
-                  {translation[userLanguage]["lockout.attempts"]} &nbsp;
-                  {localStorage.getItem("incorrectAttempts")} / 5{" "}
-                  {
-                    emojiMap[
-                      parseInt(localStorage.getItem("incorrectAttempts")) - 1
-                    ]
-                  }
-                </Text>
-              ) : null}
-              {parseInt(localStorage.getItem("incorrectAttempts")) >= 5 &&
-              !isTimerExpired ? (
+              {incorrectAttempts >= 5 && !isTimerExpired ? (
                 <>
                   <div style={{ maxWidth: 600 }}>
                     <Text
@@ -3396,6 +3387,13 @@ const Step = ({
                       borderRadius={12}
                       padding={4}
                     >
+                      <FaHeartBroken
+                        style={{
+                          display: "inline",
+                          marginRight: 4,
+                          color: "red",
+                        }}
+                      />
                       {translation[userLanguage]["lockout.message"]} <br />
                       <br />
                       <CountdownTimer
@@ -3432,6 +3430,24 @@ const Step = ({
                     transition="0.2s all ease-in-out"
                     borderBottomRightRadius={"0px"}
                   >
+                    {!isCorrect &&
+                      incorrectAttempts > 0 &&
+                      incorrectAttempts < 5 && (
+                        <HStack
+                          mb={2}
+                          spacing={1}
+                          justify="center"
+                          width="100%"
+                        >
+                          {Array.from({ length: 5 }, (_, i) =>
+                            i < 5 - incorrectAttempts ? (
+                              <FaHeart key={i} color="red" />
+                            ) : (
+                              <FaRegHeart key={i} color="red" />
+                            )
+                          )}
+                        </HStack>
+                      )}
                     <Text
                       textAlign={"left"}
                       color={isCorrect ? "orange.500" : "red.500"}
@@ -3470,7 +3486,7 @@ const Step = ({
                 currentStep > 0 &&
                 !isCorrect &&
                 !isSending &&
-                !(parseInt(localStorage.getItem("incorrectAttempts")) >= "5") &&
+                !(incorrectAttempts >= 5) &&
                 isTimerExpired ? (
                   <Button
                     fontSize="sm"
@@ -5088,6 +5104,9 @@ function App({ isShutDown }) {
   const [showClouds, setShowClouds] = useState(false);
   const [pendingPath, setPendingPath] = useState(null);
   const [pendingStep, setPendingStep] = useState(null);
+  const [incorrectAttempts, setIncorrectAttempts] = useState(
+    parseInt(localStorage.getItem("incorrectAttempts"), 10) || 0
+  );
   const defaultTransitionStats = {
     salary: 0,
     salaryProgress: 0,
@@ -5521,6 +5540,8 @@ function App({ isShutDown }) {
                       setCurrentStep={setCurrentStep}
                       navigateWithTransition={navigateWithTransition}
                       setTransitionStats={setTransitionStats}
+                      incorrectAttempts={incorrectAttempts}
+                      setIncorrectAttempts={setIncorrectAttempts}
                     />
                   </PrivateRoute>
                 }

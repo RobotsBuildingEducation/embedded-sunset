@@ -13186,14 +13186,15 @@ export const loot = [
   },
   {
     monetaryValue: 500,
-    en: "Recognising primitive data types enables safe edits to JSON or environment files.",
-    es: "Reconocer los tipos de datos primitivos permite editar de forma segura archivos JSON o de entorno.",
-  },
-  {
-    monetaryValue: 750,
     en: "Creating an array makes simple data‑entry automations (lists, CSV tweaks) possible.",
     es: "Crear un arreglo hace posibles automatizaciones simples de ingreso de datos (listas, ajustes de CSV).",
   },
+  {
+    monetaryValue: 750,
+    en: "Recognising primitive data types enables safe edits to files.",
+    es: "Reconocer los tipos de datos primitivos permite editar de forma segura archivos JSON o de entorno.",
+  },
+
   {
     monetaryValue: 1000,
     en: "Writing a working code snippet shows executable output—sellable micro‑tasks begin here.",

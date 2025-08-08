@@ -60,7 +60,7 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
           border: "8px solid transparent",
           background:
             "linear-gradient(white, white) padding-box, linear-gradient(135deg,#FFD700,#FF69B4,#DA70D6,#FFA500) border-box",
-          '&::before': {
+          "&::before": {
             content: '""',
             position: "absolute",
             top: "8px",
@@ -74,10 +74,7 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
         }}
       >
         <ModalBody p={6} color="gray.800">
-          <HStack justifyContent="space-between" mb={4}>
-            <Text fontSize="xl" fontWeight="bold">
-              {translation[userLanguage]["modal.title.decentralizedTranscript"]}
-            </Text>
+          <HStack justifyContent="center" mb={4}>
             <Text fontSize="xl" fontWeight="bold">
               {translation[userLanguage]["modal.title.decentralizedTranscript"]}
             </Text>
@@ -90,12 +87,16 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
                 borderRadius="33%"
                 boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
               />
-            ) : (
-              <ReactConfetti numberOfPieces={80} recycle={false} />
-            )}
+            ) : null
+            // <ReactConfetti numberOfPieces={80} recycle={false} />
+            }
           </Box>
           <Text mb={4}>
-            {translation[userLanguage]["modal.decentralizedTranscript.awareness"]}
+            {
+              translation[userLanguage][
+                "modal.decentralizedTranscript.awareness"
+              ]
+            }
           </Text>
           <Box display="flex" flexWrap="wrap" justifyContent="center">
             {badges.map((badge) => (

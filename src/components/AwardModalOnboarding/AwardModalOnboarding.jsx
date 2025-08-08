@@ -6,13 +6,12 @@ import {
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
   ModalFooter,
   ModalBody,
   HStack,
-  useToast,
   Image,
 } from "@chakra-ui/react";
+import { motion } from "framer-motion";
 import { CloudCanvas } from "../../elements/SunsetCanvas";
 
 import "prismjs/components/prism-clike";
@@ -29,13 +28,12 @@ const AwardModalOnboarding = ({
   userLanguage,
   handleActuallyReallySeriouslyLaunchApp,
 }) => {
-  const [badges, setBadges] = useState([]);
   const [areBadgesLoading, setAreBadgesLoading] = useState(true);
   const { getUserBadges } = useSharedNostr(
     localStorage.getItem("local_npub"),
     localStorage.getItem("local_nsec")
   );
-  const toast = useToast();
+  const [badges, setBadges] = useState([]);
   useEffect(() => {
     async function getBadges() {
       let data = await getUserBadges();
@@ -50,37 +48,45 @@ const AwardModalOnboarding = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="4xl"
-      scrollBehavior={"inside"}
+      size="lg"
       closeOnOverlayClick={false}
+      isCentered
     >
-      <ModalOverlay></ModalOverlay>
+      <ModalOverlay bg="rgba(255,255,255,0.8)" backdropFilter="blur(8px)" />
       <ModalContent
-        background={"#38628D"}
-        // color="white"
-        borderRadius="lg"
-        boxShadow="2xl"
+        as={motion.div}
+        initial={{ y: 80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 80, opacity: 0 }}
+        transition={{ duration: 0.4 }}
+        bg="white"
+        borderRadius="xl"
+        boxShadow="xl"
         p={0}
-        width="100%"
-
-        // style={{ fontFamily: "Roboto Serif, serif" }}
+        sx={{
+          position: "relative",
+          border: "8px solid transparent",
+          background:
+            "linear-gradient(white, white) padding-box, linear-gradient(135deg,#FFD700,#FF69B4,#DA70D6,#FFA500) border-box",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            top: "8px",
+            left: "8px",
+            right: "8px",
+            bottom: "8px",
+            border: "2px solid #FFD700",
+            borderRadius: "calc(var(--chakra-radii-xl) - 8px)",
+            pointerEvents: "none",
+          },
+        }}
       >
-        <ModalHeader
-          fontSize="3xl"
-          fontWeight="bold"
-          marginTop={0}
-          paddingTop={0}
-          padding={3}
-        >
-          <HStack>
-            <div style={{ color: "white" }}>
-              {/* {translation[userLanguage]["modal.learn.title"]} */}
+        <ModalBody p={6} color="gray.800" textAlign="center">
+          <HStack justifyContent="center" mb={4}>
+            <Text fontSize="xl" fontWeight="bold">
               {translation[userLanguage]["modal.title.decentralizedTranscript"]}
-            </div>
+            </Text>
           </HStack>
-        </ModalHeader>
-
-        <ModalBody p={8} style={{ width: "100%", color: "white" }}>
           {/* <ReactConfetti
             gravity={1.35}
             numberOfPieces={100}
@@ -89,34 +95,40 @@ const AwardModalOnboarding = ({
           /> */}
           {translation[userLanguage]["modal.decentralizedTranscript.youEarned"]}
           <br />
-          <Text fontSize={"large"} fontWeight={"bold"} mb={2}>
-            {onboardingTranscript.name[userLanguage]}
-          </Text>
-          <a
-            target="_blank"
-            href={`https://badges.page/a/${
-              onboardingTranscript["address"] || ""
-            }`}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                window.open(
-                  `https://badges.page/a/${
-                    onboardingTranscript["address"] || ""
-                  }`
-                );
-              }
+          <Text mb={2}>{onboardingTranscript.name[userLanguage]}</Text>
+          <Box
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
             }}
           >
-            <Image
-              loading="eager"
-              src={onboardingTranscript["imgSrc"]}
-              width={150}
-              style={{
-                borderRadius: "33%",
-                boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+            <a
+              target="_blank"
+              href={`https://badges.page/a/${
+                onboardingTranscript["address"] || ""
+              }`}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  window.open(
+                    `https://badges.page/a/${
+                      onboardingTranscript["address"] || ""
+                    }`
+                  );
+                }
               }}
-            />
-          </a>
+            >
+              <Image
+                loading="eager"
+                src={onboardingTranscript["imgSrc"]}
+                width={150}
+                style={{
+                  borderRadius: "33%",
+                  boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+                }}
+              />
+            </a>
+          </Box>
           <br />
           <br />
           {/* <Button
