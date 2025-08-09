@@ -36,6 +36,7 @@ import Markdown from "react-markdown";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { PracticeModule } from "../PracticeModule/PracticeModule";
 import { CheckCircleIcon, TimeIcon } from "@chakra-ui/icons";
+import { CloudCanvas } from "../../elements/SunsetCanvas";
 
 const newTheme = {
   h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
@@ -447,7 +448,19 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
   console.log("name", transcriptObject.name.replace(/ /g, "-"));
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="3xl" isCentered>
-      <ModalOverlay />
+      <ModalOverlay>
+        <Box
+          position="absolute"
+          top={0}
+          left={0}
+          w="100%"
+          h="100%"
+          bgGradient="linear(to-b, #0a0a1a, #000)"
+        />
+        <Box position="absolute" top={0} left={0} w="100%" h="100%" opacity={0.5}>
+          <CloudCanvas />
+        </Box>
+      </ModalOverlay>
       <ModalContent>
         <ModalHeader style={{ display: "flex", alignItems: "center" }}>
           {translation[userLanguage]["settings.button.yourTutor"]}

@@ -109,7 +109,6 @@ import {
 } from "react-icons/ri";
 import { MdOutlineSchedule } from "react-icons/md";
 
-import { IoPlay } from "react-icons/io5";
 import { IoConstruct } from "react-icons/io5";
 
 import MultipleChoiceQuestion from "./components/MultipleChoice/MultipleChoice";
@@ -1493,6 +1492,23 @@ const Step = ({
     onClose: onKnowledgeLedgerClose,
   } = useDisclosure();
 
+  const handleAwardModalClose = () => {
+    onAwardModalClose();
+    onLectureModalOpen();
+  };
+
+  const handleLectureModalClose = () => {
+    onLectureModalClose();
+    if (lectureNextPath) {
+      navigate(lectureNextPath);
+      if (lectureNextStep !== null) {
+        setCurrentStep(lectureNextStep);
+      }
+      setLectureNextPath(null);
+      setLectureNextStep(null);
+    }
+  };
+
   const {
     isOpen: isBitcoinModeOpen,
     onOpen: onBitcoinModeOpen,
@@ -2311,7 +2327,27 @@ const Step = ({
       detail: salaryText,
     });
 
-    //
+    if (step.isConversationReview) {
+      const npub = localStorage.getItem("local_npub");
+      setIsPostingWithNostr(true);
+      try {
+        if (currentStep > 4) incrementUserStep(npub, currentStep);
+        else await incrementUserStep(npub, currentStep);
+        if (currentStep > 0) {
+          storeCorrectAnswer(step, feedback).catch(console.error);
+        }
+      } finally {
+        setIsPostingWithNostr(false);
+      }
+      const path =
+        currentStep <= 4
+          ? `/onboarding/${currentStep + 2}`
+          : `/q/${currentStep + 1}`;
+      setLectureNextPath(path);
+      setLectureNextStep(nextStep);
+      return;
+    }
+
     if (currentStep === 9) {
       const npub = localStorage.getItem("local_npub");
 
@@ -2784,33 +2820,6 @@ const Step = ({
                     }
                   }}
                 />
-                {userLanguage.includes("en") ? (
-                  <IconButton
-                    width="24px"
-                    height="30px"
-                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                    border="2px solid"
-                    borderColor={getBorderColor(step.group)}
-                    background="pink.100"
-                    opacity="0.75"
-                    color="pink.600"
-                    icon={<IoPlay padding="4px" fontSize="14px" />}
-                    mr={5}
-                    onMouseDown={() => {
-                      //open modal
-                      onLectureModalOpen();
-                      return;
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        onLectureModalOpen();
-                        //open modal
-                        return;
-                      }
-                    }}
-                  />
-                ) : null}
-
                 <IconButton
                   width="24px"
                   height="30px"
@@ -3657,7 +3666,7 @@ const Step = ({
               userLanguage={userLanguage}
               currentStep={currentStep}
               isOpen={isLectureModalOpen}
-              onClose={onLectureModalClose}
+              onClose={handleLectureModalClose}
             />
           ) : null}
 
@@ -3703,7 +3712,7 @@ const Step = ({
             {isAwardModalOpen ? (
               <AwardModal
                 isOpen={isAwardModalOpen}
-                onClose={onAwardModalClose}
+                onClose={handleAwardModalClose}
                 // educationalMessages={educationalMessages}
                 // educationalContent={educationalContent}
                 userLanguage={userLanguage}
@@ -5106,6 +5115,8 @@ function App({ isShutDown }) {
   const [showClouds, setShowClouds] = useState(false);
   const [pendingPath, setPendingPath] = useState(null);
   const [pendingStep, setPendingStep] = useState(null);
+  const [lectureNextPath, setLectureNextPath] = useState(null);
+  const [lectureNextStep, setLectureNextStep] = useState(null);
   const [incorrectAttempts, setIncorrectAttempts] = useState(
     parseInt(localStorage.getItem("incorrectAttempts"), 10) || 0
   );
