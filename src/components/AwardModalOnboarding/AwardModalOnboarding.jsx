@@ -187,6 +187,8 @@ const AwardModalOnboarding = ({
               width="fit-content"
               flexWrap="wrap"
               height="min-content"
+              justifyContent="center"
+              marginInline="auto"
             >
               {badges.map((badge) => (
                 <div
@@ -245,7 +247,15 @@ const AwardModalOnboarding = ({
                       }}
                     />
                   </a>
-                  <div style={{ padding: 6 }}>
+                  <div
+                    style={{
+                      padding: 6,
+                      marginLeft: "12px",
+
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
                     <Text fontSize={"sm"}>
                       {translation[userLanguage][badge.name] || badge.name}
                     </Text>

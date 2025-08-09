@@ -351,49 +351,95 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
 
   const getBadgeData = async (addy) => {
     try {
-      // Connect to Nostr
       const connection = await connectToNostr();
       if (!connection) return [];
 
-      const { ndkInstance, hexNpub } = connection;
+      const { ndkInstance } = connection;
 
-      // const addressPointer = await getAddressPointer(addy);
-      let addressPointer = addy.split(":");
+      // Parse a-pointer robustly
+      const parts = String(addy).split(":");
+      const off = parts[0] === "a" ? 1 : 0;
+      if (parts.length - off < 3) return [];
 
-      // Create a filter for badge events (kind 30008) for the given user
+      const kind = Number(parts[off + 0]);
+      const issuer = (parts[off + 1] || "").toLowerCase();
+      const d = parts[off + 2];
+
+      const BADGE_DEFINITION_KIND =
+        typeof NDKKind !== "undefined" &&
+        typeof NDKKind.BadgeDefinition === "number"
+          ? NDKKind.BadgeDefinition
+          : 30009;
+
       const filter = {
-        kinds: [NDKKind.BadgeDefinition], // Use the NDKKind enum for better readability
-        authors: [addressPointer[1]], // The user's hex-encoded npub
-        "#d": [addressPointer[2]],
+        kinds: [BADGE_DEFINITION_KIND], // definition (NIP-58)
+        authors: [issuer],
+        "#d": [d],
         limit: 1,
       };
 
-      // Create a subscription to fetch the events
-      const subscription = ndkInstance.subscribe(filter, { closeOnEose: true });
+      return await new Promise((resolve) => {
+        const sub = ndkInstance.subscribe(filter, { closeOnEose: true });
 
-      // Array to hold badges
-      const badges = [];
+        const out = [];
+        const seen = new Set();
 
-      // Listen for events
-      subscription.on("event", (event) => {
-        const badgeInfo = {
-          content: event.content,
-          createdAt: event.created_at,
-          tags: event.tags,
-          badgeAddress: addy,
+        // We aim to see EOSE from all relays in the relaySet, then wait a tiny idle period.
+        // If relaySet is unknown, we still finish via idle/hard timeout.
+        const targetRelays =
+          (sub.relaySet && sub.relaySet.size) ||
+          (ndkInstance.pool?.relays ? ndkInstance.pool.relays.size : 0);
+
+        let eoseCount = 0;
+        let idleTimer = null;
+
+        const IDLE_MS = 800; // wait this long after the last event/EOSE
+        const HARD_MS = 8000; // absolute cap so we never hang
+
+        const armIdle = () => {
+          clearTimeout(idleTimer);
+          idleTimer = setTimeout(() => {
+            clearTimeout(idleTimer);
+            try {
+              sub.stop?.();
+            } catch {}
+            resolve(out);
+          }, IDLE_MS);
         };
-        badges.push(badgeInfo);
+
+        sub.on("event", (event) => {
+          if (!seen.has(event.id)) {
+            seen.add(event.id);
+            out.push({
+              id: event.id,
+              content: event.content,
+              createdAt: event.created_at,
+              tags: event.tags,
+              badgeAddress: addy,
+            });
+          }
+          armIdle(); // every event restarts the idle timer
+        });
+
+        sub.on("eose", () => {
+          eoseCount += 1;
+          // If we know the relay count, wait for all of them; otherwise, just rely on idle window.
+          if (targetRelays === 0 || eoseCount >= targetRelays) {
+            armIdle(); // let any straggler events flush before resolving
+          }
+        });
+
+        // Hard safety cap
+        setTimeout(() => {
+          try {
+            sub.stop?.();
+          } catch {}
+          resolve(out);
+        }, HARD_MS);
       });
-
-      // Wait for the subscription to finish
-      await new Promise((resolve) => subscription.on("eose", resolve));
-
-      // Log the retrieved badges
-
-      return badges;
     } catch (error) {
       console.error("Error retrieving badges:", error);
-      setErrorMessage(error.message);
+      setErrorMessage?.(error.message);
       return [];
     }
   };
@@ -403,6 +449,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       if (!connection) return [];
 
       const { ndkInstance } = connection;
+
       const hexNpub = getHexNPub(npub); // Convert npub to hex
 
       // Create a filter for badge award events (kind 30009) where the user is the recipient
@@ -422,6 +469,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
           createdAt: event.created_at,
           tags: event.tags,
         };
+
         badges.push(badgeInfo);
       });
 
