@@ -395,9 +395,9 @@ const CloudTransition = ({
                   </Text>
                   <WaveBar
                     value={salaryProgress}
-                    start="#fcf39d"
-                    end="#fef37b"
-                    delay={0}
+                    start="#43e97b"
+                    end="#38f9d7"
+                    delay={0.2}
                     bg="rgba(255,255,255,0.65)"
                     border="#ededed"
                   />
@@ -425,9 +425,9 @@ const CloudTransition = ({
                   </Text>
                   <WaveBar
                     value={dailyGoalProgress}
-                    start="#43e97b"
-                    end="#38f9d7"
-                    delay={0.2}
+                    start="#fce09d"
+                    end="#fef37b"
+                    delay={0}
                     bg="rgba(255,255,255,0.65)"
                     border="#ededed"
                   />
