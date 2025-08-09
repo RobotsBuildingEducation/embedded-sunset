@@ -5,71 +5,71 @@ import { motion, AnimatePresence } from "framer-motion";
 const MotionBox = motion(Box);
 const MotionG = motion.g;
 
-// ---- Level-based background (unchanged look, just drives the canvas) ----
+// ---- Level-based background (clouds a bit stronger) ----
 const THEMES = {
   tutorial: {
     skyTop: "#e3f2fd",
     skyBottom: "#ffffff",
     clouds: [
-      "rgba(255,255,255,0.6)",
-      "rgba(224,240,255,0.4)",
-      "rgba(245,224,255,0.4)",
-      "rgba(255,240,245,0.4)",
-      "rgba(255,255,224,0.4)",
+      "rgba(255,255,255,0.75)",
+      "rgba(224,240,255,0.65)",
+      "rgba(245,224,255,0.65)",
+      "rgba(255,240,245,0.65)",
+      "rgba(255,255,224,0.65)",
     ],
   },
   1: {
     skyTop: "#e1f5fe",
     skyBottom: "#ffffff",
     clouds: [
-      "rgba(224,240,255,0.5)",
-      "rgba(210,235,255,0.35)",
-      "rgba(255,255,255,0.5)",
+      "rgba(224,240,255,0.7)",
+      "rgba(210,235,255,0.55)",
+      "rgba(255,255,255,0.65)",
     ],
   },
   2: {
     skyTop: "#f3e5f5",
     skyBottom: "#ffffff",
     clouds: [
-      "rgba(245,224,255,0.5)",
-      "rgba(233,215,251,0.35)",
-      "rgba(255,255,255,0.5)",
+      "rgba(245,224,255,0.7)",
+      "rgba(233,215,251,0.55)",
+      "rgba(255,255,255,0.65)",
     ],
   },
   3: {
     skyTop: "#fff8e1",
     skyBottom: "#ffffff",
     clouds: [
-      "rgba(255,255,224,0.5)",
-      "rgba(255,244,214,0.35)",
-      "rgba(255,255,255,0.5)",
+      "rgba(255,255,224,0.7)",
+      "rgba(255,244,214,0.55)",
+      "rgba(255,255,255,0.65)",
     ],
   },
   4: {
     skyTop: "#e0f7fa",
     skyBottom: "#ffffff",
     clouds: [
-      "rgba(224,247,250,0.5)",
-      "rgba(204,242,245,0.35)",
-      "rgba(255,255,255,0.5)",
+      "rgba(224,247,250,0.7)",
+      "rgba(204,242,245,0.55)",
+      "rgba(255,255,255,0.65)",
     ],
   },
   5: {
     skyTop: "#e8f5e9",
     skyBottom: "#ffffff",
     clouds: [
-      "rgba(232,245,233,0.5)",
-      "rgba(220,240,225,0.35)",
-      "rgba(255,255,255,0.5)",
+      "rgba(232,245,233,0.7)",
+      "rgba(220,240,225,0.55)",
+      "rgba(255,255,255,0.65)",
     ],
   },
 };
 
 const clampPct = (n) => Math.max(0, Math.min(100, Number(n) || 0));
 
-// ---- Subtle wave bar using SVG (keeps your original colors) ----
+// ---- Subtle wave bar (unchanged) ----
 const WaveBar = ({
-  value, // 0-100
+  value,
   height = 30,
   start = "#000",
   end = "#000",
@@ -79,7 +79,6 @@ const WaveBar = ({
 }) => {
   const id = useRef(`wave-${Math.random().toString(36).slice(2, 9)}`).current;
   const widthPct = `${clampPct(value)}%`;
-
   return (
     <Box
       position="relative"
@@ -110,16 +109,12 @@ const WaveBar = ({
               <stop offset="100%" stopColor={end} />
             </linearGradient>
           </defs>
-
-          {/* Base fill */}
           <rect
             width="120"
             height="30"
             fill={`url(#grad-${id})`}
             opacity="0.9"
           />
-
-          {/* Two very soft moving “cloud waves” (white with low opacity) */}
           <MotionG
             initial={{ x: 0 }}
             animate={{ x: [-10, 0, -10] }}
@@ -136,7 +131,6 @@ const WaveBar = ({
               fill="#fff"
             />
           </MotionG>
-
           <MotionG
             initial={{ x: 0 }}
             animate={{ x: [10, 0, 10] }}
@@ -153,8 +147,6 @@ const WaveBar = ({
               fill="#fff"
             />
           </MotionG>
-
-          {/* A faint highlight near the top edge */}
           <rect
             y="0"
             width="120"
@@ -167,14 +159,6 @@ const WaveBar = ({
     </Box>
   );
 };
-
-const colors = [
-  "rgba(255,255,255,0.6)",
-  "rgba(224,240,255,0.4)",
-  "rgba(245,224,255,0.4)",
-  "rgba(255,240,245,0.4)",
-  "rgba(255,255,224,0.4)",
-];
 
 const CloudTransition = ({
   clonedStep,
@@ -234,7 +218,7 @@ const CloudTransition = ({
     return () => cancelAnimationFrame(frameId);
   }, [salary]);
 
-  // level-based canvas sky with gentle clouds (crisp DPR)
+  // level-based canvas sky with fluffier clouds + GOLD sparkles
   useEffect(() => {
     if (!isActive) return;
     const canvas = canvasRef.current;
@@ -255,35 +239,78 @@ const CloudTransition = ({
     let width = window.innerWidth;
     let height = window.innerHeight;
 
-    const clouds = Array.from({ length: 12 }, () => ({
+    // Bigger, multi-lobe clouds for visibility
+    const clouds = Array.from({ length: 16 }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      radius: 40 + Math.random() * 80,
-      speedY: 0.28 + Math.random() * 0.35,
-      speedX: (Math.random() - 0.5) * 0.18,
+      radius: 90 + Math.random() * 150,
+      speedY: 0.24 + Math.random() * 0.32,
+      speedX: (Math.random() - 0.5) * 0.16,
       wobble: Math.random() * Math.PI * 2,
       color: theme.clouds[Math.floor(Math.random() * theme.clouds.length)],
     }));
 
+    // Warm gold sparkles ✨
+    const sparkles = Array.from({ length: 130 }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      r: 0.9 + Math.random() * 1.9,
+      baseA: 0.3 + Math.random() * 0.55,
+      flicker: Math.random() * Math.PI * 2,
+      vy: 0.12 + Math.random() * 0.22,
+      vx: (Math.random() - 0.5) * 0.05,
+    }));
+
+    const drawCloudLobe = (cx, cy, r, color) => {
+      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+      grad.addColorStop(0, color);
+      grad.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fill();
+    };
+
     const draw = () => {
+      // Sky gradient
       const sky = ctx.createLinearGradient(0, 0, 0, height);
       sky.addColorStop(0, theme.skyTop);
       sky.addColorStop(1, theme.skyBottom);
       ctx.fillStyle = sky;
       ctx.fillRect(0, 0, width, height);
 
+      // Clouds (3-lobe puffs + soft gloss)
       clouds.forEach((c) => {
         c.wobble += 0.01;
         const wobbleY = Math.sin(c.wobble) * 0.18;
 
-        const grad = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.radius);
-        grad.addColorStop(0, c.color);
-        grad.addColorStop(1, "rgba(255,255,255,0)");
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(c.x, c.y, c.radius, 0, Math.PI * 2);
-        ctx.fill();
+        // main lobe + sides
+        drawCloudLobe(c.x, c.y, c.radius, c.color);
+        drawCloudLobe(
+          c.x - c.radius * 0.42,
+          c.y - c.radius * 0.08,
+          c.radius * 0.85,
+          c.color
+        );
+        drawCloudLobe(
+          c.x + c.radius * 0.46,
+          c.y - c.radius * 0.1,
+          c.radius * 0.88,
+          c.color
+        );
 
+        // glossy highlight to pop clouds
+        ctx.save();
+        ctx.globalAlpha = 0.16;
+        drawCloudLobe(
+          c.x - c.radius * 0.18,
+          c.y - c.radius * 0.28,
+          c.radius * 0.9,
+          "rgba(255,255,255,0.9)"
+        );
+        ctx.restore();
+
+        // motion
         c.y -= c.speedY + wobbleY;
         c.x += c.speedX;
 
@@ -294,6 +321,46 @@ const CloudTransition = ({
         if (c.x - c.radius > width) c.x = -c.radius;
         if (c.x + c.radius < 0) c.x = width + c.radius;
       });
+
+      // Sparkles (additive gold)
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      sparkles.forEach((s, i) => {
+        s.flicker += 0.12 + (i % 5) * 0.005;
+        const a = s.baseA * (0.5 + 0.5 * Math.sin(s.flicker));
+        const r = s.r * (0.85 + 0.3 * Math.sin(s.flicker * 1.7));
+
+        // soft gold dot
+        ctx.fillStyle = `rgba(255,215,0,${a})`; // GOLD
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, r, 0, Math.PI * 2);
+        ctx.fill();
+
+        // tiny cross twinkle
+        if ((i + (s.flicker | 0)) % 7 === 0) {
+          ctx.globalAlpha = a * 0.9;
+          ctx.beginPath();
+          ctx.moveTo(s.x - r * 1.8, s.y);
+          ctx.lineTo(s.x + r * 1.8, s.y);
+          ctx.moveTo(s.x, s.y - r * 1.8);
+          ctx.lineTo(s.x, s.y + r * 1.8);
+          ctx.lineWidth = 0.8;
+          ctx.strokeStyle = "rgba(255,215,0,0.9)"; // GOLD
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
+
+        // drift
+        s.y -= s.vy;
+        s.x += s.vx;
+        if (s.y < -4) {
+          s.y = height + 4;
+          s.x = Math.random() * width;
+        }
+        if (s.x < -4) s.x = width + 4;
+        if (s.x > width + 4) s.x = -4;
+      });
+      ctx.restore();
 
       animationId = requestAnimationFrame(draw);
     };
@@ -388,7 +455,7 @@ const CloudTransition = ({
                 <br />
                 <br />
 
-                {/* Salary bar (yellow) */}
+                {/* Salary bar */}
                 <Box w="100%" mx="auto" mb={6}>
                   <Text fontSize="sm" mb={1} color="purple.500">
                     Salary
@@ -403,7 +470,7 @@ const CloudTransition = ({
                   />
                 </Box>
 
-                {/* Step progress bar (purple → blue) */}
+                {/* Step progress bar */}
                 <Box w="100%" mx="auto" mb={6}>
                   <Text fontSize="sm" mb={1} color="purple.500">
                     Progress
@@ -418,7 +485,7 @@ const CloudTransition = ({
                   />
                 </Box>
 
-                {/* Daily goal bar (green → cyan) */}
+                {/* Daily goal bar */}
                 <Box w="100%" mx="auto">
                   <Text fontSize="sm" mb={1} color="purple.500">
                     {dailyGoalLabel} {dailyProgress}/{dailyGoals}
