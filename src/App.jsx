@@ -3700,15 +3700,17 @@ const Step = ({
           /> */}
 
           <>
-            <AwardModal
-              isOpen={isAwardModalOpen}
-              onClose={onAwardModalClose}
-              // educationalMessages={educationalMessages}
-              // educationalContent={educationalContent}
-              userLanguage={userLanguage}
-              step={step}
-              isCorrect={isCorrect}
-            />
+            {isAwardModalOpen ? (
+              <AwardModal
+                isOpen={isAwardModalOpen}
+                onClose={onAwardModalClose}
+                // educationalMessages={educationalMessages}
+                // educationalContent={educationalContent}
+                userLanguage={userLanguage}
+                step={step}
+                isCorrect={isCorrect}
+              />
+            ) : null}
 
             <PasscodeModal userLanguage={userLanguage} />
             {/* 
@@ -5410,6 +5412,7 @@ function App({ isShutDown }) {
   return (
     <Box ref={topRef}>
       <CloudTransition
+        clonedStep={clonedStep}
         isActive={showClouds}
         salary={transitionStats.salary}
         salaryProgress={transitionStats.salaryProgress}

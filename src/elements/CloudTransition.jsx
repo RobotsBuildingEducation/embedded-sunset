@@ -1,18 +1,183 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import { Box, Text, Button } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 
+const MotionBox = motion(Box);
+const MotionG = motion.g;
+
+// ---- Level-based background (unchanged look, just drives the canvas) ----
+const THEMES = {
+  tutorial: {
+    skyTop: "#e3f2fd",
+    skyBottom: "#ffffff",
+    clouds: [
+      "rgba(255,255,255,0.6)",
+      "rgba(224,240,255,0.4)",
+      "rgba(245,224,255,0.4)",
+      "rgba(255,240,245,0.4)",
+      "rgba(255,255,224,0.4)",
+    ],
+  },
+  1: {
+    skyTop: "#e1f5fe",
+    skyBottom: "#ffffff",
+    clouds: [
+      "rgba(224,240,255,0.5)",
+      "rgba(210,235,255,0.35)",
+      "rgba(255,255,255,0.5)",
+    ],
+  },
+  2: {
+    skyTop: "#f3e5f5",
+    skyBottom: "#ffffff",
+    clouds: [
+      "rgba(245,224,255,0.5)",
+      "rgba(233,215,251,0.35)",
+      "rgba(255,255,255,0.5)",
+    ],
+  },
+  3: {
+    skyTop: "#fff8e1",
+    skyBottom: "#ffffff",
+    clouds: [
+      "rgba(255,255,224,0.5)",
+      "rgba(255,244,214,0.35)",
+      "rgba(255,255,255,0.5)",
+    ],
+  },
+  4: {
+    skyTop: "#e0f7fa",
+    skyBottom: "#ffffff",
+    clouds: [
+      "rgba(224,247,250,0.5)",
+      "rgba(204,242,245,0.35)",
+      "rgba(255,255,255,0.5)",
+    ],
+  },
+  5: {
+    skyTop: "#e8f5e9",
+    skyBottom: "#ffffff",
+    clouds: [
+      "rgba(232,245,233,0.5)",
+      "rgba(220,240,225,0.35)",
+      "rgba(255,255,255,0.5)",
+    ],
+  },
+};
+
+const clampPct = (n) => Math.max(0, Math.min(100, Number(n) || 0));
+
+// ---- Subtle wave bar using SVG (keeps your original colors) ----
+const WaveBar = ({
+  value, // 0-100
+  height = 30,
+  start = "#000",
+  end = "#000",
+  delay = 0,
+  bg = "rgba(255,255,255,0.6)",
+  border = "#ededed",
+}) => {
+  const id = useRef(`wave-${Math.random().toString(36).slice(2, 9)}`).current;
+  const widthPct = `${clampPct(value)}%`;
+
+  return (
+    <Box
+      position="relative"
+      bg={bg}
+      borderRadius="9999px"
+      overflow="hidden"
+      height={`${height}px`}
+      border={`1px solid ${border}`}
+      backdropFilter="saturate(120%) blur(4px)"
+    >
+      <motion.div
+        initial={{ width: 0 }}
+        animate={{ width: widthPct }}
+        transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
+        style={{ position: "absolute", top: 0, left: 0, bottom: 0 }}
+      >
+        <Box
+          as="svg"
+          viewBox="0 0 120 30"
+          preserveAspectRatio="none"
+          width="100%"
+          height="100%"
+          display="block"
+        >
+          <defs>
+            <linearGradient id={`grad-${id}`} x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor={start} />
+              <stop offset="100%" stopColor={end} />
+            </linearGradient>
+          </defs>
+
+          {/* Base fill */}
+          <rect
+            width="120"
+            height="30"
+            fill={`url(#grad-${id})`}
+            opacity="0.9"
+          />
+
+          {/* Two very soft moving “cloud waves” (white with low opacity) */}
+          <MotionG
+            initial={{ x: 0 }}
+            animate={{ x: [-10, 0, -10] }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay,
+            }}
+            opacity={0.18}
+          >
+            <path
+              d="M0,18 C10,14 20,22 30,18 S50,14 60,18 S80,22 90,18 S110,14 120,18 L120,30 L0,30 Z"
+              fill="#fff"
+            />
+          </MotionG>
+
+          <MotionG
+            initial={{ x: 0 }}
+            animate={{ x: [10, 0, 10] }}
+            transition={{
+              duration: 12,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: delay + 0.2,
+            }}
+            opacity={0.12}
+          >
+            <path
+              d="M0,16 C12,12 22,20 32,16 S52,12 62,16 S82,20 92,16 S112,12 122,16 L122,30 L0,30 Z"
+              fill="#fff"
+            />
+          </MotionG>
+
+          {/* A faint highlight near the top edge */}
+          <rect
+            y="0"
+            width="120"
+            height="2"
+            fill="rgba(255,255,255,0.45)"
+            rx="1"
+          />
+        </Box>
+      </motion.div>
+    </Box>
+  );
+};
+
 const colors = [
-  "rgba(255,255,255,0.6)", // soft white
-  "rgba(224,240,255,0.4)", // powder blue
-  "rgba(245,224,255,0.4)", // lavender
-  "rgba(255,240,245,0.4)", // pink blush
-  "rgba(255,255,224,0.4)", // light gold
+  "rgba(255,255,255,0.6)",
+  "rgba(224,240,255,0.4)",
+  "rgba(245,224,255,0.4)",
+  "rgba(255,240,245,0.4)",
+  "rgba(255,255,224,0.4)",
 ];
 
-const MotionBox = motion(Box);
-
 const CloudTransition = ({
+  clonedStep,
   isActive,
   salary,
   salaryProgress,
@@ -30,9 +195,15 @@ const CloudTransition = ({
   const [displaySalary, setDisplaySalary] = useState(salary);
   const prevSalary = useRef(salary);
 
-  // Prevent the click that opens the overlay from immediately
-  // triggering the Continue action by enabling the button only
-  // after a short delay
+  // Chapter key
+  const groupKey = useMemo(() => {
+    const g = clonedStep?.group ?? clonedStep ?? "tutorial";
+    const s = String(g).toLowerCase();
+    return s === "0" ? "tutorial" : s;
+  }, [clonedStep]);
+
+  const theme = THEMES[groupKey] ?? THEMES.tutorial;
+
   useEffect(() => {
     if (isActive) {
       setCanContinue(false);
@@ -42,6 +213,7 @@ const CloudTransition = ({
     setCanContinue(false);
   }, [isActive]);
 
+  // salary count-up
   useEffect(() => {
     const start = prevSalary.current || 0;
     const end = salary || 0;
@@ -51,69 +223,76 @@ const CloudTransition = ({
     }
     let startTime;
     let frameId;
-
-    const step = (timestamp) => {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / 800, 1);
-      const value = Math.floor(start + (end - start) * progress);
-      setDisplaySalary(value);
-      if (progress < 1) {
-        frameId = requestAnimationFrame(step);
-      } else {
-        prevSalary.current = end;
-      }
+    const step = (t) => {
+      if (!startTime) startTime = t;
+      const p = Math.min((t - startTime) / 800, 1);
+      setDisplaySalary(Math.floor(start + (end - start) * p));
+      if (p < 1) frameId = requestAnimationFrame(step);
+      else prevSalary.current = end;
     };
-
     frameId = requestAnimationFrame(step);
     return () => cancelAnimationFrame(frameId);
   }, [salary]);
 
+  // level-based canvas sky with gentle clouds (crisp DPR)
   useEffect(() => {
     if (!isActive) return;
-
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     let animationId;
 
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
+    const setSize = () => {
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(window.innerWidth * ratio);
+      canvas.height = Math.floor(window.innerHeight * ratio);
+      canvas.style.width = "100%";
+      canvas.style.height = "100%";
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    };
 
-    const clouds = Array.from({ length: 10 }, () => ({
+    setSize();
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+
+    const clouds = Array.from({ length: 12 }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
       radius: 40 + Math.random() * 80,
-      speed: 0.4 + Math.random() * 0.4,
-      color: colors[Math.floor(Math.random() * colors.length)],
+      speedY: 0.28 + Math.random() * 0.35,
+      speedX: (Math.random() - 0.5) * 0.18,
+      wobble: Math.random() * Math.PI * 2,
+      color: theme.clouds[Math.floor(Math.random() * theme.clouds.length)],
     }));
 
     const draw = () => {
       const sky = ctx.createLinearGradient(0, 0, 0, height);
-      sky.addColorStop(0, "#e3f2fd");
-      sky.addColorStop(1, "#ffffff");
+      sky.addColorStop(0, theme.skyTop);
+      sky.addColorStop(1, theme.skyBottom);
       ctx.fillStyle = sky;
       ctx.fillRect(0, 0, width, height);
 
-      clouds.forEach((cloud) => {
-        const grad = ctx.createRadialGradient(
-          cloud.x,
-          cloud.y,
-          0,
-          cloud.x,
-          cloud.y,
-          cloud.radius
-        );
-        grad.addColorStop(0, cloud.color);
+      clouds.forEach((c) => {
+        c.wobble += 0.01;
+        const wobbleY = Math.sin(c.wobble) * 0.18;
+
+        const grad = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.radius);
+        grad.addColorStop(0, c.color);
         grad.addColorStop(1, "rgba(255,255,255,0)");
         ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.arc(cloud.x, cloud.y, cloud.radius, 0, Math.PI * 2);
+        ctx.arc(c.x, c.y, c.radius, 0, Math.PI * 2);
         ctx.fill();
 
-        cloud.y -= cloud.speed;
-        if (cloud.y + cloud.radius < 0) {
-          cloud.y = height + cloud.radius;
-          cloud.x = Math.random() * width;
+        c.y -= c.speedY + wobbleY;
+        c.x += c.speedX;
+
+        if (c.y + c.radius < 0) {
+          c.y = height + c.radius;
+          c.x = Math.random() * width;
         }
+        if (c.x - c.radius > width) c.x = -c.radius;
+        if (c.x + c.radius < 0) c.x = width + c.radius;
       });
 
       animationId = requestAnimationFrame(draw);
@@ -121,18 +300,17 @@ const CloudTransition = ({
 
     draw();
 
-    const handleResize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+    const onResize = () => {
+      setSize();
+      width = window.innerWidth;
+      height = window.innerHeight;
     };
-
-    window.addEventListener("resize", handleResize);
-
+    window.addEventListener("resize", onResize);
     return () => {
       cancelAnimationFrame(animationId);
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", onResize);
     };
-  }, [isActive]);
+  }, [isActive, theme]);
 
   return (
     <AnimatePresence>
@@ -161,117 +339,100 @@ const CloudTransition = ({
             w="100%"
             h="100%"
           />
+
           <MotionBox
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
+            initial={{ opacity: 0, y: 18, scale: 0.99 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.45, ease: "easeOut" }}
             textAlign="center"
             color="purple.600"
             w="90%"
-            maxW="400px"
+            maxW="420px"
           >
             {message && (
               <Text
                 as={motion.p}
                 fontSize="md"
                 mt={6}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 0.8, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.2 }}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 0.92, y: 0 }}
+                transition={{ duration: 0.35, delay: 0.15 }}
               >
                 <Text
                   as={motion.p}
                   fontSize="3xl"
                   fontWeight="bold"
                   mb={4}
-                  initial={{ scale: 0.9 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 0.6 }}
+                  initial={{ scale: 0.94, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.55 }}
                   color="#05f569"
+                  style={{ textShadow: "0 0 12px rgba(5,245,105,0.25)" }}
                 >
-                  +${displaySalary.toLocaleString()}/yr
+                  +${(displaySalary ?? 0).toLocaleString()}/yr
                 </Text>
+
                 {detail && (
                   <Text
                     as={motion.p}
                     fontSize="sm"
                     mt={2}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 0.8, y: 0 }}
-                    transition={{ duration: 0.4, delay: 0.3 }}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 0.85, y: 0 }}
+                    transition={{ duration: 0.35, delay: 0.25 }}
                   >
                     {detail}
                   </Text>
                 )}
+
                 <br />
                 <br />
+
+                {/* Salary bar (yellow) */}
                 <Box w="100%" mx="auto" mb={6}>
                   <Text fontSize="sm" mb={1} color="purple.500">
                     Salary
                   </Text>
-                  <Box
-                    h="8px"
-                    bg="gray.200"
-                    borderRadius="full"
-                    overflow="hidden"
-                    height="30px"
-                  >
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${salaryProgress}%` }}
-                      transition={{ duration: 0.6 }}
-                      style={{
-                        height: "100%",
-                        background: "linear-gradient(90deg,#fcf39d,#fef37b)",
-                      }}
-                    />
-                  </Box>
+                  <WaveBar
+                    value={salaryProgress}
+                    start="#fcf39d"
+                    end="#fef37b"
+                    delay={0}
+                    bg="rgba(255,255,255,0.65)"
+                    border="#ededed"
+                  />
                 </Box>
+
+                {/* Step progress bar (purple → blue) */}
                 <Box w="100%" mx="auto" mb={6}>
                   <Text fontSize="sm" mb={1} color="purple.500">
                     Progress
                   </Text>
-                  <Box
-                    h="8px"
-                    bg="gray.200"
-                    borderRadius="full"
-                    overflow="hidden"
-                    height="30px"
-                  >
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${stepProgress}%` }}
-                      transition={{ duration: 0.6, delay: 0.1 }}
-                      style={{
-                        height: "100%",
-                        background: "linear-gradient(90deg,#6a11cb,#72a2f2)",
-                      }}
-                    />
-                  </Box>
+                  <WaveBar
+                    value={stepProgress}
+                    start="#6a11cb"
+                    end="#72a2f2"
+                    delay={0.1}
+                    bg="rgba(255,255,255,0.65)"
+                    border="#ededed"
+                  />
                 </Box>
+
+                {/* Daily goal bar (green → cyan) */}
                 <Box w="100%" mx="auto">
                   <Text fontSize="sm" mb={1} color="purple.500">
                     {dailyGoalLabel} {dailyProgress}/{dailyGoals}
                   </Text>
-                  <Box
-                    h="8px"
-                    bg="gray.200"
-                    borderRadius="full"
-                    overflow="hidden"
-                    border="1px solid #ededed"
-                    height="30px"
-                  >
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${dailyGoalProgress}%` }}
-                      transition={{ duration: 0.6, delay: 0.2 }}
-                      style={{
-                        height: "100%",
-                        background: "linear-gradient(90deg,#43e97b,#38f9d7)",
-                      }}
-                    />
-                  </Box>
+                  <WaveBar
+                    value={dailyGoalProgress}
+                    start="#43e97b"
+                    end="#38f9d7"
+                    delay={0.2}
+                    bg="rgba(255,255,255,0.65)"
+                    border="#ededed"
+                  />
                 </Box>
+
                 <br />
                 <br />
                 {message}
@@ -285,9 +446,11 @@ const CloudTransition = ({
               variant="outline"
               borderRadius="full"
               px={6}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.4 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.985 }}
+              transition={{ duration: 0.2, delay: 0.35 }}
               onClick={onContinue}
               disabled={!canContinue}
             >
