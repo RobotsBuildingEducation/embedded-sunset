@@ -143,7 +143,7 @@ import { PasscodeModal } from "./components/PasscodeModal/PasscodeModal";
 import { usePasscodeModalStore } from "./usePasscodeModalStore";
 
 import { OrbCanvas } from "./elements/OrbCanvas";
-import LectureModal from "./components/LectureModal/LectureModal";
+import LectureReview from "./components/LectureReview/LectureReview";
 
 // import { TestNostrWallet } from "./components/WalletSetup/TestNostrWallet";
 import { useNostrWalletStore } from "./hooks/useNostrWalletStore";
@@ -1460,8 +1460,14 @@ const Step = ({
   const {
     isOpen: isAwardModalOpen,
     onOpen: onAwardModalOpen,
-    onClose: onAwardModalClose,
+    onClose: closeAwardModal,
   } = useDisclosure();
+
+  const handleAwardModalClose = async () => {
+    closeAwardModal();
+    await handleNextClick();
+    onLectureModalOpen();
+  };
 
   const {
     isOpen: isProgressModalOpen,
@@ -2353,15 +2359,20 @@ const Step = ({
         if (currentStep > 0) {
           storeCorrectAnswer(step, feedback).catch(console.error);
         }
-
-        if (currentStep <= 4) {
-          navigateWithTransition(`/onboarding/${currentStep + 2}`, nextStep);
-        } else {
-          navigateWithTransition(`/q/${currentStep + 1}`, nextStep);
-        }
       } finally {
         setIsPostingWithNostr(false);
       }
+
+      const nextPath =
+        currentStep <= 4
+          ? `/onboarding/${currentStep + 2}`
+          : `/q/${currentStep + 1}`;
+      if (step.isConversationReview) {
+        setPendingPath(nextPath);
+        setPendingStep(nextStep);
+        return;
+      }
+      navigateWithTransition(nextPath, nextStep);
     }
   };
 
@@ -2784,33 +2795,6 @@ const Step = ({
                     }
                   }}
                 />
-                {userLanguage.includes("en") ? (
-                  <IconButton
-                    width="24px"
-                    height="30px"
-                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                    border="2px solid"
-                    borderColor={getBorderColor(step.group)}
-                    background="pink.100"
-                    opacity="0.75"
-                    color="pink.600"
-                    icon={<IoPlay padding="4px" fontSize="14px" />}
-                    mr={5}
-                    onMouseDown={() => {
-                      //open modal
-                      onLectureModalOpen();
-                      return;
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        onLectureModalOpen();
-                        //open modal
-                        return;
-                      }
-                    }}
-                  />
-                ) : null}
-
                 <IconButton
                   width="24px"
                   height="30px"
@@ -3653,11 +3637,12 @@ const Step = ({
           ) : null}
 
           {isLectureModalOpen ? (
-            <LectureModal
+            <LectureReview
               userLanguage={userLanguage}
               currentStep={currentStep}
               isOpen={isLectureModalOpen}
               onClose={onLectureModalClose}
+              onContinue={handleTransitionContinue}
             />
           ) : null}
 
@@ -3703,7 +3688,7 @@ const Step = ({
             {isAwardModalOpen ? (
               <AwardModal
                 isOpen={isAwardModalOpen}
-                onClose={onAwardModalClose}
+                onClose={handleAwardModalClose}
                 // educationalMessages={educationalMessages}
                 // educationalContent={educationalContent}
                 userLanguage={userLanguage}
