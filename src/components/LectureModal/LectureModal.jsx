@@ -441,39 +441,23 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
   // }, []);
   if (!isOpen) return null;
   return (
-    <CloudTransition clonedStep="night" isActive={isOpen}>
-      <Box
-        w="100%"
-        h="100%"
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        p={4}
-        color="white"
-      >
+      <CloudTransition clonedStep="night" isActive={isOpen}>
+        <Box w="100%" h="100%" p={4} color="white" overflowY="auto">
         <Box
+          p={4}
+          borderBottom="1px solid"
+          borderColor="whiteAlpha.300"
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
           bg="rgba(0,0,0,0.6)"
-          borderRadius="md"
-          maxW="3xl"
-          w="100%"
-          maxH="100%"
-          overflowY="auto"
-          boxShadow="lg"
         >
-          <Box
-            p={4}
-            borderBottom="1px solid"
-            borderColor="whiteAlpha.300"
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-          >
             <Text flex="1">
               {translation[userLanguage]["settings.button.yourTutor"]}
             </Text>
             <CloseButton onClick={onClose} />
           </Box>
-          <Box p={4}>
+        <Box p={4} bg="rgba(0,0,0,0.6)">
             <Accordion allowToggle mb={4}>
               <AccordionItem>
                 <h2>
@@ -634,37 +618,37 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
               </Accordion>
             </Box>
           </Box>
-          <Box
-            p={4}
-            borderTop="1px solid"
-            borderColor="whiteAlpha.300"
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
+        <Box
+          p={4}
+          borderTop="1px solid"
+          borderColor="whiteAlpha.300"
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          bg="rgba(0,0,0,0.6)"
+        >
+          <ProgressDisplay
+            videoWatched={videoDurationDetection}
+            summaryViewed={hasViewedSummary}
+            practiceCompleted={hasPracticedModule}
+          />
+          <Button
+            mt={4}
+            onMouseDown={onClose}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                onClose();
+              }
+            }}
+            variant="solid"
+            size="lg"
+            boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
           >
-            <ProgressDisplay
-              videoWatched={videoDurationDetection}
-              summaryViewed={hasViewedSummary}
-              practiceCompleted={hasPracticedModule}
-            />
-            <Button
-              mt={4}
-              onMouseDown={onClose}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  onClose();
-                }
-              }}
-              variant="solid"
-              size="lg"
-              boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-            >
-              Close
-            </Button>
-          </Box>
+            Close
+          </Button>
         </Box>
       </Box>
-    </CloudTransition>
+      </CloudTransition>
   );
 };
 
