@@ -1460,8 +1460,14 @@ const Step = ({
   const {
     isOpen: isAwardModalOpen,
     onOpen: onAwardModalOpen,
-    onClose: onAwardModalClose,
+    onClose: closeAwardModal,
   } = useDisclosure();
+
+  const handleAwardModalClose = async () => {
+    closeAwardModal();
+    await handleNextClick();
+    onLectureModalOpen();
+  };
 
   const {
     isOpen: isProgressModalOpen,
@@ -2364,10 +2370,9 @@ const Step = ({
       if (step.isConversationReview) {
         setPendingPath(nextPath);
         setPendingStep(nextStep);
-        onLectureModalOpen();
-      } else {
-        navigateWithTransition(nextPath, nextStep);
+        return;
       }
+      navigateWithTransition(nextPath, nextStep);
     }
   };
 
@@ -3683,7 +3688,7 @@ const Step = ({
             {isAwardModalOpen ? (
               <AwardModal
                 isOpen={isAwardModalOpen}
-                onClose={onAwardModalClose}
+                onClose={handleAwardModalClose}
                 // educationalMessages={educationalMessages}
                 // educationalContent={educationalContent}
                 userLanguage={userLanguage}
