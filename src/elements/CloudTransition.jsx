@@ -63,6 +63,15 @@ const THEMES = {
       "rgba(255,255,255,0.65)",
     ],
   },
+  night: {
+    skyTop: "#0b1023",
+    skyBottom: "#1a2038",
+    clouds: [
+      "rgba(255,255,255,0.15)",
+      "rgba(160,170,210,0.1)",
+      "rgba(120,130,180,0.12)",
+    ],
+  },
 };
 
 const clampPct = (n) => Math.max(0, Math.min(100, Number(n) || 0));
@@ -173,6 +182,7 @@ const CloudTransition = ({
   message,
   detail,
   onContinue,
+  children,
 }) => {
   const canvasRef = useRef(null);
   const [canContinue, setCanContinue] = useState(false);
@@ -407,123 +417,135 @@ const CloudTransition = ({
             h="100%"
           />
 
-          <MotionBox
-            initial={{ opacity: 0, y: 18, scale: 0.99 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.45, ease: "easeOut" }}
-            textAlign="center"
-            color="purple.600"
-            w="90%"
-            maxW="420px"
-          >
-            {message && (
-              <Text
-                as={motion.p}
-                fontSize="md"
-                mt={6}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 0.92, y: 0 }}
-                transition={{ duration: 0.35, delay: 0.15 }}
-              >
+          {children ? (
+            <Box
+              position="absolute"
+              top={0}
+              left={0}
+              w="100%"
+              h="100%"
+            >
+              {children}
+            </Box>
+          ) : (
+            <MotionBox
+              initial={{ opacity: 0, y: 18, scale: 0.99 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.45, ease: "easeOut" }}
+              textAlign="center"
+              color="purple.600"
+              w="90%"
+              maxW="420px"
+            >
+              {message && (
                 <Text
                   as={motion.p}
-                  fontSize="3xl"
-                  fontWeight="bold"
-                  mb={4}
-                  initial={{ scale: 0.94, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.55 }}
-                  color="#05f569"
-                  style={{ textShadow: "0 0 12px rgba(5,245,105,0.25)" }}
+                  fontSize="md"
+                  mt={6}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 0.92, y: 0 }}
+                  transition={{ duration: 0.35, delay: 0.15 }}
                 >
-                  +${(displaySalary ?? 0).toLocaleString()}/yr
-                </Text>
-
-                {detail && (
                   <Text
                     as={motion.p}
-                    fontSize="sm"
-                    mt={2}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 0.85, y: 0 }}
-                    transition={{ duration: 0.35, delay: 0.25 }}
+                    fontSize="3xl"
+                    fontWeight="bold"
+                    mb={4}
+                    initial={{ scale: 0.94, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.55 }}
+                    color="#05f569"
+                    style={{ textShadow: "0 0 12px rgba(5,245,105,0.25)" }}
                   >
-                    {detail}
+                    +${(displaySalary ?? 0).toLocaleString()}/yr
                   </Text>
-                )}
 
-                <br />
-                <br />
+                  {detail && (
+                    <Text
+                      as={motion.p}
+                      fontSize="sm"
+                      mt={2}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 0.85, y: 0 }}
+                      transition={{ duration: 0.35, delay: 0.25 }}
+                    >
+                      {detail}
+                    </Text>
+                  )}
 
-                {/* Salary bar */}
-                <Box w="100%" mx="auto" mb={6}>
-                  <Text fontSize="sm" mb={1} color="purple.500">
-                    Salary
-                  </Text>
-                  <WaveBar
-                    value={salaryProgress}
-                    start="#43e97b"
-                    end="#38f9d7"
-                    delay={0.2}
-                    bg="rgba(255,255,255,0.65)"
-                    border="#ededed"
-                  />
-                </Box>
+                  <br />
+                  <br />
 
-                {/* Step progress bar */}
-                <Box w="100%" mx="auto" mb={6}>
-                  <Text fontSize="sm" mb={1} color="purple.500">
-                    Progress
-                  </Text>
-                  <WaveBar
-                    value={stepProgress}
-                    start="#6a11cb"
-                    end="#72a2f2"
-                    delay={0.1}
-                    bg="rgba(255,255,255,0.65)"
-                    border="#ededed"
-                  />
-                </Box>
+                  {/* Salary bar */}
+                  <Box w="100%" mx="auto" mb={6}>
+                    <Text fontSize="sm" mb={1} color="purple.500">
+                      Salary
+                    </Text>
+                    <WaveBar
+                      value={salaryProgress}
+                      start="#43e97b"
+                      end="#38f9d7"
+                      delay={0.2}
+                      bg="rgba(255,255,255,0.65)"
+                      border="#ededed"
+                    />
+                  </Box>
 
-                {/* Daily goal bar */}
-                <Box w="100%" mx="auto">
-                  <Text fontSize="sm" mb={1} color="purple.500">
-                    {dailyGoalLabel} {dailyProgress}/{dailyGoals}
-                  </Text>
-                  <WaveBar
-                    value={dailyGoalProgress}
-                    start="#fce09d"
-                    end="#fef37b"
-                    delay={0}
-                    bg="rgba(255,255,255,0.65)"
-                    border="#ededed"
-                  />
-                </Box>
+                  {/* Step progress bar */}
+                  <Box w="100%" mx="auto" mb={6}>
+                    <Text fontSize="sm" mb={1} color="purple.500">
+                      Progress
+                    </Text>
+                    <WaveBar
+                      value={stepProgress}
+                      start="#6a11cb"
+                      end="#72a2f2"
+                      delay={0.1}
+                      bg="rgba(255,255,255,0.65)"
+                      border="#ededed"
+                    />
+                  </Box>
 
-                <br />
-                <br />
-                {message}
-              </Text>
-            )}
+                  {/* Daily goal bar */}
+                  <Box w="100%" mx="auto">
+                    <Text fontSize="sm" mb={1} color="purple.500">
+                      {dailyGoalLabel} {dailyProgress}/{dailyGoals}
+                    </Text>
+                    <WaveBar
+                      value={dailyGoalProgress}
+                      start="#fce09d"
+                      end="#fef37b"
+                      delay={0}
+                      bg="rgba(255,255,255,0.65)"
+                      border="#ededed"
+                    />
+                  </Box>
 
-            <Button
-              as={motion.button}
-              mt={8}
-              colorScheme="yellow"
-              variant="outline"
-              borderRadius="full"
-              px={6}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.985 }}
-              transition={{ duration: 0.2, delay: 0.35 }}
-              onClick={onContinue}
-              disabled={!canContinue}
-            >
-              Continue
-            </Button>
-          </MotionBox>
+                  <br />
+                  <br />
+                  {message}
+                </Text>
+              )}
+
+              <Button
+                as={motion.button}
+                mt={8}
+                colorScheme="yellow"
+                variant="outline"
+                borderRadius="full"
+                px={6}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.985 }}
+                transition={{ duration: 0.2, delay: 0.35 }}
+                onClick={onContinue}
+                disabled={!canContinue}
+              >
+                Continue
+              </Button>
+            </MotionBox>
+          )}
         </Box>
       )}
     </AnimatePresence>
