@@ -3661,14 +3661,12 @@ const Step = ({
             />
           ) : null}
 
-          {isLectureModalOpen ? (
-            <LectureModal
-              userLanguage={userLanguage}
-              currentStep={currentStep}
-              isOpen={isLectureModalOpen}
-              onClose={handleLectureModalClose}
-            />
-          ) : null}
+          <LectureModal
+            userLanguage={userLanguage}
+            currentStep={currentStep}
+            isOpen={isLectureModalOpen}
+            onClose={handleLectureModalClose}
+          />
 
           {isKnowledgeLedgerOpen && userLanguage !== "compsci-en" ? (
             <KnowledgeLedgerModal
