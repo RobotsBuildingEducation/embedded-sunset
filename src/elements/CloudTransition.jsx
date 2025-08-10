@@ -403,28 +403,26 @@ const CloudTransition = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          overflowY="auto"
           display="flex"
-          justifyContent="center"
+          flexDirection="column"
+          justifyContent={children ? "flex-start" : "center"}
           alignItems="center"
         >
           <Box
             as="canvas"
             ref={canvasRef}
-            position="absolute"
+            position="fixed"
             top={0}
             left={0}
             w="100%"
             h="100%"
+            zIndex={0}
+            pointerEvents="none"
           />
 
           {children ? (
-            <Box
-              position="absolute"
-              top={0}
-              left={0}
-              w="100%"
-              h="100%"
-            >
+            <Box w="100%" maxW="600px" zIndex={1}>
               {children}
             </Box>
           ) : (

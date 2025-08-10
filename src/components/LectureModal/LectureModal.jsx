@@ -442,7 +442,7 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
   if (!isOpen) return null;
   return (
       <CloudTransition clonedStep="night" isActive={isOpen}>
-        <Box w="100%" h="100%" p={4} color="white" overflowY="auto">
+        <Box p={4} color="white">
         <Box
           p={4}
           borderBottom="1px solid"
