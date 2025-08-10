@@ -1,11 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
   Button,
   Text,
   Box,
@@ -19,13 +13,11 @@ import {
   useToast,
   Heading,
   Code,
-  UnorderedList,
-  ModalFooter,
   VStack,
   HStack,
   Icon,
-  OrderedList,
 } from "@chakra-ui/react";
+import { CloudCanvas } from "../../elements/SunsetCanvas";
 import { steps } from "../../utility/content";
 import { videoTranscript } from "../../utility/transcript";
 import { useSharedNostr } from "../../hooks/useNOSTR";
@@ -130,7 +122,13 @@ const ProgressDisplay = ({
   );
 };
 
-const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
+const LectureReview = ({
+  isOpen,
+  onClose,
+  currentStep,
+  userLanguage,
+  onContinue,
+}) => {
   const { getLastNotesByNpub, assignExistingBadgeToNpub } = useSharedNostr(
     localStorage.getItem("local_npub"),
     localStorage.getItem("local_nsec")
@@ -445,201 +443,172 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
   //   assignExistingBadgeToNpub(transcriptObject.name.replace(/ /g, "-"));
   // }, []);
   console.log("name", transcriptObject.name.replace(/ /g, "-"));
+  if (!isOpen) return null;
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="3xl" isCentered>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader style={{ display: "flex", alignItems: "center" }}>
-          {translation[userLanguage]["settings.button.yourTutor"]}
-        </ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <Accordion allowToggle mb={4}>
+    <Box
+      position="fixed"
+      top={0}
+      left={0}
+      w="100vw"
+      h="100vh"
+      bgGradient="linear(to-b, #0a0e27, #1a202c)"
+      color="white"
+      overflowY="auto"
+      zIndex={1000}
+    >
+      <Box position="absolute" top={0} left={0} w="100%" h="100%" zIndex={0}>
+        <CloudCanvas outlineColor="rgba(255,255,255,0.2)" />
+      </Box>
+      <Box
+        position="absolute"
+        top={0}
+        left={0}
+        w="100%"
+        h="100%"
+        bg="rgba(0,0,0,0.5)"
+        zIndex={0}
+      />
+      <Box position="relative" zIndex={1} maxW="600px" mx="auto" p={4}>
+        <Box mb={4}>
+          <Box fontSize="sm">
+            {translation[userLanguage]["transcriptBadges"]}
+          </Box>
+          <Box display="flex" flexDirection="row">
+            {badgeImages.map((bdge, index) => {
+              const isBadgeEarned = badges.some(
+                (badge) => badge.image === bdge.imageLink
+              );
+
+              return (
+                <Box key={index} position="relative" m={1} mb={4}>
+                  <Link href={bdge.badgeLink} target="_blank">
+                    <Image
+                      src={bdge.imageLink}
+                      loading="lazy"
+                      width="60px"
+                      borderRadius="20px"
+                      alt={`Badge ${index + 1}`}
+                    />
+                  </Link>
+                  {!isBadgeEarned && (
+                    <Link href={bdge.badgeLink} target="_blank">
+                      <Box
+                        position="absolute"
+                        top="0"
+                        left="0"
+                        right="0"
+                        bottom="0"
+                        bg="white"
+                        opacity="0.7"
+                        borderRadius="20px"
+                      />
+                    </Link>
+                  )}
+                </Box>
+              );
+            })}
+          </Box>
+
+          <Box display="flex" justifyContent={"center"}>
+            <video
+              poster="https://res.cloudinary.com/dtkeyccga/image/upload/v1706481474/Untitled_Desktop_Wallpaper_qrpmgm.png"
+              style={{
+                width: "100%",
+                maxWidth: 350,
+                height: "100%",
+                borderRadius: "30px",
+                boxShadow:
+                  "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)",
+                marginTop: 8,
+              }}
+              controls
+              autoPlay={false}
+              ref={videoRef}
+              playsInline
+              onPlay={handlePlay}
+            >
+              <source src={transcriptObject.videoSrc} type="video/mp4" />
+              <source src={transcriptObject.videoSrc} type="video/mov" />
+              Your browser does not support the video tag.
+            </video>
+          </Box>
+          <Accordion allowToggle mb={4} mt={6}>
             <AccordionItem>
               <h2>
-                <AccordionButton>
+                <AccordionButton
+                  onMouseDown={handleSummaryView}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      handleSummaryView();
+                    }
+                  }}
+                >
                   <Box flex="1" textAlign="left">
-                    {translation[userLanguage]["instructions"]}
+                    Summary
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
               </h2>
               <AccordionPanel pb={4}>
-                {/* <Button onClick={handleCopyKeys}>
-                  🔑 {translation[userLanguage]["button.copyKey"]}
-                </Button>
-                <br /> */}
-                {/* <br /> */}
-                <Box>
-                  {/* {translation[userLanguage]["tutorModal.instructions.1"]}
-                  <Link
-                    href="https://embedded-rox.app"
-                    target="_blank"
-                    style={{ textDecoration: "underline" }}
-                  >
-                    {translation[userLanguage]["tutorModal.instructions.1.33"]}
-                  </Link> */}
-                  {translation[userLanguage]["tutorModal.instructions.1.66"]}
-                </Box>
-                <br />
-                <Box>
-                  {translation[userLanguage]["tutorModal.instructions.2"]}
-                  <OrderedList ml={8}>
-                    <li>
-                      {" "}
-                      {translation[userLanguage]["tutorModal.instructions.3"]}
-                    </li>
-                    <li>
-                      {" "}
-                      {translation[userLanguage]["tutorModal.instructions.4"]}
-                    </li>
-                  </OrderedList>
-                </Box>
+                <Markdown
+                  components={ChakraUIRenderer(newTheme)}
+                  children={
+                    translation[userLanguage][
+                      `video.summary.${
+                        step.group === "introduction" ? "tutorial" : step.group
+                      }`
+                    ]
+                  }
+                />
+              </AccordionPanel>
+            </AccordionItem>
+            <AccordionItem>
+              <h2>
+                <AccordionButton>
+                  <Box flex="1" textAlign="left">
+                    Practice
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
+              </h2>
+              <AccordionPanel pb={4}>
+                <PracticeModule
+                  currentTranscript={transcriptObject}
+                  userLanguage={userLanguage}
+                  onPracticeComplete={() => {
+                    handlePracticeComplete();
+                  }}
+                />
               </AccordionPanel>
             </AccordionItem>
           </Accordion>
-          <Box mb={4}>
-            <Box fontSize="sm">
-              {translation[userLanguage]["transcriptBadges"]}
-            </Box>
-            <Box display="flex" flexDirection="row">
-              <br />
-              {badgeImages.map((bdge, index) => {
-                const isBadgeEarned = badges.some(
-                  (badge) => badge.image === bdge.imageLink
-                );
-
-                return (
-                  <Box key={index} position="relative" m={1} mb={4}>
-                    <Link href={bdge.badgeLink} target="_blank">
-                      <Image
-                        src={bdge.imageLink}
-                        loading="lazy"
-                        width="60px"
-                        borderRadius="20px"
-                        alt={`Badge ${index + 1}`}
-                      />
-                    </Link>
-                    {!isBadgeEarned && (
-                      <Link href={bdge.badgeLink} target="_blank">
-                        <Box
-                          position="absolute"
-                          top="0"
-                          left="0"
-                          right="0"
-                          bottom="0"
-                          bg="white"
-                          opacity="0.7"
-                          borderRadius="20px"
-                        />
-                      </Link>
-                    )}
-                  </Box>
-                );
-              })}
-            </Box>
-
-            <Box display="flex" justifyContent={"center"}>
-              <video
-                poster="https://res.cloudinary.com/dtkeyccga/image/upload/v1706481474/Untitled_Desktop_Wallpaper_qrpmgm.png"
-                style={{
-                  width: "100%",
-                  maxWidth: 350,
-                  height: "100%",
-                  borderRadius: "30px",
-                  boxShadow:
-                    "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)",
-                  marginTop: 8,
-                }}
-                controls
-                autoPlay={false}
-                ref={videoRef}
-                playsInline
-                onPlay={handlePlay} // Attach handlePlay to the play event
-              >
-                <source src={transcriptObject.videoSrc} type="video/mp4" />
-                <source src={transcriptObject.videoSrc} type="video/mov" />
-                Your browser does not support the video tag.
-              </video>
-            </Box>
-            <Accordion allowToggle mb={4} mt={6}>
-              <AccordionItem>
-                <h2>
-                  <AccordionButton
-                    onMouseDown={handleSummaryView}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        handleSummaryView();
-                      }
-                    }}
-                  >
-                    <Box flex="1" textAlign="left">
-                      Summary
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>
-                  <Markdown
-                    components={ChakraUIRenderer(newTheme)}
-                    children={
-                      translation[userLanguage][
-                        `video.summary.${step.group === "introduction" ? "tutorial" : step.group}`
-                      ]
-                    }
-                  />
-                </AccordionPanel>
-              </AccordionItem>
-              <AccordionItem>
-                <h2>
-                  <AccordionButton>
-                    <Box flex="1" textAlign="left">
-                      Practice
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>
-                  <PracticeModule
-                    currentTranscript={transcriptObject}
-                    userLanguage={userLanguage}
-                    onPracticeComplete={(moduleName) => {
-                      handlePracticeComplete();
-                    }}
-                  />
-                </AccordionPanel>
-              </AccordionItem>
-            </Accordion>
-          </Box>
-        </ModalBody>
-        <ModalFooter
-          display="flex"
-          justifyContent="space-between"
-          alignContent={"center"}
+        </Box>
+        <ProgressDisplay
+          videoWatched={videoDurationDetection}
+          summaryViewed={hasViewedSummary}
+          practiceCompleted={hasPracticedModule}
+        />
+        <Button
+          mt={4}
+          onMouseDown={() => {
+            onClose();
+            onContinue();
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              onClose();
+              onContinue();
+            }
+          }}
+          variant="solid"
+          size="lg"
+          boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
         >
-          <ProgressDisplay
-            videoWatched={videoDurationDetection}
-            summaryViewed={hasViewedSummary}
-            practiceCompleted={hasPracticedModule}
-          />
-          <Button
-            mt={4}
-            onMouseDown={onClose}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                onClose();
-              }
-            }}
-            variant="solid"
-            size="lg"
-            boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-          >
-            Close
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+          Continue
+        </Button>
+      </Box>
+    </Box>
   );
 };
 
-export default LectureModal;
+export default LectureReview;
