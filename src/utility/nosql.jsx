@@ -30,7 +30,6 @@ export const updateUserData = async (
       : new Date(nextGoalExpiration);
   const userDocRef = doc(database, "users", userId);
 
-  console.log("daily goals...", dailyGoals);
   await updateDoc(userDocRef, {
     timer,
     streak,

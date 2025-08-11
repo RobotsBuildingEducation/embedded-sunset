@@ -84,7 +84,6 @@ export const useNostrWalletStore = create((set, get) => ({
 
       set({ isConnected: true });
 
-      console.log("HEXNSEC", hexNsec);
       // return the object, the machine key, and the ability to sign/verify your actions/behvior
       return { ndkInstance, hexNpub, signer: new NDKPrivateKeySigner(hexNsec) };
     } catch (err) {
@@ -162,8 +161,9 @@ export const useNostrWalletStore = create((set, get) => ({
     console.log("WALLET P2pk", testdata);
     // listen for updates to the balance, when a user answers a question, the balance should update
     wallet.on("balance_updated", async (balance) => {
+      console.log("arg balance", balance);
       const bal = (await wallet.balance()) || [];
-
+      console.log("balanace...", bal);
       set({ walletBalance: bal });
     });
 
@@ -171,6 +171,7 @@ export const useNostrWalletStore = create((set, get) => ({
     // essentially checking the balance redundantly, resulting in outdated balance
     //woudn't be surprised if this runs first actually, we'll see
     const initialBal = (await wallet.balance()) || [];
+    console.log("initialBal", initialBal);
     set({
       walletBalance: initialBal,
       cashuWallet: wallet,
@@ -346,6 +347,7 @@ export const useNostrWalletStore = create((set, get) => ({
 
       // if expected payment success data isnt returned, throw an error
       const { proofs, mint } = confirmation;
+      console.log("proofs", proofs);
       if (!proofs || !mint) {
         throw new Error("No proofs returned from cashuPay.");
       }
@@ -450,6 +452,7 @@ export const useNostrWalletStore = create((set, get) => ({
       set({ walletBalance: updatedBalance || [] });
 
       setInvoice("");
+      window.location.reload();
     });
 
     deposit.on("error", (e) => {

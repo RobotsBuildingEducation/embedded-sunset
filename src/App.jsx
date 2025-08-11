@@ -668,7 +668,7 @@ export const VoiceInput = ({
       submitEducationalPrompt(
         `Generate educational material about ${JSON.stringify(
           step
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning.  Additionally the ${pickProgrammingLanguage(userLanguage)} or relevant code should consider line breaks, whitespace and have a maximum print width of 80 characters and never start with a backticking markdown specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning.  Additionally the ${pickProgrammingLanguage(userLanguage)} or relevant code should consider line breaks, whitespace and have a maximum print width of 80 characters and never start with a backticking markdown with triple backticks specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
           userLanguage.includes("en") ? "english" : "spanish"
         }`
       );
@@ -678,7 +678,7 @@ export const VoiceInput = ({
       submitEducationalPrompt(
         `Generate educational material about ${JSON.stringify(
           relevantSteps
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally the ${pickProgrammingLanguage(userLanguage)} or relevant code should consider line breaks and formatting and have a maximum print width of 80 characters and never start with a backticking markdown specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets.  Never specify the answer. Lastly the user is speaking in ${
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally the ${pickProgrammingLanguage(userLanguage)} or relevant code should consider line breaks and formatting and have a maximum print width of 80 characters and never start with a backticking markdown with triple backticks specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets.  Never specify the answer. Lastly the user is speaking in ${
           userLanguage.includes("en") ? "english" : "spanish"
         }`
       );
@@ -1382,12 +1382,14 @@ const Step = ({
   const [interval, setInterval] = useState(0);
   // const { cashTap, loadWallet } = useCashuStore();
   const {
+    sendOneSatToNpubX,
     sendOneSatToNpub,
     initWalletService,
     init,
     walletBalance,
     cashuWallet,
   } = useNostrWalletStore((state) => ({
+    sendOneSatToNpubX: state.sendOneSatToNpubX,
     sendOneSatToNpub: state.sendOneSatToNpub, // renamed from cashTap
     initWalletService: state.initWalletService, // renamed from loadWallet
     init: state.init,
@@ -1633,7 +1635,6 @@ const Step = ({
         setStartTime(currentTime);
         setEndTime(newEndTime);
 
-        console.log(".... step init", dailyGoals);
         await updateUserData(
           userId,
           userData.timer,
@@ -1646,9 +1647,6 @@ const Step = ({
           userData.goalCount || 0
         );
       } else {
-        console.log(".... step init 2?", dailyGoals);
-        console.log("check..", userData.dailyGoals);
-
         await updateUserData(
           userId,
           userData.timer,
@@ -2461,7 +2459,7 @@ const Step = ({
         //     content:
         `Generate educational ${pickProgrammingLanguage(userLanguage)} material about ${JSON.stringify(
           step
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally any ${pickProgrammingLanguage(userLanguage)} or relevant code should have a maximum print width of 80 characters and never start with a backticking markdown specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally any ${pickProgrammingLanguage(userLanguage)} or relevant code should have a maximum print width of 80 characters and never start with a backticking markdown with triple backticks specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
           userLanguage.includes("en") ? "english" : "spanish"
         }`
         //     ,

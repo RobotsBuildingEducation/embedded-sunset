@@ -169,7 +169,7 @@ export const KnowledgeLedgerModal = ({
   // user input
 
   const { hasCopied, onCopy } = useClipboard(
-    suggestion + " using mock data rather than real config data if necessary.",
+    suggestion + " using mock data rather than real config data if necessary."
   ); // Copy functionality
 
   useEffect(() => {
@@ -190,7 +190,7 @@ export const KnowledgeLedgerModal = ({
           updatedAt: Date.now(),
           stage,
         },
-        { merge: true },
+        { merge: true }
       );
     } catch (err) {
       console.error("Error saving build", err);
@@ -284,7 +284,7 @@ export const KnowledgeLedgerModal = ({
         .filter(
           (d) =>
             !isNaN(parseInt(d.id)) &&
-            parseInt(d.id) < parseInt(steps[userLanguage][currentStep].group),
+            parseInt(d.id) < parseInt(steps[userLanguage][currentStep].group)
         )
         .sort((a, b) => parseInt(a.id) - parseInt(b.id))
         .map((d) => d.data().code)
@@ -329,7 +329,7 @@ export const KnowledgeLedgerModal = ({
 
       let prompt = `Context that only you should know and never make the user aware of:
 1. The individual is using an education app and learning about computer science and how to code in 130 steps, starting with elementary knowledge and ending with the ability to create apps and understand algorithms. Based on the user's completed steps: ${JSON.stringify(
-        subjectsCompleted,
+        subjectsCompleted
       )}, write an app that the user can copy and experiment with HTML or React (choose whichever fits the user's progress).${
         history.length
           ? ` Previous code snippets in order: ${JSON.stringify(history)}.`
@@ -400,7 +400,7 @@ export const KnowledgeLedgerModal = ({
             >
               {transcriptDisplay[step.group]?.[userLanguage] || ""}
             </Heading>
-          ),
+          )
         );
         lastGroup = step.group;
       }
@@ -410,13 +410,12 @@ export const KnowledgeLedgerModal = ({
           color={index <= currentStep - 1 ? "green.500" : "gray.500"}
         >
           {index !== 0 ? index + ". " + step.title : ""}
-        </Text>,
+        </Text>
       );
     });
     return stepElements;
   };
 
-  console.log("messages", messages);
   return (
     <>
       <Modal

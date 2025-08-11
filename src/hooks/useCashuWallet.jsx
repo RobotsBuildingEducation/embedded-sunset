@@ -30,6 +30,7 @@ export const useProofStorage = () => {
       return;
     }
     localStorage.setItem("proofs", JSON.stringify(proofs));
+    console.log("proofs", proofs);
     const newBalance = proofs.reduce((total, proof) => total + proof.amount, 0);
     localStorage.setItem("balance", newBalance);
 

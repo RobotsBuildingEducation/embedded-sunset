@@ -668,6 +668,7 @@ const SettingsMenu = ({
                   onClose();
                   setView("buttons");
                   navigate("/");
+                  window.location.reload();
                 }}
                 onKeyDown={(e) => {
                   // walletService.stop();
@@ -684,6 +685,7 @@ const SettingsMenu = ({
                     setView("buttons");
 
                     navigate("/");
+                    window.location.reload();
                   }
                 }}
                 p={6}

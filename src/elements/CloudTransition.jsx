@@ -490,19 +490,19 @@ const CloudTransition = ({
                     />
                   </Box>
                   {/* Balance bar */}
-                  {/* <Box w="100%" mx="auto" mb={6}>
+                  <Box w="100%" mx="auto" mb={6}>
                     <Text fontSize="sm" mb={1} color="purple.500">
-                      {balanceProgress} Bitcoin sats
+                      {balanceProgress - 1} Bitcoin sats
                     </Text>
                     <WaveBar
-                      value={balanceProgress}
+                      value={balanceProgress - 1}
                       start="#fce09d"
                       end="#fef37b"
                       delay={0}
                       bg="rgba(255,255,255,0.65)"
                       border="#ededed"
                     />
-                  </Box> */}
+                  </Box>
 
                   {/* Step progress bar */}
                   <Box w="100%" mx="auto" mb={6}>

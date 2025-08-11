@@ -85,6 +85,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
   // }, []);
   // Helper: sum up wallet balance
 
+  console.log("total balance", walletBalance);
   const totalBalance =
     (walletBalance || [])?.reduce((sum, b) => sum + (b.amount || 0), 0) || null;
 
