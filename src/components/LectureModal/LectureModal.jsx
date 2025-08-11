@@ -162,7 +162,13 @@ const ProgressDisplayBottom = ({
   );
 };
 
-const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
+const LectureModal = ({
+  isOpen,
+  onClose,
+  currentStep,
+  userLanguage,
+  handleNextClick,
+}) => {
   let navigate = useNavigate();
   const { getLastNotesByNpub, assignExistingBadgeToNpub } = useSharedNostr(
     localStorage.getItem("local_npub"),
@@ -658,13 +664,13 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
         <Box p={4} display="flex" justifyContent="flex-end" alignItems="center">
           <Button
             mt={4}
-            onMouseDown={() => {
-              navigate(`/q/${currentStep + 1}`);
+            onMouseDown={async () => {
+              await handleNextClick();
               onClose();
             }}
-            onKeyDown={(e) => {
+            onKeyDown={async (e) => {
               if (e.key === "Enter" || e.key === " ") {
-                navigate(`/q/${currentStep + 1}`);
+                await handleNextClick();
                 onClose();
               }
             }}

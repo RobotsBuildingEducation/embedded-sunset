@@ -1354,6 +1354,10 @@ const Step = ({
   setTransitionStats,
   incorrectAttempts,
   setIncorrectAttempts,
+  lectureNextPath,
+  setLectureNextPath,
+  lectureNextStep,
+  setLectureNextStep,
 }) => {
   let loot = buildSuperLoot();
 
@@ -2191,7 +2195,6 @@ const Step = ({
         // console.log("last message", lastMessage);
         // if (!lastMessage.meta.loading) {
 
-        console.log("last msg", lastMessage);
         if (isLastMessage) {
           // console.log("LAST MESSAGE", lastMessage);
           const jsonResponse =
@@ -2345,7 +2348,6 @@ const Step = ({
           : `/q/${currentStep + 1}`;
       setLectureNextPath(path);
       setLectureNextStep(nextStep);
-      return;
     }
 
     if (currentStep === 9) {
@@ -2356,6 +2358,7 @@ const Step = ({
         import.meta.env.VITE_PATREON_PASSCODE
       ) {
         await incrementToSubscription(npub, currentStep);
+
         navigateWithTransition("/subscription", nextStep);
       } else {
         setIsPostingWithNostr(true);
@@ -3666,6 +3669,7 @@ const Step = ({
             currentStep={currentStep}
             isOpen={isLectureModalOpen}
             onClose={handleLectureModalClose}
+            handleNextClick={handleNextClick}
           />
 
           {isKnowledgeLedgerOpen && userLanguage !== "compsci-en" ? (
@@ -5118,6 +5122,7 @@ function App({ isShutDown }) {
   const [incorrectAttempts, setIncorrectAttempts] = useState(
     parseInt(localStorage.getItem("incorrectAttempts"), 10) || 0
   );
+
   const defaultTransitionStats = {
     salary: 0,
     salaryProgress: 0,
@@ -5554,6 +5559,10 @@ function App({ isShutDown }) {
                       setTransitionStats={setTransitionStats}
                       incorrectAttempts={incorrectAttempts}
                       setIncorrectAttempts={setIncorrectAttempts}
+                      lectureNextPath={lectureNextPath}
+                      setLectureNextPath={setLectureNextPath}
+                      lectureNextStep={lectureNextPath}
+                      setLectureNextStep={setLectureNextStep}
                     />
                   </PrivateRoute>
                 }
