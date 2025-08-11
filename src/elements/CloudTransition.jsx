@@ -206,7 +206,7 @@ const CloudTransition = ({
       setCanContinue(false);
       const id = setTimeout(() => setCanContinue(true), 200);
 
-      if (clonedStep != "night") {
+      if (clonedStep !== "night") {
         const audio = new Audio(sparkle);
         audio.volume = 0.25; // optional volume control
         audio.play().catch(() => {
@@ -518,10 +518,11 @@ const CloudTransition = ({
                   {/* Balance bar */}
                   <Box w="100%" mx="auto" mb={6}>
                     <Text fontSize="sm" mb={1} color="purple.500">
-                      {balanceProgress - 1} Bitcoin sats
+                      {balanceProgress === 0 ? "0" : balanceProgress - 1}{" "}
+                      Bitcoin sats
                     </Text>
                     <WaveBar
-                      value={balanceProgress - 1}
+                      value={balanceProgress === 0 ? "0" : balanceProgress - 1}
                       start="#fce09d"
                       end="#fef37b"
                       delay={0}
