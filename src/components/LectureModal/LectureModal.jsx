@@ -472,9 +472,9 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
 
   return (
     <CloudTransition clonedStep="night" isActive={isOpen}>
-      <Heading as="h1" color="purple">
+      {/* <Heading as="h1" color="purple">
         Module Review
-      </Heading>
+      </Heading> */}
       <Box p={4} color="white">
         <Box
           p={4}
