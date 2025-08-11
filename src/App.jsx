@@ -2310,6 +2310,8 @@ const Step = ({
 
     const salaryVal = loot[currentStep]["monetaryValue"] || 0;
     const salaryProgress = (salaryVal / 120000) * 100;
+    const totalSteps = steps[userLanguage].length;
+    const stepProgress = ((currentStep + 1) / totalSteps) * 100;
     const balanceProgress = calculateBalance();
     const salaryText = loot[currentStep][userLanguage];
     const updatedDailyProgress = Math.min(dailyProgress + 1, dailyGoals || 5);
@@ -2320,6 +2322,7 @@ const Step = ({
     setTransitionStats({
       salary: salaryVal,
       salaryProgress,
+      stepProgress,
       balanceProgress,
       dailyGoalProgress: dailyGoalPercent,
       dailyProgress: updatedDailyProgress,
@@ -5125,6 +5128,7 @@ function App({ isShutDown }) {
   const defaultTransitionStats = {
     salary: 0,
     salaryProgress: 0,
+    stepProgress: 0,
     balanceProgress: 0,
     dailyGoalProgress: 0,
     dailyProgress: 0,
@@ -5429,6 +5433,7 @@ function App({ isShutDown }) {
         isActive={showClouds}
         salary={transitionStats.salary}
         salaryProgress={transitionStats.salaryProgress}
+        stepProgress={transitionStats.stepProgress}
         balanceProgress={transitionStats.balanceProgress}
         dailyGoalProgress={transitionStats.dailyGoalProgress}
         dailyProgress={transitionStats.dailyProgress}

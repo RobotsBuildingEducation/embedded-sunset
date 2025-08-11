@@ -174,6 +174,7 @@ const CloudTransition = ({
   isActive,
   salary,
   salaryProgress,
+  stepProgress,
   balanceProgress,
   dailyGoalProgress,
   dailyProgress,
@@ -484,6 +485,21 @@ const CloudTransition = ({
                       start="#43e97b"
                       end="#38f9d7"
                       delay={0.2}
+                      bg="rgba(255,255,255,0.65)"
+                      border="#ededed"
+                    />
+                  </Box>
+
+                  {/* Step progress bar */}
+                  <Box w="100%" mx="auto" mb={6}>
+                    <Text fontSize="sm" mb={1} color="purple.500">
+                      Progress
+                    </Text>
+                    <WaveBar
+                      value={stepProgress}
+                      start="#6a11cb"
+                      end="#72a2f2"
+                      delay={0.1}
                       bg="rgba(255,255,255,0.65)"
                       border="#ededed"
                     />
