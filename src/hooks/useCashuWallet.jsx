@@ -11,12 +11,15 @@ export const useProofStorage = () => {
   useEffect(() => {
     const storedProofs = localStorage.getItem("proofs");
     if (storedProofs) {
+      console.log("storedProofs", storedProofs);
       const parsedProofs = JSON.parse(storedProofs);
+      console.log("parsed", parsedProofs);
       setProofs(parsedProofs);
       const initialBalance = parsedProofs.reduce(
         (total, proof) => total + proof.amount,
         0
       );
+      console.log("initialBalance", initialBalance);
       localStorage.setItem("balance", initialBalance);
       setBalance(initialBalance);
     }

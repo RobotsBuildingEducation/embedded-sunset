@@ -668,7 +668,7 @@ export const VoiceInput = ({
       submitEducationalPrompt(
         `Generate educational material about ${JSON.stringify(
           step
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning.  Additionally the ${pickProgrammingLanguage(userLanguage)} or relevant code should consider line breaks, whitespace and have a maximum print width of 80 characters in well formatted markdown and never start with a backticked markdown formatter. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning.  Additionally the ${pickProgrammingLanguage(userLanguage)} or relevant code should consider line breaks, whitespace and have a maximum print width of 80 characters and never start with a backticking markdown specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
           userLanguage.includes("en") ? "english" : "spanish"
         }`
       );
@@ -678,7 +678,7 @@ export const VoiceInput = ({
       submitEducationalPrompt(
         `Generate educational material about ${JSON.stringify(
           relevantSteps
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally the ${pickProgrammingLanguage(userLanguage)} or relevant code should consider line breaks and formatting and have a maximum print width of 80 characters in well formatted markdow and never start with a backticked markdown formatter. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets.  Never specify the answer. Lastly the user is speaking in ${
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally the ${pickProgrammingLanguage(userLanguage)} or relevant code should consider line breaks and formatting and have a maximum print width of 80 characters and never start with a backticking markdown specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets.  Never specify the answer. Lastly the user is speaking in ${
           userLanguage.includes("en") ? "english" : "spanish"
         }`
       );
@@ -2461,7 +2461,7 @@ const Step = ({
         //     content:
         `Generate educational ${pickProgrammingLanguage(userLanguage)} material about ${JSON.stringify(
           step
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally any ${pickProgrammingLanguage(userLanguage)} or relevant code should have a maximum print width of 80 characters in well formatted markdown and never start with a backticked markdown formatter. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally any ${pickProgrammingLanguage(userLanguage)} or relevant code should have a maximum print width of 80 characters and never start with a backticking markdown specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
           userLanguage.includes("en") ? "english" : "spanish"
         }`
         //     ,
@@ -4975,7 +4975,7 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
         if (userSnapshot.exists()) {
           // console.log("User document exists");
           const userData = userSnapshot.data();
-          const userStep = isOldAccount ? userData.step : userData.previousStep; // Default to 0 if no previousStep
+          const userStep = userData.previousStep; // Default to 0 if no previousStep
 
           // console.log("User step:", userStep);
 
@@ -4983,11 +4983,11 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
 
           // Update Firestore document with previousStep + 1
           await updateDoc(userDocRef, {
-            step: isOldAccount ? userStep : userStep + 1,
+            step: isOldAccount ? userStep + 1 : userStep + 1,
             hasSubmittedPasscode: true,
           });
 
-          navigate(`/q/${isOldAccount ? userStep : userStep + 1}`);
+          navigate(`/q/${isOldAccount ? userStep + 1 : userStep + 1}`);
           // console.log("Updated user step to:", userStep + 1);
         } else {
           console.log("User document not found");

@@ -125,7 +125,6 @@ const EducationalModal = ({
   educationalContent,
   userLanguage,
 }) => {
-  console.log("educationalMessages", educationalMessages);
   const topRef = useRef();
   const newMessageRef = useRef(null);
 
