@@ -218,9 +218,9 @@ export const IdentityCard = ({
       }}
     >
       This code is an address that you can use to send Bitcoin from your Cash
-      App. This is an experimental feature that will have you deposit $0.02
-      worth of Bitcoin. The app is designed to charge you 1 Bitcoin cent called
-      sats. Depositing 2 cents USD of sats grants you about 30 charges of the
+      App. This is an experimental feature that will have you deposit $0.10
+      worth of Bitcoin. The app is designed to charge you 10 Bitcoin cents called
+      sats. Depositing 10 cents USD of sats grants you about 100 charges of the
       app. QR codes soon!
       <a
         target="_blank"

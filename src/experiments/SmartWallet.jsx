@@ -26,7 +26,7 @@
 //     }
 //   };
 
-//   // Send a transaction (1 cent)
+//   // Send a transaction (10 cents)
 //   const sendTransaction = async () => {
 //     if (!address) {
 //       alert("Please connect wallet first");
@@ -34,8 +34,8 @@
 //     }
 
 //     try {
-//       // Convert 1 cent to wei. Note: This is a very rough estimate, actual value depends on ETH price.
-//       const amountInWei = ethers.utils.parseUnits("0.01", 18); // Assuming 1 cent is roughly 0.01 ETH at some point
+//       // Convert 10 cents to wei. Note: This is a very rough estimate, actual value depends on ETH price.
+//       const amountInWei = ethers.utils.parseUnits("0.10", 18); // Assuming 10 cents is roughly 0.10 ETH at some point
 
 //       const provider = wallet.makeWeb3Provider();
 //       const signer = provider.getSigner();

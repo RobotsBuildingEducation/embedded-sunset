@@ -175,6 +175,7 @@ const CloudTransition = ({
   salary,
   salaryProgress,
   stepProgress,
+  balanceProgress,
   dailyGoalProgress,
   dailyProgress,
   dailyGoals,
@@ -488,6 +489,20 @@ const CloudTransition = ({
                       border="#ededed"
                     />
                   </Box>
+                  {/* Balance bar */}
+                  <Box w="100%" mx="auto" mb={6}>
+                    <Text fontSize="sm" mb={1} color="purple.500">
+                      {balanceProgress} Bitcoin sats
+                    </Text>
+                    <WaveBar
+                      value={balanceProgress}
+                      start="#fce09d"
+                      end="#fef37b"
+                      delay={0}
+                      bg="rgba(255,255,255,0.65)"
+                      border="#ededed"
+                    />
+                  </Box>
 
                   {/* Step progress bar */}
                   <Box w="100%" mx="auto" mb={6}>
@@ -496,8 +511,8 @@ const CloudTransition = ({
                     </Text>
                     <WaveBar
                       value={stepProgress}
-                      start="#6a11cb"
-                      end="#72a2f2"
+                      start="#0345fc"
+                      end="#03f4fc"
                       delay={0.1}
                       bg="rgba(255,255,255,0.65)"
                       border="#ededed"
@@ -511,7 +526,7 @@ const CloudTransition = ({
                     </Text>
                     <WaveBar
                       value={dailyGoalProgress}
-                      start="#fce09d"
+                      start="#03f4fc"
                       end="#fef37b"
                       delay={0}
                       bg="rgba(255,255,255,0.65)"
