@@ -69,7 +69,7 @@ const useCashuStore = create((set, get) => ({
     if (!proofsToRemove) return;
 
     const updatedProofs = proofs.filter(
-      (proof) => !proofsToRemove.includes(proof)
+      (proof) => !proofsToRemove.some((p) => p.secret === proof.secret)
     );
     const newBalance = updatedProofs.reduce(
       (total, proof) => total + proof.amount,
