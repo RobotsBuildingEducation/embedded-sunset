@@ -236,9 +236,9 @@ export const PracticeModule = ({ currentTranscript, onPracticeComplete }) => {
             </Box>
           )}
 
-          <Text color="blue.300" fontWeight="bold">
+          {/* <Text color="blue.300" fontWeight="bold">
             🎉 Congratulations on completing the practice!
-          </Text>
+          </Text> */}
         </VStack>
       )}
     </Box>

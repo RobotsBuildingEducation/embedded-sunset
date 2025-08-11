@@ -31,6 +31,12 @@ import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { PracticeModule } from "../PracticeModule/PracticeModule";
 import { CheckCircleIcon, TimeIcon } from "@chakra-ui/icons";
 import CloudTransition from "../../elements/CloudTransition";
+import { useNavigate } from "react-router-dom";
+import {
+  FadeInComponent,
+  PanRightComponent,
+  RiseUpAnimation,
+} from "../../elements/RandomCharacter";
 
 const newTheme = {
   h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
@@ -40,21 +46,17 @@ const newTheme = {
   h5: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   h6: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   code: ({ node, inline, className, children, ...props }) => {
-    // Detect if it's a single word or short phrase
     const content = Array.isArray(children)
       ? children.join("")
       : String(children);
-
-    // Check if the content is a single word
     const isSingleWord = content.trim().split(/\s+/).length === 1;
 
-    // Inline code styling
     if (isSingleWord) {
       return (
         <Code
           p={1}
           borderRadius={8}
-          display="inline" // Prevent block display
+          display="inline"
           fontFamily={"Fira code, Fira Mono, monospace"}
           fontSize="xs"
           {...props}
@@ -64,7 +66,6 @@ const newTheme = {
       );
     }
 
-    // Multi-line or multi-word code block styling
     return (
       <Box
         as="pre"
@@ -94,38 +95,75 @@ const ProgressDisplay = ({
   practiceCompleted,
 }) => {
   return (
+    <FadeInComponent speed="1s">
+      <Box mb={4} p={4} bg="whiteAlpha.200" borderRadius="md" color="white">
+        <Text fontSize="lg" fontWeight="bold" mb={2}>
+          To earn a chapter review badge
+        </Text>
+        <VStack align="start" spacing={2}>
+          <HStack>
+            <Icon
+              as={videoWatched ? CheckCircleIcon : TimeIcon}
+              color={videoWatched ? "#07fc92" : "gray.400"}
+            />
+            <Text>Watch Video Lecture</Text>
+          </HStack>
+          <HStack>
+            <Icon
+              as={summaryViewed ? CheckCircleIcon : TimeIcon}
+              color={summaryViewed ? "#07fc92" : "gray.400"}
+            />
+            <Text>Review Summary</Text>
+          </HStack>
+          <HStack>
+            <Icon
+              as={practiceCompleted ? CheckCircleIcon : TimeIcon}
+              color={practiceCompleted ? "#07fc92" : "gray.400"}
+            />
+            <Text>Complete Practice Module</Text>
+          </HStack>
+        </VStack>
+      </Box>
+    </FadeInComponent>
+  );
+};
+
+const ProgressDisplayBottom = ({
+  videoWatched,
+  summaryViewed,
+  practiceCompleted,
+}) => {
+  return (
     <Box mb={4} p={4} bg="whiteAlpha.200" borderRadius="md" color="white">
-      <Text fontSize="lg" fontWeight="bold" mb={2}>
-        Module Progress:
-      </Text>
-      <VStack align="start" spacing={2}>
+      <HStack display="flex" justify={"space-around"} spacing={2}>
         <HStack>
           <Icon
             as={videoWatched ? CheckCircleIcon : TimeIcon}
-            color={videoWatched ? "green.500" : "gray.400"}
+            color={videoWatched ? "#07fc92" : "gray.400"}
           />
-          <Text>Watch Video Lecture</Text>
+          <Text>Video </Text>
         </HStack>
         <HStack>
           <Icon
             as={summaryViewed ? CheckCircleIcon : TimeIcon}
-            color={summaryViewed ? "green.500" : "gray.400"}
+            color={summaryViewed ? "#07fc92" : "gray.400"}
           />
-          <Text>Review Summary</Text>
+          <Text>Summary</Text>
         </HStack>
         <HStack>
           <Icon
             as={practiceCompleted ? CheckCircleIcon : TimeIcon}
-            color={practiceCompleted ? "green.500" : "gray.400"}
+            color={practiceCompleted ? "#07fc92" : "gray.400"}
           />
-          <Text>Complete Practice Module</Text>
+          <Text>Practice </Text>
         </HStack>
-      </VStack>
+      </HStack>
     </Box>
   );
 };
 
 const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
+  let navigate = useNavigate();
   const { getLastNotesByNpub, assignExistingBadgeToNpub } = useSharedNostr(
     localStorage.getItem("local_npub"),
     localStorage.getItem("local_nsec")
@@ -178,7 +216,6 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
             practiceCompleted: false,
           };
 
-          // Update state variables based on fetched progress
           setVideoDurationDetection(currentProgress.videoWatched || false);
           setHasViewedSummary(currentProgress.summaryViewed || false);
           setHasPracticedModule(currentProgress.practiceCompleted || false);
@@ -192,39 +229,35 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
 
     if (isOpen) {
       getProgress();
-
       getBadges();
     } else {
       setAreBadgesLoading(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
-  const handlePlay = () => {
-    console.log("xxx");
 
+  const handlePlay = () => {
     setIsVideoPlaying(true);
   };
+
   useEffect(() => {
     const videoElement = videoRef.current;
-    console.log("videoRef.current:", videoElement);
     if (!videoElement) return;
 
     let periodicCheckInterval;
 
     const handlePause = () => {
-      console.log("Video paused!");
       setIsVideoPlaying(false);
       if (periodicCheckInterval) {
-        clearInterval(periodicCheckInterval); // Stop periodic checks when paused
+        clearInterval(periodicCheckInterval);
       }
     };
-    const checkVideoProgress = async () => {
-      console.log("checking");
 
+    const checkVideoProgress = async () => {
       if (!videoElement || videoDurationDetection) return;
 
       const ninetyPercentDuration = videoElement.duration * 0.9;
 
-      console.log("running");
       if (
         videoElement.currentTime >= ninetyPercentDuration &&
         !videoDurationDetection
@@ -237,30 +270,28 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
         checkAndUpdateProgress();
       }
     };
+
     const handleMetadataLoaded = () => {
-      console.log(`Video duration: ${videoElement.duration}`);
+      // duration available
     };
 
     periodicCheckInterval = setInterval(() => {
       checkVideoProgress();
     }, 10000);
-    videoElement.addEventListener("loadedmetadata", handleMetadataLoaded);
 
+    videoElement.addEventListener("loadedmetadata", handleMetadataLoaded);
     videoElement.addEventListener("play", handlePlay);
     videoElement.addEventListener("pause", handlePause);
     videoElement.addEventListener("ended", handlePause);
-    // videoElement.addEventListener("timeupdate", checkVideoProgress);
 
     return () => {
       videoElement.removeEventListener("loadedmetadata", handleMetadataLoaded);
-
       videoElement.removeEventListener("play", handlePlay);
       videoElement.addEventListener("pause", handlePause);
       if (periodicCheckInterval) {
         clearInterval(periodicCheckInterval);
       }
       videoElement.removeEventListener("ended", handlePause);
-      // videoElement.removeEventListener("timeupdate", checkVideoProgress);
     };
   }, [videoDurationDetection, isVideoPlaying]);
 
@@ -329,7 +360,6 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
         stepGroup = "tutorial";
       }
 
-      // Get current progress or initialize it
       const currentProgress = userData.moduleProgress?.[stepGroup] || {
         videoWatched: false,
         summaryViewed: false,
@@ -337,9 +367,6 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
         badgeAwarded: false,
       };
 
-      console.log("videoDurationDetection", videoDurationDetection);
-
-      // Update the module progress for the current module
       const updatedModuleProgress = {
         ...currentProgress,
         videoWatched: videoDurationDetection || currentProgress.videoWatched,
@@ -348,31 +375,23 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
           hasPracticedModule || currentProgress.practiceCompleted,
       };
 
-      // Create the updated moduleProgress object
       const updatedProgress = {
         ...userData.moduleProgress,
         [stepGroup]: updatedModuleProgress,
       };
 
-      // Update the document with the new progress
       await updateDoc(userDocRef, {
         moduleProgress: updatedProgress,
       });
 
-      // Check if all components are completed
       if (
         updatedModuleProgress.videoWatched &&
         updatedModuleProgress.summaryViewed &&
         updatedModuleProgress.practiceCompleted &&
         !updatedModuleProgress.badgeAwarded
       ) {
-        // Award the badge
-        console.log("awarding badge..");
-
-        // Update badge awarded status
         updatedModuleProgress.badgeAwarded = true;
 
-        // Update the moduleProgress with badgeAwarded = true
         const updatedProgressWithBadge = {
           ...userData.moduleProgress,
           [stepGroup]: updatedModuleProgress,
@@ -413,115 +432,105 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
     if (videoDurationDetection) {
       checkAndUpdateProgress();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videoDurationDetection]);
 
   useEffect(() => {
     if (hasViewedSummary) {
       checkAndUpdateProgress();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasViewedSummary]);
 
   useEffect(() => {
     if (hasPracticedModule) {
       checkAndUpdateProgress();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasPracticedModule]);
 
   const badgeImages = extractImageSources(videoTranscript);
 
-  // console.log(
-  //   "Markdown content:",
-  //   translation[userLanguage][
-  //     `video.summary.${step.group === "introduction" ? "tutorial" : step.group}`
-  //   ]
-  // );
+  // ---- Progressive badge reveal (smooth trail) ----
+  const [visibleCount, setVisibleCount] = useState(0);
+  useEffect(() => {
+    if (!isOpen) return;
 
-  // useEffect(() => {
-  //   assignExistingBadgeToNpub(transcriptObject.name.replace(/ /g, "-"));
-  // }, []);
+    setVisibleCount(0); // restart when opening
+    let i = 0;
+    const id = setInterval(() => {
+      i += 1;
+      setVisibleCount((prev) => (prev < badgeImages.length ? i : prev));
+      if (i >= badgeImages.length) clearInterval(id);
+    }, 120); // delay between each badge (ms)
+
+    return () => clearInterval(id);
+  }, [isOpen, badgeImages.length]);
+  // -------------------------------------------------
+
   if (!isOpen) return null;
+
   return (
-      <CloudTransition clonedStep="night" isActive={isOpen}>
-        <Box p={4} color="white">
+    <CloudTransition clonedStep="night" isActive={isOpen}>
+      <Heading as="h1" color="purple">
+        Module Review
+      </Heading>
+      <Box p={4} color="white">
         <Box
           p={4}
-          borderBottom="1px solid"
-          borderColor="whiteAlpha.300"
+          borderColor="transparent"
           display="flex"
           alignItems="center"
           justifyContent="space-between"
-          bg="rgba(0,0,0,0.6)"
-        >
-            <Text flex="1">
-              {translation[userLanguage]["settings.button.yourTutor"]}
-            </Text>
-            <CloseButton onClick={onClose} />
-          </Box>
-        <Box p={4} bg="rgba(0,0,0,0.6)">
-            <Accordion allowToggle mb={4}>
-              <AccordionItem>
-                <h2>
-                  <AccordionButton>
-                    <Box flex="1" textAlign="left">
-                      {translation[userLanguage]["instructions"]}
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>
-                  {/* <Button onClick={handleCopyKeys}>
-                    🔑 {translation[userLanguage]["button.copyKey"]}
-                  </Button>
-                  <br /> */}
-                  {/* <br /> */}
-                  <Box>
-                    {/* {translation[userLanguage]["tutorModal.instructions.1"]}
-                    <Link
-                      href="https://embedded-rox.app"
-                      target="_blank"
-                      style={{ textDecoration: "underline" }}
-                    >
-                      {translation[userLanguage]["tutorModal.instructions.1.33"]}
-                    </Link> */}
-                    {translation[userLanguage]["tutorModal.instructions.1.66"]}
-                  </Box>
-                  <br />
-                  <Box>
-                    {translation[userLanguage]["tutorModal.instructions.2"]}
-                    <OrderedList ml={8}>
-                      <li>
-                        {" "}
-                        {translation[userLanguage]["tutorModal.instructions.3"]}
-                      </li>
-                      <li>
-                        {" "}
-                        {translation[userLanguage]["tutorModal.instructions.4"]}
-                      </li>
-                    </OrderedList>
-                  </Box>
-                </AccordionPanel>
-              </AccordionItem>
-            </Accordion>
-            <Box mb={4}>
-              <Box fontSize="sm">
-                {translation[userLanguage]["transcriptBadges"]}
-              </Box>
-              <Box display="flex" flexDirection="row">
-                <br />
-                {badgeImages.map((bdge, index) => {
-                  const isBadgeEarned = badges.some(
-                    (badge) => badge.image === bdge.imageLink
-                  );
+        ></Box>
 
-                  return (
-                    <Box key={index} position="relative" m={1} mb={4}>
+        <Box>
+          <Accordion allowToggle mb={4} border="1px solid transparent">
+            <AccordionItem>
+              <AccordionPanel pb={4}>
+                <Box>
+                  {translation[userLanguage]["tutorModal.instructions.1.66"]}
+                </Box>
+                <br />
+                <Box>
+                  {translation[userLanguage]["tutorModal.instructions.2"]}
+                  <OrderedList ml={8}>
+                    <li>
+                      {translation[userLanguage]["tutorModal.instructions.3"]}
+                    </li>
+                    <li>
+                      {translation[userLanguage]["tutorModal.instructions.4"]}
+                    </li>
+                  </OrderedList>
+                </Box>
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
+
+          <Box mb={4}>
+            <Box display="flex" flexDirection="row">
+              <br />
+              {badgeImages.slice(0, visibleCount).map((bdge, index) => {
+                const isBadgeEarned = badges.some(
+                  (badge) => badge.image === bdge.imageLink
+                );
+
+                return (
+                  <PanRightComponent key={bdge.imageLink ?? index}>
+                    <Box position="relative" m={1} mb={4}>
                       <Link href={bdge.badgeLink} target="_blank">
                         <Image
                           src={bdge.imageLink}
                           loading="lazy"
+                          decoding="async"
                           width="60px"
                           borderRadius="20px"
                           alt={`Badge ${index + 1}`}
+                          style={{
+                            transition:
+                              "opacity 240ms ease, transform 240ms ease",
+                          }}
+                          boxShadow="0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)"
                         />
                       </Link>
                       {!isBadgeEarned && (
@@ -539,11 +548,19 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
                         </Link>
                       )}
                     </Box>
-                  );
-                })}
-              </Box>
+                  </PanRightComponent>
+                );
+              })}
+            </Box>
 
-              <Box display="flex" justifyContent={"center"}>
+            <ProgressDisplay
+              videoWatched={videoDurationDetection}
+              summaryViewed={hasViewedSummary}
+              practiceCompleted={hasPracticedModule}
+            />
+
+            <Box display="flex" justifyContent={"center"}>
+              <RiseUpAnimation speed="0.75s">
                 <video
                   poster="https://res.cloudinary.com/dtkeyccga/image/upload/v1706481474/Untitled_Desktop_Wallpaper_qrpmgm.png"
                   style={{
@@ -552,91 +569,102 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
                     height: "100%",
                     borderRadius: "30px",
                     boxShadow:
-                      "0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)",
-                    marginTop: 8,
+                      "0px 10px 20px rgba(0,0,0,1), 0px 6px 6px rgba(0,0,0,1)",
+                    // marginTop: 8,
                   }}
                   controls
                   autoPlay={false}
                   ref={videoRef}
                   playsInline
-                  onPlay={handlePlay} // Attach handlePlay to the play event
+                  onPlay={handlePlay}
                 >
                   <source src={transcriptObject.videoSrc} type="video/mp4" />
                   <source src={transcriptObject.videoSrc} type="video/mov" />
                   Your browser does not support the video tag.
                 </video>
-              </Box>
-              <Accordion allowToggle mb={4} mt={6}>
-                <AccordionItem>
-                  <h2>
-                    <AccordionButton
-                      onMouseDown={handleSummaryView}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          handleSummaryView();
-                        }
-                      }}
-                    >
-                      <Box flex="1" textAlign="left">
-                        Summary
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel pb={4}>
-                    <Markdown
-                      components={ChakraUIRenderer(newTheme)}
-                      children={
-                        translation[userLanguage][
-                          `video.summary.${
-                            step.group === "introduction" ? "tutorial" : step.group
-                          }`
-                        ]
-                      }
-                    />
-                  </AccordionPanel>
-                </AccordionItem>
-                <AccordionItem>
-                  <h2>
-                    <AccordionButton>
-                      <Box flex="1" textAlign="left">
-                        Practice
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel pb={4}>
-                    <PracticeModule
-                      currentTranscript={transcriptObject}
-                      userLanguage={userLanguage}
-                      onPracticeComplete={(moduleName) => {
-                        handlePracticeComplete();
-                      }}
-                    />
-                  </AccordionPanel>
-                </AccordionItem>
-              </Accordion>
+              </RiseUpAnimation>
             </Box>
+
+            <Accordion allowToggle mb={4} mt={6}>
+              <AccordionItem
+                border="1px solid transparent"
+                borderBottom="1px solid #3f4247"
+              >
+                <h2>
+                  <AccordionButton
+                    border="1px solid transparent"
+                    height="100%"
+                    padding="40px"
+                    onMouseDown={handleSummaryView}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        handleSummaryView();
+                      }
+                    }}
+                  >
+                    <Box flex="1" textAlign="left">
+                      Summary
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel pb={4} textAlign={"left"}>
+                  <Markdown
+                    components={ChakraUIRenderer(newTheme)}
+                    children={
+                      translation[userLanguage][
+                        `video.summary.${
+                          step.group === "introduction"
+                            ? "tutorial"
+                            : step.group
+                        }`
+                      ]
+                    }
+                  />
+                </AccordionPanel>
+              </AccordionItem>
+
+              <AccordionItem border="1px solid transparent">
+                <h2>
+                  <AccordionButton
+                    border="1px solid transparent"
+                    height="100%"
+                    padding="40px"
+                  >
+                    <Box textAlign="left">Practice</Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel pb={4} p={0}>
+                  <PracticeModule
+                    currentTranscript={transcriptObject}
+                    userLanguage={userLanguage}
+                    onPracticeComplete={() => {
+                      handlePracticeComplete();
+                    }}
+                  />
+                </AccordionPanel>
+              </AccordionItem>
+            </Accordion>
           </Box>
-        <Box
-          p={4}
-          borderTop="1px solid"
-          borderColor="whiteAlpha.300"
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          bg="rgba(0,0,0,0.6)"
-        >
-          <ProgressDisplay
-            videoWatched={videoDurationDetection}
-            summaryViewed={hasViewedSummary}
-            practiceCompleted={hasPracticedModule}
-          />
+        </Box>
+
+        <ProgressDisplayBottom
+          videoWatched={videoDurationDetection}
+          summaryViewed={hasViewedSummary}
+          practiceCompleted={hasPracticedModule}
+        />
+
+        <Box p={4} display="flex" justifyContent="flex-end" alignItems="center">
           <Button
             mt={4}
-            onMouseDown={onClose}
+            onMouseDown={() => {
+              navigate(`/q/${currentStep + 1}`);
+              onClose();
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
+                navigate(`/q/${currentStep + 1}`);
                 onClose();
               }
             }}
@@ -644,11 +672,11 @@ const LectureModal = ({ isOpen, onClose, currentStep, userLanguage }) => {
             size="lg"
             boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
           >
-            Close
+            Next
           </Button>
         </Box>
       </Box>
-      </CloudTransition>
+    </CloudTransition>
   );
 };
 
