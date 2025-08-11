@@ -143,8 +143,8 @@ const BitcoinOnboarding = ({ userLanguage }) => {
   const handleInitiateDeposit = async () => {
     setDepositing(true);
     try {
-      // Initiate a deposit for 10 sats (example)
-      const pr = await initiateDeposit(10);
+      // Initiate a deposit for 100 sats (example)
+      const pr = await initiateDeposit(100);
       // pr is a LN invoice (bolt11)
       // if (pr) {
       //   setLnInvoice(pr);
@@ -165,8 +165,8 @@ const BitcoinOnboarding = ({ userLanguage }) => {
   const generateNewQR = async () => {
     setIsGeneratingNewQR(true);
     try {
-      // Initiate a deposit for 10 sats (example)
-      const pr = await initiateDeposit(10);
+      // Initiate a deposit for 100 sats (example)
+      const pr = await initiateDeposit(100);
       // pr is a LN invoice (bolt11)
       // if (pr) {
       //   setLnInvoice(pr);

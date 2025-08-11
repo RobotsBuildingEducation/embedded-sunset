@@ -174,7 +174,7 @@ const CloudTransition = ({
   isActive,
   salary,
   salaryProgress,
-  stepProgress,
+  balanceProgress,
   dailyGoalProgress,
   dailyProgress,
   dailyGoals,
@@ -489,13 +489,13 @@ const CloudTransition = ({
                     />
                   </Box>
 
-                  {/* Step progress bar */}
+                  {/* Balance bar */}
                   <Box w="100%" mx="auto" mb={6}>
                     <Text fontSize="sm" mb={1} color="purple.500">
-                      Progress
+                      Balance {balanceProgress}/100 sats
                     </Text>
                     <WaveBar
-                      value={stepProgress}
+                      value={balanceProgress}
                       start="#6a11cb"
                       end="#72a2f2"
                       delay={0.1}
