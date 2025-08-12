@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { CloudCanvas } from "../../elements/SunsetCanvas";
 import { translation } from "../../utility/translation";
 import { createUser, updateUserData } from "../../utility/nosql";
+import DemoQuestion from "./DemoQuestion";
 
 export const Landing = ({
   userLanguage,
@@ -101,6 +102,8 @@ export const Landing = ({
           onChange={handleToggle}
         />
       </FormControl>
+
+      <DemoQuestion userLanguage={userLanguage} />
 
       <Button variant="ghost" onMouseDown={() => navigate("/about")}>
         {translation[userLanguage]["button.about"]}
