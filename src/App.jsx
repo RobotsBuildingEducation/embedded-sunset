@@ -1340,7 +1340,7 @@ function TerminalComponent({
   );
 }
 
-const Step = ({
+export const Step = ({
   currentStep,
   userLanguage,
   setUserLanguage,
@@ -1364,7 +1364,7 @@ const Step = ({
 
   // console.log(loot);
   const { stepIndex } = useParams();
-  const currentStepIndex = parseInt(stepIndex, 10);
+  const currentStepIndex = stepIndex ? parseInt(stepIndex, 10) : currentStep;
 
   const [searchTerm, setSearchTerm] = useState("");
 

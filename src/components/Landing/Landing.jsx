@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { CloudCanvas } from "../../elements/SunsetCanvas";
 import { translation } from "../../utility/translation";
 import { createUser, updateUserData } from "../../utility/nosql";
+import DemoStep from "./DemoStep";
 
 export const Landing = ({
   userLanguage,
@@ -90,6 +91,8 @@ export const Landing = ({
           {translation[userLanguage]["landing.button.signIn"]}
         </Button>
       </HStack>
+
+      <DemoStep userLanguage={userLanguage} />
 
       <FormControl display="flex" alignItems="center" mt={4}>
         <FormLabel mb="0">
