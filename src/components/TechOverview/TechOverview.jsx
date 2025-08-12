@@ -1,11 +1,15 @@
 import React from "react";
 import {
   Box,
-  Heading,
   Text,
   UnorderedList,
   ListItem,
   HStack,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
 } from "@chakra-ui/react";
 import { translation } from "../../utility/translation";
 
@@ -555,8 +559,7 @@ export const TechOverview = ({ userLanguage }) => {
     },
   };
 
-  console.log("userLanauge", userLanguage);
-  const data = content[userLanguage] || {};
+    const data = content[userLanguage] || {};
 
   return (
     <Box p={4}>
@@ -601,52 +604,69 @@ export const TechOverview = ({ userLanguage }) => {
       <Text fontSize="sm">{data.core}</Text>
 
       {data.lists && (
-        <Box textAlign={"left"}>
+        <Accordion allowMultiple textAlign={"left"} mt={4}>
           {/* Languages */}
-          <Text fontWeight={"bold"} fontSize="md" mt={4} mb={1}>
-            {translation[userLanguage]["languages.header.languages"]}
-          </Text>
-          <UnorderedList mb={3} display="inline-block" fontSize="md">
-            {data.lists.languages.map((item) => (
-              <ListItem textAlign="left" key={item} mb={3}>
-                <Text>{item.name}</Text>
-                <Text fontSize="sm">{item.description}</Text>
-              </ListItem>
-            ))}
-          </UnorderedList>
-
-          {/* Frameworks & Libraries */}
-          <Text fontWeight={"bold"} fontSize="md" mb={1}>
-            {translation[userLanguage]["languages.header.frameworks"]}
-          </Text>
-          <UnorderedList mb={3} display="inline-block" fontSize="md">
-            {data.lists.frameworks.map((item) => (
-              <ListItem key={item} mb={3}>
-                {" "}
-                <Text>{item.name}</Text>
-                <Text fontSize="sm">{item.description}</Text>
-              </ListItem>
-            ))}
-          </UnorderedList>
-
-          {/* Developer Tools */}
-          {data.lists?.devTools ? (
-            <>
-              <Text fontWeight={"bold"} fontSize="md" mb={1}>
-                {translation[userLanguage]["languages.header.devTools"]}
-              </Text>
-              <UnorderedList display="inline-block" fontSize="md">
-                {data.lists.devTools.map((item) => (
-                  <ListItem key={item} mb={3}>
-                    {" "}
+          <AccordionItem>
+            <AccordionButton padding={4}>
+              <Box flex="1" textAlign="left">
+                {translation[userLanguage]["languages.header.languages"]}
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
+            <AccordionPanel pb={4}>
+              <UnorderedList mb={3} display="inline-block" fontSize="md">
+                {data.lists.languages.map((item) => (
+                  <ListItem textAlign="left" key={item.name} mb={3}>
                     <Text>{item.name}</Text>
                     <Text fontSize="sm">{item.description}</Text>
                   </ListItem>
                 ))}
               </UnorderedList>
-            </>
+            </AccordionPanel>
+          </AccordionItem>
+
+          {/* Frameworks & Libraries */}
+          <AccordionItem>
+            <AccordionButton padding={4}>
+              <Box flex="1" textAlign="left">
+                {translation[userLanguage]["languages.header.frameworks"]}
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
+            <AccordionPanel pb={4}>
+              <UnorderedList mb={3} display="inline-block" fontSize="md">
+                {data.lists.frameworks.map((item) => (
+                  <ListItem key={item.name} mb={3}>
+                    <Text>{item.name}</Text>
+                    <Text fontSize="sm">{item.description}</Text>
+                  </ListItem>
+                ))}
+              </UnorderedList>
+            </AccordionPanel>
+          </AccordionItem>
+
+          {/* Developer Tools */}
+          {data.lists?.devTools ? (
+            <AccordionItem>
+              <AccordionButton padding={4}>
+                <Box flex="1" textAlign="left">
+                  {translation[userLanguage]["languages.header.devTools"]}
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+              <AccordionPanel pb={4}>
+                <UnorderedList display="inline-block" fontSize="md">
+                  {data.lists.devTools.map((item) => (
+                    <ListItem key={item.name} mb={3}>
+                      <Text>{item.name}</Text>
+                      <Text fontSize="sm">{item.description}</Text>
+                    </ListItem>
+                  ))}
+                </UnorderedList>
+              </AccordionPanel>
+            </AccordionItem>
           ) : null}
-        </Box>
+        </Accordion>
       )}
     </Box>
   );
