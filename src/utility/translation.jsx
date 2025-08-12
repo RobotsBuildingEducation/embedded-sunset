@@ -76,6 +76,8 @@ export let translation = {
     skip: "Skip",
 
     runCode: "Run code",
+    "demo.correct": "Correct!",
+    "demo.incorrect": "Try again.",
     "modal.selfPace.weekPlan": "Set up 1 week plan",
     "modal.selfPace.monthPlan": "Set up 1 month plan",
     "modal.dailyGoal.estimate":
@@ -1701,6 +1703,8 @@ reverse(head) {
       "Esta aplicación crecerá y se adaptará contigo a medida que aprendes y avanzas. Por ahora, comenzaremos con una aplicación sencilla para mostrarte algunas cosas que vas a aprender. Más adelante podrás cambiar tu idea.",
     skip: "Saltar",
     runCode: "Ejecutar programa",
+    "demo.correct": "¡Correcto!",
+    "demo.incorrect": "Inténtalo de nuevo.",
     "modal.selfPace.weekPlan": "Configurar plan de 1 semana",
     "modal.selfPace.monthPlan": "Configurar plan de 1 mes",
     "app.terminal.placeholder": "Escribe tu respuesta aquí",

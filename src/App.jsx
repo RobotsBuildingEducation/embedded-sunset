@@ -127,6 +127,7 @@ import { DataTags } from "./elements/DataTag";
 import { transcript } from "./utility/transcript";
 import AwardModal from "./components/AwardModal/AwardModal";
 import CodeCompletionQuestion from "./components/CodeCompletionQuestion/CodeCompletionQuestion";
+import DemoQuestion from "./components/Landing/DemoQuestion";
 
 import isEmpty from "lodash/isEmpty";
 import {
@@ -4347,9 +4348,10 @@ const Home = ({
                   onChange={handleToggle}
                   onKeyDown={(e) => e.key === "Enter" && handleToggle()}
                 />
-              </FormControl>
-            </VStack>
+            </FormControl>
           </VStack>
+          <DemoQuestion userLanguage={userLanguage} />
+        </VStack>
 
           {/* First slide: Why Learn */}
           <Box
