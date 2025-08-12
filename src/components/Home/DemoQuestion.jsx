@@ -11,11 +11,19 @@ const DemoQuestion = ({ userLanguage }) => {
   const demoStep = steps["compsci-en"][4];
   const [selectedOption, setSelectedOption] = useState(null);
   const [feedbackKey, setFeedbackKey] = useState("");
+  const [isComplete, setIsComplete] = useState(false);
 
   const checkAnswer = () => {
     const isCorrect = selectedOption === demoStep.question.answer;
     GLOBAL_USER.lastAnswerCorrect = isCorrect;
     setFeedbackKey(isCorrect ? "demo.correct" : "demo.incorrect");
+    setIsComplete(isCorrect);
+  };
+
+  const nextQuestion = () => {
+    setSelectedOption(null);
+    setFeedbackKey("");
+    setIsComplete(false);
   };
 
   return (
@@ -32,17 +40,33 @@ const DemoQuestion = ({ userLanguage }) => {
         userLanguage={userLanguage}
         handleModalCheck={(fn) => fn()}
       />
-      <Button
-        colorScheme="green"
-        onMouseDown={checkAnswer}
-        isDisabled={!selectedOption}
-      >
-        {translation[userLanguage]["app.button.answer"]}
-      </Button>
+      {!isComplete && (
+        <Button
+          colorScheme="green"
+          onMouseDown={checkAnswer}
+          isDisabled={!selectedOption}
+        >
+          {translation[userLanguage]["app.button.answer"]}
+        </Button>
+      )}
       {feedbackKey && (
         <Text fontSize="sm">
           {translation[userLanguage][feedbackKey]}
         </Text>
+      )}
+      {isComplete && (
+        <>
+          <Button variant="outline" onMouseDown={() => {}}>
+            View progress
+          </Button>
+          <Button
+            colorScheme="purple"
+            variant="outline"
+            onMouseDown={nextQuestion}
+          >
+            {translation[userLanguage]["app.button.nextQuestion"]}
+          </Button>
+        </>
       )}
     </VStack>
   );

@@ -127,6 +127,7 @@ import { DataTags } from "./elements/DataTag";
 import { transcript } from "./utility/transcript";
 import AwardModal from "./components/AwardModal/AwardModal";
 import CodeCompletionQuestion from "./components/CodeCompletionQuestion/CodeCompletionQuestion";
+import DemoQuestion from "./components/Home/DemoQuestion";
 
 import isEmpty from "lodash/isEmpty";
 import {
@@ -4350,6 +4351,8 @@ const Home = ({
             </FormControl>
           </VStack>
         </VStack>
+
+        <DemoQuestion userLanguage={userLanguage} />
 
           {/* First slide: Why Learn */}
           <Box
