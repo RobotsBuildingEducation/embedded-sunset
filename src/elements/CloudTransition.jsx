@@ -3,6 +3,7 @@ import { Box, Text, Button } from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import sparkle from "../assets/sparkle.mp3";
 import complete from "../assets/complete.mp3";
+import { useOneShotAudio } from "../hooks/useOneShotAudio";
 
 const MotionBox = motion(Box);
 const MotionG = motion.g;
@@ -191,6 +192,8 @@ const CloudTransition = ({
   const [canContinue, setCanContinue] = useState(false);
   const [displaySalary, setDisplaySalary] = useState(salary);
   const prevSalary = useRef(salary);
+  const playSparkle = useOneShotAudio(sparkle);
+  const playComplete = useOneShotAudio(complete);
 
   // Chapter key
   const groupKey = useMemo(() => {
@@ -202,37 +205,21 @@ const CloudTransition = ({
   const theme = THEMES[groupKey] ?? THEMES.tutorial;
 
   useEffect(() => {
-    if (isActive) {
+    if (!isActive) {
       setCanContinue(false);
-      const id = setTimeout(() => setCanContinue(true), 200);
-
-      if (clonedStep !== "night") {
-        const audio = new Audio(sparkle);
-        audio.volume = 0.25; // optional volume control
-        audio.play().catch(() => {
-          // Some browsers block autoplay until user interacts
-          const unlock = () => {
-            audio.play().catch(() => {});
-            window.removeEventListener("pointerdown", unlock);
-          };
-          window.addEventListener("pointerdown", unlock);
-        });
-      } else {
-        const audio = new Audio(complete);
-        audio.volume = 0.25; // optional volume control
-        audio.play().catch(() => {
-          // Some browsers block autoplay until user interacts
-          const unlock = () => {
-            audio.play().catch(() => {});
-            window.removeEventListener("pointerdown", unlock);
-          };
-          window.addEventListener("pointerdown", unlock);
-        });
-      }
-      return () => clearTimeout(id);
+      return;
     }
     setCanContinue(false);
-  }, [isActive]);
+    const id = setTimeout(() => setCanContinue(true), 200);
+
+    if (String(clonedStep).toLowerCase() !== "night") {
+      playSparkle();
+    } else {
+      playComplete();
+    }
+
+    return () => clearTimeout(id);
+  }, [isActive, clonedStep, playSparkle, playComplete]);
 
   // salary count-up
   useEffect(() => {

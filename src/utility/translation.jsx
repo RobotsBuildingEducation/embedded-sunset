@@ -1000,7 +1000,7 @@ reverse(head) {
       "The goal is to create scholarships with learning!",
 
     "modal.bitcoinMode.instructions.createWallet.2":
-      "Selecting a recipient creates a wallet allows you to optionally deposit a maximum of about $0.01 worth in Bitcoin.",
+      "Selecting a recipient creates a wallet allows you to optionally deposit a maximum of about $0.10 worth in Bitcoin.",
 
     "modal.bitcoinMode.instructions.createWallet.2.25":
       "When you answer questions and make progress in the app, your Bitcoin deposit gets spent and sent to your receipient!",
@@ -1011,7 +1011,7 @@ reverse(head) {
 
     //deposit bitcoin
     "modal.bitcoinMode.instructions.deposit.1":
-      "Press deposit to generate a QR code that you can scan or an address you can send to. This will request about $0.01 worth in Bitcoin from your Bitcoin wallet.",
+      "Press deposit to generate a QR code that you can scan or an address you can send to. This will request about $0.10 worth in Bitcoin from your Bitcoin wallet.",
 
     "modal.bitcoinMode.instructions.activeWallet.1":
       "You're now using Bitcoin!",
@@ -1942,7 +1942,7 @@ reverse(head) {
       "¡El objetivo es crear becas con aprendizaje!",
 
     "modal.bitcoinMode.instructions.createWallet.2":
-      "Seleccionar un destinatario y crear una billetera te permite depositar un máximo de equivalente a $0.01 en Bitcoin.",
+      "Seleccionar un destinatario y crear una billetera te permite depositar un máximo de equivalente a $0.10 en Bitcoin.",
     "modal.bitcoinMode.instructions.createWallet.2.25":
       "Cuando respondes preguntas y avanzas en la aplicación, tu depósito de Bitcoin se gasta y se envía a tu destinatario!",
 
@@ -1951,7 +1951,7 @@ reverse(head) {
 
     //depositar bitcoin
     "modal.bitcoinMode.instructions.deposit.1":
-      "Presiona depositar para generar un código QR que puedes escanear o una dirección a la que puedes enviar. Esto solicitará equivalente a $0.01 en Bitcoin desde tu billetera de Bitcoin.",
+      "Presiona depositar para generar un código QR que puedes escanear o una dirección a la que puedes enviar. Esto solicitará equivalente a $0.10 en Bitcoin desde tu billetera de Bitcoin.",
 
     "modal.bitcoinMode.instructions.activeWallet.1":
       "¡Ahora estás usando Bitcoin!",
@@ -2774,7 +2774,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "modal.adaptiveLearning.stepsTaken": "Pasos dados",
     "modal.bitcoinMode.title": "Billetera Bitcoin",
     "modal.bitcoinMode.instructions":
-      "Escanea el código QR con Cash App para depositar Bitcoin. Esta es una función de prueba que depositará $0.01 en Bitcoin para mostrar que puedes crear becas utilizando y aprendiendo con la aplicación.",
+      "Escanea el código QR con Cash App para depositar Bitcoin. Esta es una función de prueba que depositará $0.10 en Bitcoin para mostrar que puedes crear becas utilizando y aprendiendo con la aplicación.",
     "modal.bitcoinMode.copyAddressButton": "Copiar dirección",
     "modal.bitcoinMode.rechargeButton": "Generar Dirección",
     "modal.bitcoinMode.successMessage": "¡Ahora estás usando Bitcoin!",
@@ -4166,7 +4166,7 @@ reverse(head) {
       "The goal is to create scholarships with learning!",
 
     "modal.bitcoinMode.instructions.createWallet.2":
-      "Selecting a recipient creates a wallet allows you to optionally deposit a maximum of about $0.01 worth in Bitcoin.",
+      "Selecting a recipient creates a wallet allows you to optionally deposit a maximum of about $0.10 worth in Bitcoin.",
 
     "modal.bitcoinMode.instructions.createWallet.2.25":
       "When you answer questions and make progress in the app, your Bitcoin deposit gets spent and sent to your receipient!",
@@ -4177,7 +4177,7 @@ reverse(head) {
 
     //deposit bitcoin
     "modal.bitcoinMode.instructions.deposit.1":
-      "Press deposit to generate a QR code that you can scan or an address you can send to. This will request about $0.01 worth in Bitcoin from your Bitcoin wallet.",
+      "Press deposit to generate a QR code that you can scan or an address you can send to. This will request about $0.10 worth in Bitcoin from your Bitcoin wallet.",
 
     "modal.bitcoinMode.instructions.activeWallet.1":
       "You're now using Bitcoin!",
@@ -5765,7 +5765,7 @@ reverse(head) {
       "The goal is to create scholarships with learning!",
 
     "modal.bitcoinMode.instructions.createWallet.2":
-      "Selecting a recipient creates a wallet allows you to optionally deposit a maximum of about $0.01 worth in Bitcoin.",
+      "Selecting a recipient creates a wallet allows you to optionally deposit a maximum of about $0.10 worth in Bitcoin.",
 
     "modal.bitcoinMode.instructions.createWallet.2.25":
       "When you answer questions and make progress in the app, your Bitcoin deposit gets spent and sent to your receipient!",
@@ -5776,7 +5776,7 @@ reverse(head) {
 
     //deposit bitcoin
     "modal.bitcoinMode.instructions.deposit.1":
-      "Press deposit to generate a QR code that you can scan or an address you can send to. This will request about $0.01 worth in Bitcoin from your Bitcoin wallet.",
+      "Press deposit to generate a QR code that you can scan or an address you can send to. This will request about $0.10 worth in Bitcoin from your Bitcoin wallet.",
 
     "modal.bitcoinMode.instructions.activeWallet.1":
       "You're now using Bitcoin!",
@@ -7364,7 +7364,7 @@ reverse(head) {
       "The goal is to create scholarships with learning!",
 
     "modal.bitcoinMode.instructions.createWallet.2":
-      "Selecting a recipient creates a wallet allows you to optionally deposit a maximum of about $0.01 worth in Bitcoin.",
+      "Selecting a recipient creates a wallet allows you to optionally deposit a maximum of about $0.10 worth in Bitcoin.",
 
     "modal.bitcoinMode.instructions.createWallet.2.25":
       "When you answer questions and make progress in the app, your Bitcoin deposit gets spent and sent to your receipient!",
@@ -7375,7 +7375,7 @@ reverse(head) {
 
     //deposit bitcoin
     "modal.bitcoinMode.instructions.deposit.1":
-      "Press deposit to generate a QR code that you can scan or an address you can send to. This will request about $0.01 worth in Bitcoin from your Bitcoin wallet.",
+      "Press deposit to generate a QR code that you can scan or an address you can send to. This will request about $0.10 worth in Bitcoin from your Bitcoin wallet.",
 
     "modal.bitcoinMode.instructions.activeWallet.1":
       "You're now using Bitcoin!",
@@ -8961,7 +8961,7 @@ reverse(head) {
       "The goal is to create scholarships with learning!",
 
     "modal.bitcoinMode.instructions.createWallet.2":
-      "Selecting a recipient creates a wallet allows you to optionally deposit a maximum of about $0.01 worth in Bitcoin.",
+      "Selecting a recipient creates a wallet allows you to optionally deposit a maximum of about $0.10 worth in Bitcoin.",
 
     "modal.bitcoinMode.instructions.createWallet.2.25":
       "When you answer questions and make progress in the app, your Bitcoin deposit gets spent and sent to your receipient!",
@@ -8972,7 +8972,7 @@ reverse(head) {
 
     //deposit bitcoin
     "modal.bitcoinMode.instructions.deposit.1":
-      "Press deposit to generate a QR code that you can scan or an address you can send to. This will request about $0.01 worth in Bitcoin from your Bitcoin wallet.",
+      "Press deposit to generate a QR code that you can scan or an address you can send to. This will request about $0.10 worth in Bitcoin from your Bitcoin wallet.",
 
     "modal.bitcoinMode.instructions.activeWallet.1":
       "You're now using Bitcoin!",
