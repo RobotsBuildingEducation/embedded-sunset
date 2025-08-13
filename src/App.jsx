@@ -127,6 +127,7 @@ import { DataTags } from "./elements/DataTag";
 import { transcript } from "./utility/transcript";
 import AwardModal from "./components/AwardModal/AwardModal";
 import CodeCompletionQuestion from "./components/CodeCompletionQuestion/CodeCompletionQuestion";
+import DemoQuestion from "./components/Home/DemoQuestion";
 
 import isEmpty from "lodash/isEmpty";
 import {
@@ -1339,7 +1340,7 @@ function TerminalComponent({
   );
 }
 
-const Step = ({
+export const Step = ({
   currentStep,
   userLanguage,
   setUserLanguage,
@@ -1363,7 +1364,7 @@ const Step = ({
 
   // console.log(loot);
   const { stepIndex } = useParams();
-  const currentStepIndex = parseInt(stepIndex, 10);
+  const currentStepIndex = stepIndex ? parseInt(stepIndex, 10) : currentStep;
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -4347,9 +4348,11 @@ const Home = ({
                   onChange={handleToggle}
                   onKeyDown={(e) => e.key === "Enter" && handleToggle()}
                 />
-              </FormControl>
-            </VStack>
+            </FormControl>
           </VStack>
+        </VStack>
+
+        <DemoQuestion userLanguage={userLanguage} />
 
           {/* First slide: Why Learn */}
           <Box
