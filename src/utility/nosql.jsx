@@ -9,6 +9,8 @@ import {
   query,
   where,
   deleteDoc,
+  onSnapshot,
+  increment,
 } from "firebase/firestore";
 import { database } from "../database/firebaseResources";
 
@@ -222,4 +224,18 @@ export const fetchUsersWithToken = async () => {
   querySnapshot.forEach((doc) => {
     console.log(`User ID: ${doc.id}`, doc.data());
   });
+};
+
+// Global question count utilities
+const questionDoc = doc(database, "analytics", "questionsAnswered");
+export const BASE_QUESTION_COUNT = 4200;
+
+export const subscribeToQuestionsAnswered = (callback) =>
+  onSnapshot(questionDoc, (snap) => {
+    const extra = snap.data()?.count || 0;
+    callback(BASE_QUESTION_COUNT + extra);
+  });
+
+export const incrementQuestionsAnswered = async () => {
+  await setDoc(questionDoc, { count: increment(1) }, { merge: true });
 };

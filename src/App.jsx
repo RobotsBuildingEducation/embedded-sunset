@@ -71,6 +71,7 @@ import {
   incrementUserStep,
   setOnboardingToDone,
   updateUserData,
+  incrementQuestionsAnswered,
 } from "./utility/nosql";
 import {
   getObjectsByGroup,
@@ -2275,6 +2276,7 @@ const Step = ({
       logEvent(analytics, "handleNextClick", {
         action: "completed_question",
       });
+      await incrementQuestionsAnswered();
     } else {
       // window.alert("you cant do that buddy");
     }

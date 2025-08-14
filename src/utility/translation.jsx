@@ -914,6 +914,7 @@ reverse(head) {
         {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
       </div>
     ),
+    "landing.questionsAnswered": "Questions answered:",
     "landing.button.telemetry": "Create Account",
     "landing.button.signIn": "Sign In",
     "createAccount.instructions": "All we need to start is a user name.",
@@ -2714,6 +2715,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
         ideas.
       </div>
     ),
+    "landing.questionsAnswered": "Preguntas contestadas:",
     "landing.button.telemetry": "Crear Cuenta",
     "landing.button.signIn": "Iniciar Sesión",
     "createAccount.instructions":
