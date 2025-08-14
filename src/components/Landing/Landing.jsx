@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   VStack,
@@ -14,12 +14,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { CloudCanvas } from "../../elements/SunsetCanvas";
 import { translation } from "../../utility/translation";
-import {
-  createUser,
-  updateUserData,
-  subscribeToQuestionsAnswered,
-  BASE_QUESTION_COUNT,
-} from "../../utility/nosql";
+import { createUser, updateUserData } from "../../utility/nosql";
 
 export const Landing = ({
   userLanguage,
@@ -41,14 +36,6 @@ export const Landing = ({
   const [loadingMessage, setLoadingMessage] = useState(
     "createAccount.isCreating"
   );
-  const [questionsAnswered, setQuestionsAnswered] = useState(
-    BASE_QUESTION_COUNT
-  );
-
-  useEffect(() => {
-    const unsubscribe = subscribeToQuestionsAnswered(setQuestionsAnswered);
-    return () => unsubscribe();
-  }, []);
 
   const toast = useToast();
   const navigate = useNavigate();
@@ -67,10 +54,6 @@ export const Landing = ({
         <Text fontSize="xl">{translation[userLanguage]["landing.title"]}</Text>
         <Text fontSize="sm" mt={-2}>
           {translation[userLanguage]["landing.introduction"]}
-        </Text>
-        <Text fontSize="md">
-          {translation[userLanguage]["landing.questionsAnswered"]}{" "}
-          {questionsAnswered}
         </Text>
       </VStack>
 

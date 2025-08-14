@@ -72,6 +72,8 @@ import {
   setOnboardingToDone,
   updateUserData,
   incrementQuestionsAnswered,
+  subscribeToQuestionsAnswered,
+  BASE_QUESTION_COUNT,
 } from "./utility/nosql";
 import {
   getObjectsByGroup,
@@ -3937,6 +3939,15 @@ const Home = ({
   const [role, setRole] = useState("chores");
   const topRef = useRef();
 
+  const [questionsAnswered, setQuestionsAnswered] = useState(
+    BASE_QUESTION_COUNT
+  );
+
+  useEffect(() => {
+    const unsubscribe = subscribeToQuestionsAnswered(setQuestionsAnswered);
+    return () => unsubscribe();
+  }, []);
+
   useEffect(() => {
     let index = 0;
     const interval = setInterval(() => {
@@ -4277,6 +4288,10 @@ const Home = ({
               <Text fontSize="xl">{renderContentBasedOnURL()}</Text>
               <Text fontSize="sm" mt="-5">
                 {translation[userLanguage]["landing.introduction"]}
+              </Text>
+              <Text fontSize="md">
+                {translation[userLanguage]["landing.questionsAnswered"]}{" "}
+                {questionsAnswered}
               </Text>
             </VStack>
 
