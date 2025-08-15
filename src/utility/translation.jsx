@@ -15,6 +15,7 @@ export const pickProgrammingLanguage = (language) => {
 
 export let translation = {
   en: {
+    "landing.scholarshipsCreated": "Scholarships created",
     year: "year",
     skillValue: "Your skill value: ",
     startTutorialAndOnboarding:
@@ -914,7 +915,7 @@ reverse(head) {
         {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
       </div>
     ),
-    "landing.questionsAnswered": "Questions answered:",
+    "landing.questionsAnswered": "Questions answered",
     "landing.button.telemetry": "Create Account",
     "landing.button.signIn": "Sign In",
     "createAccount.instructions": "All we need to start is a user name.",
@@ -1623,6 +1624,8 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   es: {
+    "landing.scholarshipsCreated": "Becas creadas",
+    "landing.questionsAnswered": "Preguntas respondidas",
     year: "año",
 
     skillValue: "Tu valor de habilidad: ",
@@ -3186,6 +3189,8 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "language.compsci.english": "Ciencias de la Computación (Python)",
   },
   "py-en": {
+    "landing.scholarshipsCreated": "Scholarships created",
+    "landing.questionsAnswered": "Questions answered",
     year: "year",
     skillValue: "Your skill value: ",
     "settings.theme.purple": "Purple",
@@ -4783,6 +4788,8 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "swift-en": {
+    "landing.scholarshipsCreated": "Scholarships created",
+    "landing.questionsAnswered": "Questions answered",
     year: "year",
     skillValue: "Your skill value: ",
     "settings.theme.purple": "Purple",
@@ -6382,6 +6389,8 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "android-en": {
+    "landing.scholarshipsCreated": "Scholarships created",
+    "landing.questionsAnswered": "Questions answered",
     year: "year",
     skillValue: "Your skill value: ",
     "settings.theme.purple": "Purple",
@@ -7981,6 +7990,8 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "compsci-en": {
+    "landing.scholarshipsCreated": "Scholarships created",
+    "landing.questionsAnswered": "Questions answered",
     year: "year",
     "settings.theme.purple": "Purple",
     "settings.theme.orange": "Orange",

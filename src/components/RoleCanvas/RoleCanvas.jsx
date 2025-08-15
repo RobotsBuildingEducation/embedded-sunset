@@ -29,7 +29,7 @@ export function RoleCanvas({
   waterAmplitude = 0.01,
 
   transitionEase = 0.2,
-  backgroundColorX = "255,255,255",
+  backgroundColorX = "245,244,242",
 }) {
   const canvasRef = useRef(null);
   const roleRef = useRef(role);
