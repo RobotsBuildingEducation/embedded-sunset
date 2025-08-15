@@ -5,6 +5,10 @@ service cloud.firestore {
     match /experiments/{experimentId} {
       allow read, write: if true;
     }
+    
+    match /analytics/{document=**} {
+      allow read, write: if true;
+    }
 
     // Match any document in the 'users' collection
     match /users/{userId} {

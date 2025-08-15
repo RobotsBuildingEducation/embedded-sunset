@@ -33,6 +33,7 @@ import {
   MenuItem,
   Tooltip,
   Center,
+  Image,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
@@ -71,6 +72,9 @@ import {
   incrementUserStep,
   setOnboardingToDone,
   updateUserData,
+  incrementQuestionsAnswered,
+  subscribeToQuestionsAnswered,
+  BASE_QUESTION_COUNT,
 } from "./utility/nosql";
 import {
   getObjectsByGroup,
@@ -2251,7 +2255,8 @@ const Step = ({
   const handleNextClick = async () => {
     const hostname = window.location.hostname;
     const isValidHost =
-      hostname === "embedded-sunset.app" || "robotsbuildingeducation.com";
+      hostname === "embedded-sunset.app" ||
+      hostname === "robotsbuildingeducation.com";
     // const username = localStorage.getItem("displayName").toLowerCase() || '';
     // const bannedNames = [
     //   "data",
@@ -2275,6 +2280,7 @@ const Step = ({
       logEvent(analytics, "handleNextClick", {
         action: "completed_question",
       });
+      incrementQuestionsAnswered();
     } else {
       // window.alert("you cant do that buddy");
     }
@@ -3906,6 +3912,8 @@ const Home = ({
   setView,
   setCurrentStep,
 }) => {
+  const bgUrl =
+    "https://res.cloudinary.com/dtkeyccga/image/upload/v1755215290/Untitled_800_x_600_px_1_dmtcwn.gif";
   const roles = [
     "chores",
     "sphere",
@@ -3934,6 +3942,14 @@ const Home = ({
   const socket = "socket";
   const [role, setRole] = useState("chores");
   const topRef = useRef();
+
+  const [questionsAnswered, setQuestionsAnswered] =
+    useState(BASE_QUESTION_COUNT);
+
+  useEffect(() => {
+    const unsubscribe = subscribeToQuestionsAnswered(setQuestionsAnswered);
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     let index = 0;
@@ -4350,13 +4366,163 @@ const Home = ({
               </FormControl>
             </VStack>
           </VStack>
+          {/* "https://res.cloudinary.com/dtkeyccga/image/upload/v1755215290/Untitled_800_x_600_px_1_dmtcwn.gif" */}
 
+          <Box as="section" scrollSnapAlign="start" bg="#474d7e">
+            {/* Mobile: banner + content */}
+            <Box
+              display={{ base: "block", md: "none" }}
+              minH="100dvh"
+              // px={4}
+              // py={6}
+              sx={
+                {
+                  // paddingTop: "max(env(safe-area-inset-top), 16px)",
+                  // paddingBottom: "max(env(safe-area-inset-bottom), 24px)",
+                }
+              }
+            >
+              {/* Banner shows full image without cropping */}
+              <Box
+                w="100%"
+                // bg="blackAlpha.500"
+                // borderRadius="xl"
+                overflow="hidden"
+                // mb={6}
+                // border="1px solid red"
+              >
+                <Image
+                  src={bgUrl}
+                  alt="Hero banner"
+                  w="100%"
+                  maxH="30vh"
+                  // objectFit="contain" // no crop on mobile
+                />
+              </Box>
+
+              <VStack
+                // spacing={2}
+                align="center"
+                bg="blackAlpha.400"
+                borderRadius="xl"
+                backdropFilter="blur(4px)"
+                height="70vh"
+                display="flex"
+                flexDirection={"column"}
+                justifyContent="center"
+              >
+                <Text
+                  color="white"
+                  textAlign="center"
+                  fontSize="lg"
+                  fontWeight="semibold"
+                >
+                  {translation[userLanguage]["landing.questionsAnswered"]}
+                </Text>
+                <Text
+                  color="white"
+                  textAlign="center"
+                  fontSize="6xl"
+                  fontWeight="black"
+                  lineHeight="1"
+                >
+                  {questionsAnswered}
+                </Text>
+
+                <VStack>
+                  <Text
+                    color="white"
+                    textAlign="center"
+                    fontSize="lg"
+                    fontWeight="semibold"
+                  >
+                    {/* {translation[userLanguage]["landing.questionsAnswered"]} */}
+                    {translation[userLanguage]["landing.scholarshipsCreated"]}
+                  </Text>
+                  <Text
+                    color="white"
+                    textAlign="center"
+                    fontSize="7xl"
+                    fontWeight="black"
+                    lineHeight="1"
+                  >
+                    $12,000
+                  </Text>
+                </VStack>
+              </VStack>
+            </Box>
+
+            {/* Desktop/tablet: full hero with background cover */}
+            <Box
+              display={{ base: "none", md: "flex" }}
+              pos="relative"
+              minH="100vh"
+              px={8}
+              py={16}
+              alignItems="center"
+              justifyContent="center"
+              bgImage={`linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('${bgUrl}')`}
+              bgRepeat="no-repeat"
+              bgSize="cover"
+              bgPos="center"
+            >
+              <Box
+                maxW="container.md"
+                w="100%"
+                bg="rgba(0,0,0,0.25)"
+                backdropFilter="blur(4px)"
+                borderRadius="xl"
+                px={8}
+                py={10}
+              >
+                <VStack spacing={3} align="center">
+                  <Text
+                    color="white"
+                    textAlign="center"
+                    fontSize="2xl"
+                    fontWeight="semibold"
+                  >
+                    {translation[userLanguage]["landing.questionsAnswered"]}
+                  </Text>
+                  <Text
+                    color="white"
+                    textAlign="center"
+                    fontSize="7xl"
+                    fontWeight="black"
+                    lineHeight="1"
+                  >
+                    {questionsAnswered}
+                  </Text>
+                </VStack>
+
+                <VStack spacing={3} align="center" mt={12}>
+                  <Text
+                    color="white"
+                    textAlign="center"
+                    fontSize="2xl"
+                    fontWeight="semibold"
+                  >
+                    {translation[userLanguage]["landing.scholarshipsCreated"]}
+                  </Text>
+                  <Text
+                    color="white"
+                    textAlign="center"
+                    fontSize="7xl"
+                    fontWeight="black"
+                    lineHeight="1"
+                  >
+                    $12,000
+                  </Text>
+                </VStack>
+              </Box>
+            </Box>
+          </Box>
           {/* First slide: Why Learn */}
           <Box
             height="100%"
             scrollSnapAlign="start"
             p={8}
-            bg="white"
+            bg="#f5f4f2"
             display="flex"
             flexDirection="column"
             alignItems="center"
@@ -4367,27 +4533,53 @@ const Home = ({
               <Text fontSize="2xl" textAlign="center" width="100%" mt={4}>
                 {translation[userLanguage]["landing.whyLearn.title"]}
               </Text>
-
               <Text fontSize="md" fontWeight="bold">
                 {translation[userLanguage]["landing.whyLearn.section1.title"]}
               </Text>
               <Text fontSize="md" maxWidth="650px" textAlign="left">
                 {translation[userLanguage]["landing.whyLearn.section1.content"]}
               </Text>
-
+              <Image
+                width="100%"
+                maxWidth="600px"
+                borderRadius="12px"
+                boxShadow="0px 0.5px 0.5px black"
+                src={
+                  userLanguage !== "es"
+                    ? "https://res.cloudinary.com/dtkeyccga/image/upload/v1738251300/rzhhloly1rbsvx7f1qz3.png"
+                    : "https://res.cloudinary.com/dtkeyccga/image/upload/v1755251476/260db5ec-13ba-4893-a098-5f8dd2aa506b_sodjix.png"
+                }
+              />
               <Text fontSize="md" fontWeight="bold">
                 {translation[userLanguage]["landing.whyLearn.section2.title"]}
-              </Text>
+              </Text>{" "}
               <Text fontSize="md" maxWidth="675px" textAlign="left">
                 {translation[userLanguage]["landing.whyLearn.section2.content"]}
               </Text>
-
+              <Image
+                maxWidth="600px"
+                width="100%"
+                borderRadius="12px"
+                boxShadow="0px 0.5px 0.5px black"
+                src={
+                  userLanguage !== "es"
+                    ? "https://res.cloudinary.com/dtkeyccga/image/upload/v1755239709/Screenshot_2025-08-15_at_12.32.37_AM_yea3uh.png"
+                    : "https://res.cloudinary.com/dtkeyccga/image/upload/v1755252228/ChatGPT_Image_Aug_15_2025_04_03_39_AM_khx1xe.png"
+                }
+              />
               <Text fontSize="md" fontWeight="bold">
                 {translation[userLanguage]["landing.whyLearn.section3.title"]}
               </Text>
               <Text fontSize="md" maxWidth="675px" textAlign="left">
                 {translation[userLanguage]["landing.whyLearn.section3.content"]}
               </Text>
+              <Image
+                maxWidth="600px"
+                width="100%"
+                borderRadius="12px"
+                boxShadow="0px 0.5px 0.5px black"
+                src="https://res.cloudinary.com/dtkeyccga/image/upload/v1755245865/4049a20a-4f49-4d8e-9579-23cfb7623011_w1cixo.png"
+              />
             </VStack>
           </Box>
 
