@@ -4234,7 +4234,7 @@ const Home = ({
     } else if (hostname === "robotsbuildingeducation.com") {
       return "Robots Building Education";
     } else {
-      return "Sunset"; // Fallback content
+      return "Robots Building Education"; // Fallback content
     }
   };
 
@@ -4288,8 +4288,8 @@ const Home = ({
                 )}
               </HStack>
 
-              <Text fontSize="xl">{renderContentBasedOnURL()}</Text>
-              <Text fontSize="sm" mt="-5">
+              <Text fontSize="3xl">{renderContentBasedOnURL()}</Text>
+              <Text fontSize="sm" mt="-5" width="80%">
                 {translation[userLanguage]["landing.introduction"]}
               </Text>
             </VStack>
@@ -4372,7 +4372,7 @@ const Home = ({
             {/* Mobile: banner + content */}
             <Box
               display={{ base: "block", md: "none" }}
-              minH="100dvh"
+              minH="80dvh"
               // px={4}
               // py={6}
               sx={
@@ -4406,7 +4406,7 @@ const Home = ({
                 bg="blackAlpha.400"
                 borderRadius="xl"
                 backdropFilter="blur(4px)"
-                height="70vh"
+                height="50vh"
                 display="flex"
                 flexDirection={"column"}
                 justifyContent="center"
