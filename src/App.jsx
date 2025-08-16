@@ -4456,11 +4456,20 @@ const Home = ({
                   </Text>
                 </VStack>
 
-                <Box w="80%" maxW="400px" mt={4}>
+                <Box
+                  w="80%"
+                  maxW="400px"
+                  mt={12}
+                  color="white"
+                  fontWeight="bold"
+                >
+                  {translation[userLanguage]["communityGoal"]}
+                  {questionsAnswered}/5000{" "}
+                  {translation[userLanguage]["questions"]}
                   <WaveBar
                     value={questionProgress}
-                    start="#0345fc"
-                    end="#03f4fc"
+                    start="#fce09d"
+                    end="#fef37b"
                     height={20}
                   />
                 </Box>
@@ -4536,7 +4545,9 @@ const Home = ({
                     color="white"
                     fontWeight="bold"
                   >
-                    Community goal: {questionsAnswered}/5000 questions
+                    {translation[userLanguage]["communityGoal"]}
+                    {questionsAnswered}/5000{" "}
+                    {translation[userLanguage]["questions"]}
                     <WaveBar
                       value={questionProgress}
                       start="#fce09d"

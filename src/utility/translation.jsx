@@ -15,6 +15,8 @@ export const pickProgrammingLanguage = (language) => {
 
 export let translation = {
   en: {
+    communityGoal: "Community goal: ",
+    questions: "questions",
     "landing.scholarshipsCreated": "Scholarships created",
     year: "year",
     skillValue: "Your skill value: ",
@@ -1624,6 +1626,8 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   es: {
+    communityGoal: "Meta comunitaria: ",
+    questions: "preguntas",
     "landing.scholarshipsCreated": "Becas creadas",
     "landing.questionsAnswered": "Preguntas respondidas",
     year: "año",
@@ -3189,6 +3193,8 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "language.compsci.english": "Ciencias de la Computación (Python)",
   },
   "py-en": {
+    communityGoal: "Community goal: ",
+    questions: "questions",
     "landing.scholarshipsCreated": "Scholarships created",
     "landing.questionsAnswered": "Questions answered",
     year: "year",
@@ -4788,6 +4794,8 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "swift-en": {
+    communityGoal: "Community goal: ",
+    questions: "questions",
     "landing.scholarshipsCreated": "Scholarships created",
     "landing.questionsAnswered": "Questions answered",
     year: "year",
@@ -6389,6 +6397,8 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "android-en": {
+    communityGoal: "Community goal: ",
+    questions: "questions",
     "landing.scholarshipsCreated": "Scholarships created",
     "landing.questionsAnswered": "Questions answered",
     year: "year",
@@ -7990,6 +8000,8 @@ reverse(head) {
     "tag.allowPosting": "Do not post my progress",
   },
   "compsci-en": {
+    communityGoal: "Community goal: ",
+    questions: "questions",
     "landing.scholarshipsCreated": "Scholarships created",
     "landing.questionsAnswered": "Questions answered",
     year: "year",
