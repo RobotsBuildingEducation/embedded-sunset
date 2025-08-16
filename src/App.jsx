@@ -4435,15 +4435,6 @@ const Home = ({
                   {questionsAnswered}
                 </Text>
 
-                <Box w="80%" maxW="400px" mt={4}>
-                  <WaveBar
-                    value={questionProgress}
-                    start="#0345fc"
-                    end="#03f4fc"
-                    height={20}
-                  />
-                </Box>
-
                 <VStack>
                   <Text
                     color="white"
@@ -4464,6 +4455,15 @@ const Home = ({
                     $12,000
                   </Text>
                 </VStack>
+
+                <Box w="80%" maxW="400px" mt={4}>
+                  <WaveBar
+                    value={questionProgress}
+                    start="#0345fc"
+                    end="#03f4fc"
+                    height={20}
+                  />
+                </Box>
               </VStack>
             </Box>
 
@@ -4508,14 +4508,6 @@ const Home = ({
                   >
                     {questionsAnswered}
                   </Text>
-                  <Box w="80%" maxW="400px">
-                    <WaveBar
-                      value={questionProgress}
-                      start="#0345fc"
-                      end="#03f4fc"
-                      height={20}
-                    />
-                  </Box>
                 </VStack>
 
                 <VStack spacing={3} align="center" mt={12}>
@@ -4536,6 +4528,22 @@ const Home = ({
                   >
                     $12,000
                   </Text>
+
+                  <Box
+                    w="80%"
+                    maxW="400px"
+                    mt={12}
+                    color="white"
+                    fontWeight="bold"
+                  >
+                    Community goal: {questionsAnswered}/5000 questions
+                    <WaveBar
+                      value={questionProgress}
+                      start="#fce09d"
+                      end="#fef37b"
+                      height={20}
+                    />
+                  </Box>
                 </VStack>
               </Box>
             </Box>
