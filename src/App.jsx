@@ -59,6 +59,7 @@ import {
 import EducationalModal from "./components/LearnModal/EducationalModal";
 import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
 import ThemeMenu from "./components/ThemeMenu";
+import WaveBar from "./components/WaveBar";
 
 import {
   createUser,
@@ -3945,6 +3946,11 @@ const Home = ({
 
   const [questionsAnswered, setQuestionsAnswered] =
     useState(BASE_QUESTION_COUNT);
+  const QUESTION_GOAL = 5000;
+  const questionProgress = Math.min(
+    (questionsAnswered / QUESTION_GOAL) * 100,
+    100
+  );
 
   useEffect(() => {
     const unsubscribe = subscribeToQuestionsAnswered(setQuestionsAnswered);
@@ -4449,6 +4455,15 @@ const Home = ({
                     $12,000
                   </Text>
                 </VStack>
+
+                <Box w="80%" maxW="400px" mt={4}>
+                  <WaveBar
+                    value={questionProgress}
+                    start="#0345fc"
+                    end="#03f4fc"
+                    height={20}
+                  />
+                </Box>
               </VStack>
             </Box>
 
@@ -4513,6 +4528,22 @@ const Home = ({
                   >
                     $12,000
                   </Text>
+
+                  <Box
+                    w="80%"
+                    maxW="400px"
+                    mt={12}
+                    color="white"
+                    fontWeight="bold"
+                  >
+                    Community goal: {questionsAnswered}/5000 questions
+                    <WaveBar
+                      value={questionProgress}
+                      start="#fce09d"
+                      end="#fef37b"
+                      height={20}
+                    />
+                  </Box>
                 </VStack>
               </Box>
             </Box>
