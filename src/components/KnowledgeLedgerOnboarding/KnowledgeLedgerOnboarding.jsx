@@ -26,6 +26,7 @@ import { CloudCanvas } from "../../elements/SunsetCanvas";
 import { translation } from "../../utility/translation";
 import { doc, updateDoc } from "firebase/firestore";
 import { database } from "../../database/firebaseResources";
+import WaveBar from "../WaveBar";
 
 export const transcriptDisplay = {
   tutorial: {
@@ -251,7 +252,7 @@ export default function KnowledgeLedgerOnboarding({
         {translation[userLanguage]["onboardingProgress"]}
       </Text>
 
-      <Progress
+      {/* <Progress
         opacity="0.8"
         border="1px solid #ececec"
         // boxShadow="0px 0px 0.5px 2px #ececec"
@@ -263,7 +264,17 @@ export default function KnowledgeLedgerOnboarding({
         mb={6}
         borderRadius="4px"
         background={"#ececec"}
-      />
+      /> */}
+      <Box width="250px" mb={6}>
+        <WaveBar
+          value={(1 / 6) * 100}
+          start="#02fabc"
+          end="#12ff69"
+          delay={0}
+          bg="rgba(255,255,255,0.65)"
+          border="#ededed"
+        />
+      </Box>
       <Box
         bg="white"
         p={6}

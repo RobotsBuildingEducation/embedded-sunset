@@ -2943,6 +2943,7 @@ const Step = ({
                   boxShadow={`${getBoxShadow(step.group)}`}
                   icon={<PiPatreonLogoFill padding="4px" fontSize="14px" />}
                   mr={0}
+                  border="1px solid rgb(246, 206, 86)"
                   onMouseDown={() => {
                     window.location.href =
                       "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
@@ -2969,7 +2970,7 @@ const Step = ({
                 &nbsp;
               </span>
               <MotionProgress
-                height="20px"
+                height="25px"
                 initial={{ scale: 1 }}
                 animate={progressControls}
                 opacity="0.8"
@@ -4401,7 +4402,7 @@ const Home = ({
                   src={bgUrl}
                   alt="Hero banner"
                   w="100%"
-                  maxH="30vh"
+                  maxH="40vh"
                   // objectFit="contain" // no crop on mobile
                 />
               </Box>
@@ -4459,9 +4460,10 @@ const Home = ({
                 <Box
                   w="80%"
                   maxW="400px"
-                  mt={12}
+                  mt={6}
                   color="white"
                   fontWeight="bold"
+                  fontSize="md"
                 >
                   {translation[userLanguage]["communityGoal"]}
                   {questionsAnswered}/5000{" "}
@@ -4469,8 +4471,7 @@ const Home = ({
                   <WaveBar
                     value={questionProgress}
                     start="#fce09d"
-                    end="#fef37b"
-                    height={20}
+                    end="#fab002"
                   />
                 </Box>
               </VStack>
@@ -4551,8 +4552,7 @@ const Home = ({
                     <WaveBar
                       value={questionProgress}
                       start="#fce09d"
-                      end="#fef37b"
-                      height={20}
+                      end="#fab002"
                     />
                   </Box>
                 </VStack>
@@ -4964,7 +4964,7 @@ const Home = ({
               <Text fontSize={"xs"}>
                 {translation[userLanguage]["onboardingProgress"]}
               </Text>
-              <Progress
+              {/* <Progress
                 opacity="0.8"
                 border="1px solid #ececec"
                 // boxShadow="0px 0px 0.5px 2px #ececec"
@@ -4976,7 +4976,17 @@ const Home = ({
                 mb={4}
                 borderRadius="4px"
                 background={"#ececec"}
-              />
+              /> */}
+              <Box width="250px">
+                <WaveBar
+                  value={(0 / 6) * 100}
+                  start="#bf66ff"
+                  end="#7300ff"
+                  delay={0}
+                  bg="rgba(255,255,255,0.65)"
+                  border="#ededed"
+                />
+              </Box>
             </Box>
           </RiseUpAnimation>
 
@@ -5661,6 +5671,7 @@ function App({ isShutDown }) {
   return (
     <Box ref={topRef}>
       <CloudTransition
+        userLanguage={userLanguage}
         clonedStep={clonedStep}
         isActive={showClouds}
         salary={transitionStats.salary}

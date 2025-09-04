@@ -304,7 +304,7 @@ This single evolving example now links arrays, linked lists, **tree representati
       title: "Abstract Data Types vs. Concrete Implementations",
       description:
         "Distinguish abstract data types (ADTs) from their concrete implementations.",
-      isMultipleChoice: true,
+      isMultipleAnswerChoice: true,
       question: {
         questionText: "Which of the following are abstract data types?",
         options: ["List", "Stack", "Queue", "Array", "Binary Tree"],
@@ -330,12 +330,12 @@ This single evolving example now links arrays, linked lists, **tree representati
       group: "1",
       title: "Array Access Complexity",
       description: "Identify the time complexity of array indexing.",
-      isMultipleChoice: true,
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
           "What is the Big-O time complexity to access an element by index in a contiguous array?",
         options: ["O(1)", "O(log n)", "O(n)", "O(n²)"],
-        answer: "O(1)",
+        answer: ["O(1)"],
       },
     },
     // 4
@@ -1090,7 +1090,7 @@ class Stack:
       title: "Hierarchical vs. Associative Structures",
       description:
         "Identify which of these are hierarchical versus associative data structures.",
-      isMultipleChoice: true,
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
           "Which of the following are hierarchical data structures?",
@@ -1266,7 +1266,7 @@ print(heapq.heappop(pq))  # (1, 'cook')`,
       group: "3",
       title: "Hash Table Collision Strategies",
       description: "Identify common collision-resolution methods.",
-      isMultipleChoice: true,
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
           "Which of the following are valid hash table collision-resolution strategies?",
@@ -1645,7 +1645,7 @@ print(heapq.heappop(pq))  # (1, 'cook')`,
       group: "4",
       title: "Sorting Stability",
       description: "Understand stable vs. unstable sorts.",
-      isMultipleChoice: true,
+      isMultipleAnswerChoice: true,
       question: {
         questionText: "Which of these sorting algorithms are stable?",
         options: ["Bubble Sort", "Quick Sort", "Merge Sort", "Insertion Sort"],
@@ -2063,7 +2063,7 @@ for neighbor, weight in graph[current]:
       group: "5",
       title: "File Buffering Layers",
       description: "Select which layers buffer file I/O operations.",
-      isMultipleChoice: true,
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
           "Which of the following buffer data during file operations?",
@@ -2085,7 +2085,7 @@ for neighbor, weight in graph[current]:
       group: "5",
       title: "Device Types",
       description: "Distinguish block devices from character devices.",
-      isMultipleChoice: true,
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
           "Which of the following are block devices versus character devices?",
@@ -2153,7 +2153,7 @@ for neighbor, weight in graph[current]:
       group: "5",
       title: "Caching Strategies",
       description: "Select common caching strategies used by OS and hardware.",
-      isMultipleChoice: true,
+      isMultipleAnswerChoice: true,
       question: {
         questionText: "Which of these are caching strategies?",
         options: [
@@ -2196,7 +2196,7 @@ for neighbor, weight in graph[current]:
       group: "5",
       title: "Memory Protection Mechanisms",
       description: "Identify mechanisms the OS uses to protect process memory.",
-      isMultipleChoice: true,
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
           "Which features help protect one process’s memory from another?",
@@ -2260,18 +2260,12 @@ for neighbor, weight in graph[current]:
             <p style={{ marginBottom: 12 }}>
               {" "}
               One of the best predictors for student success is exposure to
-              course material before studying it. You're encouraged to read
-              about the fundamentals of software in the study guide before
-              starting. You can reference this study guide in the menu
-              throughout your progress too.
+              course material before studying it.
             </p>
 
             <p style={{ marginBottom: 12 }}>
               Remember to fail faster and fail forward! The real education
-              happens when you push through a challenge. We'll start off nice
-              and easy at first, but then we'll start to level up the difficulty
-              as you collect more progress. Make sure to use the tools at your
-              disposal! You're going to need it.
+              happens when you push through a challenge.
             </p>
           </div>
         ),
@@ -4610,22 +4604,17 @@ await addDoc(collection(db, 'users'), {
         questionText: (
           <div>
             <p style={{ marginBottom: 12 }}>
-              {" "}
-              Uno de los mejores indicadores de éxito académico para un
-              estudiante es su exposición al material del curso antes de
-              estudiarlo. Se te anima a leer sobre los fundamentos del software
-              antes de comenzar.
+              Uno de los mejores predictores del éxito estudiantil es exponerse
+              al material del curso antes de estudiarlo.
             </p>
 
             <p style={{ marginBottom: 12 }}>
-              ¡Recuerda fracasar rápido y aprender de cada error! La verdadera
-              educación ocurre cuando superas un desafío. Empezaremos de forma
-              suave y sencilla al principio, pero luego iremos aumentando la
-              dificultad a medida que avances. ¡Asegúrate de utilizar las
-              herramientas a tu disposición! Las vas a necesitar.
+              ¡Recuerda fallar rápido y avanzar con cada error! El verdadero
+              aprendizaje ocurre cuando superas un reto.
             </p>
           </div>
         ),
+
         metaData: `### Consejos
 Sé que esto parece contenido de ChatGPT... 
 
@@ -6849,18 +6838,14 @@ console.log(arr);
         questionText: (
           <div>
             <p style={{ marginBottom: 12 }}>
+              {" "}
               One of the best predictors for student success is exposure to
-              course material before studying it. You're encouraged to read
-              about the fundamentals of Python in this study guide before
-              starting. You can reference this guide in the menu throughout your
-              progress, too.
+              course material before studying it.
             </p>
+
             <p style={{ marginBottom: 12 }}>
               Remember to fail faster and fail forward! The real education
-              happens when you push through a challenge. We'll start off nice
-              and easy at first, then level up in difficulty as you collect more
-              progress. Make sure to use the tools at your disposal—you’re going
-              to need them.
+              happens when you push through a challenge.
             </p>
           </div>
         ),
@@ -8890,18 +8875,14 @@ doc_ref.delete()`,
         questionText: (
           <div>
             <p style={{ marginBottom: 12 }}>
+              {" "}
               One of the best predictors for student success is exposure to
-              course material before studying it. You're encouraged to read
-              about the fundamentals of Swift in this study guide before
-              starting. You can reference this guide in the menu throughout your
-              progress, too.
+              course material before studying it.
             </p>
+
             <p style={{ marginBottom: 12 }}>
               Remember to fail faster and fail forward! The real education
-              happens when you push through a challenge. We'll start off nice
-              and easy at first, then level up in difficulty as you collect more
-              progress. Make sure to use the tools at your disposal—you’re going
-              to need them.
+              happens when you push through a challenge.
             </p>
           </div>
         ),
@@ -10990,18 +10971,14 @@ doc.delete()`,
         questionText: (
           <div>
             <p style={{ marginBottom: 12 }}>
+              {" "}
               One of the best predictors for student success is exposure to
-              course material before studying it. You're encouraged to read
-              about the fundamentals of Java and Android in this study guide
-              before starting. You can reference this guide in the menu
-              throughout your progress, too.
+              course material before studying it.
             </p>
+
             <p style={{ marginBottom: 12 }}>
               Remember to fail faster and fail forward! The real education
-              happens when you push through a challenge. We'll start off nice
-              and easy at first, then level up in difficulty as you collect more
-              progress. Make sure to use the tools at your disposal—you’re going
-              to need them.
+              happens when you push through a challenge.
             </p>
           </div>
         ),

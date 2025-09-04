@@ -477,6 +477,35 @@ const SettingsMenu = ({
                 &nbsp;
                 {translation[userLanguage]["settings.button.bitcoinMode"]}
               </Button> */}
+
+              {localStorage.getItem("passcode") !==
+              import.meta.env.VITE_PATREON_PASSCODE ? (
+                <Button
+                  p={6}
+                  w="100%"
+                  color="#2e2200"
+                  fontWeight="700"
+                  bgGradient="linear(to-r, #f6e7b6 0%,rgb(248, 233, 137) 50%,rgb(248, 234, 108) 100%)"
+                  border="1px solid #c4a035"
+                  borderRadius="md"
+                  transition="opacity .15s ease"
+                  _hover={{ opacity: 0.98 }}
+                  _active={{ opacity: 0.95 }}
+                  onMouseDown={() =>
+                    window.open("https://patreon.com/notesandotherstuff/about")
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      window.open(
+                        "https://patreon.com/notesandotherstuff/about"
+                      );
+                    }
+                  }}
+                >
+                  {translation[userLanguage]["settings.button.patreon"]}
+                </Button>
+              ) : null}
+
               <ThemeMenu
                 userLanguage={userLanguage}
                 isIcon={false}
@@ -615,26 +644,6 @@ const SettingsMenu = ({
                 boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
               >
                 {translation[userLanguage]["settings.button.tutorGPT"]}
-              </Button>
-
-              <Button
-                p={6}
-                style={{ width: "100%" }}
-                // as="a"
-
-                onMouseDown={() => {
-                  window.open("https://patreon.com/notesandotherstuff/about");
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    window.open("https://patreon.com/notesandotherstuff/about");
-                  }
-                }}
-                variant={"outline"}
-                // boxShadow={"0px 0.5px 0.5px 1px black"}
-                border="2px solid gold"
-              >
-                {translation[userLanguage]["settings.button.patreon"]}
               </Button>
 
               <Button

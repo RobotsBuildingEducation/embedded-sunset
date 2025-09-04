@@ -223,9 +223,9 @@ export let translation = {
     "button.back": "Back",
     "onboarding.step1.challengeTitle": "The Challenge Ahead",
     "onboarding.step1.challengeText1":
-      "The harsh reality is that most who attempt to learn for 100 days will drop off within the first 20 days. The same is also true for most videos and courses – most folks drop off in the first 20 seconds and the first 20 questions!",
+      "The harsh reality is that most who attempt to learn anything will drop off before the first 20%.",
     "onboarding.step1.challengeText2":
-      "But perhaps being aware of this and making a conscious effort to resist certain temptations may keep you in the loop to find success with the program. And perhaps the real challenge is actually a lot easier than we thought.",
+      "Being consciously aware of this will keep you in the loop to find success. Perhaps the real challenge is actually a lot easier than we thought!",
     "onboarding.step1.challengeText3":
       "What do you say? Are you up for the challenge? Let's get passed 20 questions in a more manageable way!",
     "onboarding.step1.buttonLabel": "Let's do it!",
@@ -1844,11 +1844,12 @@ reverse(head) {
     "button.back": "Atrás",
     "onboarding.step1.challengeTitle": "El Desafío que te Espera",
     "onboarding.step1.challengeText1":
-      "La cruda realidad es que la mayoría de quienes intentan aprender durante 100 días abandonan en los primeros 20 días. Lo mismo sucede con la mayoría de los videos y cursos: la mayoría se desconecta en los primeros 20 segundos y con las primeras 20 preguntas.",
+      "La dura realidad es que la mayoría de quienes intentan aprender algo abandonan antes del primer 20%.",
     "onboarding.step1.challengeText2":
-      "Pero quizá, siendo consciente de esto y esforzándote por resistir ciertas tentaciones, puedas mantenerte en el camino y tener éxito en el programa. Y tal vez el verdadero desafío sea en realidad mucho más fácil de lo que pensamos.",
+      "Ser consciente de esto te mantendrá en el camino hacia el éxito. ¡Quizás el verdadero reto sea en realidad mucho más fácil de lo que pensábamos!",
     "onboarding.step1.challengeText3":
-      "¿Qué dices? ¿Aceptas el reto? ¡Lleguemos primero a 20 preguntas!",
+      "¿Qué dices? ¿Aceptas el desafío? ¡Vamos a superar las 20 preguntas de una forma más manejable!",
+
     "onboarding.step1.buttonLabel": "¡Sí! ¡Hagámoslo!",
 
     "onboarding.step2.dailyGoalsTitle": "Configura tus objetivos diarios",
@@ -3403,9 +3404,9 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "button.back": "Back",
     "onboarding.step1.challengeTitle": "The Challenge Ahead",
     "onboarding.step1.challengeText1":
-      "The harsh reality is that most who attempt to learn for 100 days will drop off within the first 20 days. The same is also true for most videos and courses – most folks drop off in the first 20 seconds and the first 20 questions!",
+      "The harsh reality is that most who attempt to learn anything will drop off before the first 20%.",
     "onboarding.step1.challengeText2":
-      "But perhaps being aware of this and making a conscious effort to resist certain temptations may keep you in the loop to find success with the program. And perhaps the real challenge is actually a lot easier than we thought.",
+      "Being consciously aware of this will keep you in the loop to find success. Perhaps the real challenge is actually a lot easier than we thought!",
     "onboarding.step1.challengeText3":
       "What do you say? Are you up for the challenge? Let's get passed 20 questions in a more manageable way!",
     "onboarding.step1.buttonLabel": "Let's do it!",
@@ -5006,9 +5007,9 @@ reverse(head) {
     "button.back": "Back",
     "onboarding.step1.challengeTitle": "The Challenge Ahead",
     "onboarding.step1.challengeText1":
-      "The harsh reality is that most who attempt to learn for 100 days will drop off within the first 20 days. The same is also true for most videos and courses – most folks drop off in the first 20 seconds and the first 20 questions!",
+      "The harsh reality is that most who attempt to learn anything will drop off before the first 20%.",
     "onboarding.step1.challengeText2":
-      "But perhaps being aware of this and making a conscious effort to resist certain temptations may keep you in the loop to find success with the program. And perhaps the real challenge is actually a lot easier than we thought.",
+      "Being consciously aware of this will keep you in the loop to find success. Perhaps the real challenge is actually a lot easier than we thought!",
     "onboarding.step1.challengeText3":
       "What do you say? Are you up for the challenge? Let's get passed 20 questions in a more manageable way!",
     "onboarding.step1.buttonLabel": "Let's do it!",
@@ -6609,9 +6610,9 @@ reverse(head) {
     "button.back": "Back",
     "onboarding.step1.challengeTitle": "The Challenge Ahead",
     "onboarding.step1.challengeText1":
-      "The harsh reality is that most who attempt to learn for 100 days will drop off within the first 20 days. The same is also true for most videos and courses – most folks drop off in the first 20 seconds and the first 20 questions!",
+      "The harsh reality is that most who attempt to learn anything will drop off before the first 20%.",
     "onboarding.step1.challengeText2":
-      "But perhaps being aware of this and making a conscious effort to resist certain temptations may keep you in the loop to find success with the program. And perhaps the real challenge is actually a lot easier than we thought.",
+      "Being consciously aware of this will keep you in the loop to find success. Perhaps the real challenge is actually a lot easier than we thought!",
     "onboarding.step1.challengeText3":
       "What do you say? Are you up for the challenge? Let's get passed 20 questions in a more manageable way!",
     "onboarding.step1.buttonLabel": "Let's do it!",
@@ -8211,9 +8212,9 @@ reverse(head) {
     "button.back": "Back",
     "onboarding.step1.challengeTitle": "The Challenge Ahead",
     "onboarding.step1.challengeText1":
-      "The harsh reality is that most who attempt to learn for 100 days will drop off within the first 20 days. The same is also true for most videos and courses – most folks drop off in the first 20 seconds and the first 20 questions!",
+      "The harsh reality is that most who attempt to learn anything will drop off before the first 20%.",
     "onboarding.step1.challengeText2":
-      "But perhaps being aware of this and making a conscious effort to resist certain temptations may keep you in the loop to find success with the program. And perhaps the real challenge is actually a lot easier than we thought.",
+      "Being consciously aware of this will keep you in the loop to find success. Perhaps the real challenge is actually a lot easier than we thought!",
     "onboarding.step1.challengeText3":
       "What do you say? Are you up for the challenge? Let's get passed 20 questions in a more manageable way!",
     "onboarding.step1.buttonLabel": "Let's do it!",

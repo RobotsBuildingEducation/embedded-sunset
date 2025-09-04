@@ -5,6 +5,11 @@ import sparkle from "../assets/sparkle.mp3";
 import complete from "../assets/complete.mp3";
 import { useOneShotAudio } from "../hooks/useOneShotAudio";
 import WaveBar from "../components/WaveBar";
+import {
+  BASE_QUESTION_COUNT,
+  subscribeToQuestionsAnswered,
+} from "../utility/nosql";
+import { translation } from "../utility/translation";
 
 const MotionBox = motion(Box);
 
@@ -78,6 +83,7 @@ const THEMES = {
 };
 
 const CloudTransition = ({
+  userLanguage,
   clonedStep,
   isActive,
   salary,
@@ -99,6 +105,19 @@ const CloudTransition = ({
   const prevSalary = useRef(salary);
   const playSparkle = useOneShotAudio(sparkle);
   const playComplete = useOneShotAudio(complete);
+
+  const [questionsAnswered, setQuestionsAnswered] =
+    useState(BASE_QUESTION_COUNT);
+  const QUESTION_GOAL = 5000;
+  const questionProgress = Math.min(
+    (questionsAnswered / QUESTION_GOAL) * 100,
+    100
+  );
+
+  useEffect(() => {
+    const unsubscribe = subscribeToQuestionsAnswered(setQuestionsAnswered);
+    return () => unsubscribe();
+  }, []);
 
   // Chapter key
   const groupKey = useMemo(() => {
@@ -439,7 +458,7 @@ const CloudTransition = ({
                   </Box>
 
                   {/* Daily goal bar */}
-                  <Box w="100%" mx="auto">
+                  <Box w="100%" mx="auto" mb={6}>
                     <Text fontSize="sm" mb={1} color="purple.500">
                       {dailyGoalLabel} {dailyProgress}/{dailyGoals}
                     </Text>
@@ -447,6 +466,22 @@ const CloudTransition = ({
                       value={dailyGoalProgress}
                       start="#03f4fc"
                       end="#fef37b"
+                      delay={0}
+                      bg="rgba(255,255,255,0.65)"
+                      border="#ededed"
+                    />
+                  </Box>
+
+                  <Box w="100%" mx="auto">
+                    <Text fontSize="sm" mb={1} color="purple.500">
+                      {translation[userLanguage]["communityGoal"]}
+                      {questionsAnswered}/5000{" "}
+                      {translation[userLanguage]["questions"]}
+                    </Text>
+                    <WaveBar
+                      value={questionProgress}
+                      start="#bf66ff"
+                      end="#7300ff"
                       delay={0}
                       bg="rgba(255,255,255,0.65)"
                       border="#ededed"

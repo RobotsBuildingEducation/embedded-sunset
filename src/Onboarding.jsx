@@ -57,6 +57,7 @@ import { onboardingTranscript } from "./utility/transcript";
 import { useSharedNostr } from "./hooks/useNOSTR";
 import { TechOverview } from "./components/TechOverview/TechOverview";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import WaveBar from "./components/WaveBar";
 
 export const Onboarding = ({
   userLanguage,
@@ -330,7 +331,7 @@ export const Onboarding = ({
                   {" "}
                   {translation[userLanguage]["onboardingProgress"]}
                 </Text>
-                <Progress
+                {/* <Progress
                   opacity="0.8"
                   border="1px solid #ececec"
                   // boxShadow="0px 0px 0.5px 2px #ececec"
@@ -342,7 +343,17 @@ export const Onboarding = ({
                   mb={4}
                   borderRadius="4px"
                   background={"#ececec"}
-                />
+                /> */}
+                <Box width="250px" mb={4}>
+                  <WaveBar
+                    value={(2 / 7) * 100}
+                    start="#02fabc"
+                    end="#12ff69"
+                    delay={0}
+                    bg="rgba(255,255,255,0.65)"
+                    border="#ededed"
+                  />
+                </Box>
               </Box>
               <RiseUpAnimation>
                 <Box
@@ -803,7 +814,7 @@ export const Onboarding = ({
                   {" "}
                   {translation[userLanguage]["onboardingProgress"]}
                 </Text>
-                <Progress
+                {/* <Progress
                   opacity="0.8"
                   border="1px solid #ececec"
                   // boxShadow="0px 0px 0.5px 2px #ececec"
@@ -815,7 +826,17 @@ export const Onboarding = ({
                   mb={4}
                   borderRadius="4px"
                   background={"#ececec"}
-                />
+                /> */}
+                <Box width="250px" mb={4}>
+                  <WaveBar
+                    value={(3 / 7) * 100}
+                    start="#02fabc"
+                    end="#12ff69"
+                    delay={0}
+                    bg="rgba(255,255,255,0.65)"
+                    border="#ededed"
+                  />
+                </Box>
               </Box>
               <FadeInComponent>
                 <Box
@@ -875,7 +896,7 @@ export const Onboarding = ({
                 <Text fontSize="sm">
                   {translation[userLanguage]["onboardingProgress"]}
                 </Text>
-
+                {/* 
                 <Progress
                   opacity="0.8"
                   border="1px solid #ececec"
@@ -888,7 +909,18 @@ export const Onboarding = ({
                   mb={4}
                   borderRadius="4px"
                   background={"#ececec"}
-                />
+                /> */}
+
+                <Box width="250px" mb={4}>
+                  <WaveBar
+                    value={(4 / 7) * 100}
+                    start="#02fabc"
+                    end="#12ff69"
+                    delay={0}
+                    bg="rgba(255,255,255,0.65)"
+                    border="#ededed"
+                  />
+                </Box>
               </Box>
 
               <RiseUpAnimation>
@@ -1155,7 +1187,7 @@ export const Onboarding = ({
                   {" "}
                   {translation[userLanguage]["onboardingProgress"]}
                 </Text>
-                <Progress
+                {/* <Progress
                   opacity="0.8"
                   border="1px solid #ececec"
                   // boxShadow="0px 0px 0.5px 2px #ececec"
@@ -1167,7 +1199,17 @@ export const Onboarding = ({
                   mb={4}
                   borderRadius="4px"
                   background={"#ececec"}
-                />
+                /> */}
+                <Box width="250px" mb={4}>
+                  <WaveBar
+                    value={(5 / 7) * 100}
+                    start="#02fabc"
+                    end="#12ff69"
+                    delay={0}
+                    bg="rgba(255,255,255,0.65)"
+                    border="#ededed"
+                  />
+                </Box>
               </Box>
               <RiseUpAnimation>
                 <Box
@@ -1232,7 +1274,7 @@ export const Onboarding = ({
                 <Text fontSize={"sm"}>
                   {translation[userLanguage]["onboardingProgress"]}
                 </Text>
-                <Progress
+                {/* <Progress
                   opacity="0.8"
                   border="1px solid #ececec"
                   // boxShadow="0px 0px 0.5px 2px #ececec"
@@ -1244,7 +1286,17 @@ export const Onboarding = ({
                   mb={4}
                   borderRadius="4px"
                   background={"#ececec"}
-                />
+                /> */}
+                <Box width="250px" mb={4}>
+                  <WaveBar
+                    value={(6 / 7) * 100}
+                    start="#02fabc"
+                    end="#12ff69"
+                    delay={0}
+                    bg="rgba(255,255,255,0.65)"
+                    border="#ededed"
+                  />
+                </Box>
               </Box>
               <PanRightComponent>
                 <Text
