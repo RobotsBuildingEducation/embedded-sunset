@@ -10,6 +10,7 @@ import { Buffer } from "buffer";
 import { bech32 } from "bech32";
 
 import NDKWalletService, { NDKCashuWallet } from "@nostr-dev-kit/ndk-wallet";
+import { normalizeCashuBalance } from "../utility/cashu";
 
 const defaultMint = "https://mint.minibits.cash/Bitcoin";
 const defaultRelays = ["wss://relay.damus.io", "wss://relay.primal.net"];
@@ -162,7 +163,7 @@ export const useNostrWalletStore = create((set, get) => ({
     // listen for updates to the balance, when a user answers a question, the balance should update
     wallet.on("balance_updated", async (balance) => {
       console.log("arg balance", balance);
-      const bal = (await wallet.balance()) || [];
+      const bal = normalizeCashuBalance(balance || (await wallet.balance()));
       console.log("balanace...", bal);
       set({ walletBalance: bal });
     });
@@ -170,7 +171,7 @@ export const useNostrWalletStore = create((set, get) => ({
     // potentially writing a bug here
     // essentially checking the balance redundantly, resulting in outdated balance
     //woudn't be surprised if this runs first actually, we'll see
-    const initialBal = (await wallet.balance()) || [];
+    const initialBal = normalizeCashuBalance(await wallet.balance());
     console.log("initialBal", initialBal);
     set({
       walletBalance: initialBal,
@@ -381,8 +382,8 @@ export const useNostrWalletStore = create((set, get) => ({
       await cashuWallet.checkProofs();
 
       //update the balance after the spend event occurs, deducting 1 sat from your deposits
-      const updatedBalance = await cashuWallet.balance();
-      set({ walletBalance: updatedBalance || [] });
+      const updatedBalance = normalizeCashuBalance(await cashuWallet.balance());
+      set({ walletBalance: updatedBalance });
     } catch (e) {
       console.error("Error sending nutzap:", e);
       setError(e.message);
@@ -446,10 +447,10 @@ export const useNostrWalletStore = create((set, get) => ({
       await cashuWallet.checkProofs(); //sanity check, probably not needed
 
       // get new balance
-      const updatedBalance = await cashuWallet.balance();
+      const updatedBalance = normalizeCashuBalance(await cashuWallet.balance());
 
       //updates balance state, probably triggers wallet listeners too
-      set({ walletBalance: updatedBalance || [] });
+      set({ walletBalance: updatedBalance });
 
       setInvoice("");
       window.location.reload();

@@ -21,6 +21,7 @@ import { SiCashapp } from "react-icons/si";
 import { BsQrCode } from "react-icons/bs";
 
 import { translation } from "../../utility/translation";
+import { getCashuBalanceTotal } from "../../utility/cashu";
 
 import { useNostrWalletStore } from "../../hooks/useNostrWalletStore";
 import { database } from "../../database/firebaseResources";
@@ -40,7 +41,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
    * Hook from useSharedNostr:
    * - createNewWallet(): creates a new Cashu wallet event and sets up the wallet
    * - initiateDeposit(amount): returns a LN invoice to deposit sats
-   * - walletBalance: array of proofs; sum their values to get total balance
+   * - walletBalance: numeric balance (sats) available in the wallet
    * - cashuWallet: if null, no wallet yet
    */
 
@@ -86,8 +87,8 @@ const BitcoinOnboarding = ({ userLanguage }) => {
   // Helper: sum up wallet balance
 
   console.log("total balance", walletBalance);
-  const totalBalance =
-    (walletBalance || [])?.reduce((sum, b) => sum + (b.amount || 0), 0) || null;
+  const computedBalance = getCashuBalanceTotal(walletBalance);
+  const totalBalance = computedBalance > 0 ? computedBalance : null;
 
   useEffect(() => {
     // If we have a deposit in progress and the user pays it, after proofs update

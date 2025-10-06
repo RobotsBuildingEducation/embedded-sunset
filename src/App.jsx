@@ -95,6 +95,7 @@ import {
 import { analytics, database } from "./database/firebaseResources";
 
 import { pickProgrammingLanguage, translation } from "./utility/translation";
+import { getCashuBalanceTotal } from "./utility/cashu";
 
 import { Dashboard } from "./components/Dashboard/Dashboard";
 import { isUnsupportedBrowser } from "./utility/browser";
@@ -1854,12 +1855,10 @@ const Step = ({
   }, [isCorrect]);
 
   const calculateBalance = () => {
-    const totalBalance =
-      (walletBalance || [])?.reduce((sum, b) => sum + (b.amount || 0), 0) ||
-      null;
-    if (totalBalance < 0) return 0;
+    const totalBalance = getCashuBalanceTotal(walletBalance);
+    if (totalBalance <= 0) return 0;
 
-    return Math.min((totalBalance / 100) * 100, 100);
+    return Math.min(totalBalance, 100);
   };
 
   // Calculate progress within the current chapter
