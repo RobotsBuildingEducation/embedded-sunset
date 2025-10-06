@@ -42,7 +42,7 @@ const BitcoinModeModal = ({
   //  * Hook from useSharedNostr:
   //  * - createNewWallet(): creates a new Cashu wallet event and sets up the wallet
   //  * - initiateDeposit(amount): returns a LN invoice to deposit sats
-  //  * - walletBalance: array of proofs; sum their values to get total balance
+  //  * - walletBalance: numeric balance (sats) available in the wallet
   //  * - cashuWallet: if null, no wallet yet
   //  */
 
