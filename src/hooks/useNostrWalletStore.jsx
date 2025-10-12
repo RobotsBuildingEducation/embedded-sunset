@@ -453,7 +453,6 @@ export const useNostrWalletStore = create((set, get) => ({
       set({ walletBalance: updatedBalance });
 
       setInvoice("");
-      window.location.reload();
     });
 
     deposit.on("error", (e) => {
