@@ -85,11 +85,6 @@ const theme = extendTheme({
 });
 
 localStorage.setItem("CANARY_KEY", "Y2FuYXJ5");
-localStorage.setItem("passcode", import.meta.env.VITE_PATREON_PASSCODE);
-localStorage.setItem(
-  "features_passcode",
-  import.meta.env.VITE_PATREON_PASSCODE
-);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ChakraProvider theme={theme}>
