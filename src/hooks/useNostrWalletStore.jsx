@@ -16,6 +16,7 @@ import {
   normalizeCashuBalance,
   persistNormalizedCashuBalance,
 } from "../utility/cashu";
+import { getUserCashuBalance, setUserCashuBalance } from "../utility/nosql";
 
 const defaultMint = "https://mint.minibits.cash/Bitcoin";
 const defaultRelays = ["wss://relay.damus.io", "wss://relay.primal.net"];
@@ -39,7 +40,7 @@ export const useNostrWalletStore = create((set, get) => ({
   signer: null,
   walletService: null,
   cashuWallet: null,
-  walletBalance: loadStoredCashuBalance(),
+  walletBalance: 0,
   invoice: "", //not used: needs to add ability to generate new QR/address (invoice) in case things expire
 
   isCreatingWallet: false,
@@ -48,7 +49,22 @@ export const useNostrWalletStore = create((set, get) => ({
   setInvoice: (data) => set({ invoice: data }),
 
   updateWalletBalance: (rawBalance) => {
-    const normalized = persistNormalizedCashuBalance(rawBalance);
+    const normalized = normalizeCashuBalance(rawBalance);
+    const { nostrPubKey } = get();
+    const activeNpub =
+      nostrPubKey ||
+      (typeof window !== "undefined"
+        ? window.localStorage.getItem("local_npub")
+        : null);
+
+    persistNormalizedCashuBalance(normalized, activeNpub);
+
+    if (activeNpub) {
+      setUserCashuBalance(activeNpub, normalized).catch((error) => {
+        console.error("Failed to persist Cashu balance remotely:", error);
+      });
+    }
+
     set({ walletBalance: normalized });
     return normalized;
   },
@@ -205,8 +221,25 @@ export const useNostrWalletStore = create((set, get) => ({
     const storedNpub = localStorage.getItem("local_npub");
     const storedNsec = localStorage.getItem("local_nsec");
 
-    if (storedNpub) set({ nostrPubKey: storedNpub });
+    if (storedNpub) {
+      set({ nostrPubKey: storedNpub });
+      const cachedBalance = loadStoredCashuBalance(storedNpub);
+      if (typeof cachedBalance === "number") {
+        set({ walletBalance: normalizeCashuBalance(cachedBalance) });
+      }
+    }
     if (storedNsec) set({ nostrPrivKey: storedNsec });
+
+    if (storedNpub) {
+      try {
+        const remoteBalance = await getUserCashuBalance(storedNpub);
+        const normalizedRemote = normalizeCashuBalance(remoteBalance);
+        persistNormalizedCashuBalance(normalizedRemote, storedNpub);
+        set({ walletBalance: normalizedRemote });
+      } catch (error) {
+        console.error("Error loading remote Cashu balance:", error);
+      }
+    }
 
     const { connectToNostr, initWalletService } = get();
     if (storedNpub && storedNsec) {
@@ -485,7 +518,13 @@ export const useNostrWalletStore = create((set, get) => ({
 
   // just resets state for log outs
   resetState: () => {
-    clearStoredCashuBalance();
+    const { nostrPubKey } = get();
+    const activeNpub =
+      nostrPubKey ||
+      (typeof window !== "undefined"
+        ? window.localStorage.getItem("local_npub")
+        : null);
+    clearStoredCashuBalance(activeNpub);
     set({
       isConnected: false,
       errorMessage: null,

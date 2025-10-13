@@ -13,6 +13,7 @@ import {
   increment,
 } from "firebase/firestore";
 import { database } from "../database/firebaseResources";
+import { normalizeCashuBalance } from "./cashu";
 
 // Update user data with timer, streak, startTime, and endTime
 export const updateUserData = async (
@@ -59,6 +60,42 @@ export const getUserData = async (userId) => {
   } else {
     return null; // Handle case where user document does not exist
   }
+};
+
+export const getUserCashuBalance = async (npub) => {
+  if (!npub) {
+    return 0;
+  }
+
+  const userDocRef = doc(database, "users", npub);
+  const userDoc = await getDoc(userDocRef);
+
+  if (!userDoc.exists()) {
+    return 0;
+  }
+
+  const balance = userDoc.data()?.cashuBalance;
+  if (typeof balance === "number" && Number.isFinite(balance)) {
+    return normalizeCashuBalance(balance);
+  }
+
+  if (typeof balance === "string") {
+    const parsed = Number.parseInt(balance, 10);
+    return Number.isFinite(parsed) ? normalizeCashuBalance(parsed) : 0;
+  }
+
+  return 0;
+};
+
+export const setUserCashuBalance = async (npub, balance) => {
+  if (!npub) {
+    return 0;
+  }
+
+  const normalized = normalizeCashuBalance(balance);
+  const userDocRef = doc(database, "users", npub);
+  await setDoc(userDocRef, { cashuBalance: normalized }, { merge: true });
+  return normalized;
 };
 
 // Function to create or update a user in Firestore

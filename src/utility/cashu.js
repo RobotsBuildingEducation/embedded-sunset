@@ -1,5 +1,10 @@
 const CASHU_BALANCE_STORAGE_KEY = "cashu_wallet_balance";
 
+const getStorageKey = (npub) =>
+  npub && typeof npub === "string" && npub.length > 0
+    ? `${CASHU_BALANCE_STORAGE_KEY}:${npub}`
+    : CASHU_BALANCE_STORAGE_KEY;
+
 export const getCashuBalanceTotal = (balance) => {
   if (!balance) {
     return 0;
@@ -42,12 +47,12 @@ export const normalizeCashuBalance = (balance) => {
   return total < 0 ? 0 : total;
 };
 
-export const loadStoredCashuBalance = () => {
+export const loadStoredCashuBalance = (npub) => {
   if (typeof window === "undefined" || !window?.localStorage) {
     return 0;
   }
 
-  const rawValue = window.localStorage.getItem(CASHU_BALANCE_STORAGE_KEY);
+  const rawValue = window.localStorage.getItem(getStorageKey(npub));
   if (!rawValue) {
     return 0;
   }
@@ -56,15 +61,12 @@ export const loadStoredCashuBalance = () => {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
 };
 
-export const persistNormalizedCashuBalance = (balance) => {
+export const persistNormalizedCashuBalance = (balance, npub) => {
   const normalized = normalizeCashuBalance(balance);
 
   if (typeof window !== "undefined" && window?.localStorage) {
     try {
-      window.localStorage.setItem(
-        CASHU_BALANCE_STORAGE_KEY,
-        normalized.toString()
-      );
+      window.localStorage.setItem(getStorageKey(npub), normalized.toString());
     } catch (error) {
       console.warn("Unable to persist Cashu balance:", error);
     }
@@ -73,10 +75,10 @@ export const persistNormalizedCashuBalance = (balance) => {
   return normalized;
 };
 
-export const clearStoredCashuBalance = () => {
+export const clearStoredCashuBalance = (npub) => {
   if (typeof window === "undefined" || !window?.localStorage) {
     return;
   }
 
-  window.localStorage.removeItem(CASHU_BALANCE_STORAGE_KEY);
+  window.localStorage.removeItem(getStorageKey(npub));
 };
