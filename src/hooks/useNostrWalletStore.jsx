@@ -10,7 +10,12 @@ import { Buffer } from "buffer";
 import { bech32 } from "bech32";
 
 import NDKWalletService, { NDKCashuWallet } from "@nostr-dev-kit/ndk-wallet";
-import { normalizeCashuBalance } from "../utility/cashu";
+import {
+  clearStoredCashuBalance,
+  loadStoredCashuBalance,
+  normalizeCashuBalance,
+  persistNormalizedCashuBalance,
+} from "../utility/cashu";
 
 const defaultMint = "https://mint.minibits.cash/Bitcoin";
 const defaultRelays = ["wss://relay.damus.io", "wss://relay.primal.net"];
@@ -34,13 +39,19 @@ export const useNostrWalletStore = create((set, get) => ({
   signer: null,
   walletService: null,
   cashuWallet: null,
-  walletBalance: 0,
+  walletBalance: loadStoredCashuBalance(),
   invoice: "", //not used: needs to add ability to generate new QR/address (invoice) in case things expire
 
   isCreatingWallet: false,
   // functions to define state when the data gets created
   setError: (msg) => set({ errorMessage: msg }),
   setInvoice: (data) => set({ invoice: data }),
+
+  updateWalletBalance: (rawBalance) => {
+    const normalized = persistNormalizedCashuBalance(rawBalance);
+    set({ walletBalance: normalized });
+    return normalized;
+  },
 
   // Converts your public identity into a public key.
   // think of your "npub key" as something identifiable for humans
@@ -165,16 +176,23 @@ export const useNostrWalletStore = create((set, get) => ({
       console.log("arg balance", balance);
       const bal = normalizeCashuBalance(balance || (await wallet.balance()));
       console.log("balanace...", bal);
-      set({ walletBalance: bal });
+      const { updateWalletBalance } = get();
+      updateWalletBalance(bal);
     });
 
     // potentially writing a bug here
     // essentially checking the balance redundantly, resulting in outdated balance
     //woudn't be surprised if this runs first actually, we'll see
+    try {
+      await wallet.checkProofs();
+    } catch (error) {
+      console.error("Error validating wallet proofs:", error);
+    }
     const initialBal = normalizeCashuBalance(await wallet.balance());
     console.log("initialBal", initialBal);
+    const { updateWalletBalance } = get();
+    updateWalletBalance(initialBal);
     set({
-      walletBalance: initialBal,
       cashuWallet: wallet,
     });
   },
@@ -383,7 +401,8 @@ export const useNostrWalletStore = create((set, get) => ({
 
       //update the balance after the spend event occurs, deducting 1 sat from your deposits
       const updatedBalance = normalizeCashuBalance(await cashuWallet.balance());
-      set({ walletBalance: updatedBalance });
+      const { updateWalletBalance } = get();
+      updateWalletBalance(updatedBalance);
     } catch (e) {
       console.error("Error sending nutzap:", e);
       setError(e.message);
@@ -450,7 +469,8 @@ export const useNostrWalletStore = create((set, get) => ({
       const updatedBalance = normalizeCashuBalance(await cashuWallet.balance());
 
       //updates balance state, probably triggers wallet listeners too
-      set({ walletBalance: updatedBalance });
+      const { updateWalletBalance } = get();
+      updateWalletBalance(updatedBalance);
 
       setInvoice("");
     });
@@ -464,7 +484,8 @@ export const useNostrWalletStore = create((set, get) => ({
   },
 
   // just resets state for log outs
-  resetState: () =>
+  resetState: () => {
+    clearStoredCashuBalance();
     set({
       isConnected: false,
       errorMessage: null,
@@ -476,5 +497,6 @@ export const useNostrWalletStore = create((set, get) => ({
       cashuWallet: null,
       walletBalance: 0,
       invoice: "",
-    }),
+    });
+  },
 }));
