@@ -3947,7 +3947,7 @@ const Home = ({
 
   const [questionsAnswered, setQuestionsAnswered] =
     useState(BASE_QUESTION_COUNT);
-  const QUESTION_GOAL = 5000;
+  const QUESTION_GOAL = 7500;
   const questionProgress = Math.min(
     (questionsAnswered / QUESTION_GOAL) * 100,
     100
@@ -4466,7 +4466,7 @@ const Home = ({
                   fontSize="md"
                 >
                   {translation[userLanguage]["communityGoal"]}
-                  {questionsAnswered}/5000{" "}
+                  {questionsAnswered}/7500{" "}
                   {translation[userLanguage]["questions"]}
                   <WaveBar
                     value={questionProgress}
@@ -4547,7 +4547,7 @@ const Home = ({
                     fontWeight="bold"
                   >
                     {translation[userLanguage]["communityGoal"]}
-                    {questionsAnswered}/5000{" "}
+                    {questionsAnswered}/7500{" "}
                     {translation[userLanguage]["questions"]}
                     <WaveBar
                       value={questionProgress}
