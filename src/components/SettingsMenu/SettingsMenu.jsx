@@ -76,6 +76,30 @@ const SettingsMenu = ({
     walletService: state.walletService,
   }));
 
+  const handleSignOut = () => {
+    const translateValue = localStorage.getItem("userLanguage");
+
+    try {
+      walletService?.stop?.();
+    } catch (error) {
+      console.error("Error stopping wallet service during sign out:", error);
+    }
+
+    resetState();
+    setIsSignedIn(false);
+
+    localStorage.removeItem("local_nsec");
+    localStorage.removeItem("local_npub");
+
+    if (translateValue) {
+      localStorage.setItem("userLanguage", translateValue);
+    }
+
+    onClose();
+    setView("buttons");
+    navigate("/");
+  };
+
   const {
     isOpen: isSocialFeedModalOpen,
     onOpen: onSocialFeedModalOpen,
@@ -665,36 +689,11 @@ const SettingsMenu = ({
               </Button>
               <Button
                 style={{ width: "100%" }}
-                onMouseDown={() => {
-                  // walletService.stop();
-                  resetState();
-                  const translateValue = localStorage.getItem("userLanguage");
-                  localStorage.removeItem("local_nsec");
-                  localStorage.removeItem("local_npub");
-                  if (translateValue) {
-                    localStorage.setItem("userLanguage", translateValue);
-                  }
-                  onClose();
-                  setView("buttons");
-                  navigate("/");
-                  window.location.reload();
-                }}
+                onMouseDown={handleSignOut}
                 onKeyDown={(e) => {
-                  // walletService.stop();
-                  resetState();
-                  setIsSignedIn(false);
                   if (e.key === "Enter" || e.key === " ") {
-                    const translateValue = localStorage.getItem("userLanguage");
-                    localStorage.removeItem("local_nsec");
-                    localStorage.removeItem("local_npub");
-                    if (translateValue) {
-                      localStorage.setItem("userLanguage", translateValue);
-                    }
-                    onClose();
-                    setView("buttons");
-
-                    navigate("/");
-                    window.location.reload();
+                    e.preventDefault();
+                    handleSignOut();
                   }
                 }}
                 p={6}
