@@ -382,13 +382,12 @@ const AwardScreen = (userLanguage) => {
         isClosable: true,
         position: "top",
       });
-    } finally {
-      window.open(
-        "https://www.patreon.com/messages/?mode=campaign&tab=direct-messages",
-        "_blank",
-        "noopener,noreferrer"
-      );
     }
+    window.open(
+      "https://www.patreon.com/messages/?mode=campaign&tab=direct-messages",
+      "_blank",
+      "noopener,noreferrer"
+    );
   };
 
   return (
@@ -435,7 +434,7 @@ const AwardScreen = (userLanguage) => {
           boxShadow="0.5px 0.5px 1px black"
           onClick={() => navigate("/q/0")}
         >
-          Bye.
+          Return to app
         </Button>
         {/* <Text fontSize={"sm"}>
           {translation[userLanguage.userLanguage]["congrats.connect"]}
@@ -467,24 +466,7 @@ const AwardScreen = (userLanguage) => {
                 ].replace("{date}", promotionDeadline.toLocaleDateString())}
               </Text>
             )}
-            <Text fontSize="xs" mt={3} color="gray.600">
-              {
-                translation[userLanguage.userLanguage][
-                  "award.refundMessageLabel"
-                ]
-              }
-            </Text>
-            <Box
-              mt={1}
-              p={3}
-              borderRadius="md"
-              border="1px solid rgba(0,0,0,0.12)"
-              backgroundColor="#fff9f5"
-              fontSize="sm"
-              color="gray.700"
-            >
-              {refundMessage}
-            </Box>
+
             <Button
               leftIcon={<PiPatreonLogoFill />}
               mt={4}
