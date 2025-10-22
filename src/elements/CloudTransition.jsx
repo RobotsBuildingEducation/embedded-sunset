@@ -158,7 +158,7 @@ const CloudTransition = ({
 
     const totalMs = promotionDeadline.getTime() - promotionStartTime.getTime();
     if (totalMs <= 0) {
-      setPromotionProgress(100);
+      setPromotionProgress(0);
       setPromotionTimeLeft("0d 00:00:00");
       setPromotionExpired(true);
       return;
@@ -168,11 +168,13 @@ const CloudTransition = ({
 
     const updateTime = () => {
       const now = new Date();
-      const elapsed = now.getTime() - promotionStartTime.getTime();
       const remaining = promotionDeadline.getTime() - now.getTime();
       const clampedRemaining = Math.max(remaining, 0);
-      const pct = Math.min(Math.max((elapsed / totalMs) * 100, 0), 100);
-      setPromotionProgress(pct);
+      const remainingPct = Math.min(
+        Math.max((clampedRemaining / totalMs) * 100, 0),
+        100
+      );
+      setPromotionProgress(remainingPct);
 
       const days = Math.floor(
         clampedRemaining / (1000 * 60 * 60 * 24)
