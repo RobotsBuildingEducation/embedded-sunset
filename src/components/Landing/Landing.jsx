@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   VStack,
@@ -9,36 +9,22 @@ import {
   FormControl,
   FormLabel,
   Switch,
-  useToast,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { CloudCanvas } from "../../elements/SunsetCanvas";
 import { translation } from "../../utility/translation";
-import { createUser, updateUserData } from "../../utility/nosql";
 import { PiClockCountdownDuotone } from "react-icons/pi";
 
 export const Landing = ({
   userLanguage,
-  setUserLanguage,
-  generateNostrKeys,
-  setIsSignedIn,
   setView,
   televise,
   handleToggle,
   userName,
   setUserName,
   isCreatingAccount,
-  setIsCreatingAccount,
   loadingMessage,
-  setLoadingMessage,
 }) => {
-  const [userName, setUserName] = useState("");
-  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
-  const [loadingMessage, setLoadingMessage] = useState(
-    "createAccount.isCreating"
-  );
-
-  const toast = useToast();
   const navigate = useNavigate();
 
   return (

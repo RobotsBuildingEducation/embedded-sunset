@@ -4526,6 +4526,39 @@ const Home = ({
               <Text fontSize="sm" mt="-5" width="80%">
                 {translation[userLanguage]["landing.introduction"]}
               </Text>
+              <Box
+                width="100%"
+                bg="white"
+                py={4}
+                px={5}
+                borderRadius="24px"
+                boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+              >
+                <VStack alignItems="flex-start" spacing={2}>
+                  <HStack spacing={2} alignItems="center">
+                    <Box
+                      borderRadius="full"
+                      bg="pink.100"
+                      color="pink.600"
+                      p={2}
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <PiClockCountdownDuotone />
+                    </Box>
+                    <Text fontSize="md" fontWeight="bold">
+                      {translation[userLanguage]["landing.promotion.title"]}
+                    </Text>
+                  </HStack>
+                  <Text fontSize="xs" color="gray.700">
+                    {translation[userLanguage]["landing.promotion.subtitle"]}
+                  </Text>
+                  <Text fontSize="xs" color="gray.600">
+                    {translation[userLanguage]["landing.promotion.detail"]}
+                  </Text>
+                </VStack>
+              </Box>
             </VStack>
 
             <Text fontSize="md" maxWidth="600px" pt={0} mb={0}>
