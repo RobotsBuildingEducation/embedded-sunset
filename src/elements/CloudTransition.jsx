@@ -10,6 +10,8 @@ import {
   subscribeToQuestionsAnswered,
 } from "../utility/nosql";
 import { translation } from "../utility/translation";
+import { database } from "../database/firebaseResources";
+import { doc, onSnapshot } from "firebase/firestore";
 
 const MotionBox = motion(Box);
 
@@ -114,10 +116,85 @@ const CloudTransition = ({
     100
   );
 
+  const [promotionStartTime, setPromotionStartTime] = useState(null);
+  const [promotionDeadline, setPromotionDeadline] = useState(null);
+  const [promotionProgress, setPromotionProgress] = useState(null);
+  const [promotionTimeLeft, setPromotionTimeLeft] = useState("");
+  const [promotionExpired, setPromotionExpired] = useState(false);
+
   useEffect(() => {
     const unsubscribe = subscribeToQuestionsAnswered(setQuestionsAnswered);
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    const npub = localStorage.getItem("local_npub");
+    if (!npub) return;
+    const userRef = doc(database, "users", npub);
+    const unsubscribe = onSnapshot(userRef, (snapshot) => {
+      if (!snapshot.exists()) {
+        setPromotionStartTime(null);
+        setPromotionDeadline(null);
+        return;
+      }
+      const data = snapshot.data();
+      setPromotionStartTime(
+        data.promotionStartTime ? new Date(data.promotionStartTime) : null
+      );
+      setPromotionDeadline(
+        data.promotionDeadline ? new Date(data.promotionDeadline) : null
+      );
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!promotionStartTime || !promotionDeadline) {
+      setPromotionProgress(null);
+      setPromotionTimeLeft("");
+      setPromotionExpired(false);
+      return;
+    }
+
+    const totalMs = promotionDeadline.getTime() - promotionStartTime.getTime();
+    if (totalMs <= 0) {
+      setPromotionProgress(100);
+      setPromotionTimeLeft("0d 00:00:00");
+      setPromotionExpired(true);
+      return;
+    }
+
+    const formatUnit = (value) => String(value).padStart(2, "0");
+
+    const updateTime = () => {
+      const now = new Date();
+      const elapsed = now.getTime() - promotionStartTime.getTime();
+      const remaining = promotionDeadline.getTime() - now.getTime();
+      const clampedRemaining = Math.max(remaining, 0);
+      const pct = Math.min(Math.max((elapsed / totalMs) * 100, 0), 100);
+      setPromotionProgress(pct);
+
+      const days = Math.floor(
+        clampedRemaining / (1000 * 60 * 60 * 24)
+      );
+      const hours = Math.floor(
+        (clampedRemaining / (1000 * 60 * 60)) % 24
+      );
+      const minutes = Math.floor((clampedRemaining / (1000 * 60)) % 60);
+      const seconds = Math.floor((clampedRemaining / 1000) % 60);
+
+      setPromotionTimeLeft(
+        `${days}d ${formatUnit(hours)}:${formatUnit(minutes)}:${formatUnit(
+          seconds
+        )}`
+      );
+      setPromotionExpired(clampedRemaining === 0);
+    };
+
+    updateTime();
+    const timer = setInterval(updateTime, 1000);
+    return () => clearInterval(timer);
+  }, [promotionStartTime, promotionDeadline]);
 
   // Chapter key
   const groupKey = useMemo(() => {
@@ -411,6 +488,38 @@ const CloudTransition = ({
 
                   <br />
                   <br />
+
+                  {promotionProgress !== null && (
+                    <Box w="100%" mx="auto" mb={6}>
+                      <Text fontSize="sm" mb={1} color="purple.500">
+                        {translation[userLanguage]["promotion.timerLabel"]}
+                      </Text>
+                      <WaveBar
+                        value={promotionProgress}
+                        start="#ff8ba7"
+                        end="#ffcc70"
+                        delay={0}
+                        bg="rgba(255,255,255,0.65)"
+                        border="#ededed"
+                      />
+                      <Text
+                        fontSize="xs"
+                        mt={2}
+                        color={promotionExpired ? "red.500" : "purple.600"}
+                      >
+                        {promotionExpired
+                          ? translation[userLanguage][
+                              "promotion.timerExpired"
+                            ]
+                          : translation[userLanguage][
+                              "promotion.timerRemaining"
+                            ].replace("{time}", promotionTimeLeft)}
+                      </Text>
+                      <Text fontSize="xs" mt={1} color="gray.600">
+                        {translation[userLanguage]["promotion.timerHint"]}
+                      </Text>
+                    </Box>
+                  )}
 
                   {/* Salary bar */}
                   <Box w="100%" mx="auto" mb={6}>

@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { CloudCanvas } from "../../elements/SunsetCanvas";
 import { translation } from "../../utility/translation";
 import { createUser, updateUserData } from "../../utility/nosql";
+import { PiClockCountdownDuotone } from "react-icons/pi";
 
 export const Landing = ({
   userLanguage,
@@ -56,6 +57,41 @@ export const Landing = ({
           {translation[userLanguage]["landing.introduction"]}
         </Text>
       </VStack>
+
+      <Box
+        width="100%"
+        bg="white"
+        py={6}
+        px={6}
+        borderRadius="24px"
+        boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+        maxW="600px"
+      >
+        <VStack alignItems="flex-start" spacing={3}>
+          <HStack spacing={2} alignItems="center">
+            <Box
+              borderRadius="full"
+              bg="pink.100"
+              color="pink.600"
+              p={2}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <PiClockCountdownDuotone />
+            </Box>
+            <Text fontSize="lg" fontWeight="bold">
+              {translation[userLanguage]["landing.promotion.title"]}
+            </Text>
+          </HStack>
+          <Text fontSize="sm" color="gray.700">
+            {translation[userLanguage]["landing.promotion.subtitle"]}
+          </Text>
+          <Text fontSize="sm" color="gray.600">
+            {translation[userLanguage]["landing.promotion.detail"]}
+          </Text>
+        </VStack>
+      </Box>
 
       <Text fontSize="md">
         <b>{translation[userLanguage]["createAccount.instructions"]}</b>

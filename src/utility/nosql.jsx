@@ -14,6 +14,13 @@ import {
 } from "firebase/firestore";
 import { database } from "../database/firebaseResources";
 
+export const generatePromotionCode = () => {
+  if (typeof globalThis !== "undefined" && globalThis.crypto?.randomUUID) {
+    return globalThis.crypto.randomUUID().replace(/-/g, "").slice(0, 12);
+  }
+  return Math.random().toString(36).slice(2, 14);
+};
+
 // Update user data with timer, streak, startTime, and endTime
 export const updateUserData = async (
   userId,
@@ -53,8 +60,8 @@ export const getUserData = async (userId) => {
     const data = userDoc.data();
     return {
       ...data,
-      startTime: new Date(data.startTime), // Convert ISO strings back to Date objects
-      endTime: new Date(data.endTime),
+      startTime: data.startTime ? new Date(data.startTime) : null, // Convert ISO strings back to Date objects
+      endTime: data.endTime ? new Date(data.endTime) : null,
     };
   } else {
     return null; // Handle case where user document does not exist
@@ -64,6 +71,27 @@ export const getUserData = async (userId) => {
 // Function to create or update a user in Firestore
 export const createUser = async (npub, userName, language) => {
   const userDoc = doc(database, "users", npub);
+  const existingDoc = await getDoc(userDoc);
+  const now = new Date();
+  const promotionStart = now.toISOString();
+  const promotionDeadline = new Date(
+    now.getTime() + 30 * 24 * 60 * 60 * 1000
+  ).toISOString();
+
+  const promotionFields =
+    existingDoc.exists() && existingDoc.data().promotionStartTime
+      ? {}
+      : {
+          promotionStartTime: promotionStart,
+          promotionDeadline,
+          promotionGoalMet: false,
+          promotionCompletionTime: null,
+          promotionVerificationCode: generatePromotionCode(),
+          answeredStepIds: [],
+          answeredStepsCount: 0,
+          answeredSteps: {},
+        };
+
   await setDoc(
     userDoc,
     {
@@ -78,6 +106,7 @@ export const createUser = async (npub, userName, language) => {
       allowPosts: false,
       identity:
         "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt",
+      ...promotionFields,
     },
     { merge: true }
   ); // Merge true ensures it doesn't overwrite existing data
