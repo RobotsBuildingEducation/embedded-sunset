@@ -110,7 +110,7 @@ const CloudTransition = ({
 
   const [questionsAnswered, setQuestionsAnswered] =
     useState(BASE_QUESTION_COUNT);
-  const QUESTION_GOAL = 5000;
+  const QUESTION_GOAL = 7500;
   const questionProgress = Math.min(
     (questionsAnswered / QUESTION_GOAL) * 100,
     100
@@ -158,7 +158,7 @@ const CloudTransition = ({
 
     const totalMs = promotionDeadline.getTime() - promotionStartTime.getTime();
     if (totalMs <= 0) {
-      setPromotionProgress(100);
+      setPromotionProgress(0);
       setPromotionTimeLeft("0d 00:00:00");
       setPromotionExpired(true);
       return;
@@ -168,18 +168,16 @@ const CloudTransition = ({
 
     const updateTime = () => {
       const now = new Date();
-      const elapsed = now.getTime() - promotionStartTime.getTime();
       const remaining = promotionDeadline.getTime() - now.getTime();
       const clampedRemaining = Math.max(remaining, 0);
-      const pct = Math.min(Math.max((elapsed / totalMs) * 100, 0), 100);
-      setPromotionProgress(pct);
+      const remainingPct = Math.min(
+        Math.max((clampedRemaining / totalMs) * 100, 0),
+        100
+      );
+      setPromotionProgress(remainingPct);
 
-      const days = Math.floor(
-        clampedRemaining / (1000 * 60 * 60 * 24)
-      );
-      const hours = Math.floor(
-        (clampedRemaining / (1000 * 60 * 60)) % 24
-      );
+      const days = Math.floor(clampedRemaining / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((clampedRemaining / (1000 * 60 * 60)) % 24);
       const minutes = Math.floor((clampedRemaining / (1000 * 60)) % 60);
       const seconds = Math.floor((clampedRemaining / 1000) % 60);
 
@@ -421,7 +419,7 @@ const CloudTransition = ({
           overflowY="auto"
           display="flex"
           flexDirection="column"
-          justifyContent={children ? "flex-start" : "center"}
+          // justifyContent={children ? "flex-start" : "center"}
           alignItems="center"
         >
           <Box
@@ -450,36 +448,6 @@ const CloudTransition = ({
               w="90%"
               maxW="420px"
             >
-              {promotionProgress !== null && (
-                <Box w="100%" mx="auto" mb={6}>
-                  <Text fontSize="sm" mb={1} color="purple.500">
-                    {translation[userLanguage]["promotion.timerLabel"]}
-                  </Text>
-                  <WaveBar
-                    value={promotionProgress}
-                    start="#ff8ba7"
-                    end="#ffcc70"
-                    delay={0}
-                    bg="rgba(255,255,255,0.65)"
-                    border="#ededed"
-                  />
-                  <Text
-                    fontSize="xs"
-                    mt={2}
-                    color={promotionExpired ? "red.500" : "purple.600"}
-                  >
-                    {promotionExpired
-                      ? translation[userLanguage]["promotion.timerExpired"]
-                      : translation[userLanguage][
-                          "promotion.timerRemaining"
-                        ].replace("{time}", promotionTimeLeft)}
-                  </Text>
-                  <Text fontSize="xs" mt={1} color="gray.600">
-                    {translation[userLanguage]["promotion.timerHint"]}
-                  </Text>
-                </Box>
-              )}
-
               {message && (
                 <Text
                   as={motion.p}
@@ -517,7 +485,7 @@ const CloudTransition = ({
                   )}
 
                   {/* Salary bar */}
-                  <Box w="100%" mx="auto" mb={6}>
+                  <Box w="100%" mx="auto" mb={6} mt={6}>
                     <Text fontSize="sm" mb={1} color="purple.500">
                       Salary
                     </Text>
@@ -576,10 +544,10 @@ const CloudTransition = ({
                     />
                   </Box>
 
-                  <Box w="100%" mx="auto">
+                  <Box w="100%" mx="auto" mb={6}>
                     <Text fontSize="sm" mb={1} color="purple.500">
                       {translation[userLanguage]["communityGoal"]}
-                      {questionsAnswered}/5000{" "}
+                      {questionsAnswered}/7500{" "}
                       {translation[userLanguage]["questions"]}
                     </Text>
                     <WaveBar
@@ -591,6 +559,28 @@ const CloudTransition = ({
                       border="#ededed"
                     />
                   </Box>
+
+                  {promotionProgress !== null && (
+                    <Box w="50%" mx="auto" mb={0}>
+                      <Text
+                        fontSize="xs"
+                        mt={2}
+                        color={promotionExpired ? "red.500" : "purple.600"}
+                      >
+                        {promotionExpired
+                          ? translation[userLanguage]["promotion.timerExpired"]
+                          : "Refund time left: " + promotionTimeLeft}
+                      </Text>
+                      <WaveBar
+                        value={promotionProgress}
+                        start="#ff8ba7"
+                        end="#ffcc70"
+                        delay={0}
+                        bg="rgba(255,255,255,0.65)"
+                        border="#ededed"
+                      />
+                    </Box>
+                  )}
 
                   <br />
                   <br />

@@ -18,6 +18,7 @@ export let translation = {
     communityGoal: "Community goal: ",
     questions: "questions",
     "promotion.timerLabel": "30-day refund countdown",
+    "promotion.timerDescription": "RO.B.E countdown progress",
     "promotion.timerRemaining": "Time left: {time}",
     "promotion.timerExpired": "The refund countdown has expired.",
     "promotion.timerHint":
@@ -1649,6 +1650,7 @@ reverse(head) {
     communityGoal: "Meta comunitaria: ",
     questions: "preguntas",
     "promotion.timerLabel": "Cuenta regresiva de reembolso de 30 días",
+    "promotion.timerDescription": "Progreso de la cuenta regresiva RO.B.E",
     "promotion.timerRemaining": "Tiempo restante: {time}",
     "promotion.timerExpired": "La cuenta regresiva de reembolso ha expirado.",
     "promotion.timerHint":
@@ -3232,6 +3234,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     communityGoal: "Community goal: ",
     questions: "questions",
     "promotion.timerLabel": "30-day refund countdown",
+    "promotion.timerDescription": "RO.B.E countdown progress",
     "promotion.timerRemaining": "Time left: {time}",
     "promotion.timerExpired": "The refund countdown has expired.",
     "promotion.timerHint":
@@ -4844,6 +4847,7 @@ reverse(head) {
     communityGoal: "Community goal: ",
     questions: "questions",
     "promotion.timerLabel": "30-day refund countdown",
+    "promotion.timerDescription": "RO.B.E countdown progress",
     "promotion.timerRemaining": "Time left: {time}",
     "promotion.timerExpired": "The refund countdown has expired.",
     "promotion.timerHint":
@@ -6458,6 +6462,7 @@ reverse(head) {
     communityGoal: "Community goal: ",
     questions: "questions",
     "promotion.timerLabel": "30-day refund countdown",
+    "promotion.timerDescription": "RO.B.E countdown progress",
     "promotion.timerRemaining": "Time left: {time}",
     "promotion.timerExpired": "The refund countdown has expired.",
     "promotion.timerHint":
@@ -8072,6 +8077,7 @@ reverse(head) {
     communityGoal: "Community goal: ",
     questions: "questions",
     "promotion.timerLabel": "30-day refund countdown",
+    "promotion.timerDescription": "RO.B.E countdown progress",
     "promotion.timerRemaining": "Time left: {time}",
     "promotion.timerExpired": "The refund countdown has expired.",
     "promotion.timerHint":
