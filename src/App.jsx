@@ -4317,28 +4317,29 @@ const Home = ({
       const npub = localStorage.getItem("local_npub");
       const userName = localStorage.getItem("displayName");
 
-      // Check if user exists in Firestore and create if necessary
-      const userDoc = doc(database, "users", npub);
-
-      const userSnapshot = await getDoc(userDoc).catch((error) => {
+      try {
+        await createUser(npub, userName, userLanguage);
+      } catch (error) {
+        console.error("Error ensuring user record exists", error);
         setIsSigningIn(false);
         setErrorMessage(JSON.stringify(error));
+        return;
+      }
+
+      const defaultInterval = 2880;
+      const existingUserData = await getUserData(npub).catch((error) => {
+        console.error("Failed to load user data after sign in", error);
+        return null;
       });
 
-      if (!userSnapshot) {
-        try {
-          await createUser(npub, userName, userLanguage);
-
-          //direct to onboarding, otherwise go to their current location
-        } catch (error) {
-          console.log("error creating user", error);
-        }
-        const defaultInterval = 2880;
-
+      if (
+        !existingUserData?.startTime ||
+        !existingUserData?.endTime ||
+        !existingUserData?.timer
+      ) {
         const currentTime = new Date();
-        const endTime = new Date(
-          currentTime.getTime() + defaultInterval * 60000
-        );
+        const endTime = new Date(currentTime.getTime() + defaultInterval * 60000);
+
         try {
           await updateUserData(
             npub,

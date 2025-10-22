@@ -71,26 +71,6 @@ export const getUserData = async (userId) => {
 // Function to create or update a user in Firestore
 export const createUser = async (npub, userName, language) => {
   const userDoc = doc(database, "users", npub);
-  const existingDoc = await getDoc(userDoc);
-  const now = new Date();
-  const promotionStart = now.toISOString();
-  const promotionDeadline = new Date(
-    now.getTime() + 30 * 24 * 60 * 60 * 1000
-  ).toISOString();
-
-  const promotionFields =
-    existingDoc.exists() && existingDoc.data().promotionStartTime
-      ? {}
-      : {
-          promotionStartTime: promotionStart,
-          promotionDeadline,
-          promotionGoalMet: false,
-          promotionCompletionTime: null,
-          promotionVerificationCode: generatePromotionCode(),
-          answeredStepIds: [],
-          answeredStepsCount: 0,
-          answeredSteps: {},
-        };
 
   await setDoc(
     userDoc,
@@ -106,10 +86,52 @@ export const createUser = async (npub, userName, language) => {
       allowPosts: false,
       identity:
         "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt",
-      ...promotionFields,
     },
     { merge: true }
   ); // Merge true ensures it doesn't overwrite existing data
+
+  const existingDoc = await getDoc(userDoc);
+  if (!existingDoc.exists()) {
+    return null;
+  }
+
+  const data = existingDoc.data() || {};
+  const now = new Date();
+  const promotionStart = now.toISOString();
+  const promotionDeadline = new Date(
+    now.getTime() + 30 * 24 * 60 * 60 * 1000
+  ).toISOString();
+
+  const updates = {};
+
+  if (!data.promotionStartTime || !data.promotionDeadline) {
+    updates.promotionStartTime = promotionStart;
+    updates.promotionDeadline = promotionDeadline;
+    updates.promotionGoalMet = false;
+    updates.promotionCompletionTime = null;
+  }
+
+  if (!data.promotionVerificationCode) {
+    updates.promotionVerificationCode = generatePromotionCode();
+  }
+
+  if (!Array.isArray(data.answeredStepIds)) {
+    updates.answeredStepIds = [];
+  }
+
+  if (typeof data.answeredStepsCount !== "number") {
+    updates.answeredStepsCount = 0;
+  }
+
+  if (!data.answeredSteps || typeof data.answeredSteps !== "object") {
+    updates.answeredSteps = {};
+  }
+
+  if (Object.keys(updates).length > 0) {
+    await updateDoc(userDoc, updates);
+  }
+
+  return { ...data, ...updates };
 };
 
 // Function to increment the step count for a user
