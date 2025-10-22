@@ -457,6 +457,16 @@ const CloudTransition = ({
                   <Text fontSize="sm" mb={1} color="purple.500">
                     {translation[userLanguage]["promotion.timerLabel"]}
                   </Text>
+                  <Text
+                    fontSize="xs"
+                    mb={2}
+                    color="purple.400"
+                    fontWeight="semibold"
+                    textTransform="uppercase"
+                    letterSpacing="0.08em"
+                  >
+                    {translation[userLanguage]["promotion.timerDescription"]}
+                  </Text>
                   <WaveBar
                     value={promotionProgress}
                     start="#ff8ba7"
