@@ -87,7 +87,7 @@ export let translation = {
     "modal.selfPace.weekPlan": "Set up 1 week plan",
     "modal.selfPace.monthPlan": "Set up 1 month plan",
     "modal.dailyGoal.estimate":
-      "At this pace, you’ll finish all 90 questions in about {days} day{plural}.",
+      "At this pace, you’ll finish all questions in about {days} day{plural}.",
     "modal.dailyGoal.estimatedDateLabel": "Estimated completion date:",
 
     "app.terminal.placeholder": "Enter your answer here",
@@ -1738,7 +1738,7 @@ reverse(head) {
     "modal.selfPace.monthPlan": "Configurar plan de 1 mes",
     "app.terminal.placeholder": "Escribe tu respuesta aquí",
     "modal.dailyGoal.estimate":
-      "A este ritmo, terminarás las 90 preguntas en aproximadamente {days} día{plural}.",
+      "A este ritmo, terminarás las preguntas en aproximadamente {days} día{plural}.",
     "modal.dailyGoal.estimatedDateLabel": "Fecha estimada de finalización:",
 
     "badBrowser.install":
@@ -2740,13 +2740,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
       "Tu dirección de Lightning ha sido copiada.",
     "landing.welcome": "Sunset",
     "landing.introduction": (
-      <div>
-        Crea becas a con el aprendizaje.
-        <br />
-        <br />
-        Usa asistencia inteligente para aprender a programar y construir tus
-        ideas.
-      </div>
+      <div>Usa la IA para aprender a programar mejor y más rápido.</div>
     ),
     "landing.promotion.title":
       "Termina todas las preguntas en 30 días y te reembolsaremos.",
@@ -3220,7 +3214,8 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     congratulations: "¡Felicidades!",
     "congrats.message":
       "Has completado el cuestionario. Deberías estar orgulloso porque la mayoría de las personas no llegan tan lejos. Eres genuinamente excepcional. ¡Bien hecho!",
-    "award.refundCongrats": "¡Felicitaciones por completar el curso en menos de un mes!",
+    "award.refundCongrats":
+      "¡Felicitaciones por completar el curso en menos de un mes!",
     "award.refundInstructions":
       "Haz clic abajo para contactar al propietario. Copiaremos un mensaje para que lo pegues en Patreon y solicites tu reembolso.",
     "award.refundDeadline": "Fecha límite: {date}",
@@ -3318,7 +3313,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "modal.selfPace.weekPlan": "Set up 1 week plan",
     "modal.selfPace.monthPlan": "Set up 1 month plan",
     "modal.dailyGoal.estimate":
-      "At this pace, you’ll finish all 90 questions in about {days} day{plural}.",
+      "At this pace, you’ll finish all questions in about {days} day{plural}.",
     "modal.dailyGoal.estimatedDateLabel": "Estimated completion date:",
 
     "app.terminal.placeholder": "Enter your answer here",
@@ -4932,7 +4927,7 @@ reverse(head) {
     "modal.selfPace.weekPlan": "Set up 1 week plan",
     "modal.selfPace.monthPlan": "Set up 1 month plan",
     "modal.dailyGoal.estimate":
-      "At this pace, you’ll finish all 90 questions in about {days} day{plural}.",
+      "At this pace, you’ll finish all questions in about {days} day{plural}.",
     "modal.dailyGoal.estimatedDateLabel": "Estimated completion date:",
 
     "app.terminal.placeholder": "Enter your answer here",
@@ -6546,7 +6541,7 @@ reverse(head) {
     "modal.selfPace.weekPlan": "Set up 1 week plan",
     "modal.selfPace.monthPlan": "Set up 1 month plan",
     "modal.dailyGoal.estimate":
-      "At this pace, you’ll finish all 90 questions in about {days} day{plural}.",
+      "At this pace, you’ll finish all questions in about {days} day{plural}.",
     "modal.dailyGoal.estimatedDateLabel": "Estimated completion date:",
 
     "app.terminal.placeholder": "Enter your answer here",
@@ -8159,7 +8154,7 @@ reverse(head) {
     "modal.selfPace.weekPlan": "Set up 1 week plan",
     "modal.selfPace.monthPlan": "Set up 1 month plan",
     "modal.dailyGoal.estimate":
-      "At this pace, you’ll finish all 90 questions in about {days} day{plural}.",
+      "At this pace, you’ll finish all questions in about {days} day{plural}.",
     "modal.dailyGoal.estimatedDateLabel": "Estimated completion date:",
 
     "app.terminal.placeholder": "Enter your answer here",

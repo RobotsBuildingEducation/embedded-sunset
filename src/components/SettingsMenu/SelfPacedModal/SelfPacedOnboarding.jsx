@@ -256,7 +256,7 @@ const SelfPacedOnboarding = ({
 
   const setPresetGoal = (event, goalType) => {
     if (goalType === "week") {
-      setDailyGoals(12);
+      setDailyGoals(16);
       setInterval(1440);
     } else {
       //month

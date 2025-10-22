@@ -326,7 +326,8 @@ const AwardScreen = (userLanguage) => {
       }
 
       const totalQuestions = steps[userLanguage.userLanguage]?.length || 0;
-      const answeredCount = data.answeredStepsCount ??
+      const answeredCount =
+        data.answeredStepsCount ??
         (Array.isArray(data.answeredStepIds) ? data.answeredStepIds.length : 0);
       const completionTime = data.promotionCompletionTime
         ? new Date(data.promotionCompletionTime)
@@ -336,7 +337,8 @@ const AwardScreen = (userLanguage) => {
         : null;
       setPromotionDeadline(deadline);
 
-      const goalMet = Boolean(data.promotionGoalMet) ||
+      const goalMet =
+        Boolean(data.promotionGoalMet) ||
         (completionTime && deadline ? completionTime <= deadline : false);
 
       const eligible =
@@ -364,8 +366,7 @@ const AwardScreen = (userLanguage) => {
         await navigator.clipboard.writeText(messageToCopy);
         toast({
           status: "success",
-          title:
-            translation[userLanguage.userLanguage]["award.refundCopied"],
+          title: translation[userLanguage.userLanguage]["award.refundCopied"],
           duration: 2500,
           isClosable: true,
           position: "top",
@@ -376,8 +377,7 @@ const AwardScreen = (userLanguage) => {
     } catch (error) {
       toast({
         status: "error",
-        title:
-          translation[userLanguage.userLanguage]["award.refundCopyError"],
+        title: translation[userLanguage.userLanguage]["award.refundCopyError"],
         duration: 2500,
         isClosable: true,
         position: "top",
@@ -462,10 +462,9 @@ const AwardScreen = (userLanguage) => {
             </Text>
             {promotionDeadline && (
               <Text fontSize="xs" mt={2} color="gray.600">
-                {translation[userLanguage.userLanguage]["award.refundDeadline"].replace(
-                  "{date}",
-                  promotionDeadline.toLocaleDateString()
-                )}
+                {translation[userLanguage.userLanguage][
+                  "award.refundDeadline"
+                ].replace("{date}", promotionDeadline.toLocaleDateString())}
               </Text>
             )}
             <Text fontSize="xs" mt={3} color="gray.600">
@@ -2379,7 +2378,8 @@ const Step = ({
         }
 
         const totalQuestions = steps[userLanguage]?.length || 0;
-        const answeredCount = userData.answeredStepsCount ??
+        const answeredCount =
+          userData.answeredStepsCount ??
           (Array.isArray(userData.answeredStepIds)
             ? userData.answeredStepIds.length
             : 0);
@@ -2396,8 +2396,8 @@ const Step = ({
           const deadlineSource = userData.promotionDeadline
             ? new Date(userData.promotionDeadline)
             : updates.promotionDeadline
-            ? new Date(updates.promotionDeadline)
-            : null;
+              ? new Date(updates.promotionDeadline)
+              : null;
           if (deadlineSource) {
             updates.promotionGoalMet = currentTime <= deadlineSource;
           } else {
@@ -4338,7 +4338,9 @@ const Home = ({
         !existingUserData?.timer
       ) {
         const currentTime = new Date();
-        const endTime = new Date(currentTime.getTime() + defaultInterval * 60000);
+        const endTime = new Date(
+          currentTime.getTime() + defaultInterval * 60000
+        );
 
         try {
           await updateUserData(
@@ -4499,7 +4501,7 @@ const Home = ({
     >
       {view === "buttons" && (
         <>
-          <VStack spacing={4} height="90vh">
+          <VStack spacing={4} height="85vh">
             <VStack spacing={4} width="95%" maxWidth="600px" mb={4}>
               <HStack spacing={2} alignItems="center" pt={8}>
                 <CloudCanvas />
@@ -4527,39 +4529,6 @@ const Home = ({
               <Text fontSize="sm" mt="-5" width="80%">
                 {translation[userLanguage]["landing.introduction"]}
               </Text>
-              <Box
-                width="100%"
-                bg="white"
-                py={4}
-                px={5}
-                borderRadius="24px"
-                boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
-              >
-                <VStack alignItems="flex-start" spacing={2}>
-                  <HStack spacing={2} alignItems="center">
-                    <Box
-                      borderRadius="full"
-                      bg="pink.100"
-                      color="pink.600"
-                      p={2}
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <PiClockCountdownDuotone />
-                    </Box>
-                    <Text fontSize="md" fontWeight="bold">
-                      {translation[userLanguage]["landing.promotion.title"]}
-                    </Text>
-                  </HStack>
-                  <Text fontSize="xs" color="gray.700">
-                    {translation[userLanguage]["landing.promotion.subtitle"]}
-                  </Text>
-                  <Text fontSize="xs" color="gray.600">
-                    {translation[userLanguage]["landing.promotion.detail"]}
-                  </Text>
-                </VStack>
-              </Box>
             </VStack>
 
             <Text fontSize="md" maxWidth="600px" pt={0} mb={0}>
@@ -4634,6 +4603,42 @@ const Home = ({
               </FormControl>
             </VStack>
           </VStack>
+
+          <Box
+            width="100%"
+            bg="white"
+            py={4}
+            px={5}
+            boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+            display={"flex"}
+            justifyContent={"center"}
+            p={12}
+          >
+            <VStack alignItems="center" spacing={2} textAlign={"center"}>
+              <HStack spacing={2} alignItems="center">
+                <Box
+                  borderRadius="full"
+                  bg="pink.100"
+                  color="pink.600"
+                  p={2}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <PiClockCountdownDuotone />
+                </Box>
+                <Text fontSize="md" fontWeight="bold">
+                  {translation[userLanguage]["landing.promotion.title"]}
+                </Text>
+              </HStack>
+              <Text fontSize="xs" color="gray.700" textAlign={"center"}>
+                {translation[userLanguage]["landing.promotion.subtitle"]}
+              </Text>
+              <Text fontSize="xs" color="gray.600" textAlign={"center"}>
+                {translation[userLanguage]["landing.promotion.detail"]}
+              </Text>
+            </VStack>
+          </Box>
           {/* "https://res.cloudinary.com/dtkeyccga/image/upload/v1755215290/Untitled_800_x_600_px_1_dmtcwn.gif" */}
 
           <Box as="section" scrollSnapAlign="start" bg="#474d7e">
