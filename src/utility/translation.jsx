@@ -17,6 +17,11 @@ export let translation = {
   en: {
     communityGoal: "Community goal: ",
     questions: "questions",
+    "promotion.timerLabel": "30-day refund countdown",
+    "promotion.timerRemaining": "Time left: {time}",
+    "promotion.timerExpired": "The refund countdown has expired.",
+    "promotion.timerHint":
+      "Answer every question before the timer ends to stay eligible.",
     "landing.scholarshipsCreated": "Scholarships created",
     year: "year",
     skillValue: "Your skill value: ",
@@ -82,7 +87,7 @@ export let translation = {
     "modal.selfPace.weekPlan": "Set up 1 week plan",
     "modal.selfPace.monthPlan": "Set up 1 month plan",
     "modal.dailyGoal.estimate":
-      "At this pace, you’ll finish all 90 questions in about {days} day{plural}.",
+      "At this pace, you’ll finish all questions in about {days} day{plural}.",
     "modal.dailyGoal.estimatedDateLabel": "Estimated completion date:",
 
     "app.terminal.placeholder": "Enter your answer here",
@@ -917,6 +922,12 @@ reverse(head) {
         {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
       </div>
     ),
+    "landing.promotion.title":
+      "Finish every question in 30 days and we'll refund you.",
+    "landing.promotion.subtitle":
+      "Complete the full course in 30 days to unlock a refund when you reach the award page.",
+    "landing.promotion.detail":
+      "Your countdown starts automatically as soon as you create an account.",
     "landing.questionsAnswered": "Questions answered",
     "landing.button.telemetry": "Create Account",
     "landing.button.signIn": "Sign In",
@@ -1478,6 +1489,15 @@ reverse(head) {
     congratulations: "Congratulations!",
     "congrats.message":
       "You have completed the quiz. You should be proud because most people don't get this far. You are genuinely exceptional. Well done!",
+    "award.refundCongrats": "Congratulations for completing in under a month!",
+    "award.refundInstructions":
+      "Click below to contact the owner. We'll copy a message you can paste on Patreon to request your refund.",
+    "award.refundDeadline": "Deadline: {date}",
+    "award.refundMessageLabel": "Refund request message",
+    "award.refundButtonLabel": "Contact owner",
+    "award.refundCopied": "Refund request copied! Paste it into Patreon.",
+    "award.refundCopyError":
+      "Could not copy the refund request. Please copy it manually.",
     "congrats.connect": "Connect with everyone that has finished",
     advice: "My Advice",
     "advice.content": (
@@ -1628,6 +1648,11 @@ reverse(head) {
   es: {
     communityGoal: "Meta comunitaria: ",
     questions: "preguntas",
+    "promotion.timerLabel": "Cuenta regresiva de reembolso de 30 días",
+    "promotion.timerRemaining": "Tiempo restante: {time}",
+    "promotion.timerExpired": "La cuenta regresiva de reembolso ha expirado.",
+    "promotion.timerHint":
+      "Responde todas las preguntas antes de que termine el tiempo para mantener tu elegibilidad.",
     "landing.scholarshipsCreated": "Becas creadas",
     "landing.questionsAnswered": "Preguntas respondidas",
     year: "año",
@@ -1713,7 +1738,7 @@ reverse(head) {
     "modal.selfPace.monthPlan": "Configurar plan de 1 mes",
     "app.terminal.placeholder": "Escribe tu respuesta aquí",
     "modal.dailyGoal.estimate":
-      "A este ritmo, terminarás las 90 preguntas en aproximadamente {days} día{plural}.",
+      "A este ritmo, terminarás las preguntas en aproximadamente {days} día{plural}.",
     "modal.dailyGoal.estimatedDateLabel": "Fecha estimada de finalización:",
 
     "badBrowser.install":
@@ -2715,14 +2740,14 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
       "Tu dirección de Lightning ha sido copiada.",
     "landing.welcome": "Sunset",
     "landing.introduction": (
-      <div>
-        Crea becas a con el aprendizaje.
-        <br />
-        <br />
-        Usa asistencia inteligente para aprender a programar y construir tus
-        ideas.
-      </div>
+      <div>Usa la IA para aprender a programar mejor y más rápido.</div>
     ),
+    "landing.promotion.title":
+      "Termina todas las preguntas en 30 días y te reembolsaremos.",
+    "landing.promotion.subtitle":
+      "Completa el curso completo en 30 días para desbloquear un reembolso cuando llegues a la página de premios.",
+    "landing.promotion.detail":
+      "Tu cuenta regresiva comienza automáticamente en cuanto creas una cuenta.",
     "landing.questionsAnswered": "Preguntas contestadas:",
     "landing.button.telemetry": "Crear Cuenta",
     "landing.button.signIn": "Iniciar Sesión",
@@ -3189,6 +3214,16 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     congratulations: "¡Felicidades!",
     "congrats.message":
       "Has completado el cuestionario. Deberías estar orgulloso porque la mayoría de las personas no llegan tan lejos. Eres genuinamente excepcional. ¡Bien hecho!",
+    "award.refundCongrats":
+      "¡Felicitaciones por completar el curso en menos de un mes!",
+    "award.refundInstructions":
+      "Haz clic abajo para contactar al propietario. Copiaremos un mensaje para que lo pegues en Patreon y solicites tu reembolso.",
+    "award.refundDeadline": "Fecha límite: {date}",
+    "award.refundMessageLabel": "Mensaje de solicitud de reembolso",
+    "award.refundButtonLabel": "Contactar al propietario",
+    "award.refundCopied": "¡Solicitud de reembolso copiada! Pégala en Patreon.",
+    "award.refundCopyError":
+      "No se pudo copiar la solicitud de reembolso. Copia el mensaje manualmente.",
     "congrats.connect": "Conéctate con todos los que han terminado",
 
     "language.compsci.english": "Ciencias de la Computación (Python)",
@@ -3196,6 +3231,11 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
   "py-en": {
     communityGoal: "Community goal: ",
     questions: "questions",
+    "promotion.timerLabel": "30-day refund countdown",
+    "promotion.timerRemaining": "Time left: {time}",
+    "promotion.timerExpired": "The refund countdown has expired.",
+    "promotion.timerHint":
+      "Answer every question before the timer ends to stay eligible.",
     "landing.scholarshipsCreated": "Scholarships created",
     "landing.questionsAnswered": "Questions answered",
     year: "year",
@@ -3273,7 +3313,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "modal.selfPace.weekPlan": "Set up 1 week plan",
     "modal.selfPace.monthPlan": "Set up 1 month plan",
     "modal.dailyGoal.estimate":
-      "At this pace, you’ll finish all 90 questions in about {days} day{plural}.",
+      "At this pace, you’ll finish all questions in about {days} day{plural}.",
     "modal.dailyGoal.estimatedDateLabel": "Estimated completion date:",
 
     "app.terminal.placeholder": "Enter your answer here",
@@ -4094,6 +4134,12 @@ reverse(head) {
         {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
       </div>
     ),
+    "landing.promotion.title":
+      "Finish every question in 30 days and we'll refund you.",
+    "landing.promotion.subtitle":
+      "Complete the full course in 30 days to unlock a refund when you reach the award page.",
+    "landing.promotion.detail":
+      "Your countdown starts automatically as soon as you create an account.",
     "landing.button.telemetry": "Create Account",
     "landing.button.signIn": "Sign In",
     "createAccount.instructions": "All we need to start is a user name.",
@@ -4797,6 +4843,11 @@ reverse(head) {
   "swift-en": {
     communityGoal: "Community goal: ",
     questions: "questions",
+    "promotion.timerLabel": "30-day refund countdown",
+    "promotion.timerRemaining": "Time left: {time}",
+    "promotion.timerExpired": "The refund countdown has expired.",
+    "promotion.timerHint":
+      "Answer every question before the timer ends to stay eligible.",
     "landing.scholarshipsCreated": "Scholarships created",
     "landing.questionsAnswered": "Questions answered",
     year: "year",
@@ -4876,7 +4927,7 @@ reverse(head) {
     "modal.selfPace.weekPlan": "Set up 1 week plan",
     "modal.selfPace.monthPlan": "Set up 1 month plan",
     "modal.dailyGoal.estimate":
-      "At this pace, you’ll finish all 90 questions in about {days} day{plural}.",
+      "At this pace, you’ll finish all questions in about {days} day{plural}.",
     "modal.dailyGoal.estimatedDateLabel": "Estimated completion date:",
 
     "app.terminal.placeholder": "Enter your answer here",
@@ -5697,6 +5748,12 @@ reverse(head) {
         {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
       </div>
     ),
+    "landing.promotion.title":
+      "Finish every question in 30 days and we'll refund you.",
+    "landing.promotion.subtitle":
+      "Complete the full course in 30 days to unlock a refund when you reach the award page.",
+    "landing.promotion.detail":
+      "Your countdown starts automatically as soon as you create an account.",
     "landing.button.telemetry": "Create Account",
     "landing.button.signIn": "Sign In",
     "createAccount.instructions": "All we need to start is a user name.",
@@ -6400,6 +6457,11 @@ reverse(head) {
   "android-en": {
     communityGoal: "Community goal: ",
     questions: "questions",
+    "promotion.timerLabel": "30-day refund countdown",
+    "promotion.timerRemaining": "Time left: {time}",
+    "promotion.timerExpired": "The refund countdown has expired.",
+    "promotion.timerHint":
+      "Answer every question before the timer ends to stay eligible.",
     "landing.scholarshipsCreated": "Scholarships created",
     "landing.questionsAnswered": "Questions answered",
     year: "year",
@@ -6479,7 +6541,7 @@ reverse(head) {
     "modal.selfPace.weekPlan": "Set up 1 week plan",
     "modal.selfPace.monthPlan": "Set up 1 month plan",
     "modal.dailyGoal.estimate":
-      "At this pace, you’ll finish all 90 questions in about {days} day{plural}.",
+      "At this pace, you’ll finish all questions in about {days} day{plural}.",
     "modal.dailyGoal.estimatedDateLabel": "Estimated completion date:",
 
     "app.terminal.placeholder": "Enter your answer here",
@@ -7300,6 +7362,12 @@ reverse(head) {
         {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
       </div>
     ),
+    "landing.promotion.title":
+      "Finish every question in 30 days and we'll refund you.",
+    "landing.promotion.subtitle":
+      "Complete the full course in 30 days to unlock a refund when you reach the award page.",
+    "landing.promotion.detail":
+      "Your countdown starts automatically as soon as you create an account.",
     "landing.button.telemetry": "Create Account",
     "landing.button.signIn": "Sign In",
     "createAccount.instructions": "All we need to start is a user name.",
@@ -8003,6 +8071,11 @@ reverse(head) {
   "compsci-en": {
     communityGoal: "Community goal: ",
     questions: "questions",
+    "promotion.timerLabel": "30-day refund countdown",
+    "promotion.timerRemaining": "Time left: {time}",
+    "promotion.timerExpired": "The refund countdown has expired.",
+    "promotion.timerHint":
+      "Answer every question before the timer ends to stay eligible.",
     "landing.scholarshipsCreated": "Scholarships created",
     "landing.questionsAnswered": "Questions answered",
     year: "year",
@@ -8081,7 +8154,7 @@ reverse(head) {
     "modal.selfPace.weekPlan": "Set up 1 week plan",
     "modal.selfPace.monthPlan": "Set up 1 month plan",
     "modal.dailyGoal.estimate":
-      "At this pace, you’ll finish all 90 questions in about {days} day{plural}.",
+      "At this pace, you’ll finish all questions in about {days} day{plural}.",
     "modal.dailyGoal.estimatedDateLabel": "Estimated completion date:",
 
     "app.terminal.placeholder": "Enter your answer here",
@@ -8901,6 +8974,12 @@ reverse(head) {
         Use AI to learn how to code better and faster than any other platform.
       </div>
     ),
+    "landing.promotion.title":
+      "Finish every question in 30 days and we'll refund you.",
+    "landing.promotion.subtitle":
+      "Complete the full course in 30 days to unlock a refund when you reach the award page.",
+    "landing.promotion.detail":
+      "Your countdown starts automatically as soon as you create an account.",
     "landing.button.telemetry": "Create Account",
     "landing.button.signIn": "Sign In",
     "createAccount.instructions": "All we need to start is a user name.",

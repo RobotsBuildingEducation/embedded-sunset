@@ -14,6 +14,13 @@ import {
 } from "firebase/firestore";
 import { database } from "../database/firebaseResources";
 
+export const generatePromotionCode = () => {
+  if (typeof globalThis !== "undefined" && globalThis.crypto?.randomUUID) {
+    return globalThis.crypto.randomUUID().replace(/-/g, "").slice(0, 12);
+  }
+  return Math.random().toString(36).slice(2, 14);
+};
+
 // Update user data with timer, streak, startTime, and endTime
 export const updateUserData = async (
   userId,
@@ -53,8 +60,8 @@ export const getUserData = async (userId) => {
     const data = userDoc.data();
     return {
       ...data,
-      startTime: new Date(data.startTime), // Convert ISO strings back to Date objects
-      endTime: new Date(data.endTime),
+      startTime: data.startTime ? new Date(data.startTime) : null, // Convert ISO strings back to Date objects
+      endTime: data.endTime ? new Date(data.endTime) : null,
     };
   } else {
     return null; // Handle case where user document does not exist
@@ -64,6 +71,7 @@ export const getUserData = async (userId) => {
 // Function to create or update a user in Firestore
 export const createUser = async (npub, userName, language) => {
   const userDoc = doc(database, "users", npub);
+
   await setDoc(
     userDoc,
     {
@@ -81,6 +89,49 @@ export const createUser = async (npub, userName, language) => {
     },
     { merge: true }
   ); // Merge true ensures it doesn't overwrite existing data
+
+  const existingDoc = await getDoc(userDoc);
+  if (!existingDoc.exists()) {
+    return null;
+  }
+
+  const data = existingDoc.data() || {};
+  const now = new Date();
+  const promotionStart = now.toISOString();
+  const promotionDeadline = new Date(
+    now.getTime() + 30 * 24 * 60 * 60 * 1000
+  ).toISOString();
+
+  const updates = {};
+
+  if (!data.promotionStartTime || !data.promotionDeadline) {
+    updates.promotionStartTime = promotionStart;
+    updates.promotionDeadline = promotionDeadline;
+    updates.promotionGoalMet = false;
+    updates.promotionCompletionTime = null;
+  }
+
+  if (!data.promotionVerificationCode) {
+    updates.promotionVerificationCode = generatePromotionCode();
+  }
+
+  if (!Array.isArray(data.answeredStepIds)) {
+    updates.answeredStepIds = [];
+  }
+
+  if (typeof data.answeredStepsCount !== "number") {
+    updates.answeredStepsCount = 0;
+  }
+
+  if (!data.answeredSteps || typeof data.answeredSteps !== "object") {
+    updates.answeredSteps = {};
+  }
+
+  if (Object.keys(updates).length > 0) {
+    await updateDoc(userDoc, updates);
+  }
+
+  return { ...data, ...updates };
 };
 
 // Function to increment the step count for a user
@@ -229,6 +280,7 @@ export const fetchUsersWithToken = async () => {
 // Global question count utilities
 const questionDoc = doc(database, "analytics", "questionsAnswered");
 export const BASE_QUESTION_COUNT = 4200;
+export const COURSE_LESSON_COUNT = 112;
 
 export const subscribeToQuestionsAnswered = (callback) =>
   onSnapshot(questionDoc, (snap) => {

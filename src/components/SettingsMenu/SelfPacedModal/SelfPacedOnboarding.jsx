@@ -37,6 +37,7 @@ import "react-calendar/dist/Calendar.css";
 import "./CalendarStyles.css";
 import { FaFireAlt } from "react-icons/fa";
 import { RiSlowDownLine, RiSpeedUpLine } from "react-icons/ri";
+import { COURSE_LESSON_COUNT } from "../../../utility/nosql";
 
 // CountdownTimer now supports days along with hours:minutes:seconds and shows a progress bar.
 const CountdownTimer = ({ targetTime, initialTime, label, userLanguage }) => {
@@ -255,16 +256,18 @@ const SelfPacedOnboarding = ({
 
   const setPresetGoal = (event, goalType) => {
     if (goalType === "week") {
-      setDailyGoals(12);
+      setDailyGoals(16);
       setInterval(1440);
     } else {
       //month
-      setDailyGoals(3);
+      const dailyTarget = Math.ceil(COURSE_LESSON_COUNT / 30);
+      setDailyGoals(dailyTarget);
       setInterval(1440);
     }
   };
 
-  const estimatedDays = Math.floor(90 / dailyGoals);
+  const estimatedDays =
+    dailyGoals > 0 ? Math.ceil(COURSE_LESSON_COUNT / dailyGoals) : 0;
   const estimatedDate = new Date();
   estimatedDate.setDate(estimatedDate.getDate() + estimatedDays);
   return (

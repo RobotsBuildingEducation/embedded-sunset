@@ -76,6 +76,7 @@ import {
   incrementQuestionsAnswered,
   subscribeToQuestionsAnswered,
   BASE_QUESTION_COUNT,
+  generatePromotionCode,
 } from "./utility/nosql";
 import {
   getObjectsByGroup,
@@ -86,10 +87,12 @@ import {
 import { PrivateRoute } from "./PrivateRoute";
 import {
   addDoc,
+  arrayUnion,
   collection,
   doc,
   getDoc,
   getDocs,
+  increment,
   updateDoc,
 } from "firebase/firestore";
 import { analytics, database } from "./database/firebaseResources";
@@ -247,8 +250,12 @@ const getBoxShadow = (group) => {
 
 const AwardScreen = (userLanguage) => {
   const [documentIds, setDocumentIds] = useState([]); // State to store document IDs
+  const [isEligibleForRefund, setIsEligibleForRefund] = useState(false);
+  const [refundMessage, setRefundMessage] = useState("");
+  const [promotionDeadline, setPromotionDeadline] = useState(null);
 
   const navigate = useNavigate();
+  const toast = useToast();
 
   const handleRestart = () => {
     navigate("/q/0"); // Navigate to the first step to restart the quiz
@@ -294,6 +301,95 @@ const AwardScreen = (userLanguage) => {
 
   //   saveCompletionData();
   // }, []);
+
+  useEffect(() => {
+    const fetchPromotionDetails = async () => {
+      const npub = localStorage.getItem("local_npub");
+      if (!npub) {
+        setIsEligibleForRefund(false);
+        return;
+      }
+
+      const userRef = doc(database, "users", npub);
+      const snapshot = await getDoc(userRef);
+      if (!snapshot.exists()) {
+        setIsEligibleForRefund(false);
+        return;
+      }
+
+      let data = snapshot.data() || {};
+
+      if (!data.promotionVerificationCode) {
+        const code = generatePromotionCode();
+        await updateDoc(userRef, { promotionVerificationCode: code });
+        data = { ...data, promotionVerificationCode: code };
+      }
+
+      const totalQuestions = steps[userLanguage.userLanguage]?.length || 0;
+      const answeredCount =
+        data.answeredStepsCount ??
+        (Array.isArray(data.answeredStepIds) ? data.answeredStepIds.length : 0);
+      const completionTime = data.promotionCompletionTime
+        ? new Date(data.promotionCompletionTime)
+        : null;
+      const deadline = data.promotionDeadline
+        ? new Date(data.promotionDeadline)
+        : null;
+      setPromotionDeadline(deadline);
+
+      const goalMet =
+        Boolean(data.promotionGoalMet) ||
+        (completionTime && deadline ? completionTime <= deadline : false);
+
+      const eligible =
+        goalMet && totalQuestions > 0 && answeredCount >= totalQuestions;
+      setIsEligibleForRefund(eligible);
+
+      if (npub && data.promotionVerificationCode) {
+        setRefundMessage(
+          `Hello, i've completed the objective in 30 days and can access a refund. npub: ${npub} verification: ${data.promotionVerificationCode}`
+        );
+      } else {
+        setRefundMessage(
+          "Hello, i've completed the objective in 30 days and can access a refund."
+        );
+      }
+    };
+
+    fetchPromotionDetails();
+  }, [userLanguage.userLanguage]);
+
+  const handleContactOwner = async () => {
+    const messageToCopy = refundMessage;
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(messageToCopy);
+        toast({
+          status: "success",
+          title: translation[userLanguage.userLanguage]["award.refundCopied"],
+          duration: 2500,
+          isClosable: true,
+          position: "top",
+        });
+      } else {
+        throw new Error("Clipboard unavailable");
+      }
+    } catch (error) {
+      toast({
+        status: "error",
+        title: translation[userLanguage.userLanguage]["award.refundCopyError"],
+        duration: 2500,
+        isClosable: true,
+        position: "top",
+      });
+    } finally {
+      window.open(
+        "https://www.patreon.com/messages/?mode=campaign&tab=direct-messages",
+        "_blank",
+        "noopener,noreferrer"
+      );
+    }
+  };
 
   return (
     <Box
@@ -345,6 +441,65 @@ const AwardScreen = (userLanguage) => {
           {translation[userLanguage.userLanguage]["congrats.connect"]}
         </Text> */}
         <br />
+        {isEligibleForRefund && (
+          <Box
+            mt={6}
+            textAlign="left"
+            bg="white"
+            borderRadius="24px"
+            p={5}
+            boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+          >
+            <Text fontSize="lg" fontWeight="bold" mb={1}>
+              {translation[userLanguage.userLanguage]["award.refundCongrats"]}
+            </Text>
+            <Text fontSize="sm" color="gray.700">
+              {
+                translation[userLanguage.userLanguage][
+                  "award.refundInstructions"
+                ]
+              }
+            </Text>
+            {promotionDeadline && (
+              <Text fontSize="xs" mt={2} color="gray.600">
+                {translation[userLanguage.userLanguage][
+                  "award.refundDeadline"
+                ].replace("{date}", promotionDeadline.toLocaleDateString())}
+              </Text>
+            )}
+            <Text fontSize="xs" mt={3} color="gray.600">
+              {
+                translation[userLanguage.userLanguage][
+                  "award.refundMessageLabel"
+                ]
+              }
+            </Text>
+            <Box
+              mt={1}
+              p={3}
+              borderRadius="md"
+              border="1px solid rgba(0,0,0,0.12)"
+              backgroundColor="#fff9f5"
+              fontSize="sm"
+              color="gray.700"
+            >
+              {refundMessage}
+            </Box>
+            <Button
+              leftIcon={<PiPatreonLogoFill />}
+              mt={4}
+              colorScheme="pink"
+              variant="solid"
+              onClick={handleContactOwner}
+            >
+              {
+                translation[userLanguage.userLanguage][
+                  "award.refundButtonLabel"
+                ]
+              }
+            </Button>
+          </Box>
+        )}
         {/* <ul style={{ listStyleType: "none", padding: 0 }}>
           {documentIds.length > 0 ? (
             documentIds.map((id) => (
@@ -2185,6 +2340,78 @@ const Step = ({
       newDailyProgress,
       gc
     );
+
+    try {
+      const userDocRef = doc(database, "users", userId);
+      const userSnapshot = await getDoc(userDocRef);
+      if (userSnapshot.exists()) {
+        const userData = userSnapshot.data() || {};
+        const answeredIds = Array.isArray(userData.answeredStepIds)
+          ? userData.answeredStepIds
+          : [];
+        const hasRecordedStep = answeredIds.includes(currentStep);
+        const updates = {};
+        const nowIso = currentTime.toISOString();
+
+        if (!hasRecordedStep) {
+          updates.answeredStepIds = arrayUnion(currentStep);
+          updates.answeredStepsCount = increment(1);
+          updates[`answeredSteps.${currentStep}`] = {
+            completedAt: nowIso,
+            title: step.title || "",
+          };
+        }
+
+        if (!userData.promotionStartTime || !userData.promotionDeadline) {
+          const promotionStart = currentTime.toISOString();
+          const promotionDeadline = new Date(
+            currentTime.getTime() + 30 * 24 * 60 * 60 * 1000
+          ).toISOString();
+          updates.promotionStartTime = promotionStart;
+          updates.promotionDeadline = promotionDeadline;
+          updates.promotionGoalMet = false;
+          updates.promotionCompletionTime = null;
+        }
+
+        if (!userData.promotionVerificationCode) {
+          updates.promotionVerificationCode = generatePromotionCode();
+        }
+
+        const totalQuestions = steps[userLanguage]?.length || 0;
+        const answeredCount =
+          userData.answeredStepsCount ??
+          (Array.isArray(userData.answeredStepIds)
+            ? userData.answeredStepIds.length
+            : 0);
+        const prospectiveCount = hasRecordedStep
+          ? answeredCount
+          : answeredCount + 1;
+
+        if (
+          !hasRecordedStep &&
+          totalQuestions > 0 &&
+          prospectiveCount >= totalQuestions
+        ) {
+          updates.promotionCompletionTime = nowIso;
+          const deadlineSource = userData.promotionDeadline
+            ? new Date(userData.promotionDeadline)
+            : updates.promotionDeadline
+              ? new Date(updates.promotionDeadline)
+              : null;
+          if (deadlineSource) {
+            updates.promotionGoalMet = currentTime <= deadlineSource;
+          } else {
+            updates.promotionGoalMet = true;
+          }
+        }
+
+        if (Object.keys(updates).length > 0) {
+          await updateDoc(userDocRef, updates);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to record answered question metadata", error);
+    }
   };
 
   // Stream messages and handle feedback
@@ -4090,28 +4317,31 @@ const Home = ({
       const npub = localStorage.getItem("local_npub");
       const userName = localStorage.getItem("displayName");
 
-      // Check if user exists in Firestore and create if necessary
-      const userDoc = doc(database, "users", npub);
-
-      const userSnapshot = await getDoc(userDoc).catch((error) => {
+      try {
+        await createUser(npub, userName, userLanguage);
+      } catch (error) {
+        console.error("Error ensuring user record exists", error);
         setIsSigningIn(false);
         setErrorMessage(JSON.stringify(error));
+        return;
+      }
+
+      const defaultInterval = 2880;
+      const existingUserData = await getUserData(npub).catch((error) => {
+        console.error("Failed to load user data after sign in", error);
+        return null;
       });
 
-      if (!userSnapshot) {
-        try {
-          await createUser(npub, userName, userLanguage);
-
-          //direct to onboarding, otherwise go to their current location
-        } catch (error) {
-          console.log("error creating user", error);
-        }
-        const defaultInterval = 2880;
-
+      if (
+        !existingUserData?.startTime ||
+        !existingUserData?.endTime ||
+        !existingUserData?.timer
+      ) {
         const currentTime = new Date();
         const endTime = new Date(
           currentTime.getTime() + defaultInterval * 60000
         );
+
         try {
           await updateUserData(
             npub,
@@ -4271,7 +4501,7 @@ const Home = ({
     >
       {view === "buttons" && (
         <>
-          <VStack spacing={4} height="90vh">
+          <VStack spacing={4} height="85vh">
             <VStack spacing={4} width="95%" maxWidth="600px" mb={4}>
               <HStack spacing={2} alignItems="center" pt={8}>
                 <CloudCanvas />
@@ -4373,6 +4603,42 @@ const Home = ({
               </FormControl>
             </VStack>
           </VStack>
+
+          <Box
+            width="100%"
+            bg="white"
+            py={4}
+            px={5}
+            boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+            display={"flex"}
+            justifyContent={"center"}
+            p={12}
+          >
+            <VStack alignItems="center" spacing={2} textAlign={"center"}>
+              <HStack spacing={2} alignItems="center">
+                <Box
+                  borderRadius="full"
+                  bg="pink.100"
+                  color="pink.600"
+                  p={2}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <PiClockCountdownDuotone />
+                </Box>
+                <Text fontSize="md" fontWeight="bold">
+                  {translation[userLanguage]["landing.promotion.title"]}
+                </Text>
+              </HStack>
+              <Text fontSize="xs" color="gray.700" textAlign={"center"}>
+                {translation[userLanguage]["landing.promotion.subtitle"]}
+              </Text>
+              <Text fontSize="xs" color="gray.600" textAlign={"center"}>
+                {translation[userLanguage]["landing.promotion.detail"]}
+              </Text>
+            </VStack>
+          </Box>
           {/* "https://res.cloudinary.com/dtkeyccga/image/upload/v1755215290/Untitled_800_x_600_px_1_dmtcwn.gif" */}
 
           <Box as="section" scrollSnapAlign="start" bg="#474d7e">
