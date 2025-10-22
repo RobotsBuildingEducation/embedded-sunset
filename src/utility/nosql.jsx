@@ -280,6 +280,7 @@ export const fetchUsersWithToken = async () => {
 // Global question count utilities
 const questionDoc = doc(database, "analytics", "questionsAnswered");
 export const BASE_QUESTION_COUNT = 4200;
+export const COURSE_LESSON_COUNT = 112;
 
 export const subscribeToQuestionsAnswered = (callback) =>
   onSnapshot(questionDoc, (snap) => {

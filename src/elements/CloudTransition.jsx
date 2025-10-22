@@ -450,6 +450,36 @@ const CloudTransition = ({
               w="90%"
               maxW="420px"
             >
+              {promotionProgress !== null && (
+                <Box w="100%" mx="auto" mb={6}>
+                  <Text fontSize="sm" mb={1} color="purple.500">
+                    {translation[userLanguage]["promotion.timerLabel"]}
+                  </Text>
+                  <WaveBar
+                    value={promotionProgress}
+                    start="#ff8ba7"
+                    end="#ffcc70"
+                    delay={0}
+                    bg="rgba(255,255,255,0.65)"
+                    border="#ededed"
+                  />
+                  <Text
+                    fontSize="xs"
+                    mt={2}
+                    color={promotionExpired ? "red.500" : "purple.600"}
+                  >
+                    {promotionExpired
+                      ? translation[userLanguage]["promotion.timerExpired"]
+                      : translation[userLanguage][
+                          "promotion.timerRemaining"
+                        ].replace("{time}", promotionTimeLeft)}
+                  </Text>
+                  <Text fontSize="xs" mt={1} color="gray.600">
+                    {translation[userLanguage]["promotion.timerHint"]}
+                  </Text>
+                </Box>
+              )}
+
               {message && (
                 <Text
                   as={motion.p}
@@ -484,41 +514,6 @@ const CloudTransition = ({
                     >
                       {detail}
                     </Text>
-                  )}
-
-                  <br />
-                  <br />
-
-                  {promotionProgress !== null && (
-                    <Box w="100%" mx="auto" mb={6}>
-                      <Text fontSize="sm" mb={1} color="purple.500">
-                        {translation[userLanguage]["promotion.timerLabel"]}
-                      </Text>
-                      <WaveBar
-                        value={promotionProgress}
-                        start="#ff8ba7"
-                        end="#ffcc70"
-                        delay={0}
-                        bg="rgba(255,255,255,0.65)"
-                        border="#ededed"
-                      />
-                      <Text
-                        fontSize="xs"
-                        mt={2}
-                        color={promotionExpired ? "red.500" : "purple.600"}
-                      >
-                        {promotionExpired
-                          ? translation[userLanguage][
-                              "promotion.timerExpired"
-                            ]
-                          : translation[userLanguage][
-                              "promotion.timerRemaining"
-                            ].replace("{time}", promotionTimeLeft)}
-                      </Text>
-                      <Text fontSize="xs" mt={1} color="gray.600">
-                        {translation[userLanguage]["promotion.timerHint"]}
-                      </Text>
-                    </Box>
                   )}
 
                   {/* Salary bar */}
