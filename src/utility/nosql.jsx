@@ -70,44 +70,104 @@ export const getUserData = async (userId) => {
 
 // Function to create or update a user in Firestore
 export const createUser = async (npub, userName, language) => {
-  const userDoc = doc(database, "users", npub);
-
-  await setDoc(
-    userDoc,
-    {
-      isAdaptiveLearning: true,
-      name: userName,
-      npub: npub,
-      // step: 0, // Initialize step count to 0
-      step: "onboarding",
-      onboardingStep: 1,
-      previousStep: 0,
-      language: language,
-      allowPosts: false,
-      identity:
-        "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt",
-    },
-    { merge: true }
-  ); // Merge true ensures it doesn't overwrite existing data
-
-  const existingDoc = await getDoc(userDoc);
-  if (!existingDoc.exists()) {
-    return null;
+  if (!npub) {
+    throw new Error("createUser requires an npub");
   }
 
-  const data = existingDoc.data() || {};
+  const userDoc = doc(database, "users", npub);
+  const existingSnapshot = await getDoc(userDoc);
   const now = new Date();
   const promotionStart = now.toISOString();
   const promotionDeadline = new Date(
     now.getTime() + 30 * 24 * 60 * 60 * 1000
   ).toISOString();
 
+  const baseProfile = {
+    isAdaptiveLearning: true,
+    name: userName,
+    npub,
+    step: "onboarding",
+    onboardingStep: 1,
+    previousStep: 0,
+    language,
+    allowPosts: false,
+    identity: "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt",
+  };
+
+  const defaultPromotionState = {
+    promotionStartTime: promotionStart,
+    promotionDeadline,
+    promotionGoalMet: false,
+    promotionCompletionTime: null,
+    promotionVerificationCode: generatePromotionCode(),
+    answeredStepIds: [],
+    answeredStepsCount: 0,
+    answeredSteps: {},
+  };
+
+  if (!existingSnapshot.exists()) {
+    const newUserData = {
+      ...baseProfile,
+      ...defaultPromotionState,
+    };
+
+    await setDoc(userDoc, newUserData);
+    return newUserData;
+  }
+
+  const data = existingSnapshot.data() || {};
   const updates = {};
 
-  if (!data.promotionStartTime || !data.promotionDeadline) {
+  if (!data.isAdaptiveLearning) {
+    updates.isAdaptiveLearning = true;
+  }
+
+  if (userName && data.name !== userName) {
+    updates.name = userName;
+  }
+
+  if (!data.npub) {
+    updates.npub = npub;
+  }
+
+  if (!data.step) {
+    updates.step = "onboarding";
+  }
+
+  if (typeof data.onboardingStep === "undefined") {
+    updates.onboardingStep = 1;
+  }
+
+  if (typeof data.previousStep === "undefined") {
+    updates.previousStep = 0;
+  }
+
+  if (language && data.language !== language) {
+    updates.language = language;
+  }
+
+  if (typeof data.allowPosts === "undefined") {
+    updates.allowPosts = false;
+  }
+
+  if (!data.identity) {
+    updates.identity =
+      "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt";
+  }
+
+  if (!data.promotionStartTime) {
     updates.promotionStartTime = promotionStart;
+  }
+
+  if (!data.promotionDeadline) {
     updates.promotionDeadline = promotionDeadline;
+  }
+
+  if (typeof data.promotionGoalMet !== "boolean") {
     updates.promotionGoalMet = false;
+  }
+
+  if (!("promotionCompletionTime" in data)) {
     updates.promotionCompletionTime = null;
   }
 
