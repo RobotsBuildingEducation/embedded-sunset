@@ -98,6 +98,7 @@ import {
 import { analytics, database } from "./database/firebaseResources";
 
 import { pickProgrammingLanguage, translation } from "./utility/translation";
+import { getCashuBalanceTotal } from "./utility/cashu";
 
 import { Dashboard } from "./components/Dashboard/Dashboard";
 import { isUnsupportedBrowser } from "./utility/browser";
@@ -1721,106 +1722,131 @@ const Step = ({
     }
   }, [userLanguage]);
 
-  // Fetch user data and manage streaks and timers
+  // Fetch user data and manage streaks and timers after sign-in
   useEffect(() => {
-    // alert("running..");
-    // const stepContent = steps[userLanguage][currentStep];
-    // setStep(stepContent);
+    if (!isSignedIn) {
+      return undefined;
+    }
+
+    let isActive = true;
 
     const fetchUserData = async () => {
       const userId = localStorage.getItem("local_npub");
-      const userData = await getUserData(userId);
+      if (!userId) {
+        return;
+      }
 
-      setIsAdaptiveLearning(userData?.isAdaptiveLearning);
-      setStreak(userData.streak || 0);
-      setStartTime(new Date(userData.startTime));
-      setEndTime(new Date(userData.endTime));
-      setInterval(userData.timer || 0);
-
-      setSkipExternalWarning(userData?.skipExternalWarning);
-
-      setDailyGoals(userData.dailyGoals || 5);
-      setGoalCount(userData.goalCount);
-      const currentTime = new Date();
-      let newExpiration = new Date(currentTime.getTime() + 86400000);
-
-      if (userData.nextGoalExpiration) {
-        newExpiration = new Date(userData.nextGoalExpiration);
-        // Advance the expiration in 24-hour increments until it's in the future.
-        while (currentTime > newExpiration) {
-          newExpiration = new Date(newExpiration.getTime() + 86400000);
+      try {
+        const userData = await getUserData(userId);
+        if (!userData || !isActive) {
+          return;
         }
-        setNextGoalExpiration(newExpiration);
-        // Reset daily progress since the user missed prior cycles.
-        if (userData.dailyProgress) {
-          setDailyProgress(userData.dailyProgress);
-        } else setDailyProgress(0);
-      } else {
-        setNextGoalExpiration(newExpiration);
 
-        if (userData.dailyProgress) {
-          setDailyProgress(userData.dailyProgress);
+        setIsAdaptiveLearning(userData?.isAdaptiveLearning);
+        setStreak(userData.streak || 0);
+        if (userData.startTime) {
+          setStartTime(new Date(userData.startTime));
+        }
+        if (userData.endTime) {
+          setEndTime(new Date(userData.endTime));
+        }
+        setInterval(userData.timer || 0);
+
+        setSkipExternalWarning(userData?.skipExternalWarning);
+
+        setDailyGoals(userData.dailyGoals || 5);
+        setGoalCount(userData.goalCount);
+
+        const currentTime = new Date();
+        let newExpiration = new Date(currentTime.getTime() + 86400000);
+
+        if (userData.nextGoalExpiration) {
+          newExpiration = new Date(userData.nextGoalExpiration);
+          // Advance the expiration in 24-hour increments until it's in the future.
+          while (currentTime > newExpiration) {
+            newExpiration = new Date(newExpiration.getTime() + 86400000);
+          }
+          setNextGoalExpiration(newExpiration);
+          // Reset daily progress since the user missed prior cycles.
+          if (userData.dailyProgress) {
+            setDailyProgress(userData.dailyProgress);
+          } else setDailyProgress(0);
         } else {
-          setDailyProgress(0);
+          setNextGoalExpiration(newExpiration);
+
+          if (userData.dailyProgress) {
+            setDailyProgress(userData.dailyProgress);
+          } else {
+            setDailyProgress(0);
+          }
         }
+
+        if (currentTime > new Date(userData?.nextGoalExpiration)) {
+          setStreak(0);
+          const newEndTime = new Date(
+            currentTime.getTime() + (userData.timer || 0) * 60000
+          );
+          setStartTime(currentTime);
+          setEndTime(newEndTime);
+
+          await updateUserData(
+            userId,
+            userData.timer,
+            0,
+            currentTime,
+            newEndTime,
+            userData.dailyGoals || 5,
+            newExpiration,
+            0, // Reset dailyProgress to 0 when cycle is over
+            userData.goalCount || 0
+          );
+        } else {
+          await updateUserData(
+            userId,
+            userData.timer,
+            userData.streak, // keep current streak
+            userData.startTime ? new Date(userData.startTime) : currentTime,
+            userData.endTime ? new Date(userData.endTime) : currentTime,
+            userData?.dailyGoals,
+            newExpiration,
+            userData.dailyProgress || 0, // use existing progress
+            userData.goalCount || 0
+          );
+        }
+
+        if (!isActive) {
+          return;
+        }
+
+        await init();
+        if (!isActive) {
+          return;
+        }
+        await initWalletService();
+      } catch (error) {
+        console.error("Error fetching user data:", error);
       }
-
-      // if (userData.identity) {
-
-      // }
-
-      if (currentTime > new Date(userData?.nextGoalExpiration)) {
-        setStreak(0);
-        const newEndTime = new Date(
-          currentTime.getTime() + (userData.timer || 0) * 60000
-        );
-        setStartTime(currentTime);
-        setEndTime(newEndTime);
-
-        await updateUserData(
-          userId,
-          userData.timer,
-          0,
-          currentTime,
-          newEndTime,
-          dailyGoals || 5,
-          newExpiration,
-          0, // Reset dailyProgress to 0 when cycle is over
-          userData.goalCount || 0
-        );
-      } else {
-        await updateUserData(
-          userId,
-          userData.timer,
-          userData.streak, // keep current streak
-          new Date(userData.startTime),
-          new Date(userData.endTime),
-          userData?.dailyGoals,
-          newExpiration,
-          userData.dailyProgress || 0, // use existing progress
-          userData.goalCount || 0
-        );
-      }
-
-      await init();
-      await initWalletService();
     };
 
     fetchUserData();
 
+    return () => {
+      isActive = false;
+    };
+  }, [isSignedIn, init, initWalletService]);
+
+  useEffect(() => {
     const expiryTime = localStorage.getItem("incorrectExpiry");
     if (expiryTime) {
       setIsTimerExpired(false);
       const currentTime = new Date().getTime();
-      if (currentTime > parseInt(expiryTime)) {
+      if (currentTime > parseInt(expiryTime, 10)) {
         // Expiry has passed, reset attempts
         localStorage.removeItem("incorrectExpiry");
         localStorage.setItem("incorrectAttempts", 0);
         setIncorrectAttempts(0);
       }
     }
-
-    // onAwardModalOpen();
   }, []);
 
   // Initialize items for Select Order question
@@ -1991,12 +2017,10 @@ const Step = ({
   }, [isCorrect]);
 
   const calculateBalance = () => {
-    const totalBalance =
-      (walletBalance || [])?.reduce((sum, b) => sum + (b.amount || 0), 0) ||
-      null;
-    if (totalBalance < 0) return 0;
+    const totalBalance = getCashuBalanceTotal(walletBalance);
+    if (totalBalance <= 0) return 0;
 
-    return Math.min((totalBalance / 100) * 100, 100);
+    return Math.min(totalBalance, 100);
   };
 
   // Calculate progress within the current chapter

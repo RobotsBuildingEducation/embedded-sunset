@@ -10,6 +10,13 @@ import { Buffer } from "buffer";
 import { bech32 } from "bech32";
 
 import NDKWalletService, { NDKCashuWallet } from "@nostr-dev-kit/ndk-wallet";
+import {
+  clearStoredCashuBalance,
+  loadStoredCashuBalance,
+  normalizeCashuBalance,
+  persistNormalizedCashuBalance,
+} from "../utility/cashu";
+import { getUserCashuBalance, setUserCashuBalance } from "../utility/nosql";
 
 const defaultMint = "https://mint.minibits.cash/Bitcoin";
 const defaultRelays = ["wss://relay.damus.io", "wss://relay.primal.net"];
@@ -40,6 +47,27 @@ export const useNostrWalletStore = create((set, get) => ({
   // functions to define state when the data gets created
   setError: (msg) => set({ errorMessage: msg }),
   setInvoice: (data) => set({ invoice: data }),
+
+  updateWalletBalance: (rawBalance) => {
+    const normalized = normalizeCashuBalance(rawBalance);
+    const { nostrPubKey } = get();
+    const activeNpub =
+      nostrPubKey ||
+      (typeof window !== "undefined"
+        ? window.localStorage.getItem("local_npub")
+        : null);
+
+    persistNormalizedCashuBalance(normalized, activeNpub);
+
+    if (activeNpub) {
+      setUserCashuBalance(activeNpub, normalized).catch((error) => {
+        console.error("Failed to persist Cashu balance remotely:", error);
+      });
+    }
+
+    set({ walletBalance: normalized });
+    return normalized;
+  },
 
   // Converts your public identity into a public key.
   // think of your "npub key" as something identifiable for humans
@@ -162,18 +190,25 @@ export const useNostrWalletStore = create((set, get) => ({
     // listen for updates to the balance, when a user answers a question, the balance should update
     wallet.on("balance_updated", async (balance) => {
       console.log("arg balance", balance);
-      const bal = (await wallet.balance()) || [];
+      const bal = normalizeCashuBalance(balance || (await wallet.balance()));
       console.log("balanace...", bal);
-      set({ walletBalance: bal });
+      const { updateWalletBalance } = get();
+      updateWalletBalance(bal);
     });
 
     // potentially writing a bug here
     // essentially checking the balance redundantly, resulting in outdated balance
     //woudn't be surprised if this runs first actually, we'll see
-    const initialBal = (await wallet.balance()) || [];
+    try {
+      await wallet.checkProofs();
+    } catch (error) {
+      console.error("Error validating wallet proofs:", error);
+    }
+    const initialBal = normalizeCashuBalance(await wallet.balance());
     console.log("initialBal", initialBal);
+    const { updateWalletBalance } = get();
+    updateWalletBalance(initialBal);
     set({
-      walletBalance: initialBal,
       cashuWallet: wallet,
     });
   },
@@ -186,8 +221,25 @@ export const useNostrWalletStore = create((set, get) => ({
     const storedNpub = localStorage.getItem("local_npub");
     const storedNsec = localStorage.getItem("local_nsec");
 
-    if (storedNpub) set({ nostrPubKey: storedNpub });
+    if (storedNpub) {
+      set({ nostrPubKey: storedNpub });
+      const cachedBalance = loadStoredCashuBalance(storedNpub);
+      if (typeof cachedBalance === "number") {
+        set({ walletBalance: normalizeCashuBalance(cachedBalance) });
+      }
+    }
     if (storedNsec) set({ nostrPrivKey: storedNsec });
+
+    if (storedNpub) {
+      try {
+        const remoteBalance = await getUserCashuBalance(storedNpub);
+        const normalizedRemote = normalizeCashuBalance(remoteBalance);
+        persistNormalizedCashuBalance(normalizedRemote, storedNpub);
+        set({ walletBalance: normalizedRemote });
+      } catch (error) {
+        console.error("Error loading remote Cashu balance:", error);
+      }
+    }
 
     const { connectToNostr, initWalletService } = get();
     if (storedNpub && storedNsec) {
@@ -381,8 +433,9 @@ export const useNostrWalletStore = create((set, get) => ({
       await cashuWallet.checkProofs();
 
       //update the balance after the spend event occurs, deducting 1 sat from your deposits
-      const updatedBalance = await cashuWallet.balance();
-      set({ walletBalance: updatedBalance || [] });
+      const updatedBalance = normalizeCashuBalance(await cashuWallet.balance());
+      const { updateWalletBalance } = get();
+      updateWalletBalance(updatedBalance);
     } catch (e) {
       console.error("Error sending nutzap:", e);
       setError(e.message);
@@ -446,13 +499,13 @@ export const useNostrWalletStore = create((set, get) => ({
       await cashuWallet.checkProofs(); //sanity check, probably not needed
 
       // get new balance
-      const updatedBalance = await cashuWallet.balance();
+      const updatedBalance = normalizeCashuBalance(await cashuWallet.balance());
 
       //updates balance state, probably triggers wallet listeners too
-      set({ walletBalance: updatedBalance || [] });
+      const { updateWalletBalance } = get();
+      updateWalletBalance(updatedBalance);
 
       setInvoice("");
-      window.location.reload();
     });
 
     deposit.on("error", (e) => {
@@ -464,7 +517,14 @@ export const useNostrWalletStore = create((set, get) => ({
   },
 
   // just resets state for log outs
-  resetState: () =>
+  resetState: () => {
+    const { nostrPubKey } = get();
+    const activeNpub =
+      nostrPubKey ||
+      (typeof window !== "undefined"
+        ? window.localStorage.getItem("local_npub")
+        : null);
+    clearStoredCashuBalance(activeNpub);
     set({
       isConnected: false,
       errorMessage: null,
@@ -476,5 +536,6 @@ export const useNostrWalletStore = create((set, get) => ({
       cashuWallet: null,
       walletBalance: 0,
       invoice: "",
-    }),
+    });
+  },
 }));
