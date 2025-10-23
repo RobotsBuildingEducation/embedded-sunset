@@ -20,15 +20,20 @@ service cloud.firestore {
         return id.matches('^npub1[023456789acdefghjklmnpqrstuvwxyz]{58}$') && id.size() == 63;
       }
 
-      // Allow read access if the existing document's npub field matches the document ID (userId)
-      allow read: if resource.data.npub == userId && isValidNpubID(userId);
+      // Allow read access when the document ID is a valid npub and either
+      // the stored npub matches or the field is missing (so legacy records
+      // without the npub field can still be repaired).
+      allow read: if isValidNpubID(userId) &&
+                   ((resource == null) ||
+                    !resource.data.keys().hasAny(["npub"]) ||
+                    resource.data.npub == userId);
 
       // Allow create access if the incoming npub value matches the document ID (userId)
       allow create: if request.resource.data.npub == userId && isValidNpubID(userId);
 
-      // Allow update access if both the existing document's npub and the incoming npub value match the document ID (userId)
+      // Allow update access when the incoming npub matches the document ID so
+      // clients can backfill legacy records that were missing the npub field.
       allow update: if request.resource.data.npub == userId &&
-                     resource.data.npub == userId &&
                      isValidNpubID(userId);
 
       // Deny listing (query) access to the entire collection
