@@ -116,6 +116,12 @@ const CloudTransition = ({
     100
   );
 
+  const [userNpub, setUserNpub] = useState(() => {
+    if (typeof window === "undefined") {
+      return null;
+    }
+    return localStorage.getItem("local_npub");
+  });
   const [promotionStartTime, setPromotionStartTime] = useState(null);
   const [promotionDeadline, setPromotionDeadline] = useState(null);
   const [promotionProgress, setPromotionProgress] = useState(null);
@@ -128,9 +134,46 @@ const CloudTransition = ({
   }, []);
 
   useEffect(() => {
-    const npub = localStorage.getItem("local_npub");
-    if (!npub) return;
-    const userRef = doc(database, "users", npub);
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+
+    const handleStorage = (event) => {
+      if (event.key === "local_npub" && event.newValue) {
+        setUserNpub(event.newValue);
+      }
+    };
+
+    window.addEventListener("storage", handleStorage);
+
+    if (!userNpub) {
+      const storedNpub = localStorage.getItem("local_npub");
+      if (storedNpub) {
+        setUserNpub(storedNpub);
+      } else {
+        const intervalId = window.setInterval(() => {
+          const cachedNpub = localStorage.getItem("local_npub");
+          if (cachedNpub) {
+            setUserNpub(cachedNpub);
+            window.clearInterval(intervalId);
+          }
+        }, 300);
+
+        return () => {
+          window.removeEventListener("storage", handleStorage);
+          window.clearInterval(intervalId);
+        };
+      }
+    }
+
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+    };
+  }, [userNpub]);
+
+  useEffect(() => {
+    if (!userNpub) return undefined;
+    const userRef = doc(database, "users", userNpub);
     const unsubscribe = onSnapshot(userRef, (snapshot) => {
       if (!snapshot.exists()) {
         setPromotionStartTime(null);
@@ -146,7 +189,7 @@ const CloudTransition = ({
       );
     });
     return () => unsubscribe();
-  }, []);
+  }, [userNpub]);
 
   useEffect(() => {
     if (!promotionStartTime || !promotionDeadline) {
