@@ -62,38 +62,11 @@ const BitcoinOnboarding = ({ userLanguage }) => {
     isCreatingWallet: state.isCreatingWallet,
   }));
 
-  // useEffect(() => {
-  //   const loadUserIdentity = async () => {
-  //     try {
-  //       const userDocRef = doc(
-  //         database,
-  //         "users",
-  //         localStorage.getItem("local_npub")
-  //       );
-  //       const docSnap = await getDoc(userDocRef);
-  //       if (docSnap.exists()) {
-  //         const data = docSnap.data();
-  //         if (data.identity) {
-  //           setSelectedIdentity(data.identity);
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.error("Error loading user identity:", error);
-  //     }
-  //   };
-  //   loadUserIdentity();
-  // }, []);
-  // Helper: sum up wallet balance
-
   console.log("total balance", walletBalance);
   const totalBalance =
     (walletBalance || [])?.reduce((sum, b) => sum + (b.amount || 0), 0) || null;
 
   useEffect(() => {
-    // If we have a deposit in progress and the user pays it, after proofs update
-    // the totalBalance should become > 0.
-    // If totalBalance changes and we now have sats, clear invoice.
-
     if (totalBalance > 0) {
       setLnInvoice("");
     }
@@ -144,12 +117,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
   const handleInitiateDeposit = async () => {
     setDepositing(true);
     try {
-      // Initiate a deposit for 100 sats (example)
       const pr = await initiateDeposit(100);
-      // pr is a LN invoice (bolt11)
-      // if (pr) {
-      //   setLnInvoice(pr);
-      // }
     } catch (err) {
       console.error("Error initiating deposit:", err);
       toast({
@@ -166,12 +134,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
   const generateNewQR = async () => {
     setIsGeneratingNewQR(true);
     try {
-      // Initiate a deposit for 100 sats (example)
       const pr = await initiateDeposit(100);
-      // pr is a LN invoice (bolt11)
-      // if (pr) {
-      //   setLnInvoice(pr);
-      // }
     } catch (err) {
       console.error("Error initiating deposit:", err);
       toast({
@@ -196,14 +159,6 @@ const BitcoinOnboarding = ({ userLanguage }) => {
       position: "top",
     });
   };
-
-  /**
-   * Render logic:
-   * 1. If no wallet exists (cashuWallet === null), show instructions & create wallet button.
-   * 2. If wallet exists but balance = 0 and no invoice yet, show instructions to deposit & a button to generate invoice.
-   * 3. If wallet exists and we have an invoice (lnInvoice) and balance=0, show QR code and copy button.
-   * 4. If wallet exists and balance > 0, show the Identity card with balance.
-   */
 
   useEffect(() => {
     if (cashuWallet) {
@@ -239,23 +194,6 @@ const BitcoinOnboarding = ({ userLanguage }) => {
         ))}
       </Text>
     );
-
-    // return parts.map((part, index) =>
-    //   part === "Cash App" ? (
-    //     <Link
-    //       key={index}
-    //       href="https://click.cash.app/ui6m/home2022"
-    //       isExternal
-    //       color="blue.500"
-    //       fontWeight="bold"
-    //       display="flex"
-    //     >
-    //       <SiCashapp color="00C852" /> {part}
-    //     </Link>
-    //   ) : (
-    //     part
-    //   )
-    // );
   };
 
   const renderContent = () => {
@@ -301,37 +239,6 @@ const BitcoinOnboarding = ({ userLanguage }) => {
           </Text>
 
           <VStack>
-            {/* <Select
-              mb={4}
-              onChange={handleIdentityChange}
-              value={selectedIdentity} // Bind to state
-              isDisabled={loading} // Disable dropdown while saving
-              transition="0s all linear"
-            >
-              <option value="" disabled>
-                {translation[userLanguage]["select.recipient"]}
-              </option>
-              <option value="npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt">
-                robotsbuildingeducation.com
-              </option>
-              <option value="npub166md04uzz4ksy4zv2c8maz4lprrezmtfkwq6yfevtqel3tchkthsemwtwm">
-                ladderly.io
-              </option>
-              <option value="npub1ae02dvwewx8w0z2sftpcg2ta4xyu6hc00mxuq03x2aclta6et76q90esq2">
-                girlsoncampus.org
-              </option>
-              <option value="more-schools" disabled>
-                {translation[userLanguage]["disabled.select.soon"]}
-              </option>
-            </Select> */}
-
-            {/* <Accorrdion toggmb={4} reduceMotion={true}>
-              <AccordionItem>
-                <AccordionButton
-                  display="flex"
-                  justifyContent={"space-between"}
-                >
-                  {/* <AccordionIcon mr={2} p={0} ml={0} /> */}
             <Text flex="1" textAlign="left" fontSize="sm">
               {translation[userLanguage]["select.recipient"]}
             </Text>
