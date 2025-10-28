@@ -39,7 +39,7 @@ const applyTheme = (color) => {
 };
 
 export const useThemeStore = create((set) => ({
-  themeColor: localStorage.getItem("themeColor") || "pink",
+  themeColor: localStorage.getItem("themeColor") || "orange",
   setThemeColor: async (color) => {
     set({ themeColor: color });
     localStorage.setItem("themeColor", color);
@@ -57,4 +57,4 @@ export const useThemeStore = create((set) => ({
 }));
 
 // Apply saved theme on load
-applyTheme(localStorage.getItem("themeColor") || "pink");
+applyTheme(localStorage.getItem("themeColor") || "orange");
