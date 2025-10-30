@@ -424,7 +424,7 @@ export const useNostrWalletStore = create((set, get) => ({
 
   //handles the deposit... gotta love self describing code
 
-  initiateDeposit: async (amountInSats = 10) => {
+  initiateDeposit: async (amountInSats = 10, options = {}) => {
     //get state
     const {
       cashuWallet,
@@ -434,6 +434,8 @@ export const useNostrWalletStore = create((set, get) => ({
       initWalletService,
     } =
       get();
+
+    const { onSuccess } = options ?? {};
 
     //safety check, if a wallet is never defined, just exit the function
     if (!cashuWallet) {
@@ -465,7 +467,12 @@ export const useNostrWalletStore = create((set, get) => ({
 
       setInvoice("");
       setTimeout(() => {
-        window.location.reload();
+        if (typeof onSuccess === "function") {
+          onSuccess();
+          set({ isRefreshingAfterDeposit: false });
+        } else {
+          window.location.reload();
+        }
       }, 2000);
     });
 

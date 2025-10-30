@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Alert,
   AlertDescription,
@@ -31,7 +31,7 @@ import { database } from "../../database/firebaseResources";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { IdentityCard } from "../../elements/IdentityCard";
 
-const BitcoinOnboarding = ({ userLanguage }) => {
+const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
   const toast = useToast();
   const [isGenerateNewQR, setIsGeneratingNewQR] = useState(false);
   const [lnInvoice, setLnInvoice] = useState(""); // LN invoice for deposit
@@ -39,6 +39,22 @@ const BitcoinOnboarding = ({ userLanguage }) => {
   const [depositing, setDepositing] = useState(false);
   const [selectedIdentity, setSelectedIdentity] = useState(""); // State to track selected identity
   const [loading, setLoading] = useState(false);
+
+  const depositOptions = useMemo(() => {
+    if (typeof onDepositComplete === "function") {
+      return { onSuccess: onDepositComplete };
+    }
+
+    return {};
+  }, [onDepositComplete]);
+
+  const refreshDescription = useMemo(() => {
+    if (from === "onboarding") {
+      return "We'll move you forward in just a moment so you can see your updated sats.";
+    }
+
+    return "We'll update things in just a moment so you can see your updated sats.";
+  }, [from]);
 
   /**
    * Hook from useSharedNostr:
@@ -123,7 +139,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
   const handleInitiateDeposit = async () => {
     setDepositing(true);
     try {
-      const pr = await initiateDeposit(100);
+      const pr = await initiateDeposit(100, depositOptions);
     } catch (err) {
       console.error("Error initiating deposit:", err);
       toast({
@@ -140,7 +156,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
   const generateNewQR = async () => {
     setIsGeneratingNewQR(true);
     try {
-      const pr = await initiateDeposit(100);
+      const pr = await initiateDeposit(100, depositOptions);
     } catch (err) {
       console.error("Error initiating deposit:", err);
       toast({
@@ -201,6 +217,24 @@ const BitcoinOnboarding = ({ userLanguage }) => {
       </Text>
     );
   };
+
+  const renderRefreshAlert = () => (
+    <Alert
+      status="warning"
+      variant="solid"
+      mt={4}
+      borderRadius="md"
+      alignItems="flex-start"
+    >
+      <AlertIcon />
+      <Box flex="1">
+        <AlertTitle fontSize="sm">Refreshing your balance</AlertTitle>
+        <AlertDescription fontSize="sm">
+          {refreshDescription}
+        </AlertDescription>
+      </Box>
+    </Alert>
+  );
 
   const renderContent = () => {
     if (!cashuWallet) {
@@ -397,6 +431,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
               animateOnChange={false}
               realValue={cashuWallet.walletId}
             />
+            {isRefreshingAfterDeposit && renderRefreshAlert()}
           </VStack>
         </>
       );
@@ -450,7 +485,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
                     textAlign="center"
                     color="gray.600"
                   >
-                    After your deposit arrives, this page will refresh
+                    After your deposit arrives, we'll update things
                     automatically so your wallet balance stays up to date.
                   </Text>
 
@@ -464,26 +499,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
                 </>
               )}
 
-              {isRefreshingAfterDeposit && (
-                <Alert
-                  status="warning"
-                  variant="solid"
-                  mt={4}
-                  borderRadius="md"
-                  alignItems="flex-start"
-                >
-                  <AlertIcon />
-                  <Box flex="1">
-                    <AlertTitle fontSize="sm">
-                      Refreshing your balance
-                    </AlertTitle>
-                    <AlertDescription fontSize="sm">
-                      The page will reload in just a moment so you can see your
-                      updated sats.
-                    </AlertDescription>
-                  </Box>
-                </Alert>
-              )}
+              {isRefreshingAfterDeposit && renderRefreshAlert()}
 
               <Button
                 mt={2}
@@ -560,30 +576,11 @@ const BitcoinOnboarding = ({ userLanguage }) => {
               </Button>
 
               <Text mt={2} fontSize="xs" textAlign="center" color="gray.600">
-                After your deposit is detected, the page will refresh
+                After your deposit is detected, we'll update things
                 automatically to show your updated balance.
               </Text>
 
-              {isRefreshingAfterDeposit && (
-                <Alert
-                  status="warning"
-                  variant="solid"
-                  mt={4}
-                  borderRadius="md"
-                  alignItems="flex-start"
-                >
-                  <AlertIcon />
-                  <Box flex="1">
-                    <AlertTitle fontSize="sm">
-                      Refreshing your balance
-                    </AlertTitle>
-                    <AlertDescription fontSize="sm">
-                      The page will reload in just a moment so you can see your
-                      updated sats.
-                    </AlertDescription>
-                  </Box>
-                </Alert>
-              )}
+              {isRefreshingAfterDeposit && renderRefreshAlert()}
 
               <Box marginTop="2" width="100%">
                 <Accordion allowToggle reduceMotion={true} mb={4}>

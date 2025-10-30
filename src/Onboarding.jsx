@@ -1322,6 +1322,7 @@ export const Onboarding = ({
                   <BitcoinOnboarding
                     userLanguage={userLanguage}
                     from="onboarding"
+                    onDepositComplete={handleActuallyLaunchApp}
                   />
                 </Text>
               </PanRightComponent>
