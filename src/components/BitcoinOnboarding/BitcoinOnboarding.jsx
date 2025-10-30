@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
 import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
   Button,
   Text,
   VStack,
@@ -84,7 +88,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
       const userDocRef = doc(
         database,
         "users",
-        localStorage.getItem("local_npub")
+        localStorage.getItem("local_npub"),
       ); // Replace "users" with your Firestore collection
       await updateDoc(userDocRef, { identity: value });
     } catch (error) {
@@ -99,7 +103,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
       const userDocRef = doc(
         database,
         "users",
-        localStorage.getItem("local_npub")
+        localStorage.getItem("local_npub"),
       ); // Replace "users" with your Firestore collection
       await updateDoc(userDocRef, { createdWallet: true });
       createNewWallet();
@@ -440,27 +444,45 @@ const BitcoinOnboarding = ({ userLanguage }) => {
                     {translation[userLanguage]["deposit.ps"]}
                   </Text>
 
-                  <Text mt={2} fontSize="xs" textAlign="center" color="gray.600">
-                    After your deposit arrives, this page will refresh automatically so your wallet balance stays up to date.
+                  <Text
+                    mt={2}
+                    fontSize="xs"
+                    textAlign="center"
+                    color="gray.600"
+                  >
+                    After your deposit arrives, this page will refresh
+                    automatically so your wallet balance stays up to date.
                   </Text>
 
                   <Text mt={2} fontSize="xs">
                     {renderButtonText(
                       translation[userLanguage][
                         "modal.bitcoinMode.instructions.createWallet.3"
-                      ]
+                      ],
                     )}
                   </Text>
                 </>
               )}
 
               {isRefreshingAfterDeposit && (
-                <VStack mt={4} spacing={2}>
-                  <Spinner size="sm" />
-                  <Text fontSize="sm" textAlign="center">
-                    Refreshing to update your balance...
-                  </Text>
-                </VStack>
+                <Alert
+                  status="warning"
+                  variant="solid"
+                  mt={4}
+                  borderRadius="md"
+                  alignItems="flex-start"
+                >
+                  <AlertIcon />
+                  <Box flex="1">
+                    <AlertTitle fontSize="sm">
+                      Refreshing your balance
+                    </AlertTitle>
+                    <AlertDescription fontSize="sm">
+                      The page will reload in just a moment so you can see your
+                      updated sats.
+                    </AlertDescription>
+                  </Box>
+                </Alert>
               )}
 
               <Button
@@ -538,16 +560,29 @@ const BitcoinOnboarding = ({ userLanguage }) => {
               </Button>
 
               <Text mt={2} fontSize="xs" textAlign="center" color="gray.600">
-                After your deposit is detected, the page will refresh automatically to show your updated balance.
+                After your deposit is detected, the page will refresh
+                automatically to show your updated balance.
               </Text>
 
               {isRefreshingAfterDeposit && (
-                <VStack mt={4} spacing={2}>
-                  <Spinner size="sm" />
-                  <Text fontSize="sm" textAlign="center">
-                    Refreshing to update your balance...
-                  </Text>
-                </VStack>
+                <Alert
+                  status="warning"
+                  variant="solid"
+                  mt={4}
+                  borderRadius="md"
+                  alignItems="flex-start"
+                >
+                  <AlertIcon />
+                  <Box flex="1">
+                    <AlertTitle fontSize="sm">
+                      Refreshing your balance
+                    </AlertTitle>
+                    <AlertDescription fontSize="sm">
+                      The page will reload in just a moment so you can see your
+                      updated sats.
+                    </AlertDescription>
+                  </Box>
+                </Alert>
               )}
 
               <Box marginTop="2" width="100%">
