@@ -52,6 +52,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
     invoice,
     init,
     isCreatingWallet,
+    isRefreshingAfterDeposit,
   } = useNostrWalletStore((state) => ({
     cashuWallet: state.cashuWallet,
     walletBalance: state.walletBalance,
@@ -60,6 +61,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
     invoice: state.invoice,
     init: state.init,
     isCreatingWallet: state.isCreatingWallet,
+    isRefreshingAfterDeposit: state.isRefreshingAfterDeposit,
   }));
 
   console.log("total balance", walletBalance);
@@ -438,6 +440,10 @@ const BitcoinOnboarding = ({ userLanguage }) => {
                     {translation[userLanguage]["deposit.ps"]}
                   </Text>
 
+                  <Text mt={2} fontSize="xs" textAlign="center" color="gray.600">
+                    After your deposit arrives, this page will refresh automatically so your wallet balance stays up to date.
+                  </Text>
+
                   <Text mt={2} fontSize="xs">
                     {renderButtonText(
                       translation[userLanguage][
@@ -446,6 +452,15 @@ const BitcoinOnboarding = ({ userLanguage }) => {
                     )}
                   </Text>
                 </>
+              )}
+
+              {isRefreshingAfterDeposit && (
+                <VStack mt={4} spacing={2}>
+                  <Spinner size="sm" />
+                  <Text fontSize="sm" textAlign="center">
+                    Refreshing to update your balance...
+                  </Text>
+                </VStack>
               )}
 
               <Button
@@ -521,6 +536,19 @@ const BitcoinOnboarding = ({ userLanguage }) => {
                 } */}
                 {translation[userLanguage]["deposit.button"]}
               </Button>
+
+              <Text mt={2} fontSize="xs" textAlign="center" color="gray.600">
+                After your deposit is detected, the page will refresh automatically to show your updated balance.
+              </Text>
+
+              {isRefreshingAfterDeposit && (
+                <VStack mt={4} spacing={2}>
+                  <Spinner size="sm" />
+                  <Text fontSize="sm" textAlign="center">
+                    Refreshing to update your balance...
+                  </Text>
+                </VStack>
+              )}
 
               <Box marginTop="2" width="100%">
                 <Accordion allowToggle reduceMotion={true} mb={4}>
