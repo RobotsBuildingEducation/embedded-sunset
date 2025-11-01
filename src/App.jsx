@@ -222,7 +222,12 @@ const applySymbolMappings = (text) => {
   return modifiedText;
 };
 
-const CHAPTER_MAP_EXCLUDED_GROUPS = new Set(["0", "introduction", "tutorial"]);
+const CHAPTER_MAP_EXCLUDED_GROUPS = new Set([
+  "0",
+  0,
+  "introduction",
+  "tutorial",
+]);
 
 const progressGradient = keyframes`
   0% { background-position: 0% 50%; }
@@ -1610,14 +1615,6 @@ const Step = ({
   };
 
   const handleModalClose = () => setIsExternalLinkModalOpen(false);
-
-  const handleOpenChapterMap = useCallback(() => {
-    if (!step?.group) {
-      return;
-    }
-
-    navigate(`/chapter/${encodeURIComponent(step.group)}?step=${currentStep}`);
-  }, [currentStep, navigate, step]);
 
   const persistOptionalQuestProgress = useCallback(
     (groupId, status = {}) => {
@@ -3324,16 +3321,6 @@ const Step = ({
                   }}
                 />
               </Box>
-              <Button
-                size="xs"
-                variant="ghost"
-                colorScheme="purple"
-                mt={2}
-                onClick={handleOpenChapterMap}
-              >
-                Open chapter map
-              </Button>
-              <br />
             </span>
             <VStack width="100%">
               <span style={{ fontSize: "50%" }}>
@@ -3921,14 +3908,6 @@ const Step = ({
                 ) : null}
                 {isCorrect && (
                   <>
-                    <Button
-                      variant={"outline"}
-                      mb={3}
-                      onClick={handleOpenChapterMap}
-                    >
-                      View skill map
-                    </Button>
-
                     <Button
                       background="white"
                       variant={"outline"}

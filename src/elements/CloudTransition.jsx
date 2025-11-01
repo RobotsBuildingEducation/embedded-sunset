@@ -641,10 +641,11 @@ const CloudTransition = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.45, ease: "easeOut" }}
             textAlign="center"
-            color="#1E1555"
-            w={{ base: "88%", md: "74%" }}
-            maxW="400px"
-            textShadow="0 0 18px rgba(255,255,255,0.6)"
+            color="#1b1640"
+            w={{ base: "88%", md: "360px" }}
+            maxW="360px"
+            position="relative"
+            zIndex={1}
           >
             {message && (
               <Text
@@ -689,21 +690,26 @@ const CloudTransition = ({
               mt={6}
               mb={8}
               borderRadius="2xl"
-              border="1px solid rgba(128,90,213,0.25)"
-              bg="rgba(255,255,255,0.97)"
-              boxShadow="0 24px 44px rgba(79, 70, 229, 0.18)"
+              border="1px solid rgba(76,29,149,0.18)"
+              bg="rgba(255,255,255,0.98)"
+              boxShadow="0 24px 44px rgba(79, 70, 229, 0.14)"
               px={{ base: 4, md: 5 }}
               py={{ base: 4, md: 5 }}
               color="#21174F"
+              backdropFilter="blur(4px)"
             >
-              <Accordion allowToggle allowMultiple defaultIndex={[]}>
+              <Accordion allowToggle defaultIndex={[]}>
                 <AccordionItem border="none">
                   {({ isExpanded }) => (
                     <>
                       <AccordionButton
-                        px={0}
-                        _hover={{ bg: "transparent" }}
-                        _focus={{ boxShadow: "none" }}
+                        px={3}
+                        py={2}
+                        borderRadius="xl"
+                        bg="rgba(243,240,255,0.9)"
+                        _hover={{ bg: "rgba(236,233,252,0.98)" }}
+                        _focus={{ boxShadow: "0 0 0 2px rgba(129,140,248,0.4)" }}
+                        _expanded={{ bg: "rgba(230,225,255,0.95)" }}
                         alignItems="flex-start"
                       >
                         <VStack align="flex-start" spacing={1} flex={1} pr={2}>
@@ -711,25 +717,25 @@ const CloudTransition = ({
                             fontSize="sm"
                             textTransform="uppercase"
                             letterSpacing="0.12em"
-                            color="#4330A6"
+                            color="#39258c"
                             fontWeight="semibold"
                           >
                             Chapter path
                           </Text>
                           {focusGroupLabel && (
-                            <Text fontWeight="semibold" fontSize="md" color="#251A66">
+                            <Text fontWeight="semibold" fontSize="md" color="#1e1763">
                               {focusGroupLabel}
                             </Text>
                           )}
                           {!isExpanded && (
-                            <Text fontSize="xs" color="#544b7d">
+                            <Text fontSize="xs" color="#4c3d86">
                               Peek at the last, current, and next lessons.
                             </Text>
                           )}
                         </VStack>
-                        <AccordionIcon color="#4C38B2" />
+                        <AccordionIcon color="#34217b" />
                       </AccordionButton>
-                      <AccordionPanel px={0} pt={4} pb={0}>
+                      <AccordionPanel px={1} pt={4} pb={1}>
                         {timelineNodes.length ? (
                           <Box position="relative" pt={1} pb={2}>
                             <MotionBox
@@ -741,6 +747,7 @@ const CloudTransition = ({
                               bgGradient="linear(180deg, rgba(129, 140, 248, 0.28) 0%, rgba(56, 178, 172, 0.45) 100%)"
                               transform="translateX(-50%)"
                               borderRadius="full"
+                              boxShadow="0 0 16px rgba(129, 140, 248, 0.35)"
                               animate={{ opacity: [0.45, 0.85, 0.45] }}
                               transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
                               aria-hidden
