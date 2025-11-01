@@ -82,7 +82,8 @@ export const Onboarding = ({
   );
 
   const launchLearningStep = useCallback(
-    (targetStep) => {
+    (targetStep, options = {}) => {
+      const { forceChapterIntro = false } = options;
       const numericStep = Number(targetStep);
 
       if (!Number.isFinite(numericStep)) {
@@ -93,7 +94,11 @@ export const Onboarding = ({
       const entry = lessonSteps?.[numericStep];
       const groupId = entry?.group;
 
-      if (groupId && !CHAPTER_MAP_EXCLUDED_GROUPS.has(groupId)) {
+      const shouldShowChapterIntro =
+        groupId &&
+        (forceChapterIntro || !CHAPTER_MAP_EXCLUDED_GROUPS.has(groupId));
+
+      if (shouldShowChapterIntro) {
         navigate(
           `/chapter/${encodeURIComponent(groupId)}?step=${numericStep}`
         );
@@ -825,7 +830,9 @@ export const Onboarding = ({
                         ? firstChapterStep
                         : 1;
                       setCurrentStep(chapterLaunchStep);
-                      launchLearningStep(chapterLaunchStep);
+                      launchLearningStep(chapterLaunchStep, {
+                        forceChapterIntro: true,
+                      });
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
                     mb={18}
