@@ -5879,7 +5879,10 @@ function App({ isShutDown }) {
   const resetStatsTimeoutRef = useRef(null);
 
   const navigateWithTransition = (path, nextStep = null) => {
-    if (typeof nextStep === "number") {
+    if (
+      typeof nextStep === "number" &&
+      /^\/q\//.test(path)
+    ) {
       const { shouldRedirect, groupId } = shouldRedirectToChapterMap(nextStep);
 
       if (shouldRedirect && groupId) {
