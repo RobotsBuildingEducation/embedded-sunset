@@ -31,7 +31,8 @@ export const updateUserData = async (
   dailyGoals = 5,
   nextGoalExpiration,
   dailyProgress = 0,
-  goalCount = 0
+  goalCount = 0,
+  optionalQuestProgress
 ) => {
   const nextGoalDate =
     nextGoalExpiration instanceof Date
@@ -39,7 +40,7 @@ export const updateUserData = async (
       : new Date(nextGoalExpiration);
   const userDocRef = doc(database, "users", userId);
 
-  await updateDoc(userDocRef, {
+  const updates = {
     timer,
     streak,
     startTime: startTime.toISOString(), // Store dates as ISO strings
@@ -48,7 +49,13 @@ export const updateUserData = async (
     nextGoalExpiration: nextGoalDate.toISOString(),
     dailyProgress: dailyProgress,
     goalCount: goalCount,
-  });
+  };
+
+  if (typeof optionalQuestProgress !== "undefined") {
+    updates.optionalQuestProgress = optionalQuestProgress;
+  }
+
+  await updateDoc(userDocRef, updates);
 };
 
 // Retrieve user data to use within the component

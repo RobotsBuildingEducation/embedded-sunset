@@ -1,5 +1,5 @@
 // src/components/ProgressModal/ProgressModal.tsx
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -14,8 +14,10 @@ import {
   Progress,
   Text,
   Box,
+  VisuallyHidden,
 } from "@chakra-ui/react";
 import { translation } from "../../utility/translation";
+import SkillTreeBoard from "./SkillTreeBoard";
 
 const ProgressModal = ({
   isOpen,
@@ -23,6 +25,8 @@ const ProgressModal = ({
   steps,
   currentStep,
   userLanguage,
+  navigateWithTransition,
+  optionalQuestProgress = {},
 }) => {
   const transcriptDisplay = {
     introduction: {
@@ -91,14 +95,32 @@ const ProgressModal = ({
   };
 
   // build a list of all steps (exclude index 0 placeholder)
-  const allSteps = steps[userLanguage]
-    .map((step, idx) => ({ step, idx }))
-    .filter(({ idx }) => idx > 0);
+  const allSteps = useMemo(
+    () =>
+      steps[userLanguage]
+        .map((step, idx) => ({ step, idx }))
+        .filter(({ idx }) => idx > 0),
+    [steps, userLanguage]
+  );
 
   const completedCount = Math.max(currentStep - 1, 0);
   const totalCount = allSteps.length;
   const progressValue =
     totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
+
+  const handleNavigate = useCallback(
+    (stepIndex) => {
+      if (typeof navigateWithTransition !== "function") {
+        return;
+      }
+
+      const safeIndex = Number.isFinite(stepIndex) ? stepIndex : 0;
+      const path = `/q/${safeIndex}`;
+      onClose?.();
+      navigateWithTransition(path, safeIndex);
+    },
+    [navigateWithTransition, onClose]
+  );
 
   return (
     <Modal
@@ -108,7 +130,7 @@ const ProgressModal = ({
       //   blockScrollOnMount={false}
     >
       <ModalOverlay />
-      <ModalContent height="600px" maxWidth="400px">
+      <ModalContent height="600px" maxWidth="520px">
         {/* Sticky header */}
         <ModalHeader
           position="sticky"
@@ -145,46 +167,27 @@ const ProgressModal = ({
         </Box>
 
         <ModalBody overflowY="auto" pt={2} pb={6}>
-          {(() => {
-            const elements = [];
-            let lastGroup = null;
-
-            allSteps.forEach(({ step, idx }) => {
-              const group = step.group;
-
-              if (group !== lastGroup) {
+          <SkillTreeBoard
+            steps={steps}
+            userLanguage={userLanguage}
+            currentStep={currentStep}
+            onNodeSelect={handleNavigate}
+            groupLabels={transcriptDisplay}
+            optionalQuestProgress={optionalQuestProgress}
+          />
+          <VisuallyHidden>
+            <UnorderedList>
+              {allSteps.map(({ step, idx }) => {
                 const groupLabel =
-                  transcriptDisplay[group]?.[userLanguage] || group;
-
-                elements.push(
-                  <Text
-                    key={`group-${idx}`}
-                    fontSize="sm"
-                    fontWeight="bold"
-                    color="green.400"
-                    mt={4}
-                  >
-                    {group === "tutorial" ? "" : `${group + "."}`} {groupLabel}
-                  </Text>
+                  transcriptDisplay[step.group]?.[userLanguage] || step.group;
+                return (
+                  <ListItem key={`accessible-${idx}`}>
+                    {groupLabel}: {idx}. {step.title}
+                  </ListItem>
                 );
-
-                lastGroup = group;
-              }
-
-              elements.push(
-                <Text
-                  key={`step-${idx}`}
-                  ml={2}
-                  color={idx <= currentStep - 1 ? "green.600" : "gray.500"}
-                  fontSize="sm"
-                >
-                  {idx}. {step.title}
-                </Text>
-              );
-            });
-
-            return elements;
-          })()}
+              })}
+            </UnorderedList>
+          </VisuallyHidden>
         </ModalBody>
 
         <ModalFooter

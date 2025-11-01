@@ -1,6 +1,6 @@
 import "regenerator-runtime/runtime";
 import "@babel/polyfill";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -1572,6 +1572,8 @@ const Step = ({
   const [dailyGoals, setDailyGoals] = useState(5);
   const [nextGoalExpiration, setNextGoalExpiration] = useState(null);
   const [goalCount, setGoalCount] = useState(0);
+  const [optionalQuestProgress, setOptionalQuestProgress] = useState({});
+  const pendingOptionalPersist = useRef(false);
 
   const [celebrationMessage, setCelebrationMessage] = useState("");
 
@@ -1603,6 +1605,126 @@ const Step = ({
   };
 
   const handleModalClose = () => setIsExternalLinkModalOpen(false);
+
+  const persistOptionalQuestProgress = useCallback(
+    (groupId, status = {}) => {
+      if (!groupId) {
+        return;
+      }
+
+      const userId = localStorage.getItem("local_npub");
+      setOptionalQuestProgress((prev) => {
+        const existing = prev[groupId] || {};
+        const stage = status.stage || existing.stage || "not-started";
+        const progressValue =
+          typeof status.progress === "number"
+            ? Math.min(1, Math.max(0, status.progress))
+            : existing.progress ?? 0;
+
+        if (
+          existing.stage === stage &&
+          (existing.progress ?? 0) === progressValue
+        ) {
+          return prev;
+        }
+
+        const nextState = {
+          ...prev,
+          [groupId]: {
+            stage,
+            progress: progressValue,
+            updatedAt: status.updatedAt || new Date().toISOString(),
+          },
+        };
+
+        if (
+          userId &&
+          startTime instanceof Date &&
+          endTime instanceof Date &&
+          nextGoalExpiration instanceof Date
+        ) {
+          updateUserData(
+            userId,
+            interval,
+            streak,
+            startTime,
+            endTime,
+            dailyGoals || 5,
+            nextGoalExpiration,
+            dailyProgress,
+            goalCount,
+            nextState
+          )
+            .then(() => {
+              pendingOptionalPersist.current = false;
+            })
+            .catch((error) => {
+              pendingOptionalPersist.current = true;
+              console.error("Failed to persist optional quest progress", error);
+            });
+        } else {
+          pendingOptionalPersist.current = true;
+        }
+
+        return nextState;
+      });
+    },
+    [
+      dailyGoals,
+      dailyProgress,
+      endTime,
+      goalCount,
+      interval,
+      nextGoalExpiration,
+      startTime,
+      streak,
+    ]
+  );
+
+  useEffect(() => {
+    const userId = localStorage.getItem("local_npub");
+    if (
+      !pendingOptionalPersist.current ||
+      !userId ||
+      !(startTime instanceof Date) ||
+      !(endTime instanceof Date) ||
+      !(nextGoalExpiration instanceof Date) ||
+      !optionalQuestProgress ||
+      Object.keys(optionalQuestProgress).length === 0
+    ) {
+      return;
+    }
+
+    updateUserData(
+      userId,
+      interval,
+      streak,
+      startTime,
+      endTime,
+      dailyGoals || 5,
+      nextGoalExpiration,
+      dailyProgress,
+      goalCount,
+      optionalQuestProgress
+    )
+      .catch((error) =>
+        console.error("Failed to persist pending optional quest progress", error)
+      )
+      .finally(() => {
+        pendingOptionalPersist.current = false;
+      });
+  }, [
+    dailyGoals,
+    dailyProgress,
+    endTime,
+    goalCount,
+    interval,
+    nextGoalExpiration,
+    optionalQuestProgress,
+    pendingOptionalPersist,
+    startTime,
+    streak,
+  ]);
 
   const {
     isOpen: isAwardModalOpen,
@@ -1741,6 +1863,7 @@ const Step = ({
 
       setDailyGoals(userData.dailyGoals || 5);
       setGoalCount(userData.goalCount);
+      setOptionalQuestProgress(userData?.optionalQuestProgress || {});
       const currentTime = new Date();
       let newExpiration = new Date(currentTime.getTime() + 86400000);
 
@@ -2564,6 +2687,10 @@ const Step = ({
           : `/q/${currentStep + 1}`;
       setLectureNextPath(path);
       setLectureNextStep(nextStep);
+      persistOptionalQuestProgress(step.group, {
+        stage: "complete",
+        progress: 1,
+      });
     }
 
     if (currentStep === 9) {
@@ -3601,6 +3728,7 @@ const Step = ({
                 setFinalConversation={setFinalConversation}
                 finalConversation={finalConversation}
                 handleModalCheck={handleModalCheck}
+                onQuestProgress={persistOptionalQuestProgress}
               />
             )}
             {/* {isPostingWithNostr ? (
@@ -3914,6 +4042,8 @@ const Step = ({
               steps={steps}
               currentStep={currentStep}
               userLanguage={userLanguage}
+              navigateWithTransition={navigateWithTransition}
+              optionalQuestProgress={optionalQuestProgress}
             />
           ) : null}
           {/* newmodal */}
