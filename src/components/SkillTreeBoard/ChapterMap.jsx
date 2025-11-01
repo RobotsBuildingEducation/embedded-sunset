@@ -207,7 +207,7 @@ const ChapterMap = ({
             borderRadius="full"
             onClick={handleStart}
           >
-            Start chapter
+            Start
           </Button>
         </HStack>
 

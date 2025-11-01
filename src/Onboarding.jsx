@@ -105,6 +105,21 @@ export const Onboarding = ({
     [lessonSteps, navigate]
   );
 
+  const firstChapterStep = useMemo(() => {
+    if (!lessonSteps?.length) {
+      return null;
+    }
+
+    const index = lessonSteps.findIndex((step) => {
+      if (!step?.group && step?.group !== 0) {
+        return false;
+      }
+      return !CHAPTER_MAP_EXCLUDED_GROUPS.has(step.group);
+    });
+
+    return index >= 0 ? index : null;
+  }, [lessonSteps]);
+
   const {
     isOpen: isAwardModalOpen,
     onOpen: onAwardModalOpen,
@@ -804,8 +819,13 @@ export const Onboarding = ({
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
-                      setCurrentStep(1);
-                      launchLearningStep(1);
+                      const chapterLaunchStep = Number.isFinite(
+                        firstChapterStep
+                      )
+                        ? firstChapterStep
+                        : 1;
+                      setCurrentStep(chapterLaunchStep);
+                      launchLearningStep(chapterLaunchStep);
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
                     mb={18}
