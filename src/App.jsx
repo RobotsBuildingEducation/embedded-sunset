@@ -192,6 +192,7 @@ import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWrit
 import CloudTransition from "./elements/CloudTransition";
 import ChapterMap from "./components/SkillTreeBoard/ChapterMap";
 import { skillTreeGroupLabels } from "./components/SkillTreeBoard/groupLabels";
+import { CHAPTER_MAP_EXCLUDED_GROUPS } from "./components/SkillTreeBoard/constants";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -221,13 +222,6 @@ const applySymbolMappings = (text) => {
   });
   return modifiedText;
 };
-
-const CHAPTER_MAP_EXCLUDED_GROUPS = new Set([
-  "0",
-  0,
-  "introduction",
-  "tutorial",
-]);
 
 const progressGradient = keyframes`
   0% { background-position: 0% 50%; }
