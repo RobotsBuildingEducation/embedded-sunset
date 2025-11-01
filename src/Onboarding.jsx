@@ -22,7 +22,6 @@ import {
   MenuItem,
   Menu,
 } from "@chakra-ui/react";
-import { useNavigate, useParams } from "react-router-dom";
 import { GiBullseye } from "react-icons/gi";
 import { TbBellHeart } from "react-icons/tb";
 
@@ -62,15 +61,14 @@ import WaveBar from "./components/WaveBar";
 export const Onboarding = ({
   userLanguage,
   setUserLanguage,
-  setCurrentStep,
+  step,
+  setStep,
 }) => {
   const { assignExistingBadgeToNpub } = useSharedNostr(
     localStorage.getItem("local_npub"),
     localStorage.getItem("local_nsec")
   );
-  const { step } = useParams();
   const [interval, setInterval] = useState(2880);
-  const navigate = useNavigate();
   const toast = useToast();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
@@ -85,16 +83,12 @@ export const Onboarding = ({
     assignExistingBadgeToNpub(
       onboardingTranscript["name"][userLanguage].replace(/ /g, "-")
     );
-
-    // navigate("/q/0");
     onAwardModalOpen();
   };
 
   const handleActuallyReallySeriouslyLaunchApp = () => {
     setOnboardingToDone(localStorage.getItem("local_npub"), 5);
-
-    setCurrentStep(5);
-    navigate("/q/5");
+    setStep("done");
   };
 
   // Scroll to top on step change
@@ -304,8 +298,7 @@ export const Onboarding = ({
             userLanguage={userLanguage}
             moveToNext={() => {
               incrementUserOnboardingStep(localStorage.getItem("local_npub"));
-              setCurrentStep(0);
-              navigate("/q/0");
+              setStep("2");
             }}
           />
         </Box>
@@ -773,8 +766,7 @@ export const Onboarding = ({
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
-                      setCurrentStep(1);
-                      navigate("/q/1");
+                      setStep("3");
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
                     mb={18}
@@ -867,7 +859,6 @@ export const Onboarding = ({
                     setInterval={setInterval}
                     userId={localStorage.getItem("local_npub")}
                     userLanguage={userLanguage}
-                    setCurrentStep={setCurrentStep}
                   />
                 </Box>
               </FadeInComponent>
@@ -1061,8 +1052,7 @@ export const Onboarding = ({
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
-                      setCurrentStep(3);
-                      navigate("/q/3");
+                      setStep("5");
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
                     mb={18}
@@ -1143,8 +1133,7 @@ export const Onboarding = ({
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
-                      setCurrentStep(4);
-                      navigate("/q/4");
+                      setStep("6");
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
                     mb={18}
