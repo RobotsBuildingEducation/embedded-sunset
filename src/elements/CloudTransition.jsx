@@ -641,9 +641,10 @@ const CloudTransition = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.45, ease: "easeOut" }}
             textAlign="center"
-            color="purple.600"
+            color="#1E1555"
             w={{ base: "88%", md: "74%" }}
             maxW="400px"
+            textShadow="0 0 18px rgba(255,255,255,0.6)"
           >
             {message && (
               <Text
@@ -663,7 +664,7 @@ const CloudTransition = ({
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.55 }}
                   color="#05f569"
-                  style={{ textShadow: "0 0 12px rgba(5,245,105,0.25)" }}
+                  style={{ textShadow: "0 0 14px rgba(5,245,105,0.35)" }}
                 >
                   +${(displaySalary ?? 0).toLocaleString()}/yr
                 </Text>
@@ -674,8 +675,9 @@ const CloudTransition = ({
                     fontSize="sm"
                     mt={2}
                     initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 0.85, y: 0 }}
+                    animate={{ opacity: 0.92, y: 0 }}
                     transition={{ duration: 0.35, delay: 0.25 }}
+                    color="#2A1F62"
                   >
                     {detail}
                   </Text>
@@ -687,11 +689,12 @@ const CloudTransition = ({
               mt={6}
               mb={8}
               borderRadius="2xl"
-              border="1px solid rgba(128,90,213,0.22)"
-              bg="rgba(255,255,255,0.92)"
+              border="1px solid rgba(128,90,213,0.25)"
+              bg="rgba(255,255,255,0.97)"
               boxShadow="0 24px 44px rgba(79, 70, 229, 0.18)"
               px={{ base: 4, md: 5 }}
               py={{ base: 4, md: 5 }}
+              color="#21174F"
             >
               <Accordion allowToggle allowMultiple defaultIndex={[]}>
                 <AccordionItem border="none">
@@ -708,23 +711,23 @@ const CloudTransition = ({
                             fontSize="sm"
                             textTransform="uppercase"
                             letterSpacing="0.12em"
-                            color="purple.500"
+                            color="#4330A6"
                             fontWeight="semibold"
                           >
                             Chapter path
                           </Text>
                           {focusGroupLabel && (
-                            <Text fontWeight="semibold" fontSize="md" color="purple.700">
+                            <Text fontWeight="semibold" fontSize="md" color="#251A66">
                               {focusGroupLabel}
                             </Text>
                           )}
                           {!isExpanded && (
-                            <Text fontSize="xs" color="gray.500">
+                            <Text fontSize="xs" color="#544b7d">
                               Peek at the last, current, and next lessons.
                             </Text>
                           )}
                         </VStack>
-                        <AccordionIcon color="purple.500" />
+                        <AccordionIcon color="#4C38B2" />
                       </AccordionButton>
                       <AccordionPanel px={0} pt={4} pb={0}>
                         {timelineNodes.length ? (
@@ -825,22 +828,24 @@ const CloudTransition = ({
                                       <HStack align="flex-start" spacing={3}>
                                         <Icon
                                           as={meta.icon}
-                                          color={isEmpty ? "purple.300" : "purple.500"}
+                                          color={isEmpty ? "#A7A1D8" : "#4C38B2"}
                                           boxSize={4}
                                           mt={1}
                                         />
                                         <VStack align="flex-start" spacing={1} w="100%">
                                           <Badge
                                             colorScheme={meta.badge}
-                                            variant={isEmpty ? "outline" : "subtle"}
+                                            variant={isEmpty ? "outline" : "solid"}
                                             borderRadius="full"
+                                            bg={isEmpty ? "white" : undefined}
+                                            color={isEmpty ? "#514A7D" : undefined}
                                           >
                                             {meta.label}
                                           </Badge>
-                                          <Text fontSize="sm" fontWeight="semibold" color="purple.700">
+                                          <Text fontSize="sm" fontWeight="semibold" color="#251A66">
                                             {title}
                                           </Text>
-                                          <Text fontSize="xs" color="gray.500">
+                                          <Text fontSize="xs" color="#5F598C">
                                             {subtitle}
                                           </Text>
                                         </VStack>
@@ -852,7 +857,7 @@ const CloudTransition = ({
                             </VStack>
                           </Box>
                         ) : (
-                          <Text fontSize="sm" color="gray.600">
+                          <Text fontSize="sm" color="#4F457B">
                             We&apos;ll cue up the next lessons once this chapter begins.
                           </Text>
                         )}
@@ -864,17 +869,17 @@ const CloudTransition = ({
             </Box>
 
             {message && (
-              <Box fontSize="sm" color="purple.600" mb={6}>
+              <Box fontSize="sm" color="#2A1F62" mb={6}>
                 {message}
               </Box>
             )}
 
             <Box w="100%" mx="auto" mb={6}>
               <HStack justify="space-between" mb={1}>
-                <Text fontSize="sm" color="purple.700" fontWeight="medium">
+                <Text fontSize="sm" color="#24195F" fontWeight="semibold">
                   Salary
                 </Text>
-                <Text fontSize="xs" color="gray.600" fontWeight="medium">
+                <Text fontSize="xs" color="#4F457B" fontWeight="medium">
                   {Math.round(Number(salaryProgress) || 0)}%
                 </Text>
               </HStack>
@@ -890,10 +895,10 @@ const CloudTransition = ({
             </Box>
             <Box w="100%" mx="auto" mb={6}>
               <HStack justify="space-between" mb={1}>
-                <Text fontSize="sm" color="purple.700" fontWeight="medium">
+                <Text fontSize="sm" color="#24195F" fontWeight="semibold">
                   Bitcoin sats
                 </Text>
-                <Text fontSize="xs" color="gray.600" fontWeight="medium">
+                <Text fontSize="xs" color="#4F457B" fontWeight="medium">
                   {displayedBalance}
                 </Text>
               </HStack>
@@ -910,10 +915,10 @@ const CloudTransition = ({
 
             <Box w="100%" mx="auto" mb={6}>
               <HStack justify="space-between" mb={1}>
-                <Text fontSize="sm" color="purple.700" fontWeight="medium">
-                  Progress
+                <Text fontSize="sm" color="#24195F" fontWeight="semibold">
+                  Chapter progress
                 </Text>
-                <Text fontSize="xs" color="gray.600" fontWeight="medium">
+                <Text fontSize="xs" color="#4F457B" fontWeight="medium">
                   {Math.round(Number(stepProgress) || 0)}%
                 </Text>
               </HStack>
@@ -930,10 +935,10 @@ const CloudTransition = ({
 
             <Box w="100%" mx="auto" mb={6}>
               <HStack justify="space-between" mb={1}>
-                <Text fontSize="sm" color="purple.700" fontWeight="medium">
+                <Text fontSize="sm" color="#24195F" fontWeight="semibold">
                   {dailyGoalLabel}
                 </Text>
-                <Text fontSize="xs" color="gray.600" fontWeight="medium">
+                <Text fontSize="xs" color="#4F457B" fontWeight="medium">
                   {dailyProgress}/{dailyGoals}
                 </Text>
               </HStack>
@@ -950,10 +955,10 @@ const CloudTransition = ({
 
             <Box w="100%" mx="auto" mb={6}>
               <HStack justify="space-between" mb={1}>
-                <Text fontSize="sm" color="purple.700" fontWeight="medium">
+                <Text fontSize="sm" color="#24195F" fontWeight="semibold">
                   {translation[userLanguage]["communityGoal"]}
                 </Text>
-                <Text fontSize="xs" color="gray.600" fontWeight="medium">
+                <Text fontSize="xs" color="#4F457B" fontWeight="medium">
                   {questionsAnswered}/7500
                 </Text>
               </HStack>
@@ -973,7 +978,7 @@ const CloudTransition = ({
                 <Text
                   fontSize="xs"
                   mt={2}
-                  color={promotionExpired ? "red.500" : "purple.600"}
+                  color={promotionExpired ? "#C53030" : "#2A1F62"}
                 >
                   {promotionExpired
                     ? translation[userLanguage]["promotion.timerExpired"]

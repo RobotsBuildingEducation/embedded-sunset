@@ -222,6 +222,8 @@ const applySymbolMappings = (text) => {
   return modifiedText;
 };
 
+const CHAPTER_MAP_EXCLUDED_GROUPS = new Set(["0", "introduction", "tutorial"]);
+
 const progressGradient = keyframes`
   0% { background-position: 0% 50%; }
   100% { background-position: 200% 50%; }
@@ -1853,7 +1855,10 @@ const Step = ({
     const list = steps[userLanguage] || [];
     const current = list[currentStep];
 
-    if (!current?.group) {
+    if (
+      !current?.group ||
+      CHAPTER_MAP_EXCLUDED_GROUPS.has(current.group)
+    ) {
       return;
     }
 
@@ -5821,7 +5826,7 @@ function App({ isShutDown }) {
       const list = steps?.[userLanguage] || [];
       const target = list[nextStep];
 
-      if (!target?.group) {
+      if (!target?.group || CHAPTER_MAP_EXCLUDED_GROUPS.has(target.group)) {
         return { shouldRedirect: false, groupId: null };
       }
 
