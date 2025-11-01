@@ -1055,99 +1055,6 @@ export const Onboarding = ({
 
                   <TechOverview userLanguage={userLanguage} />
 
-                  <Menu width="100%" mb={6}>
-                    <MenuButton
-                      as={Button}
-                      rightIcon={<ChevronDownIcon />}
-                      width="250px"
-                      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                    >
-                      {
-                        {
-                          en: translation[userLanguage][
-                            "language.javascript.english"
-                          ],
-                          es: translation[userLanguage][
-                            "language.javascript.spanish"
-                          ],
-                          "py-en":
-                            translation[userLanguage][
-                              "language.python.english"
-                            ],
-                          "swift-en":
-                            translation[userLanguage]["language.swift.english"],
-                          "android-en":
-                            translation[userLanguage][
-                              "language.android.english"
-                            ],
-                          "compsci-en":
-                            translation[userLanguage][
-                              "language.compsci.english"
-                            ],
-                        }[userLanguage]
-                      }
-                    </MenuButton>
-                    <MenuList boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)">
-                      <MenuItem
-                        p={6}
-                        borderBottom="1px solid #ececec"
-                        onClick={() =>
-                          handleLanguageSelect({ target: { value: "en" } })
-                        }
-                      >
-                        {
-                          translation[userLanguage][
-                            "language.javascript.english"
-                          ]
-                        }
-                      </MenuItem>
-                      <MenuItem
-                        p={6}
-                        borderBottom="1px solid #ececec"
-                        onClick={() =>
-                          handleLanguageSelect({ target: { value: "es" } })
-                        }
-                      >
-                        {
-                          translation[userLanguage][
-                            "language.javascript.spanish"
-                          ]
-                        }
-                      </MenuItem>
-                      <MenuItem
-                        p={6}
-                        borderBottom="1px solid #ececec"
-                        onClick={() =>
-                          handleLanguageSelect({ target: { value: "py-en" } })
-                        }
-                      >
-                        {translation[userLanguage]["language.python.english"]}
-                      </MenuItem>
-                      <MenuItem
-                        p={6}
-                        borderBottom="1px solid #ececec"
-                        onClick={() =>
-                          handleLanguageSelect({
-                            target: { value: "swift-en" },
-                          })
-                        }
-                      >
-                        {translation[userLanguage]["language.swift.english"]}
-                      </MenuItem>
-                      <MenuItem
-                        p={6}
-                        onClick={() =>
-                          handleLanguageSelect({
-                            target: { value: "android-en" },
-                          })
-                        }
-                      >
-                        {translation[userLanguage]["language.android.english"]}
-                      </MenuItem>
-                    </MenuList>
-                  </Menu>
-                  <br />
-                  <br />
                   <br />
                   <Button
                     onClick={() => {
@@ -1322,6 +1229,7 @@ export const Onboarding = ({
                   <BitcoinOnboarding
                     userLanguage={userLanguage}
                     from="onboarding"
+                    onDepositComplete={handleActuallyLaunchApp}
                   />
                 </Text>
               </PanRightComponent>

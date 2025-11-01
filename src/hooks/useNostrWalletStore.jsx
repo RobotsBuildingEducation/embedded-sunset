@@ -35,6 +35,7 @@ export const useNostrWalletStore = create((set, get) => ({
   cashuWallet: null,
   walletBalance: 0,
   invoice: "", //not used: needs to add ability to generate new QR/address (invoice) in case things expire
+  isRefreshingAfterDeposit: false,
 
   isCreatingWallet: false,
   // functions to define state when the data gets created
@@ -423,16 +424,26 @@ export const useNostrWalletStore = create((set, get) => ({
 
   //handles the deposit... gotta love self describing code
 
-  initiateDeposit: async (amountInSats = 10) => {
+  initiateDeposit: async (amountInSats = 10, options = {}) => {
     //get state
-    const { cashuWallet, setError, setInvoice, init, initWalletService } =
+    const {
+      cashuWallet,
+      setError,
+      setInvoice,
+      init,
+      initWalletService,
+    } =
       get();
+
+    const { onSuccess } = options ?? {};
 
     //safety check, if a wallet is never defined, just exit the function
     if (!cashuWallet) {
       console.error("Wallet not initialized.");
       return;
     }
+
+    set({ isRefreshingAfterDeposit: false });
 
     //run the deposit function with the cashu object
     const deposit = cashuWallet.deposit(amountInSats, defaultMint, "sat");
@@ -449,10 +460,20 @@ export const useNostrWalletStore = create((set, get) => ({
       const updatedBalance = await cashuWallet.balance();
 
       //updates balance state, probably triggers wallet listeners too
-      set({ walletBalance: updatedBalance || [] });
+      set({
+        walletBalance: updatedBalance || [],
+        isRefreshingAfterDeposit: true,
+      });
 
       setInvoice("");
-      window.location.reload();
+      setTimeout(() => {
+        if (typeof onSuccess === "function") {
+          onSuccess();
+          set({ isRefreshingAfterDeposit: false });
+        } else {
+          window.location.reload();
+        }
+      }, 2000);
     });
 
     deposit.on("error", (e) => {

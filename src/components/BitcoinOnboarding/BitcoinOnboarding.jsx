@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Button,
   Text,
   VStack,
   useToast,
-  Select,
   Link,
   Box,
   Accordion,
@@ -24,17 +23,61 @@ import { translation } from "../../utility/translation";
 
 import { useNostrWalletStore } from "../../hooks/useNostrWalletStore";
 import { database } from "../../database/firebaseResources";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { IdentityCard } from "../../elements/IdentityCard";
 
-const BitcoinOnboarding = ({ userLanguage }) => {
+const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
   const toast = useToast();
   const [isGenerateNewQR, setIsGeneratingNewQR] = useState(false);
-  const [lnInvoice, setLnInvoice] = useState(""); // LN invoice for deposit
-  const [initializingWallet, setInitializingWallet] = useState(false);
   const [depositing, setDepositing] = useState(false);
   const [selectedIdentity, setSelectedIdentity] = useState(""); // State to track selected identity
-  const [loading, setLoading] = useState(false);
+
+  const recipientOptions = useMemo(
+    () => [
+      {
+        value:
+          "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt",
+        label: "robotsbuildingeducation.com",
+        href: "https://robotsbuildingeducation.com",
+      },
+      {
+        value:
+          "npub166md04uzz4ksy4zv2c8maz4lprrezmtfkwq6yfevtqel3tchkthsemwtwm",
+        label: "ladderly.io",
+        href: "https://ladderly.io",
+      },
+      {
+        value:
+          "npub1ae02dvwewx8w0z2sftpcg2ta4xyu6hc00mxuq03x2aclta6et76q90esq2",
+        label: "girlsoncampus.org",
+        href: "https://www.girlsoncampus.org/",
+      },
+    ],
+    []
+  );
+
+  const selectedIdentityOption = useMemo(
+    () =>
+      recipientOptions.find((option) => option.value === selectedIdentity) ||
+      null,
+    [recipientOptions, selectedIdentity]
+  );
+
+  const depositOptions = useMemo(() => {
+    if (typeof onDepositComplete === "function") {
+      return { onSuccess: onDepositComplete };
+    }
+
+    return {};
+  }, [onDepositComplete]);
+
+  const refreshDescription = useMemo(() => {
+    if (from === "onboarding") {
+      return "We'll move you forward in just a moment so you can see your updated sats.";
+    }
+
+    return "We'll update things in just a moment so you can see your updated sats.";
+  }, [from]);
 
   /**
    * Hook from useSharedNostr:
@@ -52,6 +95,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
     invoice,
     init,
     isCreatingWallet,
+    isRefreshingAfterDeposit,
   } = useNostrWalletStore((state) => ({
     cashuWallet: state.cashuWallet,
     walletBalance: state.walletBalance,
@@ -60,6 +104,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
     invoice: state.invoice,
     init: state.init,
     isCreatingWallet: state.isCreatingWallet,
+    isRefreshingAfterDeposit: state.isRefreshingAfterDeposit,
   }));
 
   console.log("total balance", walletBalance);
@@ -67,17 +112,32 @@ const BitcoinOnboarding = ({ userLanguage }) => {
     (walletBalance || [])?.reduce((sum, b) => sum + (b.amount || 0), 0) || null;
 
   useEffect(() => {
-    if (totalBalance > 0) {
-      setLnInvoice("");
+    if (isRefreshingAfterDeposit) {
+      if (!toast.isActive("deposit-refresh")) {
+        toast({
+          id: "deposit-refresh",
+          title: "Refreshing your balance",
+          description: refreshDescription,
+          status: "warning",
+          variant: "solid",
+          duration: 4000,
+          isClosable: true,
+          position: "top",
+        });
+      }
+    } else {
+      toast.close("deposit-refresh");
     }
-  }, [totalBalance]);
+
+    return () => {
+      toast.close("deposit-refresh");
+    };
+  }, [isRefreshingAfterDeposit, toast, refreshDescription]);
 
   const handleIdentityChange = async (value) => {
     setSelectedIdentity(value);
 
     try {
-      //   setLoading(true);
-
       // Save the selected identity to Firestore under the user's document
       const userDocRef = doc(
         database,
@@ -87,8 +147,6 @@ const BitcoinOnboarding = ({ userLanguage }) => {
       await updateDoc(userDocRef, { identity: value });
     } catch (error) {
       console.error("Error saving identity to Firestore:", error);
-    } finally {
-      //   setLoading(false);
     }
   };
 
@@ -111,13 +169,12 @@ const BitcoinOnboarding = ({ userLanguage }) => {
         isClosable: true,
       });
     }
-    setInitializingWallet(false);
   };
 
   const handleInitiateDeposit = async () => {
     setDepositing(true);
     try {
-      const pr = await initiateDeposit(100);
+      const pr = await initiateDeposit(100, depositOptions);
     } catch (err) {
       console.error("Error initiating deposit:", err);
       toast({
@@ -134,7 +191,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
   const generateNewQR = async () => {
     setIsGeneratingNewQR(true);
     try {
-      const pr = await initiateDeposit(100);
+      const pr = await initiateDeposit(100, depositOptions);
     } catch (err) {
       console.error("Error initiating deposit:", err);
       toast({
@@ -159,12 +216,6 @@ const BitcoinOnboarding = ({ userLanguage }) => {
       position: "top",
     });
   };
-
-  useEffect(() => {
-    if (cashuWallet) {
-      setInitializingWallet(true);
-    }
-  }, [cashuWallet]);
 
   const renderButtonText = (buttonText) => {
     const parts = buttonText.split(/(Cash App)/); // Split by "Cash App"
@@ -195,6 +246,35 @@ const BitcoinOnboarding = ({ userLanguage }) => {
       </Text>
     );
   };
+
+  const renderRecipientAccordion = (accordionProps = {}) => (
+    <Box marginTop="2" width="100%" {...accordionProps}>
+      <Accordion allowToggle reduceMotion={true} mb={4}>
+        <AccordionItem>
+          <AccordionButton>
+            <Box flex="1" textAlign="center" fontSize="sm">
+              {translation[userLanguage]["change.recipient"]}
+            </Box>
+            <AccordionIcon />
+          </AccordionButton>
+          <AccordionPanel pb={4}>
+            <RadioGroup
+              onChange={handleIdentityChange}
+              value={selectedIdentity}
+            >
+              <VStack align="start">
+                {recipientOptions.map(({ value, label }) => (
+                  <Radio colorScheme="pink" value={value} key={value}>
+                    {label}
+                  </Radio>
+                ))}
+              </VStack>
+            </RadioGroup>
+          </AccordionPanel>
+        </AccordionItem>
+      </Accordion>
+    </Box>
+  );
 
   const renderContent = () => {
     if (!cashuWallet) {
@@ -249,60 +329,29 @@ const BitcoinOnboarding = ({ userLanguage }) => {
               value={selectedIdentity}
             >
               <VStack align="start">
-                <Radio
-                  colorScheme="pink"
-                  value="npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt"
-                >
-                  robotsbuildingeducation.com
-                </Radio>
-                <Radio
-                  colorScheme="pink"
-                  value="npub166md04uzz4ksy4zv2c8maz4lprrezmtfkwq6yfevtqel3tchkthsemwtwm"
-                >
-                  ladderly.io
-                </Radio>
-                <Radio
-                  colorScheme="pink"
-                  value="npub1ae02dvwewx8w0z2sftpcg2ta4xyu6hc00mxuq03x2aclta6et76q90esq2"
-                >
-                  girlsoncampus.org
-                </Radio>
+                {recipientOptions.map(({ value, label }) => (
+                  <Radio colorScheme="pink" value={value} key={value}>
+                    {label}
+                  </Radio>
+                ))}
               </VStack>
             </RadioGroup>
             {/* </AccordionPanel>
               </AccordionItem>
             </Accordion> */}
 
-            <Link
-              mb={4}
-              fontSize="sm"
-              target="_blank"
-              textDecoration={"underline"}
-              textAlign={"center"}
-              href={
-                selectedIdentity ===
-                "npub1ae02dvwewx8w0z2sftpcg2ta4xyu6hc00mxuq03x2aclta6et76q90esq2"
-                  ? "https://www.girlsoncampus.org/"
-                  : selectedIdentity ===
-                      "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt"
-                    ? "https://robotsbuildingeducation.com"
-                    : selectedIdentity ===
-                        "npub166md04uzz4ksy4zv2c8maz4lprrezmtfkwq6yfevtqel3tchkthsemwtwm"
-                      ? "https://ladderly.io"
-                      : null
-              }
-            >
-              {selectedIdentity ===
-              "npub1ae02dvwewx8w0z2sftpcg2ta4xyu6hc00mxuq03x2aclta6et76q90esq2"
-                ? "https://girlsoncampus.org"
-                : selectedIdentity ===
-                    "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt"
-                  ? "https://robotsbuildingeducation.com"
-                  : selectedIdentity ===
-                      "npub166md04uzz4ksy4zv2c8maz4lprrezmtfkwq6yfevtqel3tchkthsemwtwm"
-                    ? "https://ladderly.io"
-                    : null}
-            </Link>
+            {selectedIdentityOption ? (
+              <Link
+                mb={4}
+                fontSize="sm"
+                target="_blank"
+                textDecoration={"underline"}
+                textAlign={"center"}
+                href={selectedIdentityOption.href}
+              >
+                {selectedIdentityOption.href}
+              </Link>
+            ) : null}
 
             <Button
               onMouseDown={() => createNewWallet()}
@@ -391,6 +440,7 @@ const BitcoinOnboarding = ({ userLanguage }) => {
               animateOnChange={false}
               realValue={cashuWallet.walletId}
             />
+            {renderRecipientAccordion()}
           </VStack>
         </>
       );
@@ -438,6 +488,16 @@ const BitcoinOnboarding = ({ userLanguage }) => {
                     {translation[userLanguage]["deposit.ps"]}
                   </Text>
 
+                  <Text
+                    mt={2}
+                    fontSize="xs"
+                    textAlign="center"
+                    color="gray.600"
+                  >
+                    After your deposit arrives, we'll update things
+                    automatically so your wallet balance stays up to date.
+                  </Text>
+
                   <Text mt={2} fontSize="xs">
                     {renderButtonText(
                       translation[userLanguage][
@@ -447,6 +507,8 @@ const BitcoinOnboarding = ({ userLanguage }) => {
                   </Text>
                 </>
               )}
+
+              {renderRecipientAccordion({ marginTop: "2" })}
 
               <Button
                 mt={2}
@@ -522,50 +584,12 @@ const BitcoinOnboarding = ({ userLanguage }) => {
                 {translation[userLanguage]["deposit.button"]}
               </Button>
 
-              <Box marginTop="2" width="100%">
-                <Accordion allowToggle reduceMotion={true} mb={4}>
-                  <AccordionItem>
-                    <AccordionButton>
-                      <Box
-                        flex="1"
-                        textAlign="left"
-                        fontSize="sm"
-                        textAlign="center"
-                      >
-                        {translation[userLanguage]["change.recipient"]}
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                    <AccordionPanel pb={4}>
-                      <RadioGroup
-                        onChange={handleIdentityChange}
-                        value={selectedIdentity}
-                      >
-                        <VStack align="start">
-                          <Radio
-                            colorScheme="pink"
-                            value="npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt"
-                          >
-                            robotsbuildingeducation.com
-                          </Radio>
-                          <Radio
-                            colorScheme="pink"
-                            value="npub166md04uzz4ksy4zv2c8maz4lprrezmtfkwq6yfevtqel3tchkthsemwtwm"
-                          >
-                            ladderly.io
-                          </Radio>
-                          <Radio
-                            colorScheme="pink"
-                            value="npub1ae02dvwewx8w0z2sftpcg2ta4xyu6hc00mxuq03x2aclta6et76q90esq2"
-                          >
-                            girlsoncampus.org
-                          </Radio>
-                        </VStack>
-                      </RadioGroup>
-                    </AccordionPanel>
-                  </AccordionItem>
-                </Accordion>
-              </Box>
+              <Text mt={2} fontSize="xs" textAlign="center" color="gray.600">
+                After your deposit is detected, we'll update things
+                automatically to show your updated balance.
+              </Text>
+
+              {renderRecipientAccordion({ marginTop: "2" })}
             </VStack>
           </Box>
         );
