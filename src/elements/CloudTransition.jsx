@@ -1,5 +1,10 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
   Badge,
   Box,
   Button,
@@ -637,8 +642,8 @@ const CloudTransition = ({
             transition={{ duration: 0.45, ease: "easeOut" }}
             textAlign="center"
             color="purple.600"
-            w="86%"
-            maxW="460px"
+            w={{ base: "88%", md: "74%" }}
+            maxW="400px"
           >
             {message && (
               <Text
@@ -686,127 +691,176 @@ const CloudTransition = ({
               bg="rgba(255,255,255,0.92)"
               boxShadow="0 24px 44px rgba(79, 70, 229, 0.18)"
               px={{ base: 4, md: 5 }}
-              py={{ base: 5, md: 6 }}
+              py={{ base: 4, md: 5 }}
             >
-              <VStack align="stretch" spacing={4}>
-                <Box>
-                  <Text
-                    fontSize="sm"
-                    textTransform="uppercase"
-                    letterSpacing="0.12em"
-                    color="purple.500"
-                  >
-                    Chapter path
-                  </Text>
-                  {focusGroupLabel && (
-                    <Text fontWeight="semibold" fontSize="lg" color="purple.700" mt={1}>
-                      {focusGroupLabel}
-                    </Text>
-                  )}
-                </Box>
-                {timelineNodes.length ? (
-                  <Box position="relative" pt={2}>
-                    <MotionBox
-                      position="absolute"
-                      left="50%"
-                      top={0}
-                      bottom={0}
-                      width="3px"
-                      bgGradient="linear(180deg, rgba(129, 140, 248, 0.2) 0%, rgba(56, 178, 172, 0.4) 100%)"
-                      transform="translateX(-50%)"
-                      borderRadius="full"
-                      animate={{ opacity: [0.35, 0.75, 0.35] }}
-                      transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}
-                      aria-hidden
-                    />
-                    <VStack spacing={6} align="stretch">
-                      {timelineNodes.map((node, idx) => {
-                        const meta = timelineStatusMeta[node.status] || timelineStatusMeta.later;
-                        const placeholder =
-                          timelinePlaceholders[node.status] || timelinePlaceholders.later;
-                        const isEmpty = !node.step;
-                        const side = idx % 2 === 0 ? "flex-start" : "flex-end";
-                        const title = isEmpty
-                          ? placeholder.title
-                          : node.step.title || `Question ${node.step.index}`;
-                        const subtitle = isEmpty
-                          ? placeholder.subtitle
-                          : `#${node.step.index} · ${node.step.type || "Lesson"}`;
-
-                        return (
-                          <MotionFlex
-                            key={`${node.status}-${node.step?.index ?? idx}`}
-                            justify={side}
-                            initial={{ opacity: 0, x: side === "flex-start" ? -16 : 16 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.4, delay: idx * 0.08 }}
-                            w="100%"
+              <Accordion allowToggle allowMultiple defaultIndex={[]}>
+                <AccordionItem border="none">
+                  {({ isExpanded }) => (
+                    <>
+                      <AccordionButton
+                        px={0}
+                        _hover={{ bg: "transparent" }}
+                        _focus={{ boxShadow: "none" }}
+                        alignItems="flex-start"
+                      >
+                        <VStack align="flex-start" spacing={1} flex={1} pr={2}>
+                          <Text
+                            fontSize="sm"
+                            textTransform="uppercase"
+                            letterSpacing="0.12em"
+                            color="purple.500"
+                            fontWeight="semibold"
                           >
+                            Chapter path
+                          </Text>
+                          {focusGroupLabel && (
+                            <Text fontWeight="semibold" fontSize="md" color="purple.700">
+                              {focusGroupLabel}
+                            </Text>
+                          )}
+                          {!isExpanded && (
+                            <Text fontSize="xs" color="gray.500">
+                              Peek at the last, current, and next lessons.
+                            </Text>
+                          )}
+                        </VStack>
+                        <AccordionIcon color="purple.500" />
+                      </AccordionButton>
+                      <AccordionPanel px={0} pt={4} pb={0}>
+                        {timelineNodes.length ? (
+                          <Box position="relative" pt={1} pb={2}>
                             <MotionBox
-                              position="relative"
-                              maxW="88%"
-                              bg={isEmpty ? "rgba(247, 245, 255, 0.65)" : "white"}
-                              borderRadius="xl"
-                              px={4}
-                              py={3}
-                              border={
-                                isEmpty
-                                  ? "1px solid rgba(203,213,224,0.6)"
-                                  : "1px solid rgba(128,90,213,0.22)"
-                              }
-                              boxShadow={
-                                isEmpty ? "none" : "0 14px 32px rgba(99, 102, 241, 0.18)"
-                              }
-                              _before={{
-                                content: '""',
-                                position: "absolute",
-                                top: "50%",
-                                width: "42px",
-                                height: "2px",
-                                bgGradient: `linear(90deg, transparent 0%, ${meta.accent} 45%, transparent 100%)`,
-                                left: side === "flex-start" ? "100%" : "auto",
-                                right: side === "flex-end" ? "100%" : "auto",
-                                transform:
-                                  side === "flex-start"
-                                    ? "translateY(-50%) rotate(-6deg)"
-                                    : "translateY(-50%) rotate(6deg)",
-                              }}
-                            >
-                              <HStack align="flex-start" spacing={3}>
-                                <Icon
-                                  as={meta.icon}
-                                  color={isEmpty ? "purple.300" : "purple.500"}
-                                  boxSize={4}
-                                  mt={1}
-                                />
-                                <VStack align="flex-start" spacing={1} w="100%">
-                                  <Badge
-                                    colorScheme={meta.badge}
-                                    variant={isEmpty ? "outline" : "subtle"}
-                                    borderRadius="full"
+                              position="absolute"
+                              left="50%"
+                              top={0}
+                              bottom={0}
+                              width="2px"
+                              bgGradient="linear(180deg, rgba(129, 140, 248, 0.28) 0%, rgba(56, 178, 172, 0.45) 100%)"
+                              transform="translateX(-50%)"
+                              borderRadius="full"
+                              animate={{ opacity: [0.45, 0.85, 0.45] }}
+                              transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
+                              aria-hidden
+                            />
+                            <VStack spacing={5} align="stretch">
+                              {timelineNodes.map((node, idx) => {
+                                const meta =
+                                  timelineStatusMeta[node.status] || timelineStatusMeta.later;
+                                const placeholder =
+                                  timelinePlaceholders[node.status] || timelinePlaceholders.later;
+                                const isEmpty = !node.step;
+                                const side = idx % 2 === 0 ? "flex-start" : "flex-end";
+                                const title = isEmpty
+                                  ? placeholder.title
+                                  : node.step.title || `Question ${node.step.index}`;
+                                const subtitle = isEmpty
+                                  ? placeholder.subtitle
+                                  : `#${node.step.index} · ${node.step.type || "Lesson"}`;
+
+                                return (
+                                  <MotionFlex
+                                    key={`${node.status}-${node.step?.index ?? idx}`}
+                                    justify={side}
+                                    initial={{ opacity: 0, x: side === "flex-start" ? -14 : 14 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.35, delay: idx * 0.08 }}
+                                    w="100%"
                                   >
-                                    {meta.label}
-                                  </Badge>
-                                  <Text fontSize="sm" fontWeight="semibold" color="purple.700">
-                                    {title}
-                                  </Text>
-                                  <Text fontSize="xs" color="gray.500">
-                                    {subtitle}
-                                  </Text>
-                                </VStack>
-                              </HStack>
-                            </MotionBox>
-                          </MotionFlex>
-                        );
-                      })}
-                    </VStack>
-                  </Box>
-                ) : (
-                  <Text fontSize="sm" color="gray.600">
-                    We&apos;ll cue up the next lessons once this chapter begins.
-                  </Text>
-                )}
-              </VStack>
+                                    <MotionBox
+                                      position="relative"
+                                      maxW="90%"
+                                      bg={isEmpty ? "rgba(247, 245, 255, 0.65)" : "white"}
+                                      borderRadius="lg"
+                                      px={4}
+                                      py={3}
+                                      border={
+                                        isEmpty
+                                          ? "1px solid rgba(203,213,224,0.6)"
+                                          : "1px solid rgba(128,90,213,0.24)"
+                                      }
+                                      boxShadow={
+                                        isEmpty ? "none" : "0 12px 28px rgba(99, 102, 241, 0.18)"
+                                      }
+                                      _before={{
+                                        content: '""',
+                                        position: "absolute",
+                                        top: "50%",
+                                        width: "48px",
+                                        height: "28px",
+                                        borderTop: `1px solid ${meta.accent}`,
+                                        borderLeft:
+                                          side === "flex-start"
+                                            ? `1px solid ${meta.accent}`
+                                            : "none",
+                                        borderRight:
+                                          side === "flex-end"
+                                            ? `1px solid ${meta.accent}`
+                                            : "none",
+                                        borderTopLeftRadius: side === "flex-start" ? "28px" : "0",
+                                        borderBottomLeftRadius: side === "flex-start" ? "28px" : "0",
+                                        borderTopRightRadius: side === "flex-end" ? "28px" : "0",
+                                        borderBottomRightRadius: side === "flex-end" ? "28px" : "0",
+                                        left: side === "flex-start" ? "100%" : "auto",
+                                        right: side === "flex-end" ? "100%" : "auto",
+                                        transform:
+                                          side === "flex-start"
+                                            ? "translate(6px, -50%)"
+                                            : "translate(-6px, -50%)",
+                                        opacity: 0.55,
+                                      }}
+                                      _after={{
+                                        content: '""',
+                                        position: "absolute",
+                                        top: "50%",
+                                        width: "10px",
+                                        height: "10px",
+                                        borderRadius: "full",
+                                        bg: meta.accent,
+                                        left: side === "flex-start" ? "auto" : "-20px",
+                                        right: side === "flex-start" ? "-20px" : "auto",
+                                        transform: "translateY(-50%)",
+                                        boxShadow: "0 0 12px rgba(79, 70, 229, 0.35)",
+                                      }}
+                                    >
+                                      <HStack align="flex-start" spacing={3}>
+                                        <Icon
+                                          as={meta.icon}
+                                          color={isEmpty ? "purple.300" : "purple.500"}
+                                          boxSize={4}
+                                          mt={1}
+                                        />
+                                        <VStack align="flex-start" spacing={1} w="100%">
+                                          <Badge
+                                            colorScheme={meta.badge}
+                                            variant={isEmpty ? "outline" : "subtle"}
+                                            borderRadius="full"
+                                          >
+                                            {meta.label}
+                                          </Badge>
+                                          <Text fontSize="sm" fontWeight="semibold" color="purple.700">
+                                            {title}
+                                          </Text>
+                                          <Text fontSize="xs" color="gray.500">
+                                            {subtitle}
+                                          </Text>
+                                        </VStack>
+                                      </HStack>
+                                    </MotionBox>
+                                  </MotionFlex>
+                                );
+                              })}
+                            </VStack>
+                          </Box>
+                        ) : (
+                          <Text fontSize="sm" color="gray.600">
+                            We&apos;ll cue up the next lessons once this chapter begins.
+                          </Text>
+                        )}
+                      </AccordionPanel>
+                    </>
+                  )}
+                </AccordionItem>
+              </Accordion>
             </Box>
 
             {message && (
@@ -817,10 +871,10 @@ const CloudTransition = ({
 
             <Box w="100%" mx="auto" mb={6}>
               <HStack justify="space-between" mb={1}>
-                <Text fontSize="sm" color="purple.500">
+                <Text fontSize="sm" color="purple.700" fontWeight="medium">
                   Salary
                 </Text>
-                <Text fontSize="xs" color="purple.400">
+                <Text fontSize="xs" color="gray.600" fontWeight="medium">
                   {Math.round(Number(salaryProgress) || 0)}%
                 </Text>
               </HStack>
@@ -836,10 +890,10 @@ const CloudTransition = ({
             </Box>
             <Box w="100%" mx="auto" mb={6}>
               <HStack justify="space-between" mb={1}>
-                <Text fontSize="sm" color="purple.500">
+                <Text fontSize="sm" color="purple.700" fontWeight="medium">
                   Bitcoin sats
                 </Text>
-                <Text fontSize="xs" color="purple.400">
+                <Text fontSize="xs" color="gray.600" fontWeight="medium">
                   {displayedBalance}
                 </Text>
               </HStack>
@@ -856,10 +910,10 @@ const CloudTransition = ({
 
             <Box w="100%" mx="auto" mb={6}>
               <HStack justify="space-between" mb={1}>
-                <Text fontSize="sm" color="purple.500">
+                <Text fontSize="sm" color="purple.700" fontWeight="medium">
                   Progress
                 </Text>
-                <Text fontSize="xs" color="purple.400">
+                <Text fontSize="xs" color="gray.600" fontWeight="medium">
                   {Math.round(Number(stepProgress) || 0)}%
                 </Text>
               </HStack>
@@ -876,10 +930,10 @@ const CloudTransition = ({
 
             <Box w="100%" mx="auto" mb={6}>
               <HStack justify="space-between" mb={1}>
-                <Text fontSize="sm" color="purple.500">
+                <Text fontSize="sm" color="purple.700" fontWeight="medium">
                   {dailyGoalLabel}
                 </Text>
-                <Text fontSize="xs" color="purple.400">
+                <Text fontSize="xs" color="gray.600" fontWeight="medium">
                   {dailyProgress}/{dailyGoals}
                 </Text>
               </HStack>
@@ -896,10 +950,10 @@ const CloudTransition = ({
 
             <Box w="100%" mx="auto" mb={6}>
               <HStack justify="space-between" mb={1}>
-                <Text fontSize="sm" color="purple.500">
+                <Text fontSize="sm" color="purple.700" fontWeight="medium">
                   {translation[userLanguage]["communityGoal"]}
                 </Text>
-                <Text fontSize="xs" color="purple.400">
+                <Text fontSize="xs" color="gray.600" fontWeight="medium">
                   {questionsAnswered}/7500
                 </Text>
               </HStack>

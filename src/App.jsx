@@ -5840,6 +5840,28 @@ function App({ isShutDown }) {
     [chapterIntroStatus, steps, userLanguage]
   );
 
+  useEffect(() => {
+    const match = location.pathname.match(/^\/q\/(\d+)$/);
+
+    if (!match) {
+      return;
+    }
+
+    const targetIndex = Number(match[1]);
+
+    if (!Number.isFinite(targetIndex)) {
+      return;
+    }
+
+    const { shouldRedirect, groupId } = shouldRedirectToChapterMap(targetIndex);
+
+    if (shouldRedirect && groupId) {
+      navigate(`/chapter/${encodeURIComponent(groupId)}?step=${targetIndex}`, {
+        replace: true,
+      });
+    }
+  }, [location.pathname, navigate, shouldRedirectToChapterMap]);
+
   const defaultTransitionStats = {
     salary: 0,
     salaryProgress: 0,
