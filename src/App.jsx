@@ -3513,7 +3513,7 @@ const Step = ({
                                   key={idx}
                                   onClick={() => {
                                     setSearchTerm("");
-                                    navigate(`/q/${idx}`);
+                                    navigateToStep(idx);
                                   }}
                                   whiteSpace="normal"
                                 >
@@ -4492,7 +4492,7 @@ const Home = ({
       ) {
         navigate(`/onboarding/${parseInt(onboardingProgress, 10)}`);
       } else {
-        navigate(`/q/${currentStep}`);
+        navigateToStep(currentStep);
       }
     } catch (error) {
       // const err = error.error;
@@ -5818,6 +5818,27 @@ function App({ isShutDown }) {
     [chapterIntroStatus, steps, userLanguage]
   );
 
+  const navigateToStep = useCallback(
+    (stepIndex, options = {}) => {
+      if (!Number.isFinite(stepIndex)) {
+        navigate("/q/0", options);
+        return;
+      }
+
+      const { shouldRedirect, groupId } = shouldRedirectToChapterMap(stepIndex);
+
+      if (shouldRedirect && groupId) {
+        navigate(
+          `/chapter/${encodeURIComponent(groupId)}?step=${stepIndex}`,
+          options
+        );
+      } else {
+        navigate(`/q/${stepIndex}`, options);
+      }
+    },
+    [navigate, shouldRedirectToChapterMap]
+  );
+
   useEffect(() => {
     const match = location.pathname.match(/^\/q\/(\d+)$/);
 
@@ -6056,7 +6077,7 @@ function App({ isShutDown }) {
               // topRef.current?.scrollIntoView();
               window.scrollTo(0, 0);
 
-              navigate(`/q/${step}`);
+              navigateToStep(step);
             } else {
               // if (step !== 0) {
 
@@ -6071,7 +6092,7 @@ function App({ isShutDown }) {
               ) {
                 navigate(`/onboarding/${parseInt(onboardingProgress, 10)}`);
               } else {
-                navigate(`/q/${step}`);
+                navigateToStep(step);
               }
               // }
             }
