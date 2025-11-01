@@ -53,13 +53,14 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
         href: "https://www.girlsoncampus.org/",
       },
     ],
-    [],
+    []
   );
 
   const selectedIdentityOption = useMemo(
     () =>
-      recipientOptions.find((option) => option.value === selectedIdentity) || null,
-    [recipientOptions, selectedIdentity],
+      recipientOptions.find((option) => option.value === selectedIdentity) ||
+      null,
+    [recipientOptions, selectedIdentity]
   );
 
   const depositOptions = useMemo(() => {
@@ -141,7 +142,7 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
       const userDocRef = doc(
         database,
         "users",
-        localStorage.getItem("local_npub"),
+        localStorage.getItem("local_npub")
       ); // Replace "users" with your Firestore collection
       await updateDoc(userDocRef, { identity: value });
     } catch (error) {
@@ -154,7 +155,7 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
       const userDocRef = doc(
         database,
         "users",
-        localStorage.getItem("local_npub"),
+        localStorage.getItem("local_npub")
       ); // Replace "users" with your Firestore collection
       await updateDoc(userDocRef, { createdWallet: true });
       createNewWallet();
@@ -257,7 +258,10 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
             <AccordionIcon />
           </AccordionButton>
           <AccordionPanel pb={4}>
-            <RadioGroup onChange={handleIdentityChange} value={selectedIdentity}>
+            <RadioGroup
+              onChange={handleIdentityChange}
+              value={selectedIdentity}
+            >
               <VStack align="start">
                 {recipientOptions.map(({ value, label }) => (
                   <Radio colorScheme="pink" value={value} key={value}>
@@ -498,7 +502,7 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
                     {renderButtonText(
                       translation[userLanguage][
                         "modal.bitcoinMode.instructions.createWallet.3"
-                      ],
+                      ]
                     )}
                   </Text>
                 </>
