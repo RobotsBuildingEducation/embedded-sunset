@@ -1,5 +1,14 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { Box, Text, Button } from "@chakra-ui/react";
+import {
+  Badge,
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Icon,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import sparkle from "../assets/sparkle.mp3";
 import complete from "../assets/complete.mp3";
@@ -12,10 +21,62 @@ import {
 import { translation } from "../utility/translation";
 import { database } from "../database/firebaseResources";
 import { doc, onSnapshot } from "firebase/firestore";
-import SkillTreeBoard from "../components/SkillTreeBoard/SkillTreeBoard";
 import { skillTreeGroupLabels } from "../components/SkillTreeBoard/groupLabels";
+import {
+  FiArrowRightCircle,
+  FiCheckCircle,
+  FiCornerLeftUp,
+  FiMoreHorizontal,
+} from "react-icons/fi";
 
 const MotionBox = motion(Box);
+const MotionFlex = motion(Flex);
+
+const timelineStatusMeta = {
+  previous: {
+    label: "Previous",
+    icon: FiCornerLeftUp,
+    badge: "gray",
+    accent: "rgba(160, 174, 192, 0.3)",
+  },
+  current: {
+    label: "Completed",
+    icon: FiCheckCircle,
+    badge: "green",
+    accent: "rgba(56, 161, 105, 0.25)",
+  },
+  next: {
+    label: "Next up",
+    icon: FiArrowRightCircle,
+    badge: "purple",
+    accent: "rgba(129, 140, 248, 0.28)",
+  },
+  later: {
+    label: "On deck",
+    icon: FiMoreHorizontal,
+    badge: "purple",
+    accent: "rgba(167, 139, 250, 0.24)",
+  },
+};
+
+const timelinePlaceholders = {
+  previous: {
+    title: "No earlier lesson",
+    subtitle: "You're at the start of this chapter.",
+  },
+  current: {
+    title: "Ready for a fresh start",
+    subtitle: "Kick off this chapter to unlock progress.",
+  },
+  next: {
+    title: "Next lesson unlocks soon",
+    subtitle: "Continue forward to reveal the next challenge.",
+  },
+  later: {
+    title: "Future checkpoints",
+    subtitle: "Keep your momentum to see more lessons here.",
+  },
+};
 
 // ---- Level-based background (clouds a bit stronger) ----
 const THEMES = {
@@ -105,8 +166,6 @@ const CloudTransition = ({
   steps,
   currentStep,
   pendingStep,
-  optionalQuestProgress,
-  onNodeSelect,
   groupLabels = skillTreeGroupLabels,
 }) => {
   const canvasRef = useRef(null);
@@ -149,11 +208,6 @@ const CloudTransition = ({
       typeof pendingStep === "number" ? pendingStep : safeCurrentStep,
     [pendingStep, safeCurrentStep]
   );
-  const highlightStepIndex = useMemo(
-    () =>
-      typeof pendingStep === "number" ? pendingStep : safeCurrentStep,
-    [pendingStep, safeCurrentStep]
-  );
   const focusGroupId = useMemo(() => {
     const focusStep = stepList?.[boardActiveStep];
     return focusStep?.group;
@@ -171,6 +225,62 @@ const CloudTransition = ({
     }
     return entry?.[userLanguage] || entry?.en || null;
   }, [focusGroupId, groupLabels, userLanguage]);
+
+  const timelineNodes = useMemo(() => {
+    if (!focusGroupId) {
+      return [];
+    }
+
+    const chapterSteps = stepList
+      .map((item, index) => ({ ...item, index }))
+      .filter((item) => item.group === focusGroupId);
+
+    if (!chapterSteps.length) {
+      return [];
+    }
+
+    const statuses = ["previous", "current", "next", "later"];
+    const nodes = statuses.map((status) => ({ status, step: null }));
+    const currentIndex = safeCurrentStep;
+    const currentPosition = chapterSteps.findIndex(
+      (item) => item.index === currentIndex
+    );
+
+    if (currentPosition >= 0) {
+      nodes[1].step = chapterSteps[currentPosition];
+      if (currentPosition > 0) {
+        nodes[0].step = chapterSteps[currentPosition - 1];
+      }
+
+      if (chapterSteps[currentPosition + 1]) {
+        nodes[2].step = chapterSteps[currentPosition + 1];
+      }
+
+      if (chapterSteps[currentPosition + 2]) {
+        nodes[3].step = chapterSteps[currentPosition + 2];
+      }
+    } else {
+      if (chapterSteps[0]) {
+        nodes[2].step = chapterSteps[0];
+      }
+      if (chapterSteps[1]) {
+        nodes[3].step = chapterSteps[1];
+      }
+    }
+
+    return nodes;
+  }, [focusGroupId, safeCurrentStep, stepList]);
+
+  const displayedBalance = useMemo(() => {
+    const numeric = Number(balanceProgress);
+    if (!Number.isFinite(numeric)) {
+      return 0;
+    }
+    if (numeric <= 0) {
+      return 0;
+    }
+    return Math.max(0, Math.round(numeric - 1));
+  }, [balanceProgress]);
 
   useEffect(() => {
     const unsubscribe = subscribeToQuestionsAnswered(setQuestionsAnswered);
@@ -527,8 +637,8 @@ const CloudTransition = ({
             transition={{ duration: 0.45, ease: "easeOut" }}
             textAlign="center"
             color="purple.600"
-            w="90%"
-            maxW="520px"
+            w="86%"
+            maxW="460px"
           >
             {message && (
               <Text
@@ -569,42 +679,134 @@ const CloudTransition = ({
             )}
 
             <Box
-              mt={8}
-              mb={10}
+              mt={6}
+              mb={8}
               borderRadius="2xl"
-              border="1px solid rgba(128,90,213,0.25)"
-              bg="rgba(255,255,255,0.88)"
-              boxShadow="0 28px 48px rgba(64, 32, 128, 0.18)"
-              px={{ base: 4, md: 6 }}
+              border="1px solid rgba(128,90,213,0.22)"
+              bg="rgba(255,255,255,0.92)"
+              boxShadow="0 24px 44px rgba(79, 70, 229, 0.18)"
+              px={{ base: 4, md: 5 }}
               py={{ base: 5, md: 6 }}
             >
-              <Text
-                fontSize="sm"
-                textTransform="uppercase"
-                letterSpacing="0.12em"
-                color="purple.500"
-                mb={2}
-              >
-                Learning path
-              </Text>
-              {focusGroupLabel && (
-                <Text fontWeight="semibold" fontSize="lg" mb={4} color="purple.700">
-                  {focusGroupLabel}
-                </Text>
-              )}
-              <SkillTreeBoard
-                steps={steps}
-                userLanguage={userLanguage}
-                currentStep={safeCurrentStep}
-                activeStep={boardActiveStep}
-                highlightStep={highlightStepIndex}
-                focusGroup={focusGroupId}
-                optionalQuestProgress={optionalQuestProgress}
-                groupLabels={groupLabels}
-                isCompact
-                onNodeSelect={onNodeSelect}
-                isInteractive={typeof onNodeSelect === "function"}
-              />
+              <VStack align="stretch" spacing={4}>
+                <Box>
+                  <Text
+                    fontSize="sm"
+                    textTransform="uppercase"
+                    letterSpacing="0.12em"
+                    color="purple.500"
+                  >
+                    Chapter path
+                  </Text>
+                  {focusGroupLabel && (
+                    <Text fontWeight="semibold" fontSize="lg" color="purple.700" mt={1}>
+                      {focusGroupLabel}
+                    </Text>
+                  )}
+                </Box>
+                {timelineNodes.length ? (
+                  <Box position="relative" pt={2}>
+                    <MotionBox
+                      position="absolute"
+                      left="50%"
+                      top={0}
+                      bottom={0}
+                      width="3px"
+                      bgGradient="linear(180deg, rgba(129, 140, 248, 0.2) 0%, rgba(56, 178, 172, 0.4) 100%)"
+                      transform="translateX(-50%)"
+                      borderRadius="full"
+                      animate={{ opacity: [0.35, 0.75, 0.35] }}
+                      transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}
+                      aria-hidden
+                    />
+                    <VStack spacing={6} align="stretch">
+                      {timelineNodes.map((node, idx) => {
+                        const meta = timelineStatusMeta[node.status] || timelineStatusMeta.later;
+                        const placeholder =
+                          timelinePlaceholders[node.status] || timelinePlaceholders.later;
+                        const isEmpty = !node.step;
+                        const side = idx % 2 === 0 ? "flex-start" : "flex-end";
+                        const title = isEmpty
+                          ? placeholder.title
+                          : node.step.title || `Question ${node.step.index}`;
+                        const subtitle = isEmpty
+                          ? placeholder.subtitle
+                          : `#${node.step.index} · ${node.step.type || "Lesson"}`;
+
+                        return (
+                          <MotionFlex
+                            key={`${node.status}-${node.step?.index ?? idx}`}
+                            justify={side}
+                            initial={{ opacity: 0, x: side === "flex-start" ? -16 : 16 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.4, delay: idx * 0.08 }}
+                            w="100%"
+                          >
+                            <MotionBox
+                              position="relative"
+                              maxW="88%"
+                              bg={isEmpty ? "rgba(247, 245, 255, 0.65)" : "white"}
+                              borderRadius="xl"
+                              px={4}
+                              py={3}
+                              border={
+                                isEmpty
+                                  ? "1px solid rgba(203,213,224,0.6)"
+                                  : "1px solid rgba(128,90,213,0.22)"
+                              }
+                              boxShadow={
+                                isEmpty ? "none" : "0 14px 32px rgba(99, 102, 241, 0.18)"
+                              }
+                              _before={{
+                                content: '""',
+                                position: "absolute",
+                                top: "50%",
+                                width: "42px",
+                                height: "2px",
+                                bgGradient: `linear(90deg, transparent 0%, ${meta.accent} 45%, transparent 100%)`,
+                                left: side === "flex-start" ? "100%" : "auto",
+                                right: side === "flex-end" ? "100%" : "auto",
+                                transform:
+                                  side === "flex-start"
+                                    ? "translateY(-50%) rotate(-6deg)"
+                                    : "translateY(-50%) rotate(6deg)",
+                              }}
+                            >
+                              <HStack align="flex-start" spacing={3}>
+                                <Icon
+                                  as={meta.icon}
+                                  color={isEmpty ? "purple.300" : "purple.500"}
+                                  boxSize={4}
+                                  mt={1}
+                                />
+                                <VStack align="flex-start" spacing={1} w="100%">
+                                  <Badge
+                                    colorScheme={meta.badge}
+                                    variant={isEmpty ? "outline" : "subtle"}
+                                    borderRadius="full"
+                                  >
+                                    {meta.label}
+                                  </Badge>
+                                  <Text fontSize="sm" fontWeight="semibold" color="purple.700">
+                                    {title}
+                                  </Text>
+                                  <Text fontSize="xs" color="gray.500">
+                                    {subtitle}
+                                  </Text>
+                                </VStack>
+                              </HStack>
+                            </MotionBox>
+                          </MotionFlex>
+                        );
+                      })}
+                    </VStack>
+                  </Box>
+                ) : (
+                  <Text fontSize="sm" color="gray.600">
+                    We&apos;ll cue up the next lessons once this chapter begins.
+                  </Text>
+                )}
+              </VStack>
             </Box>
 
             {message && (
@@ -614,9 +816,14 @@ const CloudTransition = ({
             )}
 
             <Box w="100%" mx="auto" mb={6}>
-              <Text fontSize="sm" mb={1} color="purple.500">
-                Salary
-              </Text>
+              <HStack justify="space-between" mb={1}>
+                <Text fontSize="sm" color="purple.500">
+                  Salary
+                </Text>
+                <Text fontSize="xs" color="purple.400">
+                  {Math.round(Number(salaryProgress) || 0)}%
+                </Text>
+              </HStack>
               <WaveBar
                 value={salaryProgress}
                 start="#43e97b"
@@ -624,26 +831,38 @@ const CloudTransition = ({
                 delay={0.2}
                 bg="rgba(255,255,255,0.65)"
                 border="#ededed"
+                aria-label="Salary progress"
               />
             </Box>
             <Box w="100%" mx="auto" mb={6}>
-              <Text fontSize="sm" mb={1} color="purple.500">
-                {balanceProgress === 0 ? "0" : balanceProgress - 1} Bitcoin sats
-              </Text>
+              <HStack justify="space-between" mb={1}>
+                <Text fontSize="sm" color="purple.500">
+                  Bitcoin sats
+                </Text>
+                <Text fontSize="xs" color="purple.400">
+                  {displayedBalance}
+                </Text>
+              </HStack>
               <WaveBar
-                value={balanceProgress === 0 ? "0" : balanceProgress - 1}
+                value={displayedBalance}
                 start="#fce09d"
                 end="#fef37b"
                 delay={0}
                 bg="rgba(255,255,255,0.65)"
                 border="#ededed"
+                aria-label="Bitcoin balance progress"
               />
             </Box>
 
             <Box w="100%" mx="auto" mb={6}>
-              <Text fontSize="sm" mb={1} color="purple.500">
-                Progress
-              </Text>
+              <HStack justify="space-between" mb={1}>
+                <Text fontSize="sm" color="purple.500">
+                  Progress
+                </Text>
+                <Text fontSize="xs" color="purple.400">
+                  {Math.round(Number(stepProgress) || 0)}%
+                </Text>
+              </HStack>
               <WaveBar
                 value={stepProgress}
                 start="#0345fc"
@@ -651,13 +870,19 @@ const CloudTransition = ({
                 delay={0.1}
                 bg="rgba(255,255,255,0.65)"
                 border="#ededed"
+                aria-label="Chapter completion progress"
               />
             </Box>
 
             <Box w="100%" mx="auto" mb={6}>
-              <Text fontSize="sm" mb={1} color="purple.500">
-                {dailyGoalLabel} {dailyProgress}/{dailyGoals}
-              </Text>
+              <HStack justify="space-between" mb={1}>
+                <Text fontSize="sm" color="purple.500">
+                  {dailyGoalLabel}
+                </Text>
+                <Text fontSize="xs" color="purple.400">
+                  {dailyProgress}/{dailyGoals}
+                </Text>
+              </HStack>
               <WaveBar
                 value={dailyGoalProgress}
                 start="#03f4fc"
@@ -665,14 +890,19 @@ const CloudTransition = ({
                 delay={0}
                 bg="rgba(255,255,255,0.65)"
                 border="#ededed"
+                aria-label="Daily goal progress"
               />
             </Box>
 
             <Box w="100%" mx="auto" mb={6}>
-              <Text fontSize="sm" mb={1} color="purple.500">
-                {translation[userLanguage]["communityGoal"]}
-                {questionsAnswered}/7500 {translation[userLanguage]["questions"]}
-              </Text>
+              <HStack justify="space-between" mb={1}>
+                <Text fontSize="sm" color="purple.500">
+                  {translation[userLanguage]["communityGoal"]}
+                </Text>
+                <Text fontSize="xs" color="purple.400">
+                  {questionsAnswered}/7500
+                </Text>
+              </HStack>
               <WaveBar
                 value={questionProgress}
                 start="#bf66ff"
@@ -680,6 +910,7 @@ const CloudTransition = ({
                 delay={0}
                 bg="rgba(255,255,255,0.65)"
                 border="#ededed"
+                aria-label="Community goal progress"
               />
             </Box>
 

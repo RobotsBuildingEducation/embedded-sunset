@@ -190,7 +190,7 @@ import { AlgorithmHelper } from "./components/AlgorithmHelper/AlgorithmHelper";
 import { TbBinaryTreeFilled } from "react-icons/tb";
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
 import CloudTransition from "./elements/CloudTransition";
-import SkillTreeBoard from "./components/SkillTreeBoard/SkillTreeBoard";
+import ChapterMap from "./components/SkillTreeBoard/ChapterMap";
 import { skillTreeGroupLabels } from "./components/SkillTreeBoard/groupLabels";
 
 // logEvent(analytics, "page_view", {
@@ -1503,6 +1503,7 @@ const Step = ({
   setLectureNextStep,
   optionalQuestProgress,
   setOptionalQuestProgress,
+  chapterIntroStatus,
 }) => {
   let loot = buildSuperLoot();
 
@@ -1578,19 +1579,6 @@ const Step = ({
   const pendingOptionalPersist = useRef(false);
 
   const [celebrationMessage, setCelebrationMessage] = useState("");
-  const [chapterIntroDismissed, setChapterIntroDismissed] = useState(() => {
-    if (typeof window === "undefined") {
-      return {};
-    }
-    try {
-      const stored = localStorage.getItem("chapterIntroSeen");
-      return stored ? JSON.parse(stored) : {};
-    } catch (error) {
-      console.error("Failed to parse chapter intro state", error);
-      return {};
-    }
-  });
-  const [isChapterIntroVisible, setIsChapterIntroVisible] = useState(false);
 
   const externalUrl = "https://chat.com";
 
@@ -1621,14 +1609,13 @@ const Step = ({
 
   const handleModalClose = () => setIsExternalLinkModalOpen(false);
 
-  const handleShowSkillMapOverlay = useCallback(() => {
-    if (typeof window === "undefined") {
+  const handleOpenChapterMap = useCallback(() => {
+    if (!step?.group) {
       return;
     }
 
-    const currentPath = window.location.pathname;
-    navigateWithTransition(currentPath, currentStep);
-  }, [currentStep, navigateWithTransition]);
+    navigate(`/chapter/${encodeURIComponent(step.group)}?step=${currentStep}`);
+  }, [currentStep, navigate, step]);
 
   const persistOptionalQuestProgress = useCallback(
     (groupId, status = {}) => {
@@ -1705,29 +1692,6 @@ const Step = ({
       setOptionalQuestProgress,
     ]
   );
-
-  const handleDismissChapterIntro = useCallback(() => {
-    const groupId = step?.group;
-    if (!groupId) {
-      setIsChapterIntroVisible(false);
-      return;
-    }
-
-    setChapterIntroDismissed((prev) => {
-      const next = { ...prev, [groupId]: true };
-      try {
-        localStorage.setItem("chapterIntroSeen", JSON.stringify(next));
-      } catch (error) {
-        console.error("Failed to persist chapter intro state", error);
-      }
-      return next;
-    });
-    setIsChapterIntroVisible(false);
-  }, [step]);
-
-  const handleShowChapterIntro = useCallback(() => {
-    setIsChapterIntroVisible(true);
-  }, []);
 
   useEffect(() => {
     const userId = localStorage.getItem("local_npub");
@@ -1889,24 +1853,22 @@ const Step = ({
     const list = steps[userLanguage] || [];
     const current = list[currentStep];
 
-    if (!current || !current.group) {
-      setIsChapterIntroVisible(false);
+    if (!current?.group) {
       return;
     }
 
-    const groupIndices = list
-      .map((item, idx) => (item.group === current.group ? idx : null))
-      .filter((idx) => idx !== null);
-    const firstIndex = groupIndices[0];
+    const firstIndex = list.findIndex((item) => item?.group === current.group);
 
-    if (typeof firstIndex === "number" && currentStep === firstIndex) {
-      if (!chapterIntroDismissed[current.group]) {
-        setIsChapterIntroVisible(true);
-      }
-    } else {
-      setIsChapterIntroVisible(false);
+    if (
+      typeof firstIndex === "number" &&
+      firstIndex === currentStep &&
+      !chapterIntroStatus?.[current.group]
+    ) {
+      navigate(
+        `/chapter/${encodeURIComponent(current.group)}?step=${currentStep}`
+      );
     }
-  }, [chapterIntroDismissed, currentStep, userLanguage]);
+  }, [chapterIntroStatus, currentStep, navigate, steps, userLanguage]);
 
   // Fetch user data and manage streaks and timers
   useEffect(() => {
@@ -3362,65 +3324,13 @@ const Step = ({
                 variant="ghost"
                 colorScheme="purple"
                 mt={2}
-                onClick={handleShowChapterIntro}
+                onClick={handleOpenChapterMap}
               >
-                Preview chapter map
+                Open chapter map
               </Button>
               <br />
             </span>
             <VStack width="100%">
-              {isChapterIntroVisible && step?.group ? (
-                <Box
-                  width="100%"
-                  borderRadius="2xl"
-                  border="1px solid rgba(128,90,213,0.25)"
-                  bg="rgba(255,255,255,0.95)"
-                  boxShadow="0 18px 36px rgba(88, 28, 135, 0.18)"
-                  p={{ base: 4, md: 5 }}
-                  mb={4}
-                >
-                  <VStack align="stretch" spacing={4}>
-                    <Text
-                      fontSize="xs"
-                      textTransform="uppercase"
-                      letterSpacing="0.1em"
-                      color="purple.500"
-                    >
-                      Chapter preview
-                    </Text>
-                    <Text fontWeight="semibold" fontSize="lg" color="purple.700">
-                      {skillTreeGroupLabels?.[step.group]?.[userLanguage] ||
-                        skillTreeGroupLabels?.[step.group]?.en ||
-                        step.group}
-                    </Text>
-                    <Text fontSize="sm" color="gray.600">
-                      Visualize the upcoming lessons and optional quests before you begin.
-                    </Text>
-                    <SkillTreeBoard
-                      steps={steps}
-                      userLanguage={userLanguage}
-                      currentStep={currentStep}
-                      activeStep={currentStep}
-                      highlightStep={currentStep}
-                      focusGroup={step.group}
-                      showOnlyFocus
-                      isCompact
-                      optionalQuestProgress={optionalQuestProgress}
-                      groupLabels={skillTreeGroupLabels}
-                      isInteractive={false}
-                    />
-                    <HStack justify="flex-end">
-                      <Button
-                        size="sm"
-                        colorScheme="purple"
-                        onClick={handleDismissChapterIntro}
-                      >
-                        Start chapter
-                      </Button>
-                    </HStack>
-                  </VStack>
-                </Box>
-              ) : null}
               <span style={{ fontSize: "50%" }}>
                 {translation[userLanguage]["app.progress"]}:{" "}
                 {animatedProgress.toFixed(2)}% |{" "}
@@ -4009,7 +3919,7 @@ const Step = ({
                     <Button
                       variant={"outline"}
                       mb={3}
-                      onClick={handleShowSkillMapOverlay}
+                      onClick={handleOpenChapterMap}
                     >
                       View skill map
                     </Button>
@@ -5860,6 +5770,75 @@ function App({ isShutDown }) {
     parseInt(localStorage.getItem("incorrectAttempts"), 10) || 0
   );
   const [optionalQuestProgress, setOptionalQuestProgress] = useState({});
+  const [chapterIntroStatus, setChapterIntroStatus] = useState(() => {
+    if (typeof window === "undefined") {
+      return {};
+    }
+
+    try {
+      const stored = window.localStorage.getItem("chapterIntroSeen");
+      return stored ? JSON.parse(stored) : {};
+    } catch (error) {
+      console.error("Failed to load chapter intro state", error);
+      return {};
+    }
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    try {
+      window.localStorage.setItem(
+        "chapterIntroSeen",
+        JSON.stringify(chapterIntroStatus)
+      );
+    } catch (error) {
+      console.error("Failed to persist chapter intro state", error);
+    }
+  }, [chapterIntroStatus]);
+
+  const markChapterIntroSeen = useCallback((groupId) => {
+    if (!groupId) {
+      return;
+    }
+
+    setChapterIntroStatus((prev = {}) => {
+      if (prev[groupId]) {
+        return prev;
+      }
+      return { ...prev, [groupId]: true };
+    });
+  }, []);
+
+  const shouldRedirectToChapterMap = useCallback(
+    (nextStep) => {
+      if (!Number.isFinite(nextStep)) {
+        return { shouldRedirect: false, groupId: null };
+      }
+
+      const list = steps?.[userLanguage] || [];
+      const target = list[nextStep];
+
+      if (!target?.group) {
+        return { shouldRedirect: false, groupId: null };
+      }
+
+      const firstIndex = list.findIndex((item) => item?.group === target.group);
+
+      if (firstIndex !== nextStep) {
+        return { shouldRedirect: false, groupId: null };
+      }
+
+      if (chapterIntroStatus?.[target.group]) {
+        return { shouldRedirect: false, groupId: null };
+      }
+
+      return { shouldRedirect: true, groupId: target.group };
+    },
+    [chapterIntroStatus, steps, userLanguage]
+  );
 
   const defaultTransitionStats = {
     salary: 0,
@@ -5879,6 +5858,20 @@ function App({ isShutDown }) {
   const resetStatsTimeoutRef = useRef(null);
 
   const navigateWithTransition = (path, nextStep = null) => {
+    if (typeof nextStep === "number") {
+      const { shouldRedirect, groupId } = shouldRedirectToChapterMap(nextStep);
+
+      if (shouldRedirect && groupId) {
+        setShowClouds(false);
+        setPendingPath(null);
+        setPendingStep(null);
+        navigate(
+          `/chapter/${encodeURIComponent(groupId)}?step=${nextStep}`
+        );
+        return;
+      }
+    }
+
     if (resetStatsTimeoutRef.current) {
       clearTimeout(resetStatsTimeoutRef.current);
       resetStatsTimeoutRef.current = null;
@@ -5909,16 +5902,17 @@ function App({ isShutDown }) {
     );
   };
 
-  const handleSkillTreeNavigate = useCallback(
-    (targetStep) => {
-      if (!Number.isFinite(targetStep) || targetStep < 0) {
+  const handleStartChapter = useCallback(
+    (groupId, stepIndex) => {
+      if (!Number.isFinite(stepIndex)) {
         return;
       }
 
-      const safeIndex = Math.max(0, Math.floor(targetStep));
-      navigateWithTransition(`/q/${safeIndex}`, safeIndex);
+      markChapterIntroSeen(groupId);
+      setCurrentStep(stepIndex);
+      navigate(`/q/${stepIndex}`);
     },
-    [navigateWithTransition]
+    [markChapterIntroSeen, navigate, setCurrentStep]
   );
 
   // const {
@@ -6194,8 +6188,6 @@ function App({ isShutDown }) {
         steps={steps}
         currentStep={currentStep}
         pendingStep={pendingStep}
-        optionalQuestProgress={optionalQuestProgress}
-        onNodeSelect={handleSkillTreeNavigate}
         groupLabels={skillTreeGroupLabels}
       />
       {alert.isOpen && (
@@ -6296,6 +6288,19 @@ function App({ isShutDown }) {
               />
             }
           />
+          <Route
+            path="/chapter/:groupId"
+            element={
+              <PrivateRoute>
+                <ChapterMap
+                  steps={steps}
+                  userLanguage={userLanguage}
+                  optionalQuestProgress={optionalQuestProgress}
+                  onStartChapter={handleStartChapter}
+                />
+              </PrivateRoute>
+            }
+          />
           {location.pathname !== "/about" &&
             steps?.[userLanguage]?.map((_, index) => (
               <Route
@@ -6324,6 +6329,7 @@ function App({ isShutDown }) {
                       setLectureNextStep={setLectureNextStep}
                       optionalQuestProgress={optionalQuestProgress}
                       setOptionalQuestProgress={setOptionalQuestProgress}
+                      chapterIntroStatus={chapterIntroStatus}
                     />
                   </PrivateRoute>
                 }
