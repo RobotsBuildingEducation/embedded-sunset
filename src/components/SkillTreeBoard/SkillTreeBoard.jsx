@@ -105,7 +105,18 @@ const SkillTreeBoard = ({
   onNodeSelect,
   groupLabels,
   optionalQuestProgress = {},
+  activeStep,
+  highlightStep,
+  focusGroup,
+  showOnlyFocus = false,
+  isCompact = false,
+  isInteractive = true,
 }) => {
+  const effectiveStep =
+    typeof activeStep === "number" ? activeStep : currentStep ?? 0;
+  const highlightIndex =
+    typeof highlightStep === "number" ? highlightStep : null;
+
   const groups = useMemo(() => {
     const list = steps?.[userLanguage] || [];
     const mapping = new Map();
@@ -138,13 +149,23 @@ const SkillTreeBoard = ({
     return Array.from(mapping.values()).sort((a, b) => a.start - b.start);
   }, [steps, userLanguage]);
 
+  const displayGroups = useMemo(() => {
+    if (showOnlyFocus && focusGroup) {
+      return groups.filter((group) => group.id === focusGroup);
+    }
+    return groups;
+  }, [focusGroup, groups, showOnlyFocus]);
+
   const handleSelect = (stepIndex) => {
+    if (!isInteractive) {
+      return;
+    }
     if (typeof onNodeSelect === "function" && typeof stepIndex === "number") {
       onNodeSelect(stepIndex);
     }
   };
 
-  if (!groups.length) {
+  if (!displayGroups.length) {
     return (
       <Box borderRadius="xl" borderWidth="1px" p={6} textAlign="center">
         <Text fontSize="sm" color="gray.500">
@@ -154,30 +175,40 @@ const SkillTreeBoard = ({
     );
   }
 
-  return (
-    <Box position="relative" py={8} px={{ base: 2, sm: 6 }}>
-      <MotionBox
-        position="absolute"
-        left="50%"
-        top={0}
-        bottom={0}
-        width="3px"
-        bgGradient="linear(180deg, rgba(115, 152, 255, 0.15) 0%, rgba(56, 178, 172, 0.45) 100%)"
-        transform="translateX(-50%)"
-        borderRadius="full"
-        animate={{ opacity: [0.4, 0.75, 0.4] }}
-        transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
-        aria-hidden
-      />
+  const showSpine = !(showOnlyFocus && displayGroups.length <= 1);
 
-      <VStack spacing={16} align="stretch">
-        {groups.map((group, idx) => {
-          const completedSteps = group.steps.filter((step) => currentStep > step.index).length;
+  return (
+    <Box
+      position="relative"
+      py={isCompact ? 4 : 8}
+      px={isCompact ? { base: 0, sm: 2 } : { base: 2, sm: 6 }}
+    >
+      {showSpine && (
+        <MotionBox
+          position="absolute"
+          left="50%"
+          top={0}
+          bottom={0}
+          width="3px"
+          bgGradient="linear(180deg, rgba(115, 152, 255, 0.15) 0%, rgba(56, 178, 172, 0.45) 100%)"
+          transform="translateX(-50%)"
+          borderRadius="full"
+          animate={{ opacity: [0.4, 0.75, 0.4] }}
+          transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+          aria-hidden
+        />
+      )}
+
+      <VStack spacing={isCompact ? 10 : 16} align="stretch">
+        {displayGroups.map((group, idx) => {
+          const completedSteps = group.steps.filter(
+            (step) => effectiveStep > step.index
+          ).length;
           const totalSteps = group.steps.length;
           const status =
-            currentStep > group.end
+            effectiveStep > group.end
               ? "complete"
-              : currentStep >= group.start
+              : effectiveStep >= group.start
               ? "active"
               : "locked";
           const meta = statusMeta[status];
@@ -187,52 +218,122 @@ const SkillTreeBoard = ({
             groupLabels?.[group.id] ||
             group.id;
 
-          const optionalData = group.optional ? optionalQuestProgress?.[group.id] : null;
+          const optionalData = group.optional
+            ? optionalQuestProgress?.[group.id]
+            : null;
           let optionalStage = optionalData?.stage || "not-started";
-          if (!optionalData && group.optional && currentStep > group.optional.index) {
+          if (
+            !optionalData &&
+            group.optional &&
+            effectiveStep > group.optional.index
+          ) {
             optionalStage = "skipped";
           }
-          const optionalDescriptor = optionalMeta[optionalStage] || optionalMeta["not-started"];
-          const optionalProgress = clampProgress(optionalData?.progress ?? 0);
+          const optionalDescriptor =
+            optionalMeta[optionalStage] || optionalMeta["not-started"];
+          const optionalProgress = clampProgress(
+            optionalData?.progress ?? 0
+          );
           const showProgress = typeof optionalData?.progress === "number";
 
-          const alignment = idx % 2 === 0 ? "flex-start" : "flex-end";
-          const spineOffset = idx % 2 === 0 ? { left: "calc(50% + 12px)" } : { right: "calc(50% + 12px)" };
+          const isFocusedGroup = focusGroup && group.id === focusGroup;
+          const isHighlightedGroup = highlightIndex
+            ? group.steps.some((step) => step.index === highlightIndex)
+            : false;
+
+          const alignment = showOnlyFocus
+            ? "center"
+            : idx % 2 === 0
+            ? "flex-start"
+            : "flex-end";
+          const spineOffset = idx % 2 === 0
+            ? { left: "calc(50% + 12px)" }
+            : { right: "calc(50% + 12px)" };
+
+          const circleBorderColor = isHighlightedGroup
+            ? "purple.400"
+            : meta.accent;
+          const circleBorderWidth = isHighlightedGroup
+            ? "5px"
+            : status === "active"
+            ? "4px"
+            : "2px";
+
+          const cardBorder = isHighlightedGroup
+            ? "1px solid rgba(128,90,213,0.4)"
+            : isFocusedGroup
+            ? "1px solid rgba(99,102,241,0.28)"
+            : "1px solid rgba(226,232,240,0.6)";
+
+          const cardShadow = isHighlightedGroup
+            ? "0 20px 38px rgba(88, 28, 135, 0.22)"
+            : meta.shadow;
+
+          const badgeColorScheme =
+            status === "locked"
+              ? "gray"
+              : isHighlightedGroup
+              ? "purple"
+              : "green";
+          const badgeLabel =
+            status === "locked"
+              ? "Locked"
+              : isHighlightedGroup
+              ? "Up next"
+              : status === "complete"
+              ? "Done"
+              : "Ready";
 
           return (
-            <Flex key={group.id} justify={alignment} position="relative" minHeight="120px">
+            <Flex
+              key={group.id}
+              justify={alignment}
+              position="relative"
+              minHeight="120px"
+            >
               <MotionBox
-                role="group"
+                role={isInteractive ? "group" : undefined}
                 onClick={() => handleSelect(group.start)}
-                tabIndex={0}
+                tabIndex={isInteractive ? 0 : undefined}
                 onKeyDown={(event) => {
+                  if (!isInteractive) {
+                    return;
+                  }
                   if (event.key === "Enter" || event.key === " ") {
                     event.preventDefault();
                     handleSelect(group.start);
                   }
                 }}
-                cursor="pointer"
-                maxW={{ base: "72%", md: "64%" }}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
+                cursor={isInteractive ? "pointer" : "default"}
+                maxW={{ base: "78%", md: showOnlyFocus ? "72%" : "64%" }}
+                whileHover={isInteractive ? { scale: 1.03 } : undefined}
+                whileTap={isInteractive ? { scale: 0.97 } : undefined}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: idx * 0.08 }}
-                aria-label={`${title}: ${completedSteps} of ${totalSteps} lessons`}
+                aria-label={
+                  isInteractive
+                    ? `${title}: ${completedSteps} of ${totalSteps} lessons`
+                    : undefined
+                }
               >
                 <MotionCircle
-                  size={{ base: "68px", sm: "76px" }}
+                  size={{ base: "68px", sm: isCompact ? "68px" : "76px" }}
                   bgGradient={meta.gradient}
                   color="white"
-                  borderWidth={status === "active" ? "4px" : "2px"}
-                  borderColor={meta.accent}
-                  boxShadow={meta.shadow}
+                  borderWidth={circleBorderWidth}
+                  borderColor={circleBorderColor}
+                  boxShadow={cardShadow}
                   animate={
                     status === "locked"
                       ? { y: 0 }
                       : { y: [-8, 0, -8] }
                   }
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
                   display="flex"
                   alignItems="center"
                   justifyContent="center"
@@ -240,21 +341,46 @@ const SkillTreeBoard = ({
                   <Icon as={meta.icon} boxSize={{ base: 6, sm: 7 }} />
                 </MotionCircle>
 
-                <Box mt={4} p={4} borderRadius="2xl" bg="white" boxShadow="0 12px 30px rgba(15, 23, 42, 0.12)">
-                  <HStack justify="space-between" align="flex-start" spacing={4}>
+                <Box
+                  mt={4}
+                  p={isCompact ? 3 : 4}
+                  borderRadius="2xl"
+                  bg="white"
+                  boxShadow={cardShadow}
+                  border={cardBorder}
+                >
+                  <HStack
+                    justify="space-between"
+                    align="flex-start"
+                    spacing={4}
+                    flexWrap="wrap"
+                  >
                     <Box>
-                      <Text fontSize="xs" textTransform="uppercase" color="gray.500" letterSpacing="0.08em">
+                      <Text
+                        fontSize="xs"
+                        textTransform="uppercase"
+                        color="gray.500"
+                        letterSpacing="0.08em"
+                      >
                         {meta.label}
                       </Text>
-                      <Text fontWeight="bold" fontSize="lg" lineHeight="1.2" mt={1}>
+                      <Text
+                        fontWeight="bold"
+                        fontSize="lg"
+                        lineHeight="1.2"
+                        mt={1}
+                      >
                         {title}
                       </Text>
                       <Text fontSize="sm" color="gray.600" mt={2}>
                         {completedSteps}/{totalSteps} lessons completed
                       </Text>
                     </Box>
-                    <Badge colorScheme={status === "locked" ? "gray" : "green"} alignSelf="flex-start">
-                      {status === "locked" ? "Locked" : "Ready"}
+                    <Badge
+                      colorScheme={badgeColorScheme}
+                      alignSelf="flex-start"
+                    >
+                      {badgeLabel}
                     </Badge>
                   </HStack>
 
@@ -267,30 +393,54 @@ const SkillTreeBoard = ({
                       bg={`${optionalDescriptor.colorScheme}.50`}
                       p={3}
                       onClick={(event) => {
+                        if (!isInteractive) {
+                          return;
+                        }
                         event.stopPropagation();
                         handleSelect(group.optional.index);
                       }}
                       onKeyDown={(event) => {
+                        if (!isInteractive) {
+                          return;
+                        }
                         if (event.key === "Enter" || event.key === " ") {
                           event.preventDefault();
                           event.stopPropagation();
                           handleSelect(group.optional.index);
                         }
                       }}
-                      tabIndex={0}
-                      role="button"
-                      aria-label={`${group.optional.title} – ${optionalDescriptor.label}`}
+                      tabIndex={isInteractive ? 0 : undefined}
+                      role={isInteractive ? "button" : undefined}
+                      aria-label={
+                        isInteractive
+                          ? `${group.optional.title} – ${optionalDescriptor.label}`
+                          : undefined
+                      }
                     >
                       <HStack spacing={3} align="center" justify="space-between">
                         <HStack spacing={3} align="center">
-                          <Circle size="32px" bg={`${optionalDescriptor.colorScheme}.100`} color={`${optionalDescriptor.colorScheme}.500`}>
-                            <Icon as={group.optional.isConversationReview ? FiFlag : FiStar} boxSize={4} />
+                          <Circle
+                            size="32px"
+                            bg={`${optionalDescriptor.colorScheme}.100`}
+                            color={`${optionalDescriptor.colorScheme}.500`}
+                          >
+                            <Icon
+                              as={
+                                group.optional.isConversationReview
+                                  ? FiFlag
+                                  : FiStar
+                              }
+                              boxSize={4}
+                            />
                           </Circle>
                           <Box>
                             <Text fontWeight="medium" fontSize="sm">
                               {group.optional.title}
                             </Text>
-                            <Text fontSize="xs" color={`${optionalDescriptor.colorScheme}.600`}>
+                            <Text
+                              fontSize="xs"
+                              color={`${optionalDescriptor.colorScheme}.600`}
+                            >
                               {optionalDescriptor.label}
                               {showProgress
                                 ? ` • ${Math.round(optionalProgress * 100)}%`
@@ -301,11 +451,17 @@ const SkillTreeBoard = ({
                         <Button
                           size="xs"
                           colorScheme={optionalDescriptor.colorScheme}
-                          variant={optionalStage === "skipped" ? "outline" : "solid"}
+                          variant={
+                            optionalStage === "skipped" ? "outline" : "solid"
+                          }
                           onClick={(event) => {
+                            if (!isInteractive) {
+                              return;
+                            }
                             event.stopPropagation();
                             handleSelect(group.optional.index);
                           }}
+                          isDisabled={!isInteractive}
                         >
                           {optionalDescriptor.cta}
                         </Button>
@@ -315,13 +471,13 @@ const SkillTreeBoard = ({
                 </Box>
               </MotionBox>
 
-              {idx < groups.length - 1 && (
+              {showSpine && idx < displayGroups.length - 1 && (
                 <MotionBox
                   position="absolute"
                   top="calc(50% + 38px)"
                   {...spineOffset}
                   width="2px"
-                  height="100px"
+                  height={isCompact ? "80px" : "100px"}
                   bgGradient="linear(180deg, rgba(56, 189, 248, 0.3) 0%, rgba(45, 212, 191, 0.6) 100%)"
                   borderRadius="full"
                   {...connectorAnimation}

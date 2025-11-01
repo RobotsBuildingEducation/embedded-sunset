@@ -185,12 +185,13 @@ import { keyframes } from "@emotion/react";
 import { Delaunay } from "d3-delaunay";
 import StudyGuideModal from "./components/StudyGuideModal/StudyGuideModal";
 import { CodeEditor } from "./components/CodeEditor/CodeEditor";
-import ProgressModal from "./components/ProgressModal/ProgressModal";
 import { RoleCanvas } from "./components/RoleCanvas/RoleCanvas";
 import { AlgorithmHelper } from "./components/AlgorithmHelper/AlgorithmHelper";
 import { TbBinaryTreeFilled } from "react-icons/tb";
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
 import CloudTransition from "./elements/CloudTransition";
+import SkillTreeBoard from "./components/SkillTreeBoard/SkillTreeBoard";
+import { skillTreeGroupLabels } from "./components/SkillTreeBoard/groupLabels";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -1500,6 +1501,8 @@ const Step = ({
   setLectureNextPath,
   lectureNextStep,
   setLectureNextStep,
+  optionalQuestProgress,
+  setOptionalQuestProgress,
 }) => {
   let loot = buildSuperLoot();
 
@@ -1572,10 +1575,22 @@ const Step = ({
   const [dailyGoals, setDailyGoals] = useState(5);
   const [nextGoalExpiration, setNextGoalExpiration] = useState(null);
   const [goalCount, setGoalCount] = useState(0);
-  const [optionalQuestProgress, setOptionalQuestProgress] = useState({});
   const pendingOptionalPersist = useRef(false);
 
   const [celebrationMessage, setCelebrationMessage] = useState("");
+  const [chapterIntroDismissed, setChapterIntroDismissed] = useState(() => {
+    if (typeof window === "undefined") {
+      return {};
+    }
+    try {
+      const stored = localStorage.getItem("chapterIntroSeen");
+      return stored ? JSON.parse(stored) : {};
+    } catch (error) {
+      console.error("Failed to parse chapter intro state", error);
+      return {};
+    }
+  });
+  const [isChapterIntroVisible, setIsChapterIntroVisible] = useState(false);
 
   const externalUrl = "https://chat.com";
 
@@ -1605,6 +1620,15 @@ const Step = ({
   };
 
   const handleModalClose = () => setIsExternalLinkModalOpen(false);
+
+  const handleShowSkillMapOverlay = useCallback(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const currentPath = window.location.pathname;
+    navigateWithTransition(currentPath, currentStep);
+  }, [currentStep, navigateWithTransition]);
 
   const persistOptionalQuestProgress = useCallback(
     (groupId, status = {}) => {
@@ -1678,8 +1702,32 @@ const Step = ({
       nextGoalExpiration,
       startTime,
       streak,
+      setOptionalQuestProgress,
     ]
   );
+
+  const handleDismissChapterIntro = useCallback(() => {
+    const groupId = step?.group;
+    if (!groupId) {
+      setIsChapterIntroVisible(false);
+      return;
+    }
+
+    setChapterIntroDismissed((prev) => {
+      const next = { ...prev, [groupId]: true };
+      try {
+        localStorage.setItem("chapterIntroSeen", JSON.stringify(next));
+      } catch (error) {
+        console.error("Failed to persist chapter intro state", error);
+      }
+      return next;
+    });
+    setIsChapterIntroVisible(false);
+  }, [step]);
+
+  const handleShowChapterIntro = useCallback(() => {
+    setIsChapterIntroVisible(true);
+  }, []);
 
   useEffect(() => {
     const userId = localStorage.getItem("local_npub");
@@ -1730,12 +1778,6 @@ const Step = ({
     isOpen: isAwardModalOpen,
     onOpen: onAwardModalOpen,
     onClose: onAwardModalClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: isProgressModalOpen,
-    onOpen: onProgressModalOpen,
-    onClose: onProgressModalClose,
   } = useDisclosure();
 
   const {
@@ -1842,6 +1884,29 @@ const Step = ({
       generateSuggestionForNewStep();
     }
   }, [userLanguage]);
+
+  useEffect(() => {
+    const list = steps[userLanguage] || [];
+    const current = list[currentStep];
+
+    if (!current || !current.group) {
+      setIsChapterIntroVisible(false);
+      return;
+    }
+
+    const groupIndices = list
+      .map((item, idx) => (item.group === current.group ? idx : null))
+      .filter((idx) => idx !== null);
+    const firstIndex = groupIndices[0];
+
+    if (typeof firstIndex === "number" && currentStep === firstIndex) {
+      if (!chapterIntroDismissed[current.group]) {
+        setIsChapterIntroVisible(true);
+      }
+    } else {
+      setIsChapterIntroVisible(false);
+    }
+  }, [chapterIntroDismissed, currentStep, userLanguage]);
 
   // Fetch user data and manage streaks and timers
   useEffect(() => {
@@ -3292,9 +3357,70 @@ const Step = ({
                   }}
                 />
               </Box>
+              <Button
+                size="xs"
+                variant="ghost"
+                colorScheme="purple"
+                mt={2}
+                onClick={handleShowChapterIntro}
+              >
+                Preview chapter map
+              </Button>
               <br />
             </span>
             <VStack width="100%">
+              {isChapterIntroVisible && step?.group ? (
+                <Box
+                  width="100%"
+                  borderRadius="2xl"
+                  border="1px solid rgba(128,90,213,0.25)"
+                  bg="rgba(255,255,255,0.95)"
+                  boxShadow="0 18px 36px rgba(88, 28, 135, 0.18)"
+                  p={{ base: 4, md: 5 }}
+                  mb={4}
+                >
+                  <VStack align="stretch" spacing={4}>
+                    <Text
+                      fontSize="xs"
+                      textTransform="uppercase"
+                      letterSpacing="0.1em"
+                      color="purple.500"
+                    >
+                      Chapter preview
+                    </Text>
+                    <Text fontWeight="semibold" fontSize="lg" color="purple.700">
+                      {skillTreeGroupLabels?.[step.group]?.[userLanguage] ||
+                        skillTreeGroupLabels?.[step.group]?.en ||
+                        step.group}
+                    </Text>
+                    <Text fontSize="sm" color="gray.600">
+                      Visualize the upcoming lessons and optional quests before you begin.
+                    </Text>
+                    <SkillTreeBoard
+                      steps={steps}
+                      userLanguage={userLanguage}
+                      currentStep={currentStep}
+                      activeStep={currentStep}
+                      highlightStep={currentStep}
+                      focusGroup={step.group}
+                      showOnlyFocus
+                      isCompact
+                      optionalQuestProgress={optionalQuestProgress}
+                      groupLabels={skillTreeGroupLabels}
+                      isInteractive={false}
+                    />
+                    <HStack justify="flex-end">
+                      <Button
+                        size="sm"
+                        colorScheme="purple"
+                        onClick={handleDismissChapterIntro}
+                      >
+                        Start chapter
+                      </Button>
+                    </HStack>
+                  </VStack>
+                </Box>
+              ) : null}
               <span style={{ fontSize: "50%" }}>
                 {translation[userLanguage]["app.progress"]}:{" "}
                 {animatedProgress.toFixed(2)}% |{" "}
@@ -3883,9 +4009,9 @@ const Step = ({
                     <Button
                       variant={"outline"}
                       mb={3}
-                      onClick={onProgressModalOpen}
+                      onClick={handleShowSkillMapOverlay}
                     >
-                      View progress
+                      View skill map
                     </Button>
 
                     <Button
@@ -4035,17 +4161,6 @@ const Step = ({
             />
           )}
 
-          {isProgressModalOpen ? (
-            <ProgressModal
-              isOpen={isProgressModalOpen}
-              onClose={onProgressModalClose}
-              steps={steps}
-              currentStep={currentStep}
-              userLanguage={userLanguage}
-              navigateWithTransition={navigateWithTransition}
-              optionalQuestProgress={optionalQuestProgress}
-            />
-          ) : null}
           {/* newmodal */}
           {/* <ExternalLinkModal
             isOpen={isExternalLinkModalOpen}
@@ -5744,6 +5859,7 @@ function App({ isShutDown }) {
   const [incorrectAttempts, setIncorrectAttempts] = useState(
     parseInt(localStorage.getItem("incorrectAttempts"), 10) || 0
   );
+  const [optionalQuestProgress, setOptionalQuestProgress] = useState({});
 
   const defaultTransitionStats = {
     salary: 0,
@@ -5792,6 +5908,18 @@ function App({ isShutDown }) {
       1000
     );
   };
+
+  const handleSkillTreeNavigate = useCallback(
+    (targetStep) => {
+      if (!Number.isFinite(targetStep) || targetStep < 0) {
+        return;
+      }
+
+      const safeIndex = Math.max(0, Math.floor(targetStep));
+      navigateWithTransition(`/q/${safeIndex}`, safeIndex);
+    },
+    [navigateWithTransition]
+  );
 
   // const {
   //   generateNostrKeys,
@@ -6063,6 +6191,12 @@ function App({ isShutDown }) {
         message={transitionStats.message}
         detail={transitionStats.detail}
         onContinue={handleTransitionContinue}
+        steps={steps}
+        currentStep={currentStep}
+        pendingStep={pendingStep}
+        optionalQuestProgress={optionalQuestProgress}
+        onNodeSelect={handleSkillTreeNavigate}
+        groupLabels={skillTreeGroupLabels}
       />
       {alert.isOpen && (
         <Alert
@@ -6188,6 +6322,8 @@ function App({ isShutDown }) {
                       setLectureNextPath={setLectureNextPath}
                       lectureNextStep={lectureNextPath}
                       setLectureNextStep={setLectureNextStep}
+                      optionalQuestProgress={optionalQuestProgress}
+                      setOptionalQuestProgress={setOptionalQuestProgress}
                     />
                   </PrivateRoute>
                 }
