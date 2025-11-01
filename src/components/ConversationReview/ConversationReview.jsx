@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   VStack,
   Text,
@@ -88,6 +88,7 @@ const ConversationReview = ({
   setFinalConversation,
   finalConversation,
   handleModalCheck,
+  onQuestProgress = () => {},
 }) => {
   const [response, setResponse] = useState("");
   const [conversation, setConversation] = useState([]);
@@ -97,6 +98,7 @@ const ConversationReview = ({
   const chatboxRef = useRef(null);
   const chatContainerRef = useRef(null);
   const [showIntro, setShowIntro] = useState(true);
+  const hasLoggedConversation = useRef(false);
 
   useEffect(() => {
     const checkStage = async () => {
@@ -210,6 +212,25 @@ const ConversationReview = ({
     }
   }, [conversation]);
 
+  useEffect(() => {
+    hasLoggedConversation.current = false;
+  }, [step.group]);
+
+  useEffect(() => {
+    if (conversation.length > 0 && !hasLoggedConversation.current) {
+      hasLoggedConversation.current = true;
+      onQuestProgress(step.group, { stage: "chatting", progress: 0.9 });
+    }
+  }, [conversation.length, onQuestProgress, step.group]);
+
+  const handlePreConversationProgress = useCallback(
+    (update) => {
+      if (!update) return;
+      onQuestProgress(step.group, update);
+    },
+    [onQuestProgress, step.group]
+  );
+
   if (showIntro) {
     return (
       <PreConversation
@@ -217,6 +238,7 @@ const ConversationReview = ({
         step={step}
         userLanguage={userLanguage}
         onContinue={() => setShowIntro(false)}
+        onQuestProgress={handlePreConversationProgress}
       />
     );
   }

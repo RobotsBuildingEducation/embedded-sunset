@@ -166,7 +166,13 @@ const renderGroupedSteps = (steps, currentStep, userLanguage) => {
   });
 };
 
-const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
+const PreConversation = ({
+  steps,
+  step,
+  userLanguage,
+  onContinue,
+  onQuestProgress,
+}) => {
   const [idea, setIdea] = useState("");
   const [savedIdea, setSavedIdea] = useState("");
   const [code, setCode] = useState("");
@@ -298,6 +304,12 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
         },
         { merge: true }
       );
+      if (typeof onQuestProgress === "function") {
+        onQuestProgress({
+          stage,
+          progress: stage === "conversation" ? 0.75 : 0.5,
+        });
+      }
     } catch (err) {
       console.error("Error saving build", err);
     }

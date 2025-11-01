@@ -12,6 +12,8 @@ import {
 import { translation } from "../utility/translation";
 import { database } from "../database/firebaseResources";
 import { doc, onSnapshot } from "firebase/firestore";
+import SkillTreeBoard from "../components/SkillTreeBoard/SkillTreeBoard";
+import { skillTreeGroupLabels } from "../components/SkillTreeBoard/groupLabels";
 
 const MotionBox = motion(Box);
 
@@ -100,6 +102,12 @@ const CloudTransition = ({
   detail,
   onContinue,
   children,
+  steps,
+  currentStep,
+  pendingStep,
+  optionalQuestProgress,
+  onNodeSelect,
+  groupLabels = skillTreeGroupLabels,
 }) => {
   const canvasRef = useRef(null);
   const [canContinue, setCanContinue] = useState(false);
@@ -127,6 +135,42 @@ const CloudTransition = ({
   const [promotionProgress, setPromotionProgress] = useState(null);
   const [promotionTimeLeft, setPromotionTimeLeft] = useState("");
   const [promotionExpired, setPromotionExpired] = useState(false);
+
+  const stepList = useMemo(
+    () => steps?.[userLanguage] || [],
+    [steps, userLanguage]
+  );
+  const safeCurrentStep = useMemo(
+    () => (typeof currentStep === "number" ? currentStep : 0),
+    [currentStep]
+  );
+  const boardActiveStep = useMemo(
+    () =>
+      typeof pendingStep === "number" ? pendingStep : safeCurrentStep,
+    [pendingStep, safeCurrentStep]
+  );
+  const highlightStepIndex = useMemo(
+    () =>
+      typeof pendingStep === "number" ? pendingStep : safeCurrentStep,
+    [pendingStep, safeCurrentStep]
+  );
+  const focusGroupId = useMemo(() => {
+    const focusStep = stepList?.[boardActiveStep];
+    return focusStep?.group;
+  }, [boardActiveStep, stepList]);
+  const focusGroupLabel = useMemo(() => {
+    if (!focusGroupId) {
+      return null;
+    }
+    const entry = groupLabels?.[focusGroupId];
+    if (!entry) {
+      return null;
+    }
+    if (typeof entry === "string") {
+      return entry;
+    }
+    return entry?.[userLanguage] || entry?.en || null;
+  }, [focusGroupId, groupLabels, userLanguage]);
 
   useEffect(() => {
     const unsubscribe = subscribeToQuestionsAnswered(setQuestionsAnswered);
@@ -477,179 +521,210 @@ const CloudTransition = ({
             pointerEvents="none"
           />
 
-          {children ? (
-            <Box w="100%" maxW="600px" zIndex={1}>
-              {children}
-            </Box>
-          ) : (
-            <MotionBox
-              initial={{ opacity: 0, y: 18, scale: 0.99 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.45, ease: "easeOut" }}
-              textAlign="center"
-              color="purple.600"
-              w="90%"
-              maxW="420px"
-            >
-              {message && (
+          <MotionBox
+            initial={{ opacity: 0, y: 18, scale: 0.99 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.45, ease: "easeOut" }}
+            textAlign="center"
+            color="purple.600"
+            w="90%"
+            maxW="520px"
+          >
+            {message && (
+              <Text
+                as={motion.p}
+                fontSize="md"
+                mt={6}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 0.92, y: 0 }}
+                transition={{ duration: 0.35, delay: 0.15 }}
+              >
                 <Text
                   as={motion.p}
-                  fontSize="md"
-                  mt={6}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 0.92, y: 0 }}
-                  transition={{ duration: 0.35, delay: 0.15 }}
+                  fontSize="3xl"
+                  fontWeight="bold"
+                  mb={4}
+                  initial={{ scale: 0.94, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.55 }}
+                  color="#05f569"
+                  style={{ textShadow: "0 0 12px rgba(5,245,105,0.25)" }}
                 >
+                  +${(displaySalary ?? 0).toLocaleString()}/yr
+                </Text>
+
+                {detail && (
                   <Text
                     as={motion.p}
-                    fontSize="3xl"
-                    fontWeight="bold"
-                    mb={4}
-                    initial={{ scale: 0.94, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.55 }}
-                    color="#05f569"
-                    style={{ textShadow: "0 0 12px rgba(5,245,105,0.25)" }}
+                    fontSize="sm"
+                    mt={2}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 0.85, y: 0 }}
+                    transition={{ duration: 0.35, delay: 0.25 }}
                   >
-                    +${(displaySalary ?? 0).toLocaleString()}/yr
+                    {detail}
                   </Text>
+                )}
+              </Text>
+            )}
 
-                  {detail && (
-                    <Text
-                      as={motion.p}
-                      fontSize="sm"
-                      mt={2}
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 0.85, y: 0 }}
-                      transition={{ duration: 0.35, delay: 0.25 }}
-                    >
-                      {detail}
-                    </Text>
-                  )}
-
-                  {/* Salary bar */}
-                  <Box w="100%" mx="auto" mb={6} mt={6}>
-                    <Text fontSize="sm" mb={1} color="purple.500">
-                      Salary
-                    </Text>
-                    <WaveBar
-                      value={salaryProgress}
-                      start="#43e97b"
-                      end="#38f9d7"
-                      delay={0.2}
-                      bg="rgba(255,255,255,0.65)"
-                      border="#ededed"
-                    />
-                  </Box>
-                  {/* Balance bar */}
-                  <Box w="100%" mx="auto" mb={6}>
-                    <Text fontSize="sm" mb={1} color="purple.500">
-                      {balanceProgress === 0 ? "0" : balanceProgress - 1}{" "}
-                      Bitcoin sats
-                    </Text>
-                    <WaveBar
-                      value={balanceProgress === 0 ? "0" : balanceProgress - 1}
-                      start="#fce09d"
-                      end="#fef37b"
-                      delay={0}
-                      bg="rgba(255,255,255,0.65)"
-                      border="#ededed"
-                    />
-                  </Box>
-
-                  {/* Step progress bar */}
-                  <Box w="100%" mx="auto" mb={6}>
-                    <Text fontSize="sm" mb={1} color="purple.500">
-                      Progress
-                    </Text>
-                    <WaveBar
-                      value={stepProgress}
-                      start="#0345fc"
-                      end="#03f4fc"
-                      delay={0.1}
-                      bg="rgba(255,255,255,0.65)"
-                      border="#ededed"
-                    />
-                  </Box>
-
-                  {/* Daily goal bar */}
-                  <Box w="100%" mx="auto" mb={6}>
-                    <Text fontSize="sm" mb={1} color="purple.500">
-                      {dailyGoalLabel} {dailyProgress}/{dailyGoals}
-                    </Text>
-                    <WaveBar
-                      value={dailyGoalProgress}
-                      start="#03f4fc"
-                      end="#fef37b"
-                      delay={0}
-                      bg="rgba(255,255,255,0.65)"
-                      border="#ededed"
-                    />
-                  </Box>
-
-                  <Box w="100%" mx="auto" mb={6}>
-                    <Text fontSize="sm" mb={1} color="purple.500">
-                      {translation[userLanguage]["communityGoal"]}
-                      {questionsAnswered}/7500{" "}
-                      {translation[userLanguage]["questions"]}
-                    </Text>
-                    <WaveBar
-                      value={questionProgress}
-                      start="#bf66ff"
-                      end="#7300ff"
-                      delay={0}
-                      bg="rgba(255,255,255,0.65)"
-                      border="#ededed"
-                    />
-                  </Box>
-
-                  {promotionProgress !== null && (
-                    <Box w="50%" mx="auto" mb={0}>
-                      <Text
-                        fontSize="xs"
-                        mt={2}
-                        color={promotionExpired ? "red.500" : "purple.600"}
-                      >
-                        {promotionExpired
-                          ? translation[userLanguage]["promotion.timerExpired"]
-                          : "Refund time left: " + promotionTimeLeft}
-                      </Text>
-                      <WaveBar
-                        value={promotionProgress}
-                        start="#ff8ba7"
-                        end="#ffcc70"
-                        delay={0}
-                        bg="rgba(255,255,255,0.65)"
-                        border="#ededed"
-                      />
-                    </Box>
-                  )}
-
-                  <br />
-                  <br />
-                  {message}
+            <Box
+              mt={8}
+              mb={10}
+              borderRadius="2xl"
+              border="1px solid rgba(128,90,213,0.25)"
+              bg="rgba(255,255,255,0.88)"
+              boxShadow="0 28px 48px rgba(64, 32, 128, 0.18)"
+              px={{ base: 4, md: 6 }}
+              py={{ base: 5, md: 6 }}
+            >
+              <Text
+                fontSize="sm"
+                textTransform="uppercase"
+                letterSpacing="0.12em"
+                color="purple.500"
+                mb={2}
+              >
+                Learning path
+              </Text>
+              {focusGroupLabel && (
+                <Text fontWeight="semibold" fontSize="lg" mb={4} color="purple.700">
+                  {focusGroupLabel}
                 </Text>
               )}
+              <SkillTreeBoard
+                steps={steps}
+                userLanguage={userLanguage}
+                currentStep={safeCurrentStep}
+                activeStep={boardActiveStep}
+                highlightStep={highlightStepIndex}
+                focusGroup={focusGroupId}
+                optionalQuestProgress={optionalQuestProgress}
+                groupLabels={groupLabels}
+                isCompact
+                onNodeSelect={onNodeSelect}
+                isInteractive={typeof onNodeSelect === "function"}
+              />
+            </Box>
 
-              <Button
-                as={motion.button}
-                mt={8}
-                colorScheme="yellow"
-                variant="outline"
-                borderRadius="full"
-                px={6}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.985 }}
-                transition={{ duration: 0.2, delay: 0.35 }}
-                onClick={onContinue}
-                disabled={!canContinue}
-              >
-                Continue
-              </Button>
-            </MotionBox>
-          )}
+            {message && (
+              <Box fontSize="sm" color="purple.600" mb={6}>
+                {message}
+              </Box>
+            )}
+
+            <Box w="100%" mx="auto" mb={6}>
+              <Text fontSize="sm" mb={1} color="purple.500">
+                Salary
+              </Text>
+              <WaveBar
+                value={salaryProgress}
+                start="#43e97b"
+                end="#38f9d7"
+                delay={0.2}
+                bg="rgba(255,255,255,0.65)"
+                border="#ededed"
+              />
+            </Box>
+            <Box w="100%" mx="auto" mb={6}>
+              <Text fontSize="sm" mb={1} color="purple.500">
+                {balanceProgress === 0 ? "0" : balanceProgress - 1} Bitcoin sats
+              </Text>
+              <WaveBar
+                value={balanceProgress === 0 ? "0" : balanceProgress - 1}
+                start="#fce09d"
+                end="#fef37b"
+                delay={0}
+                bg="rgba(255,255,255,0.65)"
+                border="#ededed"
+              />
+            </Box>
+
+            <Box w="100%" mx="auto" mb={6}>
+              <Text fontSize="sm" mb={1} color="purple.500">
+                Progress
+              </Text>
+              <WaveBar
+                value={stepProgress}
+                start="#0345fc"
+                end="#03f4fc"
+                delay={0.1}
+                bg="rgba(255,255,255,0.65)"
+                border="#ededed"
+              />
+            </Box>
+
+            <Box w="100%" mx="auto" mb={6}>
+              <Text fontSize="sm" mb={1} color="purple.500">
+                {dailyGoalLabel} {dailyProgress}/{dailyGoals}
+              </Text>
+              <WaveBar
+                value={dailyGoalProgress}
+                start="#03f4fc"
+                end="#fef37b"
+                delay={0}
+                bg="rgba(255,255,255,0.65)"
+                border="#ededed"
+              />
+            </Box>
+
+            <Box w="100%" mx="auto" mb={6}>
+              <Text fontSize="sm" mb={1} color="purple.500">
+                {translation[userLanguage]["communityGoal"]}
+                {questionsAnswered}/7500 {translation[userLanguage]["questions"]}
+              </Text>
+              <WaveBar
+                value={questionProgress}
+                start="#bf66ff"
+                end="#7300ff"
+                delay={0}
+                bg="rgba(255,255,255,0.65)"
+                border="#ededed"
+              />
+            </Box>
+
+            {promotionProgress !== null && (
+              <Box w="50%" mx="auto" mb={0}>
+                <Text
+                  fontSize="xs"
+                  mt={2}
+                  color={promotionExpired ? "red.500" : "purple.600"}
+                >
+                  {promotionExpired
+                    ? translation[userLanguage]["promotion.timerExpired"]
+                    : "Refund time left: " + promotionTimeLeft}
+                </Text>
+                <WaveBar
+                  value={promotionProgress}
+                  start="#ff8ba7"
+                  end="#ffcc70"
+                  delay={0}
+                  bg="rgba(255,255,255,0.65)"
+                  border="#ededed"
+                />
+              </Box>
+            )}
+
+            {children}
+
+            <Button
+              as={motion.button}
+              mt={8}
+              colorScheme="yellow"
+              variant="outline"
+              borderRadius="full"
+              px={6}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.985 }}
+              transition={{ duration: 0.2, delay: 0.35 }}
+              onClick={onContinue}
+              disabled={!canContinue}
+            >
+              Continue
+            </Button>
+          </MotionBox>
         </Box>
       )}
     </AnimatePresence>
