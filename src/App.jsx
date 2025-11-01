@@ -1846,22 +1846,31 @@ const Step = ({
     const list = steps[userLanguage] || [];
     const current = list[currentStep];
 
+    const groupId = current?.group;
+
     if (
-      !current?.group ||
-      CHAPTER_MAP_EXCLUDED_GROUPS.has(current.group)
+      groupId === undefined ||
+      groupId === null ||
+      groupId === "" ||
+      CHAPTER_MAP_EXCLUDED_GROUPS.has(groupId) ||
+      CHAPTER_MAP_EXCLUDED_GROUPS.has(String(groupId))
     ) {
       return;
     }
 
-    const firstIndex = list.findIndex((item) => item?.group === current.group);
+    const groupKey = String(groupId);
+
+    const firstIndex = list.findIndex(
+      (item) => String(item?.group) === groupKey
+    );
 
     if (
       typeof firstIndex === "number" &&
       firstIndex === currentStep &&
-      !chapterIntroStatus?.[current.group]
+      !chapterIntroStatus?.[groupKey]
     ) {
       navigate(
-        `/chapter/${encodeURIComponent(current.group)}?step=${currentStep}`
+        `/chapter/${encodeURIComponent(groupKey)}?step=${currentStep}`
       );
     }
   }, [chapterIntroStatus, currentStep, navigate, steps, userLanguage]);
@@ -5778,15 +5787,17 @@ function App({ isShutDown }) {
   }, [chapterIntroStatus]);
 
   const markChapterIntroSeen = useCallback((groupId) => {
-    if (!groupId) {
+    if (groupId === undefined || groupId === null || groupId === "") {
       return;
     }
 
+    const key = String(groupId);
+
     setChapterIntroStatus((prev = {}) => {
-      if (prev[groupId]) {
+      if (prev[key]) {
         return prev;
       }
-      return { ...prev, [groupId]: true };
+      return { ...prev, [key]: true };
     });
   }, []);
 
@@ -5798,22 +5809,33 @@ function App({ isShutDown }) {
 
       const list = steps?.[userLanguage] || [];
       const target = list[nextStep];
+      const groupId = target?.group;
 
-      if (!target?.group || CHAPTER_MAP_EXCLUDED_GROUPS.has(target.group)) {
+      if (
+        groupId === undefined ||
+        groupId === null ||
+        groupId === "" ||
+        CHAPTER_MAP_EXCLUDED_GROUPS.has(groupId) ||
+        CHAPTER_MAP_EXCLUDED_GROUPS.has(String(groupId))
+      ) {
         return { shouldRedirect: false, groupId: null };
       }
 
-      const firstIndex = list.findIndex((item) => item?.group === target.group);
+      const groupKey = String(groupId);
+
+      const firstIndex = list.findIndex(
+        (item) => String(item?.group) === groupKey
+      );
 
       if (firstIndex !== nextStep) {
         return { shouldRedirect: false, groupId: null };
       }
 
-      if (chapterIntroStatus?.[target.group]) {
+      if (chapterIntroStatus?.[groupKey]) {
         return { shouldRedirect: false, groupId: null };
       }
 
-      return { shouldRedirect: true, groupId: target.group };
+      return { shouldRedirect: true, groupId: groupKey };
     },
     [chapterIntroStatus, steps, userLanguage]
   );
@@ -6059,6 +6081,10 @@ function App({ isShutDown }) {
               setUserLanguage("en");
             }
 
+            const onOnboardingRoute = /^\/onboarding\//.test(
+              location.pathname
+            );
+
             if (location.pathname === "/experiment") {
             } else if (location.pathname === "/about") {
               // Do nothing if on /about
@@ -6094,7 +6120,7 @@ function App({ isShutDown }) {
                 parseInt(onboardingProgress, 10) === step + 1
               ) {
                 navigate(`/onboarding/${parseInt(onboardingProgress, 10)}`);
-              } else {
+              } else if (!onOnboardingRoute) {
                 navigateToStep(step);
               }
               // }

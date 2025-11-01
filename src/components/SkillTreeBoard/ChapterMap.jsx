@@ -39,6 +39,8 @@ const ChapterMap = ({
   const navigate = useNavigate();
   const location = useLocation();
   const groupId = rawGroupId ? decodeURIComponent(rawGroupId) : null;
+  const normalizedGroupId =
+    groupId !== null && groupId !== undefined ? String(groupId) : null;
 
   const stepList = useMemo(() => steps?.[userLanguage] || [], [steps, userLanguage]);
 
@@ -46,8 +48,8 @@ const ChapterMap = ({
     () =>
       stepList
         .map((step, index) => ({ ...step, index }))
-        .filter((item) => item.group === groupId),
-    [groupId, stepList]
+        .filter((item) => String(item.group) === normalizedGroupId),
+    [normalizedGroupId, stepList]
   );
 
   const defaultStepIndex = groupSteps.length ? groupSteps[0].index : 0;
@@ -70,17 +72,17 @@ const ChapterMap = ({
   }, [initialStep]);
 
   const chapterLabel = useMemo(() => {
-    const entry = groupLabels?.[groupId];
+    const entry = groupLabels?.[normalizedGroupId];
     if (!entry) {
-      return groupId || "";
+      return normalizedGroupId || "";
     }
     if (typeof entry === "string") {
       return entry;
     }
-    return entry?.[userLanguage] || entry?.en || groupId;
-  }, [groupId, groupLabels, userLanguage]);
+    return entry?.[userLanguage] || entry?.en || normalizedGroupId;
+  }, [groupLabels, normalizedGroupId, userLanguage]);
 
-  const optionalState = optionalQuestProgress?.[groupId];
+  const optionalState = optionalQuestProgress?.[normalizedGroupId];
 
   const handleBack = useCallback(() => {
     navigate(-1);
@@ -92,11 +94,11 @@ const ChapterMap = ({
       : defaultStepIndex;
 
     if (typeof onStartChapter === "function") {
-      onStartChapter(groupId, targetIndex);
+      onStartChapter(normalizedGroupId, targetIndex);
     } else {
       navigate(`/q/${targetIndex}`);
     }
-  }, [defaultStepIndex, groupId, navigate, onStartChapter, selectedStep]);
+  }, [defaultStepIndex, navigate, normalizedGroupId, onStartChapter, selectedStep]);
 
   const onNodeSelect = useCallback((index) => {
     if (!Number.isFinite(index)) {
@@ -105,7 +107,7 @@ const ChapterMap = ({
     setSelectedStep(index);
   }, []);
 
-  if (!groupId || groupSteps.length === 0) {
+  if (!normalizedGroupId || groupSteps.length === 0) {
     return (
       <Box
         minH="100vh"

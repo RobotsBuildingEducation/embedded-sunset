@@ -33,7 +33,7 @@ import {
 
 import { translation } from "./utility/translation";
 import { steps as courseSteps } from "./utility/content";
-import { CHAPTER_MAP_EXCLUDED_GROUPS } from "./components/SkillTreeBoard/constants";
+import { shouldShowChapterIntro } from "./components/SkillTreeBoard/constants";
 
 import RandomCharacter, {
   FadeInComponent,
@@ -93,14 +93,13 @@ export const Onboarding = ({
 
       const entry = lessonSteps?.[numericStep];
       const groupId = entry?.group;
+      const hasGroup = groupId !== undefined && groupId !== null && groupId !== "";
+      const showChapterIntro =
+        (forceChapterIntro && hasGroup) || shouldShowChapterIntro(groupId);
 
-      const shouldShowChapterIntro =
-        groupId &&
-        (forceChapterIntro || !CHAPTER_MAP_EXCLUDED_GROUPS.has(groupId));
-
-      if (shouldShowChapterIntro) {
+      if (showChapterIntro) {
         navigate(
-          `/chapter/${encodeURIComponent(groupId)}?step=${numericStep}`
+          `/chapter/${encodeURIComponent(String(groupId))}?step=${numericStep}`
         );
         return;
       }
@@ -119,7 +118,7 @@ export const Onboarding = ({
       if (!step?.group && step?.group !== 0) {
         return false;
       }
-      return !CHAPTER_MAP_EXCLUDED_GROUPS.has(step.group);
+      return shouldShowChapterIntro(step.group);
     });
 
     return index >= 0 ? index : null;
