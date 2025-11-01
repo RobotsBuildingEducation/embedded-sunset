@@ -1,6 +1,6 @@
 import "regenerator-runtime/runtime";
 import "@babel/polyfill";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Box,
   Button,
@@ -32,6 +32,8 @@ import {
 } from "./utility/nosql";
 
 import { translation } from "./utility/translation";
+import { steps as courseSteps } from "./utility/content";
+import { shouldShowChapterIntro } from "./components/SkillTreeBoard/constants";
 
 import RandomCharacter, {
   FadeInComponent,
@@ -74,6 +76,54 @@ export const Onboarding = ({
   const toast = useToast();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
+  const lessonSteps = useMemo(
+    () => courseSteps?.[userLanguage] || [],
+    [userLanguage]
+  );
+
+  const launchLearningStep = useCallback(
+    (targetStep, options = {}) => {
+      const { forceChapterIntro = false } = options;
+      const numericStep = Number(targetStep);
+
+      if (!Number.isFinite(numericStep)) {
+        navigate("/q/0");
+        return;
+      }
+
+      const entry = lessonSteps?.[numericStep];
+      const groupId = entry?.group;
+      const hasGroup = groupId !== undefined && groupId !== null && groupId !== "";
+      const showChapterIntro =
+        (forceChapterIntro && hasGroup) || shouldShowChapterIntro(groupId);
+
+      if (showChapterIntro) {
+        navigate(
+          `/chapter/${encodeURIComponent(String(groupId))}?step=${numericStep}`
+        );
+        return;
+      }
+
+      navigate(`/q/${numericStep}`);
+    },
+    [lessonSteps, navigate]
+  );
+
+  const firstChapterStep = useMemo(() => {
+    if (!lessonSteps?.length) {
+      return null;
+    }
+
+    const index = lessonSteps.findIndex((step) => {
+      if (!step?.group && step?.group !== 0) {
+        return false;
+      }
+      return shouldShowChapterIntro(step.group);
+    });
+
+    return index >= 0 ? index : null;
+  }, [lessonSteps]);
+
   const {
     isOpen: isAwardModalOpen,
     onOpen: onAwardModalOpen,
@@ -94,7 +144,7 @@ export const Onboarding = ({
     setOnboardingToDone(localStorage.getItem("local_npub"), 5);
 
     setCurrentStep(5);
-    navigate("/q/5");
+    launchLearningStep(5);
   };
 
   // Scroll to top on step change
@@ -305,7 +355,7 @@ export const Onboarding = ({
             moveToNext={() => {
               incrementUserOnboardingStep(localStorage.getItem("local_npub"));
               setCurrentStep(0);
-              navigate("/q/0");
+              launchLearningStep(0);
             }}
           />
         </Box>
@@ -773,8 +823,15 @@ export const Onboarding = ({
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
-                      setCurrentStep(1);
-                      navigate("/q/1");
+                      const chapterLaunchStep = Number.isFinite(
+                        firstChapterStep
+                      )
+                        ? firstChapterStep
+                        : 1;
+                      setCurrentStep(chapterLaunchStep);
+                      launchLearningStep(chapterLaunchStep, {
+                        forceChapterIntro: true,
+                      });
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
                     mb={18}
@@ -1062,7 +1119,7 @@ export const Onboarding = ({
                         localStorage.getItem("local_npub")
                       );
                       setCurrentStep(3);
-                      navigate("/q/3");
+                      launchLearningStep(3);
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
                     mb={18}
@@ -1144,7 +1201,7 @@ export const Onboarding = ({
                         localStorage.getItem("local_npub")
                       );
                       setCurrentStep(4);
-                      navigate("/q/4");
+                      launchLearningStep(4);
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
                     mb={18}

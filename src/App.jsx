@@ -1,6 +1,6 @@
 import "regenerator-runtime/runtime";
 import "@babel/polyfill";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -185,12 +185,14 @@ import { keyframes } from "@emotion/react";
 import { Delaunay } from "d3-delaunay";
 import StudyGuideModal from "./components/StudyGuideModal/StudyGuideModal";
 import { CodeEditor } from "./components/CodeEditor/CodeEditor";
-import ProgressModal from "./components/ProgressModal/ProgressModal";
 import { RoleCanvas } from "./components/RoleCanvas/RoleCanvas";
 import { AlgorithmHelper } from "./components/AlgorithmHelper/AlgorithmHelper";
 import { TbBinaryTreeFilled } from "react-icons/tb";
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
 import CloudTransition from "./elements/CloudTransition";
+import ChapterMap from "./components/SkillTreeBoard/ChapterMap";
+import { skillTreeGroupLabels } from "./components/SkillTreeBoard/groupLabels";
+import { CHAPTER_MAP_EXCLUDED_GROUPS } from "./components/SkillTreeBoard/constants";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -1500,6 +1502,9 @@ const Step = ({
   setLectureNextPath,
   lectureNextStep,
   setLectureNextStep,
+  optionalQuestProgress,
+  setOptionalQuestProgress,
+  chapterIntroStatus,
 }) => {
   let loot = buildSuperLoot();
 
@@ -1572,6 +1577,7 @@ const Step = ({
   const [dailyGoals, setDailyGoals] = useState(5);
   const [nextGoalExpiration, setNextGoalExpiration] = useState(null);
   const [goalCount, setGoalCount] = useState(0);
+  const pendingOptionalPersist = useRef(false);
 
   const [celebrationMessage, setCelebrationMessage] = useState("");
 
@@ -1604,16 +1610,131 @@ const Step = ({
 
   const handleModalClose = () => setIsExternalLinkModalOpen(false);
 
+  const persistOptionalQuestProgress = useCallback(
+    (groupId, status = {}) => {
+      if (!groupId) {
+        return;
+      }
+
+      const userId = localStorage.getItem("local_npub");
+      setOptionalQuestProgress((prev) => {
+        const existing = prev[groupId] || {};
+        const stage = status.stage || existing.stage || "not-started";
+        const progressValue =
+          typeof status.progress === "number"
+            ? Math.min(1, Math.max(0, status.progress))
+            : existing.progress ?? 0;
+
+        if (
+          existing.stage === stage &&
+          (existing.progress ?? 0) === progressValue
+        ) {
+          return prev;
+        }
+
+        const nextState = {
+          ...prev,
+          [groupId]: {
+            stage,
+            progress: progressValue,
+            updatedAt: status.updatedAt || new Date().toISOString(),
+          },
+        };
+
+        if (
+          userId &&
+          startTime instanceof Date &&
+          endTime instanceof Date &&
+          nextGoalExpiration instanceof Date
+        ) {
+          updateUserData(
+            userId,
+            interval,
+            streak,
+            startTime,
+            endTime,
+            dailyGoals || 5,
+            nextGoalExpiration,
+            dailyProgress,
+            goalCount,
+            nextState
+          )
+            .then(() => {
+              pendingOptionalPersist.current = false;
+            })
+            .catch((error) => {
+              pendingOptionalPersist.current = true;
+              console.error("Failed to persist optional quest progress", error);
+            });
+        } else {
+          pendingOptionalPersist.current = true;
+        }
+
+        return nextState;
+      });
+    },
+    [
+      dailyGoals,
+      dailyProgress,
+      endTime,
+      goalCount,
+      interval,
+      nextGoalExpiration,
+      startTime,
+      streak,
+      setOptionalQuestProgress,
+    ]
+  );
+
+  useEffect(() => {
+    const userId = localStorage.getItem("local_npub");
+    if (
+      !pendingOptionalPersist.current ||
+      !userId ||
+      !(startTime instanceof Date) ||
+      !(endTime instanceof Date) ||
+      !(nextGoalExpiration instanceof Date) ||
+      !optionalQuestProgress ||
+      Object.keys(optionalQuestProgress).length === 0
+    ) {
+      return;
+    }
+
+    updateUserData(
+      userId,
+      interval,
+      streak,
+      startTime,
+      endTime,
+      dailyGoals || 5,
+      nextGoalExpiration,
+      dailyProgress,
+      goalCount,
+      optionalQuestProgress
+    )
+      .catch((error) =>
+        console.error("Failed to persist pending optional quest progress", error)
+      )
+      .finally(() => {
+        pendingOptionalPersist.current = false;
+      });
+  }, [
+    dailyGoals,
+    dailyProgress,
+    endTime,
+    goalCount,
+    interval,
+    nextGoalExpiration,
+    optionalQuestProgress,
+    pendingOptionalPersist,
+    startTime,
+    streak,
+  ]);
+
   const {
     isOpen: isAwardModalOpen,
     onOpen: onAwardModalOpen,
     onClose: onAwardModalClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: isProgressModalOpen,
-    onOpen: onProgressModalOpen,
-    onClose: onProgressModalClose,
   } = useDisclosure();
 
   const {
@@ -1721,6 +1842,39 @@ const Step = ({
     }
   }, [userLanguage]);
 
+  useEffect(() => {
+    const list = steps[userLanguage] || [];
+    const current = list[currentStep];
+
+    const groupId = current?.group;
+
+    if (
+      groupId === undefined ||
+      groupId === null ||
+      groupId === "" ||
+      CHAPTER_MAP_EXCLUDED_GROUPS.has(groupId) ||
+      CHAPTER_MAP_EXCLUDED_GROUPS.has(String(groupId))
+    ) {
+      return;
+    }
+
+    const groupKey = String(groupId);
+
+    const firstIndex = list.findIndex(
+      (item) => String(item?.group) === groupKey
+    );
+
+    if (
+      typeof firstIndex === "number" &&
+      firstIndex === currentStep &&
+      !chapterIntroStatus?.[groupKey]
+    ) {
+      navigate(
+        `/chapter/${encodeURIComponent(groupKey)}?step=${currentStep}`
+      );
+    }
+  }, [chapterIntroStatus, currentStep, navigate, steps, userLanguage]);
+
   // Fetch user data and manage streaks and timers
   useEffect(() => {
     // alert("running..");
@@ -1741,6 +1895,7 @@ const Step = ({
 
       setDailyGoals(userData.dailyGoals || 5);
       setGoalCount(userData.goalCount);
+      setOptionalQuestProgress(userData?.optionalQuestProgress || {});
       const currentTime = new Date();
       let newExpiration = new Date(currentTime.getTime() + 86400000);
 
@@ -2564,6 +2719,10 @@ const Step = ({
           : `/q/${currentStep + 1}`;
       setLectureNextPath(path);
       setLectureNextStep(nextStep);
+      persistOptionalQuestProgress(step.group, {
+        stage: "complete",
+        progress: 1,
+      });
     }
 
     if (currentStep === 9) {
@@ -3165,7 +3324,6 @@ const Step = ({
                   }}
                 />
               </Box>
-              <br />
             </span>
             <VStack width="100%">
               <span style={{ fontSize: "50%" }}>
@@ -3364,7 +3522,7 @@ const Step = ({
                                   key={idx}
                                   onClick={() => {
                                     setSearchTerm("");
-                                    navigate(`/q/${idx}`);
+                                    navigateToStep(idx);
                                   }}
                                   whiteSpace="normal"
                                 >
@@ -3601,6 +3759,7 @@ const Step = ({
                 setFinalConversation={setFinalConversation}
                 finalConversation={finalConversation}
                 handleModalCheck={handleModalCheck}
+                onQuestProgress={persistOptionalQuestProgress}
               />
             )}
             {/* {isPostingWithNostr ? (
@@ -3753,14 +3912,6 @@ const Step = ({
                 {isCorrect && (
                   <>
                     <Button
-                      variant={"outline"}
-                      mb={3}
-                      onClick={onProgressModalOpen}
-                    >
-                      View progress
-                    </Button>
-
-                    <Button
                       background="white"
                       variant={"outline"}
                       onClick={handleNextClick}
@@ -3907,15 +4058,6 @@ const Step = ({
             />
           )}
 
-          {isProgressModalOpen ? (
-            <ProgressModal
-              isOpen={isProgressModalOpen}
-              onClose={onProgressModalClose}
-              steps={steps}
-              currentStep={currentStep}
-              userLanguage={userLanguage}
-            />
-          ) : null}
           {/* newmodal */}
           {/* <ExternalLinkModal
             isOpen={isExternalLinkModalOpen}
@@ -4359,7 +4501,7 @@ const Home = ({
       ) {
         navigate(`/onboarding/${parseInt(onboardingProgress, 10)}`);
       } else {
-        navigate(`/q/${currentStep}`);
+        navigateToStep(currentStep);
       }
     } catch (error) {
       // const err = error.error;
@@ -5614,6 +5756,132 @@ function App({ isShutDown }) {
   const [incorrectAttempts, setIncorrectAttempts] = useState(
     parseInt(localStorage.getItem("incorrectAttempts"), 10) || 0
   );
+  const [optionalQuestProgress, setOptionalQuestProgress] = useState({});
+  const [chapterIntroStatus, setChapterIntroStatus] = useState(() => {
+    if (typeof window === "undefined") {
+      return {};
+    }
+
+    try {
+      const stored = window.localStorage.getItem("chapterIntroSeen");
+      return stored ? JSON.parse(stored) : {};
+    } catch (error) {
+      console.error("Failed to load chapter intro state", error);
+      return {};
+    }
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    try {
+      window.localStorage.setItem(
+        "chapterIntroSeen",
+        JSON.stringify(chapterIntroStatus)
+      );
+    } catch (error) {
+      console.error("Failed to persist chapter intro state", error);
+    }
+  }, [chapterIntroStatus]);
+
+  const markChapterIntroSeen = useCallback((groupId) => {
+    if (groupId === undefined || groupId === null || groupId === "") {
+      return;
+    }
+
+    const key = String(groupId);
+
+    setChapterIntroStatus((prev = {}) => {
+      if (prev[key]) {
+        return prev;
+      }
+      return { ...prev, [key]: true };
+    });
+  }, []);
+
+  const shouldRedirectToChapterMap = useCallback(
+    (nextStep) => {
+      if (!Number.isFinite(nextStep)) {
+        return { shouldRedirect: false, groupId: null };
+      }
+
+      const list = steps?.[userLanguage] || [];
+      const target = list[nextStep];
+      const groupId = target?.group;
+
+      if (
+        groupId === undefined ||
+        groupId === null ||
+        groupId === "" ||
+        CHAPTER_MAP_EXCLUDED_GROUPS.has(groupId) ||
+        CHAPTER_MAP_EXCLUDED_GROUPS.has(String(groupId))
+      ) {
+        return { shouldRedirect: false, groupId: null };
+      }
+
+      const groupKey = String(groupId);
+
+      const firstIndex = list.findIndex(
+        (item) => String(item?.group) === groupKey
+      );
+
+      if (firstIndex !== nextStep) {
+        return { shouldRedirect: false, groupId: null };
+      }
+
+      if (chapterIntroStatus?.[groupKey]) {
+        return { shouldRedirect: false, groupId: null };
+      }
+
+      return { shouldRedirect: true, groupId: groupKey };
+    },
+    [chapterIntroStatus, steps, userLanguage]
+  );
+
+  const navigateToStep = useCallback(
+    (stepIndex, options = {}) => {
+      if (!Number.isFinite(stepIndex)) {
+        navigate("/q/0", options);
+        return;
+      }
+
+      const { shouldRedirect, groupId } = shouldRedirectToChapterMap(stepIndex);
+
+      if (shouldRedirect && groupId) {
+        navigate(
+          `/chapter/${encodeURIComponent(groupId)}?step=${stepIndex}`,
+          options
+        );
+      } else {
+        navigate(`/q/${stepIndex}`, options);
+      }
+    },
+    [navigate, shouldRedirectToChapterMap]
+  );
+
+  useEffect(() => {
+    const match = location.pathname.match(/^\/q\/(\d+)$/);
+
+    if (!match) {
+      return;
+    }
+
+    const targetIndex = Number(match[1]);
+
+    if (!Number.isFinite(targetIndex)) {
+      return;
+    }
+
+    const { shouldRedirect, groupId } = shouldRedirectToChapterMap(targetIndex);
+
+    if (shouldRedirect && groupId) {
+      navigate(`/chapter/${encodeURIComponent(groupId)}?step=${targetIndex}`, {
+        replace: true,
+      });
+    }
+  }, [location.pathname, navigate, shouldRedirectToChapterMap]);
 
   const defaultTransitionStats = {
     salary: 0,
@@ -5633,6 +5901,23 @@ function App({ isShutDown }) {
   const resetStatsTimeoutRef = useRef(null);
 
   const navigateWithTransition = (path, nextStep = null) => {
+    if (
+      typeof nextStep === "number" &&
+      /^\/q\//.test(path)
+    ) {
+      const { shouldRedirect, groupId } = shouldRedirectToChapterMap(nextStep);
+
+      if (shouldRedirect && groupId) {
+        setShowClouds(false);
+        setPendingPath(null);
+        setPendingStep(null);
+        navigate(
+          `/chapter/${encodeURIComponent(groupId)}?step=${nextStep}`
+        );
+        return;
+      }
+    }
+
     if (resetStatsTimeoutRef.current) {
       clearTimeout(resetStatsTimeoutRef.current);
       resetStatsTimeoutRef.current = null;
@@ -5662,6 +5947,19 @@ function App({ isShutDown }) {
       1000
     );
   };
+
+  const handleStartChapter = useCallback(
+    (groupId, stepIndex) => {
+      if (!Number.isFinite(stepIndex)) {
+        return;
+      }
+
+      markChapterIntroSeen(groupId);
+      setCurrentStep(stepIndex);
+      navigate(`/q/${stepIndex}`);
+    },
+    [markChapterIntroSeen, navigate, setCurrentStep]
+  );
 
   // const {
   //   generateNostrKeys,
@@ -5783,6 +6081,10 @@ function App({ isShutDown }) {
               setUserLanguage("en");
             }
 
+            const onOnboardingRoute = /^\/onboarding\//.test(
+              location.pathname
+            );
+
             if (location.pathname === "/experiment") {
             } else if (location.pathname === "/about") {
               // Do nothing if on /about
@@ -5804,7 +6106,7 @@ function App({ isShutDown }) {
               // topRef.current?.scrollIntoView();
               window.scrollTo(0, 0);
 
-              navigate(`/q/${step}`);
+              navigateToStep(step);
             } else {
               // if (step !== 0) {
 
@@ -5818,8 +6120,8 @@ function App({ isShutDown }) {
                 parseInt(onboardingProgress, 10) === step + 1
               ) {
                 navigate(`/onboarding/${parseInt(onboardingProgress, 10)}`);
-              } else {
-                navigate(`/q/${step}`);
+              } else if (!onOnboardingRoute) {
+                navigateToStep(step);
               }
               // }
             }
@@ -5933,6 +6235,10 @@ function App({ isShutDown }) {
         message={transitionStats.message}
         detail={transitionStats.detail}
         onContinue={handleTransitionContinue}
+        steps={steps}
+        currentStep={currentStep}
+        pendingStep={pendingStep}
+        groupLabels={skillTreeGroupLabels}
       />
       {alert.isOpen && (
         <Alert
@@ -6032,6 +6338,19 @@ function App({ isShutDown }) {
               />
             }
           />
+          <Route
+            path="/chapter/:groupId"
+            element={
+              <PrivateRoute>
+                <ChapterMap
+                  steps={steps}
+                  userLanguage={userLanguage}
+                  optionalQuestProgress={optionalQuestProgress}
+                  onStartChapter={handleStartChapter}
+                />
+              </PrivateRoute>
+            }
+          />
           {location.pathname !== "/about" &&
             steps?.[userLanguage]?.map((_, index) => (
               <Route
@@ -6058,6 +6377,9 @@ function App({ isShutDown }) {
                       setLectureNextPath={setLectureNextPath}
                       lectureNextStep={lectureNextPath}
                       setLectureNextStep={setLectureNextStep}
+                      optionalQuestProgress={optionalQuestProgress}
+                      setOptionalQuestProgress={setOptionalQuestProgress}
+                      chapterIntroStatus={chapterIntroStatus}
                     />
                   </PrivateRoute>
                 }

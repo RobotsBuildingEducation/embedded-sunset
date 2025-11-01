@@ -1,5 +1,19 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { Box, Text, Button } from "@chakra-ui/react";
+import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Badge,
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Icon,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import sparkle from "../assets/sparkle.mp3";
 import complete from "../assets/complete.mp3";
@@ -12,8 +26,62 @@ import {
 import { translation } from "../utility/translation";
 import { database } from "../database/firebaseResources";
 import { doc, onSnapshot } from "firebase/firestore";
+import { skillTreeGroupLabels } from "../components/SkillTreeBoard/groupLabels";
+import {
+  FiArrowRightCircle,
+  FiCheckCircle,
+  FiCornerLeftUp,
+  FiMoreHorizontal,
+} from "react-icons/fi";
 
 const MotionBox = motion(Box);
+const MotionFlex = motion(Flex);
+
+const timelineStatusMeta = {
+  previous: {
+    label: "Previous",
+    icon: FiCornerLeftUp,
+    badge: "gray",
+    accent: "rgba(160, 174, 192, 0.3)",
+  },
+  current: {
+    label: "Completed",
+    icon: FiCheckCircle,
+    badge: "green",
+    accent: "rgba(56, 161, 105, 0.25)",
+  },
+  next: {
+    label: "Next up",
+    icon: FiArrowRightCircle,
+    badge: "purple",
+    accent: "rgba(129, 140, 248, 0.28)",
+  },
+  later: {
+    label: "On deck",
+    icon: FiMoreHorizontal,
+    badge: "purple",
+    accent: "rgba(167, 139, 250, 0.24)",
+  },
+};
+
+const timelinePlaceholders = {
+  previous: {
+    title: "No earlier lesson",
+    subtitle: "You're at the start of this chapter.",
+  },
+  current: {
+    title: "Ready for a fresh start",
+    subtitle: "Kick off this chapter to unlock progress.",
+  },
+  next: {
+    title: "Next lesson unlocks soon",
+    subtitle: "Continue forward to reveal the next challenge.",
+  },
+  later: {
+    title: "Future checkpoints",
+    subtitle: "Keep your momentum to see more lessons here.",
+  },
+};
 
 // ---- Level-based background (clouds a bit stronger) ----
 const THEMES = {
@@ -100,6 +168,10 @@ const CloudTransition = ({
   detail,
   onContinue,
   children,
+  steps,
+  currentStep,
+  pendingStep,
+  groupLabels = skillTreeGroupLabels,
 }) => {
   const canvasRef = useRef(null);
   const [canContinue, setCanContinue] = useState(false);
@@ -127,6 +199,93 @@ const CloudTransition = ({
   const [promotionProgress, setPromotionProgress] = useState(null);
   const [promotionTimeLeft, setPromotionTimeLeft] = useState("");
   const [promotionExpired, setPromotionExpired] = useState(false);
+
+  const stepList = useMemo(
+    () => steps?.[userLanguage] || [],
+    [steps, userLanguage]
+  );
+  const safeCurrentStep = useMemo(
+    () => (typeof currentStep === "number" ? currentStep : 0),
+    [currentStep]
+  );
+  const boardActiveStep = useMemo(
+    () =>
+      typeof pendingStep === "number" ? pendingStep : safeCurrentStep,
+    [pendingStep, safeCurrentStep]
+  );
+  const focusGroupId = useMemo(() => {
+    const focusStep = stepList?.[boardActiveStep];
+    return focusStep?.group;
+  }, [boardActiveStep, stepList]);
+  const focusGroupLabel = useMemo(() => {
+    if (!focusGroupId) {
+      return null;
+    }
+    const entry = groupLabels?.[focusGroupId];
+    if (!entry) {
+      return null;
+    }
+    if (typeof entry === "string") {
+      return entry;
+    }
+    return entry?.[userLanguage] || entry?.en || null;
+  }, [focusGroupId, groupLabels, userLanguage]);
+
+  const timelineNodes = useMemo(() => {
+    if (!focusGroupId) {
+      return [];
+    }
+
+    const chapterSteps = stepList
+      .map((item, index) => ({ ...item, index }))
+      .filter((item) => item.group === focusGroupId);
+
+    if (!chapterSteps.length) {
+      return [];
+    }
+
+    const statuses = ["previous", "current", "next", "later"];
+    const nodes = statuses.map((status) => ({ status, step: null }));
+    const currentIndex = safeCurrentStep;
+    const currentPosition = chapterSteps.findIndex(
+      (item) => item.index === currentIndex
+    );
+
+    if (currentPosition >= 0) {
+      nodes[1].step = chapterSteps[currentPosition];
+      if (currentPosition > 0) {
+        nodes[0].step = chapterSteps[currentPosition - 1];
+      }
+
+      if (chapterSteps[currentPosition + 1]) {
+        nodes[2].step = chapterSteps[currentPosition + 1];
+      }
+
+      if (chapterSteps[currentPosition + 2]) {
+        nodes[3].step = chapterSteps[currentPosition + 2];
+      }
+    } else {
+      if (chapterSteps[0]) {
+        nodes[2].step = chapterSteps[0];
+      }
+      if (chapterSteps[1]) {
+        nodes[3].step = chapterSteps[1];
+      }
+    }
+
+    return nodes;
+  }, [focusGroupId, safeCurrentStep, stepList]);
+
+  const displayedBalance = useMemo(() => {
+    const numeric = Number(balanceProgress);
+    if (!Number.isFinite(numeric)) {
+      return 0;
+    }
+    if (numeric <= 0) {
+      return 0;
+    }
+    return Math.max(0, Math.round(numeric - 1));
+  }, [balanceProgress]);
 
   useEffect(() => {
     const unsubscribe = subscribeToQuestionsAnswered(setQuestionsAnswered);
@@ -477,179 +636,392 @@ const CloudTransition = ({
             pointerEvents="none"
           />
 
-          {children ? (
-            <Box w="100%" maxW="600px" zIndex={1}>
-              {children}
-            </Box>
-          ) : (
-            <MotionBox
-              initial={{ opacity: 0, y: 18, scale: 0.99 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.45, ease: "easeOut" }}
-              textAlign="center"
-              color="purple.600"
-              w="90%"
-              maxW="420px"
-            >
-              {message && (
+          <MotionBox
+            initial={{ opacity: 0, y: 18, scale: 0.99 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.45, ease: "easeOut" }}
+            textAlign="center"
+            color="#1b1640"
+            w={{ base: "88%", md: "360px" }}
+            maxW="360px"
+            position="relative"
+            zIndex={1}
+          >
+            {message && (
+              <Text
+                as={motion.p}
+                fontSize="md"
+                mt={6}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 0.92, y: 0 }}
+                transition={{ duration: 0.35, delay: 0.15 }}
+              >
                 <Text
                   as={motion.p}
-                  fontSize="md"
-                  mt={6}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 0.92, y: 0 }}
-                  transition={{ duration: 0.35, delay: 0.15 }}
+                  fontSize="3xl"
+                  fontWeight="bold"
+                  mb={4}
+                  initial={{ scale: 0.94, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.55 }}
+                  color="#05f569"
+                  style={{ textShadow: "0 0 14px rgba(5,245,105,0.35)" }}
                 >
+                  +${(displaySalary ?? 0).toLocaleString()}/yr
+                </Text>
+
+                {detail && (
                   <Text
                     as={motion.p}
-                    fontSize="3xl"
-                    fontWeight="bold"
-                    mb={4}
-                    initial={{ scale: 0.94, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.55 }}
-                    color="#05f569"
-                    style={{ textShadow: "0 0 12px rgba(5,245,105,0.25)" }}
+                    fontSize="sm"
+                    mt={2}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 0.92, y: 0 }}
+                    transition={{ duration: 0.35, delay: 0.25 }}
+                    color="#2A1F62"
                   >
-                    +${(displaySalary ?? 0).toLocaleString()}/yr
+                    {detail}
                   </Text>
+                )}
+              </Text>
+            )}
 
-                  {detail && (
-                    <Text
-                      as={motion.p}
-                      fontSize="sm"
-                      mt={2}
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 0.85, y: 0 }}
-                      transition={{ duration: 0.35, delay: 0.25 }}
-                    >
-                      {detail}
-                    </Text>
-                  )}
-
-                  {/* Salary bar */}
-                  <Box w="100%" mx="auto" mb={6} mt={6}>
-                    <Text fontSize="sm" mb={1} color="purple.500">
-                      Salary
-                    </Text>
-                    <WaveBar
-                      value={salaryProgress}
-                      start="#43e97b"
-                      end="#38f9d7"
-                      delay={0.2}
-                      bg="rgba(255,255,255,0.65)"
-                      border="#ededed"
-                    />
-                  </Box>
-                  {/* Balance bar */}
-                  <Box w="100%" mx="auto" mb={6}>
-                    <Text fontSize="sm" mb={1} color="purple.500">
-                      {balanceProgress === 0 ? "0" : balanceProgress - 1}{" "}
-                      Bitcoin sats
-                    </Text>
-                    <WaveBar
-                      value={balanceProgress === 0 ? "0" : balanceProgress - 1}
-                      start="#fce09d"
-                      end="#fef37b"
-                      delay={0}
-                      bg="rgba(255,255,255,0.65)"
-                      border="#ededed"
-                    />
-                  </Box>
-
-                  {/* Step progress bar */}
-                  <Box w="100%" mx="auto" mb={6}>
-                    <Text fontSize="sm" mb={1} color="purple.500">
-                      Progress
-                    </Text>
-                    <WaveBar
-                      value={stepProgress}
-                      start="#0345fc"
-                      end="#03f4fc"
-                      delay={0.1}
-                      bg="rgba(255,255,255,0.65)"
-                      border="#ededed"
-                    />
-                  </Box>
-
-                  {/* Daily goal bar */}
-                  <Box w="100%" mx="auto" mb={6}>
-                    <Text fontSize="sm" mb={1} color="purple.500">
-                      {dailyGoalLabel} {dailyProgress}/{dailyGoals}
-                    </Text>
-                    <WaveBar
-                      value={dailyGoalProgress}
-                      start="#03f4fc"
-                      end="#fef37b"
-                      delay={0}
-                      bg="rgba(255,255,255,0.65)"
-                      border="#ededed"
-                    />
-                  </Box>
-
-                  <Box w="100%" mx="auto" mb={6}>
-                    <Text fontSize="sm" mb={1} color="purple.500">
-                      {translation[userLanguage]["communityGoal"]}
-                      {questionsAnswered}/7500{" "}
-                      {translation[userLanguage]["questions"]}
-                    </Text>
-                    <WaveBar
-                      value={questionProgress}
-                      start="#bf66ff"
-                      end="#7300ff"
-                      delay={0}
-                      bg="rgba(255,255,255,0.65)"
-                      border="#ededed"
-                    />
-                  </Box>
-
-                  {promotionProgress !== null && (
-                    <Box w="50%" mx="auto" mb={0}>
-                      <Text
-                        fontSize="xs"
-                        mt={2}
-                        color={promotionExpired ? "red.500" : "purple.600"}
+            <Box
+              mt={6}
+              mb={8}
+              borderRadius="2xl"
+              border="1px solid rgba(76,29,149,0.18)"
+              bg="rgba(255,255,255,0.98)"
+              boxShadow="0 24px 44px rgba(79, 70, 229, 0.14)"
+              px={{ base: 4, md: 5 }}
+              py={{ base: 4, md: 5 }}
+              color="#21174F"
+              backdropFilter="blur(4px)"
+            >
+              <Accordion allowToggle defaultIndex={[]}>
+                <AccordionItem border="none">
+                  {({ isExpanded }) => (
+                    <>
+                      <AccordionButton
+                        px={3}
+                        py={2}
+                        borderRadius="xl"
+                        bg="rgba(243,240,255,0.9)"
+                        _hover={{ bg: "rgba(236,233,252,0.98)" }}
+                        _focus={{ boxShadow: "0 0 0 2px rgba(129,140,248,0.4)" }}
+                        _expanded={{ bg: "rgba(230,225,255,0.95)" }}
+                        alignItems="flex-start"
                       >
-                        {promotionExpired
-                          ? translation[userLanguage]["promotion.timerExpired"]
-                          : "Refund time left: " + promotionTimeLeft}
-                      </Text>
-                      <WaveBar
-                        value={promotionProgress}
-                        start="#ff8ba7"
-                        end="#ffcc70"
-                        delay={0}
-                        bg="rgba(255,255,255,0.65)"
-                        border="#ededed"
-                      />
-                    </Box>
+                        <VStack align="flex-start" spacing={1} flex={1} pr={2}>
+                          <Text
+                            fontSize="sm"
+                            textTransform="uppercase"
+                            letterSpacing="0.12em"
+                            color="#39258c"
+                            fontWeight="semibold"
+                          >
+                            Chapter path
+                          </Text>
+                          {focusGroupLabel && (
+                            <Text fontWeight="semibold" fontSize="md" color="#1e1763">
+                              {focusGroupLabel}
+                            </Text>
+                          )}
+                          {!isExpanded && (
+                            <Text fontSize="xs" color="#4c3d86">
+                              Peek at the last, current, and next lessons.
+                            </Text>
+                          )}
+                        </VStack>
+                        <AccordionIcon color="#34217b" />
+                      </AccordionButton>
+                      <AccordionPanel px={1} pt={4} pb={1}>
+                        {timelineNodes.length ? (
+                          <Box position="relative" pt={1} pb={2}>
+                            <MotionBox
+                              position="absolute"
+                              left="50%"
+                              top={0}
+                              bottom={0}
+                              width="2px"
+                              bgGradient="linear(180deg, rgba(129, 140, 248, 0.28) 0%, rgba(56, 178, 172, 0.45) 100%)"
+                              transform="translateX(-50%)"
+                              borderRadius="full"
+                              boxShadow="0 0 16px rgba(129, 140, 248, 0.35)"
+                              animate={{ opacity: [0.45, 0.85, 0.45] }}
+                              transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
+                              aria-hidden
+                            />
+                            <VStack spacing={5} align="stretch">
+                              {timelineNodes.map((node, idx) => {
+                                const meta =
+                                  timelineStatusMeta[node.status] || timelineStatusMeta.later;
+                                const placeholder =
+                                  timelinePlaceholders[node.status] || timelinePlaceholders.later;
+                                const isEmpty = !node.step;
+                                const side = idx % 2 === 0 ? "flex-start" : "flex-end";
+                                const title = isEmpty
+                                  ? placeholder.title
+                                  : node.step.title || `Question ${node.step.index}`;
+                                const subtitle = isEmpty
+                                  ? placeholder.subtitle
+                                  : `#${node.step.index} · ${node.step.type || "Lesson"}`;
+
+                                return (
+                                  <MotionFlex
+                                    key={`${node.status}-${node.step?.index ?? idx}`}
+                                    justify={side}
+                                    initial={{ opacity: 0, x: side === "flex-start" ? -14 : 14 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.35, delay: idx * 0.08 }}
+                                    w="100%"
+                                  >
+                                    <MotionBox
+                                      position="relative"
+                                      maxW="90%"
+                                      bg={isEmpty ? "rgba(247, 245, 255, 0.65)" : "white"}
+                                      borderRadius="lg"
+                                      px={4}
+                                      py={3}
+                                      border={
+                                        isEmpty
+                                          ? "1px solid rgba(203,213,224,0.6)"
+                                          : "1px solid rgba(128,90,213,0.24)"
+                                      }
+                                      boxShadow={
+                                        isEmpty ? "none" : "0 12px 28px rgba(99, 102, 241, 0.18)"
+                                      }
+                                      _before={{
+                                        content: '""',
+                                        position: "absolute",
+                                        top: "50%",
+                                        width: "48px",
+                                        height: "28px",
+                                        borderTop: `1px solid ${meta.accent}`,
+                                        borderLeft:
+                                          side === "flex-start"
+                                            ? `1px solid ${meta.accent}`
+                                            : "none",
+                                        borderRight:
+                                          side === "flex-end"
+                                            ? `1px solid ${meta.accent}`
+                                            : "none",
+                                        borderTopLeftRadius: side === "flex-start" ? "28px" : "0",
+                                        borderBottomLeftRadius: side === "flex-start" ? "28px" : "0",
+                                        borderTopRightRadius: side === "flex-end" ? "28px" : "0",
+                                        borderBottomRightRadius: side === "flex-end" ? "28px" : "0",
+                                        left: side === "flex-start" ? "100%" : "auto",
+                                        right: side === "flex-end" ? "100%" : "auto",
+                                        transform:
+                                          side === "flex-start"
+                                            ? "translate(6px, -50%)"
+                                            : "translate(-6px, -50%)",
+                                        opacity: 0.55,
+                                      }}
+                                      _after={{
+                                        content: '""',
+                                        position: "absolute",
+                                        top: "50%",
+                                        width: "10px",
+                                        height: "10px",
+                                        borderRadius: "full",
+                                        bg: meta.accent,
+                                        left: side === "flex-start" ? "auto" : "-20px",
+                                        right: side === "flex-start" ? "-20px" : "auto",
+                                        transform: "translateY(-50%)",
+                                        boxShadow: "0 0 12px rgba(79, 70, 229, 0.35)",
+                                      }}
+                                    >
+                                      <HStack align="flex-start" spacing={3}>
+                                        <Icon
+                                          as={meta.icon}
+                                          color={isEmpty ? "#A7A1D8" : "#4C38B2"}
+                                          boxSize={4}
+                                          mt={1}
+                                        />
+                                        <VStack align="flex-start" spacing={1} w="100%">
+                                          <Badge
+                                            colorScheme={meta.badge}
+                                            variant={isEmpty ? "outline" : "solid"}
+                                            borderRadius="full"
+                                            bg={isEmpty ? "white" : undefined}
+                                            color={isEmpty ? "#514A7D" : undefined}
+                                          >
+                                            {meta.label}
+                                          </Badge>
+                                          <Text fontSize="sm" fontWeight="semibold" color="#251A66">
+                                            {title}
+                                          </Text>
+                                          <Text fontSize="xs" color="#5F598C">
+                                            {subtitle}
+                                          </Text>
+                                        </VStack>
+                                      </HStack>
+                                    </MotionBox>
+                                  </MotionFlex>
+                                );
+                              })}
+                            </VStack>
+                          </Box>
+                        ) : (
+                          <Text fontSize="sm" color="#4F457B">
+                            We&apos;ll cue up the next lessons once this chapter begins.
+                          </Text>
+                        )}
+                      </AccordionPanel>
+                    </>
                   )}
+                </AccordionItem>
+              </Accordion>
+            </Box>
 
-                  <br />
-                  <br />
-                  {message}
+            {message && (
+              <Box fontSize="sm" color="#2A1F62" mb={6}>
+                {message}
+              </Box>
+            )}
+
+            <Box w="100%" mx="auto" mb={6}>
+              <HStack justify="space-between" mb={1}>
+                <Text fontSize="sm" color="#24195F" fontWeight="semibold">
+                  Salary
                 </Text>
-              )}
+                <Text fontSize="xs" color="#4F457B" fontWeight="medium">
+                  {Math.round(Number(salaryProgress) || 0)}%
+                </Text>
+              </HStack>
+              <WaveBar
+                value={salaryProgress}
+                start="#43e97b"
+                end="#38f9d7"
+                delay={0.2}
+                bg="rgba(255,255,255,0.65)"
+                border="#ededed"
+                aria-label="Salary progress"
+              />
+            </Box>
+            <Box w="100%" mx="auto" mb={6}>
+              <HStack justify="space-between" mb={1}>
+                <Text fontSize="sm" color="#24195F" fontWeight="semibold">
+                  Bitcoin sats
+                </Text>
+                <Text fontSize="xs" color="#4F457B" fontWeight="medium">
+                  {displayedBalance}
+                </Text>
+              </HStack>
+              <WaveBar
+                value={displayedBalance}
+                start="#fce09d"
+                end="#fef37b"
+                delay={0}
+                bg="rgba(255,255,255,0.65)"
+                border="#ededed"
+                aria-label="Bitcoin balance progress"
+              />
+            </Box>
 
-              <Button
-                as={motion.button}
-                mt={8}
-                colorScheme="yellow"
-                variant="outline"
-                borderRadius="full"
-                px={6}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.985 }}
-                transition={{ duration: 0.2, delay: 0.35 }}
-                onClick={onContinue}
-                disabled={!canContinue}
-              >
-                Continue
-              </Button>
-            </MotionBox>
-          )}
+            <Box w="100%" mx="auto" mb={6}>
+              <HStack justify="space-between" mb={1}>
+                <Text fontSize="sm" color="#24195F" fontWeight="semibold">
+                  Chapter progress
+                </Text>
+                <Text fontSize="xs" color="#4F457B" fontWeight="medium">
+                  {Math.round(Number(stepProgress) || 0)}%
+                </Text>
+              </HStack>
+              <WaveBar
+                value={stepProgress}
+                start="#0345fc"
+                end="#03f4fc"
+                delay={0.1}
+                bg="rgba(255,255,255,0.65)"
+                border="#ededed"
+                aria-label="Chapter completion progress"
+              />
+            </Box>
+
+            <Box w="100%" mx="auto" mb={6}>
+              <HStack justify="space-between" mb={1}>
+                <Text fontSize="sm" color="#24195F" fontWeight="semibold">
+                  {dailyGoalLabel}
+                </Text>
+                <Text fontSize="xs" color="#4F457B" fontWeight="medium">
+                  {dailyProgress}/{dailyGoals}
+                </Text>
+              </HStack>
+              <WaveBar
+                value={dailyGoalProgress}
+                start="#03f4fc"
+                end="#fef37b"
+                delay={0}
+                bg="rgba(255,255,255,0.65)"
+                border="#ededed"
+                aria-label="Daily goal progress"
+              />
+            </Box>
+
+            <Box w="100%" mx="auto" mb={6}>
+              <HStack justify="space-between" mb={1}>
+                <Text fontSize="sm" color="#24195F" fontWeight="semibold">
+                  {translation[userLanguage]["communityGoal"]}
+                </Text>
+                <Text fontSize="xs" color="#4F457B" fontWeight="medium">
+                  {questionsAnswered}/7500
+                </Text>
+              </HStack>
+              <WaveBar
+                value={questionProgress}
+                start="#bf66ff"
+                end="#7300ff"
+                delay={0}
+                bg="rgba(255,255,255,0.65)"
+                border="#ededed"
+                aria-label="Community goal progress"
+              />
+            </Box>
+
+            {promotionProgress !== null && (
+              <Box w="50%" mx="auto" mb={0}>
+                <Text
+                  fontSize="xs"
+                  mt={2}
+                  color={promotionExpired ? "#C53030" : "#2A1F62"}
+                >
+                  {promotionExpired
+                    ? translation[userLanguage]["promotion.timerExpired"]
+                    : "Refund time left: " + promotionTimeLeft}
+                </Text>
+                <WaveBar
+                  value={promotionProgress}
+                  start="#ff8ba7"
+                  end="#ffcc70"
+                  delay={0}
+                  bg="rgba(255,255,255,0.65)"
+                  border="#ededed"
+                />
+              </Box>
+            )}
+
+            {children}
+
+            <Button
+              as={motion.button}
+              mt={8}
+              colorScheme="yellow"
+              variant="outline"
+              borderRadius="full"
+              px={6}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.985 }}
+              transition={{ duration: 0.2, delay: 0.35 }}
+              onClick={onContinue}
+              disabled={!canContinue}
+            >
+              Continue
+            </Button>
+          </MotionBox>
         </Box>
       )}
     </AnimatePresence>
