@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState, useMemo, useId } from "react";
 import {
   Accordion,
   AccordionButton,
@@ -8,8 +8,15 @@ import {
   Box,
   Button,
   Flex,
+  Icon,
   Text,
 } from "@chakra-ui/react";
+import {
+  CheckCircleIcon,
+  QuestionIcon,
+  RepeatIcon,
+  StarIcon,
+} from "@chakra-ui/icons";
 import { motion, AnimatePresence } from "framer-motion";
 import sparkle from "../assets/sparkle.mp3";
 import complete from "../assets/complete.mp3";
@@ -47,10 +54,36 @@ const SKILL_NODE_STYLES = {
   },
 };
 
-const CONNECTOR_GRADIENT =
-  "linear(to-b, rgba(124,58,237,0.45), rgba(56,189,248,0))";
-const BRANCH_GRADIENT =
-  "linear(to-r, rgba(124,58,237,0.05), rgba(56,189,248,0.4), rgba(14,165,233,0.05))";
+const QUESTION_TYPE_STYLES = {
+  order: {
+    icon: RepeatIcon,
+    label: "Ordering Challenge",
+    accent: "#8b5cf6",
+    gradient: "linear(to-br, rgba(139,92,246,0.22), rgba(59,130,246,0.18))",
+    halo: "rgba(139,92,246,0.22)",
+  },
+  multiAnswer: {
+    icon: CheckCircleIcon,
+    label: "Multi-Select",
+    accent: "#10b981",
+    gradient: "linear(to-br, rgba(16,185,129,0.22), rgba(59,130,246,0.14))",
+    halo: "rgba(16,185,129,0.18)",
+  },
+  multiChoice: {
+    icon: QuestionIcon,
+    label: "Multiple Choice",
+    accent: "#0ea5e9",
+    gradient: "linear(to-br, rgba(14,165,233,0.22), rgba(99,102,241,0.16))",
+    halo: "rgba(14,165,233,0.2)",
+  },
+  default: {
+    icon: StarIcon,
+    label: "Skill Quest",
+    accent: "#f59e0b",
+    gradient: "linear(to-br, rgba(245,158,11,0.22), rgba(249,168,212,0.18))",
+    halo: "rgba(245,158,11,0.18)",
+  },
+};
 
 const skillTreeContainerVariants = {
   hidden: { opacity: 0, y: 12 },
@@ -109,6 +142,20 @@ const buildStepSummary = (step) => {
   const questionText = sanitizeText(step.question?.questionText);
   const summary = description || questionText;
   return truncateText(summary);
+};
+
+const detectQuestionKind = (step) => {
+  if (!step || typeof step !== "object") return "default";
+  if (step.isSelectOrder) return "order";
+  if (step.isMultipleAnswerChoice) return "multiAnswer";
+  if (step.isMultipleChoice) return "multiChoice";
+
+  const answer = step.question?.answer;
+  if (Array.isArray(answer) && answer.length > 1) {
+    return "multiAnswer";
+  }
+
+  return "default";
 };
 
 // ---- Level-based background (clouds a bit stronger) ----
@@ -225,6 +272,7 @@ const CloudTransition = ({
   const [promotionProgress, setPromotionProgress] = useState(null);
   const [promotionTimeLeft, setPromotionTimeLeft] = useState("");
   const [promotionExpired, setPromotionExpired] = useState(false);
+  const connectorBaseId = useId();
 
   useEffect(() => {
     const unsubscribe = subscribeToQuestionsAnswered(setQuestionsAnswered);
@@ -417,10 +465,12 @@ const CloudTransition = ({
     activeIndex = Math.min(Math.max(activeIndex, 0), localeSteps.length - 1);
 
     const nodes = [];
-    let order = 0;
 
     const pushNode = (step, index, type, label) => {
       if (!step) return;
+      const questionKind = detectQuestionKind(step);
+      const questionStyle =
+        QUESTION_TYPE_STYLES[questionKind] ?? QUESTION_TYPE_STYLES.default;
       nodes.push({
         id: `${type}-${index}`,
         index,
@@ -428,9 +478,9 @@ const CloudTransition = ({
         title: step?.title || `Question ${index + 1}`,
         summary: buildStepSummary(step),
         label,
-        order,
+        questionKind,
+        questionKindLabel: questionStyle.label,
       });
-      order += 1;
     };
 
     if (activeIndex - 1 >= 0) {
@@ -478,85 +528,166 @@ const CloudTransition = ({
     [skillTreeNodes]
   );
   const hasSkillTree = skillTreeNodes.length > 0;
+  const displayNodes = useMemo(() => {
+    const list = [];
+    if (previousNode) list.push(previousNode);
+    if (currentNode) list.push(currentNode);
+    if (upcomingNodes.length) {
+      list.push(...upcomingNodes);
+    }
+    return list;
+  }, [currentNode, previousNode, upcomingNodes]);
 
-  const renderSkillNode = (node) => {
+  const renderSkillNode = (node, index) => {
     if (!node) return null;
-    const style = SKILL_NODE_STYLES[node.type] ?? SKILL_NODE_STYLES.upcoming;
+    const statusStyle =
+      SKILL_NODE_STYLES[node.type] ?? SKILL_NODE_STYLES.upcoming;
+    const typeStyle =
+      QUESTION_TYPE_STYLES[node.questionKind] ?? QUESTION_TYPE_STYLES.default;
     const questionNumber = `Q${String(node.index + 1).padStart(2, "0")}`;
+    const IconComponent = typeStyle.icon ?? StarIcon;
+    const accent = typeStyle.accent ?? statusStyle.accent;
+    const gradient = typeStyle.gradient ?? statusStyle.gradient;
+    const halo = typeStyle.halo ?? statusStyle.highlight ?? `${accent}33`;
 
     return (
       <MotionBox
         variants={skillNodeVariants}
-        custom={node.order}
+        custom={index}
         whileHover={{ y: -6, scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         transition={{ type: "spring", stiffness: 220, damping: 20 }}
-        borderRadius="xl"
-        px={6}
-        py={5}
+        borderRadius="2xl"
+        px={{ base: 5, md: 6 }}
+        py={{ base: 5, md: 6 }}
         bg="rgba(255,255,255,0.92)"
-        backdropFilter="blur(12px)"
-        boxShadow={`0 22px 48px ${style.shadow}`}
+        backdropFilter="blur(14px)"
+        boxShadow={`0 24px 48px ${statusStyle.shadow}`}
         borderWidth="1px"
-        borderColor={`${style.accent}33`}
+        borderColor={`${accent}33`}
         position="relative"
         overflow="hidden"
-        minW="230px"
+        minW="240px"
       >
         <Box
           position="absolute"
           inset={0}
-          bgGradient={style.gradient}
-          opacity={0.28}
+          bgGradient={gradient}
+          opacity={0.32}
           pointerEvents="none"
         />
         <MotionBox
           position="absolute"
-          top="-32px"
+          top="-36px"
           right="-24px"
-          w="110px"
-          h="110px"
-          borderRadius="full"
-          bgGradient={`radial-gradient(circle at center, ${style.highlight}66, transparent 65%)`}
-          opacity={0.8}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-          pointerEvents="none"
-        />
-        <MotionBox
-          position="absolute"
-          bottom="-36px"
-          left="-20px"
           w="120px"
           h="120px"
           borderRadius="full"
-          bgGradient={`radial-gradient(circle at center, ${style.accent}40, transparent 70%)`}
-          animate={{ rotate: -360 }}
-          transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
-          opacity={0.5}
+          bgGradient={`radial-gradient(circle at center, ${halo}, transparent 68%)`}
+          opacity={0.85}
+          animate={{ rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           pointerEvents="none"
         />
-        <Text
-          fontSize="xs"
-          fontWeight="semibold"
-          textTransform="uppercase"
-          letterSpacing="0.24em"
-          color={`${style.accent}cc`}
-        >
-          {node.label}
-        </Text>
-        <Text fontWeight="extrabold" fontSize="xl" color={style.accent} mt={1}>
-          {questionNumber}
-        </Text>
-        <Text fontSize="md" fontWeight="semibold" color="purple.700" mt={1}>
-          {node.title}
-        </Text>
-        {node.summary && (
-          <Text mt={3} fontSize="sm" color="purple.500" lineHeight={1.5}>
-            {node.summary}
+        <MotionBox
+          position="absolute"
+          bottom="-42px"
+          left="-28px"
+          w="130px"
+          h="130px"
+          borderRadius="full"
+          bgGradient={`radial-gradient(circle at center, ${statusStyle.highlight}, transparent 72%)`}
+          animate={{ rotate: -360 }}
+          transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
+          opacity={0.45}
+          pointerEvents="none"
+        />
+        <Flex align="center" gap={4} position="relative" zIndex={1}>
+          <Box
+            w="56px"
+            h="56px"
+            borderRadius="full"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            bgGradient={`radial-gradient(circle at 30% 30%, ${accent}33, transparent 70%)`}
+            boxShadow={`0 12px 24px ${accent}33`}
+          >
+            <Icon as={IconComponent} boxSize={7} color={accent} />
+          </Box>
+          <Box>
+            <Text
+              fontSize="xs"
+              textTransform="uppercase"
+              letterSpacing="0.3em"
+              fontWeight="bold"
+              color={`${accent}cc`}
+            >
+              {node.questionKindLabel}
+            </Text>
+            <Text fontSize="sm" fontWeight="semibold" color="purple.500" mt={1}>
+              {node.label}
+            </Text>
+          </Box>
+        </Flex>
+        <Box mt={5} position="relative" zIndex={1}>
+          <Text fontWeight="extrabold" fontSize="xl" color={accent}>
+            {questionNumber}
           </Text>
-        )}
+          <Text fontSize="lg" fontWeight="semibold" color="purple.700" mt={1}>
+            {node.title}
+          </Text>
+          {node.summary && (
+            <Text mt={3} fontSize="sm" color="purple.500" lineHeight={1.6}>
+              {node.summary}
+            </Text>
+          )}
+        </Box>
       </MotionBox>
+    );
+  };
+
+  const renderConnector = (fromNode, toNode, index) => {
+    const fromStyle =
+      QUESTION_TYPE_STYLES[fromNode?.questionKind] ??
+      QUESTION_TYPE_STYLES.default;
+    const toStyle =
+      QUESTION_TYPE_STYLES[toNode?.questionKind] ?? QUESTION_TYPE_STYLES.default;
+    const gradientId = `${connectorBaseId}-connector-${index}`;
+
+    return (
+      <Box
+        as="svg"
+        key={`connector-${index}`}
+        width={{ base: "120px", md: "160px" }}
+        height="120px"
+        viewBox="0 0 160 120"
+        preserveAspectRatio="none"
+        flex="0 0 auto"
+        opacity={0.9}
+      >
+        <defs>
+          <linearGradient id={gradientId} x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor={fromStyle.accent} stopOpacity="0.68" />
+            <stop offset="100%" stopColor={toStyle.accent} stopOpacity="0.68" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M8 112 C 52 20, 108 20, 152 112"
+          stroke={`url(#${gradientId})`}
+          strokeWidth="4"
+          fill="none"
+          strokeLinecap="round"
+        />
+        <path
+          d="M8 112 C 52 60, 108 60, 152 112"
+          stroke={`url(#${gradientId})`}
+          strokeWidth="2"
+          fill="none"
+          strokeLinecap="round"
+          opacity="0.4"
+        />
+      </Box>
     );
   };
 
@@ -972,98 +1103,36 @@ const CloudTransition = ({
                                 initial="hidden"
                                 animate={isExpanded ? "show" : "hidden"}
                               >
-                                {previousNode && (
-                                  <Box
-                                    position="relative"
-                                    pb={currentNode ? 12 : 0}
-                                    display="flex"
-                                    justifyContent="center"
-                                  >
-                                    {currentNode && (
-                                      <Box
-                                        position="absolute"
-                                        bottom="-14px"
-                                        left="50%"
-                                        transform="translateX(-50%)"
-                                        width="2px"
-                                        height="38px"
-                                        bgGradient={CONNECTOR_GRADIENT}
-                                        opacity={0.7}
-                                      />
-                                    )}
-                                    {renderSkillNode(previousNode)}
-                                  </Box>
-                                )}
-
-                                {currentNode && (
-                                  <Box
-                                    position="relative"
-                                    pb={upcomingNodes.length ? 18 : 0}
-                                    display="flex"
-                                    justifyContent="center"
-                                  >
-                                    {upcomingNodes.length > 0 && (
-                                      <Box
-                                        position="absolute"
-                                        bottom="-18px"
-                                        left="50%"
-                                        transform="translateX(-50%)"
-                                        width="2px"
-                                        height="46px"
-                                        bgGradient={CONNECTOR_GRADIENT}
-                                        opacity={0.7}
-                                      />
-                                    )}
-                                    {renderSkillNode(currentNode)}
-                                  </Box>
-                                )}
-
-                                {upcomingNodes.length > 0 && (
-                                  <Box position="relative" pt={12}>
-                                    <Box
-                                      position="absolute"
-                                      top="0"
-                                      left={{ base: "12%", md: "18%" }}
-                                      right={{ base: "12%", md: "18%" }}
-                                      height="2px"
-                                      bgGradient={BRANCH_GRADIENT}
-                                      opacity={0.65}
-                                    />
-                                    <Flex
-                                      justifyContent={
-                                        upcomingNodes.length === 1
-                                          ? "center"
-                                          : "space-between"
-                                      }
-                                      gap={6}
-                                      flexWrap="wrap"
-                                    >
-                                      {upcomingNodes.map((node) => (
-                                        <Box
-                                          key={node.id}
-                                          position="relative"
-                                          pt={8}
-                                          flex="1 1 220px"
-                                          maxW={{ base: "100%", md: "calc(50% - 12px)" }}
-                                          display="flex"
-                                          justifyContent="center"
-                                        >
-                                          <Box
-                                            position="absolute"
-                                            top="-10px"
-                                            left="50%"
-                                            transform="translate(-50%, -100%)"
-                                            width="2px"
-                                            height="40px"
-                                            bgGradient={CONNECTOR_GRADIENT}
-                                            opacity={0.65}
-                                          />
-                                          {renderSkillNode(node)}
-                                        </Box>
-                                      ))}
-                                    </Flex>
-                                  </Box>
-                                )}
+                                <Text
+                                  fontSize="sm"
+                                  fontWeight="medium"
+                                  color="purple.500"
+                                  mb={4}
+                                >
+                                  A flowing lane of what you just mastered and what
+                                  curves ahead next.
+                                </Text>
+                                <Flex
+                                  align="center"
+                                  gap={{ base: 6, md: 8, xl: 10 }}
+                                  overflowX="auto"
+                                  pb={4}
+                                  pt={2}
+                                  px={1}
+                                  className="skill-tree-track"
+                                >
+                                  {displayNodes.map((node, index) => (
+                                    <React.Fragment key={node.id}>
+                                      {renderSkillNode(node, index)}
+                                      {index < displayNodes.length - 1 &&
+                                        renderConnector(
+                                          node,
+                                          displayNodes[index + 1],
+                                          index
+                                        )}
+                                    </React.Fragment>
+                                  ))}
+                                </Flex>
                               </MotionBox>
                             </AccordionPanel>
                           </Box>
