@@ -1564,6 +1564,15 @@ const deriveChapterLabel = (group, primaryMap, fallbackMap) => {
 };
 
 const ChapterReview = ({ nodes, text, onStart }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const previewCount = 2;
+  const visibleNodes = isExpanded ? nodes : nodes.slice(0, previewCount);
+  const hasHiddenNodes = nodes.length > visibleNodes.length;
+
+  useEffect(() => {
+    setIsExpanded(false);
+  }, [nodes]);
+
   return (
     <Box
       width="100%"
@@ -1599,7 +1608,7 @@ const ChapterReview = ({ nodes, text, onStart }) => {
           boxShadow="0 24px 50px rgba(99,102,241,0.18)"
         >
           <VStack spacing={6} align="stretch">
-            {nodes.map((node, index) => {
+            {visibleNodes.map((node, index) => {
               const typeStyle =
                 CHAPTER_REVIEW_TYPE_STYLES[node.questionKind] ||
                 CHAPTER_REVIEW_TYPE_STYLES.default;
@@ -1677,7 +1686,7 @@ const ChapterReview = ({ nodes, text, onStart }) => {
                     </Flex>
                   </Box>
 
-                  {index < nodes.length - 1 ? (
+                  {index < visibleNodes.length - 1 ? (
                     <Box
                       h={{ base: 40, md: 52 }}
                       display="flex"
@@ -1703,6 +1712,27 @@ const ChapterReview = ({ nodes, text, onStart }) => {
                 </Box>
               );
             })}
+            {hasHiddenNodes && !isExpanded ? (
+              <Box
+                as={motion.div}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: visibleNodes.length * 0.05 }}
+                pt={{ base: 2, md: 3 }}
+              >
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  borderRadius="full"
+                  px={{ base: 6, md: 8 }}
+                  py={{ base: 4, md: 5 }}
+                  colorScheme="purple"
+                  onClick={() => setIsExpanded(true)}
+                >
+                  {text?.expand || "Show more"}
+                </Button>
+              </Box>
+            ) : null}
           </VStack>
         </Box>
 
@@ -1885,6 +1915,10 @@ const Step = ({
         translationMap["chapterReview.cta"] ||
         fallbackTranslation["chapterReview.cta"] ||
         "Start chapter",
+      expand:
+        translationMap["chapterReview.expand"] ||
+        fallbackTranslation["chapterReview.expand"] ||
+        "Show full journey",
     }),
     [fallbackTranslation, translationMap]
   );

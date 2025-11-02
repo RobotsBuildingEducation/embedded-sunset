@@ -32,6 +32,7 @@ export let translation = {
     "chapterReview.subtitle":
       "Preview the milestones you'll tackle in this chapter before diving in.",
     "chapterReview.cta": "Start chapter",
+    "chapterReview.expand": "Show full journey",
     "language.compsci.english": "Computer Science (Python)",
     "languageToggle.english": "English",
     "languageToggle.spanish": "Español",
@@ -1674,6 +1675,7 @@ reverse(head) {
     "chapterReview.subtitle":
       "Consulta los hitos que abordarás en este capítulo antes de comenzar.",
     "chapterReview.cta": "Comenzar capítulo",
+    "chapterReview.expand": "Mostrar recorrido completo",
     "Foundations of Data Structures": "Fundamentos de Estructuras de Datos",
     "Linear Data Structures": "Estructuras de Datos Lineales",
     "Hierarchical & Associative Data Structures":
@@ -3265,6 +3267,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "chapterReview.subtitle":
       "Preview the milestones you'll tackle in this chapter before diving in.",
     "chapterReview.cta": "Start chapter",
+    "chapterReview.expand": "Show full journey",
     "Foundations of Data Structures": "Foundations of Data Structures",
     "Linear Data Structures": "Linear Data Structures",
     "Hierarchical & Associative Data Structures":
@@ -4882,6 +4885,7 @@ reverse(head) {
     "chapterReview.subtitle":
       "Preview the milestones you'll tackle in this chapter before diving in.",
     "chapterReview.cta": "Start chapter",
+    "chapterReview.expand": "Show full journey",
     "Foundations of Data Structures": "Foundations of Data Structures",
     "Linear Data Structures": "Linear Data Structures",
     "Hierarchical & Associative Data Structures":
@@ -6501,6 +6505,7 @@ reverse(head) {
     "chapterReview.subtitle":
       "Preview the milestones you'll tackle in this chapter before diving in.",
     "chapterReview.cta": "Start chapter",
+    "chapterReview.expand": "Show full journey",
     "Foundations of Data Structures": "Foundations of Data Structures",
     "Linear Data Structures": "Linear Data Structures",
     "Hierarchical & Associative Data Structures":
@@ -8119,6 +8124,7 @@ reverse(head) {
     "chapterReview.subtitle":
       "Preview the milestones you'll tackle in this chapter before diving in.",
     "chapterReview.cta": "Start chapter",
+    "chapterReview.expand": "Show full journey",
     "Foundations of Data Structures": "Foundations of Data Structures",
     "Linear Data Structures": "Linear Data Structures",
     "Hierarchical & Associative Data Structures":
