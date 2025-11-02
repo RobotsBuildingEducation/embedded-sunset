@@ -345,13 +345,13 @@ const CloudTransition = ({
   const theme = THEMES[groupKey] ?? THEMES.tutorial;
 
   const skillTreeNodes = useMemo(() => {
-    if (!clonedStep || typeof clonedStep !== "object") {
-      return [];
-    }
-
     const mapSource = stepsMap ?? defaultSteps;
     const availableMap = mapSource ?? {};
     const mapKeys = Object.keys(availableMap);
+
+    if (mapKeys.length === 0) {
+      return [];
+    }
 
     const localeKey = (() => {
       if (
@@ -378,12 +378,22 @@ const CloudTransition = ({
       return [];
     }
 
-    let activeIndex =
-      typeof currentStepIndex === "number" && currentStepIndex >= 0
-        ? currentStepIndex
-        : -1;
+    const normalizeIndex = (value) => {
+      if (typeof value === "number" && Number.isFinite(value)) {
+        return value;
+      }
+      if (typeof value === "string" && value.trim() !== "") {
+        const parsed = Number(value);
+        if (Number.isFinite(parsed)) {
+          return parsed;
+        }
+      }
+      return null;
+    };
 
-    if (activeIndex < 0) {
+    let activeIndex = normalizeIndex(currentStepIndex);
+
+    if (activeIndex === null || activeIndex < 0 || activeIndex >= localeSteps.length) {
       activeIndex = localeSteps.findIndex((step) => {
         if (!step || typeof step !== "object") return false;
         if (step?.title && clonedStep?.title) {
@@ -400,9 +410,11 @@ const CloudTransition = ({
       });
     }
 
-    if (activeIndex < 0) {
-      return [];
+    if (activeIndex === null || activeIndex < 0) {
+      activeIndex = 0;
     }
+
+    activeIndex = Math.min(Math.max(activeIndex, 0), localeSteps.length - 1);
 
     const nodes = [];
     let order = 0;
@@ -422,7 +434,12 @@ const CloudTransition = ({
     };
 
     if (activeIndex - 1 >= 0) {
-      pushNode(localeSteps[activeIndex - 1], activeIndex - 1, "previous", "Previously");
+      pushNode(
+        localeSteps[activeIndex - 1],
+        activeIndex - 1,
+        "previous",
+        "Previously"
+      );
     }
 
     pushNode(localeSteps[activeIndex], activeIndex, "current", "Current Question");
@@ -460,7 +477,7 @@ const CloudTransition = ({
     () => skillTreeNodes.filter((node) => node.type === "upcoming"),
     [skillTreeNodes]
   );
-  const hasSkillTree = Boolean(currentNode);
+  const hasSkillTree = skillTreeNodes.length > 0;
 
   const renderSkillNode = (node) => {
     if (!node) return null;
