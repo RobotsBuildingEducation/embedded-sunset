@@ -1,16 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo, useId } from "react";
-import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
-  Box,
-  Button,
-  Flex,
-  Icon,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Icon, Text } from "@chakra-ui/react";
 import {
   CheckCircleIcon,
   QuestionIcon,
@@ -466,50 +455,30 @@ const CloudTransition = ({
 
     const nodes = [];
 
-    const pushNode = (step, index, type, label) => {
+    const pushNode = (step, index, type) => {
       if (!step) return;
       const questionKind = detectQuestionKind(step);
-      const questionStyle =
-        QUESTION_TYPE_STYLES[questionKind] ?? QUESTION_TYPE_STYLES.default;
       nodes.push({
         id: `${type}-${index}`,
         index,
         type,
         title: step?.title || `Question ${index + 1}`,
-        summary: buildStepSummary(step),
-        label,
         questionKind,
-        questionKindLabel: questionStyle.label,
       });
     };
 
     if (activeIndex - 1 >= 0) {
-      pushNode(
-        localeSteps[activeIndex - 1],
-        activeIndex - 1,
-        "previous",
-        "Previously"
-      );
+      pushNode(localeSteps[activeIndex - 1], activeIndex - 1, "previous");
     }
 
-    pushNode(localeSteps[activeIndex], activeIndex, "current", "Current Question");
+    pushNode(localeSteps[activeIndex], activeIndex, "current");
 
     if (activeIndex + 1 < localeSteps.length) {
-      pushNode(
-        localeSteps[activeIndex + 1],
-        activeIndex + 1,
-        "upcoming",
-        "Next Question"
-      );
+      pushNode(localeSteps[activeIndex + 1], activeIndex + 1, "upcoming");
     }
 
     if (activeIndex + 2 < localeSteps.length) {
-      pushNode(
-        localeSteps[activeIndex + 2],
-        activeIndex + 2,
-        "upcoming",
-        "On the Horizon"
-      );
+      pushNode(localeSteps[activeIndex + 2], activeIndex + 2, "upcoming");
     }
 
     return nodes;
@@ -540,72 +509,45 @@ const CloudTransition = ({
 
   const renderSkillNode = (node, index) => {
     if (!node) return null;
-    const statusStyle =
-      SKILL_NODE_STYLES[node.type] ?? SKILL_NODE_STYLES.upcoming;
     const typeStyle =
       QUESTION_TYPE_STYLES[node.questionKind] ?? QUESTION_TYPE_STYLES.default;
-    const questionNumber = `Q${String(node.index + 1).padStart(2, "0")}`;
     const IconComponent = typeStyle.icon ?? StarIcon;
+    const statusStyle =
+      SKILL_NODE_STYLES[node.type] ?? SKILL_NODE_STYLES.upcoming;
     const accent = typeStyle.accent ?? statusStyle.accent;
     const gradient = typeStyle.gradient ?? statusStyle.gradient;
-    const halo = typeStyle.halo ?? statusStyle.highlight ?? `${accent}33`;
 
     return (
       <MotionBox
         variants={skillNodeVariants}
         custom={index}
-        whileHover={{ y: -6, scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-        transition={{ type: "spring", stiffness: 220, damping: 20 }}
-        borderRadius="2xl"
-        px={{ base: 5, md: 6 }}
-        py={{ base: 5, md: 6 }}
-        bg="rgba(255,255,255,0.92)"
-        backdropFilter="blur(14px)"
-        boxShadow={`0 24px 48px ${statusStyle.shadow}`}
+        whileHover={{ y: -4, scale: 1.01 }}
+        whileTap={{ scale: 0.99 }}
+        transition={{ type: "spring", stiffness: 260, damping: 24 }}
+        borderRadius="full"
+        px={{ base: 4, md: 5 }}
+        py={{ base: 3, md: 4 }}
+        bg="rgba(255,255,255,0.88)"
+        backdropFilter="blur(10px)"
+        boxShadow={`0 14px 28px ${statusStyle.shadow}`}
         borderWidth="1px"
-        borderColor={`${accent}33`}
+        borderColor={`${accent}40`}
         position="relative"
         overflow="hidden"
-        minW="240px"
+        width="100%"
+        maxW="360px"
       >
         <Box
           position="absolute"
           inset={0}
           bgGradient={gradient}
-          opacity={0.32}
-          pointerEvents="none"
-        />
-        <MotionBox
-          position="absolute"
-          top="-36px"
-          right="-24px"
-          w="120px"
-          h="120px"
-          borderRadius="full"
-          bgGradient={`radial-gradient(circle at center, ${halo}, transparent 68%)`}
-          opacity={0.85}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          pointerEvents="none"
-        />
-        <MotionBox
-          position="absolute"
-          bottom="-42px"
-          left="-28px"
-          w="130px"
-          h="130px"
-          borderRadius="full"
-          bgGradient={`radial-gradient(circle at center, ${statusStyle.highlight}, transparent 72%)`}
-          animate={{ rotate: -360 }}
-          transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
-          opacity={0.45}
+          opacity={0.24}
           pointerEvents="none"
         />
         <Flex align="center" gap={4} position="relative" zIndex={1}>
           <Box
-            w="56px"
-            h="56px"
+            w="52px"
+            h="52px"
             borderRadius="full"
             display="flex"
             alignItems="center"
@@ -615,34 +557,14 @@ const CloudTransition = ({
           >
             <Icon as={IconComponent} boxSize={7} color={accent} />
           </Box>
-          <Box>
-            <Text
-              fontSize="xs"
-              textTransform="uppercase"
-              letterSpacing="0.3em"
-              fontWeight="bold"
-              color={`${accent}cc`}
-            >
-              {node.questionKindLabel}
-            </Text>
-            <Text fontSize="sm" fontWeight="semibold" color="purple.500" mt={1}>
-              {node.label}
-            </Text>
-          </Box>
-        </Flex>
-        <Box mt={5} position="relative" zIndex={1}>
-          <Text fontWeight="extrabold" fontSize="xl" color={accent}>
-            {questionNumber}
-          </Text>
-          <Text fontSize="lg" fontWeight="semibold" color="purple.700" mt={1}>
+          <Text
+            fontSize="lg"
+            fontWeight={node.type === "current" ? "bold" : "semibold"}
+            color={node.type === "current" ? "purple.700" : "purple.500"}
+          >
             {node.title}
           </Text>
-          {node.summary && (
-            <Text mt={3} fontSize="sm" color="purple.500" lineHeight={1.6}>
-              {node.summary}
-            </Text>
-          )}
-        </Box>
+        </Flex>
       </MotionBox>
     );
   };
@@ -659,28 +581,28 @@ const CloudTransition = ({
       <Box
         as="svg"
         key={`connector-${index}`}
-        width={{ base: "120px", md: "160px" }}
+        width="160px"
         height="120px"
         viewBox="0 0 160 120"
         preserveAspectRatio="none"
-        flex="0 0 auto"
-        opacity={0.9}
+        opacity={0.8}
+        mx="auto"
       >
         <defs>
-          <linearGradient id={gradientId} x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor={fromStyle.accent} stopOpacity="0.68" />
-            <stop offset="100%" stopColor={toStyle.accent} stopOpacity="0.68" />
+          <linearGradient id={gradientId} x1="50%" y1="0%" x2="50%" y2="100%">
+            <stop offset="0%" stopColor={fromStyle.accent} stopOpacity="0.72" />
+            <stop offset="100%" stopColor={toStyle.accent} stopOpacity="0.72" />
           </linearGradient>
         </defs>
         <path
-          d="M8 112 C 52 20, 108 20, 152 112"
+          d="M80 0 C 132 28, 36 72, 80 120"
           stroke={`url(#${gradientId})`}
           strokeWidth="4"
           fill="none"
           strokeLinecap="round"
         />
         <path
-          d="M8 112 C 52 60, 108 60, 152 112"
+          d="M80 0 C 108 32, 52 68, 80 120"
           stroke={`url(#${gradientId})`}
           strokeWidth="2"
           fill="none"
@@ -1048,99 +970,6 @@ const CloudTransition = ({
                     />
                   </Box>
 
-                  {hasSkillTree && (
-                    <Accordion
-                      allowToggle
-                      mt={10}
-                      border="none"
-                      bg="transparent"
-                    >
-                      <AccordionItem border="none">
-                        {({ isExpanded }) => (
-                          <Box
-                            borderRadius="2xl"
-                            border="1px solid rgba(124,58,237,0.16)"
-                            bg={
-                              isExpanded
-                                ? "rgba(255,255,255,0.92)"
-                                : "rgba(255,255,255,0.78)"
-                            }
-                            boxShadow={
-                              isExpanded
-                                ? "0 22px 48px rgba(79,70,229,0.22)"
-                                : "0 14px 36px rgba(79,70,229,0.14)"
-                            }
-                            transition="all 0.3s ease"
-                            overflow="hidden"
-                          >
-                            <AccordionButton
-                              px={5}
-                              py={4}
-                              _hover={{ bg: "rgba(255,255,255,0.95)" }}
-                              _expanded={{
-                                bg: "rgba(255,255,255,0.98)",
-                                color: "purple.700",
-                              }}
-                            >
-                              <Box textAlign="left" flex="1">
-                                <Text fontWeight="bold" color="purple.600">
-                                  Journey Skill Tree
-                                </Text>
-                                <Text fontSize="xs" color="purple.400">
-                                  Trace how your next questions blossom ahead
-                                </Text>
-                              </Box>
-                              <AccordionIcon />
-                            </AccordionButton>
-                            <AccordionPanel
-                              pt={6}
-                              pb={4}
-                              px={{ base: 3, md: 6 }}
-                              bg="rgba(255,255,255,0.88)"
-                            >
-                              <MotionBox
-                                variants={skillTreeContainerVariants}
-                                initial="hidden"
-                                animate={isExpanded ? "show" : "hidden"}
-                              >
-                                <Text
-                                  fontSize="sm"
-                                  fontWeight="medium"
-                                  color="purple.500"
-                                  mb={4}
-                                >
-                                  A flowing lane of what you just mastered and what
-                                  curves ahead next.
-                                </Text>
-                                <Flex
-                                  align="center"
-                                  gap={{ base: 6, md: 8, xl: 10 }}
-                                  overflowX="auto"
-                                  pb={4}
-                                  pt={2}
-                                  px={1}
-                                  className="skill-tree-track"
-                                >
-                                  {displayNodes.map((node, index) => (
-                                    <React.Fragment key={node.id}>
-                                      {renderSkillNode(node, index)}
-                                      {index < displayNodes.length - 1 &&
-                                        renderConnector(
-                                          node,
-                                          displayNodes[index + 1],
-                                          index
-                                        )}
-                                    </React.Fragment>
-                                  ))}
-                                </Flex>
-                              </MotionBox>
-                            </AccordionPanel>
-                          </Box>
-                        )}
-                      </AccordionItem>
-                    </Accordion>
-                  )}
-
                   {promotionProgress !== null && (
                     <Box w="50%" mx="auto" mb={0}>
                       <Text
@@ -1186,6 +1015,27 @@ const CloudTransition = ({
               >
                 Continue
               </Button>
+
+              {hasSkillTree && (
+                <MotionBox
+                  variants={skillTreeContainerVariants}
+                  initial="hidden"
+                  animate="show"
+                  mt={10}
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="center"
+                  gap={{ base: 6, md: 7 }}
+                >
+                  {displayNodes.map((node, index) => (
+                    <React.Fragment key={node.id}>
+                      {renderSkillNode(node, index)}
+                      {index < displayNodes.length - 1 &&
+                        renderConnector(node, displayNodes[index + 1], index)}
+                    </React.Fragment>
+                  ))}
+                </MotionBox>
+              )}
             </MotionBox>
           )}
         </Box>
