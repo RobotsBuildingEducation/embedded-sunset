@@ -5933,6 +5933,8 @@ function App({ isShutDown }) {
         message={transitionStats.message}
         detail={transitionStats.detail}
         onContinue={handleTransitionContinue}
+        currentStepIndex={currentStep}
+        stepsMap={steps}
       />
       {alert.isOpen && (
         <Alert

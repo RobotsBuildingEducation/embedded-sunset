@@ -1,5 +1,15 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
-import { Box, Text, Button } from "@chakra-ui/react";
+import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Box,
+  Button,
+  Flex,
+  Text,
+} from "@chakra-ui/react";
 import { motion, AnimatePresence } from "framer-motion";
 import sparkle from "../assets/sparkle.mp3";
 import complete from "../assets/complete.mp3";
@@ -12,8 +22,94 @@ import {
 import { translation } from "../utility/translation";
 import { database } from "../database/firebaseResources";
 import { doc, onSnapshot } from "firebase/firestore";
+import { steps as defaultSteps } from "../utility/content";
 
 const MotionBox = motion(Box);
+
+const SKILL_NODE_STYLES = {
+  previous: {
+    accent: "#7c3aed",
+    gradient: "linear(to-br, rgba(124,58,237,0.28), rgba(249,168,212,0.26))",
+    shadow: "rgba(124,58,237,0.28)",
+    highlight: "#c4b5fd",
+  },
+  current: {
+    accent: "#0ea5e9",
+    gradient: "linear(to-br, rgba(34,197,94,0.32), rgba(14,165,233,0.28))",
+    shadow: "rgba(45,212,191,0.34)",
+    highlight: "#99f6e4",
+  },
+  upcoming: {
+    accent: "#6366f1",
+    gradient: "linear(to-br, rgba(99,102,241,0.28), rgba(168,85,247,0.24))",
+    shadow: "rgba(99,102,241,0.26)",
+    highlight: "#a5b4fc",
+  },
+};
+
+const CONNECTOR_GRADIENT =
+  "linear(to-b, rgba(124,58,237,0.45), rgba(56,189,248,0))";
+const BRANCH_GRADIENT =
+  "linear(to-r, rgba(124,58,237,0.05), rgba(56,189,248,0.4), rgba(14,165,233,0.05))";
+
+const skillTreeContainerVariants = {
+  hidden: { opacity: 0, y: 12 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { when: "beforeChildren", staggerChildren: 0.08 },
+  },
+};
+
+const skillNodeVariants = {
+  hidden: { opacity: 0, scale: 0.96, y: 16 },
+  show: (i = 0) => ({
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 0.45,
+      ease: "easeOut",
+      delay: i * 0.05,
+    },
+  }),
+};
+
+const extractTextFromNode = (node) => {
+  if (node === null || node === undefined) return "";
+  if (typeof node === "string" || typeof node === "number") {
+    return String(node);
+  }
+  if (Array.isArray(node)) {
+    return node.map((child) => extractTextFromNode(child)).join(" ");
+  }
+  if (React.isValidElement(node)) {
+    return extractTextFromNode(node.props?.children);
+  }
+  if (typeof node === "object") {
+    return Object.values(node)
+      .map((value) => extractTextFromNode(value))
+      .join(" ");
+  }
+  return "";
+};
+
+const sanitizeText = (value) =>
+  extractTextFromNode(value).replace(/\s+/g, " ").replace(/\u00a0/g, " ").trim();
+
+const truncateText = (value, limit = 140) => {
+  if (!value) return "";
+  if (value.length <= limit) return value;
+  return `${value.slice(0, limit).trim()}…`;
+};
+
+const buildStepSummary = (step) => {
+  if (!step) return "";
+  const description = sanitizeText(step.description);
+  const questionText = sanitizeText(step.question?.questionText);
+  const summary = description || questionText;
+  return truncateText(summary);
+};
 
 // ---- Level-based background (clouds a bit stronger) ----
 const THEMES = {
@@ -99,6 +195,8 @@ const CloudTransition = ({
   message,
   detail,
   onContinue,
+  currentStepIndex,
+  stepsMap,
   children,
 }) => {
   const canvasRef = useRef(null);
@@ -245,6 +343,205 @@ const CloudTransition = ({
   }, [clonedStep]);
 
   const theme = THEMES[groupKey] ?? THEMES.tutorial;
+
+  const skillTreeNodes = useMemo(() => {
+    if (!clonedStep || typeof clonedStep !== "object") {
+      return [];
+    }
+
+    const mapSource = stepsMap ?? defaultSteps;
+    const availableMap = mapSource ?? {};
+    const mapKeys = Object.keys(availableMap);
+
+    const localeKey = (() => {
+      if (
+        userLanguage &&
+        Array.isArray(availableMap[userLanguage]) &&
+        availableMap[userLanguage].length > 0
+      ) {
+        return userLanguage;
+      }
+      if (Array.isArray(availableMap.en) && availableMap.en.length > 0) {
+        return "en";
+      }
+      if (userLanguage && availableMap[userLanguage]) {
+        return userLanguage;
+      }
+      if (availableMap.en) {
+        return "en";
+      }
+      return mapKeys[0];
+    })();
+
+    const localeSteps = (availableMap && availableMap[localeKey]) || [];
+    if (!localeSteps?.length) {
+      return [];
+    }
+
+    let activeIndex =
+      typeof currentStepIndex === "number" && currentStepIndex >= 0
+        ? currentStepIndex
+        : -1;
+
+    if (activeIndex < 0) {
+      activeIndex = localeSteps.findIndex((step) => {
+        if (!step || typeof step !== "object") return false;
+        if (step?.title && clonedStep?.title) {
+          return step.title === clonedStep.title;
+        }
+        if (step?.group && clonedStep?.group) {
+          return step.group === clonedStep.group;
+        }
+        const stepSummary = buildStepSummary(step);
+        const clonedSummary = buildStepSummary(clonedStep);
+        return stepSummary && clonedSummary
+          ? stepSummary === clonedSummary
+          : false;
+      });
+    }
+
+    if (activeIndex < 0) {
+      return [];
+    }
+
+    const nodes = [];
+    let order = 0;
+
+    const pushNode = (step, index, type, label) => {
+      if (!step) return;
+      nodes.push({
+        id: `${type}-${index}`,
+        index,
+        type,
+        title: step?.title || `Question ${index + 1}`,
+        summary: buildStepSummary(step),
+        label,
+        order,
+      });
+      order += 1;
+    };
+
+    if (activeIndex - 1 >= 0) {
+      pushNode(localeSteps[activeIndex - 1], activeIndex - 1, "previous", "Previously");
+    }
+
+    pushNode(localeSteps[activeIndex], activeIndex, "current", "Current Question");
+
+    if (activeIndex + 1 < localeSteps.length) {
+      pushNode(
+        localeSteps[activeIndex + 1],
+        activeIndex + 1,
+        "upcoming",
+        "Next Question"
+      );
+    }
+
+    if (activeIndex + 2 < localeSteps.length) {
+      pushNode(
+        localeSteps[activeIndex + 2],
+        activeIndex + 2,
+        "upcoming",
+        "On the Horizon"
+      );
+    }
+
+    return nodes;
+  }, [clonedStep, currentStepIndex, stepsMap, userLanguage]);
+
+  const previousNode = useMemo(
+    () => skillTreeNodes.find((node) => node.type === "previous"),
+    [skillTreeNodes]
+  );
+  const currentNode = useMemo(
+    () => skillTreeNodes.find((node) => node.type === "current"),
+    [skillTreeNodes]
+  );
+  const upcomingNodes = useMemo(
+    () => skillTreeNodes.filter((node) => node.type === "upcoming"),
+    [skillTreeNodes]
+  );
+  const hasSkillTree = Boolean(currentNode);
+
+  const renderSkillNode = (node) => {
+    if (!node) return null;
+    const style = SKILL_NODE_STYLES[node.type] ?? SKILL_NODE_STYLES.upcoming;
+    const questionNumber = `Q${String(node.index + 1).padStart(2, "0")}`;
+
+    return (
+      <MotionBox
+        variants={skillNodeVariants}
+        custom={node.order}
+        whileHover={{ y: -6, scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{ type: "spring", stiffness: 220, damping: 20 }}
+        borderRadius="xl"
+        px={6}
+        py={5}
+        bg="rgba(255,255,255,0.92)"
+        backdropFilter="blur(12px)"
+        boxShadow={`0 22px 48px ${style.shadow}`}
+        borderWidth="1px"
+        borderColor={`${style.accent}33`}
+        position="relative"
+        overflow="hidden"
+        minW="230px"
+      >
+        <Box
+          position="absolute"
+          inset={0}
+          bgGradient={style.gradient}
+          opacity={0.28}
+          pointerEvents="none"
+        />
+        <MotionBox
+          position="absolute"
+          top="-32px"
+          right="-24px"
+          w="110px"
+          h="110px"
+          borderRadius="full"
+          bgGradient={`radial-gradient(circle at center, ${style.highlight}66, transparent 65%)`}
+          opacity={0.8}
+          animate={{ rotate: 360 }}
+          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+          pointerEvents="none"
+        />
+        <MotionBox
+          position="absolute"
+          bottom="-36px"
+          left="-20px"
+          w="120px"
+          h="120px"
+          borderRadius="full"
+          bgGradient={`radial-gradient(circle at center, ${style.accent}40, transparent 70%)`}
+          animate={{ rotate: -360 }}
+          transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
+          opacity={0.5}
+          pointerEvents="none"
+        />
+        <Text
+          fontSize="xs"
+          fontWeight="semibold"
+          textTransform="uppercase"
+          letterSpacing="0.24em"
+          color={`${style.accent}cc`}
+        >
+          {node.label}
+        </Text>
+        <Text fontWeight="extrabold" fontSize="xl" color={style.accent} mt={1}>
+          {questionNumber}
+        </Text>
+        <Text fontSize="md" fontWeight="semibold" color="purple.700" mt={1}>
+          {node.title}
+        </Text>
+        {node.summary && (
+          <Text mt={3} fontSize="sm" color="purple.500" lineHeight={1.5}>
+            {node.summary}
+          </Text>
+        )}
+      </MotionBox>
+    );
+  };
 
   useEffect(() => {
     if (!isActive) {
@@ -602,6 +899,161 @@ const CloudTransition = ({
                       border="#ededed"
                     />
                   </Box>
+
+                  {hasSkillTree && (
+                    <Accordion
+                      allowToggle
+                      mt={10}
+                      border="none"
+                      bg="transparent"
+                    >
+                      <AccordionItem border="none">
+                        {({ isExpanded }) => (
+                          <Box
+                            borderRadius="2xl"
+                            border="1px solid rgba(124,58,237,0.16)"
+                            bg={
+                              isExpanded
+                                ? "rgba(255,255,255,0.92)"
+                                : "rgba(255,255,255,0.78)"
+                            }
+                            boxShadow={
+                              isExpanded
+                                ? "0 22px 48px rgba(79,70,229,0.22)"
+                                : "0 14px 36px rgba(79,70,229,0.14)"
+                            }
+                            transition="all 0.3s ease"
+                            overflow="hidden"
+                          >
+                            <AccordionButton
+                              px={5}
+                              py={4}
+                              _hover={{ bg: "rgba(255,255,255,0.95)" }}
+                              _expanded={{
+                                bg: "rgba(255,255,255,0.98)",
+                                color: "purple.700",
+                              }}
+                            >
+                              <Box textAlign="left" flex="1">
+                                <Text fontWeight="bold" color="purple.600">
+                                  Journey Skill Tree
+                                </Text>
+                                <Text fontSize="xs" color="purple.400">
+                                  Trace how your next questions blossom ahead
+                                </Text>
+                              </Box>
+                              <AccordionIcon />
+                            </AccordionButton>
+                            <AccordionPanel
+                              pt={6}
+                              pb={4}
+                              px={{ base: 3, md: 6 }}
+                              bg="rgba(255,255,255,0.88)"
+                            >
+                              <MotionBox
+                                variants={skillTreeContainerVariants}
+                                initial="hidden"
+                                animate={isExpanded ? "show" : "hidden"}
+                              >
+                                {previousNode && (
+                                  <Box
+                                    position="relative"
+                                    pb={currentNode ? 12 : 0}
+                                    display="flex"
+                                    justifyContent="center"
+                                  >
+                                    {currentNode && (
+                                      <Box
+                                        position="absolute"
+                                        bottom="-14px"
+                                        left="50%"
+                                        transform="translateX(-50%)"
+                                        width="2px"
+                                        height="38px"
+                                        bgGradient={CONNECTOR_GRADIENT}
+                                        opacity={0.7}
+                                      />
+                                    )}
+                                    {renderSkillNode(previousNode)}
+                                  </Box>
+                                )}
+
+                                {currentNode && (
+                                  <Box
+                                    position="relative"
+                                    pb={upcomingNodes.length ? 18 : 0}
+                                    display="flex"
+                                    justifyContent="center"
+                                  >
+                                    {upcomingNodes.length > 0 && (
+                                      <Box
+                                        position="absolute"
+                                        bottom="-18px"
+                                        left="50%"
+                                        transform="translateX(-50%)"
+                                        width="2px"
+                                        height="46px"
+                                        bgGradient={CONNECTOR_GRADIENT}
+                                        opacity={0.7}
+                                      />
+                                    )}
+                                    {renderSkillNode(currentNode)}
+                                  </Box>
+                                )}
+
+                                {upcomingNodes.length > 0 && (
+                                  <Box position="relative" pt={12}>
+                                    <Box
+                                      position="absolute"
+                                      top="0"
+                                      left={{ base: "12%", md: "18%" }}
+                                      right={{ base: "12%", md: "18%" }}
+                                      height="2px"
+                                      bgGradient={BRANCH_GRADIENT}
+                                      opacity={0.65}
+                                    />
+                                    <Flex
+                                      justifyContent={
+                                        upcomingNodes.length === 1
+                                          ? "center"
+                                          : "space-between"
+                                      }
+                                      gap={6}
+                                      flexWrap="wrap"
+                                    >
+                                      {upcomingNodes.map((node) => (
+                                        <Box
+                                          key={node.id}
+                                          position="relative"
+                                          pt={8}
+                                          flex="1 1 220px"
+                                          maxW={{ base: "100%", md: "calc(50% - 12px)" }}
+                                          display="flex"
+                                          justifyContent="center"
+                                        >
+                                          <Box
+                                            position="absolute"
+                                            top="-10px"
+                                            left="50%"
+                                            transform="translate(-50%, -100%)"
+                                            width="2px"
+                                            height="40px"
+                                            bgGradient={CONNECTOR_GRADIENT}
+                                            opacity={0.65}
+                                          />
+                                          {renderSkillNode(node)}
+                                        </Box>
+                                      ))}
+                                    </Flex>
+                                  </Box>
+                                )}
+                              </MotionBox>
+                            </AccordionPanel>
+                          </Box>
+                        )}
+                      </AccordionItem>
+                    </Accordion>
+                  )}
 
                   {promotionProgress !== null && (
                     <Box w="50%" mx="auto" mb={0}>
