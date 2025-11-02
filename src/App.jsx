@@ -1566,7 +1566,15 @@ const deriveChapterLabel = (group, primaryMap, fallbackMap) => {
 const ChapterReview = ({ nodes, text, onStart }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const previewCount = 2;
-  const visibleNodes = isExpanded ? nodes : nodes.slice(0, previewCount);
+  const activeNodeIndex = Math.max(
+    0,
+    nodes.findIndex((node) => node.isActive)
+  );
+  const collapsedNodes = nodes.slice(
+    activeNodeIndex,
+    activeNodeIndex + previewCount
+  );
+  const visibleNodes = isExpanded ? nodes : collapsedNodes;
   const hasHiddenNodes = nodes.length > visibleNodes.length;
 
   useEffect(() => {
@@ -1835,22 +1843,7 @@ const Step = ({
     return [];
   }, [userLanguage]);
 
-  const tutorialStartIndex = useMemo(() => {
-    if (!Array.isArray(localeSteps) || !localeSteps.length) {
-      return -1;
-    }
-
-    return localeSteps.findIndex((entry) => {
-      if (!entry || typeof entry !== "object") return false;
-      const groupValue = entry.group ?? entry.chapter ?? "";
-      const normalized = String(groupValue).toLowerCase();
-      if (!normalized || normalized === "introduction") return false;
-      if (entry.isStudyGuide) return false;
-      return normalized === "tutorial";
-    });
-  }, [localeSteps]);
-
-  const chapterReviewNodes = useMemo(() => {
+  const chapterReviewChapters = useMemo(() => {
     if (!Array.isArray(localeSteps) || !localeSteps.length) {
       return [];
     }
@@ -1863,43 +1856,89 @@ const Step = ({
       }
 
       const groupValue = entry.group ?? entry.chapter;
-      if (!groupValue || groupValue === "introduction") {
+      if (!groupValue) {
         return acc;
       }
 
-      if (seenGroups.has(groupValue)) {
+      const normalizedGroup = String(groupValue).toLowerCase();
+      if (normalizedGroup === "introduction") {
         return acc;
       }
 
-      seenGroups.add(groupValue);
+      if (seenGroups.has(normalizedGroup)) {
+        return acc;
+      }
+
+      seenGroups.add(normalizedGroup);
 
       const questionKind = detectChapterQuestionKind(entry);
 
       acc.push({
-        id: `${groupValue}-${index}`,
+        id: `${normalizedGroup}-${index}`,
         title: normalizeChapterTitle(entry.title, index),
         questionKind,
         chapterLabel: deriveChapterLabel(groupValue, translationMap, fallbackTranslation),
-        isActive: acc.length === 0,
+        groupValue,
+        normalizedGroup,
+        firstIndex: index,
       });
 
       return acc;
     }, []);
   }, [fallbackTranslation, localeSteps, translationMap]);
 
+  const activeChapterKey = useMemo(() => {
+    const currentEntry = Array.isArray(localeSteps)
+      ? localeSteps[currentStep]
+      : null;
+    if (!currentEntry || typeof currentEntry !== "object") {
+      return null;
+    }
+
+    const groupValue = currentEntry.group ?? currentEntry.chapter;
+    if (!groupValue) {
+      return null;
+    }
+
+    const normalized = String(groupValue).toLowerCase();
+    if (normalized === "introduction") {
+      return null;
+    }
+
+    return normalized;
+  }, [currentStep, localeSteps]);
+
+  const chapterReviewNodes = useMemo(
+    () =>
+      chapterReviewChapters.map((node, index) => ({
+        ...node,
+        isActive:
+          node.normalizedGroup === activeChapterKey ||
+          (!activeChapterKey && index === 0),
+      })),
+    [activeChapterKey, chapterReviewChapters]
+  );
+
   const [showChapterReview, setShowChapterReview] = useState(false);
+  const [lastChapterReviewStep, setLastChapterReviewStep] = useState(null);
 
   useEffect(() => {
-    if (
-      tutorialStartIndex !== -1 &&
-      currentStep === tutorialStartIndex &&
-      chapterReviewNodes.length > 0
-    ) {
+    if (!chapterReviewNodes.length) {
+      setShowChapterReview(false);
+      return;
+    }
+
+    const isFirstStepOfChapter = chapterReviewNodes.find(
+      (node) => node.firstIndex === currentStep
+    );
+
+    if (isFirstStepOfChapter && lastChapterReviewStep !== currentStep) {
       setShowChapterReview(true);
-    } else if (tutorialStartIndex !== currentStep) {
+      setLastChapterReviewStep(currentStep);
+    } else if (!isFirstStepOfChapter) {
       setShowChapterReview(false);
     }
-  }, [chapterReviewNodes.length, currentStep, tutorialStartIndex]);
+  }, [chapterReviewNodes, currentStep, lastChapterReviewStep]);
 
   const chapterReviewText = useMemo(
     () => ({
@@ -1923,7 +1962,10 @@ const Step = ({
     [fallbackTranslation, translationMap]
   );
 
-  const dismissChapterReview = () => setShowChapterReview(false);
+  const dismissChapterReview = () => {
+    setShowChapterReview(false);
+    setLastChapterReviewStep(currentStep);
+  };
 
   const { resetMessages, messages, submitPrompt } = useChatCompletion({
     response_format: { type: "json_object" },
