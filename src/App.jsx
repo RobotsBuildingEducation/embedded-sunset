@@ -1673,22 +1673,12 @@ const ChapterReview = ({ nodes, text, onStart }) => {
                         <Icon as={IconComponent} boxSize={7} color={accent} />
                       </Box>
                       <VStack spacing={1} align="flex-start" flex={1}>
-                        {node.chapterLabel ? (
-                          <Text
-                            fontSize="xs"
-                            textTransform="uppercase"
-                            letterSpacing="widest"
-                            color={`${accent}a3`}
-                          >
-                            {node.chapterLabel}
-                          </Text>
-                        ) : null}
                         <Text
                           fontSize="lg"
                           fontWeight={node.isActive ? "bold" : "semibold"}
                           color="gray.800"
                         >
-                          {node.title}
+                          {node.chapterLabel || node.title}
                         </Text>
                       </VStack>
                     </Flex>
