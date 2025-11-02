@@ -8,6 +8,8 @@ import {
   VStack,
   Input,
   HStack,
+  Flex,
+  Icon,
   useDisclosure,
   useToast,
   Checkbox,
@@ -101,7 +103,15 @@ import { pickProgrammingLanguage, translation } from "./utility/translation";
 
 import { Dashboard } from "./components/Dashboard/Dashboard";
 import { isUnsupportedBrowser } from "./utility/browser";
-import { ChevronDownIcon, EmailIcon, PlusSquareIcon } from "@chakra-ui/icons";
+import {
+  CheckCircleIcon,
+  ChevronDownIcon,
+  EmailIcon,
+  PlusSquareIcon,
+  QuestionIcon,
+  RepeatIcon,
+  StarIcon,
+} from "@chakra-ui/icons";
 import { IoChatbubblesOutline, IoShareOutline } from "react-icons/io5";
 import {
   PiClockCountdownDuotone,
@@ -1481,6 +1491,241 @@ function TerminalComponent({
   );
 }
 
+const CHAPTER_REVIEW_TYPE_STYLES = {
+  order: {
+    icon: RepeatIcon,
+    accent: "#8b5cf6",
+    gradient: "linear(to-br, rgba(139,92,246,0.22), rgba(59,130,246,0.18))",
+  },
+  multiAnswer: {
+    icon: CheckCircleIcon,
+    accent: "#10b981",
+    gradient: "linear(to-br, rgba(16,185,129,0.22), rgba(59,130,246,0.14))",
+  },
+  multiChoice: {
+    icon: QuestionIcon,
+    accent: "#0ea5e9",
+    gradient: "linear(to-br, rgba(14,165,233,0.22), rgba(99,102,241,0.16))",
+  },
+  default: {
+    icon: StarIcon,
+    accent: "#f59e0b",
+    gradient: "linear(to-br, rgba(245,158,11,0.22), rgba(249,168,212,0.18))",
+  },
+};
+
+const detectChapterQuestionKind = (step) => {
+  if (!step || typeof step !== "object") return "default";
+  if (step.isSelectOrder) return "order";
+  if (step.isMultipleAnswerChoice) return "multiAnswer";
+  if (step.isMultipleChoice) return "multiChoice";
+
+  const answer = step.question?.answer;
+  if (Array.isArray(answer) && answer.length > 1) {
+    return "multiAnswer";
+  }
+
+  return "default";
+};
+
+const normalizeChapterTitle = (title, fallbackIndex = 0) => {
+  if (typeof title === "string" && title.trim()) {
+    return title.trim();
+  }
+  return `Question ${fallbackIndex + 1}`;
+};
+
+const deriveChapterLabel = (group, primaryMap, fallbackMap) => {
+  if (!group) return "";
+  const normalized = String(group).toLowerCase();
+
+  if (normalized === "tutorial") {
+    return (
+      primaryMap?.["onboarding.chapter0.title"] ||
+      fallbackMap?.["onboarding.chapter0.title"] ||
+      "Tutorial Chapter"
+    );
+  }
+
+  const numeric = Number(normalized);
+  if (Number.isFinite(numeric)) {
+    const key = `onboarding.chapter${numeric}.title`;
+    return (
+      primaryMap?.[key] || fallbackMap?.[key] || `Chapter ${numeric}`
+    );
+  }
+
+  return normalized
+    .split("-")
+    .map((segment) =>
+      segment ? segment.charAt(0).toUpperCase() + segment.slice(1) : ""
+    )
+    .join(" ");
+};
+
+const ChapterReview = ({ nodes, text, onStart }) => {
+  return (
+    <Box
+      width="100%"
+      display="flex"
+      justifyContent="center"
+      py={{ base: 10, md: 12 }}
+      px={{ base: 2, md: 4 }}
+    >
+      <VStack spacing={8} width="100%" maxW="560px" align="center">
+        <Box textAlign="center" px={{ base: 4, md: 6 }}>
+          <Text
+            fontSize="sm"
+            fontWeight="semibold"
+            textTransform="uppercase"
+            letterSpacing="widest"
+            color="purple.400"
+            mb={2}
+          >
+            {text?.title}
+          </Text>
+          <Text fontSize={{ base: "xl", md: "2xl" }} color="gray.600">
+            {text?.subtitle}
+          </Text>
+        </Box>
+
+        <Box
+          w="100%"
+          borderRadius="3xl"
+          p={{ base: 6, md: 8 }}
+          bg="rgba(255,255,255,0.88)"
+          backdropFilter="blur(14px)"
+          border="1px solid rgba(226,232,240,0.7)"
+          boxShadow="0 24px 50px rgba(99,102,241,0.18)"
+        >
+          <VStack spacing={6} align="stretch">
+            {nodes.map((node, index) => {
+              const typeStyle =
+                CHAPTER_REVIEW_TYPE_STYLES[node.questionKind] ||
+                CHAPTER_REVIEW_TYPE_STYLES.default;
+              const IconComponent = typeStyle.icon || StarIcon;
+              const accent = typeStyle.accent;
+              const gradient = typeStyle.gradient;
+
+              return (
+                <Box
+                  key={node.id}
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="center"
+                >
+                  <Box
+                    as={motion.div}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.05 }}
+                    width="100%"
+                    borderRadius="full"
+                    px={{ base: 4, md: 6 }}
+                    py={{ base: 3, md: 4 }}
+                    bg="rgba(255,255,255,0.95)"
+                    borderWidth="1px"
+                    borderColor={`${accent}40`}
+                    boxShadow={`0 16px 32px ${accent}26`}
+                    position="relative"
+                    overflow="hidden"
+                  >
+                    <Box
+                      position="absolute"
+                      inset={0}
+                      bgGradient={gradient}
+                      opacity={0.24}
+                      pointerEvents="none"
+                    />
+                    <Flex
+                      align="center"
+                      gap={{ base: 4, md: 5 }}
+                      position="relative"
+                      zIndex={1}
+                    >
+                      <Box
+                        w="56px"
+                        h="56px"
+                        borderRadius="full"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        bgGradient={`radial-gradient(circle at 30% 30%, ${accent}3d, transparent 70%)`}
+                        boxShadow={`0 18px 34px ${accent}33`}
+                      >
+                        <Icon as={IconComponent} boxSize={7} color={accent} />
+                      </Box>
+                      <VStack spacing={1} align="flex-start" flex={1}>
+                        {node.chapterLabel ? (
+                          <Text
+                            fontSize="xs"
+                            textTransform="uppercase"
+                            letterSpacing="widest"
+                            color={`${accent}a3`}
+                          >
+                            {node.chapterLabel}
+                          </Text>
+                        ) : null}
+                        <Text
+                          fontSize="lg"
+                          fontWeight={node.isActive ? "bold" : "semibold"}
+                          color="gray.800"
+                        >
+                          {node.title}
+                        </Text>
+                      </VStack>
+                    </Flex>
+                  </Box>
+
+                  {index < nodes.length - 1 ? (
+                    <Box
+                      h={{ base: 40, md: 52 }}
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <Box as="svg" width="200" height="64" viewBox="0 0 200 64" fill="none">
+                        <path
+                          d="M100 2 C140 16 60 48 100 62"
+                          stroke={`${accent}55`}
+                          strokeWidth="4"
+                          strokeLinecap="round"
+                        />
+                        <path
+                          d="M100 2 C140 24 60 40 100 62"
+                          stroke="rgba(148,163,184,0.12)"
+                          strokeWidth="4"
+                          strokeLinecap="round"
+                        />
+                      </Box>
+                    </Box>
+                  ) : null}
+                </Box>
+              );
+            })}
+          </VStack>
+        </Box>
+
+        <Button
+          colorScheme="purple"
+          size="lg"
+          borderRadius="full"
+          px={{ base: 8, md: 12 }}
+          py={{ base: 6, md: 7 }}
+          onMouseDown={onStart}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              onStart();
+            }
+          }}
+        >
+          {text?.cta}
+        </Button>
+      </VStack>
+    </Box>
+  );
+};
+
 const Step = ({
   currentStep,
   userLanguage,
@@ -1542,6 +1787,109 @@ const Step = ({
   const [isTimerExpired, setIsTimerExpired] = useState(true);
 
   const [step, setStep] = useState(steps[userLanguage][currentStep]);
+
+  const fallbackTranslation = translation.en || {};
+  const translationMap = translation[userLanguage] || fallbackTranslation;
+
+  const localeSteps = useMemo(() => {
+    if (Array.isArray(steps[userLanguage]) && steps[userLanguage].length) {
+      return steps[userLanguage];
+    }
+    if (Array.isArray(steps.en) && steps.en.length) {
+      return steps.en;
+    }
+    const [firstKey] = Object.keys(steps);
+    if (firstKey && Array.isArray(steps[firstKey])) {
+      return steps[firstKey];
+    }
+    return [];
+  }, [userLanguage]);
+
+  const tutorialStartIndex = useMemo(() => {
+    if (!Array.isArray(localeSteps) || !localeSteps.length) {
+      return -1;
+    }
+
+    return localeSteps.findIndex((entry) => {
+      if (!entry || typeof entry !== "object") return false;
+      const groupValue = entry.group ?? entry.chapter ?? "";
+      const normalized = String(groupValue).toLowerCase();
+      if (!normalized || normalized === "introduction") return false;
+      if (entry.isStudyGuide) return false;
+      return normalized === "tutorial";
+    });
+  }, [localeSteps]);
+
+  const chapterReviewNodes = useMemo(() => {
+    if (!Array.isArray(localeSteps) || !localeSteps.length) {
+      return [];
+    }
+
+    const seenGroups = new Set();
+
+    return localeSteps.reduce((acc, entry, index) => {
+      if (!entry || typeof entry !== "object") {
+        return acc;
+      }
+
+      const groupValue = entry.group ?? entry.chapter;
+      if (!groupValue || groupValue === "introduction") {
+        return acc;
+      }
+
+      if (seenGroups.has(groupValue)) {
+        return acc;
+      }
+
+      seenGroups.add(groupValue);
+
+      const questionKind = detectChapterQuestionKind(entry);
+
+      acc.push({
+        id: `${groupValue}-${index}`,
+        title: normalizeChapterTitle(entry.title, index),
+        questionKind,
+        chapterLabel: deriveChapterLabel(groupValue, translationMap, fallbackTranslation),
+        isActive: acc.length === 0,
+      });
+
+      return acc;
+    }, []);
+  }, [fallbackTranslation, localeSteps, translationMap]);
+
+  const [showChapterReview, setShowChapterReview] = useState(false);
+
+  useEffect(() => {
+    if (
+      tutorialStartIndex !== -1 &&
+      currentStep === tutorialStartIndex &&
+      chapterReviewNodes.length > 0
+    ) {
+      setShowChapterReview(true);
+    } else if (tutorialStartIndex !== currentStep) {
+      setShowChapterReview(false);
+    }
+  }, [chapterReviewNodes.length, currentStep, tutorialStartIndex]);
+
+  const chapterReviewText = useMemo(
+    () => ({
+      title:
+        translationMap["chapterReview.title"] ||
+        fallbackTranslation["chapterReview.title"] ||
+        "Chapter Skill Journey",
+      subtitle:
+        translationMap["chapterReview.subtitle"] ||
+        fallbackTranslation["chapterReview.subtitle"] ||
+        "Preview the milestones you'll tackle in this chapter before diving in.",
+      cta:
+        translationMap["chapterReview.cta"] ||
+        fallbackTranslation["chapterReview.cta"] ||
+        "Start chapter",
+    }),
+    [fallbackTranslation, translationMap]
+  );
+
+  const dismissChapterReview = () => setShowChapterReview(false);
 
   const { resetMessages, messages, submitPrompt } = useChatCompletion({
     response_format: { type: "json_object" },
@@ -2973,7 +3321,13 @@ const Step = ({
     <VStack spacing={4} width="100%" mt={6} p={4}>
       {/* <OrbCanvas width={500} height={500} /> */}
 
-      {newQuestionMessages.length > 0 && isEmpty(generatedQuestion) ? (
+      {showChapterReview && chapterReviewNodes.length > 0 ? (
+        <ChapterReview
+          nodes={chapterReviewNodes}
+          text={chapterReviewText}
+          onStart={dismissChapterReview}
+        />
+      ) : newQuestionMessages.length > 0 && isEmpty(generatedQuestion) ? (
         <VStack
           textAlign={"left"}
           style={{ width: "100%", maxWidth: 400 }}

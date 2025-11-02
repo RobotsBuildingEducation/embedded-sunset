@@ -28,6 +28,10 @@ export let translation = {
     skillValue: "Your skill value: ",
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
+    "chapterReview.title": "Chapter Skill Journey",
+    "chapterReview.subtitle":
+      "Preview the milestones you'll tackle in this chapter before diving in.",
+    "chapterReview.cta": "Start chapter",
     "language.compsci.english": "Computer Science (Python)",
     "languageToggle.english": "English",
     "languageToggle.spanish": "Español",
@@ -1666,6 +1670,10 @@ reverse(head) {
     "settings.theme.select": "Seleccionar tema",
     startTutorialAndOnboarding:
       "Comencemos con el tutorial y la configuración de la cuenta a continuación.",
+    "chapterReview.title": "Recorrido de habilidades del capítulo",
+    "chapterReview.subtitle":
+      "Consulta los hitos que abordarás en este capítulo antes de comenzar.",
+    "chapterReview.cta": "Comenzar capítulo",
     "Foundations of Data Structures": "Fundamentos de Estructuras de Datos",
     "Linear Data Structures": "Estructuras de Datos Lineales",
     "Hierarchical & Associative Data Structures":
@@ -3253,6 +3261,10 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
 
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
+    "chapterReview.title": "Chapter Skill Journey",
+    "chapterReview.subtitle":
+      "Preview the milestones you'll tackle in this chapter before diving in.",
+    "chapterReview.cta": "Start chapter",
     "Foundations of Data Structures": "Foundations of Data Structures",
     "Linear Data Structures": "Linear Data Structures",
     "Hierarchical & Associative Data Structures":
@@ -4866,6 +4878,10 @@ reverse(head) {
 
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
+    "chapterReview.title": "Chapter Skill Journey",
+    "chapterReview.subtitle":
+      "Preview the milestones you'll tackle in this chapter before diving in.",
+    "chapterReview.cta": "Start chapter",
     "Foundations of Data Structures": "Foundations of Data Structures",
     "Linear Data Structures": "Linear Data Structures",
     "Hierarchical & Associative Data Structures":
@@ -6481,6 +6497,10 @@ reverse(head) {
 
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
+    "chapterReview.title": "Chapter Skill Journey",
+    "chapterReview.subtitle":
+      "Preview the milestones you'll tackle in this chapter before diving in.",
+    "chapterReview.cta": "Start chapter",
     "Foundations of Data Structures": "Foundations of Data Structures",
     "Linear Data Structures": "Linear Data Structures",
     "Hierarchical & Associative Data Structures":
@@ -8095,6 +8115,10 @@ reverse(head) {
     "settings.theme.select": "Select Theme",
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
+    "chapterReview.title": "Chapter Skill Journey",
+    "chapterReview.subtitle":
+      "Preview the milestones you'll tackle in this chapter before diving in.",
+    "chapterReview.cta": "Start chapter",
     "Foundations of Data Structures": "Foundations of Data Structures",
     "Linear Data Structures": "Linear Data Structures",
     "Hierarchical & Associative Data Structures":
