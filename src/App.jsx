@@ -3608,6 +3608,37 @@ const Step = ({
     localStorage.getItem("passcode") ===
       import.meta.env.VITE_PATREON_PASSCODE || hasSubmittedPasscode;
 
+  const actionBarShadow = "0 12px 24px rgba(209, 137, 96, 0.25)";
+
+  const actionBarButtonProps = {
+    width: "56px",
+    height: "56px",
+    borderRadius: "20px",
+    bgGradient: "linear(180deg, #fff7ec 0%, #ffe3c3 100%)",
+    border: "1px solid rgba(244, 198, 134, 0.8)",
+    boxShadow: actionBarShadow,
+    color: "#c76f48",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    transition: "all 0.2s ease-in-out",
+    _hover: {
+      transform: "translateY(-4px)",
+      boxShadow: "0 18px 32px rgba(209, 137, 96, 0.35)",
+    },
+    _active: {
+      transform: "translateY(-1px)",
+      boxShadow: "0 10px 18px rgba(209, 137, 96, 0.2)",
+    },
+  };
+
+  const patreonButtonShadow = (() => {
+    const accent = getBoxShadow(step.group);
+    return typeof accent === "string" && accent.includes("px")
+      ? `${accent}, ${actionBarShadow}`
+      : actionBarShadow;
+  })();
+
   return (
     <VStack spacing={4} width="100%" mt={6} p={4}>
       {/* <OrbCanvas width={500} height={500} /> */}
@@ -3656,162 +3687,13 @@ const Step = ({
         <>
           <VStack
             textAlign={"left"}
-            style={{ width: "100%", maxWidth: 400, alignItems: "flex-start" }}
+            style={{
+              width: "100%",
+              maxWidth: 400,
+              alignItems: "flex-start",
+              paddingBottom: "140px",
+            }}
           >
-            <span style={{ fontSize: "50%", marginBottom: 8 }}>
-              <Box mb={"-1"}>
-                <IconButton
-                  width="24px"
-                  height="30px"
-                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                  // border="1px solid #ececec"
-                  background="pink.100"
-                  color="pink.600"
-                  opacity="0.75"
-                  // color="pink.600"
-                  icon={<FaBitcoin padding="4px" fontSize="14px" />}
-                  mr={5}
-                  onMouseDown={() => {
-                    //open modal
-                    onBitcoinModeOpen();
-                    return;
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      onBitcoinModeOpen();
-                      //open modal
-                      return;
-                    }
-                  }}
-                />
-                <IconButton
-                  width="24px"
-                  height="30px"
-                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                  background="pink.100"
-                  opacity="0.75"
-                  color="pink.600"
-                  icon={<PiClockCountdownFill padding="4px" fontSize="18px" />}
-                  mr={5}
-                  onMouseDown={() => {
-                    //open modal
-                    onSelfPacedOpen();
-                    return;
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      onSelfPacedOpen();
-                      //open modal
-                      return;
-                    }
-                  }}
-                />
-
-                <ThemeMenu
-                  userLanguage={userLanguage}
-                  buttonProps={{
-                    width: "24px",
-                    height: "30px",
-                    boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
-                    background: "pink.100",
-                    opacity: "0.75",
-                    color: "pink.600",
-                    mr: 5,
-                  }}
-                />
-
-                {userLanguage === "compsci-en" ? (
-                  <IconButton
-                    width="24px"
-                    height="30px"
-                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                    background="pink.100"
-                    opacity="0.75"
-                    color="pink.600"
-                    icon={<TbBinaryTreeFilled padding="4px" fontSize="14px" />}
-                    mr={5}
-                    onMouseDown={() => {
-                      //open modal
-                      onKnowledgeLedgerOpen();
-                      return;
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        onKnowledgeLedgerOpen();
-                        //open modal
-                        return;
-                      }
-                    }}
-                  />
-                ) : // <IconButton
-                //   width="24px"
-                //   height="30px"
-                //   boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                //   background="pink.100"
-                //   opacity="0.75"
-                //   color="pink.600"
-                //   icon={<FaMagic padding="4px" fontSize="14px" />}
-                //   mr={5}
-                //   onMouseDown={() => {
-                //     //open modal
-                //     onKnowledgeLedgerOpen();
-                //     return;
-                //   }}
-                //   onKeyDown={(e) => {
-                //     if (e.key === "Enter" || e.key === " ") {
-                //       onKnowledgeLedgerOpen();
-                //       //open modal
-                //       return;
-                //     }
-                //   }}
-                // />
-                null}
-
-                {/* <IconButton
-                  width="18px"
-                  height="24px"
-                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                  // border="1px solid #ececec"
-                  background="whiteAlpha.100"
-                  opacity="0.75"
-                  // color="pink.600"
-                  icon={<EmailIcon padding="4px" fontSize="18px" />}
-                  mr={3}
-                  onMouseDown={() =>
-                    (window.location.href = `mailto:sheilfer@robotsbuildingeducation.com?subject=Robots Building Education ${translation[userLanguage]["email.question"]} ${currentStep}: ${step.question.questionText} | ${step.description}&body=${translation[userLanguage]["email.donotdelete"]}       \n\n ${JSON.stringify(emailText)}  `)
-                  }
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      window.location.href = `mailto:sheilfer@robotsbuildingeducation.com?subject=Robots Building Education ${translation[userLanguage]["email.question"]} ${currentStep}: ${step.question.questionText} | ${step.description}&body=${translation[userLanguage]["email.donotdelete"]}       \n\n ${JSON.stringify(emailText)}  `;
-                    }
-                  }}
-                /> */}
-
-                <IconButton
-                  width="24px"
-                  height="30px"
-                  s
-                  // boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                  background="whiteAlpha.100"
-                  opacity="0.75"
-                  boxShadow={`${getBoxShadow(step.group)}`}
-                  icon={<PiPatreonLogoFill padding="4px" fontSize="14px" />}
-                  mr={0}
-                  border="1px solid rgb(246, 206, 86)"
-                  onMouseDown={() => {
-                    window.location.href =
-                      "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      window.location.href =
-                        "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
-                    }
-                  }}
-                />
-              </Box>
-              <br />
-            </span>
             <VStack width="100%">
               <span style={{ fontSize: "50%" }}>
                 {translation[userLanguage]["app.progress"]}:{" "}
@@ -4525,6 +4407,95 @@ const Step = ({
               from="app"
             />
           ) : null}
+
+          <Box
+            position="fixed"
+            bottom={{ base: "16px", md: "28px" }}
+            left="50%"
+            transform="translateX(-50%)"
+            width="calc(100% - 32px)"
+            maxWidth="440px"
+            zIndex="popover"
+            px={1}
+          >
+            <Box
+              bg="rgba(255, 248, 240, 0.94)"
+              borderRadius="36px"
+              px={{ base: 3, md: 4 }}
+              py={{ base: 2.5, md: 3 }}
+              border="1px solid rgba(244, 198, 134, 0.65)"
+              boxShadow="0 20px 36px rgba(209, 137, 96, 0.28)"
+              backdropFilter="blur(12px)"
+            >
+              <HStack spacing={{ base: 2, md: 3 }} justify="center">
+                <IconButton
+                  {...actionBarButtonProps}
+                  aria-label="Open Bitcoin mode"
+                  icon={<FaBitcoin fontSize="20px" />}
+                  onMouseDown={() => {
+                    onBitcoinModeOpen();
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      onBitcoinModeOpen();
+                    }
+                  }}
+                />
+                <IconButton
+                  {...actionBarButtonProps}
+                  aria-label="Open self-paced mode"
+                  icon={<PiClockCountdownFill fontSize="22px" />}
+                  onMouseDown={() => {
+                    onSelfPacedOpen();
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      onSelfPacedOpen();
+                    }
+                  }}
+                />
+                <ThemeMenu
+                  userLanguage={userLanguage}
+                  buttonProps={{
+                    ...actionBarButtonProps,
+                    color: actionBarButtonProps.color,
+                  }}
+                />
+                {userLanguage === "compsci-en" && (
+                  <IconButton
+                    {...actionBarButtonProps}
+                    aria-label="Open knowledge ledger"
+                    icon={<TbBinaryTreeFilled fontSize="20px" />}
+                    onMouseDown={() => {
+                      onKnowledgeLedgerOpen();
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        onKnowledgeLedgerOpen();
+                      }
+                    }}
+                  />
+                )}
+                <IconButton
+                  {...actionBarButtonProps}
+                  aria-label="Support on Patreon"
+                  icon={<PiPatreonLogoFill fontSize="20px" />}
+                  boxShadow={patreonButtonShadow}
+                  borderColor="rgba(244, 198, 134, 0.85)"
+                  onMouseDown={() => {
+                    window.location.href =
+                      "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      window.location.href =
+                        "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
+                    }
+                  }}
+                />
+              </HStack>
+            </Box>
+          </Box>
 
           <LectureModal
             userLanguage={userLanguage}
