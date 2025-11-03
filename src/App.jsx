@@ -134,7 +134,9 @@ import {
 import { IoIosMore } from "react-icons/io";
 import {
   RiAiGenerate,
+  RiBookOpenLine,
   RiCalendarScheduleFill,
+  RiFlag2Line,
   RiRobot2Fill,
 } from "react-icons/ri";
 import { MdOutlineSchedule } from "react-icons/md";
@@ -193,7 +195,9 @@ import {
   FaHeart,
   FaRegHeart,
   FaHeartBroken,
+  FaFire,
 } from "react-icons/fa";
+import { FiTrendingUp } from "react-icons/fi";
 import MiniKitInitializer from "./MiniKitInitializer";
 
 import BitcoinModeModal from "./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal";
@@ -3727,16 +3731,107 @@ const Step = ({
             }}
           >
             <VStack width="100%" spacing={3} alignItems="flex-start">
-              <span style={{ fontSize: "50%" }}>
-                {translation[userLanguage]["app.progress"]}:{" "}
-                {animatedProgress.toFixed(2)}% |{" "}
-                {translation[userLanguage]["chapter"]}: {step.group}
-                &nbsp;|&nbsp;
-                {translation[userLanguage]["app.streak"]}: {streak}
-                &nbsp;|&nbsp;{translation[userLanguage]["goal"] + "s"}:{" "}
-                {String(goalCount) || "0"}
-                &nbsp;
-              </span>
+              <Box
+                width="100%"
+                background="linear-gradient(130deg, rgba(255, 248, 240, 0.95), rgba(255, 240, 244, 0.92))"
+                borderRadius="lg"
+                border="1px solid rgba(255, 186, 150, 0.45)"
+                boxShadow="0 10px 25px rgba(255, 165, 92, 0.25)"
+                p={4}
+              >
+                <Text
+                  fontSize="xs"
+                  textTransform="uppercase"
+                  letterSpacing="0.18em"
+                  color="orange.500"
+                  fontWeight="semibold"
+                  mb={2}
+                >
+                  Journey pulse
+                </Text>
+                <HStack spacing={3} flexWrap="wrap" alignItems="stretch">
+                  <Flex
+                    align="center"
+                    gap={3}
+                    px={3}
+                    py={2}
+                    borderRadius="md"
+                    background="rgba(255, 255, 255, 0.9)"
+                    boxShadow="inset 0 0 0 1px rgba(255, 173, 86, 0.25)"
+                    minW="140px"
+                  >
+                    <Icon as={FiTrendingUp} color="orange.400" boxSize={5} />
+                    <Box>
+                      <Text fontSize="xs" color="gray.500">
+                        {translation[userLanguage]["app.progress"]}
+                      </Text>
+                      <Text fontWeight="bold" fontSize="sm">
+                        {animatedProgress.toFixed(2)}%
+                      </Text>
+                    </Box>
+                  </Flex>
+                  <Flex
+                    align="center"
+                    gap={3}
+                    px={3}
+                    py={2}
+                    borderRadius="md"
+                    background="rgba(255, 255, 255, 0.9)"
+                    boxShadow="inset 0 0 0 1px rgba(255, 173, 86, 0.25)"
+                    minW="140px"
+                  >
+                    <Icon as={RiBookOpenLine} color="pink.400" boxSize={5} />
+                    <Box>
+                      <Text fontSize="xs" color="gray.500">
+                        {translation[userLanguage]["chapter"]}
+                      </Text>
+                      <Text fontWeight="bold" fontSize="sm">
+                        {step.group}
+                      </Text>
+                    </Box>
+                  </Flex>
+                  <Flex
+                    align="center"
+                    gap={3}
+                    px={3}
+                    py={2}
+                    borderRadius="md"
+                    background="rgba(255, 255, 255, 0.9)"
+                    boxShadow="inset 0 0 0 1px rgba(255, 173, 86, 0.25)"
+                    minW="140px"
+                  >
+                    <Icon as={FaFire} color="red.400" boxSize={5} />
+                    <Box>
+                      <Text fontSize="xs" color="gray.500">
+                        {translation[userLanguage]["app.streak"]}
+                      </Text>
+                      <Text fontWeight="bold" fontSize="sm">
+                        {streak}
+                      </Text>
+                    </Box>
+                  </Flex>
+                  <Flex
+                    align="center"
+                    gap={3}
+                    px={3}
+                    py={2}
+                    borderRadius="md"
+                    background="rgba(255, 255, 255, 0.9)"
+                    boxShadow="inset 0 0 0 1px rgba(255, 173, 86, 0.25)"
+                    minW="140px"
+                  >
+                    <Icon as={RiFlag2Line} color="purple.400" boxSize={5} />
+                    <Box>
+                      <Text fontSize="xs" color="gray.500">
+                        {translation[userLanguage]["goal"] + "s"}
+                      </Text>
+                      <Text fontWeight="bold" fontSize="sm">
+                        {String(goalCount) || "0"}
+                      </Text>
+                    </Box>
+                  </Flex>
+                </HStack>
+              </Box>
               <MotionProgress
                 height="25px"
                 initial={{ scale: 1 }}
