@@ -134,7 +134,9 @@ import {
 import { IoIosMore } from "react-icons/io";
 import {
   RiAiGenerate,
+  RiBookOpenLine,
   RiCalendarScheduleFill,
+  RiFlag2Line,
   RiRobot2Fill,
 } from "react-icons/ri";
 import { MdOutlineSchedule } from "react-icons/md";
@@ -193,7 +195,9 @@ import {
   FaHeart,
   FaRegHeart,
   FaHeartBroken,
+  FaFire,
 } from "react-icons/fa";
+import { FiTrendingUp } from "react-icons/fi";
 import MiniKitInitializer from "./MiniKitInitializer";
 
 import BitcoinModeModal from "./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal";
@@ -3648,7 +3652,7 @@ const Step = ({
     borderRadius: "14px",
     bgGradient: "linear(180deg, #fff7ec 0%, #ffe3c3 100%)",
     border: "1px solid rgba(244, 198, 134, 0.8)",
-    boxShadow: actionBarShadow,
+    // boxShadow: actionBarShadow,
     color: "#c76f48",
     display: "flex",
     alignItems: "center",
@@ -3656,11 +3660,11 @@ const Step = ({
     transition: "all 0.2s ease-in-out",
     _hover: {
       transform: "translateY(-4px)",
-      boxShadow: "0 18px 32px rgba(209, 137, 96, 0.35)",
+      // boxShadow: "0 18px 32px rgba(209, 137, 96, 0.35)",
     },
     _active: {
       transform: "translateY(-1px)",
-      boxShadow: "0 10px 18px rgba(209, 137, 96, 0.2)",
+      // boxShadow: "0 10px 18px rgba(209, 137, 96, 0.2)",
     },
   };
 
@@ -3726,39 +3730,89 @@ const Step = ({
               paddingBottom: "14px",
             }}
           >
-            <VStack width="100%" spacing={3} alignItems="flex-start">
-              <span style={{ fontSize: "50%" }}>
-                {translation[userLanguage]["app.progress"]}:{" "}
-                {animatedProgress.toFixed(2)}% |{" "}
-                {translation[userLanguage]["chapter"]}: {step.group}
-                &nbsp;|&nbsp;
-                {translation[userLanguage]["app.streak"]}: {streak}
-                &nbsp;|&nbsp;{translation[userLanguage]["goal"] + "s"}:{" "}
-                {String(goalCount) || "0"}
-                &nbsp;
-              </span>
+            <VStack width="100%" spacing={2} alignItems="flex-start">
+              <HStack
+                spacing={2}
+                flexWrap="wrap"
+                rowGap={1.5}
+                alignItems="center"
+                width="100%"
+              >
+                <HStack
+                  spacing={1.5}
+                  px={2}
+                  py={1}
+                  borderRadius="full"
+                  background="rgba(247, 252, 255, 0.92)"
+                  border="1px solid rgba(102, 133, 255, 0.5)"
+                >
+                  <Icon as={RiBookOpenLine} color="blue.400" boxSize={3.5} />
+                  <Text fontSize="sm" fontWeight="medium" color="gray.700">
+                    {step.group}
+                  </Text>
+                </HStack>
+                <HStack
+                  spacing={1.5}
+                  px={2}
+                  py={1}
+                  borderRadius="full"
+                  background="rgba(255, 249, 242, 0.9)"
+                  border="1px solid rgba(246, 173, 85, 0.4)"
+                >
+                  <Icon as={FiTrendingUp} color="orange.500" boxSize={3.5} />
+                  <Text fontSize="sm" fontWeight="medium" color="gray.700">
+                    {animatedProgress.toFixed(0)}%
+                  </Text>
+                </HStack>
+
+                <HStack
+                  spacing={1.5}
+                  px={2}
+                  py={1}
+                  borderRadius="full"
+                  background="rgba(255, 245, 245, 0.95)"
+                  border="1px solid rgba(252, 129, 129, 0.45)"
+                >
+                  <Icon as={FaFire} color="red.400" boxSize={3.5} />
+                  <Text fontSize="sm" fontWeight="medium" color="gray.700">
+                    {streak}
+                  </Text>
+                </HStack>
+                <HStack
+                  spacing={1.5}
+                  px={2}
+                  py={1}
+                  borderRadius="full"
+                  background="rgba(249, 247, 255, 0.95)"
+                  border="1px solid rgba(183, 148, 244, 0.5)"
+                >
+                  <Icon as={RiFlag2Line} color="purple.400" boxSize={3.5} />
+                  <Text fontSize="sm" fontWeight="medium" color="gray.700">
+                    {String(goalCount) || "0"}
+                  </Text>
+                </HStack>
+              </HStack>
               <MotionProgress
-                height="25px"
+                height="24px"
                 initial={{ scale: 1 }}
                 animate={progressControls}
-                opacity="0.8"
+                opacity={0.8}
                 value={animatedProgress}
-                size="md"
+                size="sm"
                 colorScheme={getColorScheme(step.group)}
-                width="80%"
+                width="100%"
                 hasStripe
                 isAnimated
                 borderRadius="4px"
-                border="1px solid #ececec"
-                boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                border="1px solid rgba(236, 236, 236, 0.8)"
                 background={getBackgroundScheme(step.group)}
-                mb={userLanguage !== "compsci-en" ? 2 : 3}
+                mb={userLanguage !== "compsci-en" ? 1 : 2}
                 sx={{
                   "& > div": {
                     background:
                       "linear-gradient(270deg, #f6ad55, #fbd38d, #f6ad55)",
                     backgroundSize: "200% 200%",
-                    animation: `${progressGradient} 7s ease-in-out  infinite`,
+                    animation: `${progressGradient} 7s ease-in-out infinite`,
                   },
                 }}
               />
@@ -4461,7 +4515,7 @@ const Step = ({
                   py={{ base: 2, md: 2.5 }}
                   border="1px solid rgba(244, 198, 134, 0.65)"
                   borderBottom="0"
-                  boxShadow="0 -2px 12px rgba(209, 137, 96, 0.2)"
+                  boxShadow="0 -2px 0px rgba(209, 137, 96, 0.2)"
                   backdropFilter="blur(10px)"
                 >
                   <HStack spacing={{ base: 2, md: 3 }} justify="center">
@@ -4517,7 +4571,7 @@ const Step = ({
                       {...actionBarButtonProps}
                       aria-label="Support on Patreon"
                       icon={<PiPatreonLogoFill fontSize="20px" />}
-                      boxShadow={patreonButtonShadow}
+                      // boxShadow={patreonButtonShadow}
                       borderColor="rgba(244, 198, 134, 0.85)"
                       onMouseDown={() => {
                         window.location.href =
