@@ -11,6 +11,12 @@ import {
   Flex,
   Icon,
   useDisclosure,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerHeader,
+  DrawerBody,
+  DrawerCloseButton,
   useToast,
   Checkbox,
   Textarea,
@@ -1514,6 +1520,21 @@ const CHAPTER_REVIEW_TYPE_STYLES = {
   },
 };
 
+const FLOW_CARD_PATTERNS = [
+  { alignSelf: "flex-start", translateX: "-12%", rotate: "-4deg", anchor: 80 },
+  { alignSelf: "center", translateX: "0%", rotate: "3deg", anchor: 200 },
+  { alignSelf: "flex-end", translateX: "12%", rotate: "-3deg", anchor: 320 },
+  { alignSelf: "center", translateX: "-6%", rotate: "2deg", anchor: 200 },
+];
+
+const createFlowConnectorPath = (startAnchor, endAnchor) => {
+  const controlOffset = (endAnchor - startAnchor) * 0.5;
+  const controlPoint1 = startAnchor + controlOffset * 0.6;
+  const controlPoint2 = endAnchor - controlOffset * 0.6;
+
+  return `M ${startAnchor} 10 C ${controlPoint1} -6, ${controlPoint2} 70, ${endAnchor} 54`;
+};
+
 const detectChapterQuestionKind = (step) => {
   if (!step || typeof step !== "object") return "default";
   if (step.isSelectOrder) return "order";
@@ -1565,6 +1586,12 @@ const deriveChapterLabel = (group, primaryMap, fallbackMap) => {
 
 const ChapterReview = ({ nodes, text, onStart }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [selectedChapter, setSelectedChapter] = useState(null);
+  const {
+    isOpen: isChapterDrawerOpen,
+    onOpen: onChapterDrawerOpen,
+    onClose: onChapterDrawerClose,
+  } = useDisclosure();
   const previewCount = 2;
   const activeNodeIndex = Math.max(
     0,
@@ -1579,17 +1606,54 @@ const ChapterReview = ({ nodes, text, onStart }) => {
 
   useEffect(() => {
     setIsExpanded(false);
-  }, [nodes]);
+    setSelectedChapter(null);
+    if (isChapterDrawerOpen) {
+      onChapterDrawerClose();
+    }
+  }, [nodes, isChapterDrawerOpen, onChapterDrawerClose]);
+
+  const handleChapterSelect = (node) => {
+    if (!node?.questions?.length) return;
+    setSelectedChapter(node);
+    onChapterDrawerOpen();
+  };
+
+  const handleChapterKeyDown = (event, node) => {
+    if (!node?.questions?.length) return;
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleChapterSelect(node);
+    }
+  };
+
+  const handleDrawerClose = () => {
+    setSelectedChapter(null);
+    onChapterDrawerClose();
+  };
+
+  const resolvePattern = (index) =>
+    FLOW_CARD_PATTERNS[index % FLOW_CARD_PATTERNS.length];
+
+  const getJustifyContent = (align) => {
+    if (align === "flex-start") return "flex-start";
+    if (align === "flex-end") return "flex-end";
+    return "center";
+  };
 
   return (
     <Box
       width="100%"
       display="flex"
       justifyContent="center"
-      py={{ base: 10, md: 12 }}
-      px={{ base: 2, md: 4 }}
+      py={{ base: 10, md: 14 }}
+      px={{ base: 3, md: 6 }}
     >
-      <VStack spacing={8} width="100%" maxW="560px" align="center">
+      <VStack
+        spacing={{ base: 10, md: 12 }}
+        width="100%"
+        maxW={{ base: "680px", lg: "820px" }}
+        align="center"
+      >
         <Box textAlign="center" px={{ base: 4, md: 6 }}>
           <Text
             fontSize="sm"
@@ -1608,14 +1672,14 @@ const ChapterReview = ({ nodes, text, onStart }) => {
 
         <Box
           w="100%"
-          borderRadius="3xl"
+          borderRadius="4xl"
           p={{ base: 6, md: 8 }}
-          bg="rgba(255,255,255,0.88)"
-          backdropFilter="blur(14px)"
+          bg="rgba(255,255,255,0.9)"
+          backdropFilter="blur(16px)"
           border="1px solid rgba(226,232,240,0.7)"
-          boxShadow="0 24px 50px rgba(99,102,241,0.18)"
+          boxShadow="0 32px 80px rgba(79,70,229,0.18)"
         >
-          <VStack spacing={6} align="stretch">
+          <VStack spacing={{ base: 10, md: 12 }} align="stretch">
             {visibleNodes.map((node, index) => {
               const typeStyle =
                 CHAPTER_REVIEW_TYPE_STYLES[node.questionKind] ||
@@ -1623,85 +1687,114 @@ const ChapterReview = ({ nodes, text, onStart }) => {
               const IconComponent = typeStyle.icon || StarIcon;
               const accent = typeStyle.accent;
               const gradient = typeStyle.gradient;
+              const pattern = resolvePattern(index);
+              const nextPattern = resolvePattern(index + 1);
+              const justifyContent = getJustifyContent(pattern.alignSelf);
+              const isClickable = node?.questions?.length > 0;
 
               return (
-                <Box
-                  key={node.id}
-                  display="flex"
-                  flexDirection="column"
-                  alignItems="center"
-                >
-                  <Box
-                    as={motion.div}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: index * 0.05 }}
-                    width="100%"
-                    borderRadius="full"
-                    px={{ base: 4, md: 6 }}
-                    py={{ base: 3, md: 4 }}
-                    bg="rgba(255,255,255,0.95)"
-                    borderWidth="1px"
-                    borderColor={`${accent}40`}
-                    boxShadow={`0 16px 32px ${accent}26`}
-                    position="relative"
-                    overflow="hidden"
-                  >
+                <Box key={node.id} display="flex" flexDirection="column" gap={4}>
+                  <Flex justify={justifyContent} w="100%">
                     <Box
-                      position="absolute"
-                      inset={0}
-                      bgGradient={gradient}
-                      opacity={0.24}
-                      pointerEvents="none"
-                    />
-                    <Flex
-                      align="center"
+                      as={motion.div}
+                      role={isClickable ? "button" : undefined}
+                      tabIndex={isClickable ? 0 : -1}
+                      onClick={() => handleChapterSelect(node)}
+                      onKeyDown={(event) => handleChapterKeyDown(event, node)}
+                      initial={{ opacity: 0, y: 24, scale: 0.94 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ duration: 0.45, delay: index * 0.06 }}
+                      px={{ base: 4, md: 5 }}
+                      py={{ base: 4, md: 5 }}
+                      borderRadius="full"
+                      bg="rgba(255,255,255,0.96)"
+                      borderWidth="1px"
+                      borderColor={node.isActive ? `${accent}85` : `${accent}45`}
+                      boxShadow={
+                        node.isActive
+                          ? `0 28px 54px ${accent}35`
+                          : `0 18px 38px rgba(15,23,42,0.14)`
+                      }
+                      display="flex"
+                      alignItems="center"
                       gap={{ base: 4, md: 5 }}
                       position="relative"
-                      zIndex={1}
+                      cursor={isClickable ? "pointer" : "default"}
+                      transform={`translateX(${pattern.translateX}) rotate(${pattern.rotate})`}
+                      _hover={
+                        isClickable
+                          ? {
+                              transform: `translateX(${pattern.translateX}) rotate(${pattern.rotate}) scale(1.02)`
+                            }
+                          : undefined
+                      }
+                      _focusVisible={{ boxShadow: `0 0 0 3px ${accent}55` }}
                     >
                       <Box
-                        w="56px"
-                        h="56px"
-                        borderRadius="full"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        bgGradient={`radial-gradient(circle at 30% 30%, ${accent}3d, transparent 70%)`}
-                        boxShadow={`0 18px 34px ${accent}33`}
+                        position="absolute"
+                        inset={0}
+                        bgGradient={gradient}
+                        opacity={0.28}
+                        pointerEvents="none"
+                      />
+                      <Flex
+                        align="center"
+                        gap={{ base: 4, md: 5 }}
+                        position="relative"
+                        zIndex={1}
+                        w="100%"
                       >
-                        <Icon as={IconComponent} boxSize={7} color={accent} />
-                      </Box>
-                      <VStack spacing={1} align="flex-start" flex={1}>
+                        <Box
+                          w={{ base: "56px", md: "64px" }}
+                          h={{ base: "56px", md: "64px" }}
+                          borderRadius="full"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          bgGradient={`radial-gradient(circle at 30% 30%, ${accent}33, transparent 70%)`}
+                          boxShadow={`0 20px 40px ${accent}30`}
+                        >
+                          <Icon as={IconComponent} boxSize={{ base: 6, md: 7 }} color={accent} />
+                        </Box>
                         <Text
-                          fontSize="lg"
-                          fontWeight={node.isActive ? "bold" : "semibold"}
+                          fontSize={{ base: "lg", md: "xl" }}
+                          fontWeight={node.isActive ? "extrabold" : "semibold"}
                           color="gray.800"
+                          letterSpacing="tight"
                         >
                           {node.chapterLabel || node.title}
                         </Text>
-                      </VStack>
-                    </Flex>
-                  </Box>
+                      </Flex>
+                    </Box>
+                  </Flex>
 
                   {index < visibleNodes.length - 1 ? (
                     <Box
-                      h={{ base: 40, md: 52 }}
+                      h={{ base: 16, md: 20 }}
+                      w="100%"
                       display="flex"
                       alignItems="center"
                       justifyContent="center"
+                      px={{ base: 6, md: 8 }}
                     >
-                      <Box as="svg" width="200" height="64" viewBox="0 0 200 64" fill="none">
+                      <Box
+                        as="svg"
+                        width="100%"
+                        height="100%"
+                        viewBox="0 0 400 80"
+                        fill="none"
+                        preserveAspectRatio="none"
+                      >
                         <path
-                          d="M100 2 C140 16 60 48 100 62"
-                          stroke={`${accent}55`}
-                          strokeWidth="4"
+                          d={createFlowConnectorPath(pattern.anchor, nextPattern.anchor)}
+                          stroke="rgba(148,163,184,0.18)"
+                          strokeWidth="10"
                           strokeLinecap="round"
                         />
                         <path
-                          d="M100 2 C140 24 60 40 100 62"
-                          stroke="rgba(148,163,184,0.12)"
-                          strokeWidth="4"
+                          d={createFlowConnectorPath(pattern.anchor, nextPattern.anchor)}
+                          stroke={`${accent}55`}
+                          strokeWidth="5"
                           strokeLinecap="round"
                         />
                       </Box>
@@ -1713,10 +1806,10 @@ const ChapterReview = ({ nodes, text, onStart }) => {
             {hasHiddenNodes && !isExpanded ? (
               <Box
                 as={motion.div}
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: visibleNodes.length * 0.05 }}
-                pt={{ base: 2, md: 3 }}
+                transition={{ duration: 0.45, delay: visibleNodes.length * 0.06 }}
+                pt={{ base: 2, md: 4 }}
               >
                 <Button
                   variant="ghost"
@@ -1749,6 +1842,113 @@ const ChapterReview = ({ nodes, text, onStart }) => {
         >
           {text?.cta}
         </Button>
+
+        <Drawer
+          isOpen={isChapterDrawerOpen}
+          placement="bottom"
+          onClose={handleDrawerClose}
+        >
+          <DrawerOverlay bg="blackAlpha.400" backdropFilter="blur(8px)" />
+          <DrawerContent
+            borderTopRadius={{ base: "3xl", md: "4xl" }}
+            bg="rgba(255,255,255,0.96)"
+            maxH="80vh"
+            overflow="hidden"
+          >
+            <DrawerCloseButton top={{ base: 3, md: 4 }} right={{ base: 4, md: 6 }} />
+            <DrawerHeader pt={{ base: 8, md: 10 }} pb={{ base: 4, md: 6 }}>
+              <VStack align="flex-start" spacing={{ base: 1, md: 2 }}>
+                <Text
+                  fontSize="xs"
+                  fontWeight="semibold"
+                  letterSpacing="widest"
+                  textTransform="uppercase"
+                  color="purple.400"
+                >
+                  {text?.drawerTitle || "Inside this chapter"}
+                </Text>
+                <Text fontSize={{ base: "2xl", md: "3xl" }} fontWeight="bold" color="gray.800">
+                  {selectedChapter?.chapterLabel || selectedChapter?.title}
+                </Text>
+              </VStack>
+            </DrawerHeader>
+            <DrawerBody pb={{ base: 8, md: 12 }}>
+              <VStack spacing={{ base: 4, md: 5 }} align="stretch">
+                {selectedChapter?.questions?.length ? (
+                  selectedChapter.questions.map((question, index) => {
+                    const questionStyle =
+                      CHAPTER_REVIEW_TYPE_STYLES[question.questionKind] ||
+                      CHAPTER_REVIEW_TYPE_STYLES.default;
+                    const QuestionIconComponent = questionStyle.icon || StarIcon;
+                    const questionAccent = questionStyle.accent;
+                    const questionGradient = questionStyle.gradient;
+
+                    return (
+                      <Box
+                        key={question.id || `${selectedChapter.id}-${index}`}
+                        as={motion.div}
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.35, delay: index * 0.05 }}
+                        borderRadius="2xl"
+                        px={{ base: 4, md: 5 }}
+                        py={{ base: 3, md: 4 }}
+                        bg="rgba(255,255,255,0.95)"
+                        borderWidth="1px"
+                        borderColor={`${questionAccent}40`}
+                        boxShadow={`0 18px 36px ${questionAccent}26`}
+                        position="relative"
+                        overflow="hidden"
+                      >
+                        <Box
+                          position="absolute"
+                          inset={0}
+                          bgGradient={questionGradient}
+                          opacity={0.24}
+                          pointerEvents="none"
+                        />
+                        <Flex
+                          align="center"
+                          gap={{ base: 4, md: 5 }}
+                          position="relative"
+                          zIndex={1}
+                        >
+                          <Box
+                            w={{ base: "48px", md: "56px" }}
+                            h={{ base: "48px", md: "56px" }}
+                            borderRadius="full"
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                            bgGradient={`radial-gradient(circle at 30% 30%, ${questionAccent}33, transparent 70%)`}
+                            boxShadow={`0 18px 30px ${questionAccent}24`}
+                          >
+                            <Icon
+                              as={QuestionIconComponent}
+                              boxSize={{ base: 6, md: 7 }}
+                              color={questionAccent}
+                            />
+                          </Box>
+                          <Text
+                            fontSize={{ base: "lg", md: "xl" }}
+                            fontWeight="semibold"
+                            color="gray.800"
+                          >
+                            {question.title}
+                          </Text>
+                        </Flex>
+                      </Box>
+                    );
+                  })
+                ) : (
+                  <Text color="gray.500" fontSize="md">
+                    {text?.emptyChapter || "Lessons will appear here."}
+                  </Text>
+                )}
+              </VStack>
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
       </VStack>
     </Box>
   );
@@ -1838,43 +2038,66 @@ const Step = ({
       return [];
     }
 
-    const seenGroups = new Set();
+    const chapterMap = new Map();
 
-    return localeSteps.reduce((acc, entry, index) => {
+    localeSteps.forEach((entry, index) => {
       if (!entry || typeof entry !== "object") {
-        return acc;
+        return;
       }
 
       const groupValue = entry.group ?? entry.chapter;
       if (!groupValue) {
-        return acc;
+        return;
       }
 
       const normalizedGroup = String(groupValue).toLowerCase();
       if (normalizedGroup === "introduction") {
-        return acc;
+        return;
       }
-
-      if (seenGroups.has(normalizedGroup)) {
-        return acc;
-      }
-
-      seenGroups.add(normalizedGroup);
 
       const questionKind = detectChapterQuestionKind(entry);
+      const questionTitle = normalizeChapterTitle(entry.title, index);
 
-      acc.push({
-        id: `${normalizedGroup}-${index}`,
-        title: normalizeChapterTitle(entry.title, index),
+      let chapter = chapterMap.get(normalizedGroup);
+
+      if (!chapter) {
+        chapter = {
+          id: `${normalizedGroup}-${index}`,
+          title: questionTitle,
+          questionKind,
+          chapterLabel: deriveChapterLabel(
+            groupValue,
+            translationMap,
+            fallbackTranslation
+          ),
+          groupValue,
+          normalizedGroup,
+          firstIndex: index,
+          questions: [],
+        };
+        chapterMap.set(normalizedGroup, chapter);
+      }
+
+      chapter.questions.push({
+        id: `${normalizedGroup}-question-${index}`,
+        title: questionTitle,
         questionKind,
-        chapterLabel: deriveChapterLabel(groupValue, translationMap, fallbackTranslation),
-        groupValue,
-        normalizedGroup,
-        firstIndex: index,
+        index,
       });
 
-      return acc;
-    }, []);
+      if (index < chapter.firstIndex) {
+        chapter.firstIndex = index;
+      }
+
+      if (chapter.questions.length === 1) {
+        chapter.title = questionTitle;
+        chapter.questionKind = questionKind;
+      }
+    });
+
+    return Array.from(chapterMap.values()).sort(
+      (a, b) => a.firstIndex - b.firstIndex
+    );
   }, [fallbackTranslation, localeSteps, translationMap]);
 
   const activeChapterKey = useMemo(() => {
