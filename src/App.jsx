@@ -1,6 +1,12 @@
 import "regenerator-runtime/runtime";
 import "@babel/polyfill";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Box,
   Button,
@@ -1571,9 +1577,7 @@ const deriveChapterLabel = (group, primaryMap, fallbackMap) => {
   const numeric = Number(normalized);
   if (Number.isFinite(numeric)) {
     const key = `onboarding.chapter${numeric}.title`;
-    return (
-      primaryMap?.[key] || fallbackMap?.[key] || `Chapter ${numeric}`
-    );
+    return primaryMap?.[key] || fallbackMap?.[key] || `Chapter ${numeric}`;
   }
 
   return normalized
@@ -1695,7 +1699,12 @@ const ChapterReview = ({ nodes, text, onStart }) => {
               const isClickable = node?.questions?.length > 0;
 
               return (
-                <Box key={node.id} display="flex" flexDirection="column" gap={4}>
+                <Box
+                  key={node.id}
+                  display="flex"
+                  flexDirection="column"
+                  gap={4}
+                >
                   <Flex justify={justifyContent} w="100%">
                     <Box
                       as={motion.div}
@@ -1711,7 +1720,9 @@ const ChapterReview = ({ nodes, text, onStart }) => {
                       borderRadius="full"
                       bg="rgba(255,255,255,0.96)"
                       borderWidth="1px"
-                      borderColor={node.isActive ? `${accent}85` : `${accent}45`}
+                      borderColor={
+                        node.isActive ? `${accent}85` : `${accent}45`
+                      }
                       boxShadow={
                         node.isActive
                           ? `0 28px 54px ${accent}35`
@@ -1726,7 +1737,7 @@ const ChapterReview = ({ nodes, text, onStart }) => {
                       _hover={
                         isClickable
                           ? {
-                              transform: `translateX(${pattern.translateX}) rotate(${pattern.rotate}) scale(1.02)`
+                              transform: `translateX(${pattern.translateX}) rotate(${pattern.rotate}) scale(1.02)`,
                             }
                           : undefined
                       }
@@ -1756,7 +1767,11 @@ const ChapterReview = ({ nodes, text, onStart }) => {
                           bgGradient={`radial-gradient(circle at 30% 30%, ${accent}33, transparent 70%)`}
                           boxShadow={`0 20px 40px ${accent}30`}
                         >
-                          <Icon as={IconComponent} boxSize={{ base: 6, md: 7 }} color={accent} />
+                          <Icon
+                            as={IconComponent}
+                            boxSize={{ base: 6, md: 7 }}
+                            color={accent}
+                          />
                         </Box>
                         <Text
                           fontSize={{ base: "lg", md: "xl" }}
@@ -1788,13 +1803,19 @@ const ChapterReview = ({ nodes, text, onStart }) => {
                         preserveAspectRatio="none"
                       >
                         <path
-                          d={createFlowConnectorPath(pattern.anchor, nextPattern.anchor)}
+                          d={createFlowConnectorPath(
+                            pattern.anchor,
+                            nextPattern.anchor
+                          )}
                           stroke="rgba(148,163,184,0.18)"
                           strokeWidth="10"
                           strokeLinecap="round"
                         />
                         <path
-                          d={createFlowConnectorPath(pattern.anchor, nextPattern.anchor)}
+                          d={createFlowConnectorPath(
+                            pattern.anchor,
+                            nextPattern.anchor
+                          )}
                           stroke={`${accent}55`}
                           strokeWidth="5"
                           strokeLinecap="round"
@@ -1810,7 +1831,10 @@ const ChapterReview = ({ nodes, text, onStart }) => {
                 as={motion.div}
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.45, delay: visibleNodes.length * 0.06 }}
+                transition={{
+                  duration: 0.45,
+                  delay: visibleNodes.length * 0.06,
+                }}
                 pt={{ base: 2, md: 4 }}
               >
                 <Button
@@ -1857,7 +1881,10 @@ const ChapterReview = ({ nodes, text, onStart }) => {
             maxH="80vh"
             overflow="hidden"
           >
-            <DrawerCloseButton top={{ base: 3, md: 4 }} right={{ base: 4, md: 6 }} />
+            <DrawerCloseButton
+              top={{ base: 3, md: 4 }}
+              right={{ base: 4, md: 6 }}
+            />
             <DrawerHeader pt={{ base: 8, md: 10 }} pb={{ base: 4, md: 6 }}>
               <VStack align="flex-start" spacing={{ base: 1, md: 2 }}>
                 <Text
@@ -1869,7 +1896,11 @@ const ChapterReview = ({ nodes, text, onStart }) => {
                 >
                   {text?.drawerTitle || "Inside this chapter"}
                 </Text>
-                <Text fontSize={{ base: "2xl", md: "3xl" }} fontWeight="bold" color="gray.800">
+                <Text
+                  fontSize={{ base: "2xl", md: "3xl" }}
+                  fontWeight="bold"
+                  color="gray.800"
+                >
                   {selectedChapter?.chapterLabel || selectedChapter?.title}
                 </Text>
               </VStack>
@@ -1881,7 +1912,8 @@ const ChapterReview = ({ nodes, text, onStart }) => {
                     const questionStyle =
                       CHAPTER_REVIEW_TYPE_STYLES[question.questionKind] ||
                       CHAPTER_REVIEW_TYPE_STYLES.default;
-                    const QuestionIconComponent = questionStyle.icon || StarIcon;
+                    const QuestionIconComponent =
+                      questionStyle.icon || StarIcon;
                     const questionAccent = questionStyle.accent;
                     const questionGradient = questionStyle.gradient;
 
@@ -3691,7 +3723,7 @@ const Step = ({
               width: "100%",
               maxWidth: 400,
               alignItems: "flex-start",
-              paddingBottom: "140px",
+              paddingBottom: "14px",
             }}
           >
             <VStack width="100%" spacing={3} alignItems="flex-start">
@@ -4352,11 +4384,11 @@ const Step = ({
             </Box>
           ) : !isAdaptiveLearning ||
             step.isTerminal ? null : suggestionMessage.length > 0 ? (
-            <Box maxWidth="600px" width="100%">
+            <Box maxWidth="600px" width="100%" pb={12}>
               <Box
                 as={motion.div}
                 mt={4}
-                mb={{ base: 24, md: 28 }}
+                // mb={{ base: 24, md: 28 }}
                 p={4}
                 borderRadius="24px"
                 borderBottomLeftRadius={"0px"}
@@ -4407,9 +4439,18 @@ const Step = ({
             />
           ) : null}
 
-          <Box position="fixed" bottom="0" left="0" width="100%" zIndex="popover">
+          <Box
+            position="fixed"
+            bottom="0"
+            left="0"
+            width="100%"
+            // zIndex="popover"
+          >
             <Flex justify="center" width="100%">
-              <Box width={{ base: "100%", md: "440px" }} px={{ base: 0, md: 4 }}>
+              <Box
+                width={{ base: "100%", md: "440px" }}
+                px={{ base: 0, md: 4 }}
+              >
                 <Box
                   bg="rgba(255, 248, 240, 0.96)"
                   borderTopLeftRadius={{ base: "20px", md: "24px" }}

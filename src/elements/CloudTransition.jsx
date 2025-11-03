@@ -117,7 +117,10 @@ const extractTextFromNode = (node) => {
 };
 
 const sanitizeText = (value) =>
-  extractTextFromNode(value).replace(/\s+/g, " ").replace(/\u00a0/g, " ").trim();
+  extractTextFromNode(value)
+    .replace(/\s+/g, " ")
+    .replace(/\u00a0/g, " ")
+    .trim();
 
 const truncateText = (value, limit = 140) => {
   if (!value) return "";
@@ -430,7 +433,11 @@ const CloudTransition = ({
 
     let activeIndex = normalizeIndex(currentStepIndex);
 
-    if (activeIndex === null || activeIndex < 0 || activeIndex >= localeSteps.length) {
+    if (
+      activeIndex === null ||
+      activeIndex < 0 ||
+      activeIndex >= localeSteps.length
+    ) {
       activeIndex = localeSteps.findIndex((step) => {
         if (!step || typeof step !== "object") return false;
         if (step?.title && clonedStep?.title) {
@@ -574,7 +581,8 @@ const CloudTransition = ({
       QUESTION_TYPE_STYLES[fromNode?.questionKind] ??
       QUESTION_TYPE_STYLES.default;
     const toStyle =
-      QUESTION_TYPE_STYLES[toNode?.questionKind] ?? QUESTION_TYPE_STYLES.default;
+      QUESTION_TYPE_STYLES[toNode?.questionKind] ??
+      QUESTION_TYPE_STYLES.default;
     const gradientId = `${connectorBaseId}-connector-${index}`;
 
     return (
