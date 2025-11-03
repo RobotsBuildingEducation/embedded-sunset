@@ -3730,130 +3730,111 @@ const Step = ({
               paddingBottom: "14px",
             }}
           >
-            <VStack width="100%" spacing={3} alignItems="flex-start">
-              <Box
-                width="100%"
-                background="linear-gradient(130deg, rgba(255, 248, 240, 0.95), rgba(255, 240, 244, 0.92))"
-                borderRadius="lg"
-                border="1px solid rgba(255, 186, 150, 0.45)"
-                boxShadow="0 10px 25px rgba(255, 165, 92, 0.25)"
-                p={4}
-              >
+            <VStack width="100%" spacing={2} alignItems="flex-start">
+              <HStack spacing={2} alignItems="center" color="orange.600">
+                <Icon as={FiTrendingUp} boxSize={4} />
                 <Text
                   fontSize="xs"
                   textTransform="uppercase"
                   letterSpacing="0.18em"
-                  color="orange.500"
                   fontWeight="semibold"
-                  mb={2}
                 >
                   Journey pulse
                 </Text>
-                <HStack spacing={3} flexWrap="wrap" alignItems="stretch">
-                  <Flex
-                    align="center"
-                    gap={3}
-                    px={3}
-                    py={2}
-                    borderRadius="md"
-                    background="rgba(255, 255, 255, 0.9)"
-                    boxShadow="inset 0 0 0 1px rgba(255, 173, 86, 0.25)"
-                    minW="140px"
-                  >
-                    <Icon as={FiTrendingUp} color="orange.400" boxSize={5} />
-                    <Box>
-                      <Text fontSize="xs" color="gray.500">
-                        {translation[userLanguage]["app.progress"]}
-                      </Text>
-                      <Text fontWeight="bold" fontSize="sm">
-                        {animatedProgress.toFixed(2)}%
-                      </Text>
-                    </Box>
-                  </Flex>
-                  <Flex
-                    align="center"
-                    gap={3}
-                    px={3}
-                    py={2}
-                    borderRadius="md"
-                    background="rgba(255, 255, 255, 0.9)"
-                    boxShadow="inset 0 0 0 1px rgba(255, 173, 86, 0.25)"
-                    minW="140px"
-                  >
-                    <Icon as={RiBookOpenLine} color="pink.400" boxSize={5} />
-                    <Box>
-                      <Text fontSize="xs" color="gray.500">
-                        {translation[userLanguage]["chapter"]}
-                      </Text>
-                      <Text fontWeight="bold" fontSize="sm">
-                        {step.group}
-                      </Text>
-                    </Box>
-                  </Flex>
-                  <Flex
-                    align="center"
-                    gap={3}
-                    px={3}
-                    py={2}
-                    borderRadius="md"
-                    background="rgba(255, 255, 255, 0.9)"
-                    boxShadow="inset 0 0 0 1px rgba(255, 173, 86, 0.25)"
-                    minW="140px"
-                  >
-                    <Icon as={FaFire} color="red.400" boxSize={5} />
-                    <Box>
-                      <Text fontSize="xs" color="gray.500">
-                        {translation[userLanguage]["app.streak"]}
-                      </Text>
-                      <Text fontWeight="bold" fontSize="sm">
-                        {streak}
-                      </Text>
-                    </Box>
-                  </Flex>
-                  <Flex
-                    align="center"
-                    gap={3}
-                    px={3}
-                    py={2}
-                    borderRadius="md"
-                    background="rgba(255, 255, 255, 0.9)"
-                    boxShadow="inset 0 0 0 1px rgba(255, 173, 86, 0.25)"
-                    minW="140px"
-                  >
-                    <Icon as={RiFlag2Line} color="purple.400" boxSize={5} />
-                    <Box>
-                      <Text fontSize="xs" color="gray.500">
-                        {translation[userLanguage]["goal"] + "s"}
-                      </Text>
-                      <Text fontWeight="bold" fontSize="sm">
-                        {String(goalCount) || "0"}
-                      </Text>
-                    </Box>
-                  </Flex>
+              </HStack>
+              <HStack
+                spacing={2}
+                flexWrap="wrap"
+                rowGap={1.5}
+                alignItems="center"
+                width="100%"
+              >
+                <HStack
+                  spacing={1.5}
+                  px={2}
+                  py={1}
+                  borderRadius="full"
+                  background="rgba(255, 249, 242, 0.9)"
+                  border="1px solid rgba(246, 173, 85, 0.4)"
+                >
+                  <Icon as={FiTrendingUp} color="orange.500" boxSize={3.5} />
+                  <Text fontSize="sm" fontWeight="medium" color="gray.700">
+                    {animatedProgress.toFixed(0)}%
+                  </Text>
+                  <Text fontSize="xs" color="gray.500">
+                    {translation[userLanguage]["app.progress"]}
+                  </Text>
                 </HStack>
-              </Box>
+                <HStack
+                  spacing={1.5}
+                  px={2}
+                  py={1}
+                  borderRadius="full"
+                  background="rgba(255, 247, 252, 0.92)"
+                  border="1px solid rgba(251, 182, 206, 0.5)"
+                >
+                  <Icon as={RiBookOpenLine} color="pink.400" boxSize={3.5} />
+                  <Text fontSize="sm" fontWeight="medium" color="gray.700">
+                    {step.group}
+                  </Text>
+                  <Text fontSize="xs" color="gray.500">
+                    {translation[userLanguage]["chapter"]}
+                  </Text>
+                </HStack>
+                <HStack
+                  spacing={1.5}
+                  px={2}
+                  py={1}
+                  borderRadius="full"
+                  background="rgba(255, 245, 245, 0.95)"
+                  border="1px solid rgba(252, 129, 129, 0.45)"
+                >
+                  <Icon as={FaFire} color="red.400" boxSize={3.5} />
+                  <Text fontSize="sm" fontWeight="medium" color="gray.700">
+                    {streak}
+                  </Text>
+                  <Text fontSize="xs" color="gray.500">
+                    {translation[userLanguage]["app.streak"]}
+                  </Text>
+                </HStack>
+                <HStack
+                  spacing={1.5}
+                  px={2}
+                  py={1}
+                  borderRadius="full"
+                  background="rgba(249, 247, 255, 0.95)"
+                  border="1px solid rgba(183, 148, 244, 0.5)"
+                >
+                  <Icon as={RiFlag2Line} color="purple.400" boxSize={3.5} />
+                  <Text fontSize="sm" fontWeight="medium" color="gray.700">
+                    {String(goalCount) || "0"}
+                  </Text>
+                  <Text fontSize="xs" color="gray.500">
+                    {translation[userLanguage]["goal"] + "s"}
+                  </Text>
+                </HStack>
+              </HStack>
               <MotionProgress
-                height="25px"
+                height="12px"
                 initial={{ scale: 1 }}
                 animate={progressControls}
-                opacity="0.8"
+                opacity={0.9}
                 value={animatedProgress}
-                size="md"
+                size="sm"
                 colorScheme={getColorScheme(step.group)}
-                width="80%"
+                width="100%"
                 hasStripe
                 isAnimated
-                borderRadius="4px"
-                border="1px solid #ececec"
-                boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                borderRadius="full"
+                border="1px solid rgba(236, 236, 236, 0.8)"
                 background={getBackgroundScheme(step.group)}
-                mb={userLanguage !== "compsci-en" ? 2 : 3}
+                mb={userLanguage !== "compsci-en" ? 1 : 2}
                 sx={{
                   "& > div": {
                     background:
                       "linear-gradient(270deg, #f6ad55, #fbd38d, #f6ad55)",
                     backgroundSize: "200% 200%",
-                    animation: `${progressGradient} 7s ease-in-out  infinite`,
+                    animation: `${progressGradient} 7s ease-in-out infinite`,
                   },
                 }}
               />
