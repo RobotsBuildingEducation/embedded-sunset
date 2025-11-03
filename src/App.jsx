@@ -1,6 +1,6 @@
 import "regenerator-runtime/runtime";
 import "@babel/polyfill";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -1604,13 +1604,15 @@ const ChapterReview = ({ nodes, text, onStart }) => {
   const visibleNodes = isExpanded ? nodes : collapsedNodes;
   const hasHiddenNodes = nodes.length > visibleNodes.length;
 
+  const closeChapterDrawer = useCallback(() => {
+    setSelectedChapter(null);
+    onChapterDrawerClose();
+  }, [onChapterDrawerClose]);
+
   useEffect(() => {
     setIsExpanded(false);
-    setSelectedChapter(null);
-    if (isChapterDrawerOpen) {
-      onChapterDrawerClose();
-    }
-  }, [nodes, isChapterDrawerOpen, onChapterDrawerClose]);
+    closeChapterDrawer();
+  }, [nodes, closeChapterDrawer]);
 
   const handleChapterSelect = (node) => {
     if (!node?.questions?.length) return;
