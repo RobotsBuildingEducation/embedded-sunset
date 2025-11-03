@@ -3731,17 +3731,6 @@ const Step = ({
             }}
           >
             <VStack width="100%" spacing={2} alignItems="flex-start">
-              <HStack spacing={2} alignItems="center" color="orange.600">
-                <Icon as={FiTrendingUp} boxSize={4} />
-                <Text
-                  fontSize="xs"
-                  textTransform="uppercase"
-                  letterSpacing="0.18em"
-                  fontWeight="semibold"
-                >
-                  Journey pulse
-                </Text>
-              </HStack>
               <HStack
                 spacing={2}
                 flexWrap="wrap"
@@ -3754,15 +3743,12 @@ const Step = ({
                   px={2}
                   py={1}
                   borderRadius="full"
-                  background="rgba(255, 249, 242, 0.9)"
-                  border="1px solid rgba(246, 173, 85, 0.4)"
+                  background="rgba(247, 252, 255, 0.92)"
+                  border="1px solid rgba(102, 133, 255, 0.5)"
                 >
-                  <Icon as={FiTrendingUp} color="orange.500" boxSize={3.5} />
+                  <Icon as={RiBookOpenLine} color="blue.400" boxSize={3.5} />
                   <Text fontSize="sm" fontWeight="medium" color="gray.700">
-                    {animatedProgress.toFixed(0)}%
-                  </Text>
-                  <Text fontSize="xs" color="gray.500">
-                    {translation[userLanguage]["app.progress"]}
+                    {step.group}
                   </Text>
                 </HStack>
                 <HStack
@@ -3770,17 +3756,15 @@ const Step = ({
                   px={2}
                   py={1}
                   borderRadius="full"
-                  background="rgba(255, 247, 252, 0.92)"
-                  border="1px solid rgba(251, 182, 206, 0.5)"
+                  background="rgba(255, 249, 242, 0.9)"
+                  border="1px solid rgba(246, 173, 85, 0.4)"
                 >
-                  <Icon as={RiBookOpenLine} color="pink.400" boxSize={3.5} />
+                  <Icon as={FiTrendingUp} color="orange.500" boxSize={3.5} />
                   <Text fontSize="sm" fontWeight="medium" color="gray.700">
-                    {step.group}
-                  </Text>
-                  <Text fontSize="xs" color="gray.500">
-                    {translation[userLanguage]["chapter"]}
+                    {animatedProgress.toFixed(0)}%
                   </Text>
                 </HStack>
+
                 <HStack
                   spacing={1.5}
                   px={2}
@@ -3792,9 +3776,6 @@ const Step = ({
                   <Icon as={FaFire} color="red.400" boxSize={3.5} />
                   <Text fontSize="sm" fontWeight="medium" color="gray.700">
                     {streak}
-                  </Text>
-                  <Text fontSize="xs" color="gray.500">
-                    {translation[userLanguage]["app.streak"]}
                   </Text>
                 </HStack>
                 <HStack
@@ -3809,23 +3790,20 @@ const Step = ({
                   <Text fontSize="sm" fontWeight="medium" color="gray.700">
                     {String(goalCount) || "0"}
                   </Text>
-                  <Text fontSize="xs" color="gray.500">
-                    {translation[userLanguage]["goal"] + "s"}
-                  </Text>
                 </HStack>
               </HStack>
               <MotionProgress
-                height="12px"
+                height="24px"
                 initial={{ scale: 1 }}
                 animate={progressControls}
-                opacity={0.9}
+                opacity={0.8}
                 value={animatedProgress}
                 size="sm"
                 colorScheme={getColorScheme(step.group)}
                 width="100%"
                 hasStripe
                 isAnimated
-                borderRadius="full"
+                borderRadius="4px"
                 border="1px solid rgba(236, 236, 236, 0.8)"
                 background={getBackgroundScheme(step.group)}
                 mb={userLanguage !== "compsci-en" ? 1 : 2}
