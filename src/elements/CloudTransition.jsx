@@ -1,5 +1,11 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
-import { Box, Text, Button } from "@chakra-ui/react";
+import React, { useEffect, useRef, useState, useMemo, useId } from "react";
+import { Box, Button, Flex, Icon, Text } from "@chakra-ui/react";
+import {
+  CheckCircleIcon,
+  QuestionIcon,
+  RepeatIcon,
+  StarIcon,
+} from "@chakra-ui/icons";
 import { motion, AnimatePresence } from "framer-motion";
 import sparkle from "../assets/sparkle.mp3";
 import complete from "../assets/complete.mp3";
@@ -12,8 +18,137 @@ import {
 import { translation } from "../utility/translation";
 import { database } from "../database/firebaseResources";
 import { doc, onSnapshot } from "firebase/firestore";
+import { steps as defaultSteps } from "../utility/content";
 
 const MotionBox = motion(Box);
+
+const SKILL_NODE_STYLES = {
+  previous: {
+    accent: "#7c3aed",
+    gradient: "linear(to-br, rgba(124,58,237,0.28), rgba(249,168,212,0.26))",
+    shadow: "rgba(124,58,237,0.28)",
+    highlight: "#c4b5fd",
+  },
+  current: {
+    accent: "#0ea5e9",
+    gradient: "linear(to-br, rgba(34,197,94,0.32), rgba(14,165,233,0.28))",
+    shadow: "rgba(45,212,191,0.34)",
+    highlight: "#99f6e4",
+  },
+  upcoming: {
+    accent: "#6366f1",
+    gradient: "linear(to-br, rgba(99,102,241,0.28), rgba(168,85,247,0.24))",
+    shadow: "rgba(99,102,241,0.26)",
+    highlight: "#a5b4fc",
+  },
+};
+
+const QUESTION_TYPE_STYLES = {
+  order: {
+    icon: RepeatIcon,
+    label: "Ordering Challenge",
+    accent: "#8b5cf6",
+    gradient: "linear(to-br, rgba(139,92,246,0.22), rgba(59,130,246,0.18))",
+    halo: "rgba(139,92,246,0.22)",
+  },
+  multiAnswer: {
+    icon: CheckCircleIcon,
+    label: "Multi-Select",
+    accent: "#10b981",
+    gradient: "linear(to-br, rgba(16,185,129,0.22), rgba(59,130,246,0.14))",
+    halo: "rgba(16,185,129,0.18)",
+  },
+  multiChoice: {
+    icon: QuestionIcon,
+    label: "Multiple Choice",
+    accent: "#0ea5e9",
+    gradient: "linear(to-br, rgba(14,165,233,0.22), rgba(99,102,241,0.16))",
+    halo: "rgba(14,165,233,0.2)",
+  },
+  default: {
+    icon: StarIcon,
+    label: "Skill Quest",
+    accent: "#f59e0b",
+    gradient: "linear(to-br, rgba(245,158,11,0.22), rgba(249,168,212,0.18))",
+    halo: "rgba(245,158,11,0.18)",
+  },
+};
+
+const skillTreeContainerVariants = {
+  hidden: { opacity: 0, y: 12 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { when: "beforeChildren", staggerChildren: 0.08 },
+  },
+};
+
+const skillNodeVariants = {
+  hidden: { opacity: 0, scale: 0.96, y: 16 },
+  show: (i = 0) => ({
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 0.45,
+      ease: "easeOut",
+      delay: i * 0.05,
+    },
+  }),
+};
+
+const extractTextFromNode = (node) => {
+  if (node === null || node === undefined) return "";
+  if (typeof node === "string" || typeof node === "number") {
+    return String(node);
+  }
+  if (Array.isArray(node)) {
+    return node.map((child) => extractTextFromNode(child)).join(" ");
+  }
+  if (React.isValidElement(node)) {
+    return extractTextFromNode(node.props?.children);
+  }
+  if (typeof node === "object") {
+    return Object.values(node)
+      .map((value) => extractTextFromNode(value))
+      .join(" ");
+  }
+  return "";
+};
+
+const sanitizeText = (value) =>
+  extractTextFromNode(value)
+    .replace(/\s+/g, " ")
+    .replace(/\u00a0/g, " ")
+    .trim();
+
+const truncateText = (value, limit = 140) => {
+  if (!value) return "";
+  if (value.length <= limit) return value;
+  return `${value.slice(0, limit).trim()}…`;
+};
+
+const buildStepSummary = (step) => {
+  if (!step) return "";
+  const description = sanitizeText(step.description);
+  const questionText = sanitizeText(step.question?.questionText);
+  const summary = description || questionText;
+  return truncateText(summary);
+};
+
+const detectQuestionKind = (step) => {
+  if (!step || typeof step !== "object") return "default";
+  if (step.isSelectOrder) return "order";
+  if (step.isMultipleAnswerChoice) return "multiAnswer";
+  if (step.isMultipleChoice) return "multiChoice";
+
+  const answer = step.question?.answer;
+  if (Array.isArray(answer) && answer.length > 1) {
+    return "multiAnswer";
+  }
+
+  return "default";
+};
 
 // ---- Level-based background (clouds a bit stronger) ----
 const THEMES = {
@@ -99,6 +234,8 @@ const CloudTransition = ({
   message,
   detail,
   onContinue,
+  currentStepIndex,
+  stepsMap,
   children,
 }) => {
   const canvasRef = useRef(null);
@@ -127,6 +264,7 @@ const CloudTransition = ({
   const [promotionProgress, setPromotionProgress] = useState(null);
   const [promotionTimeLeft, setPromotionTimeLeft] = useState("");
   const [promotionExpired, setPromotionExpired] = useState(false);
+  const connectorBaseId = useId();
 
   useEffect(() => {
     const unsubscribe = subscribeToQuestionsAnswered(setQuestionsAnswered);
@@ -245,6 +383,243 @@ const CloudTransition = ({
   }, [clonedStep]);
 
   const theme = THEMES[groupKey] ?? THEMES.tutorial;
+
+  const skillTreeNodes = useMemo(() => {
+    const mapSource = stepsMap ?? defaultSteps;
+    const availableMap = mapSource ?? {};
+    const mapKeys = Object.keys(availableMap);
+
+    if (mapKeys.length === 0) {
+      return [];
+    }
+
+    const localeKey = (() => {
+      if (
+        userLanguage &&
+        Array.isArray(availableMap[userLanguage]) &&
+        availableMap[userLanguage].length > 0
+      ) {
+        return userLanguage;
+      }
+      if (Array.isArray(availableMap.en) && availableMap.en.length > 0) {
+        return "en";
+      }
+      if (userLanguage && availableMap[userLanguage]) {
+        return userLanguage;
+      }
+      if (availableMap.en) {
+        return "en";
+      }
+      return mapKeys[0];
+    })();
+
+    const localeSteps = (availableMap && availableMap[localeKey]) || [];
+    if (!localeSteps?.length) {
+      return [];
+    }
+
+    const normalizeIndex = (value) => {
+      if (typeof value === "number" && Number.isFinite(value)) {
+        return value;
+      }
+      if (typeof value === "string" && value.trim() !== "") {
+        const parsed = Number(value);
+        if (Number.isFinite(parsed)) {
+          return parsed;
+        }
+      }
+      return null;
+    };
+
+    let activeIndex = normalizeIndex(currentStepIndex);
+
+    if (
+      activeIndex === null ||
+      activeIndex < 0 ||
+      activeIndex >= localeSteps.length
+    ) {
+      activeIndex = localeSteps.findIndex((step) => {
+        if (!step || typeof step !== "object") return false;
+        if (step?.title && clonedStep?.title) {
+          return step.title === clonedStep.title;
+        }
+        if (step?.group && clonedStep?.group) {
+          return step.group === clonedStep.group;
+        }
+        const stepSummary = buildStepSummary(step);
+        const clonedSummary = buildStepSummary(clonedStep);
+        return stepSummary && clonedSummary
+          ? stepSummary === clonedSummary
+          : false;
+      });
+    }
+
+    if (activeIndex === null || activeIndex < 0) {
+      activeIndex = 0;
+    }
+
+    activeIndex = Math.min(Math.max(activeIndex, 0), localeSteps.length - 1);
+
+    const nodes = [];
+
+    const pushNode = (step, index, type) => {
+      if (!step) return;
+      const questionKind = detectQuestionKind(step);
+      nodes.push({
+        id: `${type}-${index}`,
+        index,
+        type,
+        title: step?.title || `Question ${index + 1}`,
+        questionKind,
+      });
+    };
+
+    if (activeIndex - 1 >= 0) {
+      pushNode(localeSteps[activeIndex - 1], activeIndex - 1, "previous");
+    }
+
+    pushNode(localeSteps[activeIndex], activeIndex, "current");
+
+    if (activeIndex + 1 < localeSteps.length) {
+      pushNode(localeSteps[activeIndex + 1], activeIndex + 1, "upcoming");
+    }
+
+    if (activeIndex + 2 < localeSteps.length) {
+      pushNode(localeSteps[activeIndex + 2], activeIndex + 2, "upcoming");
+    }
+
+    return nodes;
+  }, [clonedStep, currentStepIndex, stepsMap, userLanguage]);
+
+  const previousNode = useMemo(
+    () => skillTreeNodes.find((node) => node.type === "previous"),
+    [skillTreeNodes]
+  );
+  const currentNode = useMemo(
+    () => skillTreeNodes.find((node) => node.type === "current"),
+    [skillTreeNodes]
+  );
+  const upcomingNodes = useMemo(
+    () => skillTreeNodes.filter((node) => node.type === "upcoming"),
+    [skillTreeNodes]
+  );
+  const hasSkillTree = skillTreeNodes.length > 0;
+  const displayNodes = useMemo(() => {
+    const list = [];
+    if (previousNode) list.push(previousNode);
+    if (currentNode) list.push(currentNode);
+    if (upcomingNodes.length) {
+      list.push(...upcomingNodes);
+    }
+    return list;
+  }, [currentNode, previousNode, upcomingNodes]);
+
+  const renderSkillNode = (node, index) => {
+    if (!node) return null;
+    const typeStyle =
+      QUESTION_TYPE_STYLES[node.questionKind] ?? QUESTION_TYPE_STYLES.default;
+    const IconComponent = typeStyle.icon ?? StarIcon;
+    const statusStyle =
+      SKILL_NODE_STYLES[node.type] ?? SKILL_NODE_STYLES.upcoming;
+    const accent = typeStyle.accent ?? statusStyle.accent;
+    const gradient = typeStyle.gradient ?? statusStyle.gradient;
+
+    return (
+      <MotionBox
+        variants={skillNodeVariants}
+        custom={index}
+        whileHover={{ y: -4, scale: 1.01 }}
+        whileTap={{ scale: 0.99 }}
+        transition={{ type: "spring", stiffness: 260, damping: 24 }}
+        borderRadius="full"
+        px={{ base: 4, md: 5 }}
+        py={{ base: 3, md: 4 }}
+        bg="rgba(255,255,255,0.88)"
+        backdropFilter="blur(10px)"
+        boxShadow={`0 14px 28px ${statusStyle.shadow}`}
+        borderWidth="1px"
+        borderColor={`${accent}40`}
+        position="relative"
+        overflow="hidden"
+        width="100%"
+        maxW="360px"
+      >
+        <Box
+          position="absolute"
+          inset={0}
+          bgGradient={gradient}
+          opacity={0.24}
+          pointerEvents="none"
+        />
+        <Flex align="center" gap={4} position="relative" zIndex={1}>
+          <Box
+            w="52px"
+            h="52px"
+            borderRadius="full"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            bgGradient={`radial-gradient(circle at 30% 30%, ${accent}33, transparent 70%)`}
+            boxShadow={`0 12px 24px ${accent}33`}
+          >
+            <Icon as={IconComponent} boxSize={7} color={accent} />
+          </Box>
+          <Text
+            fontSize="lg"
+            fontWeight={node.type === "current" ? "bold" : "semibold"}
+            color={node.type === "current" ? "purple.700" : "purple.500"}
+          >
+            {node.title}
+          </Text>
+        </Flex>
+      </MotionBox>
+    );
+  };
+
+  const renderConnector = (fromNode, toNode, index) => {
+    const fromStyle =
+      QUESTION_TYPE_STYLES[fromNode?.questionKind] ??
+      QUESTION_TYPE_STYLES.default;
+    const toStyle =
+      QUESTION_TYPE_STYLES[toNode?.questionKind] ??
+      QUESTION_TYPE_STYLES.default;
+    const gradientId = `${connectorBaseId}-connector-${index}`;
+
+    return (
+      <Box
+        as="svg"
+        key={`connector-${index}`}
+        width="160px"
+        height="120px"
+        viewBox="0 0 160 120"
+        preserveAspectRatio="none"
+        opacity={0.8}
+        mx="auto"
+      >
+        <defs>
+          <linearGradient id={gradientId} x1="50%" y1="0%" x2="50%" y2="100%">
+            <stop offset="0%" stopColor={fromStyle.accent} stopOpacity="0.72" />
+            <stop offset="100%" stopColor={toStyle.accent} stopOpacity="0.72" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M80 0 C 132 28, 36 72, 80 120"
+          stroke={`url(#${gradientId})`}
+          strokeWidth="4"
+          fill="none"
+          strokeLinecap="round"
+        />
+        <path
+          d="M80 0 C 108 32, 52 68, 80 120"
+          stroke={`url(#${gradientId})`}
+          strokeWidth="2"
+          fill="none"
+          strokeLinecap="round"
+          opacity="0.4"
+        />
+      </Box>
+    );
+  };
 
   useEffect(() => {
     if (!isActive) {
@@ -648,6 +1023,27 @@ const CloudTransition = ({
               >
                 Continue
               </Button>
+
+              {hasSkillTree && (
+                <MotionBox
+                  variants={skillTreeContainerVariants}
+                  initial="hidden"
+                  animate="show"
+                  mt={10}
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="center"
+                  gap={{ base: 6, md: 7 }}
+                >
+                  {displayNodes.map((node, index) => (
+                    <React.Fragment key={node.id}>
+                      {renderSkillNode(node, index)}
+                      {index < displayNodes.length - 1 &&
+                        renderConnector(node, displayNodes[index + 1], index)}
+                    </React.Fragment>
+                  ))}
+                </MotionBox>
+              )}
             </MotionBox>
           )}
         </Box>

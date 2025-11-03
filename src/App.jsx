@@ -1,6 +1,12 @@
 import "regenerator-runtime/runtime";
 import "@babel/polyfill";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Box,
   Button,
@@ -8,7 +14,15 @@ import {
   VStack,
   Input,
   HStack,
+  Flex,
+  Icon,
   useDisclosure,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerHeader,
+  DrawerBody,
+  DrawerCloseButton,
   useToast,
   Checkbox,
   Textarea,
@@ -101,7 +115,15 @@ import { pickProgrammingLanguage, translation } from "./utility/translation";
 
 import { Dashboard } from "./components/Dashboard/Dashboard";
 import { isUnsupportedBrowser } from "./utility/browser";
-import { ChevronDownIcon, EmailIcon, PlusSquareIcon } from "@chakra-ui/icons";
+import {
+  CheckCircleIcon,
+  ChevronDownIcon,
+  EmailIcon,
+  PlusSquareIcon,
+  QuestionIcon,
+  RepeatIcon,
+  StarIcon,
+} from "@chakra-ui/icons";
 import { IoChatbubblesOutline, IoShareOutline } from "react-icons/io5";
 import {
   PiClockCountdownDuotone,
@@ -1481,6 +1503,491 @@ function TerminalComponent({
   );
 }
 
+const CHAPTER_REVIEW_TYPE_STYLES = {
+  order: {
+    icon: RepeatIcon,
+    accent: "#8b5cf6",
+    gradient: "linear(to-br, rgba(139,92,246,0.22), rgba(59,130,246,0.18))",
+  },
+  multiAnswer: {
+    icon: CheckCircleIcon,
+    accent: "#10b981",
+    gradient: "linear(to-br, rgba(16,185,129,0.22), rgba(59,130,246,0.14))",
+  },
+  multiChoice: {
+    icon: QuestionIcon,
+    accent: "#0ea5e9",
+    gradient: "linear(to-br, rgba(14,165,233,0.22), rgba(99,102,241,0.16))",
+  },
+  default: {
+    icon: StarIcon,
+    accent: "#f59e0b",
+    gradient: "linear(to-br, rgba(245,158,11,0.22), rgba(249,168,212,0.18))",
+  },
+};
+
+const FLOW_CARD_PATTERNS = [
+  { alignSelf: "flex-start", translateX: "-12%", rotate: "-4deg", anchor: 80 },
+  { alignSelf: "center", translateX: "0%", rotate: "3deg", anchor: 200 },
+  { alignSelf: "flex-end", translateX: "12%", rotate: "-3deg", anchor: 320 },
+  { alignSelf: "center", translateX: "-6%", rotate: "2deg", anchor: 200 },
+];
+
+const createFlowConnectorPath = (startAnchor, endAnchor) => {
+  const controlOffset = (endAnchor - startAnchor) * 0.5;
+  const controlPoint1 = startAnchor + controlOffset * 0.6;
+  const controlPoint2 = endAnchor - controlOffset * 0.6;
+
+  return `M ${startAnchor} 10 C ${controlPoint1} -6, ${controlPoint2} 70, ${endAnchor} 54`;
+};
+
+const detectChapterQuestionKind = (step) => {
+  if (!step || typeof step !== "object") return "default";
+  if (step.isSelectOrder) return "order";
+  if (step.isMultipleAnswerChoice) return "multiAnswer";
+  if (step.isMultipleChoice) return "multiChoice";
+
+  const answer = step.question?.answer;
+  if (Array.isArray(answer) && answer.length > 1) {
+    return "multiAnswer";
+  }
+
+  return "default";
+};
+
+const normalizeChapterTitle = (title, fallbackIndex = 0) => {
+  if (typeof title === "string" && title.trim()) {
+    return title.trim();
+  }
+  return `Question ${fallbackIndex + 1}`;
+};
+
+const deriveChapterLabel = (group, primaryMap, fallbackMap) => {
+  if (!group) return "";
+  const normalized = String(group).toLowerCase();
+
+  if (normalized === "tutorial") {
+    return (
+      primaryMap?.["onboarding.chapter0.title"] ||
+      fallbackMap?.["onboarding.chapter0.title"] ||
+      "Tutorial Chapter"
+    );
+  }
+
+  const numeric = Number(normalized);
+  if (Number.isFinite(numeric)) {
+    const key = `onboarding.chapter${numeric}.title`;
+    return primaryMap?.[key] || fallbackMap?.[key] || `Chapter ${numeric}`;
+  }
+
+  return normalized
+    .split("-")
+    .map((segment) =>
+      segment ? segment.charAt(0).toUpperCase() + segment.slice(1) : ""
+    )
+    .join(" ");
+};
+
+const ChapterReview = ({ nodes, text, onStart }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [selectedChapter, setSelectedChapter] = useState(null);
+  const {
+    isOpen: isChapterDrawerOpen,
+    onOpen: onChapterDrawerOpen,
+    onClose: onChapterDrawerClose,
+  } = useDisclosure();
+  const previewCount = 2;
+  const activeNodeIndex = Math.max(
+    0,
+    nodes.findIndex((node) => node.isActive)
+  );
+  const collapsedNodes = nodes.slice(
+    activeNodeIndex,
+    activeNodeIndex + previewCount
+  );
+  const visibleNodes = isExpanded ? nodes : collapsedNodes;
+  const hasHiddenNodes = nodes.length > visibleNodes.length;
+
+  const closeChapterDrawer = useCallback(() => {
+    setSelectedChapter(null);
+    onChapterDrawerClose();
+  }, [onChapterDrawerClose]);
+
+  useEffect(() => {
+    setIsExpanded(false);
+    closeChapterDrawer();
+  }, [nodes, closeChapterDrawer]);
+
+  const handleChapterSelect = (node) => {
+    if (!node?.questions?.length) return;
+    setSelectedChapter(node);
+    onChapterDrawerOpen();
+  };
+
+  const handleChapterKeyDown = (event, node) => {
+    if (!node?.questions?.length) return;
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleChapterSelect(node);
+    }
+  };
+
+  const handleDrawerClose = () => {
+    setSelectedChapter(null);
+    onChapterDrawerClose();
+  };
+
+  const resolvePattern = (index) =>
+    FLOW_CARD_PATTERNS[index % FLOW_CARD_PATTERNS.length];
+
+  const getJustifyContent = (align) => {
+    if (align === "flex-start") return "flex-start";
+    if (align === "flex-end") return "flex-end";
+    return "center";
+  };
+
+  return (
+    <Box
+      width="100%"
+      display="flex"
+      justifyContent="center"
+      py={{ base: 10, md: 14 }}
+      px={{ base: 3, md: 6 }}
+    >
+      <VStack
+        spacing={{ base: 10, md: 12 }}
+        width="100%"
+        maxW={{ base: "680px", lg: "820px" }}
+        align="center"
+      >
+        <Box textAlign="center" px={{ base: 4, md: 6 }}>
+          <Text
+            fontSize="sm"
+            fontWeight="semibold"
+            textTransform="uppercase"
+            letterSpacing="widest"
+            color="purple.400"
+            mb={2}
+          >
+            {text?.title}
+          </Text>
+          <Text fontSize={{ base: "xl", md: "2xl" }} color="gray.600">
+            {text?.subtitle}
+          </Text>
+        </Box>
+
+        <Box
+          w="100%"
+          borderRadius="4xl"
+          p={{ base: 6, md: 8 }}
+          bg="rgba(255,255,255,0.9)"
+          backdropFilter="blur(16px)"
+          border="1px solid rgba(226,232,240,0.7)"
+          boxShadow="0 32px 80px rgba(79,70,229,0.18)"
+        >
+          <VStack spacing={{ base: 10, md: 12 }} align="stretch">
+            {visibleNodes.map((node, index) => {
+              const typeStyle =
+                CHAPTER_REVIEW_TYPE_STYLES[node.questionKind] ||
+                CHAPTER_REVIEW_TYPE_STYLES.default;
+              const IconComponent = typeStyle.icon || StarIcon;
+              const accent = typeStyle.accent;
+              const gradient = typeStyle.gradient;
+              const pattern = resolvePattern(index);
+              const nextPattern = resolvePattern(index + 1);
+              const justifyContent = getJustifyContent(pattern.alignSelf);
+              const isClickable = node?.questions?.length > 0;
+
+              return (
+                <Box
+                  key={node.id}
+                  display="flex"
+                  flexDirection="column"
+                  gap={4}
+                >
+                  <Flex justify={justifyContent} w="100%">
+                    <Box
+                      as={motion.div}
+                      role={isClickable ? "button" : undefined}
+                      tabIndex={isClickable ? 0 : -1}
+                      onClick={() => handleChapterSelect(node)}
+                      onKeyDown={(event) => handleChapterKeyDown(event, node)}
+                      initial={{ opacity: 0, y: 24, scale: 0.94 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ duration: 0.45, delay: index * 0.06 }}
+                      px={{ base: 4, md: 5 }}
+                      py={{ base: 4, md: 5 }}
+                      borderRadius="full"
+                      bg="rgba(255,255,255,0.96)"
+                      borderWidth="1px"
+                      borderColor={
+                        node.isActive ? `${accent}85` : `${accent}45`
+                      }
+                      boxShadow={
+                        node.isActive
+                          ? `0 28px 54px ${accent}35`
+                          : `0 18px 38px rgba(15,23,42,0.14)`
+                      }
+                      display="flex"
+                      alignItems="center"
+                      gap={{ base: 4, md: 5 }}
+                      position="relative"
+                      cursor={isClickable ? "pointer" : "default"}
+                      transform={`translateX(${pattern.translateX}) rotate(${pattern.rotate})`}
+                      _hover={
+                        isClickable
+                          ? {
+                              transform: `translateX(${pattern.translateX}) rotate(${pattern.rotate}) scale(1.02)`,
+                            }
+                          : undefined
+                      }
+                      _focusVisible={{ boxShadow: `0 0 0 3px ${accent}55` }}
+                    >
+                      <Box
+                        position="absolute"
+                        inset={0}
+                        bgGradient={gradient}
+                        opacity={0.28}
+                        pointerEvents="none"
+                      />
+                      <Flex
+                        align="center"
+                        gap={{ base: 4, md: 5 }}
+                        position="relative"
+                        zIndex={1}
+                        w="100%"
+                      >
+                        <Box
+                          w={{ base: "56px", md: "64px" }}
+                          h={{ base: "56px", md: "64px" }}
+                          borderRadius="full"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          bgGradient={`radial-gradient(circle at 30% 30%, ${accent}33, transparent 70%)`}
+                          boxShadow={`0 20px 40px ${accent}30`}
+                        >
+                          <Icon
+                            as={IconComponent}
+                            boxSize={{ base: 6, md: 7 }}
+                            color={accent}
+                          />
+                        </Box>
+                        <Text
+                          fontSize={{ base: "lg", md: "xl" }}
+                          fontWeight={node.isActive ? "extrabold" : "semibold"}
+                          color="gray.800"
+                          letterSpacing="tight"
+                        >
+                          {node.chapterLabel || node.title}
+                        </Text>
+                      </Flex>
+                    </Box>
+                  </Flex>
+
+                  {index < visibleNodes.length - 1 ? (
+                    <Box
+                      h={{ base: 16, md: 20 }}
+                      w="100%"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      px={{ base: 6, md: 8 }}
+                    >
+                      <Box
+                        as="svg"
+                        width="100%"
+                        height="100%"
+                        viewBox="0 0 400 80"
+                        fill="none"
+                        preserveAspectRatio="none"
+                      >
+                        <path
+                          d={createFlowConnectorPath(
+                            pattern.anchor,
+                            nextPattern.anchor
+                          )}
+                          stroke="rgba(148,163,184,0.18)"
+                          strokeWidth="10"
+                          strokeLinecap="round"
+                        />
+                        <path
+                          d={createFlowConnectorPath(
+                            pattern.anchor,
+                            nextPattern.anchor
+                          )}
+                          stroke={`${accent}55`}
+                          strokeWidth="5"
+                          strokeLinecap="round"
+                        />
+                      </Box>
+                    </Box>
+                  ) : null}
+                </Box>
+              );
+            })}
+            {hasHiddenNodes && !isExpanded ? (
+              <Box
+                as={motion.div}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.45,
+                  delay: visibleNodes.length * 0.06,
+                }}
+                pt={{ base: 2, md: 4 }}
+              >
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  borderRadius="full"
+                  px={{ base: 6, md: 8 }}
+                  py={{ base: 4, md: 5 }}
+                  colorScheme="purple"
+                  onClick={() => setIsExpanded(true)}
+                >
+                  {text?.expand || "Show more"}
+                </Button>
+              </Box>
+            ) : null}
+          </VStack>
+        </Box>
+
+        <Button
+          colorScheme="purple"
+          size="lg"
+          borderRadius="full"
+          px={{ base: 8, md: 12 }}
+          py={{ base: 6, md: 7 }}
+          onMouseDown={onStart}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              onStart();
+            }
+          }}
+        >
+          {text?.cta}
+        </Button>
+
+        <Drawer
+          isOpen={isChapterDrawerOpen}
+          placement="bottom"
+          onClose={handleDrawerClose}
+        >
+          <DrawerOverlay bg="blackAlpha.400" backdropFilter="blur(8px)" />
+          <DrawerContent
+            borderTopRadius={{ base: "3xl", md: "4xl" }}
+            bg="rgba(255,255,255,0.96)"
+            maxH="80vh"
+            overflow="hidden"
+          >
+            <DrawerCloseButton
+              top={{ base: 3, md: 4 }}
+              right={{ base: 4, md: 6 }}
+            />
+            <DrawerHeader pt={{ base: 8, md: 10 }} pb={{ base: 4, md: 6 }}>
+              <VStack align="flex-start" spacing={{ base: 1, md: 2 }}>
+                <Text
+                  fontSize="xs"
+                  fontWeight="semibold"
+                  letterSpacing="widest"
+                  textTransform="uppercase"
+                  color="purple.400"
+                >
+                  {text?.drawerTitle || "Inside this chapter"}
+                </Text>
+                <Text
+                  fontSize={{ base: "2xl", md: "3xl" }}
+                  fontWeight="bold"
+                  color="gray.800"
+                >
+                  {selectedChapter?.chapterLabel || selectedChapter?.title}
+                </Text>
+              </VStack>
+            </DrawerHeader>
+            <DrawerBody pb={{ base: 8, md: 12 }}>
+              <VStack spacing={{ base: 4, md: 5 }} align="stretch">
+                {selectedChapter?.questions?.length ? (
+                  selectedChapter.questions.map((question, index) => {
+                    const questionStyle =
+                      CHAPTER_REVIEW_TYPE_STYLES[question.questionKind] ||
+                      CHAPTER_REVIEW_TYPE_STYLES.default;
+                    const QuestionIconComponent =
+                      questionStyle.icon || StarIcon;
+                    const questionAccent = questionStyle.accent;
+                    const questionGradient = questionStyle.gradient;
+
+                    return (
+                      <Box
+                        key={question.id || `${selectedChapter.id}-${index}`}
+                        as={motion.div}
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.35, delay: index * 0.05 }}
+                        borderRadius="2xl"
+                        px={{ base: 4, md: 5 }}
+                        py={{ base: 3, md: 4 }}
+                        bg="rgba(255,255,255,0.95)"
+                        borderWidth="1px"
+                        borderColor={`${questionAccent}40`}
+                        boxShadow={`0 18px 36px ${questionAccent}26`}
+                        position="relative"
+                        overflow="hidden"
+                      >
+                        <Box
+                          position="absolute"
+                          inset={0}
+                          bgGradient={questionGradient}
+                          opacity={0.24}
+                          pointerEvents="none"
+                        />
+                        <Flex
+                          align="center"
+                          gap={{ base: 4, md: 5 }}
+                          position="relative"
+                          zIndex={1}
+                        >
+                          <Box
+                            w={{ base: "48px", md: "56px" }}
+                            h={{ base: "48px", md: "56px" }}
+                            borderRadius="full"
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                            bgGradient={`radial-gradient(circle at 30% 30%, ${questionAccent}33, transparent 70%)`}
+                            boxShadow={`0 18px 30px ${questionAccent}24`}
+                          >
+                            <Icon
+                              as={QuestionIconComponent}
+                              boxSize={{ base: 6, md: 7 }}
+                              color={questionAccent}
+                            />
+                          </Box>
+                          <Text
+                            fontSize={{ base: "lg", md: "xl" }}
+                            fontWeight="semibold"
+                            color="gray.800"
+                          >
+                            {question.title}
+                          </Text>
+                        </Flex>
+                      </Box>
+                    );
+                  })
+                ) : (
+                  <Text color="gray.500" fontSize="md">
+                    {text?.emptyChapter || "Lessons will appear here."}
+                  </Text>
+                )}
+              </VStack>
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
+      </VStack>
+    </Box>
+  );
+};
+
 const Step = ({
   currentStep,
   userLanguage,
@@ -1542,6 +2049,170 @@ const Step = ({
   const [isTimerExpired, setIsTimerExpired] = useState(true);
 
   const [step, setStep] = useState(steps[userLanguage][currentStep]);
+
+  const fallbackTranslation = translation.en || {};
+  const translationMap = translation[userLanguage] || fallbackTranslation;
+
+  const localeSteps = useMemo(() => {
+    if (Array.isArray(steps[userLanguage]) && steps[userLanguage].length) {
+      return steps[userLanguage];
+    }
+    if (Array.isArray(steps.en) && steps.en.length) {
+      return steps.en;
+    }
+    const [firstKey] = Object.keys(steps);
+    if (firstKey && Array.isArray(steps[firstKey])) {
+      return steps[firstKey];
+    }
+    return [];
+  }, [userLanguage]);
+
+  const chapterReviewChapters = useMemo(() => {
+    if (!Array.isArray(localeSteps) || !localeSteps.length) {
+      return [];
+    }
+
+    const chapterMap = new Map();
+
+    localeSteps.forEach((entry, index) => {
+      if (!entry || typeof entry !== "object") {
+        return;
+      }
+
+      const groupValue = entry.group ?? entry.chapter;
+      if (!groupValue) {
+        return;
+      }
+
+      const normalizedGroup = String(groupValue).toLowerCase();
+      if (normalizedGroup === "introduction") {
+        return;
+      }
+
+      const questionKind = detectChapterQuestionKind(entry);
+      const questionTitle = normalizeChapterTitle(entry.title, index);
+
+      let chapter = chapterMap.get(normalizedGroup);
+
+      if (!chapter) {
+        chapter = {
+          id: `${normalizedGroup}-${index}`,
+          title: questionTitle,
+          questionKind,
+          chapterLabel: deriveChapterLabel(
+            groupValue,
+            translationMap,
+            fallbackTranslation
+          ),
+          groupValue,
+          normalizedGroup,
+          firstIndex: index,
+          questions: [],
+        };
+        chapterMap.set(normalizedGroup, chapter);
+      }
+
+      chapter.questions.push({
+        id: `${normalizedGroup}-question-${index}`,
+        title: questionTitle,
+        questionKind,
+        index,
+      });
+
+      if (index < chapter.firstIndex) {
+        chapter.firstIndex = index;
+      }
+
+      if (chapter.questions.length === 1) {
+        chapter.title = questionTitle;
+        chapter.questionKind = questionKind;
+      }
+    });
+
+    return Array.from(chapterMap.values()).sort(
+      (a, b) => a.firstIndex - b.firstIndex
+    );
+  }, [fallbackTranslation, localeSteps, translationMap]);
+
+  const activeChapterKey = useMemo(() => {
+    const currentEntry = Array.isArray(localeSteps)
+      ? localeSteps[currentStep]
+      : null;
+    if (!currentEntry || typeof currentEntry !== "object") {
+      return null;
+    }
+
+    const groupValue = currentEntry.group ?? currentEntry.chapter;
+    if (!groupValue) {
+      return null;
+    }
+
+    const normalized = String(groupValue).toLowerCase();
+    if (normalized === "introduction") {
+      return null;
+    }
+
+    return normalized;
+  }, [currentStep, localeSteps]);
+
+  const chapterReviewNodes = useMemo(
+    () =>
+      chapterReviewChapters.map((node, index) => ({
+        ...node,
+        isActive:
+          node.normalizedGroup === activeChapterKey ||
+          (!activeChapterKey && index === 0),
+      })),
+    [activeChapterKey, chapterReviewChapters]
+  );
+
+  const [showChapterReview, setShowChapterReview] = useState(false);
+  const [lastChapterReviewStep, setLastChapterReviewStep] = useState(null);
+
+  useEffect(() => {
+    if (!chapterReviewNodes.length) {
+      setShowChapterReview(false);
+      return;
+    }
+
+    const isFirstStepOfChapter = chapterReviewNodes.find(
+      (node) => node.firstIndex === currentStep
+    );
+
+    if (isFirstStepOfChapter && lastChapterReviewStep !== currentStep) {
+      setShowChapterReview(true);
+      setLastChapterReviewStep(currentStep);
+    } else if (!isFirstStepOfChapter) {
+      setShowChapterReview(false);
+    }
+  }, [chapterReviewNodes, currentStep, lastChapterReviewStep]);
+
+  const chapterReviewText = useMemo(
+    () => ({
+      title:
+        translationMap["chapterReview.title"] ||
+        fallbackTranslation["chapterReview.title"] ||
+        "Chapter Skill Journey",
+      subtitle:
+        translationMap["chapterReview.subtitle"] ||
+        fallbackTranslation["chapterReview.subtitle"] ||
+        "Preview the milestones you'll tackle in this chapter before diving in.",
+      cta:
+        translationMap["chapterReview.cta"] ||
+        fallbackTranslation["chapterReview.cta"] ||
+        "Start chapter",
+      expand:
+        translationMap["chapterReview.expand"] ||
+        fallbackTranslation["chapterReview.expand"] ||
+        "Show full journey",
+    }),
+    [fallbackTranslation, translationMap]
+  );
+
+  const dismissChapterReview = () => {
+    setShowChapterReview(false);
+    setLastChapterReviewStep(currentStep);
+  };
 
   const { resetMessages, messages, submitPrompt } = useChatCompletion({
     response_format: { type: "json_object" },
@@ -2969,11 +3640,48 @@ const Step = ({
     localStorage.getItem("passcode") ===
       import.meta.env.VITE_PATREON_PASSCODE || hasSubmittedPasscode;
 
+  const actionBarShadow = "0 12px 24px rgba(209, 137, 96, 0.25)";
+
+  const actionBarButtonProps = {
+    width: "48px",
+    height: "48px",
+    borderRadius: "14px",
+    bgGradient: "linear(180deg, #fff7ec 0%, #ffe3c3 100%)",
+    border: "1px solid rgba(244, 198, 134, 0.8)",
+    boxShadow: actionBarShadow,
+    color: "#c76f48",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    transition: "all 0.2s ease-in-out",
+    _hover: {
+      transform: "translateY(-4px)",
+      boxShadow: "0 18px 32px rgba(209, 137, 96, 0.35)",
+    },
+    _active: {
+      transform: "translateY(-1px)",
+      boxShadow: "0 10px 18px rgba(209, 137, 96, 0.2)",
+    },
+  };
+
+  const patreonButtonShadow = (() => {
+    const accent = getBoxShadow(step.group);
+    return typeof accent === "string" && accent.includes("px")
+      ? `${accent}, ${actionBarShadow}`
+      : actionBarShadow;
+  })();
+
   return (
     <VStack spacing={4} width="100%" mt={6} p={4}>
       {/* <OrbCanvas width={500} height={500} /> */}
 
-      {newQuestionMessages.length > 0 && isEmpty(generatedQuestion) ? (
+      {showChapterReview && chapterReviewNodes.length > 0 ? (
+        <ChapterReview
+          nodes={chapterReviewNodes}
+          text={chapterReviewText}
+          onStart={dismissChapterReview}
+        />
+      ) : newQuestionMessages.length > 0 && isEmpty(generatedQuestion) ? (
         <VStack
           textAlign={"left"}
           style={{ width: "100%", maxWidth: 400 }}
@@ -3011,163 +3719,14 @@ const Step = ({
         <>
           <VStack
             textAlign={"left"}
-            style={{ width: "100%", maxWidth: 400, alignItems: "flex-start" }}
+            style={{
+              width: "100%",
+              maxWidth: 400,
+              alignItems: "flex-start",
+              paddingBottom: "14px",
+            }}
           >
-            <span style={{ fontSize: "50%", marginBottom: 8 }}>
-              <Box mb={"-1"}>
-                <IconButton
-                  width="24px"
-                  height="30px"
-                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                  // border="1px solid #ececec"
-                  background="pink.100"
-                  color="pink.600"
-                  opacity="0.75"
-                  // color="pink.600"
-                  icon={<FaBitcoin padding="4px" fontSize="14px" />}
-                  mr={5}
-                  onMouseDown={() => {
-                    //open modal
-                    onBitcoinModeOpen();
-                    return;
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      onBitcoinModeOpen();
-                      //open modal
-                      return;
-                    }
-                  }}
-                />
-                <IconButton
-                  width="24px"
-                  height="30px"
-                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                  background="pink.100"
-                  opacity="0.75"
-                  color="pink.600"
-                  icon={<PiClockCountdownFill padding="4px" fontSize="18px" />}
-                  mr={5}
-                  onMouseDown={() => {
-                    //open modal
-                    onSelfPacedOpen();
-                    return;
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      onSelfPacedOpen();
-                      //open modal
-                      return;
-                    }
-                  }}
-                />
-
-                <ThemeMenu
-                  userLanguage={userLanguage}
-                  buttonProps={{
-                    width: "24px",
-                    height: "30px",
-                    boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
-                    background: "pink.100",
-                    opacity: "0.75",
-                    color: "pink.600",
-                    mr: 5,
-                  }}
-                />
-
-                {userLanguage === "compsci-en" ? (
-                  <IconButton
-                    width="24px"
-                    height="30px"
-                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                    background="pink.100"
-                    opacity="0.75"
-                    color="pink.600"
-                    icon={<TbBinaryTreeFilled padding="4px" fontSize="14px" />}
-                    mr={5}
-                    onMouseDown={() => {
-                      //open modal
-                      onKnowledgeLedgerOpen();
-                      return;
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        onKnowledgeLedgerOpen();
-                        //open modal
-                        return;
-                      }
-                    }}
-                  />
-                ) : // <IconButton
-                //   width="24px"
-                //   height="30px"
-                //   boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                //   background="pink.100"
-                //   opacity="0.75"
-                //   color="pink.600"
-                //   icon={<FaMagic padding="4px" fontSize="14px" />}
-                //   mr={5}
-                //   onMouseDown={() => {
-                //     //open modal
-                //     onKnowledgeLedgerOpen();
-                //     return;
-                //   }}
-                //   onKeyDown={(e) => {
-                //     if (e.key === "Enter" || e.key === " ") {
-                //       onKnowledgeLedgerOpen();
-                //       //open modal
-                //       return;
-                //     }
-                //   }}
-                // />
-                null}
-
-                {/* <IconButton
-                  width="18px"
-                  height="24px"
-                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                  // border="1px solid #ececec"
-                  background="whiteAlpha.100"
-                  opacity="0.75"
-                  // color="pink.600"
-                  icon={<EmailIcon padding="4px" fontSize="18px" />}
-                  mr={3}
-                  onMouseDown={() =>
-                    (window.location.href = `mailto:sheilfer@robotsbuildingeducation.com?subject=Robots Building Education ${translation[userLanguage]["email.question"]} ${currentStep}: ${step.question.questionText} | ${step.description}&body=${translation[userLanguage]["email.donotdelete"]}       \n\n ${JSON.stringify(emailText)}  `)
-                  }
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      window.location.href = `mailto:sheilfer@robotsbuildingeducation.com?subject=Robots Building Education ${translation[userLanguage]["email.question"]} ${currentStep}: ${step.question.questionText} | ${step.description}&body=${translation[userLanguage]["email.donotdelete"]}       \n\n ${JSON.stringify(emailText)}  `;
-                    }
-                  }}
-                /> */}
-
-                <IconButton
-                  width="24px"
-                  height="30px"
-                  s
-                  // boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                  background="whiteAlpha.100"
-                  opacity="0.75"
-                  boxShadow={`${getBoxShadow(step.group)}`}
-                  icon={<PiPatreonLogoFill padding="4px" fontSize="14px" />}
-                  mr={0}
-                  border="1px solid rgb(246, 206, 86)"
-                  onMouseDown={() => {
-                    window.location.href =
-                      "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      window.location.href =
-                        "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
-                    }
-                  }}
-                />
-              </Box>
-              <br />
-            </span>
-            <VStack width="100%">
+            <VStack width="100%" spacing={3} alignItems="flex-start">
               <span style={{ fontSize: "50%" }}>
                 {translation[userLanguage]["app.progress"]}:{" "}
                 {animatedProgress.toFixed(2)}% |{" "}
@@ -3193,7 +3752,7 @@ const Step = ({
                 border="1px solid #ececec"
                 boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                 background={getBackgroundScheme(step.group)}
-                mb={userLanguage !== "compsci-en" ? 0 : 4}
+                mb={userLanguage !== "compsci-en" ? 2 : 3}
                 sx={{
                   "& > div": {
                     background:
@@ -3202,7 +3761,6 @@ const Step = ({
                     animation: `${progressGradient} 7s ease-in-out  infinite`,
                   },
                 }}
-                mb={4}
               />
               {/* {userLanguage !== "compsci-en" ? (
                 <Text
@@ -3826,11 +4384,11 @@ const Step = ({
             </Box>
           ) : !isAdaptiveLearning ||
             step.isTerminal ? null : suggestionMessage.length > 0 ? (
-            <Box maxWidth="600px" width="100%">
+            <Box maxWidth="600px" width="100%" pb={12}>
               <Box
                 as={motion.div}
                 mt={4}
-                mb={0}
+                // mb={{ base: 24, md: 28 }}
                 p={4}
                 borderRadius="24px"
                 borderBottomLeftRadius={"0px"}
@@ -3880,6 +4438,103 @@ const Step = ({
               from="app"
             />
           ) : null}
+
+          <Box
+            position="fixed"
+            bottom="0"
+            left="0"
+            width="100%"
+            // zIndex="popover"
+          >
+            <Flex justify="center" width="100%">
+              <Box
+                width={{ base: "100%", md: "440px" }}
+                px={{ base: 0, md: 4 }}
+              >
+                <Box
+                  bg="rgba(255, 248, 240, 0.96)"
+                  borderTopLeftRadius={{ base: "20px", md: "24px" }}
+                  borderTopRightRadius={{ base: "20px", md: "24px" }}
+                  borderBottomLeftRadius="0px"
+                  borderBottomRightRadius="0px"
+                  px={{ base: 3, md: 4 }}
+                  py={{ base: 2, md: 2.5 }}
+                  border="1px solid rgba(244, 198, 134, 0.65)"
+                  borderBottom="0"
+                  boxShadow="0 -2px 12px rgba(209, 137, 96, 0.2)"
+                  backdropFilter="blur(10px)"
+                >
+                  <HStack spacing={{ base: 2, md: 3 }} justify="center">
+                    <IconButton
+                      {...actionBarButtonProps}
+                      aria-label="Open Bitcoin mode"
+                      icon={<FaBitcoin fontSize="20px" />}
+                      onMouseDown={() => {
+                        onBitcoinModeOpen();
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          onBitcoinModeOpen();
+                        }
+                      }}
+                    />
+                    <IconButton
+                      {...actionBarButtonProps}
+                      aria-label="Open self-paced mode"
+                      icon={<PiClockCountdownFill fontSize="22px" />}
+                      onMouseDown={() => {
+                        onSelfPacedOpen();
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          onSelfPacedOpen();
+                        }
+                      }}
+                    />
+                    <ThemeMenu
+                      userLanguage={userLanguage}
+                      buttonProps={{
+                        ...actionBarButtonProps,
+                        color: actionBarButtonProps.color,
+                      }}
+                    />
+                    {userLanguage === "compsci-en" && (
+                      <IconButton
+                        {...actionBarButtonProps}
+                        aria-label="Open knowledge ledger"
+                        icon={<TbBinaryTreeFilled fontSize="20px" />}
+                        onMouseDown={() => {
+                          onKnowledgeLedgerOpen();
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            onKnowledgeLedgerOpen();
+                          }
+                        }}
+                      />
+                    )}
+                    <IconButton
+                      {...actionBarButtonProps}
+                      aria-label="Support on Patreon"
+                      icon={<PiPatreonLogoFill fontSize="20px" />}
+                      boxShadow={patreonButtonShadow}
+                      borderColor="rgba(244, 198, 134, 0.85)"
+                      onMouseDown={() => {
+                        window.location.href =
+                          "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          window.location.href =
+                            "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
+                        }
+                      }}
+                    />
+                  </HStack>
+                </Box>
+              </Box>
+            </Flex>
+          </Box>
 
           <LectureModal
             userLanguage={userLanguage}
@@ -5933,6 +6588,8 @@ function App({ isShutDown }) {
         message={transitionStats.message}
         detail={transitionStats.detail}
         onContinue={handleTransitionContinue}
+        currentStepIndex={currentStep}
+        stepsMap={steps}
       />
       {alert.isOpen && (
         <Alert
