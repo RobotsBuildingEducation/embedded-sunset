@@ -3652,7 +3652,7 @@ const Step = ({
     borderRadius: "14px",
     bgGradient: "linear(180deg, #fff7ec 0%, #ffe3c3 100%)",
     border: "1px solid rgba(244, 198, 134, 0.8)",
-    boxShadow: actionBarShadow,
+    // boxShadow: actionBarShadow,
     color: "#c76f48",
     display: "flex",
     alignItems: "center",
@@ -3660,11 +3660,11 @@ const Step = ({
     transition: "all 0.2s ease-in-out",
     _hover: {
       transform: "translateY(-4px)",
-      boxShadow: "0 18px 32px rgba(209, 137, 96, 0.35)",
+      // boxShadow: "0 18px 32px rgba(209, 137, 96, 0.35)",
     },
     _active: {
       transform: "translateY(-1px)",
-      boxShadow: "0 10px 18px rgba(209, 137, 96, 0.2)",
+      // boxShadow: "0 10px 18px rgba(209, 137, 96, 0.2)",
     },
   };
 
@@ -4515,7 +4515,7 @@ const Step = ({
                   py={{ base: 2, md: 2.5 }}
                   border="1px solid rgba(244, 198, 134, 0.65)"
                   borderBottom="0"
-                  boxShadow="0 -2px 12px rgba(209, 137, 96, 0.2)"
+                  boxShadow="0 -2px 0px rgba(209, 137, 96, 0.2)"
                   backdropFilter="blur(10px)"
                 >
                   <HStack spacing={{ base: 2, md: 3 }} justify="center">
@@ -4571,7 +4571,7 @@ const Step = ({
                       {...actionBarButtonProps}
                       aria-label="Support on Patreon"
                       icon={<PiPatreonLogoFill fontSize="20px" />}
-                      boxShadow={patreonButtonShadow}
+                      // boxShadow={patreonButtonShadow}
                       borderColor="rgba(244, 198, 134, 0.85)"
                       onMouseDown={() => {
                         window.location.href =
