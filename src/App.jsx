@@ -3611,9 +3611,9 @@ const Step = ({
   const actionBarShadow = "0 12px 24px rgba(209, 137, 96, 0.25)";
 
   const actionBarButtonProps = {
-    width: "56px",
-    height: "56px",
-    borderRadius: "20px",
+    width: "48px",
+    height: "48px",
+    borderRadius: "14px",
     bgGradient: "linear(180deg, #fff7ec 0%, #ffe3c3 100%)",
     border: "1px solid rgba(244, 198, 134, 0.8)",
     boxShadow: actionBarShadow,
@@ -3694,7 +3694,7 @@ const Step = ({
               paddingBottom: "140px",
             }}
           >
-            <VStack width="100%">
+            <VStack width="100%" spacing={3} alignItems="flex-start">
               <span style={{ fontSize: "50%" }}>
                 {translation[userLanguage]["app.progress"]}:{" "}
                 {animatedProgress.toFixed(2)}% |{" "}
@@ -3720,7 +3720,7 @@ const Step = ({
                 border="1px solid #ececec"
                 boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                 background={getBackgroundScheme(step.group)}
-                mb={userLanguage !== "compsci-en" ? 0 : 4}
+                mb={userLanguage !== "compsci-en" ? 2 : 3}
                 sx={{
                   "& > div": {
                     background:
@@ -3729,7 +3729,6 @@ const Step = ({
                     animation: `${progressGradient} 7s ease-in-out  infinite`,
                   },
                 }}
-                mb={4}
               />
               {/* {userLanguage !== "compsci-en" ? (
                 <Text
@@ -4357,7 +4356,7 @@ const Step = ({
               <Box
                 as={motion.div}
                 mt={4}
-                mb={0}
+                mb={{ base: 24, md: 28 }}
                 p={4}
                 borderRadius="24px"
                 borderBottomLeftRadius={"0px"}
@@ -4408,93 +4407,92 @@ const Step = ({
             />
           ) : null}
 
-          <Box
-            position="fixed"
-            bottom={{ base: "16px", md: "28px" }}
-            left="50%"
-            transform="translateX(-50%)"
-            width="calc(100% - 32px)"
-            maxWidth="440px"
-            zIndex="popover"
-            px={1}
-          >
-            <Box
-              bg="rgba(255, 248, 240, 0.94)"
-              borderRadius="36px"
-              px={{ base: 3, md: 4 }}
-              py={{ base: 2.5, md: 3 }}
-              border="1px solid rgba(244, 198, 134, 0.65)"
-              boxShadow="0 20px 36px rgba(209, 137, 96, 0.28)"
-              backdropFilter="blur(12px)"
-            >
-              <HStack spacing={{ base: 2, md: 3 }} justify="center">
-                <IconButton
-                  {...actionBarButtonProps}
-                  aria-label="Open Bitcoin mode"
-                  icon={<FaBitcoin fontSize="20px" />}
-                  onMouseDown={() => {
-                    onBitcoinModeOpen();
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      onBitcoinModeOpen();
-                    }
-                  }}
-                />
-                <IconButton
-                  {...actionBarButtonProps}
-                  aria-label="Open self-paced mode"
-                  icon={<PiClockCountdownFill fontSize="22px" />}
-                  onMouseDown={() => {
-                    onSelfPacedOpen();
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      onSelfPacedOpen();
-                    }
-                  }}
-                />
-                <ThemeMenu
-                  userLanguage={userLanguage}
-                  buttonProps={{
-                    ...actionBarButtonProps,
-                    color: actionBarButtonProps.color,
-                  }}
-                />
-                {userLanguage === "compsci-en" && (
-                  <IconButton
-                    {...actionBarButtonProps}
-                    aria-label="Open knowledge ledger"
-                    icon={<TbBinaryTreeFilled fontSize="20px" />}
-                    onMouseDown={() => {
-                      onKnowledgeLedgerOpen();
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        onKnowledgeLedgerOpen();
-                      }
-                    }}
-                  />
-                )}
-                <IconButton
-                  {...actionBarButtonProps}
-                  aria-label="Support on Patreon"
-                  icon={<PiPatreonLogoFill fontSize="20px" />}
-                  boxShadow={patreonButtonShadow}
-                  borderColor="rgba(244, 198, 134, 0.85)"
-                  onMouseDown={() => {
-                    window.location.href =
-                      "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      window.location.href =
-                        "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
-                    }
-                  }}
-                />
-              </HStack>
-            </Box>
+          <Box position="fixed" bottom="0" left="0" width="100%" zIndex="popover">
+            <Flex justify="center" width="100%">
+              <Box width={{ base: "100%", md: "440px" }} px={{ base: 0, md: 4 }}>
+                <Box
+                  bg="rgba(255, 248, 240, 0.96)"
+                  borderTopLeftRadius={{ base: "20px", md: "24px" }}
+                  borderTopRightRadius={{ base: "20px", md: "24px" }}
+                  borderBottomLeftRadius="0px"
+                  borderBottomRightRadius="0px"
+                  px={{ base: 3, md: 4 }}
+                  py={{ base: 2, md: 2.5 }}
+                  border="1px solid rgba(244, 198, 134, 0.65)"
+                  borderBottom="0"
+                  boxShadow="0 -2px 12px rgba(209, 137, 96, 0.2)"
+                  backdropFilter="blur(10px)"
+                >
+                  <HStack spacing={{ base: 2, md: 3 }} justify="center">
+                    <IconButton
+                      {...actionBarButtonProps}
+                      aria-label="Open Bitcoin mode"
+                      icon={<FaBitcoin fontSize="20px" />}
+                      onMouseDown={() => {
+                        onBitcoinModeOpen();
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          onBitcoinModeOpen();
+                        }
+                      }}
+                    />
+                    <IconButton
+                      {...actionBarButtonProps}
+                      aria-label="Open self-paced mode"
+                      icon={<PiClockCountdownFill fontSize="22px" />}
+                      onMouseDown={() => {
+                        onSelfPacedOpen();
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          onSelfPacedOpen();
+                        }
+                      }}
+                    />
+                    <ThemeMenu
+                      userLanguage={userLanguage}
+                      buttonProps={{
+                        ...actionBarButtonProps,
+                        color: actionBarButtonProps.color,
+                      }}
+                    />
+                    {userLanguage === "compsci-en" && (
+                      <IconButton
+                        {...actionBarButtonProps}
+                        aria-label="Open knowledge ledger"
+                        icon={<TbBinaryTreeFilled fontSize="20px" />}
+                        onMouseDown={() => {
+                          onKnowledgeLedgerOpen();
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            onKnowledgeLedgerOpen();
+                          }
+                        }}
+                      />
+                    )}
+                    <IconButton
+                      {...actionBarButtonProps}
+                      aria-label="Support on Patreon"
+                      icon={<PiPatreonLogoFill fontSize="20px" />}
+                      boxShadow={patreonButtonShadow}
+                      borderColor="rgba(244, 198, 134, 0.85)"
+                      onMouseDown={() => {
+                        window.location.href =
+                          "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          window.location.href =
+                            "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
+                        }
+                      }}
+                    />
+                  </HStack>
+                </Box>
+              </Box>
+            </Flex>
           </Box>
 
           <LectureModal
