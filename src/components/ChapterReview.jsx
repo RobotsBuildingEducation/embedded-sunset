@@ -1,3 +1,4 @@
+// ChapterReview.jsx
 import { useCallback, useEffect, useState } from "react";
 import {
   Box,
@@ -9,6 +10,8 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Flex,
+  Grid,
+  GridItem,
   Icon,
   Text,
   VStack,
@@ -178,7 +181,7 @@ const getStyleForKind = (kind) => {
   );
 };
 
-/** -------------------- Flow Layout Helpers -------------------- */
+/** -------------------- Skill-tree Flow Layout Helpers -------------------- */
 
 const FLOW_CARD_PATTERNS = [
   { alignSelf: "flex-start", translateX: "-12%", rotate: "-4deg", anchor: 80 },
@@ -201,6 +204,17 @@ const getJustifyContent = (align) => {
   if (align === "flex-start") return "flex-start";
   if (align === "flex-end") return "flex-end";
   return "center";
+};
+
+/** -------------------- Drawer Mosaic Helpers -------------------- */
+
+const isLong = (t) => (t ? String(t).length > 34 : false);
+const getMosaicSpan = (index, title) => {
+  const long = isLong(title);
+  const mdPattern = [6, 4, 3, 3, 4, 6, 4, 3, 3, 4];
+  const mdCol = long ? 8 : mdPattern[index % mdPattern.length]; // give long titles more width
+  const baseCol = long || index % 5 === 0 ? 2 : 1;
+  return { baseCol, mdCol };
 };
 
 /** -------------------- Component -------------------- */
@@ -293,16 +307,9 @@ const ChapterReview = ({
           </Text>
         </Box>
 
-        <Box
-          w="100%"
-          borderRadius="4xl"
-          p={{ base: 6, md: 8 }}
-          bg="rgba(255,255,255,0.9)"
-          backdropFilter="blur(16px)"
-          border="1px solid rgba(226,232,240,0.7)"
-          boxShadow="0 32px 80px rgba(79,70,229,0.18)"
-        >
-          <VStack spacing={{ base: 10, md: 12 }} align="stretch">
+        {/* ---------- SKILL TREE (restored) ---------- */}
+        <Box w="100%" borderRadius="4xl" p={{ base: 6, md: 8 }}>
+          <VStack align="stretch" spacing={{ base: 6, md: 8 }}>
             {visibleNodes.map((node, index) => {
               const typeStyle = getStyleForKind(node.questionKind);
               const IconComponent = typeStyle.icon || StarIcon;
@@ -363,8 +370,8 @@ const ChapterReview = ({
                       <Box
                         position="absolute"
                         inset={0}
-                        bgGradient={gradient}
-                        opacity={0.28}
+                        // bgGradient={gradient}
+                        opacity={0.22}
                         pointerEvents="none"
                       />
                       <Flex
@@ -402,6 +409,7 @@ const ChapterReview = ({
                     </Box>
                   </Flex>
 
+                  {/* connector between cards */}
                   {index < visibleNodes.length - 1 ? (
                     <Box
                       h={{ base: 16, md: 20 }}
@@ -479,6 +487,7 @@ const ChapterReview = ({
             px={{ base: 8, md: 12 }}
             py={{ base: 6, md: 7 }}
             onMouseDown={onStart}
+            mt="-48px"
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 onStart();
@@ -489,6 +498,7 @@ const ChapterReview = ({
           </Button>
         ) : null}
 
+        {/* ---------- DRAWER (mosaic grid) ---------- */}
         <Drawer
           isOpen={isChapterDrawerOpen}
           placement="bottom"
@@ -520,13 +530,23 @@ const ChapterReview = ({
                   fontSize={{ base: "2xl", md: "3xl" }}
                   fontWeight="bold"
                   color="gray.800"
+                  noOfLines={2}
                 >
                   {selectedChapter?.chapterLabel || selectedChapter?.title}
                 </Text>
               </VStack>
             </DrawerHeader>
-            <DrawerBody pb={{ base: 8, md: 12 }}>
-              <VStack spacing={{ base: 4, md: 5 }} align="stretch">
+
+            <DrawerBody pb={{ base: 8, md: 12 }} pt={{ base: 2, md: 3 }}>
+              <Grid
+                templateColumns={{
+                  base: "repeat(2, minmax(0, 1fr))",
+                  md: "repeat(12, minmax(0, 1fr))",
+                }}
+                gap={{ base: 2.5, md: 3 }}
+                gridAutoFlow="dense"
+                alignItems="stretch"
+              >
                 {selectedChapter?.questions?.length ? (
                   selectedChapter.questions.map((question, index) => {
                     const questionStyle = getStyleForKind(
@@ -536,70 +556,81 @@ const ChapterReview = ({
                       questionStyle.icon || StarIcon;
                     const questionAccent = questionStyle.accent;
                     const questionGradient = questionStyle.gradient;
+                    const { baseCol, mdCol } = getMosaicSpan(
+                      index,
+                      question.title
+                    );
 
                     return (
-                      <Box
+                      <GridItem
                         key={question.id || `${selectedChapter.id}-${index}`}
-                        as={motion.div}
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.35, delay: index * 0.05 }}
-                        borderRadius="2xl"
-                        px={{ base: 4, md: 5 }}
-                        py={{ base: 3, md: 4 }}
-                        bg="rgba(255,255,255,0.95)"
-                        borderWidth="1px"
-                        borderColor={`${questionAccent}40`}
-                        boxShadow={`0 18px 36px ${questionAccent}26`}
-                        position="relative"
-                        overflow="hidden"
+                        colSpan={{ base: baseCol, md: mdCol }}
                       >
                         <Box
-                          position="absolute"
-                          inset={0}
-                          bgGradient={questionGradient}
-                          opacity={0.24}
-                          pointerEvents="none"
-                        />
-                        <Flex
-                          align="center"
-                          gap={{ base: 4, md: 5 }}
+                          as={motion.div}
+                          initial={{ opacity: 0, y: 12 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3, delay: index * 0.03 }}
+                          borderRadius="2xl"
+                          px={{ base: 3, md: 4 }}
+                          py={{ base: 3, md: 4 }}
+                          bg="rgba(255,255,255,0.95)"
+                          borderWidth="1px"
+                          borderColor={`${questionAccent}40`}
+                          boxShadow={`0 18px 36px ${questionAccent}26`}
                           position="relative"
-                          zIndex={1}
+                          overflow="hidden"
+                          h="100%"
+                          display="flex"
+                          alignItems="center"
+                          gap={{ base: 3, md: 4 }}
                         >
                           <Box
-                            w={{ base: "48px", md: "56px" }}
-                            h={{ base: "48px", md: "56px" }}
+                            position="absolute"
+                            inset={0}
+                            bgGradient={questionGradient}
+                            opacity={0.2}
+                            pointerEvents="none"
+                          />
+                          <Box
+                            w={{ base: "44px", md: "52px" }}
+                            h={{ base: "44px", md: "52px" }}
                             borderRadius="full"
                             display="flex"
                             alignItems="center"
                             justifyContent="center"
                             bgGradient={`radial-gradient(circle at 30% 30%, ${questionAccent}33, transparent 70%)`}
-                            boxShadow={`0 18px 30px ${questionAccent}24`}
+                            boxShadow={`0 12px 24px ${questionAccent}20`}
+                            zIndex={1}
+                            flexShrink={0}
                           >
                             <Icon
                               as={QuestionIconComponent}
-                              boxSize={{ base: 6, md: 7 }}
+                              boxSize={{ base: 5, md: 6 }}
                               color={questionAccent}
                             />
                           </Box>
                           <Text
-                            fontSize={{ base: "lg", md: "xl" }}
+                            fontSize={{ base: "md", md: "lg" }}
                             fontWeight="semibold"
-                            color="gray.800"
+                            color="gray.900"
+                            noOfLines={2}
+                            zIndex={1}
                           >
                             {question.title}
                           </Text>
-                        </Flex>
-                      </Box>
+                        </Box>
+                      </GridItem>
                     );
                   })
                 ) : (
-                  <Text color="gray.500" fontSize="md">
-                    {text?.emptyChapter || "Lessons will appear here."}
-                  </Text>
+                  <GridItem colSpan={{ base: 2, md: 12 }}>
+                    <Text color="gray.500" fontSize="md">
+                      {text?.emptyChapter || "Lessons will appear here."}
+                    </Text>
+                  </GridItem>
                 )}
-              </VStack>
+              </Grid>
             </DrawerBody>
           </DrawerContent>
         </Drawer>

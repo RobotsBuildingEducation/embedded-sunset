@@ -4528,11 +4528,7 @@ const Home = ({
         ...chapter,
         isActive: index === 0,
       }));
-  }, [
-    landingFallbackTranslation,
-    landingLocaleSteps,
-    landingTranslationMap,
-  ]);
+  }, [landingFallbackTranslation, landingLocaleSteps, landingTranslationMap]);
 
   const landingChapterReviewText = useMemo(
     () => ({
@@ -5211,94 +5207,94 @@ const Home = ({
                     />
                   </Box>
                 </VStack>
+              </Box>
+            </Box>
           </Box>
-        </Box>
-      </Box>
-      {landingChapterReviewNodes.length > 0 && (
-        <Box
-          as="section"
-          scrollSnapAlign="start"
-          bgGradient="linear(180deg, rgba(71,77,126,0.12), rgba(236,233,252,0.88))"
-          px={{ base: 2, md: 6 }}
-          py={{ base: 12, md: 20 }}
-          display="flex"
-          justifyContent="center"
-        >
-          <ChapterReview
-            nodes={landingChapterReviewNodes}
-            text={landingChapterReviewText}
-            onStart={handleChapterReviewStart}
-            defaultExpanded
-            showExpandControl={false}
-            showStartButton={false}
-          />
-        </Box>
-      )}
-      {/* First slide: Why Learn */}
-      <Box
-        height="100%"
-        scrollSnapAlign="start"
-        p={8}
-        bg="#f5f4f2"
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        pb={24}
-      >
-        <RoleCanvas role={role} width={400} height={400} color="#FF69B4" />
-        <VStack spacing={6} alignItems="flex-start">
-          <Text fontSize="2xl" textAlign="center" width="100%" mt={4}>
-            {translation[userLanguage]["landing.whyLearn.title"]}
-          </Text>
-          <Text fontSize="md" fontWeight="bold">
-            {translation[userLanguage]["landing.whyLearn.section1.title"]}
-          </Text>
-          <Text fontSize="md" maxWidth="650px" textAlign="left">
-            {translation[userLanguage]["landing.whyLearn.section1.content"]}
-          </Text>
-          <Image
-            width="100%"
-            maxWidth="600px"
-            borderRadius="12px"
-            boxShadow="0px 0.5px 0.5px black"
-            src={
-              userLanguage !== "es"
-                ? "https://res.cloudinary.com/dtkeyccga/image/upload/v1738251300/rzhhloly1rbsvx7f1qz3.png"
-                : "https://res.cloudinary.com/dtkeyccga/image/upload/v1755251476/260db5ec-13ba-4893-a098-5f8dd2aa506b_sodjix.png"
-            }
-          />
-          <Text fontSize="md" fontWeight="bold">
-            {translation[userLanguage]["landing.whyLearn.section2.title"]}
-          </Text>{" "}
-          <Text fontSize="md" maxWidth="675px" textAlign="left">
-            {translation[userLanguage]["landing.whyLearn.section2.content"]}
-          </Text>
-          <Image
-            maxWidth="600px"
-            width="100%"
-            borderRadius="12px"
-            boxShadow="0px 0.5px 0.5px black"
-            src={
-              userLanguage !== "es"
-                ? "https://res.cloudinary.com/dtkeyccga/image/upload/v1755239709/Screenshot_2025-08-15_at_12.32.37_AM_yea3uh.png"
-                : "https://res.cloudinary.com/dtkeyccga/image/upload/v1755252228/ChatGPT_Image_Aug_15_2025_04_03_39_AM_khx1xe.png"
-            }
-          />
-          <Text fontSize="md" fontWeight="bold">
-            {translation[userLanguage]["landing.whyLearn.section3.title"]}
-          </Text>
-          <Text fontSize="md" maxWidth="675px" textAlign="left">
-            {translation[userLanguage]["landing.whyLearn.section3.content"]}
-          </Text>
-          <Image
-            maxWidth="600px"
-            width="100%"
-            borderRadius="12px"
-            boxShadow="0px 0.5px 0.5px black"
-            src="https://res.cloudinary.com/dtkeyccga/image/upload/v1755245865/4049a20a-4f49-4d8e-9579-23cfb7623011_w1cixo.png"
-          />
-        </VStack>
-      </Box>
+          {landingChapterReviewNodes.length > 0 && (
+            <Box
+              as="section"
+              scrollSnapAlign="start"
+              bgGradient="linear(180deg, rgba(71,77,126,0.12), rgba(236,233,252,0.88))"
+              px={{ base: 2, md: 6 }}
+              py={{ base: 12, md: 20 }}
+              display="flex"
+              justifyContent="center"
+            >
+              <ChapterReview
+                nodes={landingChapterReviewNodes}
+                text={landingChapterReviewText}
+                onStart={handleChapterReviewStart}
+                defaultExpanded
+                showExpandControl={false}
+                showStartButton={false}
+              />
+            </Box>
+          )}
+          {/* First slide: Why Learn */}
+          <Box
+            height="100%"
+            scrollSnapAlign="start"
+            p={8}
+            bg="#f5f4f2"
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            pb={24}
+          >
+            <RoleCanvas role={role} width={400} height={400} color="#FF69B4" />
+            <VStack spacing={6} alignItems="flex-start">
+              <Text fontSize="2xl" textAlign="center" width="100%" mt={4}>
+                {translation[userLanguage]["landing.whyLearn.title"]}
+              </Text>
+              <Text fontSize="md" fontWeight="bold">
+                {translation[userLanguage]["landing.whyLearn.section1.title"]}
+              </Text>
+              <Text fontSize="md" maxWidth="650px" textAlign="left">
+                {translation[userLanguage]["landing.whyLearn.section1.content"]}
+              </Text>
+              <Image
+                width="100%"
+                maxWidth="600px"
+                borderRadius="12px"
+                boxShadow="0px 0.5px 0.5px black"
+                src={
+                  userLanguage !== "es"
+                    ? "https://res.cloudinary.com/dtkeyccga/image/upload/v1738251300/rzhhloly1rbsvx7f1qz3.png"
+                    : "https://res.cloudinary.com/dtkeyccga/image/upload/v1755251476/260db5ec-13ba-4893-a098-5f8dd2aa506b_sodjix.png"
+                }
+              />
+              <Text fontSize="md" fontWeight="bold">
+                {translation[userLanguage]["landing.whyLearn.section2.title"]}
+              </Text>{" "}
+              <Text fontSize="md" maxWidth="675px" textAlign="left">
+                {translation[userLanguage]["landing.whyLearn.section2.content"]}
+              </Text>
+              <Image
+                maxWidth="600px"
+                width="100%"
+                borderRadius="12px"
+                boxShadow="0px 0.5px 0.5px black"
+                src={
+                  userLanguage !== "es"
+                    ? "https://res.cloudinary.com/dtkeyccga/image/upload/v1755239709/Screenshot_2025-08-15_at_12.32.37_AM_yea3uh.png"
+                    : "https://res.cloudinary.com/dtkeyccga/image/upload/v1755252228/ChatGPT_Image_Aug_15_2025_04_03_39_AM_khx1xe.png"
+                }
+              />
+              <Text fontSize="md" fontWeight="bold">
+                {translation[userLanguage]["landing.whyLearn.section3.title"]}
+              </Text>
+              <Text fontSize="md" maxWidth="675px" textAlign="left">
+                {translation[userLanguage]["landing.whyLearn.section3.content"]}
+              </Text>
+              <Image
+                maxWidth="600px"
+                width="100%"
+                borderRadius="12px"
+                boxShadow="0px 0.5px 0.5px black"
+                src="https://res.cloudinary.com/dtkeyccga/image/upload/v1755245865/4049a20a-4f49-4d8e-9579-23cfb7623011_w1cixo.png"
+              />
+            </VStack>
+          </Box>
 
           {/* Second slide: The Mission */}
           <Box
