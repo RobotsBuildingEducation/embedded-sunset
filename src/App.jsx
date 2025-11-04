@@ -5228,6 +5228,9 @@ const Home = ({
             nodes={landingChapterReviewNodes}
             text={landingChapterReviewText}
             onStart={handleChapterReviewStart}
+            defaultExpanded
+            showExpandControl={false}
+            showStartButton={false}
           />
         </Box>
       )}

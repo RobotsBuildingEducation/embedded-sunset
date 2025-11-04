@@ -205,8 +205,15 @@ const getJustifyContent = (align) => {
 
 /** -------------------- Component -------------------- */
 
-const ChapterReview = ({ nodes, text, onStart }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+const ChapterReview = ({
+  nodes,
+  text,
+  onStart = () => {},
+  defaultExpanded = false,
+  showExpandControl = true,
+  showStartButton = true,
+}) => {
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [selectedChapter, setSelectedChapter] = useState(null);
 
   const {
@@ -233,9 +240,9 @@ const ChapterReview = ({ nodes, text, onStart }) => {
   }, [onChapterDrawerClose]);
 
   useEffect(() => {
-    setIsExpanded(false);
+    setIsExpanded(defaultExpanded);
     closeChapterDrawer();
-  }, [nodes, closeChapterDrawer]);
+  }, [nodes, closeChapterDrawer, defaultExpanded]);
 
   const handleChapterSelect = (node) => {
     if (!node?.questions?.length) return;
@@ -437,7 +444,7 @@ const ChapterReview = ({ nodes, text, onStart }) => {
               );
             })}
 
-            {hasHiddenNodes && !isExpanded ? (
+            {showExpandControl && hasHiddenNodes && !isExpanded ? (
               <Box
                 as={motion.div}
                 initial={{ opacity: 0, y: 16 }}
@@ -464,21 +471,23 @@ const ChapterReview = ({ nodes, text, onStart }) => {
           </VStack>
         </Box>
 
-        <Button
-          colorScheme="purple"
-          size="lg"
-          borderRadius="full"
-          px={{ base: 8, md: 12 }}
-          py={{ base: 6, md: 7 }}
-          onMouseDown={onStart}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              onStart();
-            }
-          }}
-        >
-          {text?.cta}
-        </Button>
+        {showStartButton && text?.cta ? (
+          <Button
+            colorScheme="purple"
+            size="lg"
+            borderRadius="full"
+            px={{ base: 8, md: 12 }}
+            py={{ base: 6, md: 7 }}
+            onMouseDown={onStart}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                onStart();
+              }
+            }}
+          >
+            {text?.cta}
+          </Button>
+        ) : null}
 
         <Drawer
           isOpen={isChapterDrawerOpen}
