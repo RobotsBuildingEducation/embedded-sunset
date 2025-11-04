@@ -1,3 +1,4 @@
+// CloudTransition.jsx
 import React, { useEffect, useRef, useState, useMemo, useId } from "react";
 import { Box, Button, Flex, Icon, Text } from "@chakra-ui/react";
 import {
@@ -6,6 +7,17 @@ import {
   RepeatIcon,
   StarIcon,
 } from "@chakra-ui/icons";
+// Icons for additional types
+import { FiType, FiAlignLeft } from "react-icons/fi";
+import {
+  RiCodeSSlashLine,
+  RiTerminalLine,
+  RiBookOpenLine,
+  RiChatQuoteLine,
+  RiChat3Line,
+} from "react-icons/ri";
+import { BsCodeSquare } from "react-icons/bs";
+
 import { motion, AnimatePresence } from "framer-motion";
 import sparkle from "../assets/sparkle.mp3";
 import complete from "../assets/complete.mp3";
@@ -65,6 +77,65 @@ const QUESTION_TYPE_STYLES = {
     gradient: "linear(to-br, rgba(14,165,233,0.22), rgba(99,102,241,0.16))",
     halo: "rgba(14,165,233,0.2)",
   },
+
+  // Expanded types
+  singleLine: {
+    icon: FiType,
+    label: "Single-line Answer",
+    accent: "#fb923c",
+    gradient: "linear(to-br, rgba(251,146,60,0.22), rgba(253,164,175,0.18))",
+    halo: "rgba(251,146,60,0.18)",
+  },
+  text: {
+    icon: FiAlignLeft,
+    label: "Open Response",
+    accent: "#64748b",
+    gradient: "linear(to-br, rgba(100,116,139,0.20), rgba(99,102,241,0.12))",
+    halo: "rgba(100,116,139,0.18)",
+  },
+  code: {
+    icon: RiCodeSSlashLine,
+    label: "Code (Editor)",
+    accent: "#06b6d4",
+    gradient: "linear(to-br, rgba(6,182,212,0.22), rgba(14,165,233,0.16))",
+    halo: "rgba(6,182,212,0.18)",
+  },
+  codeCompletion: {
+    icon: BsCodeSquare,
+    label: "Code Completion",
+    accent: "#84cc16",
+    gradient: "linear(to-br, rgba(132,204,22,0.22), rgba(16,185,129,0.16))",
+    halo: "rgba(132,204,22,0.18)",
+  },
+  terminal: {
+    icon: RiTerminalLine,
+    label: "Terminal Task",
+    accent: "#f43f5e",
+    gradient: "linear(to-br, rgba(244,63,94,0.22), rgba(59,130,246,0.12))",
+    halo: "rgba(244,63,94,0.18)",
+  },
+  study: {
+    icon: RiBookOpenLine,
+    label: "Study Guide",
+    accent: "#a78bfa",
+    gradient: "linear(to-br, rgba(167,139,250,0.22), rgba(14,165,233,0.14))",
+    halo: "rgba(167,139,250,0.20)",
+  },
+  prompt: {
+    icon: RiChatQuoteLine,
+    label: "Prompt",
+    accent: "#e879f9",
+    gradient: "linear(to-br, rgba(232,121,249,0.22), rgba(251,113,133,0.16))",
+    halo: "rgba(232,121,249,0.20)",
+  },
+  conversation: {
+    icon: RiChat3Line,
+    label: "Conversation",
+    accent: "#6366f1",
+    gradient: "linear(to-br, rgba(99,102,241,0.22), rgba(14,165,233,0.14))",
+    halo: "rgba(99,102,241,0.20)",
+  },
+
   default: {
     icon: StarIcon,
     label: "Skill Quest",
@@ -136,21 +207,42 @@ const buildStepSummary = (step) => {
   return truncateText(summary);
 };
 
+// Returns:
+// 'study' | 'order' | 'multiAnswer' | 'multiChoice' |
+// 'codeCompletion' | 'terminal' | 'code' | 'singleLine' | 'text' | 'default'
 const detectQuestionKind = (step) => {
   if (!step || typeof step !== "object") return "default";
-  if (step.isSelectOrder) return "order";
-  if (step.isMultipleAnswerChoice) return "multiAnswer";
-  if (step.isMultipleChoice) return "multiChoice";
+  const q = step.question ?? step;
 
-  const answer = step.question?.answer;
-  if (Array.isArray(answer) && answer.length > 1) {
+  // 1) Explicit flags
+  if (step.isStudyGuide || q?.isStudyGuide) return "study";
+  if (step.isSelectOrder || q?.isSelectOrder) return "order";
+  if (step.isMultipleAnswerChoice || q?.isMultipleAnswerChoice)
     return "multiAnswer";
+  if (step.isMultipleChoice || q?.isMultipleChoice) return "multiChoice";
+  if (step.isCodeCompletion || q?.isCodeCompletion) return "codeCompletion";
+
+  // 2) Code family
+  if (step.isCode || q?.isCode) {
+    const isTerminal = Boolean(step.isTerminal ?? q?.isTerminal);
+    return isTerminal ? "terminal" : "code";
   }
+
+  // 3) Text inputs
+  if (step.isSingleLineText || q?.isSingleLineText) return "singleLine";
+  if (step.isText || q?.isText) return "text";
+
+  // 4) Lightweight inference
+  const answer = q?.answer ?? q?.answers ?? step.answer;
+  if (Array.isArray(answer) && answer.length > 1) return "multiAnswer";
+
+  const options = q?.options ?? q?.choices ?? q?.variants ?? q?.items;
+  if (Array.isArray(options) && options.length > 0) return "multiChoice";
 
   return "default";
 };
 
-// ---- Level-based background (clouds a bit stronger) ----
+// ---- Level-based background ----
 const THEMES = {
   tutorial: {
     skyTop: "#e3f2fd",
@@ -474,10 +566,7 @@ const CloudTransition = ({
       });
     };
 
-    if (activeIndex - 1 >= 0) {
-      pushNode(localeSteps[activeIndex - 1], activeIndex - 1, "previous");
-    }
-
+    // Previous node is intentionally NOT added anymore
     pushNode(localeSteps[activeIndex], activeIndex, "current");
 
     if (activeIndex + 1 < localeSteps.length) {
@@ -491,10 +580,6 @@ const CloudTransition = ({
     return nodes;
   }, [clonedStep, currentStepIndex, stepsMap, userLanguage]);
 
-  const previousNode = useMemo(
-    () => skillTreeNodes.find((node) => node.type === "previous"),
-    [skillTreeNodes]
-  );
   const currentNode = useMemo(
     () => skillTreeNodes.find((node) => node.type === "current"),
     [skillTreeNodes]
@@ -504,41 +589,46 @@ const CloudTransition = ({
     [skillTreeNodes]
   );
   const hasSkillTree = skillTreeNodes.length > 0;
+
+  // Only show current + upcoming (no previous)
   const displayNodes = useMemo(() => {
     const list = [];
-    if (previousNode) list.push(previousNode);
     if (currentNode) list.push(currentNode);
-    if (upcomingNodes.length) {
-      list.push(...upcomingNodes);
-    }
+    if (upcomingNodes.length) list.push(...upcomingNodes);
     return list;
-  }, [currentNode, previousNode, upcomingNodes]);
+  }, [currentNode, upcomingNodes]);
 
+  // Node renderer — no hover/tap; current node emphasized with border & glow
   const renderSkillNode = (node, index) => {
     if (!node) return null;
     const typeStyle =
       QUESTION_TYPE_STYLES[node.questionKind] ?? QUESTION_TYPE_STYLES.default;
     const IconComponent = typeStyle.icon ?? StarIcon;
+
     const statusStyle =
       SKILL_NODE_STYLES[node.type] ?? SKILL_NODE_STYLES.upcoming;
+
     const accent = typeStyle.accent ?? statusStyle.accent;
     const gradient = typeStyle.gradient ?? statusStyle.gradient;
+    const isCurrent = node.type === "current";
 
     return (
       <MotionBox
         variants={skillNodeVariants}
         custom={index}
-        whileHover={{ y: -4, scale: 1.01 }}
-        whileTap={{ scale: 0.99 }}
         transition={{ type: "spring", stiffness: 260, damping: 24 }}
         borderRadius="full"
         px={{ base: 4, md: 5 }}
         py={{ base: 3, md: 4 }}
         bg="rgba(255,255,255,0.88)"
         backdropFilter="blur(10px)"
-        boxShadow={`0 14px 28px ${statusStyle.shadow}`}
-        borderWidth="1px"
-        borderColor={`${accent}40`}
+        boxShadow={
+          isCurrent
+            ? `0 18px 36px ${accent}40, 0 0 0 2px ${accent}33 inset`
+            : `0 8px 16px rgba(0,0,0,0.06)`
+        }
+        borderWidth={isCurrent ? "2px" : "1px"}
+        borderColor={isCurrent ? accent : `${accent}33`}
         position="relative"
         overflow="hidden"
         width="100%"
@@ -548,7 +638,7 @@ const CloudTransition = ({
           position="absolute"
           inset={0}
           bgGradient={gradient}
-          opacity={0.24}
+          opacity={isCurrent ? 0.26 : 0.14}
           pointerEvents="none"
         />
         <Flex align="center" gap={4} position="relative" zIndex={1}>
@@ -560,14 +650,16 @@ const CloudTransition = ({
             alignItems="center"
             justifyContent="center"
             bgGradient={`radial-gradient(circle at 30% 30%, ${accent}33, transparent 70%)`}
-            boxShadow={`0 12px 24px ${accent}33`}
+            boxShadow={
+              isCurrent ? `0 14px 28px ${accent}33` : `0 10px 20px ${accent}22`
+            }
           >
             <Icon as={IconComponent} boxSize={7} color={accent} />
           </Box>
           <Text
             fontSize="lg"
-            fontWeight={node.type === "current" ? "bold" : "semibold"}
-            color={node.type === "current" ? "purple.700" : "purple.500"}
+            fontWeight={isCurrent ? "bold" : "semibold"}
+            color={isCurrent ? "purple.700" : "purple.500"}
           >
             {node.title}
           </Text>
@@ -659,7 +751,7 @@ const CloudTransition = ({
     return () => cancelAnimationFrame(frameId);
   }, [salary]);
 
-  // level-based canvas sky with fluffier clouds + GOLD sparkles
+  // level-based canvas sky
   useEffect(() => {
     if (!isActive) return;
     const canvas = canvasRef.current;
@@ -720,12 +812,11 @@ const CloudTransition = ({
       ctx.fillStyle = sky;
       ctx.fillRect(0, 0, width, height);
 
-      // Clouds (3-lobe puffs + soft gloss)
+      // Clouds
       clouds.forEach((c) => {
         c.wobble += 0.01;
         const wobbleY = Math.sin(c.wobble) * 0.18;
 
-        // main lobe + sides
         drawCloudLobe(c.x, c.y, c.radius, c.color);
         drawCloudLobe(
           c.x - c.radius * 0.42,
@@ -740,7 +831,7 @@ const CloudTransition = ({
           c.color
         );
 
-        // glossy highlight to pop clouds
+        // glossy highlight
         ctx.save();
         ctx.globalAlpha = 0.16;
         drawCloudLobe(
@@ -763,7 +854,7 @@ const CloudTransition = ({
         if (c.x + c.radius < 0) c.x = width + c.radius;
       });
 
-      // Sparkles (additive gold)
+      // Sparkles (additive)
       ctx.save();
       ctx.globalCompositeOperation = "lighter";
       sparkles.forEach((s, i) => {
@@ -771,13 +862,11 @@ const CloudTransition = ({
         const a = s.baseA * (0.5 + 0.5 * Math.sin(s.flicker));
         const r = s.r * (0.85 + 0.3 * Math.sin(s.flicker * 1.7));
 
-        // soft gold dot
-        ctx.fillStyle = `rgba(255,215,0,${a})`; // GOLD
+        ctx.fillStyle = `rgba(255,215,0,${a})`;
         ctx.beginPath();
         ctx.arc(s.x, s.y, r, 0, Math.PI * 2);
         ctx.fill();
 
-        // tiny cross twinkle
         if ((i + (s.flicker | 0)) % 7 === 0) {
           ctx.globalAlpha = a * 0.9;
           ctx.beginPath();
@@ -786,12 +875,11 @@ const CloudTransition = ({
           ctx.moveTo(s.x, s.y - r * 1.8);
           ctx.lineTo(s.x, s.y + r * 1.8);
           ctx.lineWidth = 0.8;
-          ctx.strokeStyle = "rgba(255,215,0,0.9)"; // GOLD
+          ctx.strokeStyle = "rgba(255,215,0,0.9)";
           ctx.stroke();
           ctx.globalAlpha = 1;
         }
 
-        // drift
         s.y -= s.vy;
         s.x += s.vx;
         if (s.y < -4) {
@@ -810,8 +898,9 @@ const CloudTransition = ({
 
     const onResize = () => {
       setSize();
-      width = window.innerWidth;
-      height = window.innerHeight;
+      // Optionally update references if you want clouds to adapt immediately:
+      // width = window.innerWidth;
+      // height = window.innerHeight;
     };
     window.addEventListener("resize", onResize);
     return () => {
@@ -837,7 +926,6 @@ const CloudTransition = ({
           overflowY="auto"
           display="flex"
           flexDirection="column"
-          // justifyContent={children ? "flex-start" : "center"}
           alignItems="center"
         >
           <Box
@@ -1011,8 +1099,8 @@ const CloudTransition = ({
                 mt={8}
                 colorScheme="yellow"
                 variant="outline"
-                borderRadius="full"
-                px={6}
+                borderRadius="12px"
+                py={8}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 whileHover={{ scale: 1.02 }}
@@ -1020,6 +1108,7 @@ const CloudTransition = ({
                 transition={{ duration: 0.2, delay: 0.35 }}
                 onClick={onContinue}
                 disabled={!canContinue}
+                width="100%"
               >
                 Continue
               </Button>
@@ -1034,6 +1123,7 @@ const CloudTransition = ({
                   flexDirection="column"
                   alignItems="center"
                   gap={{ base: 6, md: 7 }}
+                  mb={12}
                 >
                   {displayNodes.map((node, index) => (
                     <React.Fragment key={node.id}>
