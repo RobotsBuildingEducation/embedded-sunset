@@ -22,7 +22,21 @@ import {
 } from "@chakra-ui/icons";
 import { motion } from "framer-motion";
 
+// extra icons for comprehensive coverage
+import { FiType, FiAlignLeft } from "react-icons/fi";
+import {
+  RiChat3Line,
+  RiChatQuoteLine,
+  RiCodeSSlashLine,
+  RiTerminalLine,
+  RiBookOpenLine,
+} from "react-icons/ri";
+import { BsCodeSquare } from "react-icons/bs";
+
+/** -------------------- Styles & Kind Resolver -------------------- */
+
 const CHAPTER_REVIEW_TYPE_STYLES = {
+  // existing kinds
   order: {
     icon: RepeatIcon,
     accent: "#8b5cf6",
@@ -38,12 +52,133 @@ const CHAPTER_REVIEW_TYPE_STYLES = {
     accent: "#0ea5e9",
     gradient: "linear(to-br, rgba(14,165,233,0.22), rgba(99,102,241,0.16))",
   },
+
+  // comprehensive additions
+  singleLine: {
+    icon: FiType,
+    accent: "#fb923c",
+    gradient: "linear(to-br, rgba(251,146,60,0.22), rgba(253,164,175,0.18))",
+  },
+  text: {
+    icon: FiAlignLeft,
+    accent: "#64748b",
+    gradient: "linear(to-br, rgba(100,116,139,0.20), rgba(99,102,241,0.12))",
+  },
+  code: {
+    icon: RiCodeSSlashLine,
+    accent: "#06b6d4",
+    gradient: "linear(to-br, rgba(6,182,212,0.22), rgba(14,165,233,0.16))",
+  },
+  codeCompletion: {
+    icon: BsCodeSquare,
+    accent: "#84cc16",
+    gradient: "linear(to-br, rgba(132,204,22,0.22), rgba(16,185,129,0.16))",
+  },
+  terminal: {
+    icon: RiTerminalLine,
+    accent: "#f43f5e",
+    gradient: "linear(to-br, rgba(244,63,94,0.22), rgba(59,130,246,0.12))",
+  },
+  prompt: {
+    icon: RiChatQuoteLine,
+    accent: "#e879f9",
+    gradient: "linear(to-br, rgba(232,121,249,0.22), rgba(251,113,133,0.16))",
+  },
+  conversation: {
+    icon: RiChat3Line,
+    accent: "#6366f1",
+    gradient: "linear(to-br, rgba(99,102,241,0.22), rgba(14,165,233,0.14))",
+  },
+  study: {
+    icon: RiBookOpenLine,
+    accent: "#a78bfa",
+    gradient: "linear(to-br, rgba(167,139,250,0.22), rgba(14,165,233,0.14))",
+  },
+
   default: {
     icon: StarIcon,
     accent: "#f59e0b",
     gradient: "linear(to-br, rgba(245,158,11,0.22), rgba(249,168,212,0.18))",
   },
 };
+
+const QUESTION_KIND_ALIASES = {
+  // order
+  order: "order",
+  selectorder: "order",
+  dragorder: "order",
+
+  // multiple choice
+  multichoice: "multiChoice",
+  multiplechoice: "multiChoice",
+  ismultiplechoice: "multiChoice",
+
+  // multiple answer
+  multianswer: "multiAnswer",
+  multipleanswer: "multiAnswer",
+  multiselect: "multiAnswer",
+  ismultipleanswerchoice: "multiAnswer",
+
+  // text
+  text: "text",
+  freetext: "text",
+  istext: "text",
+
+  // single-line text
+  singleline: "singleLine",
+  singlelinetext: "singleLine",
+  shorttext: "singleLine",
+  issinglelinetext: "singleLine",
+
+  // code
+  code: "code",
+  writecode: "code",
+  iscode: "code",
+
+  // code completion
+  codecompletion: "codeCompletion",
+  completecode: "codeCompletion",
+  fillinthecode: "codeCompletion",
+  iscodecompletion: "codeCompletion",
+
+  // terminal
+  terminal: "terminal",
+  shell: "terminal",
+  bash: "terminal",
+  isterminal: "terminal",
+
+  // prompt writing
+  prompt: "prompt",
+  promptwriting: "prompt",
+  writeprompt: "prompt",
+  ispromptwriting: "prompt",
+
+  // conversation review
+  conversation: "conversation",
+  conversationreview: "conversation",
+  chatreview: "conversation",
+  isconversationreview: "conversation",
+
+  // study / guide
+  study: "study",
+  studyguide: "study",
+  isstudyguide: "study",
+};
+
+const normalizeKind = (k) =>
+  String(k ?? "")
+    .replace(/[^a-z]/gi, "")
+    .toLowerCase();
+
+const getStyleForKind = (kind) => {
+  const norm = normalizeKind(kind);
+  const canonical = QUESTION_KIND_ALIASES[norm] || "default";
+  return (
+    CHAPTER_REVIEW_TYPE_STYLES[canonical] || CHAPTER_REVIEW_TYPE_STYLES.default
+  );
+};
+
+/** -------------------- Flow Layout Helpers -------------------- */
 
 const FLOW_CARD_PATTERNS = [
   { alignSelf: "flex-start", translateX: "-12%", rotate: "-4deg", anchor: 80 },
@@ -56,18 +191,30 @@ const createFlowConnectorPath = (startAnchor, endAnchor) => {
   const controlOffset = (endAnchor - startAnchor) * 0.5;
   const controlPoint1 = startAnchor + controlOffset * 0.6;
   const controlPoint2 = endAnchor - controlOffset * 0.6;
-
   return `M ${startAnchor} 10 C ${controlPoint1} -6, ${controlPoint2} 70, ${endAnchor} 54`;
 };
+
+const resolvePattern = (index) =>
+  FLOW_CARD_PATTERNS[index % FLOW_CARD_PATTERNS.length];
+
+const getJustifyContent = (align) => {
+  if (align === "flex-start") return "flex-start";
+  if (align === "flex-end") return "flex-end";
+  return "center";
+};
+
+/** -------------------- Component -------------------- */
 
 const ChapterReview = ({ nodes, text, onStart }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedChapter, setSelectedChapter] = useState(null);
+
   const {
     isOpen: isChapterDrawerOpen,
     onOpen: onChapterDrawerOpen,
     onClose: onChapterDrawerClose,
   } = useDisclosure();
+
   const previewCount = 2;
   const activeNodeIndex = Math.max(
     0,
@@ -107,15 +254,6 @@ const ChapterReview = ({ nodes, text, onStart }) => {
   const handleDrawerClose = () => {
     setSelectedChapter(null);
     onChapterDrawerClose();
-  };
-
-  const resolvePattern = (index) =>
-    FLOW_CARD_PATTERNS[index % FLOW_CARD_PATTERNS.length];
-
-  const getJustifyContent = (align) => {
-    if (align === "flex-start") return "flex-start";
-    if (align === "flex-end") return "flex-end";
-    return "center";
   };
 
   return (
@@ -159,9 +297,7 @@ const ChapterReview = ({ nodes, text, onStart }) => {
         >
           <VStack spacing={{ base: 10, md: 12 }} align="stretch">
             {visibleNodes.map((node, index) => {
-              const typeStyle =
-                CHAPTER_REVIEW_TYPE_STYLES[node.questionKind] ||
-                CHAPTER_REVIEW_TYPE_STYLES.default;
+              const typeStyle = getStyleForKind(node.questionKind);
               const IconComponent = typeStyle.icon || StarIcon;
               const accent = typeStyle.accent;
               const gradient = typeStyle.gradient;
@@ -205,7 +341,9 @@ const ChapterReview = ({ nodes, text, onStart }) => {
                       gap={{ base: 4, md: 5 }}
                       position="relative"
                       cursor={isClickable ? "pointer" : "default"}
-                      transform={`translateX(${pattern.translateX}) rotate(${pattern.rotate})`}
+                      style={{
+                        transform: `translateX(${pattern.translateX}) rotate(${pattern.rotate})`,
+                      }}
                       _hover={
                         isClickable
                           ? {
@@ -298,6 +436,7 @@ const ChapterReview = ({ nodes, text, onStart }) => {
                 </Box>
               );
             })}
+
             {hasHiddenNodes && !isExpanded ? (
               <Box
                 as={motion.div}
@@ -381,9 +520,9 @@ const ChapterReview = ({ nodes, text, onStart }) => {
               <VStack spacing={{ base: 4, md: 5 }} align="stretch">
                 {selectedChapter?.questions?.length ? (
                   selectedChapter.questions.map((question, index) => {
-                    const questionStyle =
-                      CHAPTER_REVIEW_TYPE_STYLES[question.questionKind] ||
-                      CHAPTER_REVIEW_TYPE_STYLES.default;
+                    const questionStyle = getStyleForKind(
+                      question.questionKind
+                    );
                     const QuestionIconComponent =
                       questionStyle.icon || StarIcon;
                     const questionAccent = questionStyle.accent;

@@ -1501,18 +1501,35 @@ function TerminalComponent({
 
 const detectChapterQuestionKind = (step) => {
   if (!step || typeof step !== "object") return "default";
-  if (step.isSelectOrder) return "order";
-  if (step.isMultipleAnswerChoice) return "multiAnswer";
-  if (step.isMultipleChoice) return "multiChoice";
+  const q = step.question ?? step;
 
-  const answer = step.question?.answer;
-  if (Array.isArray(answer) && answer.length > 1) {
+  // 1) Explicit flags (your canonical types)
+  if (step.isStudyGuide || q?.isStudyGuide) return "study";
+  if (step.isSelectOrder || q?.isSelectOrder) return "order";
+  if (step.isMultipleAnswerChoice || q?.isMultipleAnswerChoice)
     return "multiAnswer";
+  if (step.isMultipleChoice || q?.isMultipleChoice) return "multiChoice";
+  if (step.isCodeCompletion || q?.isCodeCompletion) return "codeCompletion";
+
+  // 2) Code family
+  if (step.isCode || q?.isCode) {
+    const isTerminal = Boolean(step.isTerminal ?? q?.isTerminal);
+    return isTerminal ? "terminal" : "code";
   }
+
+  // 3) Text inputs
+  if (step.isSingleLineText || q?.isSingleLineText) return "singleLine";
+  if (step.isText || q?.isText) return "text";
+
+  // 4) Lightweight inference for legacy content
+  const answer = q?.answer ?? q?.answers ?? step.answer;
+  if (Array.isArray(answer) && answer.length > 1) return "multiAnswer";
+
+  const options = q?.options ?? q?.choices ?? q?.variants ?? q?.items;
+  if (Array.isArray(options) && options.length > 0) return "multiChoice";
 
   return "default";
 };
-
 const normalizeChapterTitle = (title, fallbackIndex = 0) => {
   if (typeof title === "string" && title.trim()) {
     return title.trim();
