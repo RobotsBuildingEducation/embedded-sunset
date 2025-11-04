@@ -4442,6 +4442,120 @@ const Home = ({
     100
   );
 
+  const landingFallbackTranslation = translation.en || {};
+  const landingTranslationMap =
+    translation[userLanguage] || landingFallbackTranslation;
+
+  const landingLocaleSteps = useMemo(() => {
+    if (Array.isArray(steps[userLanguage]) && steps[userLanguage].length) {
+      return steps[userLanguage];
+    }
+    if (Array.isArray(steps.en) && steps.en.length) {
+      return steps.en;
+    }
+    const [firstKey] = Object.keys(steps);
+    if (firstKey && Array.isArray(steps[firstKey])) {
+      return steps[firstKey];
+    }
+    return [];
+  }, [userLanguage]);
+
+  const landingChapterReviewNodes = useMemo(() => {
+    if (!Array.isArray(landingLocaleSteps) || !landingLocaleSteps.length) {
+      return [];
+    }
+
+    const chapterMap = new Map();
+
+    landingLocaleSteps.forEach((entry, index) => {
+      if (!entry || typeof entry !== "object") {
+        return;
+      }
+
+      const groupValue = entry.group ?? entry.chapter;
+      if (!groupValue) {
+        return;
+      }
+
+      const normalizedGroup = String(groupValue).toLowerCase();
+      if (normalizedGroup === "introduction") {
+        return;
+      }
+
+      const questionKind = detectChapterQuestionKind(entry);
+      const questionTitle = normalizeChapterTitle(entry.title, index);
+
+      let chapter = chapterMap.get(normalizedGroup);
+
+      if (!chapter) {
+        chapter = {
+          id: `${normalizedGroup}-${index}`,
+          title: questionTitle,
+          questionKind,
+          chapterLabel: deriveChapterLabel(
+            groupValue,
+            landingTranslationMap,
+            landingFallbackTranslation
+          ),
+          groupValue,
+          normalizedGroup,
+          firstIndex: index,
+          questions: [],
+        };
+        chapterMap.set(normalizedGroup, chapter);
+      }
+
+      chapter.questions.push({
+        id: `${normalizedGroup}-question-${index}`,
+        title: questionTitle,
+        questionKind,
+        index,
+      });
+
+      if (index < chapter.firstIndex) {
+        chapter.firstIndex = index;
+      }
+
+      if (chapter.questions.length === 1) {
+        chapter.title = questionTitle;
+        chapter.questionKind = questionKind;
+      }
+    });
+
+    return Array.from(chapterMap.values())
+      .sort((a, b) => a.firstIndex - b.firstIndex)
+      .map((chapter, index) => ({
+        ...chapter,
+        isActive: index === 0,
+      }));
+  }, [landingFallbackTranslation, landingLocaleSteps, landingTranslationMap]);
+
+  const landingChapterReviewText = useMemo(
+    () => ({
+      title:
+        landingTranslationMap["chapterReview.title"] ||
+        landingFallbackTranslation["chapterReview.title"] ||
+        "Chapter Skill Journey",
+      subtitle:
+        landingTranslationMap["chapterReview.subtitle"] ||
+        landingFallbackTranslation["chapterReview.subtitle"] ||
+        "Preview the milestones you'll tackle in this chapter before diving in.",
+      cta:
+        landingTranslationMap["chapterReview.cta"] ||
+        landingFallbackTranslation["chapterReview.cta"] ||
+        "Start chapter",
+      expand:
+        landingTranslationMap["chapterReview.expand"] ||
+        landingFallbackTranslation["chapterReview.expand"] ||
+        "Show more",
+      drawerTitle:
+        landingTranslationMap["chapterReview.drawerTitle"] ||
+        landingFallbackTranslation["chapterReview.drawerTitle"] ||
+        "Inside this chapter",
+    }),
+    [landingFallbackTranslation, landingTranslationMap]
+  );
+
   useEffect(() => {
     const unsubscribe = subscribeToQuestionsAnswered(setQuestionsAnswered);
     return () => unsubscribe();
@@ -4465,6 +4579,15 @@ const Home = ({
   const toast = useToast();
   // const { width, height } = useWindow();
   // const { authWithSigner } = useSharedNostr();
+
+  const handleChapterReviewStart = useCallback(() => {
+    if (isSignedIn) {
+      navigate("/q/0");
+      return;
+    }
+
+    setView("signIn");
+  }, [isSignedIn, navigate, setView]);
 
   const televise = async () => {
     // if (localStorage.getItem(socket)) {
@@ -5087,6 +5210,26 @@ const Home = ({
               </Box>
             </Box>
           </Box>
+          {landingChapterReviewNodes.length > 0 && (
+            <Box
+              as="section"
+              scrollSnapAlign="start"
+              bgGradient="linear(180deg, rgba(71,77,126,0.12), rgba(236,233,252,0.88))"
+              px={{ base: 2, md: 6 }}
+              py={{ base: 12, md: 20 }}
+              display="flex"
+              justifyContent="center"
+            >
+              <ChapterReview
+                nodes={landingChapterReviewNodes}
+                text={landingChapterReviewText}
+                onStart={handleChapterReviewStart}
+                defaultExpanded
+                showExpandControl={false}
+                showStartButton={false}
+              />
+            </Box>
+          )}
           {/* First slide: Why Learn */}
           <Box
             height="100%"
