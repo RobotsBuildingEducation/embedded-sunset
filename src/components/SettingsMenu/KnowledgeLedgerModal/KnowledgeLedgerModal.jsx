@@ -544,19 +544,9 @@ export const KnowledgeLedgerModal = ({
                             />
                           </Box>
 
-                          <HStack justify="space-between" spacing={3}>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => runCode(idx)}
-                              isDisabled={isLoading}
-                            >
-                              {translation[userLanguage]["runCode"]}
-                            </Button>
-                            <Text fontSize="xs" color="gray.500">
-                              {translation[userLanguage]["buildYourApp.onboarding.instruction"]}
-                            </Text>
-                          </HStack>
+                          <Text fontSize="xs" color="gray.500">
+                            {translation[userLanguage]["buildYourApp.onboarding.instruction"]}
+                          </Text>
 
                           {!reactPreview ? (
                             <iframe
