@@ -174,9 +174,11 @@ export const KnowledgeLedgerModal = ({
 
   useEffect(() => {
     if (!isLoading && editorCodes.length > 0 && !hasRunCode) {
-      const first = editorCodes[0];
-      if (first && first.trim()) {
-        runCode(0);
+      const lastIndex = editorCodes.length - 1;
+      const latest = editorCodes[lastIndex];
+
+      if (latest && latest.trim()) {
+        runCode(lastIndex);
       }
     }
   }, [editorCodes, isLoading, hasRunCode]);
@@ -367,14 +369,13 @@ export const KnowledgeLedgerModal = ({
         onClose={onClose}
         blockScrollOnMount={false}
         placement="bottom"
-        size="xl"
+        size="full"
       >
         <DrawerOverlay />
         <DrawerContent
-          borderTopRadius={{ base: "2xl", md: "3xl" }}
-          maxH={{ base: "92vh", md: "88vh" }}
-          mx="auto"
-          maxW={{ base: "100%", md: "960px" }}
+          borderRadius={0}
+          maxW="100vw"
+          maxH="100vh"
         >
           <DrawerCloseButton />
           <DrawerHeader borderBottomWidth="1px" pb={4}>
