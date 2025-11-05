@@ -499,6 +499,7 @@ const ChapterReview = ({
         ) : null}
 
         {/* ---------- DRAWER (mosaic grid) ---------- */}
+        {/* ---------- DRAWER (column list) ---------- */}
         <Drawer
           isOpen={isChapterDrawerOpen}
           placement="bottom"
@@ -509,7 +510,6 @@ const ChapterReview = ({
             borderTopRadius={{ base: "3xl", md: "4xl" }}
             bg="rgba(255,255,255,0.96)"
             maxH="80vh"
-            overflow="hidden"
           >
             <DrawerCloseButton
               top={{ base: 3, md: 4 }}
@@ -526,11 +526,11 @@ const ChapterReview = ({
                 >
                   {text?.drawerTitle || "Inside this chapter"}
                 </Text>
+                {/* no ellipsis on the chapter title */}
                 <Text
                   fontSize={{ base: "2xl", md: "3xl" }}
                   fontWeight="bold"
                   color="gray.800"
-                  noOfLines={2}
                 >
                   {selectedChapter?.chapterLabel || selectedChapter?.title}
                 </Text>
@@ -538,17 +538,9 @@ const ChapterReview = ({
             </DrawerHeader>
 
             <DrawerBody pb={{ base: 8, md: 12 }} pt={{ base: 2, md: 3 }}>
-              <Grid
-                templateColumns={{
-                  base: "repeat(2, minmax(0, 1fr))",
-                  md: "repeat(12, minmax(0, 1fr))",
-                }}
-                gap={{ base: 2.5, md: 3 }}
-                gridAutoFlow="dense"
-                alignItems="stretch"
-              >
-                {selectedChapter?.questions?.length ? (
-                  selectedChapter.questions.map((question, index) => {
+              {selectedChapter?.questions?.length ? (
+                <VStack align="stretch" spacing={{ base: 3, md: 4 }}>
+                  {selectedChapter.questions.map((question, index) => {
                     const questionStyle = getStyleForKind(
                       question.questionKind
                     );
@@ -556,42 +548,38 @@ const ChapterReview = ({
                       questionStyle.icon || StarIcon;
                     const questionAccent = questionStyle.accent;
                     const questionGradient = questionStyle.gradient;
-                    const { baseCol, mdCol } = getMosaicSpan(
-                      index,
-                      question.title
-                    );
 
                     return (
-                      <GridItem
+                      <Box
                         key={question.id || `${selectedChapter.id}-${index}`}
-                        colSpan={{ base: baseCol, md: mdCol }}
+                        as={motion.div}
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: index * 0.03 }}
+                        w="100%"
+                        borderRadius="2xl"
+                        px={{ base: 3, md: 4 }}
+                        py={{ base: 3, md: 4 }}
+                        bg="rgba(255,255,255,0.95)"
+                        borderWidth="1px"
+                        borderColor={`${questionAccent}40`}
+                        boxShadow={`0 18px 36px ${questionAccent}26`}
+                        position="relative"
+                        // important: NO overflow hiding (no clipping of long text)
                       >
                         <Box
-                          as={motion.div}
-                          initial={{ opacity: 0, y: 12 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3, delay: index * 0.03 }}
-                          borderRadius="2xl"
-                          px={{ base: 3, md: 4 }}
-                          py={{ base: 3, md: 4 }}
-                          bg="rgba(255,255,255,0.95)"
-                          borderWidth="1px"
-                          borderColor={`${questionAccent}40`}
-                          boxShadow={`0 18px 36px ${questionAccent}26`}
-                          position="relative"
-                          overflow="hidden"
-                          h="100%"
-                          display="flex"
-                          alignItems="center"
+                          position="absolute"
+                          inset={0}
+                          bgGradient={questionGradient}
+                          opacity={0.2}
+                          pointerEvents="none"
+                        />
+                        <Flex
+                          align="center"
                           gap={{ base: 3, md: 4 }}
+                          position="relative"
+                          zIndex={1}
                         >
-                          <Box
-                            position="absolute"
-                            inset={0}
-                            bgGradient={questionGradient}
-                            opacity={0.2}
-                            pointerEvents="none"
-                          />
                           <Box
                             w={{ base: "44px", md: "52px" }}
                             h={{ base: "44px", md: "52px" }}
@@ -601,7 +589,6 @@ const ChapterReview = ({
                             justifyContent="center"
                             bgGradient={`radial-gradient(circle at 30% 30%, ${questionAccent}33, transparent 70%)`}
                             boxShadow={`0 12px 24px ${questionAccent}20`}
-                            zIndex={1}
                             flexShrink={0}
                           >
                             <Icon
@@ -610,27 +597,28 @@ const ChapterReview = ({
                               color={questionAccent}
                             />
                           </Box>
+
+                          {/* no ellipsis / no word-breaking; allow natural wrapping */}
                           <Text
                             fontSize={{ base: "md", md: "lg" }}
                             fontWeight="semibold"
                             color="gray.900"
-                            noOfLines={2}
-                            zIndex={1}
+                            whiteSpace="normal"
+                            wordBreak="normal"
+                            overflow="visible"
                           >
                             {question.title}
                           </Text>
-                        </Box>
-                      </GridItem>
+                        </Flex>
+                      </Box>
                     );
-                  })
-                ) : (
-                  <GridItem colSpan={{ base: 2, md: 12 }}>
-                    <Text color="gray.500" fontSize="md">
-                      {text?.emptyChapter || "Lessons will appear here."}
-                    </Text>
-                  </GridItem>
-                )}
-              </Grid>
+                  })}
+                </VStack>
+              ) : (
+                <Text color="gray.500" fontSize="md">
+                  {text?.emptyChapter || "Lessons will appear here."}
+                </Text>
+              )}
             </DrawerBody>
           </DrawerContent>
         </Drawer>

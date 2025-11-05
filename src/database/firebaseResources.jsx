@@ -71,9 +71,9 @@ const promodel = getGenerativeModel(vertexAI, {
 
 const thinkingmodel = getGenerativeModel(vertexAI, {
   // model: "gemini-1.5-flash",
-  model: "gemini-2.5-pro",
+  model: "gemini-2.5-flash",
   generationConfig: {
-    thinkingConfig: { thinkingBudget: 128, includeThoughts: false }, // min for Pro
+    thinkingConfig: { thinkingBudget: 0 }, // disables thinking
   },
 });
 
