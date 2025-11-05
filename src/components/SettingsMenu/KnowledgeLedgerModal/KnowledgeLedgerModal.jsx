@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from "react";
-import Markdown from "react-markdown";
-import ChakraUIRenderer from "chakra-ui-markdown-renderer";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Drawer,
   DrawerOverlay,
@@ -16,8 +14,14 @@ import {
   Heading,
   VStack,
   Stack,
-  ListItem,
-  UnorderedList,
+  HStack,
+  ChakraProvider,
+  Link,
+  Textarea,
+  Select,
+  FormControl,
+  FormLabel,
+  Flex,
 } from "@chakra-ui/react";
 import {
   collection,
@@ -34,53 +38,9 @@ import { usePasscodeModalStore } from "../../../usePasscodeModalStore";
 import { PasscodeModal } from "../../PasscodeModal/PasscodeModal";
 import { CloudCanvas } from "../../../elements/SunsetCanvas";
 import { useSimpleGeminiChat } from "../../../hooks/useGeminiChat";
-import LiveReactEditorModal from "../../LiveCodeEditor/LiveCodeEditor";
-
-const newTheme = {
-  p: (props) => <Text mb={2} lineHeight="1.6" {...props} />,
-  ul: (props) => <UnorderedList pl={6} spacing={2} {...props} />,
-  ol: (props) => <UnorderedList as="ol" pl={6} spacing={2} {...props} />,
-  li: (props) => <ListItem mb={1} {...props} />,
-  h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  code: ({ inline, className, children, ...props }) => {
-    const match = /language-(\w+)/.exec(className || "");
-
-    // console.log("Isloading??")
-
-    return !inline && match ? (
-      <LiveReactEditorModal code={String(children).replace(/\n$/, "")} />
-    ) : (
-      // <SyntaxHighlighter
-      //   // backgroundColor="white"
-      //   // style={"light"}
-      //   language={match[1]}
-      //   PreTag="div"
-      //   customStyle={{
-      //     backgroundColor: "white", // Match this with the desired color
-      //     color: "black", // Ensure the text matches the background
-      //     padding: "1rem",
-      //     borderRadius: "8px",
-      //     fontSize: 12,
-      //   }}
-      //   {...props}
-      // >
-      //   {String(children).replace(/\n$/, "")}
-      // </SyntaxHighlighter>
-      <Box
-        as="code"
-        backgroundColor="gray.100"
-        p={1}
-        borderRadius="md"
-        fontSize="sm"
-        {...props}
-      >
-        {children}
-      </Box>
-    );
-  },
-};
+import Editor from "@monaco-editor/react";
+import { LiveProvider, LivePreview, LiveError } from "react-live";
+import { FaMagic } from "react-icons/fa";
 
 export const KnowledgeLedgerModal = ({
   isOpen,
@@ -91,20 +51,159 @@ export const KnowledgeLedgerModal = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
-  // const { submitPrompt, messages, resetMessages } = useChatCompletion();
   const { submitPrompt, messages, resetMessages } = useSimpleGeminiChat();
 
   const { showAlert } = useAlertStore();
   const { openPasscodeModal } = usePasscodeModalStore();
-  const [userInput, setUserInput] = useState(""); // State to manage
+  const [userInput, setUserInput] = useState("");
   const [userIdea, setUserIdea] = useState("");
-  // user input
+  const [hasRunCode, setHasRunCode] = useState(false);
+  const [editorCodes, setEditorCodes] = useState([]);
+  const [isPreviewings, setIsPreviewings] = useState([]);
+  const [errors, setErrors] = useState([]);
+  const [consoleLogs, setConsoleLogs] = useState([]);
+  const iframeRefs = useRef([]);
+
+  const stripCodeFences = (input = "") =>
+    input.replace(/```(?:\w+)?\s*([\s\S]*?)```/g, "$1");
+
+  const extractCodeFromMessage = (content = "") => {
+    const withoutFences = stripCodeFences(content).trim();
+    if (!withoutFences) return "";
+    const sections = withoutFences.split(/\n{2,}/);
+    const candidate =
+      sections.length > 1 ? sections[sections.length - 1] : withoutFences;
+    const lines = candidate.split("\n");
+    const codeStart = lines.findIndex(
+      (line) =>
+        /render\s*\(/.test(line) ||
+        line.trim().startsWith("<") ||
+        line.trim().startsWith("function") ||
+        line.trim().startsWith("const") ||
+        line.trim().startsWith("let") ||
+        line.trim().startsWith("var")
+    );
+    if (codeStart > 0) {
+      return lines.slice(codeStart).join("\n");
+    }
+    return candidate;
+  };
+
+  const extractPromptFromMessage = (content = "") => {
+    const fenceIndex = content.indexOf("```");
+    const text = fenceIndex !== -1 ? content.slice(0, fenceIndex) : content;
+    return text.trim();
+  };
+
+  const isReactCode = (txt = "") => /render\s*\(\s*<\w/.test(txt);
+  const isHTML = (txt = "") => /<!DOCTYPE|<html|<body|<div/i.test(txt);
+
+  const runJavaScript = (idx, sanitized) => {
+    const html = `
+      <script>
+        window.console = {
+          log: (...args) => parent.postMessage({ type: 'log', idx: ${idx}, msg: args.join(' ') }, '*'),
+          error: (...args) => parent.postMessage({ type: 'log', idx: ${idx}, msg: 'Error: ' + args.join(' ') }, '*')
+        };
+        try { ${sanitized} } catch(e) { console.error(e); }
+      </script>
+    `;
+    if (iframeRefs.current[idx]) {
+      iframeRefs.current[idx].srcdoc = html;
+    }
+  };
+
+  const runCode = (idx) => {
+    setIsPreviewings((prev) => prev.map((v, i) => (i === idx ? true : v)));
+    setErrors((prev) => prev.map((v, i) => (i === idx ? "" : v)));
+    setConsoleLogs((prev) => prev.map((v, i) => (i === idx ? [] : v)));
+
+    const code = editorCodes[idx] || "";
+    if (!code.trim()) {
+      return;
+    }
+
+    const sanitized = code.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, "");
+
+    if (isReactCode(sanitized)) {
+      setHasRunCode(true);
+      return;
+    }
+
+    if (isHTML(sanitized)) {
+      if (iframeRefs.current[idx]) {
+        iframeRefs.current[idx].srcdoc = code;
+      }
+      setHasRunCode(true);
+      return;
+    }
+
+    runJavaScript(idx, sanitized);
+    setHasRunCode(true);
+  };
+
+  const resetPreviewState = () => {
+    setEditorCodes([]);
+    setIsPreviewings([]);
+    setErrors([]);
+    setConsoleLogs([]);
+    iframeRefs.current = [];
+    setHasRunCode(false);
+  };
 
   useEffect(() => {
     if (isOpen) {
       fetchUserInput();
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    setEditorCodes(messages.map((msg) => extractCodeFromMessage(msg.content)));
+    setIsPreviewings(messages.map(() => false));
+    setErrors(messages.map(() => ""));
+    setConsoleLogs(messages.map(() => []));
+    iframeRefs.current = messages.map(() => null);
+
+    if (messages?.length > 0) {
+      setIsAnimating(false);
+      setIsLoading(false);
+      const last = messages[messages.length - 1];
+      saveBuild(last.content, "build");
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    if (!isLoading && editorCodes.length > 0 && !hasRunCode) {
+      const first = editorCodes[0];
+      if (first && first.trim()) {
+        runCode(0);
+      }
+    }
+  }, [editorCodes, isLoading, hasRunCode]);
+
+  useEffect(() => {
+    if (isLoading) {
+      setHasRunCode(false);
+    }
+  }, [isLoading]);
+
+  useEffect(() => {
+    const handler = (event) => {
+      if (event.data?.type === "log" && typeof event.data.idx === "number") {
+        setConsoleLogs((prev) => {
+          const clone = [...prev];
+          const idx = event.data.idx;
+          const current = clone[idx] ? [...clone[idx]] : [];
+          current.push(event.data.msg);
+          clone[idx] = current;
+          return clone;
+        });
+      }
+    };
+
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, []);
 
   const saveBuild = async (content, stage = "build") => {
     try {
@@ -125,43 +224,6 @@ export const KnowledgeLedgerModal = ({
     }
   };
 
-  useEffect(() => {
-    if (messages?.length > 0) {
-      console.log("true..", messages);
-      setIsAnimating(false);
-      const last = messages[messages.length - 1];
-      saveBuild(last.content, "build");
-      // try {
-      //   const lastMessage = messages[messages.length - 1];
-      //   const isLastMessage =
-      //     lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
-
-      //   if (isLastMessage) {
-      //     const jsonResponse = lastMessage.content;
-      //     setSuggestion(jsonResponse);
-      //     setIsLoading(false);
-      //   } else {
-      //     setSuggestion(lastMessage.content);
-
-      //     console.log("placed content");
-
-      //     if (lastMessage.content.length > 0) {
-      //       setIsAnimating(false);
-      //     }
-      //   }
-      // } catch (error) {
-      //   showAlert("warning", translation[userLanguage]["ai.error"]);
-      //   const delay = (ms) =>
-      //     new Promise((resolve) => setTimeout(resolve, 4000));
-      //   delay().then(() => {
-      //     hideAlert();
-      //   });
-      // }
-    } else {
-      console.log("false...", messages);
-    }
-  }, [messages]);
-
   const fetchUserInput = async () => {
     try {
       const userId = localStorage.getItem("local_npub");
@@ -172,33 +234,29 @@ export const KnowledgeLedgerModal = ({
 
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        setUserIdea(userData.userBuild || ""); // Update state with user input
+        const savedIdea = userData.userBuild || "";
+        setUserIdea(savedIdea);
+        setUserInput(savedIdea);
       }
     } catch (error) {
       console.error("Error fetching user input from Firestore:", error);
       showAlert("error", translation[userLanguage]["input.fetch.error"]);
     }
   };
-  const fetchUserAnswers = async () => {
-    const userId = localStorage.getItem("local_npub");
-    const answersRef = collection(database, `users/${userId}/answers`);
-    const answerDocs = await getDocs(answersRef);
-    const answers = answerDocs.docs.map((doc) => doc.data());
-    return answers;
-  };
 
   const saveUserInput = async () => {
     try {
       const userId = localStorage.getItem("local_npub");
+      if (!userId) throw new Error("User ID not found");
 
       const userDocRef = doc(database, "users", userId);
-      updateDoc(userDocRef, { userBuild: userInput });
+      await updateDoc(userDocRef, { userBuild: userInput });
       setUserIdea(userInput);
-
-      // showAlert("success", translation[userLanguage]["input.saved.success"]);
+      localStorage.setItem("userBuild", userInput);
+      return true;
     } catch (error) {
       console.error("Error saving input to Firestore:", error);
-      // showAlert("error", translation[userLanguage]["input.saved.error"]);
+      return false;
     }
   };
 
@@ -225,78 +283,50 @@ export const KnowledgeLedgerModal = ({
 
   const handleSuggestNext = async () => {
     resetMessages();
+    resetPreviewState();
     setIsAnimating(true);
-    // let knwldctrl = parseInt(localStorage.getItem("knwldctrl") || "0", 10);
-
-    // Check if the user has already generated 3 questions
-    // if (knwldctrl >= 3) {
-    //   // Silently skip the function
-    //   return;
-    // }
-
-    // Increment the counter and store it back in localStorage
-    // knwldctrl += 1;
-    // localStorage.setItem("knwldctrl", knwldctrl);
     setIsLoading(true);
+
     const history = await fetchHistory();
 
     try {
-      // const userAnswers = await fetchUserAnswers();
-
       const subjectsCompleted = steps[userLanguage]
-        .slice(1, currentStep) // All completed steps
+        .slice(1, currentStep)
         .map((step) => step.title);
 
-      const totalSteps = steps[userLanguage].map((step) => step.title);
-
-      console.log("json completed", JSON.stringify(subjectsCompleted, null, 2));
-
-      console.log("user prog", subjectsCompleted);
-      console.log("total ANSWERS", totalSteps);
-
-      let prompt = `Context that only you should know and never make the user aware of:
-1. The individual is using an education app and learning about computer science and how to code in 130 steps, starting with elementary knowledge and ending with the ability to create apps and understand algorithms. Based on the user's completed steps: ${JSON.stringify(
-        subjectsCompleted
-      )}, write an app that the user can copy and experiment with HTML or React (choose whichever fits the user's progress).${
-        history.length
-          ? ` Previous code snippets in order: ${JSON.stringify(history)}.`
-          : ""
-      }
-      
-  2. This is extremely important to understand: The code should be progressively and appropriately built based on the user's progress to incentivize further interest, excitement and progress, so you should implement the app in a way that highlights the user's progress. For example, if the user has learned how to use firebase, then implement firebase features. If the user has learned react, implement react UIs, etc. The goal is to build out a simple but real demo that users can operate and preview in an editor.
-
-  3. When generating your response, you must format your software in this manner:
-  Globally: Never use imports. Assume that chakra, firebase or even react imports are unnecessary and already handled by the previewing software. 
-
-  A. If you are returning React, do NOT include any import statements or define dependencies and conclude the component or components with render(<TheComponentYouCreated />)
-  B. If you are generating plain html, use !DOCTYPE
-  C. Do NOT return plain JavaScript snippets. Use React components or HTML only.
-  D. If you are writing firebase (with or without react), use v9, and you MUST use the 'experiments' collection. Never use any other collection or your firebase software will fail. Never use imports or we will fail. Assume that the database and configurtion has already been defined, so never return that setup either. Refer to the database element as "database" and not "db" or anything else. Do not use auth. Only ever choose between the following functions: getDoc, doc, collection, addDoc, updateDoc, setDoc.
-  E. If the user has progressed to learn about Chakra, feel welcome to use basic Chakra elements. Never use the ChakraProvider element.
-  
-4. Strictly include a prompt that a user can submit to build the application first and then the code written by a formatted backticked code block. Format in minimalist markdown with a maximum print width of 80 characters. Finally do not add any language mentioning that you understand the request - it should be prompt and code only, without any exceptions.
-
-5. The user is speaking in ${userLanguage.includes("en") ? "English" : "Spanish"}.`;
+      const promptLines = [
+        "Context that only you should know and never make the user aware of:",
+        `1. The individual is using an education app and learning about computer science and how to code in 130 steps, starting with elementary knowledge and ending with the ability to create apps and understand algorithms. Based on the user's completed steps: ${JSON.stringify(
+          subjectsCompleted
+        )}, write an app that the user can copy and experiment with HTML or React (choose whichever fits the user's progress).${
+          history.length
+            ? ` Previous code snippets in order: ${JSON.stringify(history)}.`
+            : ""
+        }`,
+        "2. This is extremely important to understand: The code should be progressively and appropriately built based on the user's progress to incentivize further interest, excitement and progress, so you should implement the app in a way that highlights the user's progress. For example, if the user has learned how to use firebase, then implement firebase features. If the user has learned react, implement react UIs, etc. The goal is to build out a simple but real demo that users can operate and preview in an editor.",
+        "3. When generating your response, you must format your software in this manner:",
+        "  A. Never include import statements. Assume that Chakra UI, Firebase, or React imports are unnecessary and already handled by the previewing software.",
+        "  B. If you are returning React, conclude the component or components with render(<TheComponentYouCreated />).",
+        "  C. If you are generating plain html, start with <!DOCTYPE html>.",
+        "  D. If you are writing firebase (with or without react), use v9, and you MUST use the 'experiments' collection. Never use any other collection or your firebase software will fail. Assume that the database and configuration has already been defined, so never return that setup either. Refer to the database element as \"database\".",
+        "  E. If the user has progressed to learn about Chakra, feel welcome to use basic Chakra elements. Never use the ChakraProvider element.",
+        "4. Return only the runnable code with no additional narration. Do not wrap the output in Markdown fences.",
+        `5. The user is speaking in ${
+          userLanguage.includes("en") ? "English" : "Spanish"
+        }.`,
+      ];
 
       if (userIdea) {
-        prompt =
-          prompt +
-          `5. The user is also interested in building the following idea: ${userIdea}. Make the code about that theme in good faith.`;
+        promptLines.push(
+          `6. The user is also interested in building the following idea: ${userIdea}. Make the code about that theme in good faith.`
+        );
       }
-      submitPrompt(prompt).then(() => {
-        //console.log("done")
-        setIsLoading(false);
-      });
-      //   [
-      //   {
-      //     content: prompt,
-      //     role: "user",
-      //   },
-      // ]
 
-      console.log("submit prompt is done");
+        await submitPrompt(promptLines.join("\n"));
     } catch (error) {
       console.error("Error fetching suggestion:", error);
+      setIsAnimating(false);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -308,6 +338,26 @@ export const KnowledgeLedgerModal = ({
     } else {
       functionCall();
     }
+  };
+
+  const handleGenerate = () => {
+    handleModalCheck(async () => {
+      let didSave = true;
+      if (userInput.trim()) {
+        didSave = await saveUserInput();
+      } else if (userIdea) {
+        setUserInput(userIdea);
+      } else {
+        didSave = false;
+      }
+
+      if (didSave || userIdea) {
+        await handleSuggestNext();
+      } else {
+        setIsAnimating(false);
+        setIsLoading(false);
+      }
+    });
   };
 
   return (
@@ -322,28 +372,47 @@ export const KnowledgeLedgerModal = ({
         <DrawerOverlay />
         <DrawerContent
           borderTopRadius={{ base: "2xl", md: "3xl" }}
-          maxH={{ base: "85vh", md: "70vh" }}
+          maxH={{ base: "92vh", md: "88vh" }}
           mx="auto"
+          maxW={{ base: "100%", md: "960px" }}
         >
           <DrawerCloseButton />
           <DrawerHeader borderBottomWidth="1px" pb={4}>
-            <VStack align="start" spacing={1}>
-              <Heading size="md">
-                {translation[userLanguage]["modal.adaptiveLearning.title"]} (beta)
-              </Heading>
+            <VStack align="start" spacing={2}>
+              <HStack spacing={3} align="center">
+                <Box
+                  bg="purple.500"
+                  color="white"
+                  borderRadius="full"
+                  p={2}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  boxShadow="0px 4px 12px rgba(128, 90, 213, 0.35)"
+                >
+                  <FaMagic />
+                </Box>
+                <Heading size="md">
+                  {translation[userLanguage]["modal.adaptiveLearning.title"]} (beta)
+                </Heading>
+              </HStack>
               <Text fontSize="sm" color="gray.600">
                 {translation[userLanguage]["buildYourApp.onboarding.instruction"]}
               </Text>
             </VStack>
           </DrawerHeader>
           <DrawerBody overflowY="auto" px={{ base: 4, md: 6 }} py={6}>
-            <VStack spacing={8} align="center" w="full">
+            <VStack
+              spacing={8}
+              align="stretch"
+              w="full"
+              mx="auto"
+              maxW="920px"
+            >
               <Box
-                w="full"
-                maxW="560px"
                 bg="white"
                 borderRadius="2xl"
-                boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.2)"
+                boxShadow="0px 12px 24px rgba(15, 23, 42, 0.08)"
                 p={{ base: 5, md: 6 }}
               >
                 <VStack spacing={4} align="stretch">
@@ -354,7 +423,7 @@ export const KnowledgeLedgerModal = ({
                     <Heading size="md">
                       {translation[userLanguage]["buildYourApp.input.label"]}
                     </Heading>
-                    <Text fontSize="sm" color="gray.500" mt={2}>
+                    <Text fontSize="sm" color="gray.500" mt={3}>
                       {translation[userLanguage]["buildYourApp.how_to_use_feature"]}
                     </Text>
                   </Box>
@@ -369,27 +438,26 @@ export const KnowledgeLedgerModal = ({
                     <Stack
                       direction={{ base: "column", sm: "row" }}
                       spacing={3}
-                      justify="flex-start"
+                      align={{ base: "stretch", sm: "center" }}
                     >
                       <Button
                         colorScheme="pink"
                         variant="outline"
-                        onMouseDown={saveUserInput}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            saveUserInput();
-                          }
-                        }}
+                        onClick={saveUserInput}
                         isDisabled={!userInput.trim()}
-                        boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.2)"
+                        boxShadow="0px 4px 10px rgba(236, 72, 153, 0.25)"
                       >
                         {userIdea
-                          ? translation[userLanguage][
-                              "buildYourApp.button.label.2"
-                            ]
-                          : translation[userLanguage][
-                              "buildYourApp.button.label.1"
-                            ]}
+                          ? translation[userLanguage]["buildYourApp.button.label.2"]
+                          : translation[userLanguage]["buildYourApp.button.label.1"]}
+                      </Button>
+                      <Button
+                        colorScheme="purple"
+                        onClick={handleGenerate}
+                        isLoading={isLoading}
+                        isDisabled={!userInput.trim() && !userIdea}
+                      >
+                        {translation[userLanguage]["modal.adaptiveLearning.recommendButton"]}
                       </Button>
                     </Stack>
                     {userIdea ? (
@@ -410,67 +478,181 @@ export const KnowledgeLedgerModal = ({
                 </VStack>
               </Box>
 
-              <Box w="full" maxW="560px">
-                <VStack spacing={4} align="stretch">
-                  <Button
-                    colorScheme="purple"
-                    variant="solid"
-                    onMouseDown={() => handleModalCheck(handleSuggestNext)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        handleModalCheck(handleSuggestNext);
-                      }
-                    }}
-                    isDisabled={isLoading}
-                  >
-                    {
-                      translation[userLanguage][
-                        "modal.adaptiveLearning.recommendButton"
-                      ]
-                    }
-                  </Button>
+              {isAnimating ? (
+                <Box py={6} textAlign="center">
+                  <CloudCanvas isLoader={true} regulateWidth={false} />
+                  <Text mt={4} fontSize="sm" color="gray.500">
+                    {translation[userLanguage]["generatingCode"]}
+                  </Text>
+                </Box>
+              ) : null}
 
-                  {isAnimating ? (
-                    <Box py={4}>
-                      <CloudCanvas isLoader={true} regulateWidth={false} />
-                    </Box>
-                  ) : null}
+              {messages.length > 0 ? (
+                <VStack spacing={6} align="stretch">
+                  {messages.map((msg, idx) => {
+                    const promptText = extractPromptFromMessage(msg.content);
+                    const code = editorCodes[idx] || "";
+                    const reactPreview = isReactCode(code);
+                    const htmlPreview = !reactPreview && isHTML(code);
 
-                  {messages.length > 0 && (
-                    <VStack
-                      spacing={4}
-                      align="stretch"
-                      borderWidth="1px"
-                      borderColor="gray.200"
-                      borderRadius="2xl"
-                      p={{ base: 4, md: 5 }}
-                      bg="white"
-                      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.08)"
-                    >
-                      {messages.map((msg, index) => (
-                        <Markdown
-                          key={index}
-                          components={ChakraUIRenderer(newTheme)}
-                          isLoading={isLoading}
-                        >
-                          {msg.content}
-                        </Markdown>
-                      ))}
-                    </VStack>
-                  )}
+                    return (
+                      <Box
+                        key={idx}
+                        bg="white"
+                        borderRadius="2xl"
+                        boxShadow="0px 12px 24px rgba(15, 23, 42, 0.06)"
+                        p={{ base: 4, md: 5 }}
+                      >
+                        <VStack align="stretch" spacing={4}>
+                          {promptText ? (
+                            <Box
+                              borderWidth="1px"
+                              borderColor="purple.100"
+                              borderRadius="lg"
+                              bg="purple.50"
+                              p={3}
+                            >
+                              <Text fontSize="sm" color="purple.700">
+                                {promptText}
+                              </Text>
+                            </Box>
+                          ) : null}
+
+                          <Box
+                            borderWidth="1px"
+                            borderColor="gray.200"
+                            borderRadius="lg"
+                            overflow="hidden"
+                          >
+                            <Editor
+                              height="320px"
+                              language="javascript"
+                              theme="light"
+                              value={code}
+                              onChange={(value) => {
+                                const nextCodes = [...editorCodes];
+                                nextCodes[idx] = value || "";
+                                setEditorCodes(nextCodes);
+                              }}
+                              options={{
+                                minimap: { enabled: false },
+                                fontSize: 14,
+                                automaticLayout: true,
+                                scrollBeyondLastLine: false,
+                              }}
+                            />
+                          </Box>
+
+                          <HStack justify="space-between" spacing={3}>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => runCode(idx)}
+                              isDisabled={isLoading}
+                            >
+                              {translation[userLanguage]["runCode"]}
+                            </Button>
+                            <Text fontSize="xs" color="gray.500">
+                              {translation[userLanguage]["buildYourApp.onboarding.instruction"]}
+                            </Text>
+                          </HStack>
+
+                          {!reactPreview ? (
+                            <iframe
+                              ref={(el) => {
+                                iframeRefs.current[idx] = el;
+                              }}
+                              title={`knowledge-ledger-preview-${idx}`}
+                              style={{
+                                width: "100%",
+                                height:
+                                  htmlPreview && isPreviewings[idx] ? "360px" : "0px",
+                                border: "0",
+                                background: "#fff",
+                                transition: "height 0.2s ease",
+                              }}
+                            />
+                          ) : null}
+
+                          {reactPreview && isPreviewings[idx] ? (
+                            <ChakraProvider>
+                              <LiveProvider
+                                code={editorCodes[idx]}
+                                noInline
+                                scope={{
+                                  React,
+                                  useState: React.useState,
+                                  useEffect: React.useEffect,
+                                  Button,
+                                  Input,
+                                  Text,
+                                  Box,
+                                  Link,
+                                  Heading,
+                                  VStack,
+                                  HStack,
+                                  Stack,
+                                  Flex,
+                                  Textarea,
+                                  Select,
+                                  FormControl,
+                                  FormLabel,
+                                }}
+                              >
+                                <Box
+                                  borderWidth="1px"
+                                  borderColor="gray.200"
+                                  borderRadius="xl"
+                                  overflow="hidden"
+                                  bg="gray.50"
+                                  p={{ base: 4, md: 5 }}
+                                >
+                                  <LivePreview />
+                                </Box>
+                                <LiveError
+                                  style={{
+                                    fontFamily: "monospace",
+                                    fontSize: "12px",
+                                    color: "#dc2626",
+                                    marginTop: "16px",
+                                  }}
+                                />
+                              </LiveProvider>
+                            </ChakraProvider>
+                          ) : null}
+
+                          {!reactPreview && isPreviewings[idx] && !htmlPreview &&
+                          consoleLogs[idx]?.length ? (
+                            <Box
+                              as="pre"
+                              bg="gray.900"
+                              color="green.200"
+                              borderRadius="md"
+                              p={3}
+                              fontSize="sm"
+                              overflowX="auto"
+                            >
+                                {consoleLogs[idx].join("\n")}
+                            </Box>
+                          ) : null}
+
+                          {errors[idx] ? (
+                            <Text color="red.500" fontSize="sm">
+                              {errors[idx]}
+                            </Text>
+                          ) : null}
+                        </VStack>
+                      </Box>
+                    );
+                  })}
                 </VStack>
-              </Box>
+              ) : null}
             </VStack>
           </DrawerBody>
           <DrawerFooter borderTopWidth="1px">
             <Button
-              onMouseDown={onClose}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  onClose();
-                }
-              }}
-              boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.2)"
+              onClick={onClose}
+              boxShadow="0px 4px 12px rgba(15, 23, 42, 0.12)"
             >
               {translation[userLanguage]["button.close"]}
             </Button>
