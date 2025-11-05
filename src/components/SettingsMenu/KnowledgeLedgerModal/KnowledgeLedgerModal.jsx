@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Markdown from "react-markdown";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { darcula } from "react-syntax-highlighter/dist/esm/styles/prism"; // Syntax theme
-
 import {
   Drawer,
   DrawerOverlay,
@@ -17,8 +14,8 @@ import {
   Box,
   Input,
   Heading,
-  useClipboard,
-  Spinner,
+  VStack,
+  Stack,
   ListItem,
   UnorderedList,
 } from "@chakra-ui/react";
@@ -93,20 +90,15 @@ export const KnowledgeLedgerModal = ({
   userLanguage,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [suggestion, setSuggestion] = useState("");
   const [isAnimating, setIsAnimating] = useState(false);
   // const { submitPrompt, messages, resetMessages } = useChatCompletion();
   const { submitPrompt, messages, resetMessages } = useSimpleGeminiChat();
 
-  const { alert, hideAlert, showAlert } = useAlertStore();
+  const { showAlert } = useAlertStore();
   const { openPasscodeModal } = usePasscodeModalStore();
   const [userInput, setUserInput] = useState(""); // State to manage
   const [userIdea, setUserIdea] = useState("");
   // user input
-
-  const { hasCopied, onCopy } = useClipboard(
-    suggestion + " using mock data rather than real config data if necessary."
-  ); // Copy functionality
 
   useEffect(() => {
     if (isOpen) {
@@ -246,7 +238,6 @@ export const KnowledgeLedgerModal = ({
     // knwldctrl += 1;
     // localStorage.setItem("knwldctrl", knwldctrl);
     setIsLoading(true);
-    setSuggestion("");
     const history = await fetchHistory();
 
     try {
@@ -306,7 +297,6 @@ export const KnowledgeLedgerModal = ({
       console.log("submit prompt is done");
     } catch (error) {
       console.error("Error fetching suggestion:", error);
-      setSuggestion("Error fetching suggestion");
       setIsLoading(false);
     }
   };
@@ -326,130 +316,151 @@ export const KnowledgeLedgerModal = ({
         isOpen={isOpen}
         onClose={onClose}
         blockScrollOnMount={false}
-        size="full"
         placement="bottom"
+        size="xl"
       >
         <DrawerOverlay />
-        <DrawerContent borderTopRadius={{ base: "xl", md: "2xl" }}>
-          <DrawerHeader>
-            {" "}
-            {translation[userLanguage]["modal.adaptiveLearning.title"]} (beta)
-          </DrawerHeader>
+        <DrawerContent
+          borderTopRadius={{ base: "2xl", md: "3xl" }}
+          maxH={{ base: "85vh", md: "70vh" }}
+          mx="auto"
+        >
           <DrawerCloseButton />
-          <DrawerBody overflowY="auto" pb={6}>
-            {/* {translation[userLanguage]["buildYourApp.how_to_use_feature"]}
-            <OrderedList mb={4}>
-              <ListItem>
-                {" "}
-                {translation[userLanguage]["buildYourApp.step_1"]}
-              </ListItem>
-              <ListItem>
-                {translation[userLanguage]["buildYourApp.step_2"]}
-              </ListItem>
-              <ListItem>
-                {translation[userLanguage]["buildYourApp.step_3"]}
-              </ListItem>
-              <ListItem>
-                {translation[userLanguage]["buildYourApp.step_4"]}
-              </ListItem>
-              <ListItem>
-                {translation[userLanguage]["buildYourApp.step_5"]}
-              </ListItem>
-            </OrderedList> */}
-            <Box mb={4}>
-              <Input
-                placeholder={
-                  translation[userLanguage]["buildYourApp.input.label"]
-                  // translation[userLanguage]["input.placeholder.build"]
-                }
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-                maxWidth="400"
-              />
-              <br />
-              <Button
-                mt={2}
-                onMouseDown={saveUserInput}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    saveUserInput();
-                  }
-                }}
-                isDisabled={!userInput.trim()}
-                boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+          <DrawerHeader borderBottomWidth="1px" pb={4}>
+            <VStack align="start" spacing={1}>
+              <Heading size="md">
+                {translation[userLanguage]["modal.adaptiveLearning.title"]} (beta)
+              </Heading>
+              <Text fontSize="sm" color="gray.600">
+                {translation[userLanguage]["buildYourApp.onboarding.instruction"]}
+              </Text>
+            </VStack>
+          </DrawerHeader>
+          <DrawerBody overflowY="auto" px={{ base: 4, md: 6 }} py={6}>
+            <VStack spacing={8} align="center" w="full">
+              <Box
+                w="full"
+                maxW="560px"
+                bg="white"
+                borderRadius="2xl"
+                boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.2)"
+                p={{ base: 5, md: 6 }}
               >
-                {userIdea
-                  ? translation[userLanguage]["buildYourApp.button.label.2"]
-                  : translation[userLanguage]["buildYourApp.button.label.1"]}
-                {/* {translation[userLanguage]["button.saveInput"]} */}
-              </Button>
-            </Box>
-            {userIdea ? (
-              <Box>
-                {translation[userLanguage]["buildYourApp.idea.label"]}{" "}
-                {userIdea}
-              </Box>
-            ) : null}
-            <Box>
-              <Box mt={8}>
-                <Button
-                  colorScheme="purple"
-                  onMouseDown={handleSuggestNext}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      handleSuggestNext();
-                    }
-                  }}
-                  isDisabled={isLoading}
-                  variant={"outline"}
-                >
-                  {/* {isLoading ? (
-                    <Spinner size="sm" />
-                  ) : ( */}
-                  {
-                    translation[userLanguage][
-                      "modal.adaptiveLearning.recommendButton"
-                    ]
-                  }
-                  {/* )} */}
-                </Button>
-
-                {isAnimating ? (
-                  <>
-                    <br />
-                    <br />
-                    <CloudCanvas isLoader={true} regulateWidth={false} />
-                  </>
-                ) : null}
-
-                <br />
-                <br />
-                {messages.length > 0 && (
-                  <Box
-                    mt={4}
-                    style={{
-                      width: "100%",
-                      maxWidth: "100%",
-                    }}
-                  >
-                    {/* <Markdown
-                      components={ChakraUIRenderer(newTheme)}
-                      children={suggestion}
-                      // skipHtml
-                    /> */}
-                    {messages.map((msg, index) => (
-                      <Markdown
-                        key={index}
-                        components={ChakraUIRenderer(newTheme)}
-                        isLoading={isLoading}
-                      >
-                        {msg.content}
-                      </Markdown>
-                    ))}
+                <VStack spacing={4} align="stretch">
+                  <Box>
+                    <Text fontSize="sm" color="gray.600" mb={1}>
+                      {translation[userLanguage]["about.title.buildYourApp"]}
+                    </Text>
+                    <Heading size="md">
+                      {translation[userLanguage]["buildYourApp.input.label"]}
+                    </Heading>
+                    <Text fontSize="sm" color="gray.500" mt={2}>
+                      {translation[userLanguage]["buildYourApp.how_to_use_feature"]}
+                    </Text>
                   </Box>
-                )}
+                  <VStack align="stretch" spacing={3}>
+                    <Input
+                      placeholder={
+                        translation[userLanguage]["buildYourApp.input.label"]
+                      }
+                      value={userInput}
+                      onChange={(e) => setUserInput(e.target.value)}
+                    />
+                    <Stack
+                      direction={{ base: "column", sm: "row" }}
+                      spacing={3}
+                      justify="flex-start"
+                    >
+                      <Button
+                        colorScheme="pink"
+                        variant="outline"
+                        onMouseDown={saveUserInput}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            saveUserInput();
+                          }
+                        }}
+                        isDisabled={!userInput.trim()}
+                        boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.2)"
+                      >
+                        {userIdea
+                          ? translation[userLanguage][
+                              "buildYourApp.button.label.2"
+                            ]
+                          : translation[userLanguage][
+                              "buildYourApp.button.label.1"
+                            ]}
+                      </Button>
+                    </Stack>
+                    {userIdea ? (
+                      <Box
+                        borderWidth="1px"
+                        borderColor="gray.200"
+                        borderRadius="lg"
+                        p={3}
+                        bg="gray.50"
+                      >
+                        <Text fontWeight="semibold" fontSize="sm" mb={1}>
+                          {translation[userLanguage]["buildYourApp.idea.label"]}
+                        </Text>
+                        <Text fontSize="sm">{userIdea}</Text>
+                      </Box>
+                    ) : null}
+                  </VStack>
+                </VStack>
               </Box>
-            </Box>
+
+              <Box w="full" maxW="560px">
+                <VStack spacing={4} align="stretch">
+                  <Button
+                    colorScheme="purple"
+                    variant="solid"
+                    onMouseDown={() => handleModalCheck(handleSuggestNext)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        handleModalCheck(handleSuggestNext);
+                      }
+                    }}
+                    isDisabled={isLoading}
+                  >
+                    {
+                      translation[userLanguage][
+                        "modal.adaptiveLearning.recommendButton"
+                      ]
+                    }
+                  </Button>
+
+                  {isAnimating ? (
+                    <Box py={4}>
+                      <CloudCanvas isLoader={true} regulateWidth={false} />
+                    </Box>
+                  ) : null}
+
+                  {messages.length > 0 && (
+                    <VStack
+                      spacing={4}
+                      align="stretch"
+                      borderWidth="1px"
+                      borderColor="gray.200"
+                      borderRadius="2xl"
+                      p={{ base: 4, md: 5 }}
+                      bg="white"
+                      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.08)"
+                    >
+                      {messages.map((msg, index) => (
+                        <Markdown
+                          key={index}
+                          components={ChakraUIRenderer(newTheme)}
+                          isLoading={isLoading}
+                        >
+                          {msg.content}
+                        </Markdown>
+                      ))}
+                    </VStack>
+                  )}
+                </VStack>
+              </Box>
+            </VStack>
           </DrawerBody>
           <DrawerFooter borderTopWidth="1px">
             <Button
@@ -459,7 +470,7 @@ export const KnowledgeLedgerModal = ({
                   onClose();
                 }
               }}
-              boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+              boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.2)"
             >
               {translation[userLanguage]["button.close"]}
             </Button>
