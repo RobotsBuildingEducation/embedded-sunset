@@ -33,7 +33,6 @@ import RoxModal from "./RoxModal/RoxModal";
 import SocialWalletModal from "./SocialWalletModal/SocialWalletModal";
 
 import FeedbackModal from "./FeedbackModal/FeedbackModal";
-import ThemeMenu from "../ThemeMenu";
 import { translation } from "../../utility/translation";
 import { database } from "../../database/firebaseResources";
 import { doc, updateDoc } from "firebase/firestore";
@@ -101,12 +100,6 @@ const SettingsMenu = ({
     isOpen: isSocialWalletOpen,
     onOpen: onSocialWalletOpen,
     onClose: onSocialWalletClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: isKnowledgeLedgerOpen,
-    onOpen: onKnowledgeLedgerOpen,
-    onClose: onKnowledgeLedgerClose,
   } = useDisclosure();
 
   const {
@@ -497,16 +490,6 @@ const SettingsMenu = ({
                 </Button>
               ) : null}
 
-              <ThemeMenu
-                userLanguage={userLanguage}
-                isIcon={false}
-                buttonProps={{
-                  width: "100%",
-                  colorScheme: "pink",
-                  background: "pink.300",
-                  boxShadow: "1px 1px 2px 0px rgba(0, 0, 0,0.75)",
-                }}
-              />
               <Button
                 background="pink.300"
                 color="white"
@@ -532,33 +515,6 @@ const SettingsMenu = ({
               >
                 {translation[userLanguage]["settings.button.studyGuide"]}
               </Button>
-              {/* <Button
-                p={6}
-                colorScheme="pink"
-                background="pink.300"
-                style={{ width: "100%" }}
-                onClick={onKnowledgeLedgerOpen}
-              >
-                {translation[userLanguage]["settings.button.adaptiveLearning"]}
-              </Button> */}
-
-              {/* {userLanguage.includes("compsci-en") ? (
-                <Button
-                  p={6}
-                  colorScheme="pink"
-                  background="pink.300"
-                  boxShadow="1px 1px 2px 0px rgba(207, 128, 197,0.75)"
-                  style={{ width: "100%" }}
-                  onMouseDown={onAlgorithmHelperOpen}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      onAlgorithmHelperOpen();
-                    }
-                  }}
-                >
-                  {translation[userLanguage]["settings.button.algorithmHelper"]}
-                </Button>
-              ) : null} */}
               <Button
                 p={6}
                 colorScheme="pink"
@@ -705,16 +661,6 @@ const SettingsMenu = ({
           userLanguage={userLanguage}
         />
       ) : null}
-      {/* {isKnowledgeLedgerOpen ? (
-        <KnowledgeLedgerModal
-          userLanguage={userLanguage}
-          isOpen={isKnowledgeLedgerOpen}
-          onClose={onKnowledgeLedgerClose}
-          steps={steps}
-          currentStep={currentStep}
-        />
-      ) : null} */}
-
       {isAlgorithmHelperOpen ? (
         <AlgorithmHelper
           userLanguage={userLanguage}

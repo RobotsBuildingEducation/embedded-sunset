@@ -208,7 +208,6 @@ import { CodeEditor } from "./components/CodeEditor/CodeEditor";
 import ProgressModal from "./components/ProgressModal/ProgressModal";
 import { RoleCanvas } from "./components/RoleCanvas/RoleCanvas";
 import { AlgorithmHelper } from "./components/AlgorithmHelper/AlgorithmHelper";
-import { TbBinaryTreeFilled } from "react-icons/tb";
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
 import CloudTransition from "./elements/CloudTransition";
 
@@ -4161,21 +4160,23 @@ const Step = ({
                         }
                       }}
                     />
-                    {userLanguage === "compsci-en" && (
-                      <IconButton
-                        {...actionBarButtonProps}
-                        aria-label="Open knowledge ledger"
-                        icon={<TbBinaryTreeFilled fontSize="20px" />}
-                        onMouseDown={() => {
+                    <IconButton
+                      {...actionBarButtonProps}
+                      aria-label={
+                        translation[userLanguage]?.[
+                          "settings.button.algorithmHelper"
+                        ] || "Open build your app"
+                      }
+                      icon={<IoConstruct fontSize="22px" />}
+                      onMouseDown={() => {
+                        onKnowledgeLedgerOpen();
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
                           onKnowledgeLedgerOpen();
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            onKnowledgeLedgerOpen();
-                          }
-                        }}
-                      />
-                    )}
+                        }
+                      }}
+                    />
                     <IconButton
                       {...actionBarButtonProps}
                       aria-label="Support on Patreon"
