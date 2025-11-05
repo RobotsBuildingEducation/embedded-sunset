@@ -5,28 +5,23 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { darcula } from "react-syntax-highlighter/dist/esm/styles/prism"; // Syntax theme
 
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerHeader,
+  DrawerCloseButton,
+  DrawerBody,
+  DrawerFooter,
   Button,
-  VStack,
   Text,
   Box,
   Input,
   Heading,
-  Code,
   useClipboard,
   Spinner,
-  OrderedList,
   ListItem,
   UnorderedList,
 } from "@chakra-ui/react";
-import { useChatCompletion } from "../../../hooks/useChatCompletion";
-
 import {
   collection,
   doc,
@@ -40,68 +35,9 @@ import { translation } from "../../../utility/translation";
 import { useAlertStore } from "../../../useAlertStore";
 import { usePasscodeModalStore } from "../../../usePasscodeModalStore";
 import { PasscodeModal } from "../../PasscodeModal/PasscodeModal";
-import { CloudCanvas, SunsetCanvas } from "../../../elements/SunsetCanvas";
+import { CloudCanvas } from "../../../elements/SunsetCanvas";
 import { useSimpleGeminiChat } from "../../../hooks/useGeminiChat";
 import LiveReactEditorModal from "../../LiveCodeEditor/LiveCodeEditor";
-
-export const transcriptDisplay = {
-  tutorial: {
-    en: "Tutorial",
-    es: "Tutorial",
-    "py-en": "Tutorial",
-    "swift-en": "Tutorial",
-    "android-en": "Tutorial",
-    "compsci-en": "Tutorial",
-  },
-  1: {
-    en: "Basics of Coding",
-    es: "Fundamentos de la Programación",
-    "py-en": "Basics of Coding",
-    "swift-en": "Basics of Coding",
-    "android-en": "Basics of Coding",
-    "compsci-en": "Foundations of Data Structures", // ✅ fixed
-  },
-  2: {
-    en: "Object-Oriented Programming",
-    es: "Programación Orientada a Objetos",
-    "py-en": "Object-Oriented Programming",
-    "swift-en": "Object-Oriented Programming",
-    "android-en": "Object-Oriented Programming",
-    "compsci-en": "Linear Structures", // ✅ fixed
-  },
-  3: {
-    en: "Frontend Development",
-    es: "Desarrollo Frontend",
-    "py-en": "Frontend Development",
-    "swift-en": "Frontend Development",
-    "android-en": "Frontend Development",
-    "compsci-en": "Hierarchical & Associative Structures", // ✅ fixed
-  },
-  4: {
-    en: "Backend Engineering Fundamentals",
-    es: "Fundamentos de Ingeniería de Backend",
-    "py-en": "Backend Engineering Fundamentals",
-    "swift-en": "Backend Engineering Fundamentals",
-    "android-en": "Backend Engineering Fundamentals",
-    "compsci-en": "Sorting & Searching Algorithms", // ✅ fixed
-  },
-  5: {
-    en: "Creating Apps & Experiences",
-    es: "Creando Aplicaciones y Experiencias",
-    "py-en": "Creating Apps & Experiences",
-    "swift-en": "Creating Apps & Experiences",
-    "android-en": "Creating Apps & Experiences",
-    "compsci-en": "Operating Systems Essentials", // ✅ fixed
-  },
-  6: {
-    en: "Computer Science",
-    es: "Ciencias de la Computación",
-    "py-en": "Computer Science",
-    "swift-en": "Computer Science",
-    "android-en": "Computer Science",
-    "compsci-en": "Computer Science",
-  },
-};
 
 const newTheme = {
   p: (props) => <Text mb={2} lineHeight="1.6" {...props} />,
@@ -384,55 +320,23 @@ export const KnowledgeLedgerModal = ({
     }
   };
 
-  const renderGroupedSteps = () => {
-    const stepElements = [];
-    let lastGroup = null;
-    steps[userLanguage].forEach((step, index) => {
-      if (step.group !== lastGroup) {
-        stepElements.push(
-          step.group === "introduction" ? null : (
-            <Heading
-              as="h5"
-              size="sm"
-              mt={4}
-              key={`group-${index}`}
-              color="green.400"
-            >
-              {transcriptDisplay[step.group]?.[userLanguage] || ""}
-            </Heading>
-          )
-        );
-        lastGroup = step.group;
-      }
-      stepElements.push(
-        <Text
-          key={`step-${index}`}
-          color={index <= currentStep - 1 ? "green.500" : "gray.500"}
-        >
-          {index !== 0 ? index + ". " + step.title : ""}
-        </Text>
-      );
-    });
-    return stepElements;
-  };
-
   return (
     <>
-      <Modal
+      <Drawer
         isOpen={isOpen}
         onClose={onClose}
         blockScrollOnMount={false}
-        scrollBehavior={"inside"}
         size="full"
+        placement="bottom"
       >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>
+        <DrawerOverlay />
+        <DrawerContent borderTopRadius={{ base: "xl", md: "2xl" }}>
+          <DrawerHeader>
             {" "}
             {translation[userLanguage]["modal.adaptiveLearning.title"]} (beta)
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody overflowY="scroll">
+          </DrawerHeader>
+          <DrawerCloseButton />
+          <DrawerBody overflowY="auto" pb={6}>
             {/* {translation[userLanguage]["buildYourApp.how_to_use_feature"]}
             <OrderedList mb={4}>
               <ListItem>
@@ -486,7 +390,7 @@ export const KnowledgeLedgerModal = ({
                 {userIdea}
               </Box>
             ) : null}
-            <Box maxHeight="400px">
+            <Box>
               <Box mt={8}>
                 <Button
                   colorScheme="purple"
@@ -545,22 +449,9 @@ export const KnowledgeLedgerModal = ({
                   </Box>
                 )}
               </Box>
-              <br />
-              <VStack align="stretch">
-                <Text fontSize="lg">
-                  {" "}
-                  {
-                    translation[userLanguage][
-                      "modal.adaptiveLearning.stepsTaken"
-                    ]
-                  }
-                </Text>
-                <hr />
-                {renderGroupedSteps()}
-              </VStack>
             </Box>
-          </ModalBody>
-          <ModalFooter>
+          </DrawerBody>
+          <DrawerFooter borderTopWidth="1px">
             <Button
               onMouseDown={onClose}
               onKeyDown={(e) => {
@@ -572,9 +463,9 @@ export const KnowledgeLedgerModal = ({
             >
               {translation[userLanguage]["button.close"]}
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
       <PasscodeModal userLanguage={userLanguage} />
     </>
   );
