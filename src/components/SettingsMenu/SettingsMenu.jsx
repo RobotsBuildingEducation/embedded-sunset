@@ -46,7 +46,6 @@ import { AlgorithmHelper } from "../AlgorithmHelper/AlgorithmHelper";
 import { CareerAgent } from "../CareerAgent/CareerAgent";
 
 import { useNostrWalletStore } from "../../hooks/useNostrWalletStore";
-import SocialFeedModal from "../SocialFeedModal/SocialFeedModal";
 import StudyGuideModal from "../StudyGuideModal/StudyGuideModal";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { ChangeLanguageModal } from "../ChangeLanguageModal/ChangeLanguageModal";
@@ -62,8 +61,6 @@ const SettingsMenu = ({
   view,
   setView,
   step,
-  allowPosts,
-  setAllowPosts,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
@@ -75,12 +72,6 @@ const SettingsMenu = ({
     resetState: state.resetState, // renamed from cashTap
     walletService: state.walletService,
   }));
-
-  const {
-    isOpen: isSocialFeedModalOpen,
-    onOpen: onSocialFeedModalOpen,
-    onClose: onSocialFeedModalClose,
-  } = useDisclosure();
 
   const {
     isOpen: isAlgorithmHelperOpen,
@@ -527,23 +518,6 @@ const SettingsMenu = ({
               </Button>
 
               <Button
-                ref={firstButtonRef} // Assign the ref to the first button
-                colorScheme="pink"
-                background="pink.300"
-                boxShadow="1px 1px 2px 0px rgba(0, 0, 0,0.75)"
-                style={{ width: "100%" }}
-                onMouseDown={onSocialFeedModalOpen}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    onSocialFeedModalOpen();
-                  }
-                }}
-                p={6}
-              >
-                {translation[userLanguage]["settings.button.socialProgress"]}
-              </Button>
-
-              <Button
                 onMouseDown={onStudyGuideModalOpen}
                 p={6}
                 colorScheme="pink"
@@ -706,17 +680,6 @@ const SettingsMenu = ({
           </DrawerBody>
         </DrawerContent>
       </Drawer>
-
-      {isSocialFeedModalOpen ? (
-        <SocialFeedModal
-          userLanguage={userLanguage}
-          currentStep={currentStep}
-          isOpen={isSocialFeedModalOpen}
-          onClose={onSocialFeedModalClose}
-          allowPosts={allowPosts}
-          setAllowPosts={setAllowPosts}
-        />
-      ) : null}
 
       {isBitcoinModeOpen ? (
         <BitcoinModeModal

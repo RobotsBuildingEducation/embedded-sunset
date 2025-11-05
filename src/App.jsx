@@ -121,6 +121,7 @@ import {
   PiClockCountdownDuotone,
   PiClockCountdownFill,
   PiPatreonLogoFill,
+  PiUsersThreeFill,
 } from "react-icons/pi";
 
 import { IoIosMore } from "react-icons/io";
@@ -194,6 +195,7 @@ import MiniKitInitializer from "./MiniKitInitializer";
 
 import BitcoinModeModal from "./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal";
 import SelfPacedModal from "./components/SettingsMenu/SelfPacedModal/SelfPacedModal";
+import SocialFeedModal from "./components/SocialFeedModal/SocialFeedModal";
 import { Onboarding } from "./Onboarding";
 import { newTheme } from "./App.theme";
 import { InstallAppModal } from "./components/InstallModal/InstallModal";
@@ -1878,6 +1880,12 @@ const Step = ({
     isOpen: isSelfPacedOpen,
     onOpen: onSelfPacedOpen,
     onClose: onSelfPacedClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isSocialFeedOpen,
+    onOpen: onSocialFeedOpen,
+    onClose: onSocialFeedClose,
   } = useDisclosure();
 
   const {
@@ -4055,6 +4063,17 @@ const Step = ({
             />
           ) : null}
 
+          {isSocialFeedOpen ? (
+            <SocialFeedModal
+              userLanguage={userLanguage}
+              currentStep={currentStep}
+              isOpen={isSocialFeedOpen}
+              onClose={onSocialFeedClose}
+              allowPosts={allowPosts}
+              setAllowPosts={setAllowPosts}
+            />
+          ) : null}
+
           {isBitcoinModeOpen ? (
             <BitcoinModeModal
               isOpen={isBitcoinModeOpen}
@@ -4123,6 +4142,23 @@ const Step = ({
                       buttonProps={{
                         ...actionBarButtonProps,
                         color: actionBarButtonProps.color,
+                      }}
+                    />
+                    <IconButton
+                      {...actionBarButtonProps}
+                      aria-label={
+                        translation[userLanguage][
+                          "settings.button.socialProgress"
+                        ]
+                      }
+                      icon={<PiUsersThreeFill fontSize="20px" />}
+                      onMouseDown={() => {
+                        onSocialFeedOpen();
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          onSocialFeedOpen();
+                        }
                       }}
                     />
                     {userLanguage === "compsci-en" && (
@@ -6407,8 +6443,6 @@ function App({ isShutDown }) {
             view={view}
             setView={setView}
             step={steps?.[userLanguage]?.[currentStep]}
-            allowPosts={allowPosts}
-            setAllowPosts={setAllowPosts}
           />
         )}
 
