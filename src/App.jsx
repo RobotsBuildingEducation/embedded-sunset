@@ -4030,7 +4030,7 @@ const Step = ({
                   children={suggestionMessage}
                 />
               </Box>
-              <Box mt="-4">
+              <Box mt="-4" paddingBottom={6}>
                 <RandomCharacter />
               </Box>
             </Box>
@@ -4088,6 +4088,8 @@ const Step = ({
                   borderBottom="0"
                   boxShadow="0 -2px 0px rgba(209, 137, 96, 0.2)"
                   backdropFilter="blur(10px)"
+                  paddingBottom={6}
+                  paddingTop={4}
                 >
                   <HStack spacing={{ base: 2, md: 3 }} justify="center">
                     <IconButton
