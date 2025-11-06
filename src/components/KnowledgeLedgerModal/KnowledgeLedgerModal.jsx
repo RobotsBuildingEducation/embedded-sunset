@@ -116,6 +116,7 @@ export default function KnowledgeLedgerOnboarding({
   // guards to avoid clobbering user edits
   const userTypingRef = useRef(false);
   const typingTimerRef = useRef(null);
+  const latestRunnableRef = useRef("");
 
   /* ----------------------- load idea + saved code on open ----------------------- */
   useEffect(() => {
@@ -157,24 +158,33 @@ export default function KnowledgeLedgerOnboarding({
     if (!messages.length) return;
     const last = messages[messages.length - 1];
     const extracted = extractCodeFromMessage(last.content);
+    const isFinalChunk = last?.meta?.loading === false;
 
-    // ✅ Only adopt if the assistant actually sent runnable code.
-    if (!extracted || !isRunnable(extracted)) {
-      // do NOT wipe editor if no code — preserves user edits
+    if (extracted && isRunnable(extracted)) {
+      latestRunnableRef.current = extracted;
+      setRemoteCode(extracted);
+
+      if (!isFinalChunk) {
+        return;
+      }
+
+      if (!userTypingRef.current) {
+        setCode(extracted);
+      }
       setIsLoading(false);
+      saveBuild(extracted, "build").catch(() => {});
       return;
     }
 
-    setRemoteCode(extracted);
-
-    // ✅ Soft-sync: if user is actively typing, don't clobber their edits.
-    if (!userTypingRef.current) {
-      setCode(extracted);
+    if (isFinalChunk) {
+      setIsLoading(false);
+      if (latestRunnableRef.current && !userTypingRef.current) {
+        setCode(latestRunnableRef.current);
+      }
+      if (latestRunnableRef.current) {
+        saveBuild(latestRunnableRef.current, "build").catch(() => {});
+      }
     }
-    setIsLoading(false);
-
-    // persist in the background
-    saveBuild(extracted, "build").catch(() => {});
   }, [messages]);
 
   /* -------------------------- console piping from iframe ------------------------- */
@@ -247,6 +257,7 @@ export default function KnowledgeLedgerOnboarding({
   /* ---------------------------------- actions ---------------------------------- */
   const handleGenerate = async () => {
     setIsLoading(true);
+    latestRunnableRef.current = "";
     resetMessages();
 
     const completed = steps[userLanguage]
