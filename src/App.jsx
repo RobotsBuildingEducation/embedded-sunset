@@ -121,6 +121,7 @@ import {
   PiClockCountdownDuotone,
   PiClockCountdownFill,
   PiPatreonLogoFill,
+  PiUsersThreeFill,
 } from "react-icons/pi";
 
 import { IoIosMore } from "react-icons/io";
@@ -177,7 +178,6 @@ import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 
 import { useSimpleGeminiChat } from "./hooks/useGeminiChat";
 
-import { KnowledgeLedgerModal } from "./components/SettingsMenu/KnowledgeLedgerModal/KnowledgeLedgerModal";
 import { logEvent } from "firebase/analytics";
 import BitcoinOnboarding from "./components/BitcoinOnboarding/BitcoinOnboarding";
 import SyntaxHighlighter from "react-syntax-highlighter";
@@ -194,6 +194,7 @@ import MiniKitInitializer from "./MiniKitInitializer";
 
 import BitcoinModeModal from "./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal";
 import SelfPacedModal from "./components/SettingsMenu/SelfPacedModal/SelfPacedModal";
+import SocialFeedModal from "./components/SocialFeedModal/SocialFeedModal";
 import { Onboarding } from "./Onboarding";
 import { newTheme } from "./App.theme";
 import { InstallAppModal } from "./components/InstallModal/InstallModal";
@@ -206,9 +207,9 @@ import { CodeEditor } from "./components/CodeEditor/CodeEditor";
 import ProgressModal from "./components/ProgressModal/ProgressModal";
 import { RoleCanvas } from "./components/RoleCanvas/RoleCanvas";
 import { AlgorithmHelper } from "./components/AlgorithmHelper/AlgorithmHelper";
-import { TbBinaryTreeFilled } from "react-icons/tb";
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
 import CloudTransition from "./elements/CloudTransition";
+import KnowledgeLedgerModal from "./components/KnowledgeLedgerModal/KnowledgeLedgerModal";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -1878,6 +1879,12 @@ const Step = ({
     isOpen: isSelfPacedOpen,
     onOpen: onSelfPacedOpen,
     onClose: onSelfPacedClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isSocialFeedOpen,
+    onOpen: onSocialFeedOpen,
+    onClose: onSocialFeedClose,
   } = useDisclosure();
 
   const {
@@ -4055,6 +4062,17 @@ const Step = ({
             />
           ) : null}
 
+          {isSocialFeedOpen ? (
+            <SocialFeedModal
+              userLanguage={userLanguage}
+              currentStep={currentStep}
+              isOpen={isSocialFeedOpen}
+              onClose={onSocialFeedClose}
+              allowPosts={allowPosts}
+              setAllowPosts={setAllowPosts}
+            />
+          ) : null}
+
           {isBitcoinModeOpen ? (
             <BitcoinModeModal
               isOpen={isBitcoinModeOpen}
@@ -4125,21 +4143,40 @@ const Step = ({
                         color: actionBarButtonProps.color,
                       }}
                     />
-                    {userLanguage === "compsci-en" && (
-                      <IconButton
-                        {...actionBarButtonProps}
-                        aria-label="Open knowledge ledger"
-                        icon={<TbBinaryTreeFilled fontSize="20px" />}
-                        onMouseDown={() => {
+                    <IconButton
+                      {...actionBarButtonProps}
+                      aria-label={
+                        translation[userLanguage][
+                          "settings.button.socialProgress"
+                        ]
+                      }
+                      icon={<PiUsersThreeFill fontSize="20px" />}
+                      onMouseDown={() => {
+                        onSocialFeedOpen();
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          onSocialFeedOpen();
+                        }
+                      }}
+                    />
+                    <IconButton
+                      {...actionBarButtonProps}
+                      aria-label={
+                        translation[userLanguage]?.[
+                          "settings.button.algorithmHelper"
+                        ] || "Open build your app"
+                      }
+                      icon={<IoConstruct fontSize="22px" />}
+                      onMouseDown={() => {
+                        onKnowledgeLedgerOpen();
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
                           onKnowledgeLedgerOpen();
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            onKnowledgeLedgerOpen();
-                          }
-                        }}
-                      />
-                    )}
+                        }
+                      }}
+                    />
                     <IconButton
                       {...actionBarButtonProps}
                       aria-label="Support on Patreon"
@@ -6407,8 +6444,6 @@ function App({ isShutDown }) {
             view={view}
             setView={setView}
             step={steps?.[userLanguage]?.[currentStep]}
-            allowPosts={allowPosts}
-            setAllowPosts={setAllowPosts}
           />
         )}
 

@@ -44,7 +44,10 @@ import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { IoMicCircleOutline } from "react-icons/io5";
 import { PiMicrophoneFill, PiMicrophoneLight } from "react-icons/pi";
-import { useSimpleGeminiChat } from "../../hooks/useGeminiChat";
+import {
+  useSimpleGeminiChat,
+  useThinkingGeminiChat,
+} from "../../hooks/useGeminiChat";
 import { LuSend } from "react-icons/lu";
 import { isUnsupportedBrowser } from "../../utility/browser";
 import { InstallAppModal } from "../InstallModal/InstallModal";
@@ -151,7 +154,7 @@ const EducationalModal = ({
     browserSupportsSpeechRecognition,
     finalTranscript,
   } = useSpeechRecognition();
-  const { resetMessages, messages, submitPrompt } = useSimpleGeminiChat();
+  const { resetMessages, messages, submitPrompt } = useThinkingGeminiChat();
 
   useEffect(() => {
     if (transcript) {
