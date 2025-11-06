@@ -164,24 +164,24 @@ export default function KnowledgeLedgerOnboarding({
       latestRunnableRef.current = extracted;
       setRemoteCode(extracted);
 
-      if (!isFinalChunk) {
-        return;
-      }
-
       if (!userTypingRef.current) {
         setCode(extracted);
       }
-      setIsLoading(false);
-      saveBuild(extracted, "build").catch(() => {});
+
+      if (isFinalChunk) {
+        setIsLoading(false);
+        saveBuild(extracted, "build").catch(() => {});
+      }
       return;
     }
 
     if (isFinalChunk) {
       setIsLoading(false);
-      if (latestRunnableRef.current && !userTypingRef.current) {
-        setCode(latestRunnableRef.current);
-      }
+
       if (latestRunnableRef.current) {
+        if (!userTypingRef.current) {
+          setCode(latestRunnableRef.current);
+        }
         saveBuild(latestRunnableRef.current, "build").catch(() => {});
       }
     }
