@@ -57,12 +57,12 @@ export const KnowledgeLedgerModal = ({
   const { openPasscodeModal } = usePasscodeModalStore();
   const [userInput, setUserInput] = useState("");
   const [userIdea, setUserIdea] = useState("");
-  const [hasRunCode, setHasRunCode] = useState(false);
   const [editorCodes, setEditorCodes] = useState([]);
   const [isPreviewings, setIsPreviewings] = useState([]);
   const [errors, setErrors] = useState([]);
   const [consoleLogs, setConsoleLogs] = useState([]);
   const iframeRefs = useRef([]);
+  const lastAutoRunIndexRef = useRef(-1);
 
   const stripCodeFences = (input = "") =>
     input.replace(/```(?:\w+)?\s*([\s\S]*?)```/g, "$1");
@@ -126,7 +126,6 @@ export const KnowledgeLedgerModal = ({
     const sanitized = code.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, "");
 
     if (isReactCode(sanitized)) {
-      setHasRunCode(true);
       return;
     }
 
@@ -134,12 +133,10 @@ export const KnowledgeLedgerModal = ({
       if (iframeRefs.current[idx]) {
         iframeRefs.current[idx].srcdoc = code;
       }
-      setHasRunCode(true);
       return;
     }
 
     runJavaScript(idx, sanitized);
-    setHasRunCode(true);
   };
 
   const resetPreviewState = () => {
@@ -148,7 +145,7 @@ export const KnowledgeLedgerModal = ({
     setErrors([]);
     setConsoleLogs([]);
     iframeRefs.current = [];
-    setHasRunCode(false);
+    lastAutoRunIndexRef.current = -1;
   };
 
   useEffect(() => {
@@ -173,21 +170,20 @@ export const KnowledgeLedgerModal = ({
   }, [messages]);
 
   useEffect(() => {
-    if (!isLoading && editorCodes.length > 0 && !hasRunCode) {
+    if (!isLoading && editorCodes.length > 0) {
       const lastIndex = editorCodes.length - 1;
       const latest = editorCodes[lastIndex];
 
-      if (latest && latest.trim()) {
+      if (
+        lastIndex !== lastAutoRunIndexRef.current &&
+        latest &&
+        latest.trim()
+      ) {
+        lastAutoRunIndexRef.current = lastIndex;
         runCode(lastIndex);
       }
     }
-  }, [editorCodes, isLoading, hasRunCode]);
-
-  useEffect(() => {
-    if (isLoading) {
-      setHasRunCode(false);
-    }
-  }, [isLoading]);
+  }, [editorCodes, isLoading]);
 
   useEffect(() => {
     const handler = (event) => {
