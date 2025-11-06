@@ -48,7 +48,9 @@ export const useProofStorage = () => {
   const removeProofs = (proofsToRemove) => {
     if (!proofsToRemove) return;
     setProofs((prevProofs) =>
-      prevProofs.filter((proof) => !proofsToRemove.includes(proof))
+      prevProofs.filter(
+        (proof) => !proofsToRemove.some((p) => p.secret === proof.secret)
+      )
     );
   };
 
@@ -183,7 +185,11 @@ export const useCashuWallet = (isUnactivated, isModalOpen = null) => {
     }
 
     try {
-      const { send, returnChange } = await wallet.send(swapAmount, proofs);
+      const proofsToSend = proofs.map((p) => ({ ...p }));
+      const { send, returnChange } = await wallet.send(
+        swapAmount,
+        proofsToSend
+      );
       const encodedToken = getEncodedToken({
         token: [{ proofs: send, mint: wallet.mint.mintUrl }],
       });
