@@ -81,8 +81,9 @@ export const ChangeLanguageModal = ({
           borderTopWidth="1px"
           borderColor="blackAlpha.200"
           boxShadow="sm"
+          justifyContent="flex-end"
         >
-          <Button width="100%" size="lg" onClick={onClose}>
+          <Button size="lg" onClick={onClose}>
             {translation?.[userLanguage]?.["button.close"] || "Close"}
           </Button>
         </ModalFooter>

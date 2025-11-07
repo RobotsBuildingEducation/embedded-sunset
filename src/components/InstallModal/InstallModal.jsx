@@ -90,9 +90,9 @@ export const InstallAppModal = ({
           borderTopWidth="1px"
           borderColor="blackAlpha.200"
           boxShadow="sm"
+          justifyContent="flex-end"
         >
           <Button
-            width="100%"
             size="lg"
             onClick={onClose}
             onKeyDown={(e) => {

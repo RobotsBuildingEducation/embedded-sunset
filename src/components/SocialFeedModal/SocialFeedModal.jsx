@@ -58,8 +58,9 @@ const SocialFeedModal = ({
           borderColor="blackAlpha.200"
           boxShadow="sm"
           py={4}
+          justifyContent="flex-end"
         >
-          <Button width="100%" size="lg" onClick={onClose}>
+          <Button size="lg" onClick={onClose}>
             {translation?.[userLanguage]?.["button.close"] || "Close"}
           </Button>
         </DrawerFooter>
