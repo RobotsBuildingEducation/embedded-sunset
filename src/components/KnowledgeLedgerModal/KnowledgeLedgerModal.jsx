@@ -9,6 +9,7 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
+  DrawerFooter,
   Flex,
   HStack,
   Input,
@@ -398,10 +399,16 @@ export default function KnowledgeLedgerModal({
       blockScrollOnMount
     >
       <DrawerOverlay />
-      <DrawerContent>
+      <DrawerContent display="flex" flexDirection="column" maxH="100vh">
         <DrawerCloseButton />
         <DrawerHeader>{title}</DrawerHeader>
-        <DrawerBody display="flex" flexDir="column" p={{ base: 3, md: 6 }}>
+        <DrawerBody
+          display="flex"
+          flexDir="column"
+          p={{ base: 3, md: 6 }}
+          flex="1"
+          overflowY="auto"
+        >
           <KnowledgeLedgerContent
             steps={steps}
             step={step}
@@ -409,6 +416,18 @@ export default function KnowledgeLedgerModal({
             onContinue={onContinue}
           />
         </DrawerBody>
+        <DrawerFooter
+          position="sticky"
+          bottom="0"
+          bg="chakra-body-bg"
+          borderTopWidth="1px"
+          borderColor="blackAlpha.200"
+          boxShadow="sm"
+        >
+          <Button width="100%" size="lg" onClick={onClose}>
+            {translation?.[userLanguage]?.["button.close"] || "Close"}
+          </Button>
+        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );

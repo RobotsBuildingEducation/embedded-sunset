@@ -30,10 +30,15 @@ export const InstallAppModal = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        display="flex"
+        flexDirection="column"
+        maxH="90vh"
+        overflow="hidden"
+      >
         <ModalHeader>{translation[userLanguage].installApp}</ModalHeader>
         <ModalCloseButton />
-        <ModalBody>
+        <ModalBody flex="1" overflowY="auto">
           {vocalRequest ? (
             <>
               {" "}
@@ -78,17 +83,25 @@ export const InstallAppModal = ({
           </Flex>
         </ModalBody>
 
-        <ModalFooter>
+        <ModalFooter
+          position="sticky"
+          bottom="0"
+          bg="chakra-body-bg"
+          borderTopWidth="1px"
+          borderColor="blackAlpha.200"
+          boxShadow="sm"
+        >
           <Button
-            variant="ghost"
-            onMouseDown={onClose}
+            width="100%"
+            size="lg"
+            onClick={onClose}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 onClose();
               }
             }}
           >
-            {translation[userLanguage].close}
+            {translation?.[userLanguage]?.["button.close"] || "Close"}
           </Button>
         </ModalFooter>
       </ModalContent>

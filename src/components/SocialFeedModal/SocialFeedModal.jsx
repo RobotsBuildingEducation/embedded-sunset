@@ -37,34 +37,32 @@ const SocialFeedModal = ({
       placement="right"
     >
       <DrawerOverlay />
-      <DrawerContent>
+      <DrawerContent display="flex" flexDirection="column">
         <DrawerHeader style={{ display: "flex", alignItems: "center" }}>
           {/* {translation[userLanguage]["settings.button.yourTutor"]} */}
           #LearnWithNostr
         </DrawerHeader>
         <DrawerCloseButton />
-        <DrawerBody>
+        <DrawerBody flex="1" overflowY="auto">
           <TestFeed
             userLanguage={userLanguage}
             allowPosts={allowPosts}
             setAllowPosts={setAllowPosts}
           />
         </DrawerBody>
-        {/* <DrawerFooter
-          display="flex"
-          justifyContent="space-between"
-          alignContent={"center"}
+        <DrawerFooter
+          position="sticky"
+          bottom="0"
+          bg="chakra-body-bg"
+          borderTopWidth="1px"
+          borderColor="blackAlpha.200"
+          boxShadow="sm"
+          py={4}
         >
-          <Button
-            mt={4}
-            onClick={onClose}
-            variant="solid"
-            size="lg"
-            boxShadow={"0px 0.5px 0.5px 1px black"}
-          >
-            Close
+          <Button width="100%" size="lg" onClick={onClose}>
+            {translation?.[userLanguage]?.["button.close"] || "Close"}
           </Button>
-        </DrawerFooter> */}
+        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
