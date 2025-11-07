@@ -290,7 +290,7 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
       </Text>
 
       {/* Prompt row */}
-      <VStack width="50%" align="center" flexWrap="wrap" gap={3}>
+      <VStack width="100%" align="center" flexWrap="wrap" gap={3}>
         <Input
           placeholder={translation[userLanguage]["buildYourApp.input.label"]}
           value={idea}
