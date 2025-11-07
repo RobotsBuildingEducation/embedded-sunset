@@ -1,237 +1,171 @@
-// src/components/KnowledgeLedgerOnboarding.jsx
-import React, { useEffect, useRef, useState } from "react";
+// src/components/KnowledgeLedgerModal.jsx
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
+  Box,
+  Button,
   Drawer,
-  DrawerOverlay,
+  DrawerBody,
+  DrawerCloseButton,
   DrawerContent,
   DrawerHeader,
-  DrawerCloseButton,
-  DrawerBody,
-  DrawerFooter,
-  Button,
-  Box,
-  VStack,
-  Text,
-  Input,
-  Heading,
+  DrawerOverlay,
+  Flex,
   HStack,
-  Grid,
-  GridItem,
-  ChakraProvider,
-  Link,
+  Input,
+  Text,
+  VStack,
 } from "@chakra-ui/react";
-import Editor from "@monaco-editor/react";
-import { LiveProvider, LivePreview, LiveError } from "react-live";
-import { FaMagic } from "react-icons/fa";
 import {
+  collection,
   doc,
   getDoc,
-  updateDoc,
-  setDoc,
-  collection,
   getDocs,
+  setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { database } from "../../database/firebaseResources";
 import { useThinkingGeminiChat } from "../../hooks/useGeminiChat";
 import { translation } from "../../utility/translation";
+import LiveReactEditorModal from "../LiveCodeEditor/LiveCodeEditor";
 import { CloudCanvas } from "../../elements/SunsetCanvas";
 
-/* ------------------------ helpers: extract + detect ------------------------ */
-const stripCodeFences = (input = "") =>
-  input.replace(/```(?:[a-zA-Z0-9_-]+)?\s*([\s\S]*?)```/g, "$1");
+// --- tiny parser to safely stream fenced code
+function parseFenced(text = "") {
+  const start = text.indexOf("```");
+  if (start === -1) return { hasFence: false, closed: false };
+  let i = start + 3;
+  let lang = "";
+  while (i < text.length && text[i] !== "\n") {
+    lang += text[i];
+    i++;
+  }
+  if (text[i] === "\n") i++;
+  const end = text.indexOf("```", i);
+  if (end === -1)
+    return {
+      hasFence: true,
+      closed: false,
+      lang: lang.trim(),
+      inner: text.slice(i),
+    };
+  const inner = text.slice(i, end);
+  const fullBlock = text.slice(start, end + 3);
+  return { hasFence: true, closed: true, lang: lang.trim(), inner, fullBlock };
+}
 
-const isReactCode = (txt = "") =>
-  /(?:^|\n)\s*render\s*\(\s*<\w/i.test(txt) ||
-  /createRoot\s*\(.+?\)\.render\s*\(\s*<\w/i.test(txt);
-
-const isHTML = (txt = "") => /<!DOCTYPE|<html|<head|<body/i.test(txt);
-
-const isRunnable = (txt = "") => {
-  const t = (txt || "").trim();
-  if (!t) return false;
-  return (
-    isReactCode(t) ||
-    isHTML(t) ||
-    /(^|\n)\s*(function|const|let|var|\(|document\.|console\.)/.test(t)
-  );
-};
-
-const extractCodeFromMessage = (content = "") => {
-  const withoutFences = stripCodeFences(content).trim();
-  if (!withoutFences) return "";
-  // prefer the last block-ish section (LLMs often narrate then code)
-  const sections = withoutFences.split(/\n{2,}/);
-  const candidate =
-    sections.length > 1 ? sections[sections.length - 1] : withoutFences;
-
-  // if narration leaked in, try to find code start
-  const lines = candidate.split("\n");
-  const start = lines.findIndex(
-    (line) =>
-      /render\s*\(/i.test(line) ||
-      /createRoot\s*\(.+?\)\.render\s*\(/i.test(line) ||
-      line.trim().startsWith("<") ||
-      line.trim().startsWith("function") ||
-      line.trim().startsWith("const") ||
-      line.trim().startsWith("let") ||
-      line.trim().startsWith("var")
-  );
-  const code = start > 0 ? lines.slice(start).join("\n") : candidate;
-  return code.trim();
-};
-
-const buildJSRunnerDoc = (idx, raw = "") => {
-  const sanitized = raw.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, "");
-  return `<!DOCTYPE html><html><body><script>
-window.console = {
-  log: (...a) => parent.postMessage({ type:'log', idx:${idx}, msg:a.join(' ') }, '*'),
-  error: (...a) => parent.postMessage({ type:'log', idx:${idx}, msg:'Error: '+a.join(' ') }, '*')
-};
-try { ${sanitized} } catch(e) { console.error(e); }
-</script></body></html>`;
-};
-
-/* -------------------------------- component -------------------------------- */
-export default function KnowledgeLedgerOnboarding({
-  isOpen,
-  onClose,
-  userLanguage,
-  steps,
-  currentStep,
-  moveToNext,
-}) {
+function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
   const [idea, setIdea] = useState("");
   const [savedIdea, setSavedIdea] = useState("");
-  const [code, setCode] = useState(""); // editor code (user-visible)
-  const [remoteCode, setRemoteCode] = useState(""); // last runnable from model
-  const [isLoading, setIsLoading] = useState(false);
+  const [code, setCode] = useState(""); // full fenced block
+  const [draft, setDraft] = useState(""); // inner code only
+  const [lang, setLang] = useState("");
+
+  // streaming state
+  const [streamingView, setStreamingView] = useState("");
+  const [isStreaming, setIsStreaming] = useState(false);
+
+  // NEW: prevent post-close tokens from flipping UI back to streaming
+  const fenceClosedRef = useRef(false);
+
+  // NEW: force-remount preview so react-live/iframe always refresh
+  const [previewKey, setPreviewKey] = useState(0);
 
   const { submitPrompt, messages, resetMessages } = useThinkingGeminiChat();
+  const groupId = useMemo(
+    () => String(step?.group ?? "default"),
+    [step?.group]
+  );
 
-  // preview state
-  const [isPreviewing, setIsPreviewing] = useState(false);
-  const [consoleLogs, setConsoleLogs] = useState([]);
-  const iframeRef = useRef(null);
+  const wrapFenced = (body, language = lang || "jsx") =>
+    "```" + (language || "") + "\n" + (body || "") + "\n```";
 
-  // guards to avoid clobbering user edits
-  const userTypingRef = useRef(false);
-  const typingTimerRef = useRef(null);
-  const latestRunnableRef = useRef("");
-
-  /* ----------------------- load idea + saved code on open ----------------------- */
+  // Initial load
   useEffect(() => {
-    if (!isOpen) return;
-    (async () => {
+    const fetchData = async () => {
       try {
         const userId = localStorage.getItem("local_npub");
         if (!userId) return;
-        const userRef = doc(database, "users", userId);
-        const snap = await getDoc(userRef);
-        if (snap.exists()) {
-          const data = snap.data();
-          const prevIdea = data.userBuild || "";
-          setIdea(prevIdea);
-          setSavedIdea(prevIdea);
 
-          const group = steps?.[userLanguage]?.[currentStep]?.group;
-          if (group) {
-            const codeSnap = await getDoc(
-              doc(database, "users", userId, "buildHistory", group)
-            );
-            if (codeSnap.exists()) {
-              const { code: savedCode } = codeSnap.data();
-              if (savedCode && savedCode.trim()) {
-                setCode(savedCode);
-                setRemoteCode(savedCode);
-              }
+        const userDocRef = doc(database, "users", userId);
+        const snap = await getDoc(userDocRef);
+        if (snap.exists()) {
+          const data = snap.data() || {};
+          const initIdea = data.userBuild || "";
+          setIdea(initIdea);
+          setSavedIdea(initIdea);
+
+          const buildCode = data.buildCode || {};
+          if (buildCode[groupId]) {
+            const stored = buildCode[groupId];
+            setCode(stored);
+            const parsed = parseFenced(stored);
+            if (parsed?.hasFence) {
+              setDraft(parsed.inner || "");
+              setLang((parsed.lang || "").trim());
             }
           }
         }
-      } catch (e) {
-        console.error("Init load failed", e);
-      }
-    })();
-  }, [isOpen, steps, currentStep, userLanguage]);
 
-  /* --------------------- adopt new code from messages safely -------------------- */
+        const codeSnap = await getDoc(
+          doc(database, "users", userId, "buildHistory", groupId)
+        );
+        if (codeSnap.exists()) {
+          const d = codeSnap.data() || {};
+          if (d.code) {
+            setCode(d.code);
+            const p2 = parseFenced(d.code);
+            if (p2?.hasFence) {
+              setDraft(p2.inner || "");
+              setLang((p2.lang || "").trim());
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching build data", err);
+      }
+    };
+    fetchData();
+  }, [groupId]);
+
+  // Stream handler
   useEffect(() => {
     if (!messages.length) return;
+
+    // If we've already seen a closed fence, ignore any trailing tokens.
+    if (fenceClosedRef.current) return;
+
     const last = messages[messages.length - 1];
-    const extracted = extractCodeFromMessage(last.content);
-    const isFinalChunk = last?.meta?.loading === false;
+    const content = last?.content || "";
+    const parsed = parseFenced(content);
 
-    if (extracted && isRunnable(extracted)) {
-      latestRunnableRef.current = extracted;
-      setRemoteCode(extracted);
-
-      if (!userTypingRef.current) {
-        setCode(extracted);
-      }
-
-      if (isFinalChunk) {
-        setIsLoading(false);
-        saveBuild(extracted, "build").catch(() => {});
-      }
+    if (!parsed.hasFence) {
+      setIsStreaming(true);
+      setStreamingView(content);
       return;
     }
 
-    if (isFinalChunk) {
-      setIsLoading(false);
+    if (!parsed.closed) {
+      setIsStreaming(true);
+      setStreamingView(parsed.inner);
+    } else {
+      fenceClosedRef.current = true; // ⬅️ lock
+      const finalBlock = parsed.fullBlock;
+      setCode(finalBlock);
+      setDraft(parsed.inner || "");
+      setLang((parsed.lang || "").trim());
+      setStreamingView("");
+      setIsStreaming(false);
 
-      if (latestRunnableRef.current) {
-        if (!userTypingRef.current) {
-          setCode(latestRunnableRef.current);
-        }
-        saveBuild(latestRunnableRef.current, "build").catch(() => {});
-      }
-    }
-  }, [messages]);
+      // force preview re-mount so it always refreshes
+      setPreviewKey((k) => k + 1);
 
-  /* -------------------------- console piping from iframe ------------------------- */
-  useEffect(() => {
-    const handler = (e) => {
-      if (e.data?.type === "log" && typeof e.data.idx === "number") {
-        setConsoleLogs((prev) => [...prev, e.data.msg]);
-      }
-    };
-    window.addEventListener("message", handler);
-    return () => window.removeEventListener("message", handler);
-  }, []);
-
-  /* ----------------------------- auto-run on change ----------------------------- */
-  useEffect(() => {
-    if (!code.trim()) return;
-    const t = setTimeout(() => {
-      setIsPreviewing(true);
-      if (isHTML(code)) {
-        if (iframeRef.current) iframeRef.current.srcdoc = code;
-      } else if (!isReactCode(code)) {
-        if (iframeRef.current)
-          iframeRef.current.srcdoc = buildJSRunnerDoc(0, code);
-      }
-    }, 200);
-    return () => clearTimeout(t);
-  }, [code]);
-
-  /* --------------------------------- firestore --------------------------------- */
-  const saveBuild = async (content, stage = "build") => {
-    try {
-      if (!content || !content.trim()) return; // don't save empties
-      const userId = localStorage.getItem("local_npub");
-      if (!userId) return;
-      const group = steps?.[userLanguage]?.[currentStep]?.group || "ungrouped";
-      await setDoc(
-        doc(database, "users", userId, "buildHistory", group),
-        { code: content, updatedAt: Date.now(), stage },
-        { merge: true }
+      saveBuild(finalBlock, "build").catch((e) =>
+        console.error("saveBuild error", e)
       );
-      await updateDoc(doc(database, "users", userId), {
-        userBuild: idea,
-      }).catch(() => {});
-    } catch (e) {
-      console.error("saveBuild error", e);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages]);
 
   const fetchHistory = async () => {
     try {
@@ -239,378 +173,242 @@ export default function KnowledgeLedgerOnboarding({
       if (!userId) return [];
       const ref = collection(database, `users/${userId}/buildHistory`);
       const docs = await getDocs(ref);
-      const group = steps?.[userLanguage]?.[currentStep]?.group;
+      const currentIdx = parseInt(groupId, 10);
       return docs.docs
-        .filter(
-          (d) =>
-            !isNaN(parseInt(d.id)) && group && parseInt(d.id) < parseInt(group)
-        )
+        .filter((d) => !isNaN(parseInt(d.id)) && parseInt(d.id) < currentIdx)
         .sort((a, b) => parseInt(a.id) - parseInt(b.id))
-        .map((d) => d.data().code)
+        .map((d) => d.data()?.code)
         .filter(Boolean);
     } catch (e) {
-      console.error("history error", e);
+      console.error("Error fetching history", e);
       return [];
     }
   };
 
-  /* ---------------------------------- actions ---------------------------------- */
   const handleGenerate = async () => {
-    setIsLoading(true);
-    latestRunnableRef.current = "";
+    // reset streaming guard so a new run can update the UI
+    fenceClosedRef.current = false;
+
+    setIsStreaming(true);
+    setStreamingView("");
     resetMessages();
 
-    const completed = steps[userLanguage]
-      .slice(1, currentStep)
-      .map((s) => s.title);
+    const idx = steps[userLanguage].indexOf(step);
+    const completed = steps[userLanguage].slice(1, idx).map((s) => s.title);
     const history = await fetchHistory();
-
-    const prompt = `Context:
-The individual is learning to code. Based on completed steps: ${JSON.stringify(
-      completed
-    )}, produce a runnable demo in HTML or React.
-
-Strict rules:
-- Return only runnable code (no imports, no narration).
-- If React: end with render(<TheComponentYouCreated />).
-- If HTML: start with <!DOCTYPE html>.
-- Responsive, minimalist white UI (avoid greens).
-- If Firebase used: v9 API, "experiments" collection, refer to it as "database".
-- Labels in ${userLanguage.includes("en") ? "English" : "Spanish"}.
-- Theme around this idea: ${idea}.
-${history.length ? `- Prior snippets in order: ${JSON.stringify(history)}` : ""}`;
+    let prompt =
+      `Context for the prompt:
+      The individual is using an education app and learning about computer science and how to code, starting with elementary knowledge and ending with the ability to create apps. Based on the user's completed steps: ${JSON.stringify(
+        completed
+      )}, write an app that the user can copy and experiment with HTML or React (choose whichever is appropriate based on the user's progress).` +
+      (history.length
+        ? ` Previous code snippets in order: ${JSON.stringify(history)}.`
+        : "") +
+      `\n\n` +
+      `Strict requirements: 
+      
+      1. This is the MOST important to understand: The code should be progressively and appropriately built based on the user's progress to incentivize further interest, excitement and progress, so you should implement the app in a way that highlights the user's progress. For example, if the user's most recent progress/group has learned how to use firebase, then implement firebase features. If the user has recently learned react, implement react UIs, etc. If it's just javascript, then use HMTL. The goal is to build out a simple but real demo that users can operate and preview in an editor and to generate an awesome user experience to highlight one's growth.\n\n` +
+      `2. When generating your response, you MUST format your software in this manner:\n  Globally: Never use imports. Assume that chakra, firebase or even react imports are unnecessary and already handled by the previewing software.\n\n  
+      - A. If you are upgrading to React, do NOT include any import statements or define dependencies and conclude the component or components with render(<TheComponentYouCreated />). This means React code is only ever about writing component functions, nothing else.\n  
+      - B. If you are generating plain html, use !DOCTYPE\n  
+      - C. Do NOT return purely plain JavaScript snippets. Use React components or HTML only based on the criteria.\n  
+      - D. If you are writing firebase (with or without react), use v9, and you MUST use a unique document in the 'experiments' collection. Never use any other collection or your firebase software will fail. Never use imports or we will fail. Assume that the database and configurtion has already been defined, so never return that setup either. Refer to the database element as "database" and not "db" or anything else. Do not use auth. Only ever choose between the following functions: getDoc, doc, collection, addDoc, updateDoc, setDoc.\n  
+      - E. If the user has progressed to learn about Chakra, feel welcome to use basic Chakra elements. Never use the ChakraProvider element.\n\n` +
+      `3. Strictly return only code written by a formatted backticked code block. Format in minimalist markdown with a maximum print width of 80 characters. Finally do not add any language mentioning that you understand the request - it should the code only, without any exceptions. I repeat, do not return anything other than code or appropriate comments with the code. \n\n` +
+      `4. The user is speaking in ${userLanguage.includes("en") ? "English" : "Spanish"}. So theme the code that you're writing based on the language.` +
+      `5. The user is also interested in building the following idea: ${idea}. Make the code about that theme in good faith.` +
+      `6. The code you return MUST be responsive for both mobile and desktop views. Do not allow renders that awkwardly break out of containers, err on the side of being as mobile friendly as possible!`;
 
     await submitPrompt(prompt);
-    // messages effect will adopt code if present
   };
 
   const handleSaveIdeaAndGenerate = async () => {
     try {
       const userId = localStorage.getItem("local_npub");
       if (userId) {
-        await updateDoc(doc(database, "users", userId), { userBuild: idea });
+        try {
+          await updateDoc(doc(database, "users", userId), { userBuild: idea });
+        } catch {
+          await setDoc(
+            doc(database, "users", userId),
+            { userBuild: idea },
+            { merge: true }
+          );
+        }
         setSavedIdea(idea);
-        localStorage.setItem("userBuild", idea);
       }
-    } catch (e) {
-      console.error("save idea error", e);
+    } catch (err) {
+      console.error("Error saving build idea", err);
     }
-    await handleGenerate();
+    handleGenerate();
   };
 
-  const handleUseThisAndNext = async () => {
+  const saveBuild = async (content, stage = "build") => {
+    try {
+      const userId = localStorage.getItem("local_npub");
+      if (!userId) return;
+
+      const userDocRef = doc(database, "users", userId);
+      const userSnap = await getDoc(userDocRef);
+      const data = userSnap.exists() ? userSnap.data() : {};
+      const buildCode = data?.buildCode || {};
+
+      try {
+        await updateDoc(userDocRef, {
+          userBuild: idea,
+          buildCode: { ...buildCode, [groupId]: content },
+        });
+      } catch {
+        await setDoc(
+          userDocRef,
+          { userBuild: idea, buildCode: { ...buildCode, [groupId]: content } },
+          { merge: true }
+        );
+      }
+
+      await setDoc(
+        doc(database, "users", userId, "buildHistory", groupId),
+        { code: content, updatedAt: Date.now(), stage },
+        { merge: true }
+      );
+    } catch (err) {
+      console.error("Error saving build", err);
+    }
+  };
+
+  const handleSaveAndContinue = async () => {
     window.scrollTo(0, 0);
-    if (code.trim()) await saveBuild(code, "conversation");
-    moveToNext?.();
+    if (draft.trim())
+      await saveBuild(wrapFenced(draft, lang || "jsx"), "conversation");
+    onContinue?.();
   };
 
-  /* -------------------------- editor typing detection -------------------------- */
-  const handleEditorChange = (v) => {
-    setCode(v || "");
-    userTypingRef.current = true;
-    if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
-    typingTimerRef.current = setTimeout(() => {
-      userTypingRef.current = false;
-    }, 600);
-  };
+  return (
+    <VStack spacing={4} width="100%" maxWidth="1200px" mt="8" mx="auto">
+      <Text fontSize="sm" fontWeight="bold" mb="12px">
+        Enter an app idea and build it as you make progress!
+      </Text>
 
-  /* ------------------------------------ UI ------------------------------------ */
+      {/* Prompt row */}
+      <VStack width="50%" align="center" flexWrap="wrap" gap={3}>
+        <Input
+          placeholder={translation[userLanguage]["buildYourApp.input.label"]}
+          value={idea}
+          onChange={(e) => setIdea(e.target.value)}
+          backgroundColor="white"
+          boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+          width={{ base: 300, md: 300 }}
+        />
+        <HStack>
+          <Button
+            onClick={handleSaveIdeaAndGenerate}
+            isDisabled={idea.length < 1}
+            colorScheme="pink"
+            background="pink.300"
+            width="300px"
+          >
+            {savedIdea
+              ? translation[userLanguage]["buildYourApp.button.label.2"]
+              : translation[userLanguage]["buildYourApp.button.label.1"]}
+          </Button>
+        </HStack>
+      </VStack>
+
+      {/* Streaming state: safe monospace preview */}
+      {isStreaming ? (
+        <VStack w="100%" pt="2" align="stretch">
+          <CloudCanvas />
+          <Text>{translation[userLanguage]["loading.suggestion"]}</Text>
+          <Box
+            mt={2}
+            p={3}
+            borderWidth="1px"
+            borderRadius="md"
+            bg="gray.50"
+            fontFamily="mono"
+            fontSize="sm"
+            whiteSpace="pre-wrap"
+            wordBreak="break-word"
+            maxH="60vh"
+            overflowY="auto"
+          >
+            {streamingView || "Generating…"}
+          </Box>
+        </VStack>
+      ) : (
+        // Final: Split layout (desktop) / stacked (mobile)
+        <Flex
+          direction={{ base: "column", md: "row" }}
+          gap={4}
+          align="stretch"
+          w="100%"
+        >
+          {/* LEFT: editor */}
+          <Box
+            flexBasis={{ base: "100%", md: "50%" }}
+            maxW={{ base: "100%", md: "50%" }}
+          >
+            <LiveReactEditorModal
+              mode="editor"
+              controlledCode={draft}
+              onCodeChange={setDraft}
+              editorHeight={{ base: "280px", md: "calc(100vh - 320px)" }}
+            />
+          </Box>
+
+          {/* RIGHT: full-height renderer */}
+          <Box
+            flex="1"
+            position={{ base: "static", md: "sticky" }}
+            top={{ md: "64px" }}
+            alignSelf="stretch"
+          >
+            <LiveReactEditorModal
+              mode="preview"
+              controlledCode={draft}
+              autoRun
+              // ⬇️ key so preview hard-resets when final code lands
+              instanceKey={previewKey}
+              previewHeight={{ base: "360px", md: "calc(100vh - 160px)" }}
+            />
+          </Box>
+        </Flex>
+      )}
+    </VStack>
+  );
+}
+
+export default function KnowledgeLedgerModal({
+  isOpen,
+  onClose,
+  steps,
+  step,
+  userLanguage,
+  onContinue,
+  title = "Build Your App",
+}) {
   return (
     <Drawer
       isOpen={isOpen}
       onClose={onClose}
       placement="bottom"
       size="full"
-      blockScrollOnMount={false}
+      trapFocus
+      closeOnOverlayClick={false}
+      blockScrollOnMount
     >
-      <DrawerOverlay bg="blackAlpha.500" />
-      <DrawerContent
-        borderRadius="0"
-        w="100vw"
-        maxW="100vw"
-        h="100dvh"
-        maxH="100dvh"
-        inset="0"
-        overflow="hidden"
-        bg="white"
-        sx={{
-          paddingBottom: "env(safe-area-inset-bottom)",
-          paddingTop: "env(safe-area-inset-top)",
-        }}
-      >
+      <DrawerOverlay />
+      <DrawerContent>
         <DrawerCloseButton />
-        <DrawerHeader borderBottomWidth="1px" pb={4}>
-          <VStack align="start" spacing={2}>
-            <HStack spacing={3} align="center">
-              <Box
-                bg="purple.500"
-                color="white"
-                borderRadius="full"
-                p={2}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                boxShadow="0px 4px 12px rgba(128, 90, 213, 0.35)"
-              >
-                <FaMagic />
-              </Box>
-              <Heading size="md">
-                {translation[userLanguage]["modal.adaptiveLearning.title"]}{" "}
-                (beta)
-              </Heading>
-            </HStack>
-            <Text fontSize="sm" color="gray.600">
-              {translation[userLanguage]["buildYourApp.onboarding.instruction"]}
-            </Text>
-          </VStack>
-        </DrawerHeader>
-
-        <DrawerBody px={{ base: 4, md: 6 }} py={6} overflow="hidden">
-          {/* base: column; md+: two columns (LEFT editor/prompt, RIGHT preview) */}
-          <Grid
-            templateColumns={{ base: "1fr", md: "1fr 1fr" }}
-            gap={{ base: 6, md: 6 }}
-            h="full"
-          >
-            {/* LEFT: Prompt + Editor */}
-            <GridItem
-              colSpan={1}
-              display="flex"
-              flexDir="column"
-              gap={6}
-              minHeight={0}
-            >
-              <Box
-                bg="white"
-                p={6}
-                borderRadius="24px"
-                boxShadow="0 1px 2px rgba(0,0,0,0.08)"
-                width="100%"
-              >
-                <Text
-                  mb={4}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  <FaMagic />
-                  &nbsp;{translation[userLanguage]["about.title.buildYourApp"]}
-                </Text>
-
-                <Text mb={4} fontSize="sm" color="gray.600">
-                  {
-                    translation[userLanguage][
-                      "buildYourApp.onboarding.instruction"
-                    ]
-                  }
-                </Text>
-
-                <Input
-                  placeholder={
-                    translation[userLanguage]["buildYourApp.input.label"]
-                  }
-                  value={idea}
-                  onChange={(e) => setIdea(e.target.value)}
-                  mb={3}
-                  bg="white"
-                />
-
-                <HStack justifyContent="flex-start">
-                  <Button
-                    onClick={handleSaveIdeaAndGenerate}
-                    isDisabled={isLoading || idea.length < 1}
-                    colorScheme="pink"
-                    variant="solid"
-                  >
-                    {savedIdea
-                      ? translation[userLanguage]["buildYourApp.button.label.2"]
-                      : translation[userLanguage][
-                          "buildYourApp.button.label.1"
-                        ]}
-                  </Button>
-                  <Button variant="outline" onClick={moveToNext}>
-                    {translation[userLanguage]["skip"]}
-                  </Button>
-                </HStack>
-
-                {isLoading && (
-                  <Box mt={6}>
-                    <CloudCanvas />
-                    <Text mt={2}>
-                      {translation[userLanguage]["loading.suggestion"]}
-                    </Text>
-                  </Box>
-                )}
-              </Box>
-
-              {/* Editor under prompt; grows to fill remaining height */}
-              <Box
-                borderWidth="1px"
-                borderColor="gray.200"
-                borderRadius="xl"
-                overflow="hidden"
-                bg="white"
-                flex="1"
-                minH={{ base: "320px", md: "400px" }}
-                minHeight={0}
-              >
-                <Editor
-                  height="100%"
-                  language="javascript"
-                  theme="light"
-                  value={code}
-                  onChange={handleEditorChange}
-                  options={{
-                    minimap: { enabled: false },
-                    automaticLayout: true,
-                    fontSize: 14,
-                    scrollBeyondLastLine: false,
-                  }}
-                />
-              </Box>
-            </GridItem>
-
-            {/* RIGHT: Live Preview (full right side on md+) */}
-            <GridItem
-              colSpan={1}
-              display="flex"
-              flexDir="column"
-              overflow="hidden"
-            >
-              <Box
-                flex="1"
-                borderWidth="1px"
-                borderColor="gray.200"
-                borderRadius="xl"
-                bg="gray.50"
-                p={{ base: 3, md: 4 }}
-                overflow="auto"
-                minHeight={0}
-              >
-                {!code.trim() && !isLoading ? (
-                  <Text color="gray.500" fontSize="sm">
-                    {translation[userLanguage]["generatingCode"]}
-                  </Text>
-                ) : null}
-
-                {isLoading && (
-                  <Box>
-                    <CloudCanvas />
-                    <Text mt={2}>
-                      {translation[userLanguage]["loading.suggestion"]}
-                    </Text>
-                  </Box>
-                )}
-
-                {/* React Preview */}
-                {code.trim() &&
-                  isReactCode(code) &&
-                  isPreviewing &&
-                  !isLoading && (
-                    <ChakraProvider>
-                      <LiveProvider
-                        code={code}
-                        noInline
-                        scope={{
-                          React,
-                          useState: React.useState,
-                          useEffect: React.useEffect,
-                          Button,
-                          Input,
-                          Text,
-                          Box,
-                          Link,
-                          Heading,
-                          HStack,
-                          VStack,
-                        }}
-                      >
-                        <Box
-                          borderWidth="1px"
-                          borderColor="gray.200"
-                          borderRadius="md"
-                          overflow="hidden"
-                          bg="white"
-                          p={{ base: 3, md: 4 }}
-                        >
-                          <LivePreview />
-                        </Box>
-                        <LiveError
-                          style={{
-                            fontFamily: "monospace",
-                            fontSize: "12px",
-                            color: "#dc2626",
-                            marginTop: "12px",
-                          }}
-                        />
-                      </LiveProvider>
-                    </ChakraProvider>
-                  )}
-
-                {/* HTML Preview */}
-                {code.trim() &&
-                  !isReactCode(code) &&
-                  isHTML(code) &&
-                  isPreviewing &&
-                  !isLoading && (
-                    <iframe
-                      ref={iframeRef}
-                      title="kl-preview-html"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        minHeight: "320px",
-                        border: 0,
-                        background: "#fff",
-                      }}
-                    />
-                  )}
-
-                {/* JS Console (runs in hidden iframe; logs shown below) */}
-                {code.trim() &&
-                  !isReactCode(code) &&
-                  !isHTML(code) &&
-                  isPreviewing &&
-                  !isLoading && (
-                    <>
-                      <iframe
-                        ref={iframeRef}
-                        title="kl-preview-js"
-                        style={{ display: "none" }}
-                      />
-                      <Box
-                        as="pre"
-                        bg="gray.900"
-                        color="green.200"
-                        borderRadius="md"
-                        p={3}
-                        fontSize="sm"
-                        overflowX="auto"
-                        mt={3}
-                      >
-                        {consoleLogs.join("\n")}
-                      </Box>
-                    </>
-                  )}
-              </Box>
-
-              {/* Next button pinned below preview (when we have code) */}
-              {code.trim() && !isLoading && (
-                <HStack mt={3} justify="flex-end">
-                  <Button onClick={handleUseThisAndNext}>
-                    {translation[userLanguage]["nextStep"]}
-                  </Button>
-                </HStack>
-              )}
-            </GridItem>
-          </Grid>
+        <DrawerHeader>{title}</DrawerHeader>
+        <DrawerBody display="flex" flexDir="column" p={{ base: 3, md: 6 }}>
+          <KnowledgeLedgerContent
+            steps={steps}
+            step={step}
+            userLanguage={userLanguage}
+            onContinue={onContinue}
+          />
         </DrawerBody>
-
-        <DrawerFooter borderTopWidth="1px" justifyContent="flex-end">
-          <Button onClick={onClose}>
-            {translation[userLanguage]["button.close"]}
-          </Button>
-        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
