@@ -35,12 +35,17 @@ export const ChangeLanguageModal = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        display="flex"
+        flexDirection="column"
+        maxH="90vh"
+        overflow="hidden"
+      >
         <ModalHeader>
           {translation[userLanguage]["onboarding.languages.title"]}
         </ModalHeader>
         <ModalCloseButton />
-        <ModalBody>
+        <ModalBody flex="1" overflowY="auto">
           <VStack width="100%">
             <Menu width="100%">
               <MenuButton
@@ -69,7 +74,19 @@ export const ChangeLanguageModal = ({
           </VStack>
           <TechOverview userLanguage={userLanguage} />
         </ModalBody>
-        <ModalFooter></ModalFooter>
+        <ModalFooter
+          position="sticky"
+          bottom="0"
+          bg="chakra-body-bg"
+          borderTopWidth="1px"
+          borderColor="blackAlpha.200"
+          boxShadow="sm"
+          justifyContent="flex-end"
+        >
+          <Button size="lg" onClick={onClose}>
+            {translation?.[userLanguage]?.["button.close"] || "Close"}
+          </Button>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );

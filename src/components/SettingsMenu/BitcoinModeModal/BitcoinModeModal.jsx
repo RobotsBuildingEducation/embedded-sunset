@@ -34,17 +34,32 @@ const BitcoinModeModal = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent
+        display="flex"
+        flexDirection="column"
+        maxH="90vh"
+        overflow="hidden"
+      >
         <ModalHeader>
           {translation[userLanguage]["modal.bitcoinMode.title"]}
         </ModalHeader>
         <ModalCloseButton />
-        <ModalBody>
+        <ModalBody flex="1" overflowY="auto">
           {/* {renderContent()} */}
           <BitcoinOnboarding userLanguage={userLanguage} from={from} />
         </ModalBody>
-        <ModalFooter>
-          {/** You can add any footer actions if needed */}
+        <ModalFooter
+          position="sticky"
+          bottom="0"
+          bg="chakra-body-bg"
+          borderTopWidth="1px"
+          borderColor="blackAlpha.200"
+          boxShadow="sm"
+          justifyContent="flex-end"
+        >
+          <Button size="lg" onClick={onClose}>
+            {translation?.[userLanguage]?.["button.close"] || "Close"}
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
