@@ -129,6 +129,7 @@ import {
   RiAiGenerate,
   RiBookOpenLine,
   RiCalendarScheduleFill,
+  RiCodeAiFill,
   RiFlag2Line,
   RiRobot2Fill,
 } from "react-icons/ri";
@@ -210,6 +211,7 @@ import { AlgorithmHelper } from "./components/AlgorithmHelper/AlgorithmHelper";
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
 import CloudTransition from "./elements/CloudTransition";
 import KnowledgeLedgerModal from "./components/KnowledgeLedgerModal/KnowledgeLedgerModal";
+import { TbWorld } from "react-icons/tb";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -4150,7 +4152,7 @@ const Step = ({
                           "settings.button.socialProgress"
                         ]
                       }
-                      icon={<PiUsersThreeFill fontSize="20px" />}
+                      icon={<TbWorld fontSize="20px" />}
                       onMouseDown={() => {
                         onSocialFeedOpen();
                       }}
@@ -4167,7 +4169,7 @@ const Step = ({
                           "settings.button.algorithmHelper"
                         ] || "Open build your app"
                       }
-                      icon={<IoConstruct fontSize="22px" />}
+                      icon={<RiCodeAiFill fontSize="22px" />}
                       onMouseDown={() => {
                         onKnowledgeLedgerOpen();
                       }}
@@ -4214,7 +4216,7 @@ const Step = ({
               isOpen={isKnowledgeLedgerOpen}
               onClose={onKnowledgeLedgerClose}
               steps={steps}
-              currentStep={currentStep}
+              step={currentStep}
             />
           ) : (
             <AlgorithmHelper

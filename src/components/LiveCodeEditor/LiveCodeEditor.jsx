@@ -1,9 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
+// src/components/LiveCodeEditor/LiveCodeEditor.jsx
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ChakraProvider,
-  Button,
-  Input,
   Box,
+  Button,
   Heading,
   UnorderedList,
   ListItem,
@@ -13,21 +13,20 @@ import {
   FormLabel,
   List,
   Flex,
-  useBreakpointValue,
   useClipboard,
   Link,
   VStack,
   HStack,
   Textarea,
   Select,
+  Input,
 } from "@chakra-ui/react";
 
 import Editor from "@monaco-editor/react";
-
 import { LiveError, LivePreview, LiveProvider } from "react-live";
+
 import { database } from "../../database/firebaseResources";
 import {
-  getFirestore,
   collection,
   addDoc,
   onSnapshot,
@@ -37,137 +36,132 @@ import {
   doc,
   getDocs,
 } from "firebase/firestore";
-import { translation } from "../../utility/translation";
 
-// const code = `
-// function FirestoreDemo() {
-//   const [message, setMessage] = useState('');
-//   const [messages, setMessages] = useState([]);
-
-//   // 📝 Add a new message to Firestore
-//   const sendMessage = async () => {
-//     if (message) {
-//       await addDoc(collection(database, 'experiments'), { text: message });
-//       setMessage('');
-//     }
-//   };
-
-//   // 📡 Listen for real-time updates
-//   useEffect(() => {
-//     const unsubscribe = onSnapshot(collection(database, 'experiments'), (snapshot) => {
-//       const data = snapshot.docs.map(doc => doc.data());
-//       setMessages(data);
-//     });
-
-//     return () => unsubscribe();
-//   }, []);
-
-//   return (
-//     <div>
-//       <h2>Firebase v9 Messages</h2>
-//       <input
-//         type="text"
-//         placeholder="Type a message"
-//         value={message}
-//         onChange={(e) => setMessage(e.target.value)}
-//       />
-//       <button onClick={sendMessage}>Send</button>
-//       <ul>
-//         {messages.map((msg, index) => (
-//           <li key={index}>{msg.text}</li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// }
-
-//
-// ;
-// `;
-
+/**
+ * LiveReactEditorModal
+ * Modes:
+ *  - "full"    : editor + preview
+ *  - "editor"  : editor only
+ *  - "preview" : preview only
+ *
+ * Props:
+ *  - controlledCode/onCodeChange for external control
+ *  - instanceKey forces hard remount of preview surfaces
+ *  - autoRun triggers evaluation automatically
+ */
 const LiveReactEditorModal = ({
   code,
   isOnboarding = false,
   hideRunButton = false,
   autoRun = false,
+
+  mode = "full", // 'full' | 'editor' | 'preview'
+  controlledCode,
+  onCodeChange,
+  editorHeight = "400px",
+  previewHeight = "400px",
+  instanceKey,
 }) => {
-  const [editorCode, setEditorCode] = useState(code);
-  const { hasCopied, onCopy } = useClipboard(
-    editorCode +
-      " using mock data rather than real config data if necessary. Given that we're using v0, use supabase to replce firebase if firebase is discussed."
-  ); // Copy functionality
+  const [editorCode, setEditorCode] = useState(controlledCode ?? code ?? "");
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [error, setError] = useState("");
   const [consoleLogs, setConsoleLogs] = useState([]);
   const iframeRef = useRef(null);
 
-  useEffect(() => {
-    if (isPreviewing) {
-      setIsPreviewing(false);
-    }
-    setEditorCode(code);
-  }, [code]);
+  const { hasCopied, onCopy } = useClipboard(editorCode || "");
 
   useEffect(() => {
-    if (autoRun && editorCode.trim()) {
-      runCode();
+    const next = controlledCode ?? code ?? "";
+    setEditorCode(next);
+    if (autoRun && mode !== "editor" && next.trim()) {
+      // ensure surface is visible for react-live path
+      setIsPreviewing(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoRun]);
+  }, [controlledCode, code]); // eslint-disable-line
 
-  const isReactCode = (code) =>
-    /(ReactDOM\s*\.\s*)?render\s*\(\s*<\s*[A-Z][\w]*\s*\/?>/.test(code);
+  // ---------------- detection helpers
+  const looksLikeReact = (src = "") =>
+    /render\s*\(/i.test(src) ||
+    /ReactDOM\s*\.\s*render\s*\(/i.test(src) ||
+    /createRoot\s*\(/i.test(src) ||
+    /ReactDOM\s*\.\s*createRoot\s*\(/i.test(src);
 
-  const isHTMLCode = (code) => /<[^>]+>/.test(code);
+  const looksLikeHTML = (src = "") =>
+    /<!DOCTYPE/i.test(src) ||
+    /<html/i.test(src) ||
+    /<body/i.test(src) ||
+    /<\/?[a-z-]+/i.test(src);
 
-  const cleanCode = (inputCode) => {
-    return inputCode.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, "").trim();
+  const cleanCode = (inputCode) =>
+    (inputCode || "").replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, "").trim();
+
+  const currentCode = useMemo(
+    () => controlledCode ?? editorCode ?? "",
+    [controlledCode, editorCode]
+  );
+
+  // Normalize React 18 root/render patterns to react-live's `render(el)`
+  const normalizeReactEntry = (src = "") => {
+    let s = src;
+
+    // ReactDOM.createRoot(root).render(<App />)
+    s = s.replace(
+      /ReactDOM\s*\.\s*createRoot\s*\([^)]*\)\s*\.?\s*render\s*\(/gi,
+      "render("
+    );
+    // createRoot(root).render(<App />)
+    s = s.replace(/createRoot\s*\([^)]*\)\s*\.?\s*render\s*\(/gi, "render(");
+    // ReactDOM.render(<App />, root)
+    s = s.replace(
+      /ReactDOM\s*\.\s*render\s*\(\s*([^,]+)\s*,\s*[^)]+\)/gi,
+      "render($1)"
+    );
+
+    // Some models put a manual #root div; react-live supplies the container,
+    // so it's fine to leave extra HTML in strings; no-op here intentionally.
+    return s;
   };
 
+  // For preview: if it's React-like, pass normalized code to LiveProvider
+  const codeForPreview = useMemo(() => {
+    if (looksLikeReact(currentCode)) return normalizeReactEntry(currentCode);
+    return currentCode;
+  }, [currentCode]);
+
+  // ---------------- runners
   const runJavaScriptCode = (sanitizedCode) => {
     try {
       const htmlContent = `
-       <!DOCTYPE html>
-       <html lang="en">
-         <head>
-           <meta charset="UTF-8" />
-           <title>Live JavaScript Preview</title>
-         </head>
-         <body>
-           <script>
-             window.console = {
-               log: (...args) => window.parent.postMessage({ type: 'console', message: args.join(" ") }, '*'),
-               error: (...args) => window.parent.postMessage({ type: 'console', message: 'Error: ' + args.join(" ") }, '*')
-             };
-             try {
-               ${sanitizedCode}
-             } catch (err) {
-               console.error(err);
-             }
-           <\/script>
-         </body>
-       </html>
-     `;
-      iframeRef.current.srcdoc = htmlContent;
+<!DOCTYPE html>
+<html lang="en">
+  <head><meta charset="UTF-8" /><title>Live JavaScript Preview</title></head>
+  <body>
+    <script>
+      // pipe console back to parent
+      window.console = {
+        log: (...args) =>
+          window.parent.postMessage({ type: 'console', message: args.join(" ") }, '*'),
+        error: (...args) =>
+          window.parent.postMessage({ type: 'console', message: 'Error: ' + args.join(" ") }, '*'),
+        warn: (...args) =>
+          window.parent.postMessage({ type: 'console', message: 'Warn: ' + args.join(" ") }, '*'),
+      };
+      try { ${sanitizedCode} } catch (err) { console.error(err); }
+    <\/script>
+  </body>
+</html>`;
+      if (iframeRef.current) iframeRef.current.srcdoc = htmlContent;
     } catch (err) {
       setError(err.message);
     }
   };
 
-  const runHTMLCode = (sanitizedCode) => {
+  const runHTMLCode = (raw) => {
     try {
-      iframeRef.current.srcdoc = `
-       <!DOCTYPE html>
-       <html lang="en">
-         <head>
-           <meta charset="UTF-8" />
-           <title>Live HTML Preview</title>
-         </head>
-         <body>
-           ${sanitizedCode}
-         </body>
-       </html>
-     `;
+      const html = raw.startsWith("<!DOCTYPE")
+        ? raw
+        : `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8" /><title>Live HTML Preview</title></head><body>${raw}</body></html>`;
+      if (iframeRef.current) iframeRef.current.srcdoc = html;
     } catch (err) {
       setError(err.message);
     }
@@ -177,43 +171,60 @@ const LiveReactEditorModal = ({
     setIsPreviewing(true);
     setError("");
     setConsoleLogs([]);
-    const sanitizedCode = cleanCode(editorCode);
 
-    if (isReactCode(sanitizedCode)) {
-      // runReactCode(sanitizedCode);
-    } else if (isHTMLCode(sanitizedCode)) {
-      runHTMLCode(editorCode);
-    } else {
-      runJavaScriptCode(sanitizedCode);
+    const sanitized = cleanCode(currentCode);
+
+    if (looksLikeReact(sanitized)) {
+      // react-live path — nothing else to do
+      return;
     }
+    if (looksLikeHTML(currentCode)) {
+      runHTMLCode(currentCode);
+      return;
+    }
+    runJavaScriptCode(sanitized);
   };
 
+  // autorun when code changes (preview modes only)
+  useEffect(() => {
+    if (autoRun && mode !== "editor" && currentCode.trim()) {
+      runCode();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoRun, mode, currentCode]);
+
+  // autorun when instanceKey changes (force refresh)
+  useEffect(() => {
+    if (autoRun && mode !== "editor" && currentCode.trim()) {
+      runCode();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [instanceKey]);
+
+  // console piping from iframe
   useEffect(() => {
     const handleConsoleMessage = (event) => {
-      if (event.data.type === "console") {
-        setConsoleLogs((prevLogs) => [...prevLogs, event.data.message]);
+      if (event?.data?.type === "console") {
+        setConsoleLogs((prev) => [...prev, event.data.message]);
       }
     };
     window.addEventListener("message", handleConsoleMessage);
     return () => window.removeEventListener("message", handleConsoleMessage);
   }, []);
 
-  // const flexDirection = useBreakpointValue({
-  //   base: "column",
-  //   md: isOnboarding ? "100%" : "100%",
-  // });
-  // const editorWidth = useBreakpointValue({
-  //   base: "100%",
-  //   md: isOnboarding ? "100%" : "100%",
-  // });
-  // const previewWidth = useBreakpointValue({
-  //   base: "100%",
-  //   md: isOnboarding ? "100%" : "100%",
-  // });
+  const handleEditChange = (value) => {
+    const next = value ?? "";
+    if (controlledCode === undefined) setEditorCode(next);
+    onCodeChange?.(next);
+  };
+
+  // ---------------- UI
+  const showEditor = mode !== "preview";
+  const showPreview = mode !== "editor";
 
   return (
     <>
-      {/* {!hideRunButton && (
+      {!hideRunButton && showPreview && !autoRun && (
         <Button
           variant="outline"
           mt={4}
@@ -223,151 +234,122 @@ const LiveReactEditorModal = ({
         >
           Run Code
         </Button>
-      )} */}
-      {/* {!isOnboarding && (
-        <>
-          {" "}
-          &nbsp;
-          {translation[localStorage.getItem("userLanguage") || "en"]["or"]}
-          &nbsp;
-          <Link
-            textDecoration={"underline"}
-            as="button"
-            onMouseDown={() => {
-              onCopy();
-              window.location.href = "https://v0.dev/";
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                onCopy();
-                window.location.href = "https://v0.dev/";
-              }
-            }}
-            mb={4}
-          >
-            {hasCopied
-              ? translation[localStorage.getItem("userLanguage") || "en"][
-                  "copied"
-                ]
-              : translation[localStorage.getItem("userLanguage") || "en"][
-                  "copy_code_launch_builder"
-                ]}
-          </Link>
-        </>
-      )} */}
-      <Box display="flex" flexDirection={"column"} width="100%" mt={4}>
+      )}
+
+      {showEditor && (
         <Box
-          width={"100%"}
+          width="100%"
           mb={{ base: 4, md: 0 }}
           boxShadow="0.5px 0.5px 1px 0px rgba(0, 0, 0, 0.75)"
+          height={editorHeight}
         >
           <Editor
-            height="400px"
-            defaultLanguage={isHTMLCode(editorCode) ? "html" : "javascript"}
-            language={isHTMLCode(editorCode) ? "html" : "javascript"}
-            value={editorCode}
-            onChange={(value) => setEditorCode(value)}
-            // theme="vs-dark"
+            // height={editorHeight}
+            defaultLanguage={looksLikeHTML(currentCode) ? "html" : "javascript"}
+            language={looksLikeHTML(currentCode) ? "html" : "javascript"}
+            value={currentCode}
+            onChange={handleEditChange}
             theme="light"
-            // maxWidth="100%"
             width="100%"
             options={{
               minimap: { enabled: false },
               fontFamily: "initial",
               fontSize: "16px",
-              // wordWrap: "on",
               automaticLayout: true,
-              tabIndex: 0, // Make the editor focusable
+              tabIndex: 0,
             }}
           />
         </Box>
+      )}
 
+      {showPreview && (
         <Box
-          width={"100%"}
+          width="100%"
           borderRadius="2xl"
-          marginTop="8px"
+          mt="8px"
           border="1px solid black"
           boxSizing="border-box"
+          height={previewHeight}
+          overflow="hidden"
         >
-          {isReactCode(editorCode) && isPreviewing ? (
-            <ChakraProvider>
-              <LiveProvider
-                code={editorCode}
-                noInline={true}
-                scope={{
-                  React,
-                  useState: React.useState,
-                  useEffect: React.useEffect,
-                  Button,
-                  Input,
-                  Text,
-                  Box,
-                  Link,
-                  Heading,
-                  UnorderedList,
-                  FormControl,
-                  FormLabel,
-                  List,
-                  ListItem,
-                  Flex,
-                  VStack,
-                  HStack,
-                  Textarea,
-                  Select,
-
-                  Center,
-                  database,
-
-                  getDoc,
-                  doc,
-                  collection,
-                  addDoc,
-                  updateDoc,
-                  setDoc,
-                  getDocs,
-                }}
-              >
-                <LivePreview />
-                <LiveError />
-                {/* <LiveEditor /> */}
-              </LiveProvider>
-            </ChakraProvider>
-          ) : null}
-          {isHTMLCode(editorCode) && !isReactCode(editorCode) ? (
-            <Box width="100%" borderRadius="md">
+          {/* React preview */}
+          {looksLikeReact(codeForPreview) && (isPreviewing || autoRun) ? (
+            <Box height="100%">
+              <ChakraProvider>
+                <LiveProvider
+                  key={instanceKey} // force re-mount if needed
+                  code={codeForPreview}
+                  noInline={true}
+                  scope={{
+                    React,
+                    useState: React.useState,
+                    useEffect: React.useEffect,
+                    Button,
+                    Input,
+                    Text,
+                    Box,
+                    Link,
+                    Heading,
+                    UnorderedList,
+                    FormControl,
+                    FormLabel,
+                    List,
+                    ListItem,
+                    Flex,
+                    VStack,
+                    HStack,
+                    Textarea,
+                    Select,
+                    Center,
+                    // Firestore helpers & db handle for demos
+                    database,
+                    getDoc,
+                    doc,
+                    collection,
+                    addDoc,
+                    updateDoc,
+                    setDoc,
+                    getDocs,
+                    onSnapshot,
+                  }}
+                >
+                  <Box height="100%" overflow="auto" p={2}>
+                    <LivePreview />
+                    <LiveError />
+                  </Box>
+                </LiveProvider>
+              </ChakraProvider>
+            </Box>
+          ) : looksLikeHTML(currentCode) ? (
+            // HTML preview
+            <Box width="100%" height="100%" borderRadius="md">
               <iframe
+                key={instanceKey}
                 ref={iframeRef}
                 title="Live Preview"
-                style={{
-                  width: "100%",
-                  height: "400px",
-                  //   border: "none",
-                }}
+                style={{ width: "100%", height: "100%" }}
               />
             </Box>
-          ) : null}
-          {!isReactCode(editorCode) &&
-          !isHTMLCode(editorCode) &&
-          isPreviewing ? (
+          ) : isPreviewing || autoRun ? (
+            // Vanilla JS console logs
             <VStack
               align="start"
-              width="80%"
-              mt={4}
+              mt={0}
               p={2}
-              border="1px solid #ccc"
-              borderRadius="md"
+              borderTop="1px solid #ccc"
               bg="blackAlpha.800"
               color="white"
-              maxHeight="200px"
+              height="100%"
               overflowY="auto"
             >
-              {consoleLogs.map((log, index) => (
-                <Text key={index}>{log}</Text>
+              {consoleLogs.map((log, i) => (
+                <Text key={i}>{log}</Text>
               ))}
             </VStack>
           ) : null}
         </Box>
-      </Box>
+      )}
+
       {error && <Text color="red.500">{error}</Text>}
     </>
   );
