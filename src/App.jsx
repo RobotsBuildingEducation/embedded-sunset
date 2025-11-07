@@ -42,6 +42,7 @@ import {
   Tooltip,
   Center,
   Image,
+  useToken,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
@@ -153,6 +154,7 @@ import { DataTags } from "./elements/DataTag";
 import { transcript } from "./utility/transcript";
 import AwardModal from "./components/AwardModal/AwardModal";
 import CodeCompletionQuestion from "./components/CodeCompletionQuestion/CodeCompletionQuestion";
+import { useThemeStore } from "./useThemeStore";
 
 import isEmpty from "lodash/isEmpty";
 import {
@@ -267,6 +269,36 @@ const getBoxShadow = (group) => {
       // gray.300 → #E2E8F0 → rgba(226, 232, 240, 1)
       return "rgba(226, 232, 240, 1)";
   }
+};
+
+const defaultActionBarPalette = {
+  50: "#FFF8F0",
+  100: "#FFE3C3",
+  200: "#F4C686",
+  300: "#D18960",
+  600: "#C76F48",
+};
+
+const hexToRgba = (hex, alpha = 1) => {
+  if (!hex) {
+    return "";
+  }
+
+  let normalizedHex = hex.replace("#", "");
+
+  if (normalizedHex.length === 3) {
+    normalizedHex = normalizedHex
+      .split("")
+      .map((char) => char + char)
+      .join("");
+  }
+
+  const bigint = parseInt(normalizedHex, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
 const AwardScreen = (userLanguage) => {
@@ -1630,6 +1662,26 @@ const Step = ({
 
   const fallbackTranslation = translation.en || {};
   const translationMap = translation[userLanguage] || fallbackTranslation;
+
+  const themeColor = useThemeStore((state) => state.themeColor);
+  const [theme50, theme100, theme200, theme300, theme600] = useToken("colors", [
+    `${themeColor}.50`,
+    `${themeColor}.100`,
+    `${themeColor}.200`,
+    `${themeColor}.300`,
+    `${themeColor}.600`,
+  ]);
+
+  const actionPalette = useMemo(
+    () => ({
+      50: theme50 || defaultActionBarPalette[50],
+      100: theme100 || defaultActionBarPalette[100],
+      200: theme200 || defaultActionBarPalette[200],
+      300: theme300 || defaultActionBarPalette[300],
+      600: theme600 || defaultActionBarPalette[600],
+    }),
+    [theme50, theme100, theme200, theme300, theme600]
+  );
 
   const localeSteps = useMemo(() => {
     if (Array.isArray(steps[userLanguage]) && steps[userLanguage].length) {
@@ -3224,27 +3276,27 @@ const Step = ({
     localStorage.getItem("passcode") ===
       import.meta.env.VITE_PATREON_PASSCODE || hasSubmittedPasscode;
 
-  const actionBarShadow = "0 12px 24px rgba(209, 137, 96, 0.25)";
+  const actionBarShadow = `0 12px 24px ${hexToRgba(actionPalette[300], 0.25)}`;
 
   const actionBarButtonProps = {
     width: "48px",
     height: "48px",
     borderRadius: "14px",
-    bgGradient: "linear(180deg, #fff7ec 0%, #ffe3c3 100%)",
-    border: "1px solid rgba(244, 198, 134, 0.8)",
-    // boxShadow: actionBarShadow,
-    color: "#c76f48",
+    bgGradient: `linear(180deg, ${hexToRgba(actionPalette[50], 0.95)} 0%, ${hexToRgba(
+      actionPalette[100],
+      0.95
+    )} 100%)`,
+    border: `1px solid ${hexToRgba(actionPalette[200], 0.8)}`,
+    color: actionPalette[600],
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     transition: "all 0.2s ease-in-out",
     _hover: {
       transform: "translateY(-4px)",
-      // boxShadow: "0 18px 32px rgba(209, 137, 96, 0.35)",
     },
     _active: {
       transform: "translateY(-1px)",
-      // boxShadow: "0 10px 18px rgba(209, 137, 96, 0.2)",
     },
   };
 
@@ -4097,16 +4149,16 @@ const Step = ({
                 px={{ base: 0, md: 4 }}
               >
                 <Box
-                  bg="rgba(255, 248, 240, 0.96)"
+                  bg={hexToRgba(actionPalette[50], 0.96)}
                   borderTopLeftRadius={{ base: "20px", md: "24px" }}
                   borderTopRightRadius={{ base: "20px", md: "24px" }}
                   borderBottomLeftRadius="0px"
                   borderBottomRightRadius="0px"
                   px={{ base: 3, md: 4 }}
                   py={{ base: 2, md: 2.5 }}
-                  border="1px solid rgba(244, 198, 134, 0.65)"
+                  border={`1px solid ${hexToRgba(actionPalette[200], 0.65)}`}
                   borderBottom="0"
-                  boxShadow="0 -2px 0px rgba(209, 137, 96, 0.2)"
+                  boxShadow={`0 -2px 0px ${hexToRgba(actionPalette[300], 0.2)}`}
                   backdropFilter="blur(10px)"
                   paddingBottom={6}
                   paddingTop={4}
@@ -4184,7 +4236,7 @@ const Step = ({
                       aria-label="Support on Patreon"
                       icon={<PiPatreonLogoFill fontSize="20px" />}
                       // boxShadow={patreonButtonShadow}
-                      borderColor="rgba(244, 198, 134, 0.85)"
+                      borderColor={hexToRgba(actionPalette[200], 0.85)}
                       onMouseDown={() => {
                         window.location.href =
                           "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
