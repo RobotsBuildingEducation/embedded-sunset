@@ -46,7 +46,7 @@ const getColorScheme = (group) => {
   return colorMap[group] || "pink";
 };
 
-export const TeamView = ({ userLanguage }) => {
+export const TeamView = ({ userLanguage, refreshTrigger }) => {
   const toast = useToast();
   const [myTeams, setMyTeams] = useState([]);
   const [teamInvites, setTeamInvites] = useState([]);
@@ -57,45 +57,47 @@ export const TeamView = ({ userLanguage }) => {
   const userNpub = localStorage.getItem("local_npub");
 
   // Load initial data
-  useEffect(() => {
-    const loadData = async () => {
-      setLoading(true);
-      try {
-        const [teams, invites] = await Promise.all([
-          getUserTeams(userNpub),
-          getUserTeamInvites(userNpub),
-        ]);
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const [teams, invites] = await Promise.all([
+        getUserTeams(userNpub),
+        getUserTeamInvites(userNpub),
+      ]);
 
-        setMyTeams(teams);
-        setTeamInvites(invites);
+      setMyTeams(teams);
+      setTeamInvites(invites);
 
-        // Load progress for each team
-        const progressData = {};
-        for (const team of teams) {
-          try {
-            const progress = await getTeamMemberProgress(userNpub, team.id);
-            progressData[team.id] = progress;
-          } catch (error) {
-            console.error(`Error loading progress for team ${team.id}:`, error);
-          }
+      // Load progress for each team
+      const progressData = {};
+      for (const team of teams) {
+        try {
+          // Use the correct creator npub for fetching progress
+          const creatorNpub = team.isCreator ? userNpub : team.createdBy;
+          const progress = await getTeamMemberProgress(creatorNpub, team.id);
+          progressData[team.id] = progress;
+        } catch (error) {
+          console.error(`Error loading progress for team ${team.id}:`, error);
         }
-        setTeamMemberProgress(progressData);
-      } catch (error) {
-        console.error("Error loading team data:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load team data",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      } finally {
-        setLoading(false);
       }
-    };
+      setTeamMemberProgress(progressData);
+    } catch (error) {
+      console.error("Error loading team data:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load team data",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     loadData();
-  }, [userNpub]);
+  }, [userNpub, refreshTrigger]);
 
   // Subscribe to real-time team invite updates
   useEffect(() => {
@@ -152,9 +154,8 @@ export const TeamView = ({ userLanguage }) => {
         isClosable: true,
       });
 
-      // Reload teams to show newly accepted team
-      const teams = await getUserTeams(userNpub);
-      setMyTeams(teams);
+      // Reload all team data to show newly accepted team
+      await loadData();
     } catch (error) {
       console.error("Error accepting invite:", error);
       toast({
@@ -249,9 +250,8 @@ export const TeamView = ({ userLanguage }) => {
         isClosable: true,
       });
 
-      // Reload teams
-      const teams = await getUserTeams(userNpub);
-      setMyTeams(teams);
+      // Reload all team data
+      await loadData();
     } catch (error) {
       console.error("Error leaving team:", error);
       toast({
@@ -345,7 +345,8 @@ export const TeamView = ({ userLanguage }) => {
         ) : (
           <Accordion allowMultiple>
             {myTeams.map((team) => {
-              const isCreator = team.createdBy === userNpub;
+              // Use the isCreator flag from getUserTeams
+              const isCreator = team.isCreator === true || team.createdBy === userNpub;
               const acceptedMembers =
                 team.members?.filter((m) => m.status === "accepted") || [];
               const pendingMembers =
@@ -361,6 +362,9 @@ export const TeamView = ({ userLanguage }) => {
                           <Text fontWeight="bold">{team.teamName}</Text>
                           {isCreator && (
                             <Badge colorScheme="purple">Creator</Badge>
+                          )}
+                          {!isCreator && (
+                            <Badge colorScheme="green">Member</Badge>
                           )}
                           <Badge colorScheme="blue">
                             {acceptedMembers.length} members

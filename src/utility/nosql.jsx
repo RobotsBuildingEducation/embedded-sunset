@@ -524,7 +524,7 @@ export const rejectTeamInvite = async (userNpub, inviteId) => {
 };
 
 /**
- * Get all teams created by a user
+ * Get all teams created by a user AND teams where user is a member
  * @param {string} userNpub - The user's npub
  * @returns {Array} teams - Array of team objects
  */
@@ -533,15 +533,61 @@ export const getUserTeams = async (userNpub) => {
     throw new Error("User npub is required");
   }
 
-  const teamsRef = collection(database, "users", userNpub, "teams");
-  const teamsSnapshot = await getDocs(teamsRef);
+  // Get teams created by this user
+  const createdTeamsRef = collection(database, "users", userNpub, "teams");
+  const createdTeamsSnapshot = await getDocs(createdTeamsRef);
 
-  const teams = [];
-  teamsSnapshot.forEach((doc) => {
-    teams.push({ id: doc.id, ...doc.data() });
+  const createdTeams = [];
+  createdTeamsSnapshot.forEach((doc) => {
+    createdTeams.push({
+      id: doc.id,
+      ...doc.data(),
+      isCreator: true
+    });
   });
 
-  return teams;
+  // Get teams where user is a member (via accepted invites)
+  const invitesRef = collection(database, "users", userNpub, "teamInvites");
+  const invitesSnapshot = await getDocs(invitesRef);
+
+  const memberTeamsPromises = [];
+  invitesSnapshot.forEach((doc) => {
+    const invite = doc.data();
+    if (invite.status === "accepted" && invite.creatorNpub) {
+      memberTeamsPromises.push(
+        getDoc(doc(database, "users", invite.creatorNpub, "teams", invite.teamId))
+          .then((teamDoc) => {
+            if (teamDoc.exists()) {
+              return {
+                id: teamDoc.id,
+                ...teamDoc.data(),
+                isCreator: false,
+              };
+            }
+            return null;
+          })
+          .catch((error) => {
+            console.error("Error fetching member team:", error);
+            return null;
+          })
+      );
+    }
+  });
+
+  const memberTeams = (await Promise.all(memberTeamsPromises)).filter(
+    (team) => team !== null
+  );
+
+  // Combine and deduplicate teams
+  const allTeams = [...createdTeams, ...memberTeams];
+  const uniqueTeams = allTeams.reduce((acc, team) => {
+    if (!acc.find((t) => t.id === team.id)) {
+      acc.push(team);
+    }
+    return acc;
+  }, []);
+
+  return uniqueTeams;
 };
 
 /**

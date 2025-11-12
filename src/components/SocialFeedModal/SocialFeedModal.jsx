@@ -36,10 +36,20 @@ const SocialFeedModal = ({
   setAllowPosts,
 }) => {
   const [selectedTab, setSelectedTab] = useState(0);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const handleTeamCreated = (teamId) => {
-    // Switch to "View Team" tab after creating a team
+    // Trigger refresh and switch to "View Team" tab after creating a team
+    setRefreshTrigger((prev) => prev + 1);
     setSelectedTab(2);
+  };
+
+  const handleTabChange = (index) => {
+    setSelectedTab(index);
+    // Trigger refresh when switching to View Team tab
+    if (index === 2) {
+      setRefreshTrigger((prev) => prev + 1);
+    }
   };
 
   return (
@@ -59,7 +69,7 @@ const SocialFeedModal = ({
         <DrawerBody flex="1" overflowY="auto">
           <Tabs
             index={selectedTab}
-            onChange={(index) => setSelectedTab(index)}
+            onChange={handleTabChange}
             isFitted
             variant="enclosed"
           >
@@ -83,7 +93,10 @@ const SocialFeedModal = ({
                 />
               </TabPanel>
               <TabPanel>
-                <TeamView userLanguage={userLanguage} />
+                <TeamView
+                  userLanguage={userLanguage}
+                  refreshTrigger={refreshTrigger}
+                />
               </TabPanel>
             </TabPanels>
           </Tabs>
