@@ -94,7 +94,8 @@ const SocialFeedModal = ({
               <Tab>Global Feed</Tab>
               <Tab>Create Team</Tab>
               <Tab>
-                View Team{pendingInviteCount > 0 ? ` (${pendingInviteCount})` : ""}
+                View Team
+                {pendingInviteCount > 0 ? ` (${pendingInviteCount})` : ""}
               </Tab>
             </TabList>
             <TabPanels>
