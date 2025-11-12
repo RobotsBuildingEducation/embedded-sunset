@@ -538,10 +538,10 @@ export const getUserTeams = async (userNpub) => {
   const createdTeamsSnapshot = await getDocs(createdTeamsRef);
 
   const createdTeams = [];
-  createdTeamsSnapshot.forEach((doc) => {
+  createdTeamsSnapshot.forEach((teamDoc) => {
     createdTeams.push({
-      id: doc.id,
-      ...doc.data(),
+      id: teamDoc.id,
+      ...teamDoc.data(),
       isCreator: true
     });
   });
@@ -551,8 +551,8 @@ export const getUserTeams = async (userNpub) => {
   const invitesSnapshot = await getDocs(invitesRef);
 
   const memberTeamsPromises = [];
-  invitesSnapshot.forEach((doc) => {
-    const invite = doc.data();
+  invitesSnapshot.forEach((inviteDoc) => {
+    const invite = inviteDoc.data();
     if (invite.status === "accepted" && invite.creatorNpub) {
       memberTeamsPromises.push(
         getDoc(doc(database, "users", invite.creatorNpub, "teams", invite.teamId))
@@ -604,8 +604,8 @@ export const getUserTeamInvites = async (userNpub) => {
   const invitesSnapshot = await getDocs(invitesRef);
 
   const invites = [];
-  invitesSnapshot.forEach((doc) => {
-    invites.push({ id: doc.id, ...doc.data() });
+  invitesSnapshot.forEach((inviteDoc) => {
+    invites.push({ id: inviteDoc.id, ...inviteDoc.data() });
   });
 
   return invites;
@@ -674,8 +674,8 @@ export const deleteTeam = async (creatorNpub, teamId) => {
     const invitesSnapshot = await getDocs(q);
 
     const deletePromises = [];
-    invitesSnapshot.forEach((doc) => {
-      deletePromises.push(deleteDoc(doc.ref));
+    invitesSnapshot.forEach((inviteDoc) => {
+      deletePromises.push(deleteDoc(inviteDoc.ref));
     });
 
     return Promise.all(deletePromises);
@@ -716,8 +716,8 @@ export const leaveTeam = async (userNpub, creatorNpub, teamId) => {
   const q = query(invitesRef, where("teamId", "==", teamId));
   const invitesSnapshot = await getDocs(q);
 
-  invitesSnapshot.forEach(async (doc) => {
-    await deleteDoc(doc.ref);
+  invitesSnapshot.forEach(async (inviteDoc) => {
+    await deleteDoc(inviteDoc.ref);
   });
 };
 
@@ -749,8 +749,8 @@ export const subscribeToTeamInvites = (userNpub, callback) => {
   const invitesRef = collection(database, "users", userNpub, "teamInvites");
   return onSnapshot(invitesRef, (snapshot) => {
     const invites = [];
-    snapshot.forEach((doc) => {
-      invites.push({ id: doc.id, ...doc.data() });
+    snapshot.forEach((inviteDoc) => {
+      invites.push({ id: inviteDoc.id, ...inviteDoc.data() });
     });
     callback(invites);
   });
