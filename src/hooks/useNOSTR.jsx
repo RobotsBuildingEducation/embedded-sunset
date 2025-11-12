@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 import { Buffer } from "buffer";
 import { bech32 } from "bech32";
-import { nip19 } from "nostr-tools";
+import { nip19, nip04 } from "nostr-tools";
 import NDK, {
   NDKPrivateKeySigner,
   NDKKind,
@@ -12,6 +12,29 @@ import NDK, {
 const ndk = new NDK({
   explicitRelayUrls: ["wss://relay.damus.io", "wss://relay.primal.net"],
 });
+
+const isHex64 = (s) => typeof s === "string" && /^[0-9a-f]{64}$/i.test(s);
+
+const toHexPriv = (nsecOrHex) => {
+  if (isHex64(nsecOrHex)) return nsecOrHex.toLowerCase();
+  const { words } = bech32.decode(nsecOrHex);
+  return Buffer.from(bech32.fromWords(words)).toString("hex");
+};
+
+const toHexPub = (npubOrHex) => {
+  if (isHex64(npubOrHex)) return npubOrHex.toLowerCase();
+  const { words } = bech32.decode(npubOrHex);
+  return Buffer.from(bech32.fromWords(words)).toString("hex");
+};
+
+const ensureConnectedWithSigner = async (hexPriv) => {
+  const signer = new NDKPrivateKeySigner(hexPriv);
+  ndk.signer = signer;
+  await signer.blockUntilReady();
+  // Connect once (idempotent if already connected)
+  await ndk.connect();
+  return signer;
+};
 
 export const useSharedNostr = (initialNpub, initialNsec) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -811,6 +834,62 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     }
   };
 
+  /**
+   * Send a direct message (DM) via Nostr
+   * @param {string} recipientNpub - The recipient's npub
+   * @param {string} message - The message content
+   * @param {string} senderNsec - Optional sender's nsec (defaults to logged in user)
+   * @returns {boolean} success - Whether the DM was sent successfully
+   */
+  const sendDirectMessage = async (
+    recipientNpub, // npub... or hex
+    message, // plaintext to encrypt
+    senderNsec = null // nsec... or hex; falls back to local
+  ) => {
+    try {
+      const nsec =
+        senderNsec || localStorage.getItem("local_nsec") || nostrPrivKey;
+
+      if (!nsec) {
+        setErrorMessage("No private key available to send DM");
+        return false;
+      }
+
+      // Normalize keys
+      const hexPriv = toHexPriv(nsec);
+      const hexRecipient = toHexPub(recipientNpub);
+
+      // Ensure ndk + signer ready
+      await ensureConnectedWithSigner(hexPriv);
+
+      // NIP-04 encrypt plaintext -> ciphertext "?iv=" formatted string
+      const ciphertext = await nip04.encrypt(hexPriv, hexRecipient, message);
+
+      // Build kind:4 event (Encrypted Direct Message)
+      const dmEvent = new NDKEvent(ndk, {
+        kind: 4,
+        tags: [["p", hexRecipient]], // optionally add relay hint as third param
+        content: ciphertext, // <-- encrypted!
+        created_at: Math.floor(Date.now() / 1000),
+      });
+
+      await dmEvent.sign(ndk.signer);
+      const relays = await dmEvent.publish();
+
+      if (relays && relays.size > 0) {
+        console.log("DM sent to relays:", Array.from(relays));
+        return true;
+      } else {
+        console.warn("No relay acknowledged the DM.");
+        return false;
+      }
+    } catch (err) {
+      console.error("Error sending direct message:", err);
+      setErrorMessage(err.message);
+      return false;
+    }
+  };
+
   return {
     isConnected,
     errorMessage,
@@ -823,5 +902,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     getUserBadges,
     getLastNotesByNpub,
     getGlobalNotesWithProfilesByHashtag,
+    sendDirectMessage,
   };
 };

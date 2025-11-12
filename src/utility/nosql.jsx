@@ -351,3 +351,427 @@ export const subscribeToQuestionsAnswered = (callback) =>
 export const incrementQuestionsAnswered = async () => {
   await setDoc(questionDoc, { count: increment(1) }, { merge: true });
 };
+
+// Team Management Functions
+
+/**
+ * Create a new team for a user
+ * @param {string} creatorNpub - The npub of the team creator
+ * @param {string} teamName - Name of the team
+ * @returns {string} teamId - The created team's ID
+ */
+export const createTeam = async (creatorNpub, teamName) => {
+  if (!creatorNpub || !teamName) {
+    throw new Error("Creator npub and team name are required");
+  }
+
+  const teamId = `team_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const teamRef = doc(database, "users", creatorNpub, "teams", teamId);
+
+  const teamData = {
+    teamName,
+    createdBy: creatorNpub,
+    createdAt: new Date().toISOString(),
+    members: [],
+  };
+
+  await setDoc(teamRef, teamData);
+  return teamId;
+};
+
+/**
+ * Invite a user to a team
+ * @param {string} creatorNpub - The npub of the team creator
+ * @param {string} teamId - The team ID
+ * @param {string} teamName - The team name
+ * @param {string} inviteeNpub - The npub of the user being invited
+ * @param {string} creatorName - Name of the team creator
+ */
+export const inviteUserToTeam = async (
+  creatorNpub,
+  teamId,
+  teamName,
+  inviteeNpub,
+  creatorName
+) => {
+  if (!creatorNpub || !teamId || !inviteeNpub) {
+    throw new Error("Creator npub, team ID, and invitee npub are required");
+  }
+
+  // Add member to team with pending status
+  const teamRef = doc(database, "users", creatorNpub, "teams", teamId);
+  const teamDoc = await getDoc(teamRef);
+
+  if (!teamDoc.exists()) {
+    throw new Error("Team does not exist");
+  }
+
+  const teamData = teamDoc.data();
+  const existingMember = teamData.members.find((m) => m.npub === inviteeNpub);
+
+  if (existingMember) {
+    throw new Error("User is already a member or has a pending invite");
+  }
+
+  // Update team members list
+  await updateDoc(teamRef, {
+    members: [
+      ...teamData.members,
+      {
+        npub: inviteeNpub,
+        status: "pending",
+        addedAt: new Date().toISOString(),
+        name: "",
+      },
+    ],
+  });
+
+  // Create invite in invitee's subcollection
+  const inviteId = `invite_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const inviteRef = doc(database, "users", inviteeNpub, "teamInvites", inviteId);
+
+  await setDoc(inviteRef, {
+    teamId,
+    teamName,
+    invitedBy: creatorNpub,
+    invitedByName: creatorName,
+    status: "pending",
+    createdAt: new Date().toISOString(),
+    creatorNpub,
+  });
+
+  return inviteId;
+};
+
+/**
+ * Accept a team invite
+ * @param {string} userNpub - The npub of the user accepting
+ * @param {string} inviteId - The invite ID
+ */
+export const acceptTeamInvite = async (userNpub, inviteId) => {
+  if (!userNpub || !inviteId) {
+    throw new Error("User npub and invite ID are required");
+  }
+
+  const inviteRef = doc(database, "users", userNpub, "teamInvites", inviteId);
+  const inviteDoc = await getDoc(inviteRef);
+
+  if (!inviteDoc.exists()) {
+    throw new Error("Invite does not exist");
+  }
+
+  const inviteData = inviteDoc.data();
+  const { creatorNpub, teamId } = inviteData;
+
+  // Update invite status
+  await updateDoc(inviteRef, {
+    status: "accepted",
+  });
+
+  // Update member status in team
+  const teamRef = doc(database, "users", creatorNpub, "teams", teamId);
+  const teamDoc = await getDoc(teamRef);
+
+  if (teamDoc.exists()) {
+    const teamData = teamDoc.data();
+    const updatedMembers = teamData.members.map((m) =>
+      m.npub === userNpub ? { ...m, status: "accepted" } : m
+    );
+
+    await updateDoc(teamRef, {
+      members: updatedMembers,
+    });
+  }
+};
+
+/**
+ * Reject a team invite
+ * @param {string} userNpub - The npub of the user rejecting
+ * @param {string} inviteId - The invite ID
+ */
+export const rejectTeamInvite = async (userNpub, inviteId) => {
+  if (!userNpub || !inviteId) {
+    throw new Error("User npub and invite ID are required");
+  }
+
+  const inviteRef = doc(database, "users", userNpub, "teamInvites", inviteId);
+  const inviteDoc = await getDoc(inviteRef);
+
+  if (!inviteDoc.exists()) {
+    throw new Error("Invite does not exist");
+  }
+
+  const inviteData = inviteDoc.data();
+  const { creatorNpub, teamId } = inviteData;
+
+  // Update invite status
+  await updateDoc(inviteRef, {
+    status: "rejected",
+  });
+
+  // Remove member from team
+  const teamRef = doc(database, "users", creatorNpub, "teams", teamId);
+  const teamDoc = await getDoc(teamRef);
+
+  if (teamDoc.exists()) {
+    const teamData = teamDoc.data();
+    const updatedMembers = teamData.members.filter((m) => m.npub !== userNpub);
+
+    await updateDoc(teamRef, {
+      members: updatedMembers,
+    });
+  }
+};
+
+/**
+ * Get all teams created by a user AND teams where user is a member
+ * @param {string} userNpub - The user's npub
+ * @returns {Array} teams - Array of team objects
+ */
+export const getUserTeams = async (userNpub) => {
+  if (!userNpub) {
+    throw new Error("User npub is required");
+  }
+
+  // Get teams created by this user
+  const createdTeamsRef = collection(database, "users", userNpub, "teams");
+  const createdTeamsSnapshot = await getDocs(createdTeamsRef);
+
+  const createdTeams = [];
+  createdTeamsSnapshot.forEach((teamDoc) => {
+    createdTeams.push({
+      id: teamDoc.id,
+      ...teamDoc.data(),
+      isCreator: true
+    });
+  });
+
+  // Get teams where user is a member (via accepted invites)
+  const invitesRef = collection(database, "users", userNpub, "teamInvites");
+  const invitesSnapshot = await getDocs(invitesRef);
+
+  const memberTeamsPromises = [];
+  invitesSnapshot.forEach((inviteDoc) => {
+    const invite = inviteDoc.data();
+    if (invite.status === "accepted" && invite.creatorNpub) {
+      memberTeamsPromises.push(
+        getDoc(doc(database, "users", invite.creatorNpub, "teams", invite.teamId))
+          .then((teamDoc) => {
+            if (teamDoc.exists()) {
+              return {
+                id: teamDoc.id,
+                ...teamDoc.data(),
+                isCreator: false,
+              };
+            }
+            return null;
+          })
+          .catch((error) => {
+            console.error("Error fetching member team:", error);
+            return null;
+          })
+      );
+    }
+  });
+
+  const memberTeams = (await Promise.all(memberTeamsPromises)).filter(
+    (team) => team !== null
+  );
+
+  // Combine and deduplicate teams
+  const allTeams = [...createdTeams, ...memberTeams];
+  const uniqueTeams = allTeams.reduce((acc, team) => {
+    if (!acc.find((t) => t.id === team.id)) {
+      acc.push(team);
+    }
+    return acc;
+  }, []);
+
+  return uniqueTeams;
+};
+
+/**
+ * Get all team invites for a user
+ * @param {string} userNpub - The user's npub
+ * @returns {Array} invites - Array of invite objects
+ */
+export const getUserTeamInvites = async (userNpub) => {
+  if (!userNpub) {
+    throw new Error("User npub is required");
+  }
+
+  const invitesRef = collection(database, "users", userNpub, "teamInvites");
+  const invitesSnapshot = await getDocs(invitesRef);
+
+  const invites = [];
+  invitesSnapshot.forEach((inviteDoc) => {
+    invites.push({ id: inviteDoc.id, ...inviteDoc.data() });
+  });
+
+  return invites;
+};
+
+/**
+ * Get team member progress data
+ * @param {string} creatorNpub - The team creator's npub
+ * @param {string} teamId - The team ID
+ * @returns {Array} memberProgress - Array of member progress objects
+ */
+export const getTeamMemberProgress = async (creatorNpub, teamId) => {
+  if (!creatorNpub || !teamId) {
+    throw new Error("Creator npub and team ID are required");
+  }
+
+  const teamRef = doc(database, "users", creatorNpub, "teams", teamId);
+  const teamDoc = await getDoc(teamRef);
+
+  if (!teamDoc.exists()) {
+    throw new Error("Team does not exist");
+  }
+
+  const teamData = teamDoc.data();
+  const members = teamData.members.filter((m) => m.status === "accepted");
+
+  // Include the team creator in the progress list
+  const allMembersToFetch = [
+    { npub: creatorNpub, isCreator: true },
+    ...members.map(m => ({ ...m, isCreator: false }))
+  ];
+
+  // Fetch progress data for each member including creator
+  const memberProgressPromises = allMembersToFetch.map(async (member) => {
+    const userData = await getUserData(member.npub);
+    return {
+      npub: member.npub,
+      name: userData?.name || member.name || "Unknown User",
+      step: userData?.step || 0,
+      streak: userData?.streak || 0,
+      dailyProgress: userData?.dailyProgress || 0,
+      answeredStepsCount: userData?.answeredStepsCount || 0,
+      isCreator: member.isCreator || false,
+    };
+  });
+
+  return await Promise.all(memberProgressPromises);
+};
+
+/**
+ * Delete a team (only by creator)
+ * @param {string} creatorNpub - The team creator's npub
+ * @param {string} teamId - The team ID
+ */
+export const deleteTeam = async (creatorNpub, teamId) => {
+  if (!creatorNpub || !teamId) {
+    throw new Error("Creator npub and team ID are required");
+  }
+
+  const teamRef = doc(database, "users", creatorNpub, "teams", teamId);
+  const teamDoc = await getDoc(teamRef);
+
+  if (!teamDoc.exists()) {
+    throw new Error("Team does not exist");
+  }
+
+  const teamData = teamDoc.data();
+
+  // Delete all pending invites for members
+  const deleteInvitePromises = teamData.members.map(async (member) => {
+    const invitesRef = collection(database, "users", member.npub, "teamInvites");
+    const q = query(invitesRef, where("teamId", "==", teamId));
+    const invitesSnapshot = await getDocs(q);
+
+    const deletePromises = [];
+    invitesSnapshot.forEach((inviteDoc) => {
+      deletePromises.push(deleteDoc(inviteDoc.ref));
+    });
+
+    return Promise.all(deletePromises);
+  });
+
+  await Promise.all(deleteInvitePromises);
+
+  // Delete the team
+  await deleteDoc(teamRef);
+};
+
+/**
+ * Leave a team (for members)
+ * @param {string} userNpub - The user's npub
+ * @param {string} creatorNpub - The team creator's npub
+ * @param {string} teamId - The team ID
+ */
+export const leaveTeam = async (userNpub, creatorNpub, teamId) => {
+  if (!userNpub || !creatorNpub || !teamId) {
+    throw new Error("User npub, creator npub, and team ID are required");
+  }
+
+  // Remove user from team members
+  const teamRef = doc(database, "users", creatorNpub, "teams", teamId);
+  const teamDoc = await getDoc(teamRef);
+
+  if (teamDoc.exists()) {
+    const teamData = teamDoc.data();
+    const updatedMembers = teamData.members.filter((m) => m.npub !== userNpub);
+
+    await updateDoc(teamRef, {
+      members: updatedMembers,
+    });
+  }
+
+  // Delete user's team invite
+  const invitesRef = collection(database, "users", userNpub, "teamInvites");
+  const q = query(invitesRef, where("teamId", "==", teamId));
+  const invitesSnapshot = await getDocs(q);
+
+  invitesSnapshot.forEach(async (inviteDoc) => {
+    await deleteDoc(inviteDoc.ref);
+  });
+};
+
+/**
+ * Subscribe to team updates (real-time)
+ * @param {string} creatorNpub - The team creator's npub
+ * @param {string} teamId - The team ID
+ * @param {Function} callback - Callback function to receive updates
+ * @returns {Function} unsubscribe - Function to unsubscribe from updates
+ */
+export const subscribeToTeamUpdates = (creatorNpub, teamId, callback) => {
+  const teamRef = doc(database, "users", creatorNpub, "teams", teamId);
+  return onSnapshot(teamRef, (snapshot) => {
+    if (snapshot.exists()) {
+      callback({ id: snapshot.id, ...snapshot.data() });
+    } else {
+      callback(null);
+    }
+  });
+};
+
+/**
+ * Subscribe to team invites (real-time)
+ * @param {string} userNpub - The user's npub
+ * @param {Function} callback - Callback function to receive updates
+ * @returns {Function} unsubscribe - Function to unsubscribe from updates
+ */
+export const subscribeToTeamInvites = (userNpub, callback) => {
+  const invitesRef = collection(database, "users", userNpub, "teamInvites");
+  return onSnapshot(invitesRef, (snapshot) => {
+    const invites = [];
+    snapshot.forEach((inviteDoc) => {
+      invites.push({ id: inviteDoc.id, ...inviteDoc.data() });
+    });
+    callback(invites);
+  });
+};
+
+/**
+ * Check if a user exists in Firestore
+ * @param {string} npub - The user's npub
+ * @returns {boolean} exists - Whether the user exists
+ */
+export const checkUserExists = async (npub) => {
+  if (!npub) return false;
+
+  const userDocRef = doc(database, "users", npub);
+  const userDoc = await getDoc(userDocRef);
+  return userDoc.exists();
+};
