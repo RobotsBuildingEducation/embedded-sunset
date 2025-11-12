@@ -26,6 +26,7 @@ import { translation } from "../../utility/translation";
 import { TestFeed } from "../../experiments/TestCoinbaseUI";
 import { TeamCreation } from "../TeamCreation/TeamCreation";
 import { TeamView } from "../TeamView/TeamView";
+import { subscribeToTeamInvites } from "../../utility/nosql";
 
 const SocialFeedModal = ({
   isOpen,
@@ -37,6 +38,7 @@ const SocialFeedModal = ({
 }) => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [pendingInviteCount, setPendingInviteCount] = useState(0);
 
   const handleTeamCreated = (teamId) => {
     // Trigger refresh and switch to "View Team" tab after creating a team
@@ -51,6 +53,21 @@ const SocialFeedModal = ({
       setRefreshTrigger((prev) => prev + 1);
     }
   };
+
+  // Subscribe to team invites to show count on View Team tab
+  useEffect(() => {
+    const userNpub = localStorage.getItem("local_npub");
+    if (!userNpub) return;
+
+    const unsubscribe = subscribeToTeamInvites(userNpub, (invites) => {
+      const pendingCount = invites.filter(
+        (invite) => invite.status === "pending"
+      ).length;
+      setPendingInviteCount(pendingCount);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   return (
     <Drawer
@@ -76,7 +93,9 @@ const SocialFeedModal = ({
             <TabList mb="1em">
               <Tab>Global Feed</Tab>
               <Tab>Create Team</Tab>
-              <Tab>View Team</Tab>
+              <Tab>
+                View Team{pendingInviteCount > 0 ? ` (${pendingInviteCount})` : ""}
+              </Tab>
             </TabList>
             <TabPanels>
               <TabPanel px={0}>
