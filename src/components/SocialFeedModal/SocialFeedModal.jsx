@@ -15,10 +15,17 @@ import {
   DrawerCloseButton,
   DrawerBody,
   DrawerFooter,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
 } from "@chakra-ui/react";
 
 import { translation } from "../../utility/translation";
 import { TestFeed } from "../../experiments/TestCoinbaseUI";
+import { TeamCreation } from "../TeamCreation/TeamCreation";
+import { TeamView } from "../TeamView/TeamView";
 
 const SocialFeedModal = ({
   isOpen,
@@ -28,6 +35,13 @@ const SocialFeedModal = ({
   allowPosts,
   setAllowPosts,
 }) => {
+  const [selectedTab, setSelectedTab] = useState(0);
+
+  const handleTeamCreated = (teamId) => {
+    // Switch to "View Team" tab after creating a team
+    setSelectedTab(2);
+  };
+
   return (
     <Drawer
       isOpen={isOpen}
@@ -39,16 +53,40 @@ const SocialFeedModal = ({
       <DrawerOverlay />
       <DrawerContent display="flex" flexDirection="column">
         <DrawerHeader style={{ display: "flex", alignItems: "center" }}>
-          {/* {translation[userLanguage]["settings.button.yourTutor"]} */}
           #LearnWithNostr
         </DrawerHeader>
         <DrawerCloseButton />
         <DrawerBody flex="1" overflowY="auto">
-          <TestFeed
-            userLanguage={userLanguage}
-            allowPosts={allowPosts}
-            setAllowPosts={setAllowPosts}
-          />
+          <Tabs
+            index={selectedTab}
+            onChange={(index) => setSelectedTab(index)}
+            isFitted
+            variant="enclosed"
+          >
+            <TabList mb="1em">
+              <Tab>Global Feed</Tab>
+              <Tab>Create Team</Tab>
+              <Tab>View Team</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel px={0}>
+                <TestFeed
+                  userLanguage={userLanguage}
+                  allowPosts={allowPosts}
+                  setAllowPosts={setAllowPosts}
+                />
+              </TabPanel>
+              <TabPanel>
+                <TeamCreation
+                  userLanguage={userLanguage}
+                  onTeamCreated={handleTeamCreated}
+                />
+              </TabPanel>
+              <TabPanel>
+                <TeamView userLanguage={userLanguage} />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         </DrawerBody>
         <DrawerFooter
           position="sticky"

@@ -811,6 +811,76 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     }
   };
 
+  /**
+   * Send a direct message (DM) via Nostr
+   * @param {string} recipientNpub - The recipient's npub
+   * @param {string} message - The message content
+   * @param {string} senderNsec - Optional sender's nsec (defaults to logged in user)
+   * @returns {boolean} success - Whether the DM was sent successfully
+   */
+  const sendDirectMessage = async (
+    recipientNpub,
+    message,
+    senderNsec = null
+  ) => {
+    try {
+      const nsec =
+        senderNsec ||
+        localStorage.getItem("local_nsec") ||
+        nostrPrivKey ||
+        import.meta.env.VITE_GLOBAL_NOSTR_NSEC;
+
+      if (!nsec) {
+        console.error("No private key available to send DM");
+        setErrorMessage("No private key available to send DM");
+        return false;
+      }
+
+      // Decode nsec to get signer
+      const { words: nsecWords } = bech32.decode(nsec);
+      const hexNsec = Buffer.from(bech32.fromWords(nsecWords)).toString("hex");
+      const signer = new NDKPrivateKeySigner(hexNsec);
+
+      // Decode recipient npub to hex
+      const { words: npubWords } = bech32.decode(recipientNpub);
+      const hexRecipient = Buffer.from(bech32.fromWords(npubWords)).toString(
+        "hex"
+      );
+
+      // Create NDK instance
+      const ndkInstance = new NDK({
+        explicitRelayUrls: ["wss://relay.damus.io", "wss://relay.primal.net"],
+      });
+
+      await ndkInstance.connect();
+      ndkInstance.signer = signer;
+
+      // Create encrypted DM event (kind 4)
+      const dmEvent = new NDKEvent(ndkInstance, {
+        kind: 4, // Encrypted Direct Message
+        tags: [["p", hexRecipient]],
+        content: message,
+        created_at: Math.floor(Date.now() / 1000),
+      });
+
+      // Sign and publish
+      await dmEvent.sign(signer);
+      const relays = await dmEvent.publish();
+
+      if (relays.size > 0) {
+        console.log("DM sent successfully to relays:", Array.from(relays));
+        return true;
+      } else {
+        console.warn("No relay acknowledged the DM.");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error sending direct message:", error);
+      setErrorMessage(error.message);
+      return false;
+    }
+  };
+
   return {
     isConnected,
     errorMessage,
@@ -823,5 +893,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     getUserBadges,
     getLastNotesByNpub,
     getGlobalNotesWithProfilesByHashtag,
+    sendDirectMessage,
   };
 };
