@@ -632,8 +632,14 @@ export const getTeamMemberProgress = async (creatorNpub, teamId) => {
   const teamData = teamDoc.data();
   const members = teamData.members.filter((m) => m.status === "accepted");
 
-  // Fetch progress data for each member
-  const memberProgressPromises = members.map(async (member) => {
+  // Include the team creator in the progress list
+  const allMembersToFetch = [
+    { npub: creatorNpub, isCreator: true },
+    ...members.map(m => ({ ...m, isCreator: false }))
+  ];
+
+  // Fetch progress data for each member including creator
+  const memberProgressPromises = allMembersToFetch.map(async (member) => {
     const userData = await getUserData(member.npub);
     return {
       npub: member.npub,
@@ -642,6 +648,7 @@ export const getTeamMemberProgress = async (creatorNpub, teamId) => {
       streak: userData?.streak || 0,
       dailyProgress: userData?.dailyProgress || 0,
       answeredStepsCount: userData?.answeredStepsCount || 0,
+      isCreator: member.isCreator || false,
     };
   });
 

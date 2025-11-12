@@ -352,6 +352,8 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
               const pendingMembers =
                 team.members?.filter((m) => m.status === "pending") || [];
               const progress = teamMemberProgress[team.id] || [];
+              // Total members includes creator + accepted members
+              const totalMembers = acceptedMembers.length + 1;
 
               return (
                 <AccordionItem key={team.id}>
@@ -367,7 +369,7 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
                             <Badge colorScheme="green">Member</Badge>
                           )}
                           <Badge colorScheme="blue">
-                            {acceptedMembers.length} members
+                            {totalMembers} {totalMembers === 1 ? "member" : "members"}
                           </Badge>
                         </HStack>
                       </Box>
@@ -385,9 +387,16 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
                           {progress.map((member) => (
                             <Box key={member.npub} mb={3}>
                               <HStack justify="space-between" mb={1}>
-                                <Text fontSize="sm" fontWeight="medium">
-                                  {member.name}
-                                </Text>
+                                <HStack spacing={2}>
+                                  <Text fontSize="sm" fontWeight="medium">
+                                    {member.name}
+                                  </Text>
+                                  {member.isCreator && (
+                                    <Badge colorScheme="purple" fontSize="xs">
+                                      Creator
+                                    </Badge>
+                                  )}
+                                </HStack>
                                 <HStack spacing={2}>
                                   <Badge colorScheme="orange">
                                     {member.streak} day streak
