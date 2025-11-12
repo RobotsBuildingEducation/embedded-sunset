@@ -108,6 +108,7 @@ import {
 import { analytics, database } from "./database/firebaseResources";
 
 import { pickProgrammingLanguage, translation } from "./utility/translation";
+import { subscribeToTeamInvites } from "./utility/nosql";
 
 import { Dashboard } from "./components/Dashboard/Dashboard";
 import { isUnsupportedBrowser } from "./utility/browser";
@@ -1941,11 +1942,26 @@ const Step = ({
     onClose: onSocialFeedClose,
   } = useDisclosure();
 
+  const [hasPendingTeamInvites, setHasPendingTeamInvites] = useState(false);
+
   const {
     isOpen: isKnowledgeLedgerOpen,
     onOpen: onKnowledgeLedgerOpen,
     onClose: onKnowledgeLedgerClose,
   } = useDisclosure();
+
+  // Subscribe to team invites to show visual indicator
+  useEffect(() => {
+    const userNpub = localStorage.getItem("local_npub");
+    if (!userNpub) return;
+
+    const unsubscribe = subscribeToTeamInvites(userNpub, (invites) => {
+      const hasPending = invites.some((invite) => invite.status === "pending");
+      setHasPendingTeamInvites(hasPending);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleAwardModalClose = () => {
     onAwardModalClose();
@@ -4213,6 +4229,13 @@ const Step = ({
                           onSocialFeedOpen();
                         }
                       }}
+                      border={hasPendingTeamInvites ? "2px solid" : undefined}
+                      borderColor={hasPendingTeamInvites ? "gold" : undefined}
+                      boxShadow={
+                        hasPendingTeamInvites
+                          ? "0 0 8px rgba(255, 215, 0, 0.6)"
+                          : undefined
+                      }
                     />
                     <IconButton
                       {...actionBarButtonProps}
