@@ -351,3 +351,183 @@ export const subscribeToQuestionsAnswered = (callback) =>
 export const incrementQuestionsAnswered = async () => {
   await setDoc(questionDoc, { count: increment(1) }, { merge: true });
 };
+
+// Team management functions
+
+// Create a team and add the creator as a member
+export const createTeam = async (teamName, creatorNpub, creatorName) => {
+  const teamId = globalThis.crypto?.randomUUID() || Math.random().toString(36).slice(2);
+  const teamDoc = doc(database, "teams", teamId);
+
+  await setDoc(teamDoc, {
+    name: teamName,
+    createdBy: creatorNpub,
+    createdAt: new Date().toISOString(),
+    memberIds: [creatorNpub],
+  });
+
+  // Add team to creator's profile
+  const userDoc = doc(database, "users", creatorNpub);
+  const userSnapshot = await getDoc(userDoc);
+  const currentTeams = userSnapshot.data()?.teams || [];
+
+  await updateDoc(userDoc, {
+    teams: [...currentTeams, teamId],
+  });
+
+  return teamId;
+};
+
+// Send a team invite
+export const sendTeamInvite = async (teamId, invitingUserNpub, invitedUserNpub) => {
+  const inviteId = globalThis.crypto?.randomUUID() || Math.random().toString(36).slice(2);
+  const inviteDoc = doc(database, "teamInvites", inviteId);
+
+  await setDoc(inviteDoc, {
+    teamId,
+    invitingUserId: invitingUserNpub,
+    invitedUserId: invitedUserNpub,
+    status: "pending",
+    createdAt: new Date().toISOString(),
+  });
+
+  // Add invite to invited user's pending invites
+  const userDoc = doc(database, "users", invitedUserNpub);
+  const userSnapshot = await getDoc(userDoc);
+  const currentInvites = userSnapshot.data()?.pendingTeamInvites || [];
+
+  await updateDoc(userDoc, {
+    pendingTeamInvites: [...currentInvites, inviteId],
+  });
+
+  return inviteId;
+};
+
+// Accept a team invite
+export const acceptTeamInvite = async (inviteId, userNpub) => {
+  const inviteDoc = doc(database, "teamInvites", inviteId);
+  const inviteSnapshot = await getDoc(inviteDoc);
+
+  if (!inviteSnapshot.exists()) {
+    throw new Error("Invite not found");
+  }
+
+  const inviteData = inviteSnapshot.data();
+
+  // Update invite status
+  await updateDoc(inviteDoc, {
+    status: "accepted",
+    acceptedAt: new Date().toISOString(),
+  });
+
+  // Add user to team members
+  const teamDoc = doc(database, "teams", inviteData.teamId);
+  const teamSnapshot = await getDoc(teamDoc);
+  const currentMembers = teamSnapshot.data()?.memberIds || [];
+
+  await updateDoc(teamDoc, {
+    memberIds: [...currentMembers, userNpub],
+  });
+
+  // Add team to user's teams and remove from pending invites
+  const userDoc = doc(database, "users", userNpub);
+  const userSnapshot = await getDoc(userDoc);
+  const currentTeams = userSnapshot.data()?.teams || [];
+  const currentInvites = userSnapshot.data()?.pendingTeamInvites || [];
+
+  await updateDoc(userDoc, {
+    teams: [...currentTeams, inviteData.teamId],
+    pendingTeamInvites: currentInvites.filter(id => id !== inviteId),
+  });
+
+  return inviteData.teamId;
+};
+
+// Reject a team invite
+export const rejectTeamInvite = async (inviteId, userNpub) => {
+  const inviteDoc = doc(database, "teamInvites", inviteId);
+
+  // Update invite status
+  await updateDoc(inviteDoc, {
+    status: "rejected",
+    rejectedAt: new Date().toISOString(),
+  });
+
+  // Remove from user's pending invites
+  const userDoc = doc(database, "users", userNpub);
+  const userSnapshot = await getDoc(userDoc);
+  const currentInvites = userSnapshot.data()?.pendingTeamInvites || [];
+
+  await updateDoc(userDoc, {
+    pendingTeamInvites: currentInvites.filter(id => id !== inviteId),
+  });
+};
+
+// Get user's teams with details
+export const getUserTeams = async (userNpub) => {
+  const userDoc = doc(database, "users", userNpub);
+  const userSnapshot = await getDoc(userDoc);
+
+  if (!userSnapshot.exists()) {
+    return [];
+  }
+
+  const teamIds = userSnapshot.data()?.teams || [];
+
+  const teams = await Promise.all(
+    teamIds.map(async (teamId) => {
+      const teamDoc = doc(database, "teams", teamId);
+      const teamSnapshot = await getDoc(teamDoc);
+
+      if (teamSnapshot.exists()) {
+        return { id: teamId, ...teamSnapshot.data() };
+      }
+      return null;
+    })
+  );
+
+  return teams.filter(team => team !== null);
+};
+
+// Get user's pending invites with details
+export const getUserPendingInvites = async (userNpub) => {
+  const userDoc = doc(database, "users", userNpub);
+  const userSnapshot = await getDoc(userDoc);
+
+  if (!userSnapshot.exists()) {
+    return [];
+  }
+
+  const inviteIds = userSnapshot.data()?.pendingTeamInvites || [];
+
+  const invites = await Promise.all(
+    inviteIds.map(async (inviteId) => {
+      const inviteDoc = doc(database, "teamInvites", inviteId);
+      const inviteSnapshot = await getDoc(inviteDoc);
+
+      if (inviteSnapshot.exists()) {
+        const inviteData = inviteSnapshot.data();
+
+        // Get team details
+        const teamDoc = doc(database, "teams", inviteData.teamId);
+        const teamSnapshot = await getDoc(teamDoc);
+        const teamData = teamSnapshot.exists() ? teamSnapshot.data() : null;
+
+        // Get inviting user details
+        const inviterDoc = doc(database, "users", inviteData.invitingUserId);
+        const inviterSnapshot = await getDoc(inviterDoc);
+        const inviterData = inviterSnapshot.exists() ? inviterSnapshot.data() : null;
+
+        return {
+          id: inviteId,
+          ...inviteData,
+          teamName: teamData?.name,
+          inviterName: inviterData?.name,
+        };
+      }
+      return null;
+    })
+  );
+
+  return invites.filter(invite => invite !== null);
+};

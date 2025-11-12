@@ -48,6 +48,8 @@ import { useNostrWalletStore } from "../../hooks/useNostrWalletStore";
 import StudyGuideModal from "../StudyGuideModal/StudyGuideModal";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { ChangeLanguageModal } from "../ChangeLanguageModal/ChangeLanguageModal";
+import { ViewTeamsModal } from "../ViewTeamsModal/ViewTeamsModal";
+import { getUserPendingInvites } from "../../utility/nosql";
 
 const SettingsMenu = ({
   testIsMatch,
@@ -132,6 +134,14 @@ const SettingsMenu = ({
     onClose: onLangClose,
   } = useDisclosure();
 
+  const {
+    isOpen: isViewTeamsOpen,
+    onOpen: onViewTeamsOpen,
+    onClose: onViewTeamsClose,
+  } = useDisclosure();
+
+  const [pendingInvitesCount, setPendingInvitesCount] = useState(0);
+
   // const [interval, setIntervalState] = useState(2880);
 
   const handleToggle = async () => {
@@ -170,6 +180,21 @@ const SettingsMenu = ({
       setTimeout(() => {
         firstButtonRef.current?.focus();
       }, 0);
+
+      // Load pending invites count
+      const loadPendingInvites = async () => {
+        try {
+          const npub = localStorage.getItem("local_npub");
+          if (npub) {
+            const invites = await getUserPendingInvites(npub);
+            setPendingInvitesCount(invites.length);
+          }
+        } catch (error) {
+          console.error("Error loading pending invites:", error);
+        }
+      };
+
+      loadPendingInvites();
     }
   }, [isOpen]);
   const handleLanguageSelect = async (value) => {
@@ -515,6 +540,26 @@ const SettingsMenu = ({
               >
                 {translation[userLanguage]["settings.button.studyGuide"]}
               </Button>
+
+              <Button
+                p={6}
+                colorScheme="pink"
+                background="pink.300"
+                boxShadow="1px 1px 2px 0px rgba(0, 0, 0,0.75)"
+                style={{ width: "100%" }}
+                onMouseDown={onViewTeamsOpen}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    onViewTeamsOpen();
+                  }
+                }}
+                borderWidth={pendingInvitesCount > 0 ? "2px" : "0px"}
+                borderColor={pendingInvitesCount > 0 ? "skyblue" : "transparent"}
+              >
+                {translation[userLanguage]["settings.button.viewTeams"] || "View Teams"}
+                {pendingInvitesCount > 0 && ` (${pendingInvitesCount})`}
+              </Button>
+
               <Button
                 p={6}
                 colorScheme="pink"
@@ -729,6 +774,14 @@ const SettingsMenu = ({
           isOpen={isLangOpen}
           onClose={onLangClose}
           onSelect={handleLanguageSelect}
+        />
+      ) : null}
+
+      {isViewTeamsOpen ? (
+        <ViewTeamsModal
+          userLanguage={userLanguage}
+          isOpen={isViewTeamsOpen}
+          onClose={onViewTeamsClose}
         />
       ) : null}
     </>
