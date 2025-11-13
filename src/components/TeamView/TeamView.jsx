@@ -30,6 +30,7 @@ import {
   leaveTeam,
 } from "../../utility/nosql";
 import { steps } from "../../utility/content";
+import { translation } from "../../utility/translation";
 
 const totalSteps = steps["en"].length;
 
@@ -53,6 +54,7 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
   const [teamMemberProgress, setTeamMemberProgress] = useState({});
   const [loading, setLoading] = useState(true);
   const [processingInvite, setProcessingInvite] = useState(null);
+  const t = translation?.[userLanguage] || translation?.en || {};
 
   const userNpub = localStorage.getItem("local_npub");
 
@@ -84,8 +86,9 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
     } catch (error) {
       console.error("Error loading team data:", error);
       toast({
-        title: "Error",
-        description: "Failed to load team data",
+        title: t["teamView.errorTitle"] || "Error",
+        description:
+          t["teamView.loadError"] || "Failed to load team data",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -147,8 +150,10 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
     try {
       await acceptTeamInvite(userNpub, inviteId);
       toast({
-        title: "Invite Accepted",
-        description: "You've joined the team!",
+        title: t["teamView.inviteAcceptedTitle"] || "Invite Accepted",
+        description:
+          t["teamView.inviteAcceptedDescription"] ||
+          "You've joined the team!",
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -159,8 +164,11 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
     } catch (error) {
       console.error("Error accepting invite:", error);
       toast({
-        title: "Error",
-        description: error.message || "Failed to accept invite",
+        title: t["teamView.errorTitle"] || "Error",
+        description:
+          error.message ||
+          t["teamView.acceptError"] ||
+          "Failed to accept invite",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -175,8 +183,10 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
     try {
       await rejectTeamInvite(userNpub, inviteId);
       toast({
-        title: "Invite Rejected",
-        description: "You've declined the team invitation",
+        title: t["teamView.inviteRejectedTitle"] || "Invite Rejected",
+        description:
+          t["teamView.inviteRejectedDescription"] ||
+          "You've declined the team invitation",
         status: "info",
         duration: 3000,
         isClosable: true,
@@ -184,8 +194,11 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
     } catch (error) {
       console.error("Error rejecting invite:", error);
       toast({
-        title: "Error",
-        description: error.message || "Failed to reject invite",
+        title: t["teamView.errorTitle"] || "Error",
+        description:
+          error.message ||
+          t["teamView.rejectError"] ||
+          "Failed to reject invite",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -196,19 +209,25 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
   };
 
   const handleDeleteTeam = async (teamId, teamName) => {
-    if (
-      !window.confirm(
-        `Are you sure you want to delete the team "${teamName}"? This action cannot be undone.`
-      )
-    ) {
+    const confirmMessage = (
+      t["teamView.deleteConfirm"] ||
+      `Are you sure you want to delete the team "{teamName}"? This action cannot be undone.`
+    ).replace("{teamName}", teamName);
+
+    if (!window.confirm(confirmMessage)) {
       return;
     }
 
     try {
       await deleteTeam(userNpub, teamId);
       toast({
-        title: "Team Deleted",
-        description: `Team "${teamName}" has been deleted`,
+        title: t["teamView.teamDeletedTitle"] || "Team Deleted",
+        description:
+          (t["teamView.teamDeletedDescription"] ||
+            `Team "{teamName}" has been deleted`).replace(
+            "{teamName}",
+            teamName
+          ),
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -222,8 +241,11 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
     } catch (error) {
       console.error("Error deleting team:", error);
       toast({
-        title: "Error",
-        description: error.message || "Failed to delete team",
+        title: t["teamView.errorTitle"] || "Error",
+        description:
+          error.message ||
+          t["teamView.deleteError"] ||
+          "Failed to delete team",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -232,19 +254,25 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
   };
 
   const handleLeaveTeam = async (teamId, teamName, creatorNpub) => {
-    if (
-      !window.confirm(
-        `Are you sure you want to leave the team "${teamName}"?`
-      )
-    ) {
+    const leaveConfirm = (
+      t["teamView.leaveConfirm"] ||
+      `Are you sure you want to leave the team "{teamName}"?`
+    ).replace("{teamName}", teamName);
+
+    if (!window.confirm(leaveConfirm)) {
       return;
     }
 
     try {
       await leaveTeam(userNpub, creatorNpub, teamId);
       toast({
-        title: "Left Team",
-        description: `You've left the team "${teamName}"`,
+        title: t["teamView.leftTeamTitle"] || "Left Team",
+        description:
+          (t["teamView.leftTeamDescription"] ||
+            `You've left the team "{teamName}"`).replace(
+            "{teamName}",
+            teamName
+          ),
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -255,8 +283,11 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
     } catch (error) {
       console.error("Error leaving team:", error);
       toast({
-        title: "Error",
-        description: error.message || "Failed to leave team",
+        title: t["teamView.errorTitle"] || "Error",
+        description:
+          error.message ||
+          t["teamView.leaveError"] ||
+          "Failed to leave team",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -275,7 +306,7 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
     return (
       <Box textAlign="center" py={8}>
         <Spinner size="xl" />
-        <Text mt={4}>Loading teams...</Text>
+        <Text mt={4}>{t["teamView.loading"] || "Loading teams..."}</Text>
       </Box>
     );
   }
@@ -290,7 +321,7 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
       {pendingInvites.length > 0 && (
         <Box>
           <Text fontSize="lg" fontWeight="bold" mb={3}>
-            Pending Invitations
+            {t["teamView.pendingInvitations"] || "Pending Invitations"}
           </Text>
           <VStack spacing={3}>
             {pendingInvites.map((invite) => (
@@ -304,7 +335,8 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
               >
                 <Text fontWeight="bold">{invite.teamName}</Text>
                 <Text fontSize="sm" color="gray.600">
-                  Invited by: {invite.invitedByName}
+                  {(t["teamView.invitedBy"] || "Invited by:") + " "}
+                  {invite.invitedByName}
                 </Text>
                 <HStack mt={3} spacing={2}>
                   <Button
@@ -313,7 +345,7 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
                     onClick={() => handleAcceptInvite(invite.id)}
                     isLoading={processingInvite === invite.id}
                   >
-                    Accept
+                    {t["teamView.acceptButton"] || "Accept"}
                   </Button>
                   <Button
                     size="sm"
@@ -322,7 +354,7 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
                     onClick={() => handleRejectInvite(invite.id)}
                     isLoading={processingInvite === invite.id}
                   >
-                    Decline
+                    {t["teamView.declineButton"] || "Decline"}
                   </Button>
                 </HStack>
               </Box>
@@ -334,13 +366,18 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
       {/* My Teams Section */}
       <Box>
         <Text fontSize="lg" fontWeight="bold" mb={3}>
-          My Teams ({myTeams.length})
+          {`${t["teamView.myTeams"] || "My Teams"} (${myTeams.length})`}
         </Text>
 
         {myTeams.length === 0 ? (
           <Alert status="info">
             <AlertIcon />
-            You haven't created any teams yet. Use "Create Team" to get started!
+            {(t["teamView.noTeamsAlert"] ||
+              `You haven't created any teams yet. Use "{createTeam}" to get started!`
+            ).replace(
+              "{createTeam}",
+              t["socialFeed.tab.createTeam"] || "Create Team"
+            )}
           </Alert>
         ) : (
           <Accordion allowMultiple>
@@ -363,13 +400,20 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
                         <HStack>
                           <Text fontWeight="bold">{team.teamName}</Text>
                           {isCreator && (
-                            <Badge colorScheme="purple">Creator</Badge>
+                            <Badge colorScheme="purple">
+                              {t["teamView.badge.creator"] || "Creator"}
+                            </Badge>
                           )}
                           {!isCreator && (
-                            <Badge colorScheme="green">Member</Badge>
+                            <Badge colorScheme="green">
+                              {t["teamView.badge.member"] || "Member"}
+                            </Badge>
                           )}
                           <Badge colorScheme="blue">
-                            {totalMembers} {totalMembers === 1 ? "member" : "members"}
+                            {totalMembers}{" "}
+                            {totalMembers === 1
+                              ? t["teamView.memberCountSingular"] || "member"
+                              : t["teamView.memberCountPlural"] || "members"}
                           </Badge>
                         </HStack>
                       </Box>
@@ -382,7 +426,7 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
                       {progress.length > 0 ? (
                         <Box>
                           <Text fontSize="sm" fontWeight="bold" mb={2}>
-                            Team Progress
+                            {t["teamView.teamProgress"] || "Team Progress"}
                           </Text>
                           {progress.map((member) => (
                             <Box key={member.npub} mb={3}>
@@ -393,16 +437,24 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
                                   </Text>
                                   {member.isCreator && (
                                     <Badge colorScheme="purple" fontSize="xs">
-                                      Creator
+                                      {t["teamView.badge.creator"] || "Creator"}
                                     </Badge>
                                   )}
                                 </HStack>
                                 <HStack spacing={2}>
                                   <Badge colorScheme="orange">
-                                    {member.streak} day streak
+                                    {(t["teamView.streakLabel"] ||
+                                      "{count} day streak").replace(
+                                      "{count}",
+                                      member.streak
+                                    )}
                                   </Badge>
                                   <Badge colorScheme="green">
-                                    {member.answeredStepsCount} questions
+                                    {(t["teamView.questionsLabel"] ||
+                                      "{count} questions").replace(
+                                      "{count}",
+                                      member.answeredStepsCount
+                                    )}
                                   </Badge>
                                 </HStack>
                               </HStack>
@@ -422,7 +474,8 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
                         </Box>
                       ) : (
                         <Text fontSize="sm" color="gray.500">
-                          No members have accepted yet
+                          {t["teamView.noMembers"] ||
+                            "No members have accepted yet"}
                         </Text>
                       )}
 
@@ -430,7 +483,8 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
                       {pendingMembers.length > 0 && (
                         <Box>
                           <Text fontSize="sm" fontWeight="bold" mb={2}>
-                            Pending Invitations ({pendingMembers.length})
+                            {`${t["teamView.pendingMembers"] ||
+                              "Pending Invitations"} (${pendingMembers.length})`}
                           </Text>
                           {pendingMembers.map((member) => (
                             <Text
@@ -456,7 +510,7 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
                             handleDeleteTeam(team.id, team.teamName)
                           }
                         >
-                          Delete Team
+                          {t["teamView.deleteTeamButton"] || "Delete Team"}
                         </Button>
                       ) : (
                         <Button
@@ -471,7 +525,7 @@ export const TeamView = ({ userLanguage, refreshTrigger }) => {
                             )
                           }
                         >
-                          Leave Team
+                          {t["teamView.leaveTeamButton"] || "Leave Team"}
                         </Button>
                       )}
                     </VStack>

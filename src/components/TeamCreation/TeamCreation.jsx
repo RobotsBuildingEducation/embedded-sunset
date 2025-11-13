@@ -21,6 +21,7 @@ import {
   getUserData,
 } from "../../utility/nosql";
 import { useSharedNostr } from "../../hooks/useNOSTR";
+import { translation } from "../../utility/translation";
 
 export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
   const toast = useToast();
@@ -28,6 +29,7 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
   const [memberNpub, setMemberNpub] = useState("");
   const [membersToInvite, setMembersToInvite] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
+  const t = translation?.[userLanguage] || translation?.en || {};
 
   const { sendDirectMessage } = useSharedNostr(
     localStorage.getItem("local_npub"),
@@ -37,8 +39,9 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
   const handleAddMember = () => {
     if (!memberNpub.trim()) {
       toast({
-        title: "Error",
-        description: "Please enter a valid npub",
+        title: t["teamCreation.errorTitle"] || "Error",
+        description:
+          t["teamCreation.invalidNpub"] || "Please enter a valid npub",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -49,8 +52,10 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
     // Basic npub validation
     if (!memberNpub.startsWith("npub")) {
       toast({
-        title: "Error",
-        description: "Invalid npub format. It should start with 'npub'",
+        title: t["teamCreation.errorTitle"] || "Error",
+        description:
+          t["teamCreation.invalidNpubFormat"] ||
+          "Invalid npub format. It should start with 'npub'",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -61,8 +66,10 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
     // Check if already added
     if (membersToInvite.includes(memberNpub)) {
       toast({
-        title: "Error",
-        description: "This user is already in the invite list",
+        title: t["teamCreation.errorTitle"] || "Error",
+        description:
+          t["teamCreation.duplicateMember"] ||
+          "This user is already in the invite list",
         status: "warning",
         duration: 3000,
         isClosable: true,
@@ -81,8 +88,9 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
   const handleCreateTeam = async () => {
     if (!teamName.trim()) {
       toast({
-        title: "Error",
-        description: "Please enter a team name",
+        title: t["teamCreation.errorTitle"] || "Error",
+        description:
+          t["teamCreation.missingTeamName"] || "Please enter a team name",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -92,8 +100,10 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
 
     if (membersToInvite.length === 0) {
       toast({
-        title: "Error",
-        description: "Please add at least one member to invite",
+        title: t["teamCreation.errorTitle"] || "Error",
+        description:
+          t["teamCreation.missingMember"] ||
+          "Please add at least one member to invite",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -106,7 +116,8 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
     try {
       const creatorNpub = localStorage.getItem("local_npub");
       const creatorData = await getUserData(creatorNpub);
-      const creatorName = creatorData?.name || "Unknown User";
+      const creatorName =
+        creatorData?.name || t["teamCreation.unknownUser"] || "Unknown User";
 
       // Create the team
       const teamId = await createTeam(creatorNpub, teamName);
@@ -128,7 +139,10 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
 
           // If user doesn't exist, send NOSTR DM
           if (!userExists) {
-            const dmMessage = `Hi! You've been invited to join the team "${teamName}" on Robots Building Education (https://robotsbuildingeducation.com). Create an account to accept the invite and track your progress with your team!`;
+            const dmTemplate =
+              t["teamCreation.dmMessage"] ||
+              `Hi! You've been invited to join the team "{teamName}" on Robots Building Education (https://robotsbuildingeducation.com). Create an account to accept the invite and track your progress with your team!`;
+            const dmMessage = dmTemplate.replace("{teamName}", teamName);
             await sendDirectMessage(inviteeNpub, dmMessage);
           }
 
@@ -143,11 +157,19 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
       const successCount = results.filter((r) => r.success).length;
       const failCount = results.filter((r) => !r.success).length;
 
+      const successDescription = (
+        t["teamCreation.successDescription"] ||
+        `Team "{teamName}" created successfully. {successCount} invites sent`
+      )
+        .replace("{teamName}", teamName)
+        .replace("{successCount}", successCount);
+      const failSuffix = (
+        t["teamCreation.successFailSuffix"] || ", {failCount} failed"
+      ).replace("{failCount}", failCount);
+
       toast({
-        title: "Team Created!",
-        description: `Team "${teamName}" created successfully. ${successCount} invites sent${
-          failCount > 0 ? `, ${failCount} failed` : ""
-        }.`,
+        title: t["teamCreation.successTitle"] || "Team Created!",
+        description: successDescription + (failCount > 0 ? failSuffix : ""),
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -164,8 +186,11 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
     } catch (error) {
       console.error("Error creating team:", error);
       toast({
-        title: "Error",
-        description: error.message || "Failed to create team",
+        title: t["teamCreation.errorTitle"] || "Error",
+        description:
+          error.message ||
+          t["teamCreation.errorCreate"] ||
+          "Failed to create team",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -178,26 +203,35 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
   return (
     <Box>
       <Text fontSize="lg" fontWeight="bold" mb={4}>
-        Create a New Team
+        {t["teamCreation.heading"] || "Create a New Team"}
       </Text>
 
       <VStack spacing={4} align="stretch">
         <FormControl>
-          <FormLabel>Team Name</FormLabel>
+          <FormLabel>
+            {t["teamCreation.teamNameLabel"] || "Team Name"}
+          </FormLabel>
           <Input
             value={teamName}
             onChange={(e) => setTeamName(e.target.value)}
-            placeholder="Enter team name"
+            placeholder={
+              t["teamCreation.teamNamePlaceholder"] || "Enter team name"
+            }
           />
         </FormControl>
 
         <FormControl>
-          <FormLabel>Add Team Members</FormLabel>
+          <FormLabel>
+            {t["teamCreation.addMembersLabel"] || "Add Team Members"}
+          </FormLabel>
           <HStack>
             <Input
               value={memberNpub}
               onChange={(e) => setMemberNpub(e.target.value)}
-              placeholder="Enter npub (e.g., npub1...)"
+              placeholder={
+                t["teamCreation.npubPlaceholder"] ||
+                "Enter npub (e.g., npub1...)"
+              }
               onKeyPress={(e) => {
                 if (e.key === "Enter") {
                   handleAddMember();
@@ -208,7 +242,7 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
               onClick={handleAddMember}
               boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
             >
-              Add
+              {t["teamCreation.addButton"] || "Add"}
             </Button>
           </HStack>
         </FormControl>
@@ -216,7 +250,9 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
         {membersToInvite.length > 0 && (
           <Box>
             <Text fontSize="sm" fontWeight="bold" mb={2}>
-              Members to Invite ({membersToInvite.length})
+              {`${t["teamCreation.membersToInvite"] || "Members to Invite"} (${
+                membersToInvite.length
+              })`}
             </Text>
             <List spacing={2}>
               {membersToInvite.map((npub) => (
@@ -234,7 +270,9 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
                       size="xs"
                       icon={<CloseIcon />}
                       onClick={() => handleRemoveMember(npub)}
-                      aria-label="Remove member"
+                      aria-label={
+                        t["teamCreation.removeMemberAria"] || "Remove member"
+                      }
                     />
                   </HStack>
                 </ListItem>
@@ -248,10 +286,10 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
           colorScheme="pink"
           onClick={handleCreateTeam}
           isLoading={isCreating}
-          loadingText="Creating Team..."
+          loadingText={t["teamCreation.creatingButton"] || "Creating Team..."}
           isDisabled={!teamName.trim() || membersToInvite.length === 0}
         >
-          Create Team
+          {t["teamCreation.createButton"] || "Create Team"}
         </Button>
       </VStack>
     </Box>

@@ -39,6 +39,7 @@ const SocialFeedModal = ({
   const [selectedTab, setSelectedTab] = useState(0);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [pendingInviteCount, setPendingInviteCount] = useState(0);
+  const t = translation?.[userLanguage] || translation?.en || {};
 
   const handleTeamCreated = (teamId) => {
     // Trigger refresh and switch to "View Team" tab after creating a team
@@ -80,7 +81,7 @@ const SocialFeedModal = ({
       <DrawerOverlay />
       <DrawerContent display="flex" flexDirection="column">
         <DrawerHeader style={{ display: "flex", alignItems: "center" }}>
-          Social Progress
+          {t["socialFeed.title"] || "Social Progress"}
         </DrawerHeader>
         <DrawerCloseButton />
         <DrawerBody flex="1" overflowY="auto">
@@ -91,10 +92,10 @@ const SocialFeedModal = ({
             variant="enclosed"
           >
             <TabList mb="1em">
-              <Tab>Global Feed</Tab>
-              <Tab>Create Team</Tab>
+              <Tab>{t["socialFeed.tab.globalFeed"] || "Global Feed"}</Tab>
+              <Tab>{t["socialFeed.tab.createTeam"] || "Create Team"}</Tab>
               <Tab>
-                View Team
+                {t["socialFeed.tab.viewTeam"] || "View Team"}
                 {pendingInviteCount > 0 ? ` (${pendingInviteCount})` : ""}
               </Tab>
             </TabList>
