@@ -40,7 +40,8 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
     if (!memberNpub.trim()) {
       toast({
         title: t["teamCreation.errorTitle"] || "Error",
-        description: t["teamCreation.invalidNpub"] || "Please enter a valid npub",
+        description:
+          t["teamCreation.invalidNpub"] || "Please enter a valid npub",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -115,7 +116,8 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
     try {
       const creatorNpub = localStorage.getItem("local_npub");
       const creatorData = await getUserData(creatorNpub);
-      const creatorName = creatorData?.name || t["teamCreation.unknownUser"] || "Unknown User";
+      const creatorName =
+        creatorData?.name || t["teamCreation.unknownUser"] || "Unknown User";
 
       // Create the team
       const teamId = await createTeam(creatorNpub, teamName);
@@ -167,8 +169,7 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
 
       toast({
         title: t["teamCreation.successTitle"] || "Team Created!",
-        description:
-          successDescription + (failCount > 0 ? failSuffix : ""),
+        description: successDescription + (failCount > 0 ? failSuffix : ""),
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -207,7 +208,9 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
 
       <VStack spacing={4} align="stretch">
         <FormControl>
-          <FormLabel>{t["teamCreation.teamNameLabel"] || "Team Name"}</FormLabel>
+          <FormLabel>
+            {t["teamCreation.teamNameLabel"] || "Team Name"}
+          </FormLabel>
           <Input
             value={teamName}
             onChange={(e) => setTeamName(e.target.value)}
@@ -218,9 +221,9 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
         </FormControl>
 
         <FormControl>
-          <FormLabel>{
-            t["teamCreation.addMembersLabel"] || "Add Team Members"
-          }</FormLabel>
+          <FormLabel>
+            {t["teamCreation.addMembersLabel"] || "Add Team Members"}
+          </FormLabel>
           <HStack>
             <Input
               value={memberNpub}
@@ -283,9 +286,7 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
           colorScheme="pink"
           onClick={handleCreateTeam}
           isLoading={isCreating}
-          loadingText={
-            t["teamCreation.creatingButton"] || "Creating Team..."
-          }
+          loadingText={t["teamCreation.creatingButton"] || "Creating Team..."}
           isDisabled={!teamName.trim() || membersToInvite.length === 0}
         >
           {t["teamCreation.createButton"] || "Create Team"}
