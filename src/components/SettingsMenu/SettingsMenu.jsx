@@ -297,13 +297,24 @@ const SettingsMenu = ({
               <FormControl
                 display="flex"
                 alignItems="center"
-                style={{ justifyContent: "center" }}
+                justifyContent="center"
+                gap={3}
               >
-                {/* <FormLabel htmlFor="language-toggle" mb="0">
-                  {userLanguage.includes("en")
-                    ? "English"
-                    : "Español"}
-                </FormLabel> */}
+                <FormLabel htmlFor="language-toggle" mb="0">
+                  {translation[userLanguage]["languageToggle.english"]}
+                </FormLabel>
+                <Switch
+                  id="language-toggle"
+                  colorScheme="pink"
+                  isChecked={userLanguage.includes("es")}
+                  onChange={handleToggle}
+                  aria-label={
+                    translation[userLanguage]["settings.button.changeLanguage"]
+                  }
+                />
+                <FormLabel htmlFor="language-toggle" mb="0">
+                  {translation[userLanguage]["languageToggle.spanish"]}
+                </FormLabel>
                 {/* <FormControl>
                   <FormLabel htmlFor="language-menu" mb={2}>
                     {translation[userLanguage]["settings.languageLabel"]}
