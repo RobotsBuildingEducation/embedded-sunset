@@ -1,54 +1,19 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    match /experiments/{experimentId} {
-      allow read, write: if true;
-    }
-    
-    match /analytics/{document=**} {
-      allow read, write: if true;
-    }
-
-    // Match any document in the 'users' collection
-    match /users/{userId} {
-
-      // Function to validate that the userId is a valid npub ID
-      function isValidNpubID(id) {
-        // npub IDs start with 'npub1' and are 63 characters long
-        // Bech32 charset includes '023456789acdefghjklmnpqrstuvwxyz'
-        return id.matches('^npub1[023456789acdefghjklmnpqrstuvwxyz]{58}$') && id.size() == 63;
-      }
-
-      // Allow read access when the document ID is a valid npub and either
-      // the stored npub matches or the field is missing (so legacy records
-      // without the npub field can still be repaired).
-      allow read: if isValidNpubID(userId) &&
-                   ((resource == null) ||
-                    !resource.data.keys().hasAny(["npub"]) ||
-                    resource.data.npub == userId);
-
-      // Allow create access if the incoming npub value matches the document ID (userId)
-      allow create: if request.resource.data.npub == userId && isValidNpubID(userId);
-
-      // Allow update access when the incoming npub matches the document ID so
-      // clients can backfill legacy records that were missing the npub field.
-      allow update: if request.resource.data.npub == userId &&
-                     isValidNpubID(userId);
-
-      // Deny listing (query) access to the entire collection
-      allow list: if false;
-
-      // Define access rules for all subcollections under each user's document
-      match /{subcollection=**} {
-
-        // Allow read, create, and update access to subcollections if the parent document's npub field matches the document ID
-        allow read, create, update: if get(/databases/$(database)/documents/users/$(userId)).data.npub == userId &&
-                                     isValidNpubID(userId);
-
-        // Deny listing for subcollections as well
-        allow list: if false;
-      }
+    // This rule allows anyone with your Firestore database reference to view, edit,
+    // and delete all data in your Firestore database. It is useful for getting
+    // started, but it is configured to expire after 30 days because it
+    // leaves your app open to attackers. At that time, all client
+    // requests to your Firestore database will be denied.
+    //
+    // Make sure to write security rules for your app before that time, or else
+    // all client requests to your Firestore database will be denied until you Update
+    // your rules
+    match /{document=**} {
+      allow read, write;
     }
   }
 }

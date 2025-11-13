@@ -80,7 +80,7 @@ const SocialFeedModal = ({
       <DrawerOverlay />
       <DrawerContent display="flex" flexDirection="column">
         <DrawerHeader style={{ display: "flex", alignItems: "center" }}>
-          #LearnWithNostr
+          Social Progress
         </DrawerHeader>
         <DrawerCloseButton />
         <DrawerBody flex="1" overflowY="auto">

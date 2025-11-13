@@ -204,7 +204,10 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
                 }
               }}
             />
-            <Button onClick={handleAddMember} colorScheme="blue">
+            <Button
+              onClick={handleAddMember}
+              boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+            >
               Add
             </Button>
           </HStack>
@@ -241,7 +244,8 @@ export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
         )}
 
         <Button
-          colorScheme="green"
+          // variant={"outline"}
+          colorScheme="pink"
           onClick={handleCreateTeam}
           isLoading={isCreating}
           loadingText="Creating Team..."
