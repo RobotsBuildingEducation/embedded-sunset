@@ -204,13 +204,17 @@ export const TestFeed = ({ userLanguage, allowPosts, setAllowPosts }) => {
         const hasScholarship = profile.content
           .toLowerCase()
           .includes("a new scholarship");
+
+        const noSaboProgress = (profile.content || "")
+          .toLowerCase()
+          .includes("i just reached");
         // ||
         // profile.content.toLowerCase().includes("https://girlsoncampus.app") ||
         // profile.content.toLowerCase().includes("gm nostr!") ||
         // profile.content.toLowerCase().includes("¡Buenos días, Nostr!");
 
         return (
-          (questionNumber || hasScholarship) && (
+          (questionNumber || hasScholarship || noSaboProgress) && (
             <Box
               key={index}
               style={{ textAlign: "left" }}
