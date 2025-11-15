@@ -84,7 +84,24 @@ const SocialFeedModal = ({
           {t["socialFeed.title"] || "Social Progress"}
         </DrawerHeader>
         <DrawerCloseButton />
-        <DrawerBody flex="1" overflowY="auto">
+        <DrawerBody
+          flex="1"
+          overflowY="auto"
+          sx={{
+            /* Firefox */
+            scrollbarWidth: "none",
+            /* IE/Edge legacy */
+            msOverflowStyle: "none",
+            /* WebKit */
+            "&::-webkit-scrollbar": {
+              width: "0px",
+              height: "0px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              background: "transparent",
+            },
+          }}
+        >
           <Tabs
             index={selectedTab}
             onChange={handleTabChange}

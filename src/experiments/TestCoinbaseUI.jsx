@@ -171,23 +171,6 @@ export const TestFeed = ({ userLanguage, allowPosts, setAllowPosts }) => {
 
   return (
     <div>
-      <Text mb={2} fontSize="sm">
-        {translation[userLanguage]["learnwithnostr.intructions"]}
-      </Text>
-
-      <Button
-        onMouseDown={handleCopyKeys}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            handleCopyKeys();
-          }
-        }}
-        fontSize={"sm"}
-      >
-        🔑 {translation[userLanguage]["button.copyKey"]}
-      </Button>
-      <br />
-      <br />
       <FormControl display="flex" alignItems="center" mb={4}>
         <FormLabel htmlFor="allow-posts-switch" mb="0">
           {translation[userLanguage]["tag.allowPosting"]}

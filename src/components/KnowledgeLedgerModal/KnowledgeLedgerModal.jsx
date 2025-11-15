@@ -408,6 +408,20 @@ export default function KnowledgeLedgerModal({
           p={{ base: 3, md: 6 }}
           flex="1"
           overflowY="auto"
+          sx={{
+            /* Firefox */
+            scrollbarWidth: "none",
+            /* IE/Edge legacy */
+            msOverflowStyle: "none",
+            /* WebKit */
+            "&::-webkit-scrollbar": {
+              width: "0px",
+              height: "0px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              background: "transparent",
+            },
+          }}
         >
           <KnowledgeLedgerContent
             steps={steps}
