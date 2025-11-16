@@ -66,6 +66,38 @@ const getBackgroundScheme = (group) => {
   return lightenColor(color, 0.9); // Lighten by 50%
 };
 
+const parseNoSaboProgress = (text) => {
+  if (!text) return null;
+
+  const percentMatch = text.match(/(\d+)%\s+through\s+today's/i);
+  const ratioMatch = text.match(/\((\d+)\s*\/\s*(\d+)\s*XP\)/i);
+
+  let percent = percentMatch ? parseInt(percentMatch[1], 10) : null;
+
+  if (!percent && ratioMatch) {
+    const current = parseInt(ratioMatch[1], 10);
+    const goal = parseInt(ratioMatch[2], 10);
+    if (goal > 0) {
+      percent = Math.min(100, Math.round((current / goal) * 100));
+    }
+  }
+
+  return Number.isFinite(percent) ? percent : null;
+};
+
+const getNoSaboProgressColor = (percent) => {
+  if (percent >= 100) return "green";
+  if (percent >= 60) return "blue";
+  return "orange";
+};
+
+const waveFillStyles = {
+  "& > div": {
+    backgroundImage:
+      "repeating-linear-gradient(135deg, rgba(255,255,255,0.35) 0 12px, rgba(255,255,255,0.2) 12px 24px)",
+  },
+};
+
 function ReplaceHashtagWithLink({ text }) {
   // const parts = text.split(/(#LearnWithNostr)/g);
   const urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -191,6 +223,9 @@ export const TestFeed = ({ userLanguage, allowPosts, setAllowPosts }) => {
         const noSaboProgress = (profile.content || "")
           .toLowerCase()
           .includes("through today's");
+        const noSaboPercent = noSaboProgress
+          ? parseNoSaboProgress(profile.content)
+          : null;
         // ||
         // profile.content.toLowerCase().includes("https://girlsoncampus.app") ||
         // profile.content.toLowerCase().includes("gm nostr!") ||
@@ -237,6 +272,18 @@ export const TestFeed = ({ userLanguage, allowPosts, setAllowPosts }) => {
                   background={getBackgroundScheme(
                     steps["en"][questionNumber]["group"]
                   )}
+                />
+              )}
+              {noSaboPercent !== null && (
+                <Progress
+                  value={noSaboPercent}
+                  mt={1}
+                  colorScheme={getNoSaboProgressColor(noSaboPercent)}
+                  width="80%"
+                  mb={4}
+                  borderRadius="4px"
+                  background="rgba(255,255,255,0.2)"
+                  sx={waveFillStyles}
                 />
               )}
               <br />
