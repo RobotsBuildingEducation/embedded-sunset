@@ -190,7 +190,7 @@ export const TestFeed = ({ userLanguage, allowPosts, setAllowPosts }) => {
 
         const noSaboProgress = (profile.content || "")
           .toLowerCase()
-          .includes("i just reached");
+          .includes("through today's");
         // ||
         // profile.content.toLowerCase().includes("https://girlsoncampus.app") ||
         // profile.content.toLowerCase().includes("gm nostr!") ||
