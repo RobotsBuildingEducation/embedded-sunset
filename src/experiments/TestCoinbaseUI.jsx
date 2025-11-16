@@ -88,7 +88,8 @@ const parseNoSaboProgress = (text) => {
 const getNoSaboProgressColor = (percent) => {
   if (percent >= 100) return "green";
   if (percent >= 60) return "blue";
-  return "orange";
+  if (percent >= 30) return "yellow";
+  return "purple";
 };
 
 const waveFillStyles = {
@@ -272,6 +273,7 @@ export const TestFeed = ({ userLanguage, allowPosts, setAllowPosts }) => {
                   background={getBackgroundScheme(
                     steps["en"][questionNumber]["group"]
                   )}
+                  border="1px solid rgba(0,0,0,0.1)"
                 />
               )}
               {noSaboPercent !== null && (
@@ -283,7 +285,7 @@ export const TestFeed = ({ userLanguage, allowPosts, setAllowPosts }) => {
                   mb={4}
                   borderRadius="4px"
                   background="rgba(255,255,255,0.2)"
-                  sx={waveFillStyles}
+                  border="1px solid rgba(0,0,0,0.1)"
                 />
               )}
               <br />
