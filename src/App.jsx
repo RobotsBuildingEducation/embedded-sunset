@@ -123,6 +123,7 @@ import {
   PiClockCountdownDuotone,
   PiClockCountdownFill,
   PiPatreonLogoFill,
+  PiUsersBold,
   PiUsersThreeFill,
 } from "react-icons/pi";
 
@@ -4220,7 +4221,7 @@ const Step = ({
                           "settings.button.socialProgress"
                         ]
                       }
-                      icon={<TbWorld fontSize="20px" />}
+                      icon={<PiUsersBold fontSize="20px" />}
                       onMouseDown={() => {
                         onSocialFeedOpen();
                       }}
