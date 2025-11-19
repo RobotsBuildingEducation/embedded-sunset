@@ -307,7 +307,6 @@ export const deleteSpecificDocuments = () => {
 export const getTotalUsers = async () => {
   const usersCollectionRef = collection(database, "users");
 
-  console.log("PLEASE GOD ! ! ! ! ! !");
   try {
     // Get a snapshot of all documents in the collection
     const snapshot = await getDocs(usersCollectionRef);
@@ -332,9 +331,7 @@ export const fetchUsersWithToken = async () => {
   const querySnapshot = await getDocs(usersQuery);
 
   // Loop through the results and log each user's data
-  querySnapshot.forEach((doc) => {
-    console.log(`User ID: ${doc.id}`, doc.data());
-  });
+  querySnapshot.forEach((doc) => {});
 };
 
 // Global question count utilities
@@ -428,7 +425,13 @@ export const inviteUserToTeam = async (
 
   // Create invite in invitee's subcollection
   const inviteId = `invite_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  const inviteRef = doc(database, "users", inviteeNpub, "teamInvites", inviteId);
+  const inviteRef = doc(
+    database,
+    "users",
+    inviteeNpub,
+    "teamInvites",
+    inviteId
+  );
 
   await setDoc(inviteRef, {
     teamId,
@@ -542,7 +545,7 @@ export const getUserTeams = async (userNpub) => {
     createdTeams.push({
       id: teamDoc.id,
       ...teamDoc.data(),
-      isCreator: true
+      isCreator: true,
     });
   });
 
@@ -555,7 +558,9 @@ export const getUserTeams = async (userNpub) => {
     const invite = inviteDoc.data();
     if (invite.status === "accepted" && invite.creatorNpub) {
       memberTeamsPromises.push(
-        getDoc(doc(database, "users", invite.creatorNpub, "teams", invite.teamId))
+        getDoc(
+          doc(database, "users", invite.creatorNpub, "teams", invite.teamId)
+        )
           .then((teamDoc) => {
             if (teamDoc.exists()) {
               return {
@@ -635,7 +640,7 @@ export const getTeamMemberProgress = async (creatorNpub, teamId) => {
   // Include the team creator in the progress list
   const allMembersToFetch = [
     { npub: creatorNpub, isCreator: true },
-    ...members.map(m => ({ ...m, isCreator: false }))
+    ...members.map((m) => ({ ...m, isCreator: false })),
   ];
 
   // Fetch progress data for each member including creator
@@ -676,7 +681,12 @@ export const deleteTeam = async (creatorNpub, teamId) => {
 
   // Delete all pending invites for members
   const deleteInvitePromises = teamData.members.map(async (member) => {
-    const invitesRef = collection(database, "users", member.npub, "teamInvites");
+    const invitesRef = collection(
+      database,
+      "users",
+      member.npub,
+      "teamInvites"
+    );
     const q = query(invitesRef, where("teamId", "==", teamId));
     const invitesSnapshot = await getDocs(q);
 

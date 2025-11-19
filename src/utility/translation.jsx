@@ -66,17 +66,15 @@ export let translation = {
     "teamCreation.invalidNpub": "Please enter a valid npub",
     "teamCreation.invalidNpubFormat":
       "Invalid npub format. It should start with 'npub'",
-    "teamCreation.duplicateMember":
-      "This user is already in the invite list",
+    "teamCreation.duplicateMember": "This user is already in the invite list",
     "teamCreation.missingTeamName": "Please enter a team name",
-    "teamCreation.missingMember":
-      "Please add at least one member to invite",
+    "teamCreation.missingMember": "Please add at least one member to invite",
     "teamCreation.unknownUser": "Unknown User",
     "teamCreation.dmMessage":
-      "Hi! You've been invited to join the team \"{teamName}\" on Robots Building Education (https://robotsbuildingeducation.com). Create an account to accept the invite and track your progress with your team!",
+      'Hi! You\'ve been invited to join the team "{teamName}" on Robots Building Education (https://robotsbuildingeducation.com). Create an account to accept the invite and track your progress with your team!',
     "teamCreation.successTitle": "Team Created!",
     "teamCreation.successDescription":
-      "Team \"{teamName}\" created successfully. {successCount} invites sent",
+      'Team "{teamName}" created successfully. {successCount} invites sent',
     "teamCreation.successFailSuffix": ", {failCount} failed",
     "teamCreation.errorCreate": "Failed to create team",
     "teamCreation.heading": "Create a New Team",
@@ -95,20 +93,17 @@ export let translation = {
     "teamView.inviteAcceptedDescription": "You've joined the team!",
     "teamView.acceptError": "Failed to accept invite",
     "teamView.inviteRejectedTitle": "Invite Rejected",
-    "teamView.inviteRejectedDescription":
-      "You've declined the team invitation",
+    "teamView.inviteRejectedDescription": "You've declined the team invitation",
     "teamView.rejectError": "Failed to reject invite",
     "teamView.deleteConfirm":
-      "Are you sure you want to delete the team \"{teamName}\"? This action cannot be undone.",
+      'Are you sure you want to delete the team "{teamName}"? This action cannot be undone.',
     "teamView.teamDeletedTitle": "Team Deleted",
-    "teamView.teamDeletedDescription":
-      "Team \"{teamName}\" has been deleted",
+    "teamView.teamDeletedDescription": 'Team "{teamName}" has been deleted',
     "teamView.deleteError": "Failed to delete team",
     "teamView.leaveConfirm":
-      "Are you sure you want to leave the team \"{teamName}\"?",
+      'Are you sure you want to leave the team "{teamName}"?',
     "teamView.leftTeamTitle": "Left Team",
-    "teamView.leftTeamDescription":
-      "You've left the team \"{teamName}\"",
+    "teamView.leftTeamDescription": 'You\'ve left the team "{teamName}"',
     "teamView.leaveError": "Failed to leave team",
     "teamView.loading": "Loading teams...",
     "teamView.pendingInvitations": "Pending Invitations",
@@ -117,7 +112,7 @@ export let translation = {
     "teamView.declineButton": "Decline",
     "teamView.myTeams": "My Teams",
     "teamView.noTeamsAlert":
-      "You haven't created any teams yet. Use \"{createTeam}\" to get started!",
+      'You haven\'t created any teams yet. Use "{createTeam}" to get started!',
     "teamView.badge.creator": "Creator",
     "teamView.badge.member": "Member",
     "teamView.memberCountSingular": "member",
@@ -1612,7 +1607,10 @@ reverse(head) {
         <div style={{ fontSize: "0.95rem" }}>
           <b>Your subscription will get you:</b>
           <OrderedList>
-            <ListItem>Full access to this app.</ListItem>
+            <ListItem>
+              Full access to this platform, a language learning app and other
+              education apps.
+            </ListItem>
 
             <ListItem>Personal assistance from me and a group chat.</ListItem>
             <ListItem>
@@ -1634,7 +1632,7 @@ reverse(head) {
         <br />
         <a
           style={{
-            fontSize: "0.95rem",
+            fontSize: "1.15rem",
             textDecoration: "underline",
             color: "#63b3ed",
             fontWeight: "bold",
@@ -1643,6 +1641,20 @@ reverse(head) {
           target="_blank"
         >
           Register and subscribe as a member
+        </a>
+        <br />
+        <br />
+        <a
+          style={{
+            fontSize: "1.15rem",
+            textDecoration: "underline",
+            color: "#63b3ed",
+            fontWeight: "bold",
+          }}
+          href="https://www.patreon.com/posts/start-learning-86153437?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_fan&utm_content=web_share"
+          target="_blank"
+        >
+          Pay for apps once without subscribing
         </a>
         <br />
         <br />
@@ -1793,14 +1805,13 @@ reverse(head) {
     "teamCreation.duplicateMember":
       "Esta persona ya está en la lista de invitaciones",
     "teamCreation.missingTeamName": "Por favor ingresa un nombre de equipo",
-    "teamCreation.missingMember":
-      "Agrega al menos un miembro para invitar",
+    "teamCreation.missingMember": "Agrega al menos un miembro para invitar",
     "teamCreation.unknownUser": "Usuario desconocido",
     "teamCreation.dmMessage":
-      "¡Hola! Te han invitado a unirte al equipo \"{teamName}\" en Robots Building Education (https://robotsbuildingeducation.com). Crea una cuenta para aceptar la invitación y seguir tu progreso con tu equipo.",
+      '¡Hola! Te han invitado a unirte al equipo "{teamName}" en Robots Building Education (https://robotsbuildingeducation.com). Crea una cuenta para aceptar la invitación y seguir tu progreso con tu equipo.',
     "teamCreation.successTitle": "¡Equipo creado!",
     "teamCreation.successDescription":
-      "El equipo \"{teamName}\" se creó correctamente. {successCount} invitaciones enviadas",
+      'El equipo "{teamName}" se creó correctamente. {successCount} invitaciones enviadas',
     "teamCreation.successFailSuffix": ", {failCount} fallidas",
     "teamCreation.errorCreate": "No se pudo crear el equipo",
     "teamCreation.heading": "Crea un equipo nuevo",
@@ -1819,20 +1830,18 @@ reverse(head) {
     "teamView.inviteAcceptedDescription": "¡Te uniste al equipo!",
     "teamView.acceptError": "No se pudo aceptar la invitación",
     "teamView.inviteRejectedTitle": "Invitación rechazada",
-    "teamView.inviteRejectedDescription":
-      "Rechazaste la invitación",
+    "teamView.inviteRejectedDescription": "Rechazaste la invitación",
     "teamView.rejectError": "No se pudo rechazar la invitación",
     "teamView.deleteConfirm":
-      "¿Seguro que deseas eliminar el equipo \"{teamName}\"? Esta acción no se puede deshacer.",
+      '¿Seguro que deseas eliminar el equipo "{teamName}"? Esta acción no se puede deshacer.',
     "teamView.teamDeletedTitle": "Equipo eliminado",
     "teamView.teamDeletedDescription":
-      "El equipo \"{teamName}\" ha sido eliminado",
+      'El equipo "{teamName}" ha sido eliminado',
     "teamView.deleteError": "No se pudo eliminar el equipo",
     "teamView.leaveConfirm":
-      "¿Seguro que deseas salir del equipo \"{teamName}\"?",
+      '¿Seguro que deseas salir del equipo "{teamName}"?',
     "teamView.leftTeamTitle": "Equipo abandonado",
-    "teamView.leftTeamDescription":
-      "Saliste del equipo \"{teamName}\"",
+    "teamView.leftTeamDescription": 'Saliste del equipo "{teamName}"',
     "teamView.leaveError": "No se pudo salir del equipo",
     "teamView.loading": "Cargando equipos...",
     "teamView.pendingInvitations": "Invitaciones pendientes",
@@ -1841,7 +1850,7 @@ reverse(head) {
     "teamView.declineButton": "Rechazar",
     "teamView.myTeams": "Mis equipos",
     "teamView.noTeamsAlert":
-      "Todavía no has creado equipos. Usa \"{createTeam}\" para comenzar.",
+      'Todavía no has creado equipos. Usa "{createTeam}" para comenzar.',
     "teamView.badge.creator": "Creador",
     "teamView.badge.member": "Miembro",
     "teamView.memberCountSingular": "miembro",
