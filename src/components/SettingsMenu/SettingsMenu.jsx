@@ -298,12 +298,9 @@ const SettingsMenu = ({
             isOpen={isMenuTourStep}
             closeOnBlur={false}
             placement={menuTourStep?.placement || "bottom-end"}
+            strategy="fixed"
           >
-            <PopoverTrigger>
-              <Box ref={btnRef} display="inline-flex">
-                {menuButton}
-              </Box>
-            </PopoverTrigger>
+            <PopoverTrigger>{menuButton}</PopoverTrigger>
             <Portal>
               <PopoverContent maxW="280px">
                 <PopoverArrow />
