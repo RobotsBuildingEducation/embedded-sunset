@@ -336,6 +336,36 @@ export let translation = {
     installAppInstructions4: `That's it! You don't need to download the app through an app store because we're using open-source standards for Progressive Web Apps.`,
 
     installApp: "Install App",
+    "installApp.secretTitle": "Copy your secret key",
+    "installApp.secretDescription":
+      "Your secret key is the password to access your account. Save it somewhere safe before continuing.",
+    "installApp.secretCopied": "Secret key copied to your clipboard.",
+
+    "actionTour.menu.title": "Menu and account",
+    "actionTour.menu.description":
+      "Tap here to install the app, view your user ID, or copy your secret key (your account password).",
+    "actionTour.bitcoin.title": "Bitcoin mode",
+    "actionTour.bitcoin.description":
+      "Open Bitcoin mode to explore payments and see how sats flow through your work.",
+    "actionTour.selfPaced.title": "Self-paced study",
+    "actionTour.selfPaced.description":
+      "Use the timer to control reminders and keep your streak on track.",
+    "actionTour.theme.title": "Themes",
+    "actionTour.theme.description":
+      "Switch the app's colors to match your vibe while you study.",
+    "actionTour.social.title": "Social progress",
+    "actionTour.social.description":
+      "See your team invites and community updates in one place.",
+    "actionTour.helper.title": "Build with AI",
+    "actionTour.helper.description":
+      "Open the builder to get coding help and AI-powered project ideas.",
+    "actionTour.patreon.title": "Support the mission",
+    "actionTour.patreon.description":
+      "Back the project on Patreon to keep the learning tools improving.",
+    "actionTour.next": "Next",
+    "actionTour.skip": "Skip",
+    "actionTour.done": "Done",
+
     "select.recipient": "Select your scholarship recipient",
     "change.recipient": "Change your scholarship recipient",
 
@@ -2135,6 +2165,35 @@ reverse(head) {
     installAppInstructions4: `¡Eso es todo! No necesitas descargar la aplicación desde una tienda de aplicaciones porque estamos utilizando estándares de código abierto para Aplicaciones Web Progresivas.`,
 
     installApp: "Instalar aplicación",
+    "installApp.secretTitle": "Copia tu llave secreta",
+    "installApp.secretDescription":
+      "Tu llave secreta es la contraseña para acceder a tu cuenta. Guárdala en un lugar seguro antes de continuar.",
+    "installApp.secretCopied": "Llave secreta copiada al portapapeles.",
+
+    "actionTour.menu.title": "Menú y cuenta",
+    "actionTour.menu.description":
+      "Toca aquí para instalar la app, ver tu ID de usuario o copiar tu llave secreta (tu contraseña).",
+    "actionTour.bitcoin.title": "Modo Bitcoin",
+    "actionTour.bitcoin.description":
+      "Abre el modo Bitcoin para explorar pagos y ver cómo fluyen los sats en tu trabajo.",
+    "actionTour.selfPaced.title": "Estudio a tu ritmo",
+    "actionTour.selfPaced.description":
+      "Usa el temporizador para controlar recordatorios y mantener tu racha.",
+    "actionTour.theme.title": "Temas",
+    "actionTour.theme.description":
+      "Cambia los colores de la app para que coincidan con tu estilo al estudiar.",
+    "actionTour.social.title": "Progreso social",
+    "actionTour.social.description":
+      "Consulta invitaciones de equipo y actualizaciones de la comunidad en un solo lugar.",
+    "actionTour.helper.title": "Construye con IA",
+    "actionTour.helper.description":
+      "Abre el constructor para obtener ayuda de código e ideas de proyectos con IA.",
+    "actionTour.patreon.title": "Apoya la misión",
+    "actionTour.patreon.description":
+      "Apoya el proyecto en Patreon para seguir mejorando las herramientas de aprendizaje.",
+    "actionTour.next": "Siguiente",
+    "actionTour.skip": "Saltar",
+    "actionTour.done": "Listo",
     "modal.bitcoinMode.instructions.createWallet.1":
       "¡El objetivo es crear becas con aprendizaje!",
 

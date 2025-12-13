@@ -40,6 +40,14 @@ import {
   MenuList,
   MenuItem,
   Tooltip,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverArrow,
+  PopoverCloseButton,
+  Portal,
   Center,
   Image,
   useToken,
@@ -1619,6 +1627,12 @@ const Step = ({
   setLectureNextPath,
   lectureNextStep,
   setLectureNextStep,
+  actionTourStep,
+  isActionTourActive,
+  actionBarTourSteps,
+  onActionTourAdvance,
+  onActionTourComplete,
+  startActionTour,
 }) => {
   let loot = buildSuperLoot();
 
@@ -1659,6 +1673,21 @@ const Step = ({
   }));
   const [grade, setGrade] = useState("");
   const [isTimerExpired, setIsTimerExpired] = useState(true);
+
+  const bitcoinButtonRef = useRef(null);
+  const selfPacedButtonRef = useRef(null);
+  const themeButtonRef = useRef(null);
+  const socialButtonRef = useRef(null);
+  const helperButtonRef = useRef(null);
+  const patreonButtonRef = useRef(null);
+
+  const currentTourStep = useMemo(
+    () =>
+      typeof actionTourStep === "number"
+        ? actionBarTourSteps[actionTourStep]
+        : null,
+    [actionBarTourSteps, actionTourStep]
+  );
 
   const [step, setStep] = useState(steps[userLanguage][currentStep]);
 
@@ -1819,6 +1848,28 @@ const Step = ({
     }
   }, [chapterReviewNodes, currentStep, lastChapterReviewStep]);
 
+  useEffect(() => {
+    const hasCompletedTour =
+      localStorage.getItem("actionTourCompleted") === "true";
+
+    if (
+      currentStep === 0 &&
+      !hasCompletedTour &&
+      !isActionTourActive &&
+      actionTourStep === null
+    ) {
+      startActionTour();
+    } else if (currentStep !== 0 && isActionTourActive) {
+      onActionTourComplete(false);
+    }
+  }, [
+    actionTourStep,
+    currentStep,
+    isActionTourActive,
+    onActionTourComplete,
+    startActionTour,
+  ]);
+
   const chapterReviewText = useMemo(
     () => ({
       title:
@@ -1840,6 +1891,25 @@ const Step = ({
     }),
     [fallbackTranslation, translationMap]
   );
+
+  const handleActionTourNext = useCallback(() => {
+    const nextStep = (actionTourStep ?? -1) + 1;
+
+    if (nextStep >= actionBarTourSteps.length) {
+      onActionTourComplete();
+    } else {
+      onActionTourAdvance();
+    }
+  }, [
+    actionBarTourSteps.length,
+    actionTourStep,
+    onActionTourAdvance,
+    onActionTourComplete,
+  ]);
+
+  const handleActionTourSkip = useCallback(() => {
+    onActionTourComplete();
+  }, [onActionTourComplete]);
 
   const dismissChapterReview = () => {
     setShowChapterReview(false);
@@ -3324,6 +3394,69 @@ const Step = ({
       : actionBarShadow;
   })();
 
+  const renderActionTourPopover = (id, ref, element) => {
+    const step = actionBarTourSteps.find((item) => item.id === id);
+    const isOpen =
+      isActionTourActive && currentTourStep && currentTourStep.id === id;
+    const isLastStep =
+      typeof actionTourStep === "number" &&
+      actionTourStep >= actionBarTourSteps.length - 1;
+
+    if (!step) return element;
+
+    return (
+      <Popover
+        isOpen={isOpen}
+        closeOnBlur={false}
+        placement={step.placement || "top"}
+      >
+        <PopoverTrigger>
+          <Box ref={ref} display="inline-flex">
+            {element}
+          </Box>
+        </PopoverTrigger>
+        <Portal>
+          <PopoverContent maxW="280px">
+            <PopoverArrow />
+            <PopoverCloseButton onClick={handleActionTourSkip} />
+            <PopoverHeader fontWeight="bold">{step.title}</PopoverHeader>
+            <PopoverBody>
+              <Text fontSize="sm">{step.description}</Text>
+              <HStack justifyContent="flex-end" mt={3} spacing={2}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onMouseDown={handleActionTourSkip}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      handleActionTourSkip();
+                    }
+                  }}
+                >
+                  {translation[userLanguage]["actionTour.skip"]}
+                </Button>
+                <Button
+                  size="sm"
+                  colorScheme="pink"
+                  onMouseDown={handleActionTourNext}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      handleActionTourNext();
+                    }
+                  }}
+                >
+                  {isLastStep
+                    ? translation[userLanguage]["actionTour.done"]
+                    : translation[userLanguage]["actionTour.next"]}
+                </Button>
+              </HStack>
+            </PopoverBody>
+          </PopoverContent>
+        </Portal>
+      </Popover>
+    );
+  };
+
   return (
     <VStack spacing={4} width="100%" mt={6} p={4}>
       {/* <OrbCanvas width={500} height={500} /> */}
@@ -4181,97 +4314,137 @@ const Step = ({
                   paddingTop={4}
                 >
                   <HStack spacing={{ base: 2, md: 3 }} justify="center">
-                    <IconButton
-                      {...actionBarButtonProps}
-                      aria-label="Open Bitcoin mode"
-                      icon={<FaBitcoin fontSize="20px" />}
-                      onMouseDown={() => {
-                        onBitcoinModeOpen();
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          onBitcoinModeOpen();
-                        }
-                      }}
-                    />
-                    <IconButton
-                      {...actionBarButtonProps}
-                      aria-label="Open self-paced mode"
-                      icon={<PiClockCountdownFill fontSize="22px" />}
-                      onMouseDown={() => {
-                        onSelfPacedOpen();
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          onSelfPacedOpen();
-                        }
-                      }}
-                    />
-                    <ThemeMenu
-                      userLanguage={userLanguage}
-                      buttonProps={{
-                        ...actionBarButtonProps,
-                        color: actionBarButtonProps.color,
-                      }}
-                    />
-                    <IconButton
-                      {...actionBarButtonProps}
-                      aria-label={
-                        translation[userLanguage][
-                          "settings.button.socialProgress"
-                        ]
-                      }
-                      icon={<PiUsersBold fontSize="20px" />}
-                      onMouseDown={() => {
-                        onSocialFeedOpen();
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          onSocialFeedOpen();
-                        }
-                      }}
-                      border={hasPendingTeamInvites ? "2px solid" : undefined}
-                      borderColor={hasPendingTeamInvites ? "gold" : undefined}
-                      boxShadow={
-                        hasPendingTeamInvites
-                          ? "0 0 8px rgba(255, 215, 0, 0.6)"
-                          : undefined
-                      }
-                    />
-                    <IconButton
-                      {...actionBarButtonProps}
-                      aria-label={
-                        translation[userLanguage]?.[
-                          "settings.button.algorithmHelper"
-                        ] || "Open build your app"
-                      }
-                      icon={<RiCodeAiFill fontSize="22px" />}
-                      onMouseDown={() => {
-                        onKnowledgeLedgerOpen();
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          onKnowledgeLedgerOpen();
-                        }
-                      }}
-                    />
-                    <IconButton
-                      {...actionBarButtonProps}
-                      aria-label="Support on Patreon"
-                      icon={<PiPatreonLogoFill fontSize="20px" />}
-                      // boxShadow={patreonButtonShadow}
-                      borderColor={hexToRgba(actionPalette[200], 0.85)}
-                      onMouseDown={() => {
-                        window.location.href =
-                          "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          window.location.href =
-                            "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
-                        }
-                      }}
-                    />
+                    {renderActionTourPopover(
+                      "bitcoin",
+                      bitcoinButtonRef,
+                      (
+                        <IconButton
+                          {...actionBarButtonProps}
+                          aria-label="Open Bitcoin mode"
+                          icon={<FaBitcoin fontSize="20px" />}
+                          onMouseDown={() => {
+                            onBitcoinModeOpen();
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              onBitcoinModeOpen();
+                            }
+                          }}
+                        />
+                      )
+                    )}
+                    {renderActionTourPopover(
+                      "selfPaced",
+                      selfPacedButtonRef,
+                      (
+                        <IconButton
+                          {...actionBarButtonProps}
+                          aria-label="Open self-paced mode"
+                          icon={<PiClockCountdownFill fontSize="22px" />}
+                          onMouseDown={() => {
+                            onSelfPacedOpen();
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              onSelfPacedOpen();
+                            }
+                          }}
+                        />
+                      )
+                    )}
+                    {renderActionTourPopover(
+                      "theme",
+                      themeButtonRef,
+                      (
+                        <ThemeMenu
+                          userLanguage={userLanguage}
+                          buttonProps={{
+                            ...actionBarButtonProps,
+                            color: actionBarButtonProps.color,
+                          }}
+                        />
+                      )
+                    )}
+                    {renderActionTourPopover(
+                      "social",
+                      socialButtonRef,
+                      (
+                        <IconButton
+                          {...actionBarButtonProps}
+                          aria-label={
+                            translation[userLanguage][
+                              "settings.button.socialProgress"
+                            ]
+                          }
+                          icon={<PiUsersBold fontSize="20px" />}
+                          onMouseDown={() => {
+                            onSocialFeedOpen();
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              onSocialFeedOpen();
+                            }
+                          }}
+                          border={
+                            hasPendingTeamInvites ? "2px solid" : undefined
+                          }
+                          borderColor={
+                            hasPendingTeamInvites ? "gold" : undefined
+                          }
+                          boxShadow={
+                            hasPendingTeamInvites
+                              ? "0 0 8px rgba(255, 215, 0, 0.6)"
+                              : undefined
+                          }
+                        />
+                      )
+                    )}
+                    {renderActionTourPopover(
+                      "helper",
+                      helperButtonRef,
+                      (
+                        <IconButton
+                          {...actionBarButtonProps}
+                          aria-label={
+                            translation[userLanguage]?.[
+                              "settings.button.algorithmHelper"
+                            ] || "Open build your app"
+                          }
+                          icon={<RiCodeAiFill fontSize="22px" />}
+                          onMouseDown={() => {
+                            onKnowledgeLedgerOpen();
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              onKnowledgeLedgerOpen();
+                            }
+                          }}
+                        />
+                      )
+                    )}
+                    {renderActionTourPopover(
+                      "patreon",
+                      patreonButtonRef,
+                      (
+                        <IconButton
+                          {...actionBarButtonProps}
+                          aria-label="Support on Patreon"
+                          icon={<PiPatreonLogoFill fontSize="20px" />}
+                          // boxShadow={patreonButtonShadow}
+                          borderColor={hexToRgba(actionPalette[200], 0.85)}
+                          onMouseDown={() => {
+                            window.location.href =
+                              "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              window.location.href =
+                                "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
+                            }
+                          }}
+                        />
+                      )
+                    )}
                   </HStack>
                 </Box>
               </Box>
@@ -4802,7 +4975,7 @@ const Home = ({
 
     setIsCreatingAccount(false);
     setShowSplash(false);
-    setView("created");
+    navigate("/onboarding/1");
   };
 
   const handleSignIn = async () => {
@@ -4979,7 +5152,7 @@ const Home = ({
 
   const handleSplashComplete = () => {
     // For example, change view to "signIn" or any other route/state
-    setView("created");
+    navigate("/onboarding/1");
     setShowSplash(false);
   };
 
@@ -6155,6 +6328,10 @@ function App({ isShutDown }) {
     parseInt(localStorage.getItem("incorrectAttempts"), 10) || 0
   );
 
+  const [actionTourStep, setActionTourStep] = useState(null);
+  const [isActionTourActive, setIsActionTourActive] = useState(false);
+  const settingsButtonRef = useRef(null);
+
   const defaultTransitionStats = {
     salary: 0,
     salaryProgress: 0,
@@ -6171,6 +6348,72 @@ function App({ isShutDown }) {
     defaultTransitionStats
   );
   const resetStatsTimeoutRef = useRef(null);
+
+  const actionBarTourSteps = useMemo(
+    () => [
+      {
+        id: "menu",
+        title: translation[userLanguage]["actionTour.menu.title"],
+        description: translation[userLanguage]["actionTour.menu.description"],
+        placement: "bottom-end",
+      },
+      {
+        id: "bitcoin",
+        title: translation[userLanguage]["actionTour.bitcoin.title"],
+        description: translation[userLanguage]["actionTour.bitcoin.description"],
+        placement: "top",
+      },
+      {
+        id: "selfPaced",
+        title: translation[userLanguage]["actionTour.selfPaced.title"],
+        description: translation[userLanguage]["actionTour.selfPaced.description"],
+        placement: "top",
+      },
+      {
+        id: "theme",
+        title: translation[userLanguage]["actionTour.theme.title"],
+        description: translation[userLanguage]["actionTour.theme.description"],
+        placement: "top",
+      },
+      {
+        id: "social",
+        title: translation[userLanguage]["actionTour.social.title"],
+        description: translation[userLanguage]["actionTour.social.description"],
+        placement: "top",
+      },
+      {
+        id: "helper",
+        title: translation[userLanguage]["actionTour.helper.title"],
+        description: translation[userLanguage]["actionTour.helper.description"],
+        placement: "top",
+      },
+      {
+        id: "patreon",
+        title: translation[userLanguage]["actionTour.patreon.title"],
+        description: translation[userLanguage]["actionTour.patreon.description"],
+        placement: "top",
+      },
+    ],
+    [userLanguage]
+  );
+
+  const startActionTour = useCallback(() => {
+    setActionTourStep(0);
+    setIsActionTourActive(true);
+  }, []);
+
+  const handleActionTourAdvance = useCallback(() => {
+    setActionTourStep((prev) => (prev === null ? 0 : prev + 1));
+  }, []);
+
+  const handleActionTourComplete = useCallback((persist = true) => {
+    setIsActionTourActive(false);
+    setActionTourStep(null);
+
+    if (persist) {
+      localStorage.setItem("actionTourCompleted", "true");
+    }
+  }, []);
 
   const navigateWithTransition = (path, nextStep = null) => {
     if (resetStatsTimeoutRef.current) {
@@ -6522,6 +6765,12 @@ function App({ isShutDown }) {
             view={view}
             setView={setView}
             step={steps?.[userLanguage]?.[currentStep]}
+            actionTourStep={actionTourStep}
+            isActionTourActive={isActionTourActive}
+            onActionTourAdvance={handleActionTourAdvance}
+            onActionTourComplete={handleActionTourComplete}
+            menuButtonRef={settingsButtonRef}
+            menuTourStep={actionBarTourSteps?.[0]}
           />
         )}
 
@@ -6598,6 +6847,12 @@ function App({ isShutDown }) {
                       setLectureNextPath={setLectureNextPath}
                       lectureNextStep={lectureNextPath}
                       setLectureNextStep={setLectureNextStep}
+                      actionTourStep={actionTourStep}
+                      isActionTourActive={isActionTourActive}
+                      actionBarTourSteps={actionBarTourSteps}
+                      onActionTourAdvance={handleActionTourAdvance}
+                      onActionTourComplete={handleActionTourComplete}
+                      startActionTour={startActionTour}
                     />
                   </PrivateRoute>
                 }
