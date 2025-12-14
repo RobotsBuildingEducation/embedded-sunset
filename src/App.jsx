@@ -3418,23 +3418,11 @@ const Step = ({
         <Portal>
           <PopoverContent maxW="280px">
             <PopoverArrow />
-            <PopoverCloseButton onClick={handleActionTourSkip} />
+
             <PopoverHeader fontWeight="bold">{step.title}</PopoverHeader>
             <PopoverBody>
               <Text fontSize="sm">{step.description}</Text>
               <HStack justifyContent="flex-end" mt={3} spacing={2}>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onMouseDown={handleActionTourSkip}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      handleActionTourSkip();
-                    }
-                  }}
-                >
-                  {translation[userLanguage]["actionTour.skip"]}
-                </Button>
                 <Button
                   size="sm"
                   colorScheme="pink"
@@ -3847,7 +3835,7 @@ const Step = ({
                         handleNextClick();
                       }
                     }}
-                    disabled={isPostingWithNostr}
+                    disabled={isPostingWithNostr || isActionTourActive}
                   >
                     {translation[userLanguage]["app.button.nextQuestion"]}{" "}
                   </Button>
@@ -4147,14 +4135,6 @@ const Step = ({
                 {isCorrect && (
                   <>
                     <Button
-                      variant={"outline"}
-                      mb={3}
-                      onClick={onProgressModalOpen}
-                    >
-                      View progress
-                    </Button>
-
-                    <Button
                       background="white"
                       variant={"outline"}
                       onClick={handleNextClick}
@@ -4317,133 +4297,117 @@ const Step = ({
                     {renderActionTourPopover(
                       "bitcoin",
                       bitcoinButtonRef,
-                      (
-                        <IconButton
-                          {...actionBarButtonProps}
-                          aria-label="Open Bitcoin mode"
-                          icon={<FaBitcoin fontSize="20px" />}
-                          onMouseDown={() => {
+                      <IconButton
+                        {...actionBarButtonProps}
+                        aria-label="Open Bitcoin mode"
+                        icon={<FaBitcoin fontSize="20px" />}
+                        onMouseDown={() => {
+                          onBitcoinModeOpen();
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
                             onBitcoinModeOpen();
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              onBitcoinModeOpen();
-                            }
-                          }}
-                        />
-                      )
+                          }
+                        }}
+                      />
                     )}
                     {renderActionTourPopover(
                       "selfPaced",
                       selfPacedButtonRef,
-                      (
-                        <IconButton
-                          {...actionBarButtonProps}
-                          aria-label="Open self-paced mode"
-                          icon={<PiClockCountdownFill fontSize="22px" />}
-                          onMouseDown={() => {
+                      <IconButton
+                        {...actionBarButtonProps}
+                        aria-label="Open self-paced mode"
+                        icon={<PiClockCountdownFill fontSize="22px" />}
+                        onMouseDown={() => {
+                          onSelfPacedOpen();
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
                             onSelfPacedOpen();
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              onSelfPacedOpen();
-                            }
-                          }}
-                        />
-                      )
+                          }
+                        }}
+                      />
                     )}
                     {renderActionTourPopover(
                       "theme",
                       themeButtonRef,
-                      (
-                        <ThemeMenu
-                          userLanguage={userLanguage}
-                          buttonProps={{
-                            ...actionBarButtonProps,
-                            color: actionBarButtonProps.color,
-                          }}
-                        />
-                      )
+                      <ThemeMenu
+                        userLanguage={userLanguage}
+                        buttonProps={{
+                          ...actionBarButtonProps,
+                          color: actionBarButtonProps.color,
+                        }}
+                      />
                     )}
                     {renderActionTourPopover(
                       "social",
                       socialButtonRef,
-                      (
-                        <IconButton
-                          {...actionBarButtonProps}
-                          aria-label={
-                            translation[userLanguage][
-                              "settings.button.socialProgress"
-                            ]
-                          }
-                          icon={<PiUsersBold fontSize="20px" />}
-                          onMouseDown={() => {
+                      <IconButton
+                        {...actionBarButtonProps}
+                        aria-label={
+                          translation[userLanguage][
+                            "settings.button.socialProgress"
+                          ]
+                        }
+                        icon={<PiUsersBold fontSize="20px" />}
+                        onMouseDown={() => {
+                          onSocialFeedOpen();
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
                             onSocialFeedOpen();
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              onSocialFeedOpen();
-                            }
-                          }}
-                          border={
-                            hasPendingTeamInvites ? "2px solid" : undefined
                           }
-                          borderColor={
-                            hasPendingTeamInvites ? "gold" : undefined
-                          }
-                          boxShadow={
-                            hasPendingTeamInvites
-                              ? "0 0 8px rgba(255, 215, 0, 0.6)"
-                              : undefined
-                          }
-                        />
-                      )
+                        }}
+                        border={hasPendingTeamInvites ? "2px solid" : undefined}
+                        borderColor={hasPendingTeamInvites ? "gold" : undefined}
+                        boxShadow={
+                          hasPendingTeamInvites
+                            ? "0 0 8px rgba(255, 215, 0, 0.6)"
+                            : undefined
+                        }
+                      />
                     )}
                     {renderActionTourPopover(
                       "helper",
                       helperButtonRef,
-                      (
-                        <IconButton
-                          {...actionBarButtonProps}
-                          aria-label={
-                            translation[userLanguage]?.[
-                              "settings.button.algorithmHelper"
-                            ] || "Open build your app"
-                          }
-                          icon={<RiCodeAiFill fontSize="22px" />}
-                          onMouseDown={() => {
+                      <IconButton
+                        {...actionBarButtonProps}
+                        aria-label={
+                          translation[userLanguage]?.[
+                            "settings.button.algorithmHelper"
+                          ] || "Open build your app"
+                        }
+                        icon={<RiCodeAiFill fontSize="22px" />}
+                        onMouseDown={() => {
+                          onKnowledgeLedgerOpen();
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
                             onKnowledgeLedgerOpen();
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              onKnowledgeLedgerOpen();
-                            }
-                          }}
-                        />
-                      )
+                          }
+                        }}
+                      />
                     )}
                     {renderActionTourPopover(
                       "patreon",
                       patreonButtonRef,
-                      (
-                        <IconButton
-                          {...actionBarButtonProps}
-                          aria-label="Support on Patreon"
-                          icon={<PiPatreonLogoFill fontSize="20px" />}
-                          // boxShadow={patreonButtonShadow}
-                          borderColor={hexToRgba(actionPalette[200], 0.85)}
-                          onMouseDown={() => {
+                      <IconButton
+                        {...actionBarButtonProps}
+                        aria-label="Support on Patreon"
+                        icon={<PiPatreonLogoFill fontSize="20px" />}
+                        // boxShadow={patreonButtonShadow}
+                        borderColor={hexToRgba(actionPalette[200], 0.85)}
+                        onMouseDown={() => {
+                          window.location.href =
+                            "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
                             window.location.href =
                               "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              window.location.href =
-                                "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
-                            }
-                          }}
-                        />
-                      )
+                          }
+                        }}
+                      />
                     )}
                   </HStack>
                 </Box>
@@ -6360,13 +6324,15 @@ function App({ isShutDown }) {
       {
         id: "bitcoin",
         title: translation[userLanguage]["actionTour.bitcoin.title"],
-        description: translation[userLanguage]["actionTour.bitcoin.description"],
+        description:
+          translation[userLanguage]["actionTour.bitcoin.description"],
         placement: "top",
       },
       {
         id: "selfPaced",
         title: translation[userLanguage]["actionTour.selfPaced.title"],
-        description: translation[userLanguage]["actionTour.selfPaced.description"],
+        description:
+          translation[userLanguage]["actionTour.selfPaced.description"],
         placement: "top",
       },
       {
@@ -6390,7 +6356,8 @@ function App({ isShutDown }) {
       {
         id: "patreon",
         title: translation[userLanguage]["actionTour.patreon.title"],
-        description: translation[userLanguage]["actionTour.patreon.description"],
+        description:
+          translation[userLanguage]["actionTour.patreon.description"],
         placement: "top",
       },
     ],

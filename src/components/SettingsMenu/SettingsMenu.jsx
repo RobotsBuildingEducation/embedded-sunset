@@ -304,25 +304,13 @@ const SettingsMenu = ({
             <Portal>
               <PopoverContent maxW="280px">
                 <PopoverArrow />
-                <PopoverCloseButton onClick={handleMenuTourSkip} />
+
                 <PopoverHeader fontWeight="bold">
                   {menuTourStep?.title}
                 </PopoverHeader>
                 <PopoverBody>
                   <Text fontSize="sm">{menuTourStep?.description}</Text>
                   <HStack justifyContent="flex-end" mt={3} spacing={2}>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onMouseDown={handleMenuTourSkip}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          handleMenuTourSkip();
-                        }
-                      }}
-                    >
-                      {translation[userLanguage]["actionTour.skip"]}
-                    </Button>
                     <Button
                       size="sm"
                       colorScheme="pink"

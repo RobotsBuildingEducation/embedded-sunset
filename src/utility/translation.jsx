@@ -343,13 +343,13 @@ export let translation = {
 
     "actionTour.menu.title": "Menu and account",
     "actionTour.menu.description":
-      "Tap here to install the app, view your user ID, or copy your secret key (your account password).",
-    "actionTour.bitcoin.title": "Bitcoin mode",
+      "Tap here to install the app, view your user ID, or copy your secret key (your account password) or change your settings.",
+    "actionTour.bitcoin.title": "Bitcoin wallet",
     "actionTour.bitcoin.description":
-      "Open Bitcoin mode to explore payments and see how sats flow through your work.",
+      "Create a Bitcoin wallet to how we create scholarships with learning",
     "actionTour.selfPaced.title": "Self-paced study",
     "actionTour.selfPaced.description":
-      "Use the timer to control reminders and keep your streak on track.",
+      "Use the timer to control notifications, streaks and goals.",
     "actionTour.theme.title": "Themes",
     "actionTour.theme.description":
       "Switch the app's colors to match your vibe while you study.",
@@ -358,10 +358,10 @@ export let translation = {
       "See your team invites and community updates in one place.",
     "actionTour.helper.title": "Build with AI",
     "actionTour.helper.description":
-      "Open the builder to get coding help and AI-powered project ideas.",
-    "actionTour.patreon.title": "Support the mission",
+      "Open the builder to develop and improve your ideas as you make progress learning.",
+    "actionTour.patreon.title": "Join us!",
     "actionTour.patreon.description":
-      "Back the project on Patreon to keep the learning tools improving.",
+      "Join us on Patreon to access more education apps and content on startups, advanced engineering, investing and business.",
     "actionTour.next": "Next",
     "actionTour.skip": "Skip",
     "actionTour.done": "Done",
@@ -2172,13 +2172,14 @@ reverse(head) {
 
     "actionTour.menu.title": "Menú y cuenta",
     "actionTour.menu.description":
-      "Toca aquí para instalar la app, ver tu ID de usuario o copiar tu llave secreta (tu contraseña).",
-    "actionTour.bitcoin.title": "Modo Bitcoin",
+      "Toca aquí para instalar la app, ver tu ID de usuario, copiar tu clave secreta (la contraseña de tu cuenta) o cambiar tu configuración.",
+
+    "actionTour.bitcoin.title": "Billetera de Bitcoin",
     "actionTour.bitcoin.description":
-      "Abre el modo Bitcoin para explorar pagos y ver cómo fluyen los sats en tu trabajo.",
+      "Crea una billetera de Bitcoin para ver cómo creamos becas a través del aprendizaje.",
     "actionTour.selfPaced.title": "Estudio a tu ritmo",
     "actionTour.selfPaced.description":
-      "Usa el temporizador para controlar recordatorios y mantener tu racha.",
+      "Usa el temporizador para controlar las notificaciones, las rachas y los objetivos.",
     "actionTour.theme.title": "Temas",
     "actionTour.theme.description":
       "Cambia los colores de la app para que coincidan con tu estilo al estudiar.",
@@ -2187,10 +2188,11 @@ reverse(head) {
       "Consulta invitaciones de equipo y actualizaciones de la comunidad en un solo lugar.",
     "actionTour.helper.title": "Construye con IA",
     "actionTour.helper.description":
-      "Abre el constructor para obtener ayuda de código e ideas de proyectos con IA.",
-    "actionTour.patreon.title": "Apoya la misión",
+      "Abre el creador para desarrollar y mejorar tus ideas a medida que avanzas en tu aprendizaje.",
+    "actionTour.patreon.title": "Suscríbete",
     "actionTour.patreon.description":
-      "Apoya el proyecto en Patreon para seguir mejorando las herramientas de aprendizaje.",
+      "Únete a nosotros en Patreon para acceder a más apps educativas y contenido sobre startups, ingeniería avanzada, inversión y negocios.",
+
     "actionTour.next": "Siguiente",
     "actionTour.skip": "Saltar",
     "actionTour.done": "Listo",
