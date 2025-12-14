@@ -12,11 +12,13 @@ import {
   Flex,
   Divider,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import { IoShareOutline } from "react-icons/io5";
 import { IoIosMore } from "react-icons/io";
 import { BsPlusSquare } from "react-icons/bs";
 import { LuBadgeCheck } from "react-icons/lu";
+import { LuKey } from "react-icons/lu";
 
 import { translation } from "../../utility/translation";
 import { FaHeartBroken } from "react-icons/fa";
@@ -27,6 +29,24 @@ export const InstallAppModal = ({
   userLanguage = localStorage.getItem("userLanguage"),
   vocalRequest = false,
 }) => {
+  const toast = useToast();
+
+  const handleCopySecretKey = () => {
+    const secretKey = localStorage.getItem("local_nsec");
+
+    if (secretKey) {
+      navigator.clipboard.writeText(secretKey);
+      toast({
+        title: translation[userLanguage]["toast.title.keysCopied"],
+        description: translation[userLanguage]["installApp.secretCopied"],
+        status: "info",
+        duration: 1500,
+        isClosable: true,
+        position: "top",
+      });
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
@@ -80,6 +100,29 @@ export const InstallAppModal = ({
             <Text mt={2}>
               4. {translation[userLanguage].installAppInstructions4}
             </Text>
+          </Flex>
+          <Divider mb={6} />
+
+          <Flex direction="column" pb={2}>
+            <LuKey size={32} />
+            <Text mt={2}>
+              {translation[userLanguage]["installApp.secretTitle"]}
+            </Text>
+            <Text fontSize="sm" color="gray.700" mt={1}>
+              {translation[userLanguage]["installApp.secretDescription"]}
+            </Text>
+            <Button
+              mt={3}
+              size="sm"
+              onMouseDown={handleCopySecretKey}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleCopySecretKey();
+                }
+              }}
+            >
+              🔑 {translation[userLanguage]["button.copyKey"]}
+            </Button>
           </Flex>
         </ModalBody>
 

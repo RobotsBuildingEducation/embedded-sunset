@@ -23,6 +23,14 @@ import {
   MenuList,
   MenuButton,
   Menu,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverArrow,
+  PopoverCloseButton,
+  Portal,
 } from "@chakra-ui/react";
 
 import { useNavigate } from "react-router-dom";
@@ -60,10 +68,16 @@ const SettingsMenu = ({
   view,
   setView,
   step,
+  actionTourStep,
+  isActionTourActive,
+  onActionTourAdvance,
+  onActionTourComplete,
+  menuButtonRef,
+  menuTourStep,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
-  const btnRef = useRef(); // Reference to the settings icon button
+  const btnRef = menuButtonRef || useRef(); // Reference to the settings icon button
   const firstButtonRef = useRef(); // Reference to the first button in the drawer
   const toast = useToast();
 
@@ -241,26 +255,84 @@ const SettingsMenu = ({
     }
   };
 
+  const isMenuTourStep =
+    isActionTourActive && actionTourStep === 0 && menuTourStep;
+
+  const handleMenuTourNext = () => {
+    if (onActionTourAdvance) {
+      onActionTourAdvance();
+    }
+  };
+
+  const handleMenuTourSkip = () => {
+    if (onActionTourComplete) {
+      onActionTourComplete();
+    }
+  };
+
+  const menuButton = (
+    <IconButton
+      ref={btnRef}
+      icon={<IoAppsOutline />}
+      onMouseDown={onOpen}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          onOpen();
+        }
+      }}
+      // variant="outline"
+      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+      position="fixed"
+      top={4}
+      right={4}
+      style={{ backgroundColor: "white", zIndex: 1000 }}
+      aria-label="Settings"
+    />
+  );
+
   return (
     <>
       {isSignedIn && localStorage.getItem("local_npub") ? (
-        <IconButton
-          ref={btnRef}
-          icon={<IoAppsOutline />}
-          onMouseDown={onOpen}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              onOpen();
-            }
-          }}
-          // variant="outline"
-          boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-          position="fixed"
-          top={4}
-          right={4}
-          style={{ backgroundColor: "white", zIndex: 1000 }}
-          aria-label="Settings"
-        />
+        isMenuTourStep ? (
+          <Popover
+            isOpen={isMenuTourStep}
+            closeOnBlur={false}
+            placement={menuTourStep?.placement || "bottom-end"}
+            strategy="fixed"
+          >
+            <PopoverTrigger>{menuButton}</PopoverTrigger>
+            <Portal>
+              <PopoverContent maxW="280px">
+                <PopoverArrow />
+
+                <PopoverHeader fontWeight="bold">
+                  {menuTourStep?.title}
+                </PopoverHeader>
+                <PopoverBody>
+                  <Text fontSize="sm">{menuTourStep?.description}</Text>
+                  <HStack justifyContent="flex-end" mt={3} spacing={2}>
+                    <Button
+                      size="sm"
+                      colorScheme="pink"
+                      onMouseDown={handleMenuTourNext}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          handleMenuTourNext();
+                        }
+                      }}
+                    >
+                      {translation[userLanguage]["actionTour.next"]}
+                    </Button>
+                  </HStack>
+                </PopoverBody>
+              </PopoverContent>
+            </Portal>
+          </Popover>
+        ) : (
+          <Box ref={btnRef} display="inline-flex">
+            {menuButton}
+          </Box>
+        )
       ) : null}
       {/* {isSignedIn && testIsMatch ? (
         <IconButton

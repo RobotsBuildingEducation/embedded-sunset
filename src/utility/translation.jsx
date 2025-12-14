@@ -336,6 +336,36 @@ export let translation = {
     installAppInstructions4: `That's it! You don't need to download the app through an app store because we're using open-source standards for Progressive Web Apps.`,
 
     installApp: "Install App",
+    "installApp.secretTitle": "Copy your secret key",
+    "installApp.secretDescription":
+      "Your secret key is the password to access your account. Save it somewhere safe before continuing.",
+    "installApp.secretCopied": "Secret key copied to your clipboard.",
+
+    "actionTour.menu.title": "Menu and account",
+    "actionTour.menu.description":
+      "Tap here to install the app, view your user ID, or copy your secret key (your account password) or change your settings.",
+    "actionTour.bitcoin.title": "Bitcoin wallet",
+    "actionTour.bitcoin.description":
+      "Create a Bitcoin wallet to how we create scholarships with learning",
+    "actionTour.selfPaced.title": "Self-paced study",
+    "actionTour.selfPaced.description":
+      "Use the timer to control notifications, streaks and goals.",
+    "actionTour.theme.title": "Themes",
+    "actionTour.theme.description":
+      "Switch the app's colors to match your vibe while you study.",
+    "actionTour.social.title": "Social progress",
+    "actionTour.social.description":
+      "See your team invites and community updates in one place.",
+    "actionTour.helper.title": "Build with AI",
+    "actionTour.helper.description":
+      "Open the builder to develop and improve your ideas as you make progress learning.",
+    "actionTour.patreon.title": "Join us!",
+    "actionTour.patreon.description":
+      "Join us on Patreon to access more education apps and content on startups, advanced engineering, investing and business.",
+    "actionTour.next": "Next",
+    "actionTour.skip": "Skip",
+    "actionTour.done": "Done",
+
     "select.recipient": "Select your scholarship recipient",
     "change.recipient": "Change your scholarship recipient",
 
@@ -2135,6 +2165,37 @@ reverse(head) {
     installAppInstructions4: `¡Eso es todo! No necesitas descargar la aplicación desde una tienda de aplicaciones porque estamos utilizando estándares de código abierto para Aplicaciones Web Progresivas.`,
 
     installApp: "Instalar aplicación",
+    "installApp.secretTitle": "Copia tu llave secreta",
+    "installApp.secretDescription":
+      "Tu llave secreta es la contraseña para acceder a tu cuenta. Guárdala en un lugar seguro antes de continuar.",
+    "installApp.secretCopied": "Llave secreta copiada al portapapeles.",
+
+    "actionTour.menu.title": "Menú y cuenta",
+    "actionTour.menu.description":
+      "Toca aquí para instalar la app, ver tu ID de usuario, copiar tu clave secreta (la contraseña de tu cuenta) o cambiar tu configuración.",
+
+    "actionTour.bitcoin.title": "Billetera de Bitcoin",
+    "actionTour.bitcoin.description":
+      "Crea una billetera de Bitcoin para ver cómo creamos becas a través del aprendizaje.",
+    "actionTour.selfPaced.title": "Estudio a tu ritmo",
+    "actionTour.selfPaced.description":
+      "Usa el temporizador para controlar las notificaciones, las rachas y los objetivos.",
+    "actionTour.theme.title": "Temas",
+    "actionTour.theme.description":
+      "Cambia los colores de la app para que coincidan con tu estilo al estudiar.",
+    "actionTour.social.title": "Progreso social",
+    "actionTour.social.description":
+      "Consulta invitaciones de equipo y actualizaciones de la comunidad en un solo lugar.",
+    "actionTour.helper.title": "Construye con IA",
+    "actionTour.helper.description":
+      "Abre el creador para desarrollar y mejorar tus ideas a medida que avanzas en tu aprendizaje.",
+    "actionTour.patreon.title": "Suscríbete",
+    "actionTour.patreon.description":
+      "Únete a nosotros en Patreon para acceder a más apps educativas y contenido sobre startups, ingeniería avanzada, inversión y negocios.",
+
+    "actionTour.next": "Siguiente",
+    "actionTour.skip": "Saltar",
+    "actionTour.done": "Listo",
     "modal.bitcoinMode.instructions.createWallet.1":
       "¡El objetivo es crear becas con aprendizaje!",
 
