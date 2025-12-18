@@ -80,10 +80,10 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
   }, [from]);
 
   /**
-   * Hook from useSharedNostr:
+   * Hook from useNostrWalletStore:
    * - createNewWallet(): creates a new Cashu wallet event and sets up the wallet
    * - initiateDeposit(amount): returns a LN invoice to deposit sats
-   * - walletBalance: array of proofs; sum their values to get total balance
+   * - walletBalance: tracked balance as a number (self-managed, not from wallet.balance())
    * - cashuWallet: if null, no wallet yet
    */
 
@@ -108,8 +108,8 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
   }));
 
   console.log("total balance", walletBalance);
-  const totalBalance =
-    (walletBalance || [])?.reduce((sum, b) => sum + (b.amount || 0), 0) || null;
+  // walletBalance is now tracked as a number in the store
+  const totalBalance = typeof walletBalance === "number" ? walletBalance : 0;
 
   useEffect(() => {
     if (isRefreshingAfterDeposit) {

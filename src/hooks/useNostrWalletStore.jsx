@@ -513,8 +513,10 @@ export const useNostrWalletStore = create((set, get) => ({
   },
 
   // Initiate deposit (create Lightning invoice)
-  initiateDeposit: async (amountInSats = 10) => {
+  // options: { onSuccess?: (newBalance) => void, onError?: (error) => void }
+  initiateDeposit: async (amountInSats = 10, options = {}) => {
     const { cashuWallet, setError, setInvoice } = get();
+    const { onSuccess, onError } = options;
 
     if (!cashuWallet) {
       console.error("[Wallet] Wallet not initialized");
@@ -548,12 +550,22 @@ export const useNostrWalletStore = create((set, get) => ({
           "->",
           newBalance
         );
+
+        // Call external onSuccess callback if provided
+        if (typeof onSuccess === "function") {
+          onSuccess(newBalance);
+        }
       });
 
       deposit.on("error", (e) => {
         console.error("[Wallet] Deposit error:", e);
         setError(e.message || "Deposit failed");
         setInvoice("");
+
+        // Call external onError callback if provided
+        if (typeof onError === "function") {
+          onError(e);
+        }
       });
 
       return pr;

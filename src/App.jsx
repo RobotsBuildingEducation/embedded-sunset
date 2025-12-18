@@ -2385,9 +2385,8 @@ const Step = ({
   }, [isCorrect]);
 
   const calculateBalance = () => {
-    const totalBalance =
-      (walletBalance || [])?.reduce((sum, b) => sum + (b.amount || 0), 0) ||
-      null;
+    // walletBalance is now tracked as a number in the store
+    const totalBalance = typeof walletBalance === "number" ? walletBalance : 0;
     if (totalBalance < 0) return 0;
 
     return Math.min((totalBalance / 100) * 100, 100);
