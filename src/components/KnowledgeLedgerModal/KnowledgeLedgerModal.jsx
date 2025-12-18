@@ -198,19 +198,25 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
     const completed = steps[userLanguage].slice(1, idx).map((s) => s.title);
     const history = await fetchHistory();
     let prompt =
-      `Context for the prompt:
+      `This is extremely important to understand and follow:
       The individual is using an education app and learning about computer science and how to code, starting with elementary knowledge and ending with the ability to create apps. Based on the user's completed steps: ${JSON.stringify(
         completed
-      )}, write an app that the user can copy and experiment with HTML or React (choose whichever is appropriate based on the user's progress).` +
+      )}, write an app that the user can copy and experiment with HTML or React (determine whichever is appropriate based on the user's progress). Again it's more important than anything to determine what's appropriate - this is the true task, everything else is just here to help direct you.` +
       (history.length
         ? ` Previous code snippets in order: ${JSON.stringify(history)}.`
         : "") +
       `\n\n` +
-      `Strict requirements: 
+      `
+      -----
+      Strict requirements: 
       
-      1. This is the MOST important to understand: The code should be progressively and appropriately built based on the user's progress to incentivize further interest, excitement and progress, so you should implement the app in a way that highlights the user's progress. For example, if the user's most recent progress/group has learned how to use firebase, then implement firebase features. If the user has recently learned react, implement react UIs, etc. If it's just javascript, then use HMTL. The goal is to build out a simple but real demo that users can operate and preview in an editor and to generate an awesome user experience to highlight one's growth.\n\n` +
-      `2. When generating your response, you MUST format your software in this manner:\n  Globally: Never use imports. Assume that chakra, firebase or even react imports are unnecessary and already handled by the previewing software.\n\n  
-      - A. If you are upgrading to React, do NOT include any import statements or define dependencies and conclude the component or components with render(<TheComponentYouCreated />). This means React code is only ever about writing component functions, nothing else.\n  
+      1. This is the MOST important to understand: The code should be progressively and appropriately built based on the user's progress to incentivize further interest, excitement and progress, so you should implement the app in a way that highlights the user's progress. For example, if the user's most recent progress/group has learned how to use firebase, then implement firebase features. If the user has recently learned react, implement react UIs. If it's just javascript, then use HMTL. The goal is to build out a simple but real demo that users can operate and preview in an editor and to generate an awesome user experience to highlight one's growth.\n\n` +
+      `
+      ----
+      Guidance after determining user's progress and level:
+      
+      2. When generating your response, you MUST format your software in this manner:\n  Globally: Never use imports. Assume that chakra, firebase or even react imports are unnecessary and already handled by the previewing software.\n\n  
+      - A. If you are upgrading to React, do NOT include any import statements or define dependencies (e.g useEffect/useState should be React.useEffect/React.useState) and conclude the component or components with render(<TheComponentYouCreated />). This means React code is only ever about writing component functions, nothing else. Never do something like const { Box } = ChakraUI, just use the Box it's configured to work. \n  
       - B. If you are generating plain html, use !DOCTYPE\n  
       - C. Do NOT return purely plain JavaScript snippets. Use React components or HTML only based on the criteria.\n  
       - D. If you are writing firebase (with or without react), use v9, and you MUST use a unique document in the 'experiments' collection. Never use any other collection or your firebase software will fail. Never use imports or we will fail. Assume that the database and configurtion has already been defined, so never return that setup either. Refer to the database element as "database" and not "db" or anything else. Do not use auth. Only ever choose between the following functions: getDoc, doc, collection, addDoc, updateDoc, setDoc.\n  

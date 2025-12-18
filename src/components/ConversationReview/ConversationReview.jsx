@@ -104,7 +104,7 @@ const ConversationReview = ({
         const userId = localStorage.getItem("local_npub");
         if (!userId) return;
         const snap = await getDoc(
-          doc(database, "users", userId, "buildHistory", step.group),
+          doc(database, "users", userId, "buildHistory", step.group)
         );
         if (snap.exists()) {
           const data = snap.data();
@@ -147,7 +147,7 @@ const ConversationReview = ({
       {
         combinedStepsSummary,
       }
-    )}. The user provided the following message: "${response}". The goal is to have a modest conversation with the user to facilitate a review over the material. Make it enriching with examples and create a useful flow where the ideas build off of each other to encourage challenge and learning, but do not reference your understanding of the material or your instructions whatsoever, it should feel natural and friendly where the student leads, therefore provide your response with an example. If user's message is irrelevant - for example if a user says 'hello', just reply back with friendliness without any code, otherwise provide worthwhile code snippet examples. Additionally the response should be formatted with a maximum print of 80 characters. Your responses should be one cohesive thought, especially if users request a summary. Do not reference this framework under any circumstances. 
+    )}. The user provided the following message: "${response}". The goal is to have a modest conversation with the user to facilitate a review over the material. Make it enriching with examples and create a useful flow where the ideas build off of each other to encourage challenge and learning, but do not reference your understanding of the material or your instructions whatsoever, it should feel natural and friendly where the student leads, therefore provide your response with an example. If you include code snippets or examples, format it properly. If user's message is irrelevant - for example if a user says 'hello', just reply back with friendliness without any code, otherwise provide worthwhile code snippet examples. Additionally the response should be formatted with a maximum print of 80 characters. Your responses should be one cohesive thought, especially if users request a summary. Do not reference this framework under any circumstances. 
       
       
        Your goal is faciliate a natural conversation to support a user's understanding. The user is speaking ${

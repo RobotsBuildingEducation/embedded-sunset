@@ -185,7 +185,7 @@ export default function KnowledgeLedgerOnboarding({
         
         2. Your code should conclude with the line: render(<TheComponentYouCreated />)
         
-        3. Use the React object for useState and useEffect. Do not use it for createElement, just use the jsx notation instead.
+        3. Use the React object for useState and useEffect (React.useState, React.useEffect) without importing. Do not use it for createElement, just use the jsx notation instead.
         
         4. Print width of 80.
         

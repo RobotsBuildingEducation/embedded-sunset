@@ -51,17 +51,24 @@ async function initMessaging() {
 }
 
 initMessaging();
-const vertexAI = getVertexAI(app);
+const vertexAI = getVertexAI(app, { location: "global" });
 
 const model = getGenerativeModel(vertexAI, {
-  // model: "gemini-1.5-flash",
-  model: "gemini-2.0-flash-001",
+  model: "gemini-3-flash-preview",
+  generationConfig: {
+    // Firebase AI Logic doesn't support Gemini 3 thinking_level yet.
+    // For now, keep using thinking budgets (0 ≈ "minimal" behavior you're after).
+    thinkingConfig: { thinkingBudget: 0 },
+  },
 });
 
 const simplemodel = getGenerativeModel(vertexAI, {
-  // model: "gemini-1.5-flash",
-  // model: "gemini-2.0-flash-001",
-  model: "gemini-2.0-flash",
+  model: "gemini-3-flash-preview",
+  generationConfig: {
+    // Firebase AI Logic doesn't support Gemini 3 thinking_level yet.
+    // For now, keep using thinking budgets (0 ≈ "minimal" behavior you're after).
+    thinkingConfig: { thinkingBudget: 0 },
+  },
 });
 
 const promodel = getGenerativeModel(vertexAI, {
@@ -70,10 +77,11 @@ const promodel = getGenerativeModel(vertexAI, {
 });
 
 const thinkingmodel = getGenerativeModel(vertexAI, {
-  // model: "gemini-1.5-flash",
-  model: "gemini-2.5-flash",
+  model: "gemini-3-flash-preview",
   generationConfig: {
-    thinkingConfig: { thinkingBudget: 0 }, // disables thinking
+    // Firebase AI Logic doesn't support Gemini 3 thinking_level yet.
+    // For now, keep using thinking budgets (0 ≈ "minimal" behavior you're after).
+    thinkingConfig: { thinkingBudget: 0 },
   },
 });
 
