@@ -4428,7 +4428,7 @@ const Step = ({
               isOpen={isKnowledgeLedgerOpen}
               onClose={onKnowledgeLedgerClose}
               steps={steps}
-              step={currentStep}
+              step={step}
             />
           ) : (
             <AlgorithmHelper
