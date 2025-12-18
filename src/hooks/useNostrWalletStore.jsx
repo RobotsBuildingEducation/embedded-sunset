@@ -206,7 +206,7 @@ export const useNostrWalletStore = create((set, get) => ({
             console.warn("[Wallet] Background sync failed (keeping local):", e);
             // Keep local balance on sync failure - this is expected due to race conditions
           }
-        }, 3000); // Wait 3 seconds after wallet ready before background sync
+        }, 1000); // Wait 1 second after wallet ready before background sync
       } else {
         // First time: sync from wallet
         try {
