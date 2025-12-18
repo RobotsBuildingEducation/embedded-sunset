@@ -167,17 +167,46 @@ export const useNostrWalletStore = create((set, get) => ({
       isWalletReady: false,
     });
 
-    // Initialize tracked balance: use localStorage if available,
-    // otherwise sync from wallet.balance() on first load
+    // Initialize tracked balance: use localStorage first for stability,
+    // then run background sync to reconcile with relay data
     setTimeout(async () => {
       const storedBalance = loadTrackedBalance();
       if (storedBalance !== null) {
-        // Use our tracked balance
+        // Use our tracked balance immediately for stability
         console.log(
           "[Wallet] Using tracked balance from localStorage:",
           storedBalance
         );
         set({ walletBalance: storedBalance, isWalletReady: true });
+
+        // Background sync: check relay balance after UI is stable
+        // This runs after initial load to potentially reconcile drift
+        setTimeout(async () => {
+          try {
+            console.log("[Wallet] Running background sync with relays...");
+            const bal = await wallet.balance();
+            const relayBalance = extractBalance(bal);
+
+            if (relayBalance !== storedBalance) {
+              console.log(
+                "[Wallet] Background sync found different balance:",
+                storedBalance,
+                "->",
+                relayBalance
+              );
+              saveTrackedBalance(relayBalance);
+              set({ walletBalance: relayBalance });
+            } else {
+              console.log(
+                "[Wallet] Background sync complete - balance matches:",
+                relayBalance
+              );
+            }
+          } catch (e) {
+            console.warn("[Wallet] Background sync failed (keeping local):", e);
+            // Keep local balance on sync failure - this is expected due to race conditions
+          }
+        }, 3000); // Wait 3 seconds after wallet ready before background sync
       } else {
         // First time: sync from wallet
         try {
