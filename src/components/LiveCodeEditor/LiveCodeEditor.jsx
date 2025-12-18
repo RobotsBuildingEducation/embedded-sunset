@@ -9,6 +9,7 @@ import React, {
 import {
   ChakraProvider,
   ColorModeScript,
+  Toast,
 
   // Layout
   AbsoluteCenter,
@@ -75,6 +76,7 @@ import {
   SliderMark,
   Switch,
   Textarea,
+  SelectField,
 
   // Data Display
   Badge,
@@ -107,6 +109,9 @@ import {
   TagLeftIcon,
   TagRightIcon,
   TagCloseButton,
+  Square,
+  StackDivider,
+  ButtonGroup,
 
   // Feedback
   Alert,
@@ -120,6 +125,7 @@ import {
   SkeletonCircle,
   SkeletonText,
   Spinner,
+  Circle,
 
   // Overlays
   AlertDialog,
@@ -179,6 +185,7 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbSeparator,
+  Indicator,
   Link,
   LinkBox,
   LinkOverlay,
@@ -190,6 +197,10 @@ import {
   StepDescription,
   StepNumber,
   StepSeparator,
+  StepIcon,
+  FormErrorIcon,
+  SkipNavLink,
+  SkipNavContent,
 
   // Media & Icons
   Avatar,
@@ -210,6 +221,11 @@ import {
   Slide,
   SlideFade,
   useClipboard,
+  Img,
+  Mark,
+  RequiredIndicator,
+  FocusLock,
+  ControlBox,
 } from "@chakra-ui/react";
 
 import Editor from "@monaco-editor/react";
@@ -494,6 +510,11 @@ const LiveReactEditorModal = ({
                     VStack,
                     Wrap,
                     WrapItem,
+                    Toast,
+                    StepIcon,
+                    FormErrorIcon,
+                    SkipNavLink,
+                    SkipNavContent,
 
                     // Typography
                     Text,
@@ -502,6 +523,9 @@ const LiveReactEditorModal = ({
                     Kbd,
                     Code,
                     Divider,
+                    Square,
+                    StackDivider,
+                    ButtonGroup,
 
                     // Forms
                     Button,
@@ -509,11 +533,14 @@ const LiveReactEditorModal = ({
                     Checkbox,
                     CheckboxGroup,
                     Editable,
+                    FocusLock,
                     EditableInput,
                     EditableTextarea,
+                    ControlBox,
                     EditablePreview,
                     FormControl,
                     FormLabel,
+                    RequiredIndicator,
                     FormErrorMessage,
                     FormHelperText,
                     Input,
@@ -536,11 +563,13 @@ const LiveReactEditorModal = ({
                     RangeSliderFilledTrack,
                     RangeSliderThumb,
                     Select,
+                    SelectField,
                     Slider,
                     SliderTrack,
                     SliderFilledTrack,
                     SliderThumb,
                     SliderMark,
+                    Mark,
                     Switch,
                     Textarea,
 
@@ -586,6 +615,7 @@ const LiveReactEditorModal = ({
                     Progress,
                     Skeleton,
                     SkeletonCircle,
+                    Circle,
                     SkeletonText,
                     Spinner,
 
@@ -643,6 +673,7 @@ const LiveReactEditorModal = ({
                     TabPanels,
                     TabPanel,
                     TabIndicator,
+                    Indicator,
                     Breadcrumb,
                     BreadcrumbItem,
                     BreadcrumbLink,
@@ -665,6 +696,7 @@ const LiveReactEditorModal = ({
                     AvatarGroup,
                     Icon,
                     Image,
+                    Img,
                     CloseButton,
 
                     // Utilities
