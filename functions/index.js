@@ -515,8 +515,7 @@ app.post("/obsessed-stalker", verifyAppCheckToken, async (req, res) => {
     // Construct the payload for OpenAI API
     const constructor = {
       model: "gpt-5-nano",
-      messages: messages || [],
-      stream: false, // Disable streaming
+      input: messages || [],
       reasoning: { effort: "minimal" },
       text: { verbosity: "low" },
       ...restOfApiParams,
