@@ -524,7 +524,7 @@ app.post("/obsessed-stalker", verifyAppCheckToken, async (req, res) => {
 
     // Make the OpenAI API call using node-fetch
     const openaiResponse = await fetch(
-      "https://api.openai.com/v1/chat/completions",
+      "https://api.openai.com/v1/responses",
       {
         method: "POST",
         headers: {
