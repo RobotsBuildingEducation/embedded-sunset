@@ -517,7 +517,8 @@ app.post("/obsessed-stalker", verifyAppCheckToken, async (req, res) => {
       model: "gpt-5-nano",
       messages: messages || [],
       stream: false, // Disable streaming
-      reasoning: { effort: "low" },
+      reasoning: { effort: "minimal" },
+      text: { verbosity: "low" },
       ...restOfApiParams,
     };
 
