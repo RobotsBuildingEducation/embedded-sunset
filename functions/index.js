@@ -514,15 +514,16 @@ app.post("/obsessed-stalker", verifyAppCheckToken, async (req, res) => {
 
     // Construct the payload for OpenAI API
     const constructor = {
-      model: "gpt-4.1-mini",
-      messages: messages || [],
-      stream: false, // Disable streaming
+      model: "gpt-5-nano",
+      input: messages || [],
+      reasoning: { effort: "minimal" },
+      text: { verbosity: "low" },
       ...restOfApiParams,
     };
 
     // Make the OpenAI API call using node-fetch
     const openaiResponse = await fetch(
-      "https://api.openai.com/v1/chat/completions",
+      "https://api.openai.com/v1/responses",
       {
         method: "POST",
         headers: {
