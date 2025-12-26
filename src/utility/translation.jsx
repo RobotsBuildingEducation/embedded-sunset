@@ -1068,6 +1068,13 @@ reverse(head) {
     "createAccount.button.launchApp": "Launch App",
     "signIn.instructions": "Enter your nostr secret key",
     "signIn.input.placeholder": "Enter your secret key (nsec...)",
+    "signIn.or": "or",
+    "signIn.nip07": "Sign in with Extension",
+    "nsecPrompt.title": "Optional: Add Your Secret Key",
+    "nsecPrompt.description": "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",
+    "nsecPrompt.placeholder": "nsec1...",
+    "nsecPrompt.skip": "Skip for now",
+    "nsecPrompt.save": "Save",
     "button.dismiss": "Dimiss",
     "app.progress": "progress",
     "app.streak": "streak",
@@ -1762,7 +1769,7 @@ reverse(head) {
         <br />
       </>
     ),
-    "tag.allowPosting": "Do not post my progress",
+    "tag.allowPosting": "Allow posts",
   },
   es: {
     communityGoal: "Meta comunitaria: ",
@@ -2996,6 +3003,13 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "createAccount.button.launchApp": "Iniciar aplicación",
     "signIn.instructions": "Ingrese su clave secreta de nostr",
     "signIn.input.placeholder": "Ingrese su clave secreta (nsec...)",
+    "signIn.or": "o",
+    "signIn.nip07": "Iniciar sesión con Extensión",
+    "nsecPrompt.title": "Opcional: Agregar Tu Clave Secreta",
+    "nsecPrompt.description": "Para usar funciones como publicar contenido y depósitos de billetera, puedes proporcionar opcionalmente tu clave secreta (nsec). Esto se almacena localmente en tu dispositivo.",
+    "nsecPrompt.placeholder": "nsec1...",
+    "nsecPrompt.skip": "Omitir por ahora",
+    "nsecPrompt.save": "Guardar",
     "button.dismiss": "Descartar",
     "app.progress": "progreso",
     "app.streak": "racha",
@@ -4407,6 +4421,13 @@ reverse(head) {
     "createAccount.button.launchApp": "Launch App",
     "signIn.instructions": "Enter your nostr secret key",
     "signIn.input.placeholder": "Enter your secret key (nsec...)",
+    "signIn.or": "or",
+    "signIn.nip07": "Sign in with Extension",
+    "nsecPrompt.title": "Optional: Add Your Secret Key",
+    "nsecPrompt.description": "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",
+    "nsecPrompt.placeholder": "nsec1...",
+    "nsecPrompt.skip": "Skip for now",
+    "nsecPrompt.save": "Save",
     "button.dismiss": "Dimiss",
     "app.progress": "progress",
     "app.streak": "streak",
@@ -5068,7 +5089,7 @@ reverse(head) {
         <br />
       </>
     ),
-    "tag.allowPosting": "Do not post my progress",
+    "tag.allowPosting": "Allow posts",
   },
   "swift-en": {
     communityGoal: "Community goal: ",
@@ -6027,6 +6048,13 @@ reverse(head) {
     "createAccount.button.launchApp": "Launch App",
     "signIn.instructions": "Enter your nostr secret key",
     "signIn.input.placeholder": "Enter your secret key (nsec...)",
+    "signIn.or": "or",
+    "signIn.nip07": "Sign in with Extension",
+    "nsecPrompt.title": "Optional: Add Your Secret Key",
+    "nsecPrompt.description": "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",
+    "nsecPrompt.placeholder": "nsec1...",
+    "nsecPrompt.skip": "Skip for now",
+    "nsecPrompt.save": "Save",
     "button.dismiss": "Dimiss",
     "app.progress": "progress",
     "app.streak": "streak",
@@ -6688,7 +6716,7 @@ reverse(head) {
         <br />
       </>
     ),
-    "tag.allowPosting": "Do not post my progress",
+    "tag.allowPosting": "Allow posts",
   },
   "android-en": {
     communityGoal: "Community goal: ",
@@ -7647,6 +7675,13 @@ reverse(head) {
     "createAccount.button.launchApp": "Launch App",
     "signIn.instructions": "Enter your nostr secret key",
     "signIn.input.placeholder": "Enter your secret key (nsec...)",
+    "signIn.or": "or",
+    "signIn.nip07": "Sign in with Extension",
+    "nsecPrompt.title": "Optional: Add Your Secret Key",
+    "nsecPrompt.description": "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",
+    "nsecPrompt.placeholder": "nsec1...",
+    "nsecPrompt.skip": "Skip for now",
+    "nsecPrompt.save": "Save",
     "button.dismiss": "Dimiss",
     "app.progress": "progress",
     "app.streak": "streak",
@@ -8308,7 +8343,7 @@ reverse(head) {
         <br />
       </>
     ),
-    "tag.allowPosting": "Do not post my progress",
+    "tag.allowPosting": "Allow posts",
   },
   "compsci-en": {
     communityGoal: "Community goal: ",
@@ -9265,6 +9300,13 @@ reverse(head) {
     "createAccount.button.launchApp": "Launch App",
     "signIn.instructions": "Enter your nostr secret key",
     "signIn.input.placeholder": "Enter your secret key (nsec...)",
+    "signIn.or": "or",
+    "signIn.nip07": "Sign in with Extension",
+    "nsecPrompt.title": "Optional: Add Your Secret Key",
+    "nsecPrompt.description": "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",
+    "nsecPrompt.placeholder": "nsec1...",
+    "nsecPrompt.skip": "Skip for now",
+    "nsecPrompt.save": "Save",
     "button.dismiss": "Dimiss",
     "app.progress": "progress",
     "app.streak": "streak",
@@ -9926,6 +9968,6 @@ reverse(head) {
         <br />
       </>
     ),
-    "tag.allowPosting": "Do not post my progress",
+    "tag.allowPosting": "Allow posts",
   },
 };

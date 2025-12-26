@@ -2,7 +2,11 @@
 // NIP-60 (Cashu Wallets) and NIP-61 (Nutzaps) implementation
 // Zustand store for global wallet state
 import { create } from "zustand";
-import NDK, { NDKPrivateKeySigner, NDKEvent } from "@nostr-dev-kit/ndk";
+import NDK, {
+  NDKPrivateKeySigner,
+  NDKNip07Signer,
+  NDKEvent,
+} from "@nostr-dev-kit/ndk";
 import NDKWalletService, { NDKCashuWallet } from "@nostr-dev-kit/ndk-wallet";
 import { Buffer } from "buffer";
 import { bech32 } from "bech32";
@@ -232,14 +236,18 @@ export const useNostrWalletStore = create((set, get) => ({
       nostrPubKey,
       nostrPrivKey,
       connectToNostr,
+      connectWithNip07,
       setupWalletListeners,
     } = get();
+
+    const isNip07Login = localStorage.getItem("nip07_login") === "true";
 
     try {
       let ndk = providedNdk || ndkInstance;
       let s = providedSigner || signer;
 
       if (!ndk || !s) {
+        // Try nsec-based connection first
         if (nostrPubKey && nostrPrivKey) {
           const connection = await connectToNostr(nostrPubKey, nostrPrivKey);
           if (connection) {
@@ -248,6 +256,16 @@ export const useNostrWalletStore = create((set, get) => ({
             set({ ndkInstance: ndk, signer: s });
           } else {
             throw new Error("Unable to connect to Nostr.");
+          }
+        } else if (isNip07Login && nostrPubKey) {
+          // Try NIP-07 connection
+          const connection = await connectWithNip07();
+          if (connection) {
+            ndk = connection.ndkInstance;
+            s = connection.signer;
+            set({ ndkInstance: ndk, signer: s });
+          } else {
+            throw new Error("Unable to connect with NIP-07.");
           }
         } else {
           throw new Error("NDK or signer not found and no keys to reconnect.");
@@ -321,16 +339,50 @@ export const useNostrWalletStore = create((set, get) => ({
     }
   },
 
+  // Connect to Nostr with NIP-07 signer
+  connectWithNip07: async () => {
+    const { setError } = get();
+
+    try {
+      if (typeof window === "undefined" || !window.nostr) {
+        throw new Error("No NIP-07 extension found");
+      }
+
+      const ndkInstance = new NDK({
+        explicitRelayUrls: DEFAULT_RELAYS,
+      });
+
+      await ndkInstance.connect();
+
+      const nip07Signer = new NDKNip07Signer();
+      await nip07Signer.blockUntilReady();
+
+      ndkInstance.signer = nip07Signer;
+      const user = await nip07Signer.user();
+      const hexNpub = user.pubkey;
+
+      set({ isConnected: true, nostrPubKey: user.npub });
+
+      return { ndkInstance, hexNpub, signer: nip07Signer, isNip07: true };
+    } catch (err) {
+      console.error("[Wallet] Error connecting with NIP-07:", err);
+      setError(err.message);
+      return null;
+    }
+  },
+
   // Initialize wallet (called on app load)
   init: async () => {
     const storedNpub = localStorage.getItem("local_npub");
     const storedNsec = localStorage.getItem("local_nsec");
+    const isNip07Login = localStorage.getItem("nip07_login") === "true";
 
     if (storedNpub) set({ nostrPubKey: storedNpub });
     if (storedNsec) set({ nostrPrivKey: storedNsec });
 
-    const { connectToNostr } = get();
+    const { connectToNostr, connectWithNip07 } = get();
 
+    // Try nsec-based connection first
     if (storedNpub && storedNsec) {
       console.log("[Wallet] Initializing with stored keys");
       const connection = await connectToNostr(storedNpub, storedNsec);
@@ -340,6 +392,18 @@ export const useNostrWalletStore = create((set, get) => ({
         return true;
       }
     }
+
+    // If NIP-07 login, try connecting with extension
+    if (isNip07Login && storedNpub) {
+      console.log("[Wallet] Initializing with NIP-07 signer");
+      const connection = await connectWithNip07();
+      if (connection) {
+        const { ndkInstance: ndk, signer: s } = connection;
+        set({ ndkInstance: ndk, signer: s });
+        return true;
+      }
+    }
+
     return false;
   },
 

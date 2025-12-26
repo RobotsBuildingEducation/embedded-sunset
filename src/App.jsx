@@ -51,6 +51,14 @@ import {
   Center,
   Image,
   useToken,
+  Divider,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
@@ -2369,7 +2377,7 @@ const Step = ({
 
       getRecipient();
 
-      if (!allowPosts) {
+      if (allowPosts) {
         postNostrContent(
           `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://robotsbuildingeducation.com \n\n${step.question?.questionText} #LearnWithNostr`
         );
@@ -4652,6 +4660,8 @@ const Home = ({
   setUserLanguage,
   generateNostrKeys,
   auth,
+  authWithNip07,
+  setShowNsecPrompt,
   view,
   setView,
   setCurrentStep,
@@ -5019,6 +5029,90 @@ const Home = ({
       }
     } catch (error) {
       // const err = error.error;
+      setIsSigningIn(false);
+      setErrorMessage({ error });
+    }
+  };
+
+  const handleNip07SignIn = async () => {
+    try {
+      setIsSigningIn(true);
+      const result = await authWithNip07();
+
+      if (!result) {
+        setIsSigningIn(false);
+        return;
+      }
+
+      const npub = localStorage.getItem("local_npub");
+      const userName = localStorage.getItem("displayName");
+
+      try {
+        await createUser(npub, userName, userLanguage);
+      } catch (error) {
+        console.error("Error ensuring user record exists", error);
+        setIsSigningIn(false);
+        setErrorMessage(JSON.stringify(error));
+        return;
+      }
+
+      const defaultInterval = 2880;
+      const existingUserData = await getUserData(npub).catch((error) => {
+        console.error("Failed to load user data after sign in", error);
+        return null;
+      });
+
+      if (
+        !existingUserData?.startTime ||
+        !existingUserData?.endTime ||
+        !existingUserData?.timer
+      ) {
+        const currentTime = new Date();
+        const endTime = new Date(
+          currentTime.getTime() + defaultInterval * 60000
+        );
+
+        try {
+          await updateUserData(
+            npub,
+            defaultInterval,
+            0,
+            currentTime,
+            endTime,
+            5,
+            new Date(currentTime.getTime() + 86400000),
+            0,
+            0
+          );
+        } catch (error) {
+          console.log("error creating user data", error);
+        }
+      }
+
+      const currentStep = await getUserStep(npub).catch((error) => {
+        setIsSigningIn(false);
+        setErrorMessage(JSON.stringify(error));
+      });
+
+      const onboardingProgress = await getOnboardingStep(npub);
+
+      setIsSigningIn(false);
+      setIsSignedIn(true);
+      setCurrentStep(currentStep);
+
+      // Show nsec prompt for wallet features
+      setShowNsecPrompt(true);
+
+      if (
+        onboardingProgress !== "done" &&
+        parseInt(onboardingProgress, 10) <= 6 &&
+        parseInt(onboardingProgress, 10) === currentStep + 1
+      ) {
+        navigate(`/onboarding/${parseInt(onboardingProgress, 10)}`);
+      } else {
+        navigate(`/q/${currentStep}`);
+      }
+    } catch (error) {
       setIsSigningIn(false);
       setErrorMessage({ error });
     }
@@ -5837,7 +5931,7 @@ const Home = ({
               onMouseDown={() => setView("buttons")}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
-                  setView("buttons"); // Select the option on Enter or Space key
+                  setView("buttons");
                 }
               }}
             >
@@ -5851,7 +5945,7 @@ const Home = ({
               variant={"outline"}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
-                  handleSignIn(); // Select the option on Enter or Space key
+                  handleSignIn();
                 }
               }}
             >
@@ -5859,12 +5953,33 @@ const Home = ({
             </Button>
           </HStack>
 
+          <HStack width="100%" maxWidth="300px" alignItems="center" my={2}>
+            <Divider borderColor="gray.400" />
+            <Text fontSize="xs" color="gray.500" px={2} whiteSpace="nowrap">
+              {translation[userLanguage]["signIn.or"] || "or"}
+            </Text>
+            <Divider borderColor="gray.400" />
+          </HStack>
+
+          <Button
+            onMouseDown={handleNip07SignIn}
+            colorScheme="purple"
+            variant="solid"
+            width="100%"
+            maxWidth="300px"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                handleNip07SignIn();
+              }
+            }}
+          >
+            {translation[userLanguage]["signIn.nip07"] ||
+              "Sign in with Extension"}
+          </Button>
+
           <Text color="red" fontSize="sm">
             {errorMessage ? errorMessage?.error?.message : null}
           </Text>
-          {/* <Button onMouseDown={authWithSigner} colorScheme="pink">
-                signin with extension
-              </Button> */}
         </VStack>
       )}
       {view === "created" && keys && (
@@ -6280,7 +6395,9 @@ function App({ isShutDown }) {
   const { alert, hideAlert, showAlert } = useAlertStore();
   const [hasSubmittedPasscode, setHasSubmittedPasscode] = useState(false);
 
-  const [allowPosts, setAllowPosts] = useState(false);
+  const [allowPosts, setAllowPosts] = useState(true);
+  const [showNsecPrompt, setShowNsecPrompt] = useState(false);
+  const [nsecInput, setNsecInput] = useState("");
 
   const [showClouds, setShowClouds] = useState(false);
   const [pendingPath, setPendingPath] = useState(null);
@@ -6425,6 +6542,9 @@ function App({ isShutDown }) {
   const {
     generateNostrKeys,
     auth,
+    authWithNip07,
+    checkNip07Available,
+    saveNsecForNip07User,
     postNostrContent,
     assignExistingBadgeToNpub,
   } = useSharedNostr(
@@ -6447,6 +6567,18 @@ function App({ isShutDown }) {
         language: newLanguage,
       });
     }
+  };
+
+  const handleSaveNsec = () => {
+    if (saveNsecForNip07User(nsecInput)) {
+      setShowNsecPrompt(false);
+      setNsecInput("");
+    }
+  };
+
+  const handleSkipNsec = () => {
+    setShowNsecPrompt(false);
+    setNsecInput("");
   };
 
   let memory = () => {
@@ -6727,7 +6859,7 @@ function App({ isShutDown }) {
             steps={steps}
             userLanguage={userLanguage}
             setUserLanguage={setUserLanguage}
-            currentStep={currentStep} // Pass current step to SettingsMenu
+            currentStep={currentStep}
             view={view}
             setView={setView}
             step={steps?.[userLanguage]?.[currentStep]}
@@ -6737,6 +6869,8 @@ function App({ isShutDown }) {
             onActionTourComplete={handleActionTourComplete}
             menuButtonRef={settingsButtonRef}
             menuTourStep={actionBarTourSteps?.[0]}
+            allowPosts={allowPosts}
+            setAllowPosts={setAllowPosts}
           />
         )}
 
@@ -6752,6 +6886,8 @@ function App({ isShutDown }) {
                 setUserLanguage={setUserLanguage}
                 generateNostrKeys={generateNostrKeys}
                 auth={auth}
+                authWithNip07={authWithNip07}
+                setShowNsecPrompt={setShowNsecPrompt}
                 view={view}
                 setView={setView}
                 setCurrentStep={setCurrentStep}
@@ -6836,6 +6972,45 @@ function App({ isShutDown }) {
             }
           />
         </Routes>
+
+        {/* Nsec Prompt Modal for NIP-07 users */}
+        <Modal isOpen={showNsecPrompt} onClose={handleSkipNsec} isCentered>
+          <ModalOverlay />
+          <ModalContent mx={4}>
+            <ModalHeader>
+              {translation[userLanguage]["nsecPrompt.title"] ||
+                "Optional: Add Your Secret Key"}
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Text fontSize="sm" mb={4}>
+                {translation[userLanguage]["nsecPrompt.description"] ||
+                  "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device."}
+              </Text>
+              <Input
+                placeholder={
+                  translation[userLanguage]["nsecPrompt.placeholder"] ||
+                  "nsec1..."
+                }
+                value={nsecInput}
+                onChange={(e) => setNsecInput(e.target.value)}
+                type="password"
+              />
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="ghost" mr={3} onMouseDown={handleSkipNsec}>
+                {translation[userLanguage]["nsecPrompt.skip"] || "Skip for now"}
+              </Button>
+              <Button
+                colorScheme="purple"
+                onMouseDown={handleSaveNsec}
+                isDisabled={!nsecInput}
+              >
+                {translation[userLanguage]["nsecPrompt.save"] || "Save"}
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       </Box>
     </Box>
   );
