@@ -51,7 +51,10 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
 
   const handleCreateWallet = async () => {
     const hasNsec = localStorage.getItem("local_nsec");
-    if (!hasNsec) {
+    const isNip07Login = localStorage.getItem("nip07_login") === "true";
+
+    // Check if we have either nsec or NIP-07 extension
+    if (!hasNsec && !isNip07Login) {
       toast({
         title: translation[userLanguage]["wallet.needsNsec.title"] || "Secret Key Required",
         description: translation[userLanguage]["wallet.needsNsec.description"] || "Please add your secret key (nsec) to create a wallet. You can add it in the settings menu.",
@@ -61,6 +64,21 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
         position: "top",
       });
       return;
+    }
+
+    // For NIP-07 users, check if extension is available
+    if (isNip07Login && !hasNsec) {
+      if (typeof window === "undefined" || !window.nostr) {
+        toast({
+          title: translation[userLanguage]["wallet.needsExtension.title"] || "Extension Required",
+          description: translation[userLanguage]["wallet.needsExtension.description"] || "Please make sure your Nostr signer extension is installed and active.",
+          status: "warning",
+          duration: 5000,
+          isClosable: true,
+          position: "top",
+        });
+        return;
+      }
     }
 
     const wallet = await createNewWallet();
