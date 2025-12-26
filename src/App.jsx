@@ -4660,6 +4660,8 @@ const Home = ({
   setUserLanguage,
   generateNostrKeys,
   auth,
+  authWithNip07,
+  setShowNsecPrompt,
   view,
   setView,
   setCurrentStep,
@@ -5114,18 +5116,6 @@ const Home = ({
       setIsSigningIn(false);
       setErrorMessage({ error });
     }
-  };
-
-  const handleSaveNsec = () => {
-    if (saveNsecForNip07User(nsecInput)) {
-      setShowNsecPrompt(false);
-      setNsecInput("");
-    }
-  };
-
-  const handleSkipNsec = () => {
-    setShowNsecPrompt(false);
-    setNsecInput("");
   };
 
   const handleCheckboxChange = (event) => {
@@ -6578,6 +6568,18 @@ function App({ isShutDown }) {
     }
   };
 
+  const handleSaveNsec = () => {
+    if (saveNsecForNip07User(nsecInput)) {
+      setShowNsecPrompt(false);
+      setNsecInput("");
+    }
+  };
+
+  const handleSkipNsec = () => {
+    setShowNsecPrompt(false);
+    setNsecInput("");
+  };
+
   let memory = () => {
     console.log("get");
   };
@@ -6883,6 +6885,8 @@ function App({ isShutDown }) {
                 setUserLanguage={setUserLanguage}
                 generateNostrKeys={generateNostrKeys}
                 auth={auth}
+                authWithNip07={authWithNip07}
+                setShowNsecPrompt={setShowNsecPrompt}
                 view={view}
                 setView={setView}
                 setCurrentStep={setCurrentStep}
