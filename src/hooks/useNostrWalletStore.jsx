@@ -2,7 +2,11 @@
 // NIP-60 (Cashu Wallets) and NIP-61 (Nutzaps) implementation
 // Zustand store for global wallet state
 import { create } from "zustand";
-import NDK, { NDKPrivateKeySigner, NDKNip07Signer, NDKEvent } from "@nostr-dev-kit/ndk";
+import NDK, {
+  NDKPrivateKeySigner,
+  NDKNip07Signer,
+  NDKEvent,
+} from "@nostr-dev-kit/ndk";
 import NDKWalletService, { NDKCashuWallet } from "@nostr-dev-kit/ndk-wallet";
 import { Buffer } from "buffer";
 import { bech32 } from "bech32";

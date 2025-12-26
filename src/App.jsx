@@ -5973,7 +5973,8 @@ const Home = ({
               }
             }}
           >
-            {translation[userLanguage]["signIn.nip07"] || "Sign in with Extension"}
+            {translation[userLanguage]["signIn.nip07"] ||
+              "Sign in with Extension"}
           </Button>
 
           <Text color="red" fontSize="sm">
@@ -6977,7 +6978,8 @@ function App({ isShutDown }) {
           <ModalOverlay />
           <ModalContent mx={4}>
             <ModalHeader>
-              {translation[userLanguage]["nsecPrompt.title"] || "Optional: Add Your Secret Key"}
+              {translation[userLanguage]["nsecPrompt.title"] ||
+                "Optional: Add Your Secret Key"}
             </ModalHeader>
             <ModalCloseButton />
             <ModalBody>
@@ -6986,7 +6988,10 @@ function App({ isShutDown }) {
                   "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device."}
               </Text>
               <Input
-                placeholder={translation[userLanguage]["nsecPrompt.placeholder"] || "nsec1..."}
+                placeholder={
+                  translation[userLanguage]["nsecPrompt.placeholder"] ||
+                  "nsec1..."
+                }
                 value={nsecInput}
                 onChange={(e) => setNsecInput(e.target.value)}
                 type="password"
@@ -6996,7 +7001,11 @@ function App({ isShutDown }) {
               <Button variant="ghost" mr={3} onMouseDown={handleSkipNsec}>
                 {translation[userLanguage]["nsecPrompt.skip"] || "Skip for now"}
               </Button>
-              <Button colorScheme="purple" onMouseDown={handleSaveNsec} isDisabled={!nsecInput}>
+              <Button
+                colorScheme="purple"
+                onMouseDown={handleSaveNsec}
+                isDisabled={!nsecInput}
+              >
                 {translation[userLanguage]["nsecPrompt.save"] || "Save"}
               </Button>
             </ModalFooter>
