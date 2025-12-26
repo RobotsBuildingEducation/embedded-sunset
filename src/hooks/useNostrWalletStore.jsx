@@ -21,18 +21,38 @@ const DEFAULT_RELAYS = [
 const DEFAULT_RECEIVER =
   "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt";
 
-// localStorage key for tracked balance
-const TRACKED_BALANCE_KEY = "wallet_tracked_balance";
+// localStorage key for tracked balance (scoped per npub)
+const TRACKED_BALANCE_PREFIX = "wallet_tracked_balance";
+const LEGACY_BALANCE_KEY = TRACKED_BALANCE_PREFIX;
+
+function getBalanceStorageKey(npub = "") {
+  return npub ? `${TRACKED_BALANCE_PREFIX}:${npub}` : LEGACY_BALANCE_KEY;
+}
 
 /**
  * Load tracked balance from localStorage
  */
-function loadTrackedBalance() {
+function loadTrackedBalance(npub = "") {
   try {
-    const stored = localStorage.getItem(TRACKED_BALANCE_KEY);
+    // Prefer the balance scoped to the current npub
+    const scopedKey = getBalanceStorageKey(npub);
+    const stored = localStorage.getItem(scopedKey);
     if (stored !== null) {
       const parsed = Number(stored);
       return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    // Fallback to legacy balance (pre-npub scoping) and migrate it if valid
+    if (npub) {
+      const legacyStored = localStorage.getItem(LEGACY_BALANCE_KEY);
+      if (legacyStored !== null) {
+        const parsedLegacy = Number(legacyStored);
+        if (Number.isFinite(parsedLegacy)) {
+          saveTrackedBalance(parsedLegacy, npub);
+          localStorage.removeItem(LEGACY_BALANCE_KEY);
+          return parsedLegacy;
+        }
+      }
     }
   } catch (e) {
     console.warn("[Wallet] Error loading tracked balance:", e);
@@ -43,9 +63,10 @@ function loadTrackedBalance() {
 /**
  * Save tracked balance to localStorage
  */
-function saveTrackedBalance(balance) {
+function saveTrackedBalance(balance, npub = "") {
   try {
-    localStorage.setItem(TRACKED_BALANCE_KEY, String(balance));
+    const scopedKey = getBalanceStorageKey(npub);
+    localStorage.setItem(scopedKey, String(balance));
   } catch (e) {
     console.warn("[Wallet] Error saving tracked balance:", e);
   }
@@ -174,7 +195,8 @@ export const useNostrWalletStore = create((set, get) => ({
     // Initialize tracked balance: use localStorage first for stability,
     // then run background sync to reconcile with relay data
     setTimeout(async () => {
-      const storedBalance = loadTrackedBalance();
+      const npub = get().nostrPubKey;
+      const storedBalance = loadTrackedBalance(npub);
       if (storedBalance !== null) {
         // Use our tracked balance immediately for stability
         console.log(
@@ -198,7 +220,7 @@ export const useNostrWalletStore = create((set, get) => ({
                 "->",
                 relayBalance
               );
-              saveTrackedBalance(relayBalance);
+              saveTrackedBalance(relayBalance, npub);
               set({ walletBalance: relayBalance });
             } else {
               console.log(
@@ -217,7 +239,7 @@ export const useNostrWalletStore = create((set, get) => ({
           const bal = await wallet.balance();
           const initialBalance = extractBalance(bal);
           console.log("[Wallet] Initial balance from wallet:", initialBalance);
-          saveTrackedBalance(initialBalance);
+          saveTrackedBalance(initialBalance, npub);
           set({ walletBalance: initialBalance, isWalletReady: true });
         } catch (e) {
           console.error("[Wallet] Error getting initial balance:", e);
@@ -276,6 +298,11 @@ export const useNostrWalletStore = create((set, get) => ({
       const user = await s.user();
       user.signer = s;
 
+      // Ensure we keep the active npub in state for balance tracking
+      if (!get().nostrPubKey && user.npub) {
+        set({ nostrPubKey: user.npub });
+      }
+
       const wService = new NDKWalletService(ndk);
       wService.start();
 
@@ -329,7 +356,10 @@ export const useNostrWalletStore = create((set, get) => ({
       const user = await signer.user();
       const hexNpub = user.pubkey;
 
-      set({ isConnected: true });
+      set({
+        isConnected: true,
+        nostrPubKey: user.npub || encodeKey(hexNpub, "npub") || "",
+      });
 
       return { ndkInstance, hexNpub, signer };
     } catch (err) {
@@ -588,7 +618,7 @@ export const useNostrWalletStore = create((set, get) => ({
 
       // Update our tracked balance (decrement by amount spent)
       const newBalance = Math.max(0, currentBalance - amount);
-      saveTrackedBalance(newBalance);
+      saveTrackedBalance(newBalance, get().nostrPubKey);
       set({ walletBalance: newBalance });
       console.log(
         "[Wallet] Tracked balance updated:",
@@ -632,7 +662,7 @@ export const useNostrWalletStore = create((set, get) => ({
         // Use get() to get current balance at time of success, not at time of deposit start
         const currentBalance = extractBalance(get().walletBalance);
         const newBalance = currentBalance + amountInSats;
-        saveTrackedBalance(newBalance);
+        saveTrackedBalance(newBalance, get().nostrPubKey);
         set({
           walletBalance: newBalance,
           invoice: "",
@@ -680,7 +710,7 @@ export const useNostrWalletStore = create((set, get) => ({
     try {
       const bal = await cashuWallet.balance();
       const syncedBalance = extractBalance(bal);
-      saveTrackedBalance(syncedBalance);
+      saveTrackedBalance(syncedBalance, get().nostrPubKey);
       set({ walletBalance: syncedBalance });
       console.log("[Wallet] Balance synced from wallet:", syncedBalance);
       return syncedBalance;
@@ -698,7 +728,11 @@ export const useNostrWalletStore = create((set, get) => ({
 
     // Clear tracked balance from localStorage
     try {
-      localStorage.removeItem(TRACKED_BALANCE_KEY);
+      const npub = get().nostrPubKey || localStorage.getItem("local_npub");
+      const scopedKey = getBalanceStorageKey(npub || "");
+      localStorage.removeItem(scopedKey);
+      // Also clear legacy key for safety
+      localStorage.removeItem(LEGACY_BALANCE_KEY);
     } catch (e) {
       console.warn("[Wallet] Error clearing tracked balance:", e);
     }
