@@ -5,6 +5,7 @@ import { bech32 } from "bech32";
 import { nip19, nip04 } from "nostr-tools";
 import NDK, {
   NDKPrivateKeySigner,
+  NDKNip07Signer,
   NDKKind,
   NDKEvent,
 } from "@nostr-dev-kit/ndk";
@@ -251,6 +252,53 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       console.error("Error logging in with keys:", error);
       setErrorMessage(error.message);
       return null;
+    }
+  };
+
+  const checkNip07Available = () => {
+    return typeof window !== "undefined" && window.nostr;
+  };
+
+  const authWithNip07 = async () => {
+    try {
+      if (!checkNip07Available()) {
+        setErrorMessage("No NIP-07 extension found. Please install a Nostr signer extension like nos2x, Alby, or similar.");
+        return null;
+      }
+
+      const nip07Signer = new NDKNip07Signer();
+      await nip07Signer.blockUntilReady();
+      ndk.signer = nip07Signer;
+
+      const user = await nip07Signer.user();
+      const npub = user.npub;
+
+      setNostrPubKey(npub);
+      localStorage.setItem("local_npub", npub);
+      localStorage.setItem("nip07_login", "true");
+      setErrorMessage(null);
+
+      return { user, signer: nip07Signer, isNip07: true };
+    } catch (error) {
+      console.error("Error logging in with NIP-07:", error);
+      setErrorMessage(error.message);
+      return null;
+    }
+  };
+
+  const saveNsecForNip07User = (nsec) => {
+    try {
+      // Validate the nsec
+      const { words: nsecWords } = bech32.decode(nsec);
+      Buffer.from(bech32.fromWords(nsecWords)).toString("hex");
+
+      localStorage.setItem("local_nsec", nsec);
+      setNostrPrivKey(nsec);
+      return true;
+    } catch (error) {
+      console.error("Invalid nsec provided:", error);
+      setErrorMessage("Invalid secret key format");
+      return false;
     }
   };
 
@@ -898,6 +946,9 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     generateNostrKeys,
     postNostrContent,
     auth,
+    authWithNip07,
+    checkNip07Available,
+    saveNsecForNip07User,
     assignExistingBadgeToNpub,
     getUserBadges,
     getLastNotesByNpub,

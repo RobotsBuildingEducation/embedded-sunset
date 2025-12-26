@@ -11,10 +11,13 @@ import {
   Link,
   Box,
   Text,
+  VStack,
+  Spinner,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import { translation } from "../../../utility/translation";
 import { SunsetCanvas } from "../../../elements/SunsetCanvas";
+import { useNostrWalletStore } from "../../../hooks/useNostrWalletStore";
 
 const ActionButton = ({ href, text, userLanguage }) => (
   <Button
@@ -36,6 +39,42 @@ const ActionButton = ({ href, text, userLanguage }) => (
 
 const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
   const toast = useToast();
+
+  const { createNewWallet, isCreatingWallet, isWalletReady, walletBalance } = useNostrWalletStore(
+    (state) => ({
+      createNewWallet: state.createNewWallet,
+      isCreatingWallet: state.isCreatingWallet,
+      isWalletReady: state.isWalletReady,
+      walletBalance: state.walletBalance,
+    })
+  );
+
+  const handleCreateWallet = async () => {
+    const hasNsec = localStorage.getItem("local_nsec");
+    if (!hasNsec) {
+      toast({
+        title: translation[userLanguage]["wallet.needsNsec.title"] || "Secret Key Required",
+        description: translation[userLanguage]["wallet.needsNsec.description"] || "Please add your secret key (nsec) to create a wallet. You can add it in the settings menu.",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+      return;
+    }
+
+    const wallet = await createNewWallet();
+    if (wallet) {
+      toast({
+        title: translation[userLanguage]["wallet.created.title"] || "Wallet Created",
+        description: translation[userLanguage]["wallet.created.description"] || "Your wallet has been created successfully!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
+    }
+  };
 
   const handleCopyKeys = () => {
     const keys = localStorage.getItem("local_nsec"); // replace with actual keys
@@ -78,17 +117,36 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
           {translation[userLanguage]["modal.openSocialWallet.instructions"]}
           <br />
           <br />
-          <Button
-            onMouseDown={handleCopyKeys}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                handleCopyKeys();
-              }
-            }}
-          >
-            🔑 `{translation[userLanguage]["button.copyKey"]}`
-          </Button>
-          <br />
+          <VStack spacing={3} width="100%">
+            <Button
+              onMouseDown={handleCopyKeys}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleCopyKeys();
+                }
+              }}
+              width="100%"
+            >
+              🔑 {translation[userLanguage]["button.copyKey"]}
+            </Button>
+
+            <Button
+              colorScheme="purple"
+              width="100%"
+              onMouseDown={handleCreateWallet}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleCreateWallet();
+                }
+              }}
+              isLoading={isCreatingWallet}
+              loadingText={translation[userLanguage]["wallet.creating"] || "Creating..."}
+            >
+              {isWalletReady
+                ? `${translation[userLanguage]["wallet.balance"] || "Wallet Balance"}: ${walletBalance} sats`
+                : translation[userLanguage]["wallet.create"] || "Create Wallet"}
+            </Button>
+          </VStack>
           <br />
           {/* <ActionButton
             href={`https://primal.net/p/${localStorage.getItem("local_npub")}`}

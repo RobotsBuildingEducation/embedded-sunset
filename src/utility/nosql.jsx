@@ -90,7 +90,7 @@ export const createUser = async (npub, userName, language) => {
     onboardingStep: 1,
     previousStep: 0,
     language,
-    allowPosts: false,
+    allowPosts: true,
     identity: "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt",
   };
 

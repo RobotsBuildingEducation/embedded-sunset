@@ -74,6 +74,8 @@ const SettingsMenu = ({
   onActionTourComplete,
   menuButtonRef,
   menuTourStep,
+  allowPosts,
+  setAllowPosts,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
@@ -195,6 +197,16 @@ const SettingsMenu = ({
       await updateDoc(userDoc, { language: value });
     }
     // onLangClose();
+  };
+
+  const handleToggleAllowPosts = async (e) => {
+    const newValue = e.target.checked;
+    setAllowPosts(newValue);
+    const npub = localStorage.getItem("local_npub");
+    if (npub) {
+      const userDocRef = doc(database, "users", npub);
+      await updateDoc(userDocRef, { allowPosts: newValue });
+    }
   };
 
   const handleCopyKeys = (id) => {
@@ -417,6 +429,19 @@ const SettingsMenu = ({
                   </div>
                 </Button>
               </HStack>
+
+              <FormControl display="flex" alignItems="center" width="100%">
+                <FormLabel htmlFor="allow-posts-menu-switch" mb="0" flex="1">
+                  {translation[userLanguage]["tag.allowPosting"]}
+                </FormLabel>
+                <Switch
+                  id="allow-posts-menu-switch"
+                  isChecked={allowPosts}
+                  onChange={handleToggleAllowPosts}
+                  colorScheme="pink"
+                />
+              </FormControl>
+
               {/* <Button
                 p={6}
                 colorScheme="pink"
