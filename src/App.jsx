@@ -52,13 +52,6 @@ import {
   Image,
   useToken,
   Divider,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
@@ -4661,7 +4654,6 @@ const Home = ({
   generateNostrKeys,
   auth,
   authWithNip07,
-  setShowNsecPrompt,
   view,
   setView,
   setCurrentStep,
@@ -5099,9 +5091,6 @@ const Home = ({
       setIsSigningIn(false);
       setIsSignedIn(true);
       setCurrentStep(currentStep);
-
-      // Show nsec prompt for wallet features
-      setShowNsecPrompt(true);
 
       if (
         onboardingProgress !== "done" &&
@@ -6396,8 +6385,6 @@ function App({ isShutDown }) {
   const [hasSubmittedPasscode, setHasSubmittedPasscode] = useState(false);
 
   const [allowPosts, setAllowPosts] = useState(true);
-  const [showNsecPrompt, setShowNsecPrompt] = useState(false);
-  const [nsecInput, setNsecInput] = useState("");
 
   const [showClouds, setShowClouds] = useState(false);
   const [pendingPath, setPendingPath] = useState(null);
@@ -6543,8 +6530,6 @@ function App({ isShutDown }) {
     generateNostrKeys,
     auth,
     authWithNip07,
-    checkNip07Available,
-    saveNsecForNip07User,
     postNostrContent,
     assignExistingBadgeToNpub,
   } = useSharedNostr(
@@ -6567,18 +6552,6 @@ function App({ isShutDown }) {
         language: newLanguage,
       });
     }
-  };
-
-  const handleSaveNsec = () => {
-    if (saveNsecForNip07User(nsecInput)) {
-      setShowNsecPrompt(false);
-      setNsecInput("");
-    }
-  };
-
-  const handleSkipNsec = () => {
-    setShowNsecPrompt(false);
-    setNsecInput("");
   };
 
   let memory = () => {
@@ -6887,7 +6860,6 @@ function App({ isShutDown }) {
                 generateNostrKeys={generateNostrKeys}
                 auth={auth}
                 authWithNip07={authWithNip07}
-                setShowNsecPrompt={setShowNsecPrompt}
                 view={view}
                 setView={setView}
                 setCurrentStep={setCurrentStep}
@@ -6972,45 +6944,6 @@ function App({ isShutDown }) {
             }
           />
         </Routes>
-
-        {/* Nsec Prompt Modal for NIP-07 users */}
-        <Modal isOpen={showNsecPrompt} onClose={handleSkipNsec} isCentered>
-          <ModalOverlay />
-          <ModalContent mx={4}>
-            <ModalHeader>
-              {translation[userLanguage]["nsecPrompt.title"] ||
-                "Optional: Add Your Secret Key"}
-            </ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Text fontSize="sm" mb={4}>
-                {translation[userLanguage]["nsecPrompt.description"] ||
-                  "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device."}
-              </Text>
-              <Input
-                placeholder={
-                  translation[userLanguage]["nsecPrompt.placeholder"] ||
-                  "nsec1..."
-                }
-                value={nsecInput}
-                onChange={(e) => setNsecInput(e.target.value)}
-                type="password"
-              />
-            </ModalBody>
-            <ModalFooter>
-              <Button variant="ghost" mr={3} onMouseDown={handleSkipNsec}>
-                {translation[userLanguage]["nsecPrompt.skip"] || "Skip for now"}
-              </Button>
-              <Button
-                colorScheme="purple"
-                onMouseDown={handleSaveNsec}
-                isDisabled={!nsecInput}
-              >
-                {translation[userLanguage]["nsecPrompt.save"] || "Save"}
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
       </Box>
     </Box>
   );
