@@ -124,6 +124,14 @@ export const useNostrWalletStore = create((set, get) => ({
   // Internal refs (not reactive)
   _balanceUpdateTimeout: null,
 
+  // Helper to keep wallet balance in sync with localStorage
+  updateTrackedBalance: (balance, extraState = {}) => {
+    const normalizedBalance = Math.max(0, extractBalance(balance));
+    saveTrackedBalance(normalizedBalance);
+    set({ walletBalance: normalizedBalance, ...extraState });
+    return normalizedBalance;
+  },
+
   // Setters
   setError: (msg) => set({ errorMessage: msg }),
   setInvoice: (data) => set({ invoice: data }),
@@ -133,7 +141,7 @@ export const useNostrWalletStore = create((set, get) => ({
 
   // Refresh balance with debouncing
   refreshBalance: async () => {
-    const { cashuWallet, _balanceUpdateTimeout } = get();
+    const { cashuWallet, _balanceUpdateTimeout, updateTrackedBalance } = get();
     if (!cashuWallet) return 0;
 
     // Clear any pending balance update
@@ -149,8 +157,7 @@ export const useNostrWalletStore = create((set, get) => ({
       const totalBalance = extractBalance(bal);
 
       console.log("[Wallet] Balance refreshed:", totalBalance);
-      set({ walletBalance: totalBalance });
-      return totalBalance;
+      return updateTrackedBalance(totalBalance);
     } catch (e) {
       console.error("[Wallet] Error refreshing balance:", e);
       return get().walletBalance;
@@ -159,6 +166,7 @@ export const useNostrWalletStore = create((set, get) => ({
 
   // Setup wallet listeners
   setupWalletListeners: async (wallet) => {
+    const { updateTrackedBalance } = get();
     if (!wallet || !(wallet instanceof NDKCashuWallet)) return;
 
     console.log("[Wallet] Setting up wallet listeners");
@@ -181,7 +189,7 @@ export const useNostrWalletStore = create((set, get) => ({
           "[Wallet] Using tracked balance from localStorage:",
           storedBalance
         );
-        set({ walletBalance: storedBalance, isWalletReady: true });
+        updateTrackedBalance(storedBalance, { isWalletReady: true });
 
         // Background sync: check relay balance after UI is stable
         // This runs after initial load to potentially reconcile drift
@@ -198,8 +206,7 @@ export const useNostrWalletStore = create((set, get) => ({
                 "->",
                 relayBalance
               );
-              saveTrackedBalance(relayBalance);
-              set({ walletBalance: relayBalance });
+              updateTrackedBalance(relayBalance);
             } else {
               console.log(
                 "[Wallet] Background sync complete - balance matches:",
@@ -217,11 +224,10 @@ export const useNostrWalletStore = create((set, get) => ({
           const bal = await wallet.balance();
           const initialBalance = extractBalance(bal);
           console.log("[Wallet] Initial balance from wallet:", initialBalance);
-          saveTrackedBalance(initialBalance);
-          set({ walletBalance: initialBalance, isWalletReady: true });
+          updateTrackedBalance(initialBalance, { isWalletReady: true });
         } catch (e) {
           console.error("[Wallet] Error getting initial balance:", e);
-          set({ walletBalance: 0, isWalletReady: true });
+          updateTrackedBalance(0, { isWalletReady: true });
         }
       }
     }, 1500);
@@ -524,6 +530,7 @@ export const useNostrWalletStore = create((set, get) => ({
       fetchUserPaymentInfo,
       setError,
       walletBalance,
+      updateTrackedBalance,
     } = get();
 
     if (!cashuWallet) {
@@ -588,8 +595,7 @@ export const useNostrWalletStore = create((set, get) => ({
 
       // Update our tracked balance (decrement by amount spent)
       const newBalance = Math.max(0, currentBalance - amount);
-      saveTrackedBalance(newBalance);
-      set({ walletBalance: newBalance });
+      updateTrackedBalance(newBalance);
       console.log(
         "[Wallet] Tracked balance updated:",
         currentBalance,
@@ -609,6 +615,7 @@ export const useNostrWalletStore = create((set, get) => ({
   // options: { onSuccess?: (newBalance) => void, onError?: (error) => void }
   initiateDeposit: async (amountInSats = 10, options = {}) => {
     const { cashuWallet, setError, setInvoice } = get();
+    const { updateTrackedBalance } = get();
     const { onSuccess, onError } = options;
 
     if (!cashuWallet) {
@@ -632,11 +639,7 @@ export const useNostrWalletStore = create((set, get) => ({
         // Use get() to get current balance at time of success, not at time of deposit start
         const currentBalance = extractBalance(get().walletBalance);
         const newBalance = currentBalance + amountInSats;
-        saveTrackedBalance(newBalance);
-        set({
-          walletBalance: newBalance,
-          invoice: "",
-        });
+        updateTrackedBalance(newBalance, { invoice: "" });
         console.log(
           "[Wallet] Tracked balance updated:",
           currentBalance,
@@ -671,7 +674,7 @@ export const useNostrWalletStore = create((set, get) => ({
 
   // Force sync balance from wallet (use if tracked balance drifts)
   syncBalanceFromWallet: async () => {
-    const { cashuWallet } = get();
+    const { cashuWallet, updateTrackedBalance } = get();
     if (!cashuWallet) {
       console.warn("[Wallet] Cannot sync - wallet not initialized");
       return;
@@ -680,8 +683,7 @@ export const useNostrWalletStore = create((set, get) => ({
     try {
       const bal = await cashuWallet.balance();
       const syncedBalance = extractBalance(bal);
-      saveTrackedBalance(syncedBalance);
-      set({ walletBalance: syncedBalance });
+      updateTrackedBalance(syncedBalance);
       console.log("[Wallet] Balance synced from wallet:", syncedBalance);
       return syncedBalance;
     } catch (e) {
