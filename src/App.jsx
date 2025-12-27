@@ -1657,21 +1657,14 @@ const Step = ({
   const [endTime, setEndTime] = useState(null);
   const [interval, setInterval] = useState(0);
   // const { cashTap, loadWallet } = useCashuStore();
-  const {
-    sendOneSatToNpubX,
-    sendOneSatToNpub,
-    initWalletService,
-    init,
-    walletBalance,
-    cashuWallet,
-  } = useNostrWalletStore((state) => ({
-    sendOneSatToNpubX: state.sendOneSatToNpubX,
-    sendOneSatToNpub: state.sendOneSatToNpub, // renamed from cashTap
-    initWalletService: state.initWalletService, // renamed from loadWallet
-    init: state.init,
-    walletBalance: state.walletBalance,
-    cashuWallet: state.cashuWallet,
-  }));
+  const { sendOneSatToNpub, initWallet, init, walletBalance, cashuWallet } =
+    useNostrWalletStore((state) => ({
+      sendOneSatToNpub: state.sendOneSatToNpub,
+      initWallet: state.initWallet,
+      init: state.init,
+      walletBalance: state.walletBalance,
+      cashuWallet: state.cashuWallet,
+    }));
   const [grade, setGrade] = useState("");
   const [isTimerExpired, setIsTimerExpired] = useState(true);
 
@@ -2197,8 +2190,10 @@ const Step = ({
         );
       }
 
-      await init();
-      await initWalletService();
+      const connected = await init();
+      if (connected) {
+        await initWallet();
+      }
     };
 
     fetchUserData();

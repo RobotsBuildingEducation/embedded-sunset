@@ -94,6 +94,7 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
     initiateDeposit,
     invoice,
     init,
+    initWallet,
     isCreatingWallet,
     isRefreshingAfterDeposit,
   } = useNostrWalletStore((state) => ({
@@ -103,6 +104,7 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
     initiateDeposit: state.initiateDeposit,
     invoice: state.invoice,
     init: state.init,
+    initWallet: state.initWallet,
     isCreatingWallet: state.isCreatingWallet,
     isRefreshingAfterDeposit: state.isRefreshingAfterDeposit,
   }));
@@ -110,6 +112,23 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
   console.log("total balance", walletBalance);
   // walletBalance is now tracked as a number in the store
   const totalBalance = typeof walletBalance === "number" ? walletBalance : 0;
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const connected = await init();
+        if (connected) {
+          await initWallet();
+        }
+      } catch (e) {
+        console.warn("Wallet hydrate failed:", e);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [init, initWallet]);
 
   useEffect(() => {
     if (isRefreshingAfterDeposit) {
