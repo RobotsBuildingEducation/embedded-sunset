@@ -188,7 +188,17 @@ export const useNostrWalletStore = create((set, get) => ({
   // Initialize wallet (load existing only - does NOT create new)
   // Initialize wallet (load existing only - does NOT create new)
   initWallet: async () => {
-    const { ndkInstance, signer, setError, verifyAndUpdateBalance } = get();
+    const {
+      ndkInstance,
+      signer,
+      cashuWallet,
+      setError,
+      verifyAndUpdateBalance,
+    } = get();
+
+    if (cashuWallet) {
+      cashuWallet.removeAllListeners();
+    }
 
     if (!ndkInstance || !signer) {
       console.error("[Wallet] NDK not ready");
@@ -229,6 +239,28 @@ export const useNostrWalletStore = create((set, get) => ({
       ndkInstance.wallet = wallet;
 
       await wallet.start({ pubkey: user.pubkey });
+
+      console.log("[Wallet] Wallet status:", wallet.status);
+      console.log("[Wallet] Wallet relaySet:", wallet.relaySet);
+      wallet.on("balance_updated", (balance) => {
+        console.log("[Wallet] >>> BALANCE EVENT FIRED:", balance);
+        console.log("[Wallet] Balance updated event:", balance);
+        if (balance?.amount !== undefined) {
+          set({ walletBalance: balance.amount });
+        } else {
+          // Fallback to manual check
+          verifyAndUpdateBalance();
+        }
+      });
+
+      wallet.on("ready", () => {
+        console.log("[Wallet] Wallet ready event");
+        verifyAndUpdateBalance();
+      });
+
+      wallet.on("warning", (warning) => {
+        console.warn("[Wallet] Warning:", warning.msg);
+      });
       console.log("[Wallet] Wallet loaded, status:", wallet.status);
 
       set({ cashuWallet: wallet, isWalletReady: true });
@@ -395,7 +427,10 @@ export const useNostrWalletStore = create((set, get) => ({
   },
 
   // Send 1 sat via nutzap
-  sendOneSatToNpub: async (recipientNpub = DEFAULT_RECEIVER) => {
+  sendOneSatToNpub: async (
+    recipientNpub = DEFAULT_RECEIVER,
+    retryCount = 0
+  ) => {
     const {
       cashuWallet,
       ndkInstance,
@@ -404,8 +439,10 @@ export const useNostrWalletStore = create((set, get) => ({
       setError,
       walletBalance,
       verifyAndUpdateBalance,
-      initWallet, // Add this!
+      initWallet,
     } = get();
+
+    const MAX_RETRIES = 2;
 
     if (!cashuWallet) {
       console.error("[Wallet] Wallet not initialized");
@@ -417,10 +454,8 @@ export const useNostrWalletStore = create((set, get) => ({
       return false;
     }
 
-    // Refresh wallet state before spending to sync with other apps
     await initWallet();
 
-    // Get fresh wallet reference after refresh
     const freshWallet = get().cashuWallet;
 
     if (!freshWallet) {
@@ -435,33 +470,58 @@ export const useNostrWalletStore = create((set, get) => ({
       const { p2pkPubkey } = await fetchUserPaymentInfo(recipientNpub);
       console.log("[Wallet] Sending 1 sat to:", recipientNpub);
 
-      // Get proofs from FRESH wallet state
-      const proofs = freshWallet.state?.getProofs({ mint: DEFAULT_MINT }) || [];
+      const cashuWalletInstance =
+        await freshWallet.getCashuWallet(DEFAULT_MINT);
+
+      // Get proofs from wallet state
+      let proofs = freshWallet.state?.getProofs({ mint: DEFAULT_MINT }) || [];
       if (proofs.length === 0) {
         throw new Error("No proofs available");
       }
 
-      // Use fresh wallet for cashu instance
-      const cashuWalletInstance =
-        await freshWallet.getCashuWallet(DEFAULT_MINT);
+      // Check which proofs are actually still spendable at the mint
+      const proofStates = await cashuWalletInstance.checkProofsStates(proofs);
+
+      // Filter to only unspent proofs
+      const validProofs = proofs.filter((proof, index) => {
+        const state = proofStates[index];
+        return state?.state === "UNSPENT";
+      });
+
+      console.log("[Wallet] Total proofs:", proofs.length);
+      console.log("[Wallet] Valid proofs:", validProofs.length);
+
+      if (validProofs.length === 0) {
+        throw new Error("No valid proofs available");
+      }
+
+      // Check if we have enough balance with valid proofs
+      const validBalance = validProofs.reduce((sum, p) => sum + p.amount, 0);
+      if (validBalance < amount) {
+        throw new Error(`Insufficient valid balance: ${validBalance}`);
+      }
 
       const recipientHex = decodeKey(recipientNpub);
 
-      const { keep, send } = await cashuWalletInstance.send(amount, proofs, {
-        pubkey: p2pkPubkey,
-      });
+      // Use only valid proofs for the send
+      const { keep, send } = await cashuWalletInstance.send(
+        amount,
+        validProofs,
+        {
+          pubkey: p2pkPubkey,
+        }
+      );
 
       console.log("[Wallet] Keep proofs:", keep);
       console.log("[Wallet] Send proofs:", send);
 
-      // Update FRESH wallet state
+      // Destroy ALL original proofs (including spent ones), store the change
       await freshWallet.state.update({
         store: keep,
         destroy: proofs,
         mint: DEFAULT_MINT,
       });
 
-      // Create nutzap event...
       const proofTags = send.map((proof) => ["proof", JSON.stringify(proof)]);
 
       const nutzapEvent = new NDKEvent(ndkInstance, {
@@ -486,10 +546,21 @@ export const useNostrWalletStore = create((set, get) => ({
       return true;
     } catch (e) {
       console.error("[Wallet] Error sending nutzap:", e);
-      setError(e.message);
 
-      // On error, refresh to get correct state
-      await initWallet();
+      const isSpentError =
+        e.message?.toLowerCase().includes("already spent") ||
+        e.message?.toLowerCase().includes("no valid proofs") ||
+        e.message?.toLowerCase().includes("insufficient valid");
+
+      if (isSpentError && retryCount < MAX_RETRIES) {
+        console.log(
+          `[Wallet] Retrying... attempt ${retryCount + 1}/${MAX_RETRIES}`
+        );
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        return get().sendOneSatToNpub(recipientNpub, retryCount + 1);
+      }
+
+      setError(e.message);
       await verifyAndUpdateBalance();
 
       return false;
