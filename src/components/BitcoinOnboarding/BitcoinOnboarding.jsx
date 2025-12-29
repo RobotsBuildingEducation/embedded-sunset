@@ -14,6 +14,7 @@ import {
   RadioGroup,
   Radio,
   Spinner,
+  Input,
 } from "@chakra-ui/react";
 import QRCode from "qrcode.react";
 import { SiCashapp } from "react-icons/si";
@@ -31,6 +32,7 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
   const [isGenerateNewQR, setIsGeneratingNewQR] = useState(false);
   const [depositing, setDepositing] = useState(false);
   const [selectedIdentity, setSelectedIdentity] = useState(""); // State to track selected identity
+  const [manualNsec, setManualNsec] = useState(""); // State for NIP-07 users to enter their private key
 
   const recipientOptions = useMemo(
     () => [
@@ -97,6 +99,9 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
     initWallet,
     isCreatingWallet,
     isRefreshingAfterDeposit,
+    isNip07Mode,
+    setManualPrivateKey,
+    nostrPrivKey,
   } = useNostrWalletStore((state) => ({
     cashuWallet: state.cashuWallet,
     walletBalance: state.walletBalance,
@@ -107,6 +112,9 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
     initWallet: state.initWallet,
     isCreatingWallet: state.isCreatingWallet,
     isRefreshingAfterDeposit: state.isRefreshingAfterDeposit,
+    isNip07Mode: state.isNip07Mode,
+    setManualPrivateKey: state.setManualPrivateKey,
+    nostrPrivKey: state.nostrPrivKey,
   }));
 
   console.log("total balance", walletBalance);
@@ -169,7 +177,35 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
     }
   };
 
+  // Check if user is logged in via NIP-07 extension
+  const isUsingNip07 = isNip07Mode();
+  // Check if we have a valid private key (either from store or manually entered)
+  const hasPrivateKey = nostrPrivKey && nostrPrivKey.startsWith("nsec");
+
+  const handleManualNsecChange = (e) => {
+    const value = e.target.value;
+    setManualNsec(value);
+    if (value.startsWith("nsec")) {
+      setManualPrivateKey(value);
+    }
+  };
+
   const handleCreateWallet = async () => {
+    // For NIP-07 users, ensure the manual key is set before creating wallet
+    if (isUsingNip07 && manualNsec && !hasPrivateKey) {
+      const success = setManualPrivateKey(manualNsec);
+      if (!success) {
+        toast({
+          title: "Invalid Key",
+          description: "Please enter a valid nsec private key",
+          status: "error",
+          duration: 2000,
+          isClosable: true,
+        });
+        return;
+      }
+    }
+
     try {
       const userDocRef = doc(
         database,
@@ -298,6 +334,10 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
   const renderContent = () => {
     if (!cashuWallet) {
       // Step 1: No wallet yet
+      // Check if NIP-07 user needs to provide private key
+      const needsPrivateKey = isUsingNip07 && !hasPrivateKey;
+      const canCreateWallet = selectedIdentity.length > 0 && (!isUsingNip07 || hasPrivateKey);
+
       return (
         <>
           <Text mb={4} textAlign={"left"} p={6} fontSize="sm">
@@ -338,6 +378,31 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
           </Text>
 
           <VStack>
+            {/* NIP-07 Private Key Input - only show for NIP-07 users without a wallet */}
+            {isUsingNip07 && (
+              <Box width="100%" px={6} mb={4}>
+                <Text fontSize="sm" mb={2} fontWeight="bold">
+                  {translation[userLanguage]["nip07.privateKey.label"] ||
+                    "Enter your private key to enable wallet creation:"}
+                </Text>
+                <Input
+                  type="password"
+                  placeholder={
+                    translation[userLanguage]["nip07.privateKey.placeholder"] ||
+                    "nsec..."
+                  }
+                  value={manualNsec}
+                  onChange={handleManualNsecChange}
+                  size="sm"
+                  mb={2}
+                />
+                <Text fontSize="xs" color="gray.500">
+                  {translation[userLanguage]["nip07.privateKey.hint"] ||
+                    "Your extension doesn't share your private key. Enter it here to create a wallet."}
+                </Text>
+              </Box>
+            )}
+
             <Text flex="1" textAlign="left" fontSize="sm">
               {translation[userLanguage]["select.recipient"]}
             </Text>
@@ -373,16 +438,16 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
             ) : null}
 
             <Button
-              onMouseDown={() => createNewWallet()}
+              onMouseDown={handleCreateWallet}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
-                  createNewWallet();
+                  handleCreateWallet();
                 }
               }}
               m={6}
               isLoading={isCreatingWallet}
               loadingText={translation[userLanguage]["loading.wallet"]}
-              isDisabled={!selectedIdentity.length > 0}
+              isDisabled={!canCreateWallet}
               boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
             >
               {translation[userLanguage]["createWallet.button"]}
