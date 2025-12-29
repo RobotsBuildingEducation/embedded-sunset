@@ -4648,7 +4648,7 @@ const Home = ({
   setUserLanguage,
   generateNostrKeys,
   auth,
-  authWithNip07,
+  authWithExtension,
   view,
   setView,
   setCurrentStep,
@@ -5024,7 +5024,7 @@ const Home = ({
   const handleNip07SignIn = async () => {
     try {
       setIsSigningIn(true);
-      const result = await authWithNip07();
+      const result = await authWithExtension();
 
       if (!result) {
         setIsSigningIn(false);
@@ -6524,7 +6524,7 @@ function App({ isShutDown }) {
   const {
     generateNostrKeys,
     auth,
-    authWithNip07,
+    authWithExtension,
     postNostrContent,
     assignExistingBadgeToNpub,
   } = useSharedNostr(
@@ -6854,7 +6854,7 @@ function App({ isShutDown }) {
                 setUserLanguage={setUserLanguage}
                 generateNostrKeys={generateNostrKeys}
                 auth={auth}
-                authWithNip07={authWithNip07}
+                authWithExtension={authWithExtension}
                 view={view}
                 setView={setView}
                 setCurrentStep={setCurrentStep}

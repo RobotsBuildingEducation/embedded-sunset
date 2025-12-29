@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import { Buffer } from "buffer";
 import { bech32 } from "bech32";
-import { nip19, nip04 } from "nostr-tools";
+
 import NDK, {
   NDKPrivateKeySigner,
   NDKNip07Signer,
@@ -14,28 +14,7 @@ const ndk = new NDK({
   explicitRelayUrls: ["wss://relay.damus.io", "wss://relay.primal.net"],
 });
 
-const isHex64 = (s) => typeof s === "string" && /^[0-9a-f]{64}$/i.test(s);
-
-const toHexPriv = (nsecOrHex) => {
-  if (isHex64(nsecOrHex)) return nsecOrHex.toLowerCase();
-  const { words } = bech32.decode(nsecOrHex);
-  return Buffer.from(bech32.fromWords(words)).toString("hex");
-};
-
-const toHexPub = (npubOrHex) => {
-  if (isHex64(npubOrHex)) return npubOrHex.toLowerCase();
-  const { words } = bech32.decode(npubOrHex);
-  return Buffer.from(bech32.fromWords(words)).toString("hex");
-};
-
-const ensureConnectedWithSigner = async (hexPriv) => {
-  const signer = new NDKPrivateKeySigner(hexPriv);
-  ndk.signer = signer;
-  await signer.blockUntilReady();
-  // Connect once (idempotent if already connected)
-  await ndk.connect();
-  return signer;
-};
+console.log("ndk created:", ndk);
 
 export const useSharedNostr = (initialNpub, initialNsec) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -47,78 +26,54 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     // Load keys from local storage if they exist
     const storedNpub = localStorage.getItem("local_npub");
     const storedNsec = localStorage.getItem("local_nsec");
+    const isNip07 = localStorage.getItem("nip07_signer") === "true";
 
     if (storedNpub) {
       setNostrPubKey(storedNpub);
     }
 
-    if (storedNsec) {
+    if (storedNsec && storedNsec !== "nip07") {
       setNostrPrivKey(storedNsec);
     }
 
-    ndk
-      .connect()
-      .then(() => {
+    const initializeConnection = async () => {
+      try {
+        await ndk.connect();
         setIsConnected(true);
-      })
-      .catch((err) => {
+
+        if (isNip07 && typeof window !== "undefined" && window.nostr) {
+          const signer = new NDKNip07Signer();
+          await signer.blockUntilReady();
+          ndk.signer = signer;
+          const user = await signer.user();
+          ndk.activeUser = user; // Add this
+          console.log("NIP-07 signer initialized");
+        } else if (
+          storedNsec &&
+          storedNsec !== "nip07" &&
+          storedNsec.startsWith("nsec")
+        ) {
+          const { words: nsecWords } = bech32.decode(storedNsec);
+          const hexNsec = Buffer.from(bech32.fromWords(nsecWords)).toString(
+            "hex"
+          );
+          const signer = new NDKPrivateKeySigner(hexNsec);
+          await signer.blockUntilReady();
+          ndk.signer = signer;
+          const user = await signer.user();
+          ndk.activeUser = user; // Add this
+          console.log("Private key signer initialized");
+        }
+      } catch (err) {
         console.error("Error connecting to Nostr:", err);
         setErrorMessage(err.message);
-      });
+      }
+    };
+
+    initializeConnection();
   }, []);
 
-  const setProfilePicture = async (
-    profilePictureUrl = "https://primal.b-cdn.net/media-cache?s=o&a=1&u=https%3A%2F%2Fm.primal.net%2FKBLq.png",
-    npubRef,
-    nsecRef
-  ) => {
-    const connection = await connectToNostr(npubRef, nsecRef);
-    if (!connection) return;
-
-    const { ndkInstance, hexNpub, signer } = connection;
-
-    try {
-      // Fetch current metadata (kind: 0 event)
-      let currentMetadata = {};
-      const subscription = ndkInstance.subscribe({
-        kinds: [NDKKind.Metadata],
-        authors: [hexNpub],
-        limit: 1,
-      });
-
-      subscription.on("event", (event) => {
-        currentMetadata = JSON.parse(event.content);
-      });
-
-      await new Promise((resolve) => subscription.on("eose", resolve));
-
-      // Update the profile picture URL in the metadata
-      currentMetadata.picture = profilePictureUrl;
-
-      // Create a new metadata event (kind: 0)
-      const metadataEvent = new (ndkInstance,
-      {
-        kind: NDKKind.Metadata,
-        pubkey: hexNpub,
-        created_at: Math.floor(Date.now() / 1000),
-        content: JSON.stringify(currentMetadata),
-      })();
-
-      // Sign and publish the metadata event
-      await metadataEvent.sign(signer);
-      await metadataEvent.publish();
-    } catch (err) {
-      console.error("Error setting profile picture on Nostr:", err);
-    }
-  };
-
-  const generateNostrKeys = async (
-    userDisplayName = null,
-    setLoadingMessage,
-    profileAbout,
-    introductionPost
-  ) => {
-    setLoadingMessage("createAccount.isCreating");
+  const generateNostrKeys = async (userDisplayName = null) => {
     const privateKeySigner = NDKPrivateKeySigner.generate();
 
     const privateKey = privateKeySigner.privateKey;
@@ -130,22 +85,17 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       "nsec",
       bech32.toWords(Buffer.from(privateKey, "hex"))
     );
-    const encodedNpub = bech32.encode(
-      "npub",
-      bech32.toWords(Buffer.from(publicKey, "hex"))
-    );
-
     setNostrPrivKey(encodedNsec);
     setNostrPubKey(publicKey);
 
     if (!localStorage.getItem("local_nsec")) {
       //Creating profile... 2/4
-      setLoadingMessage("createAccount.isCreatingProfile");
+      // setLoadingMessage("createAccount.isCreatingProfile");
 
       postNostrContent(
         JSON.stringify({
           name: userDisplayName,
-          about: profileAbout,
+          about: "A student onboarded with Robots Building Education",
           // profilePictureUrl:
           //   "https://image.nostr.build/c8d21fe8773d7c5ddf3d6ef73ffe76dbeeec881c131bfb59927ce0b8b71a5607.png",
           // // "https://primal.b-cdn.net/media-cache?s=o&a=1&u=https%3A%2F%2Fm.primal.net%2FKBLq.png",
@@ -168,18 +118,23 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       //   window.location.hostname !== "127.0.0.1"
       // ) {
 
-      setLoadingMessage("createAccount.isCreatingIntroPost");
+      // setLoadingMessage("createAccount.isCreatingIntroPost");
       //Creating introduction post... 4/4
-      if (window.location.hostname !== "localhost") {
-        postNostrContent(introductionPost, 1, publicKey, encodedNsec);
-      }
+      // if (window.location.hostname !== "localhost") {
+      postNostrContent(
+        "gm nostr! I've joined #LearnWithNostr from Tiktok by creating an account with https://robotsbuildingeducation.com so I can learn how to code with AI.",
+        1,
+        publicKey,
+        encodedNsec
+      );
+      // }
       // await followUserOnNostr(
       //   "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt",
       //   publicKey,
       //   encodedNsec
       // );
     }
-
+    console.log("encodednsec", encodedNsec);
     localStorage.setItem("local_nsec", encodedNsec);
     localStorage.setItem("local_npub", publicKey);
     localStorage.setItem("uniqueId", publicKey);
@@ -187,48 +142,72 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     return { npub: publicKey, nsec: encodedNsec };
   };
 
-  const connectToNostr = async (npubRef = null, nsecRef = null) => {
-    const defaultNsec = import.meta.env.VITE_GLOBAL_NOSTR_NSEC;
-    const defaultNpub =
-      "npub1mgt5c7qh6dm9rg57mrp89rqtzn64958nj5w9g2d2h9dng27hmp0sww7u2v";
+  const connectToNostr = useCallback(
+    async (npubRef = null, nsecRef = null) => {
+      const defaultNsec = import.meta.env.VITE_GLOBAL_NOSTR_NSEC;
+      const defaultNpub =
+        "npub1mgt5c7qh6dm9rg57mrp89rqtzn64958nj5w9g2d2h9dng27hmp0sww7u2v";
 
-    const nsec =
-      nsecRef ||
-      localStorage.getItem("local_nsec") ||
-      nostrPrivKey ||
-      defaultNsec;
-    const npub =
-      npubRef ||
-      localStorage.getItem("local_npub") ||
-      nostrPubKey ||
-      defaultNpub;
+      const storedNsec = localStorage.getItem("local_nsec");
+      const isNip07 = localStorage.getItem("nip07_signer") === "true";
 
-    try {
-      // Decode the nsec from Bech32
-      const { words: nsecWords } = bech32.decode(nsec);
-      const hexNsec = Buffer.from(bech32.fromWords(nsecWords)).toString("hex");
+      const nsec =
+        nsecRef ||
+        (storedNsec !== "nip07" ? storedNsec : null) ||
+        nostrPrivKey ||
+        defaultNsec;
+      const npub =
+        npubRef ||
+        localStorage.getItem("local_npub") ||
+        nostrPubKey ||
+        defaultNpub;
 
-      // Decode the npub from Bech32
-      const { words: npubWords } = bech32.decode(npub);
-      const hexNpub = Buffer.from(bech32.fromWords(npubWords)).toString("hex");
+      try {
+        // Decode the npub from Bech32
+        const { words: npubWords } = bech32.decode(npub);
+        const hexNpub = Buffer.from(bech32.fromWords(npubWords)).toString(
+          "hex"
+        );
 
-      // Create a new NDK instance
-      const ndkInstance = new NDK({
-        explicitRelayUrls: ["wss://relay.damus.io", "wss://relay.primal.net"],
-      });
+        // Create a new NDK instance
+        const ndkInstance = new NDK({
+          explicitRelayUrls: ["wss://relay.damus.io", "wss://relay.primal.net"],
+        });
 
-      await ndkInstance.connect();
+        await ndkInstance.connect();
 
-      setIsConnected(true);
+        setIsConnected(true);
 
-      // Return the connected NDK instance and signer
-      return { ndkInstance, hexNpub, signer: new NDKPrivateKeySigner(hexNsec) };
-    } catch (err) {
-      console.error("Error connecting to Nostr:", err);
-      setErrorMessage(err.message);
-      return null;
-    }
-  };
+        // Handle NIP-07 mode - use extension signer
+        if (isNip07 && typeof window !== "undefined" && window.nostr) {
+          const signer = new NDKNip07Signer();
+          await signer.blockUntilReady();
+          return { ndkInstance, hexNpub, signer };
+        }
+
+        // Handle private key mode
+        if (nsec && nsec.startsWith("nsec")) {
+          const { words: nsecWords } = bech32.decode(nsec);
+          const hexNsec = Buffer.from(bech32.fromWords(nsecWords)).toString(
+            "hex"
+          );
+          return {
+            ndkInstance,
+            hexNpub,
+            signer: new NDKPrivateKeySigner(hexNsec),
+          };
+        }
+
+        // No signer available, return without one (read-only mode)
+        return { ndkInstance, hexNpub, signer: null };
+      } catch (err) {
+        console.error("Error connecting to Nostr:", err);
+        setErrorMessage(err.message);
+        return null;
+      }
+    },
+    [nostrPrivKey, nostrPubKey]
+  );
 
   const auth = async (nsec) => {
     try {
@@ -237,14 +216,18 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       const hexNsec = Buffer.from(bech32.fromWords(nsecWords)).toString("hex");
 
       const signer = new NDKPrivateKeySigner(hexNsec);
-      await signer.blockUntilReady(); // Wait for signer user resolution
+      await signer.blockUntilReady();
       ndk.signer = signer;
 
       const user = await signer.user();
+      ndk.activeUser = user; // Add this line
+
       setNostrPubKey(user.npub);
       setNostrPrivKey(nsec);
       localStorage.setItem("local_npub", user.npub);
+      console.log("local_nsec", nsec);
       localStorage.setItem("local_nsec", nsec);
+      localStorage.removeItem("nip07_signer");
       setErrorMessage(null);
 
       return { user, signer };
@@ -255,50 +238,77 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     }
   };
 
-  const checkNip07Available = () => {
+  const isNip07Available = () => {
     return typeof window !== "undefined" && window.nostr;
   };
 
-  const authWithNip07 = async () => {
+  const isNip07Mode = () => {
+    return (
+      typeof window !== "undefined" &&
+      localStorage.getItem("nip07_signer") === "true"
+    );
+  };
+
+  // Helper to ensure the signer is ready (initializes NIP-07 signer if needed)
+  const ensureSigner = async () => {
+    if (ndk.signer) return ndk.signer;
+
+    if (isNip07Mode() && isNip07Available()) {
+      const signer = new NDKNip07Signer();
+      await signer.blockUntilReady();
+      ndk.signer = signer;
+      return signer;
+    }
+
+    // Try to use stored nsec if available
+    const storedNsec = localStorage.getItem("local_nsec");
+    if (storedNsec && storedNsec !== "nip07" && storedNsec.startsWith("nsec")) {
+      try {
+        const { words: nsecWords } = bech32.decode(storedNsec);
+        const hexNsec = Buffer.from(bech32.fromWords(nsecWords)).toString(
+          "hex"
+        );
+        const signer = new NDKPrivateKeySigner(hexNsec);
+        await signer.blockUntilReady();
+        ndk.signer = signer;
+        return signer;
+      } catch (err) {
+        console.error("Failed to initialize signer from stored nsec:", err);
+      }
+    }
+
+    return null;
+  };
+
+  const authWithExtension = async () => {
     try {
-      if (!checkNip07Available()) {
-        setErrorMessage("No NIP-07 extension found. Please install a Nostr signer extension like nos2x, Alby, or similar.");
-        return null;
+      if (!isNip07Available()) {
+        throw new Error(
+          "No Nostr extension found. Please install a NIP-07 compatible extension like nos2x or Alby."
+        );
       }
 
-      const nip07Signer = new NDKNip07Signer();
-      await nip07Signer.blockUntilReady();
-      ndk.signer = nip07Signer;
+      const signer = new NDKNip07Signer();
+      await signer.blockUntilReady();
+      ndk.signer = signer;
 
-      const user = await nip07Signer.user();
+      const user = await signer.user();
+      ndk.activeUser = user; // Add this
       const npub = user.npub;
 
       setNostrPubKey(npub);
+      setNostrPrivKey(""); // No private key with NIP-07
       localStorage.setItem("local_npub", npub);
-      localStorage.setItem("nip07_login", "true");
+      localStorage.setItem("local_nsec", "nip07"); // Marker to indicate NIP-07 mode
+      localStorage.setItem("nip07_signer", "true");
+      localStorage.setItem("uniqueId", npub);
       setErrorMessage(null);
 
-      return { user, signer: nip07Signer, isNip07: true };
+      return { user, signer };
     } catch (error) {
-      console.error("Error logging in with NIP-07:", error);
+      console.error("Error logging in with NIP-07 extension:", error);
       setErrorMessage(error.message);
       return null;
-    }
-  };
-
-  const saveNsecForNip07User = (nsec) => {
-    try {
-      // Validate the nsec
-      const { words: nsecWords } = bech32.decode(nsec);
-      Buffer.from(bech32.fromWords(nsecWords)).toString("hex");
-
-      localStorage.setItem("local_nsec", nsec);
-      setNostrPrivKey(nsec);
-      return true;
-    } catch (error) {
-      console.error("Invalid nsec provided:", error);
-      setErrorMessage("Invalid secret key format");
-      return false;
     }
   };
 
@@ -306,17 +316,19 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     content,
     kind = NDKKind.Text,
     npubRef = null,
-    nsecRef = null
+    nsecRef = null,
+    tags = []
   ) => {
     try {
-      // If a nsecRef is provided, login with it
-      if (nsecRef) {
+      // If a nsecRef is provided and it's a valid nsec, login with it
+      if (nsecRef && nsecRef.startsWith("nsec")) {
         const loginResult = await auth(nsecRef);
         if (!loginResult) return;
       }
 
-      // Ensure we have a signer after login
-      if (!ndk.signer) {
+      // Ensure we have a signer (will initialize NIP-07 or nsec signer if needed)
+      const signer = await ensureSigner();
+      if (!signer) {
         setErrorMessage("No signer available. Please login first.");
         return;
       }
@@ -325,7 +337,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       // But it's generally not required since NDKEvent uses ndk.signer to determine the pubkey.
       const event = new NDKEvent(ndk, {
         kind,
-        tags: [],
+        tags: Array.isArray(tags) ? tags : [],
         content: content,
         created_at: Math.floor(Date.now() / 1000),
       });
@@ -416,101 +428,51 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     }
   };
 
-  const getAddressPointer = (naddr) => {
-    return nip19.decode(naddr).data;
-  };
-
   const getBadgeData = async (addy) => {
     try {
+      // Connect to Nostr
       const connection = await connectToNostr();
       if (!connection) return [];
 
       const { ndkInstance } = connection;
 
-      // Parse a-pointer robustly
-      const parts = String(addy).split(":");
-      const off = parts[0] === "a" ? 1 : 0;
-      if (parts.length - off < 3) return [];
+      // const addressPointer = await getAddressPointer(addy);
+      let addressPointer = addy.split(":");
 
-      const kind = Number(parts[off + 0]);
-      const issuer = (parts[off + 1] || "").toLowerCase();
-      const d = parts[off + 2];
-
-      const BADGE_DEFINITION_KIND =
-        typeof NDKKind !== "undefined" &&
-        typeof NDKKind.BadgeDefinition === "number"
-          ? NDKKind.BadgeDefinition
-          : 30009;
-
+      // Create a filter for badge events (kind 30008) for the given user
       const filter = {
-        kinds: [BADGE_DEFINITION_KIND], // definition (NIP-58)
-        authors: [issuer],
-        "#d": [d],
+        kinds: [NDKKind.BadgeDefinition], // Use the NDKKind enum for better readability
+        authors: [addressPointer[1]], // The user's hex-encoded npub
+        "#d": [addressPointer[2]],
         limit: 1,
       };
 
-      return await new Promise((resolve) => {
-        const sub = ndkInstance.subscribe(filter, { closeOnEose: true });
+      // Create a subscription to fetch the events
+      const subscription = ndkInstance.subscribe(filter, { closeOnEose: true });
 
-        const out = [];
-        const seen = new Set();
+      // Array to hold badges
+      const badges = [];
 
-        // We aim to see EOSE from all relays in the relaySet, then wait a tiny idle period.
-        // If relaySet is unknown, we still finish via idle/hard timeout.
-        const targetRelays =
-          (sub.relaySet && sub.relaySet.size) ||
-          (ndkInstance.pool?.relays ? ndkInstance.pool.relays.size : 0);
-
-        let eoseCount = 0;
-        let idleTimer = null;
-
-        const IDLE_MS = 800; // wait this long after the last event/EOSE
-        const HARD_MS = 8000; // absolute cap so we never hang
-
-        const armIdle = () => {
-          clearTimeout(idleTimer);
-          idleTimer = setTimeout(() => {
-            clearTimeout(idleTimer);
-            try {
-              sub.stop?.();
-            } catch {}
-            resolve(out);
-          }, IDLE_MS);
+      // Listen for events
+      subscription.on("event", (event) => {
+        const badgeInfo = {
+          content: event.content,
+          createdAt: event.created_at,
+          tags: event.tags,
+          badgeAddress: addy,
         };
-
-        sub.on("event", (event) => {
-          if (!seen.has(event.id)) {
-            seen.add(event.id);
-            out.push({
-              id: event.id,
-              content: event.content,
-              createdAt: event.created_at,
-              tags: event.tags,
-              badgeAddress: addy,
-            });
-          }
-          armIdle(); // every event restarts the idle timer
-        });
-
-        sub.on("eose", () => {
-          eoseCount += 1;
-          // If we know the relay count, wait for all of them; otherwise, just rely on idle window.
-          if (targetRelays === 0 || eoseCount >= targetRelays) {
-            armIdle(); // let any straggler events flush before resolving
-          }
-        });
-
-        // Hard safety cap
-        setTimeout(() => {
-          try {
-            sub.stop?.();
-          } catch {}
-          resolve(out);
-        }, HARD_MS);
+        badges.push(badgeInfo);
       });
+
+      // Wait for the subscription to finish
+      await new Promise((resolve) => subscription.on("eose", resolve));
+
+      // Log the retrieved badges
+
+      return badges;
     } catch (error) {
       console.error("Error retrieving badges:", error);
-      setErrorMessage?.(error.message);
+      setErrorMessage(error.message);
       return [];
     }
   };
@@ -520,7 +482,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       if (!connection) return [];
 
       const { ndkInstance } = connection;
-
       const hexNpub = getHexNPub(npub); // Convert npub to hex
 
       // Create a filter for badge award events (kind 30009) where the user is the recipient
@@ -540,7 +501,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
           createdAt: event.created_at,
           tags: event.tags,
         };
-
         badges.push(badgeInfo);
       });
 
@@ -600,164 +560,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     }
   };
 
-  // const followUserOnNostr = async (pubkeyToFollow, npubRef, nsecRef) => {
-  //   const connection = await connectToNostr(npubRef, nsecRef);
-  //   if (!connection) return;
-
-  //   const { ndkInstance, hexNpub, signer } = connection;
-
-  //   try {
-  //     const contactList = [];
-  //     let subscription;
-
-  //     // Subscribe to current user's kind-3 (Follow List) event
-  //     subscription = ndkInstance.subscribe({
-  //       kinds: [NDKKind.ContactList],
-  //       authors: [getHexNPub(pubkeyToFollow)],
-  //       limit: 1,
-  //     });
-
-  //     subscription.on("event", (event) => {
-  //       // Extract the follow list from the 'p' tags
-  //       event.tags.forEach((tag) => {
-  //         console.log("there is an event tag");
-  //         if (tag[0] === "p") {
-  //           console.log("there is a key", tag);
-
-  //           contactList.push(tag[1]); // Push hex key of followed profile
-  //         }
-  //       });
-  //     });
-
-  //     console.log("contactList...", contactList);
-  //     // Wait for the subscription to finish or timeout after 5 seconds
-  //     await new Promise((resolve, reject) => {
-  //       const timeout = setTimeout(() => {
-  //         console.warn("Subscription timed out.");
-  //         resolve();
-  //       }, 5000);
-
-  //       subscription.on("eose", () => {
-  //         clearTimeout(timeout);
-  //         subscription.unsub(); // Unsubscribe once we receive 'eose'
-  //         resolve();
-  //       });
-  //     });
-
-  //     // Check if the user is already being followed
-  //     if (!contactList.includes(pubkeyToFollow)) {
-  //       contactList.push(getHexNPub(pubkeyToFollow)); // Add new pubkey if not already in the list
-  //     }
-
-  //     // Construct the new kind-3 (Follow List) event
-  //     const contactListEvent = new NDKEvent(ndkInstance, {
-  //       kind: NDKKind.ContactList, // Kind 3 - Follow List
-  //       tags: contactList.map((pubkey) => ["p", pubkey, "", ""]), // Format as per NIP-02
-  //       pubkey: hexNpub, // Your public key
-  //       created_at: Math.floor(Date.now() / 1000), // Unix timestamp
-  //       content: "", // Content not used in kind 3 events
-  //     });
-
-  //     // Sign the event with the user's private key (via signer)
-  //     await contactListEvent.sign(signer);
-
-  //     // Publish the new kind-3 event (updated follow list)
-  //     await contactListEvent.publish();
-
-  //     console.log(Successfully followed user with pubkey: ${pubkeyToFollow});
-  //   } catch (err) {
-  //     console.error("Error following user on Nostr:", err);
-  //   }
-  // };
-
-  const getGlobalNotesByHashtag = async (hashtag = "LearnWithNostr") => {
-    try {
-      const connection = await connectToNostr();
-      if (!connection) return [];
-
-      const { ndkInstance } = connection;
-
-      // Create a filter for kind: 1 (text notes) that contain the specified hashtag
-      const filter = {
-        kinds: [NDKKind.Text], // Kind 1 is for text notes
-        "#t": [hashtag], // Filter for tags where the first element is "t" and matches the hashtag
-        limit: 100, // Adjust the limit as needed
-      };
-
-      // Create a subscription to fetch the events
-      const subscription = ndkInstance.subscribe(filter, { closeOnEose: true });
-
-      const notes = [];
-
-      subscription.on("event", (event) => {
-        const npub = bech32.encode(
-          "npub",
-          bech32.toWords(Buffer.from(event.pubkey, "hex"))
-        );
-        notes.push({
-          content: event.content,
-          createdAt: event.created_at,
-          tags: event.tags,
-          id: event.id,
-          npub,
-        });
-      });
-
-      // Wait for the subscription to finish
-      await new Promise((resolve) => subscription.on("eose", resolve));
-
-      // Return the retrieved notes
-      // console.log("global notes...", notes);
-
-      // const encodedNpub = bech32.encode(
-      //   "npub",
-      //   bech32.toWords(Buffer.from(publicKey, "hex"))
-      // );
-
-      // console.log('npub', encodedNpub)
-
-      return notes;
-    } catch (error) {
-      console.error("Error retrieving global notes by hashtag:", error);
-      setErrorMessage(error.message);
-      return [];
-    }
-  };
-
-  const getUserProfile = async (npub) => {
-    try {
-      const connection = await connectToNostr();
-      if (!connection) return null;
-
-      const { ndkInstance } = connection;
-      const hexNpub = getHexNPub(npub); // Convert npub to hex
-
-      // Create a filter for kind: 0 (profile metadata) by the author
-      const filter = {
-        kinds: [NDKKind.Metadata],
-        authors: [hexNpub],
-        limit: 1,
-      };
-
-      // Create a subscription to fetch the metadata
-      const subscription = ndkInstance.subscribe(filter, { closeOnEose: true });
-
-      let profile = null;
-
-      subscription.on("event", (event) => {
-        profile = JSON.parse(event.content); // Parse the profile metadata
-      });
-
-      // Wait for the subscription to finish
-      await new Promise((resolve) => subscription.on("eose", resolve));
-
-      return profile;
-    } catch (error) {
-      console.error("Error retrieving user profile:", error);
-      setErrorMessage(error.message);
-      return null;
-    }
-  };
   const getLastNotesByNpub = async (
     npub = localStorage.getItem("local_npub")
   ) => {
@@ -801,142 +603,89 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       return [];
     }
   };
-  const getGlobalNotesWithProfilesByHashtag = async (
-    hashtag = "LearnWithNostr"
-  ) => {
-    try {
-      const connection = await connectToNostr();
-      if (!connection) return [];
+  const getGlobalNotesWithProfilesByHashtag = useCallback(
+    async (hashtag = "LearnWithNostr") => {
+      try {
+        const connection = await connectToNostr();
+        if (!connection) return [];
 
-      const { ndkInstance } = connection;
+        const { ndkInstance } = connection;
 
-      // Step 1: Fetch notes with the hashtag
-      const notesFilter = {
-        kinds: [NDKKind.Text], // Kind 1 for text notes
-        "#t": [hashtag], // Filter for the hashtag
-        limit: 50, // Adjust the limit as needed
-      };
-
-      const notesSubscription = ndkInstance.subscribe(notesFilter, {
-        closeOnEose: true,
-      });
-
-      const notes = [];
-      const pubkeys = new Set(); // To store unique pubkeys
-
-      notesSubscription.on("event", (event) => {
-        notes.push({
-          content: event.content,
-          createdAt: event.created_at,
-          tags: event.tags,
-          id: event.id,
-          pubkey: event.pubkey, // Store the pubkey for later use
-          npub: bech32.encode(
-            "npub",
-            bech32.toWords(Buffer.from(event.pubkey, "hex"))
-          ),
-          profile: null, // Placeholder for profile data
-        });
-        pubkeys.add(event.pubkey); // Add the author's pubkey to the set
-      });
-
-      await new Promise((resolve) => notesSubscription.on("eose", resolve));
-
-      // Step 2: Fetch profiles for all unique pubkeys
-      const profilesFilter = {
-        kinds: [NDKKind.Metadata], // Kind 0 for metadata
-        authors: Array.from(pubkeys), // Batch query for all pubkeys
-      };
-
-      const profilesSubscription = ndkInstance.subscribe(profilesFilter, {
-        closeOnEose: true,
-      });
-
-      const profilesMap = new Map(); // Map to store profiles by pubkey
-
-      profilesSubscription.on("event", (event) => {
-        const metadata = JSON.parse(event.content);
-        profilesMap.set(event.pubkey, {
-          name: metadata.name || "New Private User",
-          about: metadata.about || "",
-          picture: metadata.picture || "",
-        });
-      });
-
-      await new Promise((resolve) => profilesSubscription.on("eose", resolve));
-
-      // Step 3: Merge notes with profiles
-      const notesWithProfiles = notes.map((note) => {
-        note.profile = profilesMap.get(note.pubkey) || {
-          name: "New Private User",
-          about: "",
-          picture: "",
+        // Step 1: Fetch notes with the hashtag
+        const notesFilter = {
+          kinds: [NDKKind.Text], // Kind 1 for text notes
+          "#t": [hashtag], // Filter for the hashtag
+          limit: 50, // Adjust the limit as needed
         };
-        return note;
-      });
 
-      return notesWithProfiles;
-    } catch (error) {
-      console.error("Error fetching notes with profiles:", error);
-      return [];
-    }
-  };
+        const notesSubscription = ndkInstance.subscribe(notesFilter, {
+          closeOnEose: true,
+        });
 
-  /**
-   * Send a direct message (DM) via Nostr
-   * @param {string} recipientNpub - The recipient's npub
-   * @param {string} message - The message content
-   * @param {string} senderNsec - Optional sender's nsec (defaults to logged in user)
-   * @returns {boolean} success - Whether the DM was sent successfully
-   */
-  const sendDirectMessage = async (
-    recipientNpub, // npub... or hex
-    message, // plaintext to encrypt
-    senderNsec = null // nsec... or hex; falls back to local
-  ) => {
-    try {
-      const nsec =
-        senderNsec || localStorage.getItem("local_nsec") || nostrPrivKey;
+        const notes = [];
+        const pubkeys = new Set(); // To store unique pubkeys
 
-      if (!nsec) {
-        setErrorMessage("No private key available to send DM");
-        return false;
+        notesSubscription.on("event", (event) => {
+          notes.push({
+            content: event.content,
+            createdAt: event.created_at,
+            tags: event.tags,
+            id: event.id,
+            pubkey: event.pubkey, // Store the pubkey for later use
+            npub: bech32.encode(
+              "npub",
+              bech32.toWords(Buffer.from(event.pubkey, "hex"))
+            ),
+            profile: null, // Placeholder for profile data
+          });
+          pubkeys.add(event.pubkey); // Add the author's pubkey to the set
+        });
+
+        await new Promise((resolve) => notesSubscription.on("eose", resolve));
+
+        // Step 2: Fetch profiles for all unique pubkeys
+        const profilesFilter = {
+          kinds: [NDKKind.Metadata], // Kind 0 for metadata
+          authors: Array.from(pubkeys), // Batch query for all pubkeys
+        };
+
+        const profilesSubscription = ndkInstance.subscribe(profilesFilter, {
+          closeOnEose: true,
+        });
+
+        const profilesMap = new Map(); // Map to store profiles by pubkey
+
+        profilesSubscription.on("event", (event) => {
+          const metadata = JSON.parse(event.content);
+          profilesMap.set(event.pubkey, {
+            name: metadata.name || "New Private User",
+            about: metadata.about || "",
+            picture: metadata.picture || "",
+          });
+        });
+
+        await new Promise((resolve) =>
+          profilesSubscription.on("eose", resolve)
+        );
+
+        // Step 3: Merge notes with profiles
+        const notesWithProfiles = notes.map((note) => {
+          note.profile = profilesMap.get(note.pubkey) || {
+            name: "New Private User",
+            about: "",
+            picture: "",
+          };
+          return note;
+        });
+
+        return notesWithProfiles;
+      } catch (error) {
+        console.error("Error fetching notes with profiles:", error);
+        return [];
       }
-
-      // Normalize keys
-      const hexPriv = toHexPriv(nsec);
-      const hexRecipient = toHexPub(recipientNpub);
-
-      // Ensure ndk + signer ready
-      await ensureConnectedWithSigner(hexPriv);
-
-      // NIP-04 encrypt plaintext -> ciphertext "?iv=" formatted string
-      const ciphertext = await nip04.encrypt(hexPriv, hexRecipient, message);
-
-      // Build kind:4 event (Encrypted Direct Message)
-      const dmEvent = new NDKEvent(ndk, {
-        kind: 4,
-        tags: [["p", hexRecipient]], // optionally add relay hint as third param
-        content: ciphertext, // <-- encrypted!
-        created_at: Math.floor(Date.now() / 1000),
-      });
-
-      await dmEvent.sign(ndk.signer);
-      const relays = await dmEvent.publish();
-
-      if (relays && relays.size > 0) {
-        console.log("DM sent to relays:", Array.from(relays));
-        return true;
-      } else {
-        console.warn("No relay acknowledged the DM.");
-        return false;
-      }
-    } catch (err) {
-      console.error("Error sending direct message:", err);
-      setErrorMessage(err.message);
-      return false;
-    }
-  };
+    },
+    [connectToNostr]
+  );
 
   return {
     isConnected,
@@ -946,13 +695,14 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     generateNostrKeys,
     postNostrContent,
     auth,
-    authWithNip07,
-    checkNip07Available,
-    saveNsecForNip07User,
+    authWithExtension,
+    isNip07Available,
+    isNip07Mode,
+    ensureSigner,
     assignExistingBadgeToNpub,
     getUserBadges,
     getLastNotesByNpub,
     getGlobalNotesWithProfilesByHashtag,
-    sendDirectMessage,
+    ndk,
   };
 };
