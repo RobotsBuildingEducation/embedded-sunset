@@ -292,7 +292,13 @@ export const useNostrWalletStore = create((set, get) => ({
 
   // Create and publish new wallet
   createNewWallet: async () => {
-    const { ndkInstance, signer, setError, verifyAndUpdateBalance, nostrPrivKey } = get();
+    const {
+      ndkInstance,
+      signer,
+      setError,
+      verifyAndUpdateBalance,
+      nostrPrivKey,
+    } = get();
 
     if (!ndkInstance || !signer) {
       console.error("[Wallet] NDK not ready");
@@ -308,7 +314,9 @@ export const useNostrWalletStore = create((set, get) => ({
       // For NIP-07 users, use the manually provided private key
       if (!pk && nostrPrivKey && nostrPrivKey.startsWith("nsec")) {
         pk = decodeKey(nostrPrivKey);
-        console.log("[Wallet] Using manually provided private key for NIP-07 user");
+        console.log(
+          "[Wallet] Using manually provided private key for NIP-07 user"
+        );
       }
 
       if (!pk) {
