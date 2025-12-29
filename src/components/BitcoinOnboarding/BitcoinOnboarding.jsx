@@ -336,11 +336,12 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
       // Step 1: No wallet yet
       // Check if NIP-07 user needs to provide private key
       const needsPrivateKey = isUsingNip07 && !hasPrivateKey;
-      const canCreateWallet = selectedIdentity.length > 0 && (!isUsingNip07 || hasPrivateKey);
+      const canCreateWallet =
+        selectedIdentity.length > 0 && (!isUsingNip07 || hasPrivateKey);
 
       return (
         <>
-          <Text mb={4} textAlign={"left"} p={6} fontSize="sm">
+          <Text mb={4} textAlign={"left"} fontSize="sm">
             <Text mb={4}>
               <b>
                 {
@@ -358,22 +359,12 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
               </Text>
             </Text>
 
-            <Text size="sm" mb={4}>
+            <Text size="sm">
               {
                 translation[userLanguage][
                   "modal.bitcoinMode.instructions.createWallet.2"
                 ]
               }
-            </Text>
-
-            <Text size="sm" mb={2}>
-              <b>
-                {
-                  translation[userLanguage][
-                    "modal.bitcoinMode.instructions.createWallet.2.5"
-                  ]
-                }
-              </b>
             </Text>
           </Text>
 
@@ -402,6 +393,21 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
                 </Text>
               </Box>
             )}
+            <Button
+              onMouseDown={handleCreateWallet}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleCreateWallet();
+                }
+              }}
+              m={6}
+              isLoading={isCreatingWallet}
+              loadingText={translation[userLanguage]["loading.wallet"]}
+              isDisabled={!canCreateWallet}
+              boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+            >
+              {translation[userLanguage]["createWallet.button"]}
+            </Button>
 
             <Text flex="1" textAlign="left" fontSize="sm">
               {translation[userLanguage]["select.recipient"]}
@@ -436,22 +442,6 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
                 {selectedIdentityOption.href}
               </Link>
             ) : null}
-
-            <Button
-              onMouseDown={handleCreateWallet}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  handleCreateWallet();
-                }
-              }}
-              m={6}
-              isLoading={isCreatingWallet}
-              loadingText={translation[userLanguage]["loading.wallet"]}
-              isDisabled={!canCreateWallet}
-              boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-            >
-              {translation[userLanguage]["createWallet.button"]}
-            </Button>
           </VStack>
         </>
       );
