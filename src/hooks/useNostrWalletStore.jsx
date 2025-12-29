@@ -100,6 +100,21 @@ export const useNostrWalletStore = create((set, get) => ({
   setError: (msg) => set({ errorMessage: msg }),
   setInvoice: (data) => set({ invoice: data }),
 
+  // Set manual private key for NIP-07 users who want to create a wallet
+  setManualPrivateKey: (nsec) => {
+    if (nsec && nsec.startsWith("nsec")) {
+      const hexKey = decodeKey(nsec);
+      if (hexKey) {
+        set({ nostrPrivKey: nsec });
+        return true;
+      }
+    }
+    return false;
+  },
+
+  // Check if we're in NIP-07 mode
+  isNip07Mode: () => localStorage.getItem("nip07_signer") === "true",
+
   // Utility: Get hex pubkey from npub
   getHexNPub: (npub) => decodeKey(npub),
 
@@ -276,9 +291,14 @@ export const useNostrWalletStore = create((set, get) => ({
   },
 
   // Create and publish new wallet
-  // Create and publish new wallet
   createNewWallet: async () => {
-    const { ndkInstance, signer, setError, verifyAndUpdateBalance } = get();
+    const {
+      ndkInstance,
+      signer,
+      setError,
+      verifyAndUpdateBalance,
+      nostrPrivKey,
+    } = get();
 
     if (!ndkInstance || !signer) {
       console.error("[Wallet] NDK not ready");
@@ -288,7 +308,23 @@ export const useNostrWalletStore = create((set, get) => ({
     set({ isCreatingWallet: true });
 
     try {
-      const pk = signer.privateKey;
+      // Use signer's private key if available, otherwise use manually provided key
+      let pk = signer.privateKey;
+
+      // For NIP-07 users, use the manually provided private key
+      if (!pk && nostrPrivKey && nostrPrivKey.startsWith("nsec")) {
+        pk = decodeKey(nostrPrivKey);
+        console.log(
+          "[Wallet] Using manually provided private key for NIP-07 user"
+        );
+      }
+
+      if (!pk) {
+        console.error("[Wallet] No private key available for wallet creation");
+        set({ isCreatingWallet: false });
+        setError("Private key required to create wallet");
+        return null;
+      }
 
       const wallet = new NDKCashuWallet(ndkInstance);
       wallet.mints = [DEFAULT_MINT];
