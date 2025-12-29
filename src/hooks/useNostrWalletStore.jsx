@@ -226,14 +226,16 @@ export const useNostrWalletStore = create((set, get) => ({
 
       console.log("[Wallet] Found existing wallet, loading...");
 
-      const pk = signer.privateKey;
       const wallet = new NDKCashuWallet(ndkInstance);
       wallet.mints = [DEFAULT_MINT];
-      wallet.walletId = "Robots Building Education Wallet"; // Add this line
+      wallet.walletId = "Robots Building Education Wallet";
 
-      if (pk) {
-        wallet.privkey = pk;
-        wallet.signer = new NDKPrivateKeySigner(pk);
+      // Use the signer directly - works with both NIP-07 and private key signers
+      wallet.signer = signer;
+
+      // Only set privkey if available (private key signer, not NIP-07)
+      if (signer.privateKey) {
+        wallet.privkey = signer.privateKey;
       }
 
       ndkInstance.wallet = wallet;
@@ -288,13 +290,17 @@ export const useNostrWalletStore = create((set, get) => ({
     set({ isCreatingWallet: true });
 
     try {
-      const pk = signer.privateKey;
-
       const wallet = new NDKCashuWallet(ndkInstance);
       wallet.mints = [DEFAULT_MINT];
-      wallet.privkey = pk;
-      wallet.signer = new NDKPrivateKeySigner(pk);
       wallet.walletId = "Robots Building Education Wallet";
+
+      // Use the signer directly - works with both NIP-07 and private key signers
+      wallet.signer = signer;
+
+      // Only set privkey if available (private key signer, not NIP-07)
+      if (signer.privateKey) {
+        wallet.privkey = signer.privateKey;
+      }
 
       ndkInstance.wallet = wallet;
 
