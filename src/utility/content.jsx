@@ -13173,7 +13173,7 @@ doc.delete();`,
     },
     {
       group: "tutorial",
-      title: "Nostr Fundamentals",
+      title: "NIP-01: What is Nostr?",
       description: "Which statement best describes Nostr?",
       question: {
         questionText: "Which statement best describes Nostr?",
@@ -13189,7 +13189,7 @@ doc.delete();`,
     },
     {
       group: "tutorial",
-      title: "Nostr Fundamentals",
+      title: "NIP-01 flow",
       description: "Place the Nostr data flow in order.",
       question: {
         questionText: "Place the Nostr data flow in order.",
@@ -13210,7 +13210,7 @@ doc.delete();`,
     },
     {
       group: "tutorial",
-      title: "Nostr Fundamentals",
+      title: "NIP-01 fields",
       description: "Which fields are required in a signed Nostr event?",
       question: {
         questionText: "Which fields are required in a signed Nostr event?",
@@ -13229,7 +13229,46 @@ doc.delete();`,
     },
     {
       group: "tutorial",
-      title: "Nostr Fundamentals",
+      title: "NIP-01 event body completion",
+      description: "Complete a minimal unsigned text-note event structure.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which snippet is a valid unsigned Nostr text note (kind 1) payload?",
+        options: [
+          `{"kind":1,"pubkey":"","created_at":0,"tags":[],"content":"hello","sig":""}`,
+          `{"kind":1,"content":"hello","tags":[],"pubkey":"","created_at":0}`,
+          `{"kind":1,"content":"hello","tags":[],"id":"","sig":""}`,
+          `{"kind":1,"content":"","tags":"[]"}`,
+          `{"kind":1,"content":"hello","tags":[],"pubkey":""}`,
+        ],
+        answer: `{"kind":1,"content":"hello","tags":[],"pubkey":"","created_at":0}`,
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Signing an event (NIP-01)",
+      description: "Show how you would sign an event body.",
+      question: {
+        questionText:
+          "Write pseudocode to sign an event body and attach the signature field.",
+      },
+      isCode: true,
+    },
+    {
+      group: "tutorial",
+      title: "Metadata lookup (NIP-05)",
+      description: "Recall how NIP-05 maps to a pubkey.",
+      isSingleLineText: true,
+      question: {
+        questionText: "What NIP handles DNS-style identifiers for a pubkey?",
+        placeholder: "Type the NIP number",
+        answer: "NIP-05",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Relay statelessness",
       description:
         "In your own words, why are relays stateless compared to traditional servers?",
       question: {
@@ -13240,71 +13279,28 @@ doc.delete();`,
     },
     {
       group: "tutorial",
-      title: "Nostr Fundamentals",
-      description:
-        'Write JSON for a minimal unsigned Nostr text note (kind 1) with empty tags and content "hello relays".',
+      title: "Command-line subscribe (NIP-01)",
+      description: "Practice a CLI relay subscription.",
       question: {
         questionText:
-          'Write JSON for a minimal unsigned Nostr text note (kind 1) with empty tags and content "hello relays".',
+          "Enter a WebSocket command (e.g., wscat) that subscribes to kind 1 events from a relay at wss://relay.example.com.",
       },
       isCode: true,
+      isTerminal: true,
     },
     {
       group: "tutorial",
-      title: "Keys, Identity, and Signing",
-      description: "What does an npub represent?",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
       question: {
-        questionText: "What does an npub represent?",
-        options: [
-          "A Bech32-encoded public key",
-          "An encrypted private key",
-          "A relay URL",
-          "A Cashu mint",
-        ],
-        answer: "A Bech32-encoded public key",
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [1, 8],
       },
-      isMultipleChoice: true,
-    },
-    {
-      group: "tutorial",
-      title: "Keys, Identity, and Signing",
-      description: "Why should nsec never be shipped in a mobile bundle or repo?",
-      question: {
-        questionText:
-          "Why should nsec never be shipped in a mobile bundle or repo?",
-      },
-      isText: true,
-    },
-    {
-      group: "tutorial",
-      title: "Keys, Identity, and Signing",
-      description:
-        "Using pseudocode, show how you would sign an event body with nsec and attach the signature field.",
-      question: {
-        questionText:
-          "Using pseudocode, show how you would sign an event body with nsec and attach the signature field.",
-      },
-      isCode: true,
-    },
-    {
-      group: "tutorial",
-      title: "Keys, Identity, and Signing",
-      description: "Which options reduce key exposure when building clients?",
-      question: {
-        questionText: "Which options reduce key exposure when building clients?",
-        options: [
-          "Use NIP-46 remote signer",
-          "Store nsec in plaintext localStorage",
-          "Use a delegated token for a session",
-          "Let users paste keys into unencrypted logs",
-        ],
-        answer: ["Use NIP-46 remote signer", "Use a delegated token for a session"],
-      },
-      isMultipleAnswerChoice: true,
     },
     {
       group: "1",
-      title: "Keys, Identity, and Signing",
+      title: "NIP-05 discoverability",
       description: "Explain how NIP-05 improves discoverability for a pubkey.",
       question: {
         questionText: "Explain how NIP-05 improves discoverability for a pubkey.",
@@ -13313,7 +13309,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Event Anatomy & Kinds",
+      title: "NIP-01 kind 1 text notes",
       description: "Which event kind is used for short text notes?",
       question: {
         questionText: "Which event kind is used for short text notes?",
@@ -13324,7 +13320,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Event Anatomy & Kinds",
+      title: "NIP-01 kind 0 profiles",
       description: "What does kind 0 store, and how often should you overwrite it?",
       question: {
         questionText:
@@ -13334,7 +13330,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Event Anatomy & Kinds",
+      title: "NIP-01 tagging references",
       description:
         "Write an example tags array for a note that references an event id and mentions a pubkey.",
       question: {
@@ -13345,7 +13341,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Event Anatomy & Kinds",
+      title: "Encrypted payload kinds (NIP-04/17)",
       description: "Which kinds are commonly used for direct messaging and encrypted content?",
       question: {
         questionText:
@@ -13357,7 +13353,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Event Anatomy & Kinds",
+      title: "Replaceable vs ephemeral (NIP-16/17)",
       description: "When would you prefer a replaceable event over an ephemeral one?",
       question: {
         questionText:
@@ -13367,7 +13363,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Filters & Subscriptions",
+      title: "Filters basics (NIP-01)",
       description: "What does a relay filter do?",
       question: {
         questionText: "What does a relay filter do?",
@@ -13384,7 +13380,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Filters & Subscriptions",
+      title: "NDK subscription steps",
       description: "Order the steps of subscribing with filters using NDK.",
       question: {
         questionText: "Order the steps of subscribing with filters using NDK.",
@@ -13399,7 +13395,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Filters & Subscriptions",
+      title: "Author filters example",
       description:
         "Provide a sample filter JSON to fetch kind 1 notes from a list of authors, limiting to 20 results.",
       question: {
@@ -13410,7 +13406,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Filters & Subscriptions",
+      title: "Filter hygiene (since/limit)",
       description: "Why should you set `limit` and `since` on filters when building feeds?",
       question: {
         questionText:
@@ -13420,7 +13416,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Filters & Subscriptions",
+      title: "Filter fields (NIP-01)",
       description: "Which fields can you include in a filter?",
       question: {
         questionText: "Which fields can you include in a filter?",
@@ -13431,7 +13427,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Relay Strategy",
+      title: "Relay strategy (NIP-11/NIP-65)",
       description: "Why use multiple relays with scoring in NDK?",
       question: {
         questionText: "Why use multiple relays with scoring in NDK?",
@@ -13447,7 +13443,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Relay Strategy",
+      title: "Relay scoring heuristics",
       description: "Name two heuristics for deciding when to drop or downgrade a relay.",
       question: {
         questionText:
@@ -13457,7 +13453,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Relay Strategy",
+      title: "NDK relay pool setup",
       description:
         "Show pseudocode configuring NDK to connect to at least three relays with read/write flags.",
       question: {
@@ -13468,7 +13464,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Relay Strategy",
+      title: "Relay abuse prevention",
       description: "Which practices help avoid relay abuse?",
       question: {
         questionText: "Which practices help avoid relay abuse?",
@@ -13488,7 +13484,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Relay Strategy",
+      title: "Reading NIP-11 relay info",
       description: "Explain how NIP-11 relay info documents guide client behavior.",
       question: {
         questionText:
@@ -13498,7 +13494,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Profiles & Metadata (Kind 0)",
+      title: "NIP-05 profile fields",
       description:
         "What field typically stores a display name inside kind 0 content?",
       question: {
@@ -13511,7 +13507,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Profiles & Metadata (Kind 0)",
+      title: "Replaceable profile updates (NIP-01/16)",
       description:
         "Why is kind 0 a replaceable event, and what happens when you republish it?",
       question: {
@@ -13522,7 +13518,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Profiles & Metadata (Kind 0)",
+      title: "Drafting kind 0 content",
       description: "Draft a kind 0 content JSON including name, about, and picture URL.",
       question: {
         questionText:
@@ -13532,7 +13528,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Profiles & Metadata (Kind 0)",
+      title: "Profile tags defaults",
       description: "Which tags belong on a profile event?",
       question: {
         questionText: "Which tags belong on a profile event?",
@@ -13548,7 +13544,7 @@ doc.delete();`,
     },
     {
       group: "1",
-      title: "Profiles & Metadata (Kind 0)",
+      title: "Relay selection for profiles",
       description: "How do relays decide which profile event to keep for an author?",
       question: {
         questionText:
@@ -13558,7 +13554,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "Contacts, Follows, and Lists",
+      title: "Contact lists (NIP-02)",
       description: "Which kind is used for contact/follow lists?",
       question: {
         questionText: "Which kind is used for contact/follow lists?",
@@ -13569,7 +13565,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "Contacts, Follows, and Lists",
+      title: "p-tags in contact lists (NIP-02)",
       description: "What does a p-tag represent inside a contact list event?",
       question: {
         questionText: "What does a p-tag represent inside a contact list event?",
@@ -13578,7 +13574,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "Contacts, Follows, and Lists",
+      title: "Relay hints in lists (NIP-65)",
       description:
         "Write a contact list tags array that follows two pubkeys and sets relays for one of them.",
       question: {
@@ -13589,7 +13585,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "Contacts, Follows, and Lists",
+      title: "Relay list kinds (NIP-65/10002)",
       description: "Which list kinds are commonly used for relay lists?",
       question: {
         questionText: "Which list kinds are commonly used for relay lists?",
@@ -13600,7 +13596,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "Contacts, Follows, and Lists",
+      title: "Merging relay hints with defaults",
       description:
         "How might you merge relay hints from contact lists with app defaults?",
       question: {
@@ -13611,7 +13607,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "Direct Messages & Encryption",
+      title: "Encrypted DM spec (NIP-04/17)",
       description: "Which NIP defines end-to-end encrypted direct messages?",
       question: {
         questionText: "Which NIP defines end-to-end encrypted direct messages?",
@@ -13622,7 +13618,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "Direct Messages & Encryption",
+      title: "DM logging risks",
       description: "Why should you avoid storing decrypted DM content in logs?",
       question: {
         questionText:
@@ -13632,7 +13628,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "Direct Messages & Encryption",
+      title: "Shared-secret encryption (NIP-04)",
       description:
         "Show pseudocode encrypting content with shared secret derived from sender and receiver keys.",
       question: {
@@ -13643,7 +13639,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "Direct Messages & Encryption",
+      title: "Encrypted payload kinds (NIP-04/17)",
       description: "Which event kinds carry encrypted payloads?",
       question: {
         questionText: "Which event kinds carry encrypted payloads?",
@@ -13654,7 +13650,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "Direct Messages & Encryption",
+      title: "Ephemeral chat events (NIP-17/40k)",
       description: "How do ephemeral events (kind 20000+) differ for chat use cases?",
       question: {
         questionText:
@@ -13664,7 +13660,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "File and Media Handling",
+      title: "Media attachments (NIP-94)",
       description: "What is the purpose of NIP-94?",
       question: {
         questionText: "What is the purpose of NIP-94?",
@@ -13680,7 +13676,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "File and Media Handling",
+      title: "When to pin or mirror media",
       description:
         "When should you pin or mirror media across relays or object storage?",
       question: {
@@ -13691,7 +13687,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "File and Media Handling",
+      title: "NIP-94 tags example",
       description:
         "Compose a NIP-94 event tags array referencing a hosted image with dimensions.",
       question: {
@@ -13702,7 +13698,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "File and Media Handling",
+      title: "Media linking concerns",
       description: "Which concerns apply when linking media?",
       question: {
         questionText: "Which concerns apply when linking media?",
@@ -13718,7 +13714,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "File and Media Handling",
+      title: "NIP-96 hosting strategy",
       description:
         "How can you combine NIP-96 file hosting with a progressive relay strategy?",
       question: {
@@ -13729,7 +13725,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "NDK Client Flows",
+      title: "NDK connect lifecycle",
       description: "What does NDK do when you call `ndk.connect()`?",
       question: {
         questionText: "What does NDK do when you call `ndk.connect()`?",
@@ -13745,7 +13741,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "NDK Client Flows",
+      title: "NDK instantiation & subscribe",
       description:
         "Show how to instantiate NDK with a relay list and connect before subscribing to notes.",
       question: {
@@ -13756,7 +13752,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "NDK Client Flows",
+      title: "Connection status listeners",
       description: "Why should you listen to connection status events in NDK?",
       question: {
         questionText:
@@ -13766,7 +13762,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "NDK Client Flows",
+      title: "NDK profile helpers",
       description: "Which helpers come with NDK profiles module?",
       question: {
         questionText: "Which helpers come with NDK profiles module?",
@@ -13777,7 +13773,7 @@ doc.delete();`,
     },
     {
       group: "2",
-      title: "NDK Client Flows",
+      title: "Effect cleanup for subscriptions",
       description:
         "How would you structure a React effect to open a subscription and clean it up on unmount?",
       question: {
@@ -13788,7 +13784,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Publishing and Moderation",
+      title: "Relay validation on publish (NIP-01)",
       description: "Why sign events client-side before publishing?",
       question: {
         questionText: "Why sign events client-side before publishing?",
@@ -13804,7 +13800,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Publishing and Moderation",
+      title: "Retrying publishes",
       description:
         "Explain a strategy to retry publishes when a relay rejects an event.",
       question: {
@@ -13815,7 +13811,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Publishing and Moderation",
+      title: "Optimistic UI for notes",
       description:
         "Provide pseudocode to publish a kind 1 note with optimistic UI and rollback on failure.",
       question: {
@@ -13826,7 +13822,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Publishing and Moderation",
+      title: "Moderation tags (NIP-09/36)",
       description: "Which tags can help with moderation context?",
       question: {
         questionText: "Which tags can help with moderation context?",
@@ -13846,7 +13842,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Publishing and Moderation",
+      title: "Surface relay rejection reasons",
       description: "How would you surface relay rejection reasons to a user?",
       question: {
         questionText:
@@ -13856,7 +13852,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Discovery & Search",
+      title: "Search (NIP-50)",
       description: "What does NIP-50 enable?",
       question: {
         questionText: "What does NIP-50 enable?",
@@ -13872,7 +13868,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Discovery & Search",
+      title: "Search support gaps",
       description: "Why shouldn’t you rely on every relay supporting search?",
       question: {
         questionText: "Why shouldn’t you rely on every relay supporting search?",
@@ -13881,7 +13877,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Discovery & Search",
+      title: "Search filter example",
       description:
         'Write a filter requesting kind 1 events with a search term "nostr dev" using NIP-50 conventions.',
       question: {
@@ -13892,7 +13888,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Discovery & Search",
+      title: "Search fallbacks",
       description: "Which fallbacks can you add when search is unavailable?",
       question: {
         questionText: "Which fallbacks can you add when search is unavailable?",
@@ -13912,7 +13908,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Discovery & Search",
+      title: "Ranking partial results",
       description:
         "How would you rank results when some relays return partial data?",
       question: {
@@ -13923,7 +13919,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Lightning Zaps & Receipts",
+      title: "Zap basics (NIP-57)",
       description: "Which NIP defines zaps?",
       question: {
         questionText: "Which NIP defines zaps?",
@@ -13934,7 +13930,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Lightning Zaps & Receipts",
+      title: "Zap endpoint role",
       description: "What role does the zap endpoint play in a zap request?",
       question: {
         questionText: "What role does the zap endpoint play in a zap request?",
@@ -13943,7 +13939,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Lightning Zaps & Receipts",
+      title: "Zap request tags",
       description:
         "Draft a zap request event tags array referencing a LNURL or Lightning address.",
       question: {
@@ -13954,7 +13950,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Lightning Zaps & Receipts",
+      title: "Zap proofs (receipts)",
       description: "Which data proves a zap happened?",
       question: {
         questionText: "Which data proves a zap happened?",
@@ -13970,7 +13966,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Lightning Zaps & Receipts",
+      title: "Zap failure handling",
       description: "How would you fail gracefully when a wallet returns a non-paid invoice?",
       question: {
         questionText:
@@ -13980,7 +13976,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Cashu Ecash Integration",
+      title: "Cashu mints (protocol basics)",
       description: "What is a Cashu mint responsible for?",
       question: {
         questionText: "What is a Cashu mint responsible for?",
@@ -13996,7 +13992,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Cashu Ecash Integration",
+      title: "Cashu rewards rationale",
       description: "Why might you pair Cashu rewards with Nostr achievements?",
       question: {
         questionText:
@@ -14006,7 +14002,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Cashu Ecash Integration",
+      title: "Mint request pseudocode",
       description:
         "Outline pseudocode to request a token from a mint and attach it to a Nostr badge event.",
       question: {
@@ -14017,7 +14013,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Cashu Ecash Integration",
+      title: "Cashu precautions",
       description: "Which precautions apply to ecash tokens?",
       question: {
         questionText: "Which precautions apply to ecash tokens?",
@@ -14037,7 +14033,7 @@ doc.delete();`,
     },
     {
       group: "3",
-      title: "Cashu Ecash Integration",
+      title: "Cashu proof acceptance UX",
       description: "How could you notify a user that a Cashu proof was accepted?",
       question: {
         questionText:
@@ -14047,7 +14043,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Authentication & Delegation",
+      title: "Delegated signing (NIP-46)",
       description: "What does NIP-46 enable?",
       question: {
         questionText: "What does NIP-46 enable?",
@@ -14063,7 +14059,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Authentication & Delegation",
+      title: "Why delegated tokens",
       description: "Why use delegated tokens for short-lived sessions?",
       question: {
         questionText: "Why use delegated tokens for short-lived sessions?",
@@ -14072,7 +14068,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Authentication & Delegation",
+      title: "Delegation token format",
       description: "Show an example delegation token string format with conditions field.",
       question: {
         questionText:
@@ -14082,7 +14078,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Authentication & Delegation",
+      title: "Delegation claims",
       description: "Which claims can be encoded in a delegation token?",
       question: {
         questionText: "Which claims can be encoded in a delegation token?",
@@ -14093,7 +14089,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Authentication & Delegation",
+      title: "Token expiry UX",
       description: "How would you surface token expiry in the UI?",
       question: {
         questionText: "How would you surface token expiry in the UI?",
@@ -14102,7 +14098,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Security & Abuse Prevention",
+      title: "Replay risk (NIP-22/33)",
       description: "What threat does event replays pose?",
       question: {
         questionText: "What threat does event replays pose?",
@@ -14118,7 +14114,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Security & Abuse Prevention",
+      title: "Spam mitigations",
       description: "List two mitigations to reduce spam in public feeds.",
       question: {
         questionText:
@@ -14128,7 +14124,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Security & Abuse Prevention",
+      title: "Max size guardrails",
       description: "Write pseudocode to reject events over a max size before signing.",
       question: {
         questionText:
@@ -14138,7 +14134,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Security & Abuse Prevention",
+      title: "Relay quality signals",
       description: "Which signals can help score relay quality?",
       question: {
         questionText: "Which signals can help score relay quality?",
@@ -14149,7 +14145,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Security & Abuse Prevention",
+      title: "Content warnings (NIP-36)",
       description:
         "How do content warnings help communities moderate without central control?",
       question: {
@@ -14160,7 +14156,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Testing & Tooling",
+      title: "Inspecting traffic",
       description: "Which tool can you use to inspect relay traffic?",
       question: {
         questionText: "Which tool can you use to inspect relay traffic?",
@@ -14171,7 +14167,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Testing & Tooling",
+      title: "Seeding test relays",
       description: "Why should you seed test relays with known events before UI testing?",
       question: {
         questionText:
@@ -14181,7 +14177,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Testing & Tooling",
+      title: "Publish OK expectation",
       description:
         "Provide a Jest-style test snippet that asserts a publish call resolves with an OK from at least one relay.",
       question: {
@@ -14192,7 +14188,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Testing & Tooling",
+      title: "Staging environments",
       description: "Which environments are useful for staging?",
       question: {
         questionText: "Which environments are useful for staging?",
@@ -14208,7 +14204,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Testing & Tooling",
+      title: "Mocking NDK subscriptions",
       description:
         "How could you mock NDK subscriptions for deterministic UI tests?",
       question: {
@@ -14219,7 +14215,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Performance & Caching",
+      title: "Local caching benefits",
       description: "Why cache recent events locally?",
       question: {
         questionText: "Why cache recent events locally?",
@@ -14235,7 +14231,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Performance & Caching",
+      title: "Mobile caching tradeoffs",
       description: "What is the tradeoff of aggressive local caching on mobile?",
       question: {
         questionText:
@@ -14245,7 +14241,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Performance & Caching",
+      title: "Cache key design",
       description: "Sketch a cache key strategy combining pubkey, kind, and a cursor.",
       question: {
         questionText:
@@ -14255,7 +14251,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Performance & Caching",
+      title: "Feed freshness strategies",
       description: "Which strategies keep feeds fresh?",
       question: {
         questionText: "Which strategies keep feeds fresh?",
@@ -14275,7 +14271,7 @@ doc.delete();`,
     },
     {
       group: "4",
-      title: "Performance & Caching",
+      title: "Measuring perceived latency",
       description: "How would you measure perceived latency for feed loads?",
       question: {
         questionText:
@@ -14285,7 +14281,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Product Patterns on Nostr",
+      title: "Threaded replies (NIP-10)",
       description: "Which feature relies on event threading?",
       question: {
         questionText: "Which feature relies on event threading?",
@@ -14301,7 +14297,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Product Patterns on Nostr",
+      title: "Reputation without servers",
       description: "How could you design a reputation model without central servers?",
       question: {
         questionText:
@@ -14311,7 +14307,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Product Patterns on Nostr",
+      title: "Reply tagging (NIP-10)",
       description:
         "Draft tags linking a reply to its root event and to the author being mentioned.",
       question: {
@@ -14322,7 +14318,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Product Patterns on Nostr",
+      title: "Signals for following feeds",
       description: "Which signals can drive “following” feeds?",
       question: {
         questionText: "Which signals can drive “following” feeds?",
@@ -14338,7 +14334,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Product Patterns on Nostr",
+      title: "Cashu tips + badges",
       description: "Describe one way to pair Cashu tips with milestone badges.",
       question: {
         questionText:
@@ -14348,7 +14344,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Deployment & Relay Ops",
+      title: "Running your own relay",
       description: "What is one benefit of running your own relay?",
       question: {
         questionText: "What is one benefit of running your own relay?",
@@ -14364,7 +14360,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Deployment & Relay Ops",
+      title: "Paid vs free relays",
       description: "When would you choose paid relays over free public ones?",
       question: {
         questionText: "When would you choose paid relays over free public ones?",
@@ -14373,7 +14369,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Deployment & Relay Ops",
+      title: "nostr-rs-relay commands",
       description: "List shell commands to run a nostr-rs-relay locally with a config file.",
       question: {
         questionText:
@@ -14383,7 +14379,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Deployment & Relay Ops",
+      title: "Relay maintenance tasks",
       description: "Which maintenance tasks matter for relay ops?",
       question: {
         questionText: "Which maintenance tasks matter for relay ops?",
@@ -14403,7 +14399,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Deployment & Relay Ops",
+      title: "Retention policy UX",
       description: "How do retention policies influence mobile client UX?",
       question: {
         questionText:
@@ -14413,7 +14409,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Review & Reflection",
+      title: "NDK simplification reflection",
       description: "Summarize how NDK simplifies client development for you.",
       question: {
         questionText:
@@ -14423,7 +14419,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Review & Reflection",
+      title: "Key custody pitfalls",
       description: "What pitfalls did you find around key custody?",
       question: {
         questionText:
@@ -14433,7 +14429,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Review & Reflection",
+      title: "Lightning + Cashu plan",
       description:
         "How will you combine Nostr feeds with Lightning or Cashu in your project?",
       question: {
@@ -14444,7 +14440,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Review & Reflection",
+      title: "Relay choices rationale",
       description: "Which relays would you choose for production and why?",
       question: {
         questionText: "Which relays would you choose for production and why?",
@@ -14453,7 +14449,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Review & Reflection",
+      title: "Comprehensive review",
       description:
         "Let’s review everything you practiced about Nostr, NDK, relays, and Cashu.",
       question: {
@@ -14464,7 +14460,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Post-Course Checks",
+      title: "Launch checklist",
       description: "Draft a launch checklist for a Nostr app that depends on NDK.",
       question: {
         questionText:
@@ -14474,7 +14470,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Post-Course Checks",
+      title: "Relay health monitoring",
       description: "How will you monitor relay health after shipping?",
       question: {
         questionText:
@@ -14484,7 +14480,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Post-Course Checks",
+      title: "Retry queue snippet",
       description:
         "Write a snippet that queues failed publishes for retry on reconnect.",
       question: {
@@ -14495,7 +14491,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Post-Course Checks",
+      title: "Payment fallback UX",
       description:
         "What Cashu or Lightning fallback will you show when payments fail?",
       question: {
@@ -14506,7 +14502,7 @@ doc.delete();`,
     },
     {
       group: "5",
-      title: "Post-Course Checks",
+      title: "Next feature ideas",
       description:
         "List three next features you would prototype after this course.",
       question: {
