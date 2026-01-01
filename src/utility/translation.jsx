@@ -1769,6 +1769,7 @@ reverse(head) {
         <br />
       </>
     ),
+    "settings.darkMode": "Dark mode",
     "tag.allowPosting": "Allow posts",
   },
   es: {
@@ -2093,6 +2094,7 @@ reverse(head) {
       "Elige cuántas preguntas completar para alcanzar tu meta diaria. El temporizador de la meta se reinicia cada 24 horas.",
     "toast.title.idCopied": "ID copiada.",
     "toast.description.idCopied": "Tu ID ha sido copiada.",
+    "settings.darkMode": "Modo oscuro",
     "tag.allowPosting": "No publicar mi progreso",
     "subscription.nudge": (
       <>
@@ -5089,6 +5091,7 @@ reverse(head) {
         <br />
       </>
     ),
+    "settings.darkMode": "Dark mode",
     "tag.allowPosting": "Allow posts",
   },
   "swift-en": {
@@ -6716,6 +6719,7 @@ reverse(head) {
         <br />
       </>
     ),
+    "settings.darkMode": "Dark mode",
     "tag.allowPosting": "Allow posts",
   },
   "android-en": {
@@ -8343,6 +8347,7 @@ reverse(head) {
         <br />
       </>
     ),
+    "settings.darkMode": "Dark mode",
     "tag.allowPosting": "Allow posts",
   },
   "compsci-en": {
@@ -9968,6 +9973,7 @@ reverse(head) {
         <br />
       </>
     ),
+    "settings.darkMode": "Dark mode",
     "tag.allowPosting": "Allow posts",
   },
 };
