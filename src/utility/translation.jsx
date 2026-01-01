@@ -9979,3 +9979,6 @@ reverse(head) {
     "tag.allowPosting": "Allow posts",
   },
 };
+
+// Reuse English copy for nostr-en so all translation keys resolve
+translation["nostr-en"] = translation.en;
