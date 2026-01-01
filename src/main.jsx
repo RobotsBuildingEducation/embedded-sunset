@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { keyframes } from "@emotion/react";
 
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { ChakraProvider, ColorModeScript, extendTheme } from "@chakra-ui/react";
 import { MiniKitContextProvider } from "./providers/MiniKitProvider.jsx";
 
 import { AppWrapper } from "./App.jsx";
@@ -37,7 +37,12 @@ const gradientAnimation = keyframes`
     background-position: 0% 50%;
   }
 `;
+const config = {
+  initialColorMode: "light",
+  useSystemColorMode: false,
+};
 const theme = extendTheme({
+  config,
   components: {
     Modal: {
       baseStyle: {
@@ -56,16 +61,18 @@ const theme = extendTheme({
   },
 
   styles: {
-    global: {
+    global: (props) => ({
       body: {
         height: "100vh",
-        background: "#F8F5F0",
-        // background:
-        //   "linear-gradient(270deg, #f0f0f0, #F8F5F0, #fcfcfc, #F8F5F0)", // Adding a soft beige-like color
+        background:
+          props.colorMode === "dark"
+            ? "radial-gradient(circle at 20% 20%, #1f2937, #0f172a 50%, #0b1020)"
+            : "#F8F5F0",
+        color: props.colorMode === "dark" ? "whiteAlpha.900" : "inherit",
         backgroundSize: "800% 800%",
         animation: `${gradientAnimation} 20s ease infinite`,
       },
-    },
+    }),
   },
 
   // colors: {
@@ -88,6 +95,7 @@ localStorage.setItem("CANARY_KEY", "Y2FuYXJ5");
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ChakraProvider theme={theme}>
+    <ColorModeScript initialColorMode={theme.config.initialColorMode} />
     <MiniKitContextProvider>
       <AppWrapper />
     </MiniKitContextProvider>

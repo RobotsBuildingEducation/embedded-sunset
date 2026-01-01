@@ -31,6 +31,8 @@ import {
   PopoverArrow,
   PopoverCloseButton,
   Portal,
+  useColorMode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 
 import { useNavigate } from "react-router-dom";
@@ -82,6 +84,12 @@ const SettingsMenu = ({
   const btnRef = menuButtonRef || useRef(); // Reference to the settings icon button
   const firstButtonRef = useRef(); // Reference to the first button in the drawer
   const toast = useToast();
+  const { colorMode, toggleColorMode } = useColorMode();
+  const menuButtonBg = useColorModeValue("white", "gray.800");
+  const menuButtonShadow = useColorModeValue(
+    "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+    "0px 0px 0px 1px rgba(255,255,255,0.15)"
+  );
 
   const { resetState, walletService } = useNostrWalletStore((state) => ({
     resetState: state.resetState, // renamed from cashTap
@@ -293,11 +301,12 @@ const SettingsMenu = ({
         }
       }}
       // variant="outline"
-      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+      boxShadow={menuButtonShadow}
       position="fixed"
       top={4}
       right={4}
-      style={{ backgroundColor: "white", zIndex: 1000 }}
+      bg={menuButtonBg}
+      style={{ zIndex: 1000 }}
       aria-label="Settings"
     />
   );
@@ -438,6 +447,17 @@ const SettingsMenu = ({
                   id="allow-posts-menu-switch"
                   isChecked={allowPosts}
                   onChange={handleToggleAllowPosts}
+                  colorScheme="pink"
+                />
+              </FormControl>
+              <FormControl display="flex" alignItems="center" width="100%">
+                <FormLabel htmlFor="dark-mode-switch" mb="0" flex="1">
+                  {translation[userLanguage]["settings.darkMode"]}
+                </FormLabel>
+                <Switch
+                  id="dark-mode-switch"
+                  isChecked={colorMode === "dark"}
+                  onChange={toggleColorMode}
                   colorScheme="pink"
                 />
               </FormControl>
