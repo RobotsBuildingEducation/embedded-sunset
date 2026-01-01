@@ -1640,6 +1640,8 @@ const Step = ({
   onActionTourComplete,
   startActionTour,
 }) => {
+  const surfaceBg = useColorModeValue("white", "gray.800");
+  const strongBorder = useColorModeValue("black", "white");
   let loot = buildSuperLoot();
 
   // console.log(loot);
