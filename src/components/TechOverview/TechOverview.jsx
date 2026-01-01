@@ -27,6 +27,7 @@ export const TechOverview = ({ userLanguage }) => {
     "swift-en": 2,
     es: 1,
     "compsci-en": 4,
+    "nostr-en": 3,
   };
 
   const currentDifficulty = difficultyMap[userLanguage] || 0;
@@ -124,6 +125,90 @@ export const TechOverview = ({ userLanguage }) => {
             name: "Terminal basics",
             description:
               "Essential commands for navigating and managing the filesystem.",
+          },
+        ],
+      },
+    },
+
+    /** ───────────────────────── Nostr Track (nostr‑en) ───────────────────────── */
+    "nostr-en": {
+      heading: "Why Nostr?",
+      description:
+        "Nostr lets you build censorship-resistant social apps and automation on a simple, signed-event protocol. With NDK you get connection pooling, relay scoring, and helper APIs, while Cashu gives you ecash rails for rewards and tips without channels.",
+      core: "Nostr, NIP standards, NDK, Lightning, Cashu",
+      lists: {
+        languages: [
+          {
+            name: "TypeScript / JavaScript",
+            description:
+              "Primary language for most Nostr + NDK clients and UI layers.",
+          },
+          {
+            name: "JSON",
+            description:
+              "Events, tags, filters, and relay info documents all flow through JSON.",
+          },
+          {
+            name: "Bash / Shell",
+            description:
+              "Spin up relays, run scripts, and test connections locally.",
+          },
+          {
+            name: "YAML / TOML",
+            description: "Configure relays and app settings cleanly.",
+          },
+        ],
+        frameworks: [
+          {
+            name: "Nostr Development Kit (NDK)",
+            description:
+              "Connection pooling, relay scoring, signing, publish/subscribe helpers.",
+          },
+          {
+            name: "React",
+            description: "Build responsive clients that subscribe to relays.",
+          },
+          {
+            name: "Node.js runtime",
+            description:
+              "Power scripts, bots, and backend workers that handle Nostr events.",
+          },
+          {
+            name: "Lightning / NIP-57",
+            description:
+              "Implement zaps with receipts so users can tip with proofs.",
+          },
+          {
+            name: "Cashu",
+            description:
+              "Ecash tokens and mints to reward users without LN channels.",
+          },
+        ],
+        devTools: [
+          {
+            name: "NDK relay debugger",
+            description:
+              "Inspect relay health, connection states, and subscription flows.",
+          },
+          {
+            name: "WebSocket inspectors",
+            description:
+              "Watch subscription filters, EOSE signals, and publish acks.",
+          },
+          {
+            name: "Git CLI & GitHub",
+            description:
+              "Manage client code, relay configs, and deployment scripts.",
+          },
+          {
+            name: "Docker",
+            description:
+              "Run local relays (e.g., nostr-rs-relay) and supporting services.",
+          },
+          {
+            name: "Lightning wallets / Cashu mints",
+            description:
+              "Test zaps, receipts, and ecash redemption end-to-end.",
           },
         ],
       },

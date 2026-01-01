@@ -979,6 +979,8 @@ export const Onboarding = ({
                             translation[userLanguage][
                               "language.compsci.english"
                             ],
+                          "nostr-en":
+                            translation[userLanguage]["language.nostr.english"],
                         }[userLanguage]
                       }
                     </MenuButton>
@@ -1049,6 +1051,16 @@ export const Onboarding = ({
                         }
                       >
                         {translation[userLanguage]["language.compsci.english"]}
+                      </MenuItem>
+                      <MenuItem
+                        p={6}
+                        onClick={() =>
+                          handleLanguageSelect({
+                            target: { value: "nostr-en" },
+                          })
+                        }
+                      >
+                        {translation[userLanguage]["language.nostr.english"]}
                       </MenuItem>
                     </MenuList>
                   </Menu>

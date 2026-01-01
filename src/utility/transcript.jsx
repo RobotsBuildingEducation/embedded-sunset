@@ -1818,6 +1818,7 @@ export let onboardingTranscript = {
     "swift-en": "New Student",
     "android-en": "New Student",
     "compsci-en": "New Student",
+    "nostr-en": "New Student",
   },
   imgSrc:
     "https://res.cloudinary.com/dtkeyccga/image/upload/v1745250135/bevfqeqakogfxrxn3pia.png",

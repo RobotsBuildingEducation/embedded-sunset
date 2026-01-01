@@ -31,6 +31,7 @@ export const ChangeLanguageModal = ({
     "swift-en": translation[userLanguage]["language.swift.english"],
     "android-en": translation[userLanguage]["language.android.english"],
     "compsci-en": translation[userLanguage]["language.compsci.english"],
+    "nostr-en": translation[userLanguage]["language.nostr.english"],
   };
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">

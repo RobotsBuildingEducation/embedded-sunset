@@ -39,6 +39,7 @@ export const transcriptDisplay = {
     "swift-en": "Tutorial",
     "android-en": "Tutorial",
     "compsci-en": "Tutorial",
+    "nostr-en": "Tutorial",
   },
   1: {
     en: "Basics of Coding",
@@ -47,6 +48,7 @@ export const transcriptDisplay = {
     "swift-en": "Basics of Coding",
     "android-en": "Basics of Coding",
     "compsci-en": "Foundations of Data Structures", // ✅ fixed
+    "nostr-en": "Nostr Protocol Basics",
   },
   2: {
     en: "Object-Oriented Programming",
@@ -55,6 +57,7 @@ export const transcriptDisplay = {
     "swift-en": "Object-Oriented Programming",
     "android-en": "Object-Oriented Programming",
     "compsci-en": "Linear Structures", // ✅ fixed
+    "nostr-en": "Events, Keys, and Signing",
   },
   3: {
     en: "Frontend Development",
@@ -63,6 +66,7 @@ export const transcriptDisplay = {
     "swift-en": "Frontend Development",
     "android-en": "Frontend Development",
     "compsci-en": "Hierarchical & Associative Structures", // ✅ fixed
+    "nostr-en": "Relays, Filters, Subscriptions",
   },
   4: {
     en: "Backend Engineering Fundamentals",
@@ -71,6 +75,7 @@ export const transcriptDisplay = {
     "swift-en": "Backend Engineering Fundamentals",
     "android-en": "Backend Engineering Fundamentals",
     "compsci-en": "Sorting & Searching Algorithms", // ✅ fixed
+    "nostr-en": "Publishing, Moderation, and Search",
   },
   5: {
     en: "Creating Apps & Experiences",
@@ -79,6 +84,7 @@ export const transcriptDisplay = {
     "swift-en": "Creating Apps & Experiences",
     "android-en": "Creating Apps & Experiences",
     "compsci-en": "Operating Systems Essentials", // ✅ fixed
+    "nostr-en": "Apps, Payments, and Ecash",
   },
   6: {
     en: "Computer Science",
@@ -87,6 +93,7 @@ export const transcriptDisplay = {
     "swift-en": "Computer Science",
     "android-en": "Computer Science",
     "compsci-en": "Computer Science",
+    "nostr-en": "Deployment & Review",
   },
 };
 

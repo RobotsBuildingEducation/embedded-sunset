@@ -27,6 +27,7 @@ export const CodeEditor = ({ value, onChange, height = 400, userLanguage }) => {
     "android-en": "java",
     "py-en": "python",
     "compsci-en": "python",
+    "nostr-en": "javascript",
   };
 
   return (
