@@ -494,15 +494,26 @@ const AwardScreen = (userLanguage) => {
         </Text>
         <br />
 
-        <Button
-          boxShadow="0.5px 0.5px 1px black"
-          onClick={() => navigate("/q/0")}
-        >
-          Return to app
-        </Button>
-        {/* <Text fontSize={"sm"}>
-          {translation[userLanguage.userLanguage]["congrats.connect"]}
-        </Text> */}
+        <HStack spacing={4} justifyContent="center" flexWrap="wrap">
+          <Button
+            boxShadow="0.5px 0.5px 1px black"
+            onClick={() => navigate("/q/0")}
+          >
+            {translation[userLanguage.userLanguage]?.["button.returnToApp"] || "Return to app"}
+          </Button>
+          <Button
+            colorScheme="pink"
+            boxShadow="0.5px 0.5px 1px black"
+            leftIcon={<RiAiGenerate />}
+            onClick={() => {
+              localStorage.setItem("aiLearningMode", "true");
+              const totalSteps = steps[userLanguage.userLanguage]?.length || 1;
+              navigate(`/q/${totalSteps - 1}`);
+            }}
+          >
+            {translation[userLanguage.userLanguage]?.["button.continueLearning"] || "Continue Learning"}
+          </Button>
+        </HStack>
         <br />
         {isEligibleForRefund && (
           <Box
@@ -2225,6 +2236,17 @@ const Step = ({
     }
 
     // onAwardModalOpen();
+
+    // Check if we should enable AI learning mode from the award page
+    const aiLearningModeFlag = localStorage.getItem("aiLearningMode");
+    if (aiLearningModeFlag === "true") {
+      localStorage.removeItem("aiLearningMode");
+      setIsAILearningMode(true);
+      // Trigger AI question generation after a short delay to ensure component is ready
+      setTimeout(() => {
+        handleGenerateNewQuestion();
+      }, 100);
+    }
   }, []);
 
   // Initialize items for Select Order question
@@ -4563,7 +4585,6 @@ const Step = ({
                 userLanguage={userLanguage}
                 step={step}
                 isCorrect={isCorrect}
-                onContinueLearning={handleContinueLearning}
               />
             ) : null}
 
