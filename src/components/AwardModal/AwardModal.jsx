@@ -21,7 +21,7 @@ import {
 import { CloudCanvas } from "../../elements/SunsetCanvas";
 import { useSharedNostr } from "../../hooks/useNOSTR";
 
-const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
+const AwardModal = ({ isOpen, onClose, step, userLanguage, onContinueLearning }) => {
   const langKey = useMemo(
     () => (userLanguage?.includes("es") ? "es" : "en"),
     [userLanguage]
@@ -289,8 +289,29 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
           )}
         </ModalBody>
 
-        <ModalFooter justifyContent="center">
+        <ModalFooter justifyContent="center" flexDirection="column" gap={3}>
+          {onContinueLearning && (
+            <Button
+              colorScheme="pink"
+              onMouseDown={() => {
+                onClose();
+                onContinueLearning();
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  onClose();
+                  onContinueLearning();
+                }
+              }}
+              boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+            >
+              {translation?.[userLanguage]?.["button.continueLearning"] ||
+                translation?.[langKey]?.["button.continueLearning"] ||
+                "Continue Learning"}
+            </Button>
+          )}
           <Button
+            variant={onContinueLearning ? "ghost" : "solid"}
             onMouseDown={onClose}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") onClose();

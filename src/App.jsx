@@ -1684,6 +1684,7 @@ const Step = ({
   );
 
   const [step, setStep] = useState(steps[userLanguage][currentStep]);
+  const [isAILearningMode, setIsAILearningMode] = useState(false);
 
   const fallbackTranslation = translation.en || {};
   const translationMap = translation[userLanguage] || fallbackTranslation;
@@ -2031,6 +2032,19 @@ const Step = ({
   const handleAwardModalClose = () => {
     onAwardModalClose();
     onLectureModalOpen();
+  };
+
+  const handleContinueLearning = () => {
+    setIsAILearningMode(true);
+    handleGenerateNewQuestion();
+  };
+
+  const handleExitAILearningMode = () => {
+    setIsAILearningMode(false);
+    setGeneratedQuestion(null);
+    resetNewQuestionMessages();
+    // Reset to current step's content
+    setStep(steps[userLanguage][currentStep]);
   };
 
   const handleLectureModalClose = () => {
@@ -3689,7 +3703,14 @@ const Step = ({
                           _hover={{ textDecoration: "none", opacity: 1 }}
                           mr={1}
                         >
-                          {currentStep}
+                          {isAILearningMode ? (
+                            <HStack spacing={1}>
+                              <Icon as={RiAiGenerate} boxSize={4} />
+                              <Text>AI</Text>
+                            </HStack>
+                          ) : (
+                            currentStep
+                          )}
                         </MenuButton>
                         <MenuList
                           maxH="450px"
@@ -3700,6 +3721,31 @@ const Step = ({
                           marginLeft="48px"
                           p={2}
                         >
+                          {isAILearningMode && (
+                            <>
+                              <MenuItem
+                                onClick={() => {
+                                  handleExitAILearningMode();
+                                }}
+                                fontWeight="bold"
+                                color="pink.600"
+                                icon={<RiBookOpenLine />}
+                              >
+                                {translation[userLanguage]?.["button.returnToCourse"] ||
+                                  "Return to Course"}
+                              </MenuItem>
+                              <MenuItem
+                                onClick={() => {
+                                  handleGenerateNewQuestion();
+                                }}
+                                icon={<RiAiGenerate />}
+                              >
+                                {translation[userLanguage]?.["button.generateNewQuestion"] ||
+                                  "Generate New Question"}
+                              </MenuItem>
+                              <Divider my={2} />
+                            </>
+                          )}
                           <Input
                             placeholder={translation[userLanguage]["search..."]}
                             size="sm"
@@ -3741,6 +3787,9 @@ const Step = ({
                                   key={idx}
                                   onClick={() => {
                                     setSearchTerm("");
+                                    if (isAILearningMode) {
+                                      handleExitAILearningMode();
+                                    }
                                     navigate(`/q/${idx}`);
                                   }}
                                   whiteSpace="normal"
@@ -3755,7 +3804,24 @@ const Step = ({
 
                     {/* the question title */}
                     <Text fontSize="xl" fontWeight="bold">
-                      {step.title}
+                      {isAILearningMode && !isEmpty(generatedQuestion) ? (
+                        <HStack spacing={2}>
+                          <Text
+                            as="span"
+                            fontSize="xs"
+                            bg="pink.100"
+                            color="pink.700"
+                            px={2}
+                            py={0.5}
+                            borderRadius="full"
+                          >
+                            {translation[userLanguage]?.["label.aiGenerated"] || "AI Generated"}
+                          </Text>
+                          <Text as="span">{step.title}</Text>
+                        </HStack>
+                      ) : (
+                        step.title
+                      )}
                     </Text>
                   </HStack>
                 </HStack>
@@ -4129,23 +4195,54 @@ const Step = ({
                 ) : null}
                 {isCorrect && (
                   <>
-                    <Button
-                      background="white"
-                      variant={"outline"}
-                      onClick={handleNextClick}
-                      mb={4}
-                      boxShadow={"0.5px 0.5px 1px 0px black"}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          handleNextClick();
-                        }
-                      }}
-                      disabled={isPostingWithNostr}
-                    >
-                      {
-                        translation[userLanguage]["app.button.nextQuestion"]
-                      }{" "}
-                    </Button>
+                    {isAILearningMode ? (
+                      <Button
+                        background="white"
+                        variant={"outline"}
+                        onClick={() => {
+                          setIsCorrect(null);
+                          setFeedback("");
+                          setInputValue("");
+                          setSelectedOption("");
+                          setSelectedOptions([]);
+                          handleGenerateNewQuestion();
+                        }}
+                        mb={4}
+                        boxShadow={"0.5px 0.5px 1px 0px black"}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            setIsCorrect(null);
+                            setFeedback("");
+                            setInputValue("");
+                            setSelectedOption("");
+                            setSelectedOptions([]);
+                            handleGenerateNewQuestion();
+                          }
+                        }}
+                        leftIcon={<RiAiGenerate />}
+                      >
+                        {translation[userLanguage]?.["button.nextAIQuestion"] ||
+                          "Next AI Question"}
+                      </Button>
+                    ) : (
+                      <Button
+                        background="white"
+                        variant={"outline"}
+                        onClick={handleNextClick}
+                        mb={4}
+                        boxShadow={"0.5px 0.5px 1px 0px black"}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            handleNextClick();
+                          }
+                        }}
+                        disabled={isPostingWithNostr}
+                      >
+                        {
+                          translation[userLanguage]["app.button.nextQuestion"]
+                        }{" "}
+                      </Button>
+                    )}
                   </>
                 )}
               </HStack>
@@ -4466,6 +4563,7 @@ const Step = ({
                 userLanguage={userLanguage}
                 step={step}
                 isCorrect={isCorrect}
+                onContinueLearning={handleContinueLearning}
               />
             ) : null}
 
