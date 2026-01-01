@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { VStack, Button, Text } from "@chakra-ui/react";
+import { VStack, Button, Text, useColorModeValue } from "@chakra-ui/react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { translation } from "../../utility/translation";
 import { IoChatbubblesOutline } from "react-icons/io5";
@@ -16,6 +16,18 @@ const SelectOrderQuestion = ({
   const [focusedIndex, setFocusedIndex] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [draggedIndex, setDraggedIndex] = useState(null);
+  const surfaceBg = useColorModeValue("white", "gray.800");
+  const draggedBg = useColorModeValue("#e2e8f0", "gray.700");
+  const selectedBg = useColorModeValue("#e6f7ff", "gray.700");
+  const textColor = useColorModeValue("inherit", "whiteAlpha.900");
+  const focusShadow = useColorModeValue(
+    "0 0 0 2px #3182ce",
+    "0 0 0 2px #63b3ed"
+  );
+  const cardShadow = useColorModeValue(
+    "0.5px 0.5px 1px 0px rgba(0, 0, 0, 0.75)",
+    "0 0 0 1px rgba(255, 255, 255, 0.15)"
+  );
 
   const indexMatcher = (newItems) => {
     let answerSet = step.question.answer;
@@ -137,16 +149,17 @@ const SelectOrderQuestion = ({
                         borderRadius: "4px",
                         backgroundColor:
                           draggedIndex === index
-                            ? "#e2e8f0"
+                            ? draggedBg
                             : selectedIndex === index
-                              ? "#e6f7ff"
-                              : "white",
+                              ? selectedBg
+                              : surfaceBg,
                         boxShadow:
                           focusedIndex === index
-                            ? "0 0 0 2px #3182ce"
-                            : "0.5px 0.5px 1px 0px rgba(0, 0, 0, 0.75)",
+                            ? focusShadow
+                            : cardShadow,
                         textAlign: "left",
                         cursor: "pointer",
+                        color: textColor,
                       }}
                     >
                       {index + 1 + ". " + item}

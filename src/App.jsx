@@ -50,6 +50,7 @@ import {
   Portal,
   Center,
   Image,
+  useColorModeValue,
   useToken,
   Divider,
 } from "@chakra-ui/react";
@@ -508,15 +509,15 @@ const AwardScreen = (userLanguage) => {
           <Box
             mt={6}
             textAlign="left"
-            bg="white"
+            bg={surfaceBg}
             borderRadius="24px"
             p={5}
-            boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
+            boxShadow={surfaceShadow}
           >
             <Text fontSize="lg" fontWeight="bold" mb={1}>
               {translation[userLanguage.userLanguage]["award.refundCongrats"]}
             </Text>
-            <Text fontSize="sm" color="gray.700">
+            <Text fontSize="sm" color={mutedText}>
               {
                 translation[userLanguage.userLanguage][
                   "award.refundInstructions"
@@ -524,7 +525,7 @@ const AwardScreen = (userLanguage) => {
               }
             </Text>
             {promotionDeadline && (
-              <Text fontSize="xs" mt={2} color="gray.600">
+              <Text fontSize="xs" mt={2} color={softerMutedText}>
                 {translation[userLanguage.userLanguage][
                   "award.refundDeadline"
                 ].replace("{date}", promotionDeadline.toLocaleDateString())}
@@ -1064,11 +1065,12 @@ export const VoiceInput = ({
           <FadeInComponent speed="0.25s">
             <Text
               fontSize={"smaller"}
-              backgroundColor="white"
-              color="black"
+              backgroundColor={surfaceBg}
+              color={surfaceText}
               fontWeight={"bold"}
               borderRadius="8px"
               padding="10px"
+              boxShadow={surfaceShadow}
             >
               {" "}
               {translation[userLanguage]["app.listening"]}
@@ -1082,11 +1084,12 @@ export const VoiceInput = ({
           <FadeInComponent speed="0.25s">
             <Text
               fontSize={"smaller"}
-              backgroundColor="white"
-              color="black"
+              backgroundColor={surfaceBg}
+              color={surfaceText}
               fontWeight={"bold"}
               borderRadius="8px"
               padding="10px"
+              boxShadow={surfaceShadow}
             >
               {" "}
               {translation[userLanguage]["app.listening"]}
@@ -1167,19 +1170,21 @@ export const VoiceInput = ({
           placeholder={translation[userLanguage]["app.input.placeholder"]}
           maxWidth="400px"
           width="100%"
-          style={{ boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)" }}
-          backgroundColor="white"
+          style={{ boxShadow: surfaceShadow }}
+          backgroundColor={surfaceBg}
+          color={surfaceText}
 
           // border="1px solid black"
         />
       ) : (
         <Textarea
           ref={textareaRef}
-          style={{ boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)" }}
+          style={{ boxShadow: surfaceShadow }}
           type="textarea"
           maxWidth={"100%"}
           minHeight={isTerminal ? "100px" : "100px"}
-          backgroundColor="white"
+          backgroundColor={surfaceBg}
+          color={surfaceText}
           value={
             generateResponse
               ? translation[userLanguage]["thinking"]
@@ -4130,11 +4135,12 @@ const Step = ({
                 {isCorrect && (
                   <>
                     <Button
-                      background="white"
+                      bg={surfaceBg}
+                      color={surfaceText}
                       variant={"outline"}
                       onClick={handleNextClick}
                       mb={4}
-                      boxShadow={"0.5px 0.5px 1px 0px black"}
+                      boxShadow={surfaceShadow}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
                           handleNextClick();
@@ -4196,20 +4202,20 @@ const Step = ({
           ) : !isAdaptiveLearning ||
             step.isTerminal ? null : suggestionMessage.length > 0 ? (
             <Box maxWidth="600px" width="100%" pb={12}>
-              <Box
-                as={motion.div}
-                mt={4}
-                // mb={{ base: 24, md: 28 }}
-                p={4}
-                borderRadius="24px"
-                borderBottomLeftRadius={"0px"}
-                background="white"
-                border="1px solid black"
-                textAlign={"left"}
-                width="100%"
-                initial={{ scale: 0.8 }}
-                animate={{ scale: [0.75, 1] }}
-                transition={{ duration: 0.3 }}
+                <Box
+                  as={motion.div}
+                  mt={4}
+                  // mb={{ base: 24, md: 28 }}
+                  p={4}
+                  borderRadius="24px"
+                  borderBottomLeftRadius={"0px"}
+                  background={surfaceBg}
+                  border={`1px solid ${strongBorder}`}
+                  textAlign={"left"}
+                  width="100%"
+                  initial={{ scale: 0.8 }}
+                  animate={{ scale: [0.75, 1] }}
+                  transition={{ duration: 0.3 }}
               >
                 <Markdown
                   components={ChakraUIRenderer(newTheme)}
@@ -5224,8 +5230,8 @@ const Home = ({
                 {isCreatingAccount && (
                   <Text
                     fontSize="smaller"
-                    backgroundColor="white"
-                    color="black"
+                    backgroundColor={surfaceBg}
+                    color={surfaceText}
                     fontWeight="bold"
                     borderRadius="8px"
                     padding="10px"
@@ -5235,6 +5241,7 @@ const Home = ({
                     alignItems="center"
                     textAlign="left"
                     justifyContent="center"
+                    boxShadow={surfaceShadow}
                   >
                     {translation[userLanguage][loadingMessage]}
                   </Text>
@@ -5251,20 +5258,21 @@ const Home = ({
               <b>{translation[userLanguage]["createAccount.instructions"]}</b>
             </Text>
 
-            <Input
-              mt="-3"
-              pt={0}
-              style={{
-                maxWidth: 300,
-                boxShadow: "0.5px 0.5px 1px rgba(0,0,0,0.75)",
-              }}
-              placeholder={
-                translation[userLanguage]["createAccount.input.placeholder"]
-              }
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              backgroundColor="white"
-            />
+              <Input
+                mt="-3"
+                pt={0}
+                style={{
+                  maxWidth: 300,
+                  boxShadow: surfaceShadow,
+                }}
+                placeholder={
+                  translation[userLanguage]["createAccount.input.placeholder"]
+                }
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                backgroundColor={surfaceBg}
+                color={surfaceText}
+              />
 
             <VStack>
               <Button
@@ -5316,20 +5324,20 @@ const Home = ({
                   onChange={handleToggle}
                   onKeyDown={(e) => e.key === "Enter" && handleToggle()}
                 />
-              </FormControl>
-            </VStack>
-          </VStack>
+          </FormControl>
+        </VStack>
+      </VStack>
 
-          <Box
-            width="100%"
-            bg="white"
-            py={4}
-            px={5}
-            boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
-            display={"flex"}
-            justifyContent={"center"}
-            p={12}
-          >
+      <Box
+        width="100%"
+        bg={surfaceBg}
+        py={4}
+        px={5}
+        boxShadow={surfaceShadow}
+        display={"flex"}
+        justifyContent={"center"}
+        p={12}
+      >
             <VStack alignItems="center" spacing={2} textAlign={"center"}>
               <HStack spacing={2} alignItems="center">
                 <Box
@@ -5632,11 +5640,10 @@ const Home = ({
             height="100%"
             scrollSnapAlign="start"
             p={8}
-            bg="white"
+            bg={landingSubtleBg}
             display="flex"
             flexDirection="column"
             alignItems="center"
-            backgroundColor="#f0efed"
             pb={24}
           >
             <VStack spacing={6} alignItems="flex-start">
@@ -5664,7 +5671,7 @@ const Home = ({
             height="100%"
             scrollSnapAlign="start"
             p={8}
-            bg="white"
+            bg={landingPanelBg}
             display="flex"
             flexDirection="column"
             alignItems="center"
@@ -5845,14 +5852,15 @@ const Home = ({
                 pt={0}
                 style={{
                   maxWidth: 300,
-                  boxShadow: "0.5px 0.5px 1px rgba(0,0,0,0.75)",
+                  boxShadow: surfaceShadow,
                 }}
                 placeholder={
                   translation[userLanguage]["createAccount.input.placeholder"]
                 }
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
-                backgroundColor="white"
+                backgroundColor={surfaceBg}
+                color={surfaceText}
               />
             </Box>
             <HStack w="100%" mt={4} mb={12} justifyContent="center">
@@ -5900,13 +5908,14 @@ const Home = ({
             {translation[userLanguage]["signIn.instructions"]}
           </Text>
           <Input
-            backgroundColor="white"
+            backgroundColor={surfaceBg}
+            color={surfaceText}
             placeholder={translation[userLanguage]["signIn.input.placeholder"]}
             value={secretKey}
             onChange={(e) => setSecretKey(e.target.value)}
             style={{
               maxWidth: 300,
-              boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+              boxShadow: surfaceShadow,
             }}
           />
           <HStack>
@@ -6006,8 +6015,6 @@ const Home = ({
                   start="#bf66ff"
                   end="#7300ff"
                   delay={0}
-                  bg="rgba(255,255,255,0.65)"
-                  border="#ededed"
                 />
               </Box>
             </Box>
@@ -6020,7 +6027,7 @@ const Home = ({
               width="100%"
               textAlign={"left"}
               // background="orange.100"
-              backgroundColor="white"
+              backgroundColor={surfaceBg}
               style={{
                 // backgroundColor: "#dcecfc",
                 display: "flex",
@@ -6028,7 +6035,8 @@ const Home = ({
               }}
               borderRadius="24px"
               borderBottomRightRadius={"0px"}
-              boxShadow={"0.5px 0.5px 1px 0px black"}
+              boxShadow={surfaceShadow}
+              color={surfaceText}
             >
               <Text>
                 {translation[userLanguage]["createAccount.successMessage"]}
@@ -6350,10 +6358,11 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
               {translation[userLanguage]["passcode.label"]}
             </Text>
             <Input
-              backgroundColor="white"
+              backgroundColor={surfaceBg}
               style={{
-                boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+                boxShadow: surfaceShadow,
               }}
+              color={surfaceText}
               value={input}
               onChange={(e) => setInput(e.target.value.toUpperCase())}
             />
@@ -6389,6 +6398,20 @@ function App({ isShutDown }) {
   const [incorrectAttempts, setIncorrectAttempts] = useState(
     parseInt(localStorage.getItem("incorrectAttempts"), 10) || 0
   );
+
+  const surfaceBg = useColorModeValue("white", "gray.800");
+  const elevatedBg = useColorModeValue("white", "gray.700");
+  const surfaceText = useColorModeValue("black", "whiteAlpha.900");
+  const surfaceShadow = useColorModeValue(
+    "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+    "0 0 0 1px rgba(255,255,255,0.2)"
+  );
+  const focusRingColor = useColorModeValue("#3182ce", "#63b3ed");
+  const strongBorder = useColorModeValue("black", "white");
+  const mutedText = useColorModeValue("gray.700", "gray.200");
+  const softerMutedText = useColorModeValue("gray.600", "gray.300");
+  const landingPanelBg = useColorModeValue("white", "gray.800");
+  const landingSubtleBg = useColorModeValue("#f0efed", "gray.800");
 
   const [actionTourStep, setActionTourStep] = useState(null);
   const [isActionTourActive, setIsActionTourActive] = useState(false);
