@@ -499,7 +499,8 @@ const AwardScreen = (userLanguage) => {
             boxShadow="0.5px 0.5px 1px black"
             onClick={() => navigate("/q/0")}
           >
-            {translation[userLanguage.userLanguage]?.["button.returnToApp"] || "Return to app"}
+            {translation[userLanguage.userLanguage]?.["button.returnToApp"] ||
+              "Return to app"}
           </Button>
           <Button
             colorScheme="pink"
@@ -511,7 +512,9 @@ const AwardScreen = (userLanguage) => {
               navigate(`/q/${totalSteps - 1}`);
             }}
           >
-            {translation[userLanguage.userLanguage]?.["button.continueLearning"] || "Continue Learning"}
+            {translation[userLanguage.userLanguage]?.[
+              "button.continueLearning"
+            ] || "Continue Learning"}
           </Button>
         </HStack>
         <br />
@@ -3753,8 +3756,9 @@ const Step = ({
                                 color="pink.600"
                                 icon={<RiBookOpenLine />}
                               >
-                                {translation[userLanguage]?.["button.returnToCourse"] ||
-                                  "Return to Course"}
+                                {translation[userLanguage]?.[
+                                  "button.returnToCourse"
+                                ] || "Return to Course"}
                               </MenuItem>
                               <MenuItem
                                 onClick={() => {
@@ -3762,8 +3766,9 @@ const Step = ({
                                 }}
                                 icon={<RiAiGenerate />}
                               >
-                                {translation[userLanguage]?.["button.generateNewQuestion"] ||
-                                  "Generate New Question"}
+                                {translation[userLanguage]?.[
+                                  "button.generateNewQuestion"
+                                ] || "Generate New Question"}
                               </MenuItem>
                               <Divider my={2} />
                             </>
@@ -3837,7 +3842,8 @@ const Step = ({
                             py={0.5}
                             borderRadius="full"
                           >
-                            {translation[userLanguage]?.["label.aiGenerated"] || "AI Generated"}
+                            {translation[userLanguage]?.["label.aiGenerated"] ||
+                              "AI Generated"}
                           </Text>
                           <Text as="span">{step.title}</Text>
                         </HStack>
