@@ -5,6 +5,7 @@ import { FadeInComponent } from "./RandomCharacter";
 import { StreamLoader } from "./StreamLoader";
 import { Noise } from "noisejs";
 import { Box } from "@chakra-ui/react";
+import { useThemeStore } from "../useThemeStore";
 
 function hexToHSL(H) {
   let hex = H.replace(/^#/, "");
@@ -359,6 +360,23 @@ function fbm(noise, x, y, octaves = 4, persistence = 0.5) {
   return total / maxValue;
 }
 
+// Theme-based cloud palettes
+const cloudPalettes = {
+  orange: ["#f2dcfa", "#f9d4fa", "#fca4b3", "#fcb7a4", "#fcd4a4"],
+  purple: ["#e8dcfa", "#d4c4f9", "#c4a4fc", "#b7a4fc", "#d4a4fc"],
+  green: ["#dcfae8", "#c4f9d4", "#a4fcb3", "#a4fcb7", "#c4fcd4"],
+  blue: ["#dcecfa", "#c4d4f9", "#a4b3fc", "#a4c4fc", "#b4d4fc"],
+  pink: ["#fadce8", "#f9c4d4", "#fca4b3", "#fca4c4", "#fcc4d4"],
+};
+
+const shadowColors = {
+  orange: "rgba(245, 135, 66, 1)",
+  purple: "rgba(159, 122, 234, 1)",
+  green: "rgba(72, 187, 120, 1)",
+  blue: "rgba(66, 153, 225, 1)",
+  pink: "rgba(237, 100, 166, 1)",
+};
+
 export const CloudCanvas = ({
   alternativeSpeed = null, // if provided, overrides shape oscillation speed
   isLoader = false,
@@ -371,14 +389,16 @@ export const CloudCanvas = ({
   printStatement = "",
 }) => {
   const canvasRef = useRef(null);
+  const themeColor = useThemeStore((state) => state.themeColor);
   let requestId;
 
   // Noise generator for cloud gradient (used in fbm)
   const noise = new Noise(Math.random());
 
-  // Cloud gradient parameters
-  const cloudPalette = ["#f2dcfa", "#f9d4fa", "#fca4b3", "#fcb7a4", "#fcd4a4"];
+  // Cloud gradient parameters - use theme-based palette
+  const cloudPalette = cloudPalettes[themeColor] || cloudPalettes.orange;
   const cloudPaletteRGB = cloudPalette.map(hexToRGB);
+  const themeShadowColor = shadowColors[themeColor] || shadowColors.orange;
   const groupOffsets = [0, 10, 20, 30, 40];
   const groupPhases = [0, 1.5, 3, 4.5, 6];
   const beta = 10;
@@ -513,7 +533,7 @@ export const CloudCanvas = ({
     ctx.fillStyle = pattern;
     ctx.fill();
 
-    ctx.shadowColor = "rgba(245, 135, 66, 1)";
+    ctx.shadowColor = themeShadowColor;
     ctx.shadowBlur = 3;
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = 0;
@@ -538,7 +558,7 @@ export const CloudCanvas = ({
       animate(context);
       return () => cancelAnimationFrame(requestId);
     }
-  }, [hasAnimation, alternativeSpeed, outlineColor, outlineWidth]);
+  }, [hasAnimation, alternativeSpeed, outlineColor, outlineWidth, themeColor]);
 
   return (
     <FadeInComponent speed={hasInitialFade ? "1s" : "0s"}>
