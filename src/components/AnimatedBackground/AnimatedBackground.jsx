@@ -4,11 +4,11 @@ import { useThemeStore } from "../../useThemeStore";
 
 // Map theme colors to RGB values
 const themeColorMap = {
-  purple: { r: 159, g: 122, b: 234 },  // #9f7aea
-  orange: { r: 237, g: 137, b: 54 },   // #ed8936
-  green: { r: 72, g: 187, b: 120 },    // #48bb78
-  blue: { r: 66, g: 153, b: 225 },     // #4299e1
-  pink: { r: 237, g: 100, b: 166 },    // #ed64a6
+  purple: { r: 159, g: 122, b: 234 }, // #9f7aea
+  orange: { r: 237, g: 137, b: 54 }, // #ed8936
+  green: { r: 72, g: 187, b: 120 }, // #48bb78
+  blue: { r: 66, g: 153, b: 225 }, // #4299e1
+  pink: { r: 237, g: 100, b: 166 }, // #ed64a6
 };
 
 /**
@@ -35,9 +35,9 @@ const AnimatedBackground = () => {
           position: "absolute",
           inset: 0,
           background: `
-            radial-gradient(ellipse 80% 50% at 50% -20%, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.08) 0%, transparent 50%),
-            radial-gradient(ellipse 60% 40% at 80% 100%, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06) 0%, transparent 40%),
-            radial-gradient(ellipse 50% 30% at 10% 80%, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.05) 0%, transparent 40%),
+            radial-gradient(ellipse 80% 50% at 50% -20%, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.08) 0%, transparent 90%),
+            radial-gradient(ellipse 60% 40% at 80% 100%, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06) 0%, transparent 90%),
+            radial-gradient(ellipse 50% 30% at 10% 80%, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.05) 0%, transparent 90%),
             linear-gradient(to bottom, #F8F5F0 0%, #FAF8F5 50%, #F8F5F0 100%)
           `,
         }}
@@ -90,8 +90,8 @@ const AnimatedBackground = () => {
           position: "absolute",
           inset: 0,
           backgroundImage: `
-            linear-gradient(rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.06) 1px, transparent 1px)
+            linear-gradient(rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.10) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.10) 1px, transparent 1px)
           `,
           backgroundSize: "60px 60px",
           maskImage:
