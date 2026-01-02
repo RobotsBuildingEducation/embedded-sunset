@@ -48,7 +48,7 @@ const theme = extendTheme({
     global: {
       body: {
         height: "100vh",
-        background: "transparent",
+        background: "#F8F5F0",
       },
     },
   },
