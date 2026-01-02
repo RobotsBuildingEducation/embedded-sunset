@@ -9,6 +9,7 @@ export const pickProgrammingLanguage = (language) => {
     "swift-en": "Swift",
     "android-en": "Java",
     "compsci-en": "Python",
+    "nostr-en": "Nostr",
   };
   return languages[language];
 };
@@ -141,6 +142,12 @@ export let translation = {
     "language.python.english": "Python (English)",
     "language.swift.english": "Swift & iOS (English)",
     "language.android.english": "Java & Android (English)",
+    "language.nostr.english": "Nostr (English)",
+    "language.nostr.english": "Nostr (English)",
+    "language.nostr.english": "Nostr (English)",
+    "language.nostr.english": "Nostr (English)",
+    "language.nostr.english": "Nostr (English)",
+    "language.nostr.english": "Nostr (English)",
     "settings.button.changeLanguage": "Change App Language",
     "settings.theme.select": "Select Theme",
     "settings.theme.purple": "Purple",
@@ -1929,6 +1936,7 @@ reverse(head) {
     "language.python.english": "Python (inglés)",
     "language.swift.english": "Swift e iOS (inglés)",
     "language.android.english": "Java y Android (inglés)",
+    "language.nostr.english": "Nostr (inglés)",
     "settings.button.changeLanguage": "Cambiar idioma de app",
     "settings.theme.select": "Seleccionar tema",
     "settings.theme.purple": "Morado",
@@ -10043,3 +10051,6 @@ reverse(head) {
     "tag.allowPosting": "Allow posts",
   },
 };
+
+// Reuse English copy for nostr-en so all translation keys resolve
+translation["nostr-en"] = translation.en;

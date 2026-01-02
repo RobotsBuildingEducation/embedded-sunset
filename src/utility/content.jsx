@@ -13139,6 +13139,1379 @@ doc.delete();`,
       },
     },
   ],
+
+  ["nostr-en"]: [
+    {
+      group: "introduction",
+      title: "Study Guide: Nostr, NDK & Cashu",
+      isStudyGuide: true,
+      description:
+        "Skim the core moving parts: keys, events, relays, NDK clients, Lightning/Cashu interoperability.",
+      question: {
+        questionText:
+          "<div>Quick reference on keys, relays, NDK, and Cashu.</div>",
+        metaData: `### Keys & Identity
+- npub (public key) identifies you; nsec signs events.
+- NIP-05 maps your pubkey to a DNS handle.
+
+### Events & Relays
+- Events are signed JSON with kind, content, tags.
+- Relays store + forward; clients subscribe with filters.
+
+### NDK Essentials
+- NDK provides connection pooling, relay scoring, and signing helpers.
+- Common flows: loadProfile, publish, subscribe, handleConnectionStatus.
+
+### Lightning + Cashu
+- Zaps: LN tips with proof-of-payment receipts via NIP-57.
+- Cashu: ecash tokens from mints; can distribute rewards without channels.
+
+### Security
+- Keep nsec off the client when possible; prefer delegated or nip-46.
+- Validate relay policies; beware of unrestricted writes.`,
+      },
+    },
+    {
+      group: "tutorial",
+      title: "NIP-01: What is Nostr?",
+      description: "Which statement best describes Nostr?",
+      question: {
+        questionText: "Which statement best describes Nostr?",
+        options: [
+          "A decentralized event and relay protocol using public-key identities",
+          "A centralized chat server run by a single company",
+          "A NoSQL database",
+          "A mobile-only chat app",
+        ],
+        answer: "A decentralized event and relay protocol using public-key identities",
+      },
+      isMultipleChoice: true,
+    },
+    {
+      group: "tutorial",
+      title: "NIP-01 flow",
+      description: "Place the Nostr data flow in order.",
+      question: {
+        questionText: "Place the Nostr data flow in order.",
+        options: [
+          "Client creates and signs an event",
+          "Client publishes to relays",
+          "Relays persist and broadcast the event",
+          "Subscribers receive the event",
+        ],
+        answer: [
+          "Client creates and signs an event",
+          "Client publishes to relays",
+          "Relays persist and broadcast the event",
+          "Subscribers receive the event",
+        ],
+      },
+      isSelectOrder: true,
+    },
+    {
+      group: "tutorial",
+      title: "NIP-01 fields",
+      description: "Which fields are required in a signed Nostr event?",
+      question: {
+        questionText: "Which fields are required in a signed Nostr event?",
+        options: [
+          "pubkey",
+          "created_at",
+          "kind",
+          "tags",
+          "content",
+          "sig",
+          "server_timestamp",
+        ],
+        answer: ["pubkey", "created_at", "kind", "tags", "content", "sig"],
+      },
+      isMultipleAnswerChoice: true,
+    },
+    {
+      group: "tutorial",
+      title: "NIP-01 event body completion",
+      description: "Complete a minimal unsigned text-note event structure.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which snippet is a valid unsigned Nostr text note (kind 1) payload?",
+        options: [
+          `{"kind":1,"pubkey":"","created_at":0,"tags":[],"content":"hello","sig":""}`,
+          `{"kind":1,"content":"hello","tags":[],"pubkey":"","created_at":0}`,
+          `{"kind":1,"content":"hello","tags":[],"id":"","sig":""}`,
+          `{"kind":1,"content":"","tags":"[]"}`,
+          `{"kind":1,"content":"hello","tags":[],"pubkey":""}`,
+        ],
+        answer: `{"kind":1,"content":"hello","tags":[],"pubkey":"","created_at":0}`,
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Signing an event (NIP-01)",
+      description: "Show how you would sign an event body.",
+      question: {
+        questionText:
+          "Write pseudocode to sign an event body and attach the signature field.",
+      },
+      isCode: true,
+    },
+    {
+      group: "tutorial",
+      title: "Metadata lookup (NIP-05)",
+      description: "Recall how NIP-05 maps to a pubkey.",
+      isSingleLineText: true,
+      question: {
+        questionText: "What NIP handles DNS-style identifiers for a pubkey?",
+        placeholder: "Type the NIP number",
+        answer: "NIP-05",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Relay statelessness",
+      description:
+        "In your own words, why are relays stateless compared to traditional servers?",
+      question: {
+        questionText:
+          "In your own words, why are relays stateless compared to traditional servers?",
+      },
+      isText: true,
+    },
+    {
+      group: "tutorial",
+      title: "Command-line subscribe (NIP-01)",
+      description: "Practice a CLI relay subscription.",
+      question: {
+        questionText:
+          "Enter a WebSocket command (e.g., wscat) that subscribes to kind 1 events from a relay at wss://relay.example.com.",
+      },
+      isCode: true,
+      isTerminal: true,
+    },
+    {
+      group: "tutorial",
+      title: "Review With AI Conversation (optional)",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [1, 8],
+      },
+    },
+    {
+      group: "1",
+      title: "NIP-05 discoverability",
+      description: "Explain how NIP-05 improves discoverability for a pubkey.",
+      question: {
+        questionText: "Explain how NIP-05 improves discoverability for a pubkey.",
+      },
+      isText: true,
+    },
+    {
+      group: "1",
+      title: "NIP-01 kind 1 text notes",
+      description: "Which event kind is used for short text notes?",
+      question: {
+        questionText: "Which event kind is used for short text notes?",
+        options: ["0", "1", "3", "4"],
+        answer: "1",
+      },
+      isMultipleChoice: true,
+    },
+    {
+      group: "1",
+      title: "NIP-01 kind 0 profiles",
+      description: "What does kind 0 store, and how often should you overwrite it?",
+      question: {
+        questionText:
+          "What does kind 0 store, and how often should you overwrite it?",
+      },
+      isText: true,
+    },
+    {
+      group: "1",
+      title: "NIP-01 tagging references",
+      description:
+        "Write an example tags array for a note that references an event id and mentions a pubkey.",
+      question: {
+        questionText:
+          "Write an example tags array for a note that references an event id and mentions a pubkey.",
+      },
+      isCode: true,
+    },
+    {
+      group: "1",
+      title: "Encrypted payload kinds (NIP-04/17)",
+      description: "Which kinds are commonly used for direct messaging and encrypted content?",
+      question: {
+        questionText:
+          "Which kinds are commonly used for direct messaging and encrypted content?",
+        options: ["4", "7", "1063", "40"],
+        answer: ["4", "7"],
+      },
+      isMultipleAnswerChoice: true,
+    },
+    {
+      group: "1",
+      title: "Replaceable vs ephemeral (NIP-16/17)",
+      description: "When would you prefer a replaceable event over an ephemeral one?",
+      question: {
+        questionText:
+          "When would you prefer a replaceable event over an ephemeral one?",
+      },
+      isText: true,
+    },
+    {
+      group: "1",
+      title: "Filters basics (NIP-01)",
+      description: "What does a relay filter do?",
+      question: {
+        questionText: "What does a relay filter do?",
+        options: [
+          "Specifies which events to fetch based on fields like kinds, authors, or ids",
+          "Stores events on the client",
+          "Charges fees for publishing",
+          "Encrypts content before sending",
+        ],
+        answer:
+          "Specifies which events to fetch based on fields like kinds, authors, or ids",
+      },
+      isMultipleChoice: true,
+    },
+    {
+      group: "1",
+      title: "NDK subscription steps",
+      description: "Order the steps of subscribing with filters using NDK.",
+      question: {
+        questionText: "Order the steps of subscribing with filters using NDK.",
+        options: [
+          "Create filters object",
+          "Open a subscription with NDK and filters",
+          "Handle incoming events",
+          "Close the subscription when done",
+        ],
+      },
+      isSelectOrder: true,
+    },
+    {
+      group: "1",
+      title: "Author filters example",
+      description:
+        "Provide a sample filter JSON to fetch kind 1 notes from a list of authors, limiting to 20 results.",
+      question: {
+        questionText:
+          "Provide a sample filter JSON to fetch kind 1 notes from a list of authors, limiting to 20 results.",
+      },
+      isCode: true,
+    },
+    {
+      group: "1",
+      title: "Filter hygiene (since/limit)",
+      description: "Why should you set `limit` and `since` on filters when building feeds?",
+      question: {
+        questionText:
+          "Why should you set `limit` and `since` on filters when building feeds?",
+      },
+      isText: true,
+    },
+    {
+      group: "1",
+      title: "Filter fields (NIP-01)",
+      description: "Which fields can you include in a filter?",
+      question: {
+        questionText: "Which fields can you include in a filter?",
+        options: ["ids", "authors", "kinds", "since", "until", "limit", "pubkey_signer"],
+        answer: ["ids", "authors", "kinds", "since", "until", "limit"],
+      },
+      isMultipleAnswerChoice: true,
+    },
+    {
+      group: "1",
+      title: "Relay strategy (NIP-11/NIP-65)",
+      description: "Why use multiple relays with scoring in NDK?",
+      question: {
+        questionText: "Why use multiple relays with scoring in NDK?",
+        options: [
+          "To improve redundancy and latency awareness",
+          "To enforce centralized moderation",
+          "To avoid signing events",
+          "To eliminate client-side filters",
+        ],
+        answer: "To improve redundancy and latency awareness",
+      },
+      isMultipleChoice: true,
+    },
+    {
+      group: "1",
+      title: "Relay scoring heuristics",
+      description: "Name two heuristics for deciding when to drop or downgrade a relay.",
+      question: {
+        questionText:
+          "Name two heuristics for deciding when to drop or downgrade a relay.",
+      },
+      isText: true,
+    },
+    {
+      group: "1",
+      title: "NDK relay pool setup",
+      description:
+        "Show pseudocode configuring NDK to connect to at least three relays with read/write flags.",
+      question: {
+        questionText:
+          "Show pseudocode configuring NDK to connect to at least three relays with read/write flags.",
+      },
+      isCode: true,
+    },
+    {
+      group: "1",
+      title: "Relay abuse prevention",
+      description: "Which practices help avoid relay abuse?",
+      question: {
+        questionText: "Which practices help avoid relay abuse?",
+        options: [
+          "Rate limit publishes",
+          "Batch identical events",
+          "Send huge events without size checks",
+          "Honor relay info constraints",
+        ],
+        answer: [
+          "Rate limit publishes",
+          "Batch identical events",
+          "Honor relay info constraints",
+        ],
+      },
+      isMultipleAnswerChoice: true,
+    },
+    {
+      group: "1",
+      title: "Reading NIP-11 relay info",
+      description: "Explain how NIP-11 relay info documents guide client behavior.",
+      question: {
+        questionText:
+          "Explain how NIP-11 relay info documents guide client behavior.",
+      },
+      isText: true,
+    },
+    {
+      group: "1",
+      title: "NIP-05 profile fields",
+      description:
+        "What field typically stores a display name inside kind 0 content?",
+      question: {
+        questionText:
+          "What field typically stores a display name inside kind 0 content?",
+        options: ['"name"', '"about"', '"picture"', '"role"'],
+        answer: '"name"',
+      },
+      isMultipleChoice: true,
+    },
+    {
+      group: "1",
+      title: "Replaceable profile updates (NIP-01/16)",
+      description:
+        "Why is kind 0 a replaceable event, and what happens when you republish it?",
+      question: {
+        questionText:
+          "Why is kind 0 a replaceable event, and what happens when you republish it?",
+      },
+      isText: true,
+    },
+    {
+      group: "1",
+      title: "Drafting kind 0 content",
+      description: "Draft a kind 0 content JSON including name, about, and picture URL.",
+      question: {
+        questionText:
+          "Draft a kind 0 content JSON including name, about, and picture URL.",
+      },
+      isCode: true,
+    },
+    {
+      group: "1",
+      title: "Profile tags defaults",
+      description: "Which tags belong on a profile event?",
+      question: {
+        questionText: "Which tags belong on a profile event?",
+        options: [
+          "None by default",
+          "e-tags referencing other events",
+          "p-tags referencing contacts",
+          "client-specific tags",
+        ],
+        answer: ["None by default"],
+      },
+      isMultipleAnswerChoice: true,
+    },
+    {
+      group: "1",
+      title: "Relay selection for profiles",
+      description: "How do relays decide which profile event to keep for an author?",
+      question: {
+        questionText:
+          "How do relays decide which profile event to keep for an author?",
+      },
+      isText: true,
+    },
+    {
+      group: "2",
+      title: "Contact lists (NIP-02)",
+      description: "Which kind is used for contact/follow lists?",
+      question: {
+        questionText: "Which kind is used for contact/follow lists?",
+        options: ["1", "3", "10002", "5"],
+        answer: "3",
+      },
+      isMultipleChoice: true,
+    },
+    {
+      group: "2",
+      title: "p-tags in contact lists (NIP-02)",
+      description: "What does a p-tag represent inside a contact list event?",
+      question: {
+        questionText: "What does a p-tag represent inside a contact list event?",
+      },
+      isText: true,
+    },
+    {
+      group: "2",
+      title: "Relay hints in lists (NIP-65)",
+      description:
+        "Write a contact list tags array that follows two pubkeys and sets relays for one of them.",
+      question: {
+        questionText:
+          "Write a contact list tags array that follows two pubkeys and sets relays for one of them.",
+      },
+      isCode: true,
+    },
+    {
+      group: "2",
+      title: "Relay list kinds (NIP-65/10002)",
+      description: "Which list kinds are commonly used for relay lists?",
+      question: {
+        questionText: "Which list kinds are commonly used for relay lists?",
+        options: ["10002", "10000", "30000", "5"],
+        answer: ["10002"],
+      },
+      isMultipleAnswerChoice: true,
+    },
+    {
+      group: "2",
+      title: "Merging relay hints with defaults",
+      description:
+        "How might you merge relay hints from contact lists with app defaults?",
+      question: {
+        questionText:
+          "How might you merge relay hints from contact lists with app defaults?",
+      },
+      isText: true,
+    },
+    {
+      group: "2",
+      title: "Encrypted DM spec (NIP-04/17)",
+      description: "Which NIP defines end-to-end encrypted direct messages?",
+      question: {
+        questionText: "Which NIP defines end-to-end encrypted direct messages?",
+        options: ["NIP-04", "NIP-05", "NIP-57", "NIP-11"],
+        answer: "NIP-04",
+      },
+      isMultipleChoice: true,
+    },
+    {
+      group: "2",
+      title: "DM logging risks",
+      description: "Why should you avoid storing decrypted DM content in logs?",
+      question: {
+        questionText:
+          "Why should you avoid storing decrypted DM content in logs?",
+      },
+      isText: true,
+    },
+    {
+      group: "2",
+      title: "Shared-secret encryption (NIP-04)",
+      description:
+        "Show pseudocode encrypting content with shared secret derived from sender and receiver keys.",
+      question: {
+        questionText:
+          "Show pseudocode encrypting content with shared secret derived from sender and receiver keys.",
+      },
+      isCode: true,
+    },
+    {
+      group: "2",
+      title: "Encrypted payload kinds (NIP-04/17)",
+      description: "Which event kinds carry encrypted payloads?",
+      question: {
+        questionText: "Which event kinds carry encrypted payloads?",
+        options: ["4", "1", "6", "1059"],
+        answer: ["4"],
+      },
+      isMultipleAnswerChoice: true,
+    },
+    {
+      group: "2",
+      title: "Ephemeral chat events (NIP-17/40k)",
+      description: "How do ephemeral events (kind 20000+) differ for chat use cases?",
+      question: {
+        questionText:
+          "How do ephemeral events (kind 20000+) differ for chat use cases?",
+      },
+      isText: true,
+    },
+    {
+      group: "2",
+      title: "Media attachments (NIP-94)",
+      description: "What is the purpose of NIP-94?",
+      question: {
+        questionText: "What is the purpose of NIP-94?",
+        options: [
+          "It defines how to attach URLs and metadata for media uploads",
+          "It specifies zap receipts",
+          "It replaces relay lists",
+          "It handles LN invoices",
+        ],
+        answer: "It defines how to attach URLs and metadata for media uploads",
+      },
+      isMultipleChoice: true,
+    },
+    {
+      group: "2",
+      title: "When to pin or mirror media",
+      description:
+        "When should you pin or mirror media across relays or object storage?",
+      question: {
+        questionText:
+          "When should you pin or mirror media across relays or object storage?",
+      },
+      isText: true,
+    },
+    {
+      group: "2",
+      title: "NIP-94 tags example",
+      description:
+        "Compose a NIP-94 event tags array referencing a hosted image with dimensions.",
+      question: {
+        questionText:
+          "Compose a NIP-94 event tags array referencing a hosted image with dimensions.",
+      },
+      isCode: true,
+    },
+    {
+      group: "2",
+      title: "Media linking concerns",
+      description: "Which concerns apply when linking media?",
+      question: {
+        questionText: "Which concerns apply when linking media?",
+        options: [
+          "Content-type validation",
+          "Size limits",
+          "Hotlink reliability",
+          "Sig verification of binary blobs",
+        ],
+        answer: ["Content-type validation", "Size limits", "Hotlink reliability"],
+      },
+      isMultipleAnswerChoice: true,
+    },
+    {
+      group: "2",
+      title: "NIP-96 hosting strategy",
+      description:
+        "How can you combine NIP-96 file hosting with a progressive relay strategy?",
+      question: {
+        questionText:
+          "How can you combine NIP-96 file hosting with a progressive relay strategy?",
+      },
+      isText: true,
+    },
+    {
+      group: "2",
+      title: "NDK connect lifecycle",
+      description: "What does NDK do when you call `ndk.connect()`?",
+      question: {
+        questionText: "What does NDK do when you call `ndk.connect()`?",
+        options: [
+          "Opens relay connections based on the pool configuration",
+          "Generates your nsec",
+          "Uploads media to a mint",
+          "Creates LN invoices",
+        ],
+        answer: "Opens relay connections based on the pool configuration",
+      },
+      isMultipleChoice: true,
+    },
+    {
+      group: "2",
+      title: "NDK instantiation & subscribe",
+      description:
+        "Show how to instantiate NDK with a relay list and connect before subscribing to notes.",
+      question: {
+        questionText:
+          "Show how to instantiate NDK with a relay list and connect before subscribing to notes.",
+      },
+      isCode: true,
+    },
+    {
+      group: "2",
+      title: "Connection status listeners",
+      description: "Why should you listen to connection status events in NDK?",
+      question: {
+        questionText:
+          "Why should you listen to connection status events in NDK?",
+      },
+      isText: true,
+    },
+    {
+      group: "2",
+      title: "NDK profile helpers",
+      description: "Which helpers come with NDK profiles module?",
+      question: {
+        questionText: "Which helpers come with NDK profiles module?",
+        options: ["loadProfile", "createUser", "subscribeToInvoices", "publishReplaceable"],
+        answer: ["loadProfile", "publishReplaceable"],
+      },
+      isMultipleAnswerChoice: true,
+    },
+    {
+      group: "2",
+      title: "Effect cleanup for subscriptions",
+      description:
+        "How would you structure a React effect to open a subscription and clean it up on unmount?",
+      question: {
+        questionText:
+          "How would you structure a React effect to open a subscription and clean it up on unmount?",
+      },
+      isText: true,
+    },
+    {
+      group: "3",
+      title: "Relay validation on publish (NIP-01)",
+      description: "Why sign events client-side before publishing?",
+      question: {
+        questionText: "Why sign events client-side before publishing?",
+        options: [
+          "Relays verify signatures before storing events",
+          "Relays will sign for you",
+          "To compress payloads",
+          "To anonymize content",
+        ],
+        answer: "Relays verify signatures before storing events",
+      },
+      isMultipleChoice: true,
+    },
+    {
+      group: "3",
+      title: "Retrying publishes",
+      description:
+        "Explain a strategy to retry publishes when a relay rejects an event.",
+      question: {
+        questionText:
+          "Explain a strategy to retry publishes when a relay rejects an event.",
+      },
+      isText: true,
+    },
+    {
+      group: "3",
+      title: "Optimistic UI for notes",
+      description:
+        "Provide pseudocode to publish a kind 1 note with optimistic UI and rollback on failure.",
+      question: {
+        questionText:
+          "Provide pseudocode to publish a kind 1 note with optimistic UI and rollback on failure.",
+      },
+      isCode: true,
+    },
+    {
+      group: "3",
+      title: "Moderation tags (NIP-09/36)",
+      description: "Which tags can help with moderation context?",
+      question: {
+        questionText: "Which tags can help with moderation context?",
+        options: [
+          "e tags for threads",
+          "p tags for authors",
+          "client-specific content warnings",
+          "random hashes unrelated to the thread",
+        ],
+        answer: [
+          "e tags for threads",
+          "p tags for authors",
+          "client-specific content warnings",
+        ],
+      },
+      isMultipleAnswerChoice: true,
+    },
+    {
+      group: "3",
+      title: "Surface relay rejection reasons",
+      description: "How would you surface relay rejection reasons to a user?",
+      question: {
+        questionText:
+          "How would you surface relay rejection reasons to a user?",
+      },
+      isText: true,
+    },
+    {
+      group: "3",
+      title: "Search (NIP-50)",
+      description: "What does NIP-50 enable?",
+      question: {
+        questionText: "What does NIP-50 enable?",
+        options: [
+          "Search across full-text indexes exposed by relays",
+          "Media uploads",
+          "Relay authentication",
+          "Zap receipts",
+        ],
+        answer: "Search across full-text indexes exposed by relays",
+      },
+      isMultipleChoice: true,
+    },
+    {
+      group: "3",
+      title: "Search support gaps",
+      description: "Why shouldn’t you rely on every relay supporting search?",
+      question: {
+        questionText: "Why shouldn’t you rely on every relay supporting search?",
+      },
+      isText: true,
+    },
+    {
+      group: "3",
+      title: "Search filter example",
+      description:
+        'Write a filter requesting kind 1 events with a search term "nostr dev" using NIP-50 conventions.',
+      question: {
+        questionText:
+          'Write a filter requesting kind 1 events with a search term "nostr dev" using NIP-50 conventions.',
+      },
+      isCode: true,
+    },
+    {
+      group: "3",
+      title: "Search fallbacks",
+      description: "Which fallbacks can you add when search is unavailable?",
+      question: {
+        questionText: "Which fallbacks can you add when search is unavailable?",
+        options: [
+          "Client-side indexing cache",
+          "Pin to a search-capable relay",
+          "Show an empty state with tips",
+          "Drop all relays",
+        ],
+        answer: [
+          "Client-side indexing cache",
+          "Pin to a search-capable relay",
+          "Show an empty state with tips",
+        ],
+      },
+      isMultipleAnswerChoice: true,
+    },
+    {
+      group: "3",
+      title: "Ranking partial results",
+      description:
+        "How would you rank results when some relays return partial data?",
+      question: {
+        questionText:
+          "How would you rank results when some relays return partial data?",
+      },
+      isText: true,
+    },
+    {
+      group: "3",
+      title: "Zap basics (NIP-57)",
+      description: "Which NIP defines zaps?",
+      question: {
+        questionText: "Which NIP defines zaps?",
+        options: ["NIP-57", "NIP-04", "NIP-05", "NIP-65"],
+        answer: "NIP-57",
+      },
+      isMultipleChoice: true,
+    },
+    {
+      group: "3",
+      title: "Zap endpoint role",
+      description: "What role does the zap endpoint play in a zap request?",
+      question: {
+        questionText: "What role does the zap endpoint play in a zap request?",
+      },
+      isText: true,
+    },
+    {
+      group: "3",
+      title: "Zap request tags",
+      description:
+        "Draft a zap request event tags array referencing a LNURL or Lightning address.",
+      question: {
+        questionText:
+          "Draft a zap request event tags array referencing a LNURL or Lightning address.",
+      },
+      isCode: true,
+    },
+    {
+      group: "3",
+      title: "Zap proofs (receipts)",
+      description: "Which data proves a zap happened?",
+      question: {
+        questionText: "Which data proves a zap happened?",
+        options: [
+          "Zap receipt event",
+          "Unsigned text note",
+          "Relay info document",
+          "Invoice memo",
+        ],
+        answer: ["Zap receipt event"],
+      },
+      isMultipleAnswerChoice: true,
+    },
+    {
+      group: "3",
+      title: "Zap failure handling",
+      description: "How would you fail gracefully when a wallet returns a non-paid invoice?",
+      question: {
+        questionText:
+          "How would you fail gracefully when a wallet returns a non-paid invoice?",
+      },
+      isText: true,
+    },
+    {
+      group: "3",
+      title: "Cashu mints (protocol basics)",
+      description: "What is a Cashu mint responsible for?",
+      question: {
+        questionText: "What is a Cashu mint responsible for?",
+        options: [
+          "Issuing and redeeming ecash tokens",
+          "Acting as a relay",
+          "Signing Nostr events",
+          "Indexing NIP-50 search",
+        ],
+        answer: "Issuing and redeeming ecash tokens",
+      },
+      isMultipleChoice: true,
+    },
+    {
+      group: "3",
+      title: "Cashu rewards rationale",
+      description: "Why might you pair Cashu rewards with Nostr achievements?",
+      question: {
+        questionText:
+          "Why might you pair Cashu rewards with Nostr achievements?",
+      },
+      isText: true,
+    },
+    {
+      group: "3",
+      title: "Mint request pseudocode",
+      description:
+        "Outline pseudocode to request a token from a mint and attach it to a Nostr badge event.",
+      question: {
+        questionText:
+          "Outline pseudocode to request a token from a mint and attach it to a Nostr badge event.",
+      },
+      isCode: true,
+    },
+    {
+      group: "3",
+      title: "Cashu precautions",
+      description: "Which precautions apply to ecash tokens?",
+      question: {
+        questionText: "Which precautions apply to ecash tokens?",
+        options: [
+          "Protect tokens like cash",
+          "Regenerate tokens after spending",
+          "Store them unencrypted in logs",
+          "Handle mint URLs securely",
+        ],
+        answer: [
+          "Protect tokens like cash",
+          "Regenerate tokens after spending",
+          "Handle mint URLs securely",
+        ],
+      },
+      isMultipleAnswerChoice: true,
+    },
+    {
+      group: "3",
+      title: "Cashu proof acceptance UX",
+      description: "How could you notify a user that a Cashu proof was accepted?",
+      question: {
+        questionText:
+          "How could you notify a user that a Cashu proof was accepted?",
+      },
+      isText: true,
+    },
+    {
+      group: "4",
+      title: "Delegated signing (NIP-46)",
+      description: "What does NIP-46 enable?",
+      question: {
+        questionText: "What does NIP-46 enable?",
+        options: [
+          "Remote signing via a delegated signer",
+          "File uploads",
+          "Zap receipts",
+          "DM encryption",
+        ],
+        answer: "Remote signing via a delegated signer",
+      },
+      isMultipleChoice: true,
+    },
+    {
+      group: "4",
+      title: "Why delegated tokens",
+      description: "Why use delegated tokens for short-lived sessions?",
+      question: {
+        questionText: "Why use delegated tokens for short-lived sessions?",
+      },
+      isText: true,
+    },
+    {
+      group: "4",
+      title: "Delegation token format",
+      description: "Show an example delegation token string format with conditions field.",
+      question: {
+        questionText:
+          "Show an example delegation token string format with conditions field.",
+      },
+      isCode: true,
+    },
+    {
+      group: "4",
+      title: "Delegation claims",
+      description: "Which claims can be encoded in a delegation token?",
+      question: {
+        questionText: "Which claims can be encoded in a delegation token?",
+        options: ["Expiration time", "Allowed kinds", "Relay allowlist", "SQLite schema"],
+        answer: ["Expiration time", "Allowed kinds", "Relay allowlist"],
+      },
+      isMultipleAnswerChoice: true,
+    },
+    {
+      group: "4",
+      title: "Token expiry UX",
+      description: "How would you surface token expiry in the UI?",
+      question: {
+        questionText: "How would you surface token expiry in the UI?",
+      },
+      isText: true,
+    },
+    {
+      group: "4",
+      title: "Replay risk (NIP-22/33)",
+      description: "What threat does event replays pose?",
+      question: {
+        questionText: "What threat does event replays pose?",
+        options: [
+          "Old events resurfacing out of context",
+          "Relay downtime",
+          "Extra storage usage only",
+          "Profile picture cache misses",
+        ],
+        answer: "Old events resurfacing out of context",
+      },
+      isMultipleChoice: true,
+    },
+    {
+      group: "4",
+      title: "Spam mitigations",
+      description: "List two mitigations to reduce spam in public feeds.",
+      question: {
+        questionText:
+          "List two mitigations to reduce spam in public feeds.",
+      },
+      isText: true,
+    },
+    {
+      group: "4",
+      title: "Max size guardrails",
+      description: "Write pseudocode to reject events over a max size before signing.",
+      question: {
+        questionText:
+          "Write pseudocode to reject events over a max size before signing.",
+      },
+      isCode: true,
+    },
+    {
+      group: "4",
+      title: "Relay quality signals",
+      description: "Which signals can help score relay quality?",
+      question: {
+        questionText: "Which signals can help score relay quality?",
+        options: ["Latency", "Failure rate", "Moderation policy", "Timezone"],
+        answer: ["Latency", "Failure rate", "Moderation policy"],
+      },
+      isMultipleAnswerChoice: true,
+    },
+    {
+      group: "4",
+      title: "Content warnings (NIP-36)",
+      description:
+        "How do content warnings help communities moderate without central control?",
+      question: {
+        questionText:
+          "How do content warnings help communities moderate without central control?",
+      },
+      isText: true,
+    },
+    {
+      group: "4",
+      title: "Inspecting traffic",
+      description: "Which tool can you use to inspect relay traffic?",
+      question: {
+        questionText: "Which tool can you use to inspect relay traffic?",
+        options: ["WebSocket debugging proxy", "SQL client", "FTP server", "Image CDN"],
+        answer: "WebSocket debugging proxy",
+      },
+      isMultipleChoice: true,
+    },
+    {
+      group: "4",
+      title: "Seeding test relays",
+      description: "Why should you seed test relays with known events before UI testing?",
+      question: {
+        questionText:
+          "Why should you seed test relays with known events before UI testing?",
+      },
+      isText: true,
+    },
+    {
+      group: "4",
+      title: "Publish OK expectation",
+      description:
+        "Provide a Jest-style test snippet that asserts a publish call resolves with an OK from at least one relay.",
+      question: {
+        questionText:
+          "Provide a Jest-style test snippet that asserts a publish call resolves with an OK from at least one relay.",
+      },
+      isCode: true,
+    },
+    {
+      group: "4",
+      title: "Staging environments",
+      description: "Which environments are useful for staging?",
+      question: {
+        questionText: "Which environments are useful for staging?",
+        options: [
+          "Local dockerized relays",
+          "Public testing relays",
+          "Production-only relays",
+          "Offline mocks",
+        ],
+        answer: ["Local dockerized relays", "Public testing relays", "Offline mocks"],
+      },
+      isMultipleAnswerChoice: true,
+    },
+    {
+      group: "4",
+      title: "Mocking NDK subscriptions",
+      description:
+        "How could you mock NDK subscriptions for deterministic UI tests?",
+      question: {
+        questionText:
+          "How could you mock NDK subscriptions for deterministic UI tests?",
+      },
+      isText: true,
+    },
+    {
+      group: "4",
+      title: "Local caching benefits",
+      description: "Why cache recent events locally?",
+      question: {
+        questionText: "Why cache recent events locally?",
+        options: [
+          "To reduce relay round-trips and improve perceived latency",
+          "To bypass signing",
+          "To avoid using filters",
+          "To prevent encryption",
+        ],
+        answer: "To reduce relay round-trips and improve perceived latency",
+      },
+      isMultipleChoice: true,
+    },
+    {
+      group: "4",
+      title: "Mobile caching tradeoffs",
+      description: "What is the tradeoff of aggressive local caching on mobile?",
+      question: {
+        questionText:
+          "What is the tradeoff of aggressive local caching on mobile?",
+      },
+      isText: true,
+    },
+    {
+      group: "4",
+      title: "Cache key design",
+      description: "Sketch a cache key strategy combining pubkey, kind, and a cursor.",
+      question: {
+        questionText:
+          "Sketch a cache key strategy combining pubkey, kind, and a cursor.",
+      },
+      isCode: true,
+    },
+    {
+      group: "4",
+      title: "Feed freshness strategies",
+      description: "Which strategies keep feeds fresh?",
+      question: {
+        questionText: "Which strategies keep feeds fresh?",
+        options: [
+          "Use since cursors",
+          "Backfill on reconnect",
+          "Ignore relay eose signals",
+          "Batch filter requests",
+        ],
+        answer: [
+          "Use since cursors",
+          "Backfill on reconnect",
+          "Batch filter requests",
+        ],
+      },
+      isMultipleAnswerChoice: true,
+    },
+    {
+      group: "4",
+      title: "Measuring perceived latency",
+      description: "How would you measure perceived latency for feed loads?",
+      question: {
+        questionText:
+          "How would you measure perceived latency for feed loads?",
+      },
+      isText: true,
+    },
+    {
+      group: "5",
+      title: "Threaded replies (NIP-10)",
+      description: "Which feature relies on event threading?",
+      question: {
+        questionText: "Which feature relies on event threading?",
+        options: [
+          "Comments and replies",
+          "File uploads",
+          "DNS resolution",
+          "Relay authentication",
+        ],
+        answer: "Comments and replies",
+      },
+      isMultipleChoice: true,
+    },
+    {
+      group: "5",
+      title: "Reputation without servers",
+      description: "How could you design a reputation model without central servers?",
+      question: {
+        questionText:
+          "How could you design a reputation model without central servers?",
+      },
+      isText: true,
+    },
+    {
+      group: "5",
+      title: "Reply tagging (NIP-10)",
+      description:
+        "Draft tags linking a reply to its root event and to the author being mentioned.",
+      question: {
+        questionText:
+          "Draft tags linking a reply to its root event and to the author being mentioned.",
+      },
+      isCode: true,
+    },
+    {
+      group: "5",
+      title: "Signals for following feeds",
+      description: "Which signals can drive “following” feeds?",
+      question: {
+        questionText: "Which signals can drive “following” feeds?",
+        options: [
+          "Contact lists",
+          "Relay hints",
+          "NIP-65 mailbox relays",
+          "Static HTML",
+        ],
+        answer: ["Contact lists", "Relay hints", "NIP-65 mailbox relays"],
+      },
+      isMultipleAnswerChoice: true,
+    },
+    {
+      group: "5",
+      title: "Cashu tips + badges",
+      description: "Describe one way to pair Cashu tips with milestone badges.",
+      question: {
+        questionText:
+          "Describe one way to pair Cashu tips with milestone badges.",
+      },
+      isText: true,
+    },
+    {
+      group: "5",
+      title: "Running your own relay",
+      description: "What is one benefit of running your own relay?",
+      question: {
+        questionText: "What is one benefit of running your own relay?",
+        options: [
+          "Control over retention and moderation policy",
+          "Relays sign events for you",
+          "Guaranteed search for all clients",
+          "Free cloud storage credits",
+        ],
+        answer: "Control over retention and moderation policy",
+      },
+      isMultipleChoice: true,
+    },
+    {
+      group: "5",
+      title: "Paid vs free relays",
+      description: "When would you choose paid relays over free public ones?",
+      question: {
+        questionText: "When would you choose paid relays over free public ones?",
+      },
+      isText: true,
+    },
+    {
+      group: "5",
+      title: "nostr-rs-relay commands",
+      description: "List shell commands to run a nostr-rs-relay locally with a config file.",
+      question: {
+        questionText:
+          "List shell commands to run a nostr-rs-relay locally with a config file.",
+      },
+      isCode: true,
+    },
+    {
+      group: "5",
+      title: "Relay maintenance tasks",
+      description: "Which maintenance tasks matter for relay ops?",
+      question: {
+        questionText: "Which maintenance tasks matter for relay ops?",
+        options: [
+          "Backups",
+          "Monitoring resource usage",
+          "Posting memes daily",
+          "Applying security patches",
+        ],
+        answer: [
+          "Backups",
+          "Monitoring resource usage",
+          "Applying security patches",
+        ],
+      },
+      isMultipleAnswerChoice: true,
+    },
+    {
+      group: "5",
+      title: "Retention policy UX",
+      description: "How do retention policies influence mobile client UX?",
+      question: {
+        questionText:
+          "How do retention policies influence mobile client UX?",
+      },
+      isText: true,
+    },
+    {
+      group: "5",
+      title: "NDK simplification reflection",
+      description: "Summarize how NDK simplifies client development for you.",
+      question: {
+        questionText:
+          "Summarize how NDK simplifies client development for you.",
+      },
+      isText: true,
+    },
+    {
+      group: "5",
+      title: "Key custody pitfalls",
+      description: "What pitfalls did you find around key custody?",
+      question: {
+        questionText:
+          "What pitfalls did you find around key custody?",
+      },
+      isText: true,
+    },
+    {
+      group: "5",
+      title: "Lightning + Cashu plan",
+      description:
+        "How will you combine Nostr feeds with Lightning or Cashu in your project?",
+      question: {
+        questionText:
+          "How will you combine Nostr feeds with Lightning or Cashu in your project?",
+      },
+      isText: true,
+    },
+    {
+      group: "5",
+      title: "Relay choices rationale",
+      description: "Which relays would you choose for production and why?",
+      question: {
+        questionText: "Which relays would you choose for production and why?",
+      },
+      isText: true,
+    },
+    {
+      group: "5",
+      title: "Comprehensive review",
+      description:
+        "Let’s review everything you practiced about Nostr, NDK, relays, and Cashu.",
+      question: {
+        questionText:
+          "Let’s review everything you practiced about Nostr, NDK, relays, and Cashu.",
+      },
+      isConversationReview: true,
+    },
+    {
+      group: "5",
+      title: "Launch checklist",
+      description: "Draft a launch checklist for a Nostr app that depends on NDK.",
+      question: {
+        questionText:
+          "Draft a launch checklist for a Nostr app that depends on NDK.",
+      },
+      isText: true,
+    },
+    {
+      group: "5",
+      title: "Relay health monitoring",
+      description: "How will you monitor relay health after shipping?",
+      question: {
+        questionText:
+          "How will you monitor relay health after shipping?",
+      },
+      isText: true,
+    },
+    {
+      group: "5",
+      title: "Retry queue snippet",
+      description:
+        "Write a snippet that queues failed publishes for retry on reconnect.",
+      question: {
+        questionText:
+          "Write a snippet that queues failed publishes for retry on reconnect.",
+      },
+      isCode: true,
+    },
+    {
+      group: "5",
+      title: "Payment fallback UX",
+      description:
+        "What Cashu or Lightning fallback will you show when payments fail?",
+      question: {
+        questionText:
+          "What Cashu or Lightning fallback will you show when payments fail?",
+      },
+      isText: true,
+    },
+    {
+      group: "5",
+      title: "Next feature ideas",
+      description:
+        "List three next features you would prototype after this course.",
+      question: {
+        questionText:
+          "List three next features you would prototype after this course.",
+      },
+      isText: true,
+    },
+  ],
   // ['py-en']: [
 
   // ],
