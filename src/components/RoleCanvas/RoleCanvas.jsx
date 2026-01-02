@@ -1,6 +1,16 @@
 import React, { useRef, useEffect } from "react";
 import { createNoise2D } from "simplex-noise";
 import { useColorModeValue } from "@chakra-ui/react";
+import { useThemeStore } from "../../useThemeStore";
+
+// Theme color hex values
+const themeColorHex = {
+  purple: "#9f7aea",
+  orange: "#ed8936",
+  green: "#48bb78",
+  blue: "#4299e1",
+  pink: "#ed64a6",
+};
 
 /**
  * RoleCanvas: renders a breathing sphere, a plan mesh, a plate-of-food animation,
@@ -14,7 +24,7 @@ export function RoleCanvas({
   width = 100,
   height = 100,
   particleCount = 200,
-  color = "#FFD700",
+  color = null, // null means use theme color
 
   // sphere params
   cycleSpeed = 0.0015,
@@ -35,6 +45,10 @@ export function RoleCanvas({
   const roleRef = useRef(role);
   const progressRef = useRef(0);
   const frameRef = useRef(0);
+  const themeColor = useThemeStore((state) => state.themeColor);
+
+  // Use provided color or fall back to theme color
+  const particleColor = color || themeColorHex[themeColor] || themeColorHex.orange;
 
   useEffect(() => {
     roleRef.current = role;
@@ -194,7 +208,7 @@ export function RoleCanvas({
         const rPos = p0.size + 20;
         ctx.beginPath();
         ctx.arc(xPos, yPos, rPos, 0, Math.PI * 2);
-        ctx.fillStyle = color;
+        ctx.fillStyle = particleColor;
         ctx.fill();
         frameRef.current = requestAnimationFrame(animate);
         return;
@@ -335,7 +349,7 @@ export function RoleCanvas({
 
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fillStyle = color;
+        ctx.fillStyle = particleColor;
         ctx.fill();
       });
 
@@ -349,7 +363,7 @@ export function RoleCanvas({
           const yC = cy + rad * Math.sin(angle);
           ctx.beginPath();
           ctx.arc(xC, yC, 2, 0, Math.PI * 2);
-          ctx.fillStyle = color;
+          ctx.fillStyle = particleColor;
           ctx.fill();
         }
       }
@@ -364,6 +378,7 @@ export function RoleCanvas({
     width,
     height,
     particleCount,
+    particleColor,
     cycleSpeed,
     jitterScale,
     trailOpacity,
