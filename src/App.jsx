@@ -4309,7 +4309,6 @@ const Step = ({
                   role={"sphere"}
                   width={400}
                   height={400}
-                  color="#FF69B4"
                   backgroundColorX="247,245,239"
                 />
               </Box>
@@ -5697,7 +5696,7 @@ const Home = ({
             alignItems="center"
             pb={24}
           >
-            <RoleCanvas role={role} width={400} height={400} color="#FF69B4" />
+            <RoleCanvas role={role} width={400} height={400} />
             <VStack spacing={6} alignItems="flex-start">
               <Text fontSize="2xl" textAlign="center" width="100%" mt={4}>
                 {translation[userLanguage]["landing.whyLearn.title"]}
