@@ -4181,7 +4181,12 @@ const Step = ({
                   </RiseUpAnimation>
                 </div>
               )}
-              <HStack spacing={4} width="100%" justifyContent={"center"}>
+              <HStack
+                spacing={4}
+                width="100%"
+                justifyContent={"center"}
+                paddingBottom={step.isTerminal ? 24 : null}
+              >
                 {step.question &&
                 currentStep > 0 &&
                 !isCorrect &&

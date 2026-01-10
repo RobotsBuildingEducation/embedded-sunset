@@ -18,6 +18,29 @@ import character15 from "../assets/15.png";
 import character16 from "../assets/16.png";
 import character17 from "../assets/17.png";
 import character18 from "../assets/18.png";
+import character19 from "../assets/19.png";
+import character20 from "../assets/20.png";
+import character21 from "../assets/21.png";
+import character22 from "../assets/22.png";
+import character23 from "../assets/23.png";
+import character24 from "../assets/24.png";
+import character25 from "../assets/25.png";
+import character26 from "../assets/26.png";
+import character27 from "../assets/27.png";
+import character28 from "../assets/28.png";
+import character29 from "../assets/29.png";
+import character30 from "../assets/30.png";
+import character31 from "../assets/31.png";
+import character32 from "../assets/32.png";
+import character33 from "../assets/33.png";
+import character34 from "../assets/34.png";
+import character35 from "../assets/35.png";
+import character36 from "../assets/36.png";
+import character37 from "../assets/37.png";
+import character38 from "../assets/38.png";
+import character39 from "../assets/39.png";
+import character40 from "../assets/40.png";
+import character41 from "../assets/41.png";
 
 import { keyframes } from "@emotion/react";
 import { Box } from "@chakra-ui/react";
@@ -131,6 +154,29 @@ const characterImages = [
   character16,
   character17,
   character18,
+  character19,
+  character20,
+  character21,
+  character22,
+  character23,
+  character24,
+  character25,
+  character26,
+  character27,
+  character28,
+  character29,
+  character30,
+  character31,
+  character32,
+  character33,
+  character34,
+  character35,
+  character36,
+  character37,
+  character38,
+  character39,
+  character40,
+  character41,
 ];
 
 const characterImagesMap = {
@@ -151,6 +197,29 @@ const characterImagesMap = {
   15: character16,
   16: character17,
   17: character18,
+  18: character19,
+  19: character20,
+  20: character21,
+  21: character22,
+  22: character23,
+  23: character24,
+  24: character25,
+  25: character26,
+  26: character27,
+  27: character28,
+  28: character29,
+  29: character30,
+  30: character31,
+  31: character32,
+  32: character33,
+  33: character34,
+  34: character35,
+  35: character36,
+  36: character37,
+  37: character38,
+  38: character39,
+  39: character40,
+  40: character41,
 };
 
 const RandomCharacter = ({
