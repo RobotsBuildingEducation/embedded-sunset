@@ -4344,6 +4344,7 @@ const Step = ({
               alignItems="center"
               justifyContent="center"
               width="100%"
+              mb={24}
             >
               <Switch
                 isChecked={isAdaptiveLearning}
@@ -4362,7 +4363,7 @@ const Step = ({
           {suggestionMessages.length > 0 &&
           isEmpty(suggestionMessage) &&
           !step?.isTerminal ? (
-            <Box mt={4} p={4} textAlign="center">
+            <Box mt={4} p={4} textAlign="center" mt="-86px">
               {/* <CloudCanvas isLoader={true} /> */}
               <Box marginTop={"-52px"}>
                 <RoleCanvas
@@ -4379,7 +4380,7 @@ const Step = ({
             </Box>
           ) : !isAdaptiveLearning ||
             step.isTerminal ? null : suggestionMessage.length > 0 ? (
-            <Box maxWidth="600px" width="100%" pb={12}>
+            <Box maxWidth="600px" width="100%" pb={12} mt="-86px">
               <Box
                 as={motion.div}
                 mt={4}
