@@ -323,7 +323,7 @@ export default function SoundExperiment() {
               max={100}
               w="100px"
             >
-              <SliderTrack bg="whiteAlpha.300">
+              <SliderTrack>
                 <SliderFilledTrack bg="duo.500" />
               </SliderTrack>
               <SliderThumb boxSize={4} />
@@ -452,7 +452,7 @@ export default function SoundExperiment() {
               max={100}
               step={1}
             >
-              <SliderTrack bg="whiteAlpha.300" h={3} borderRadius="full">
+              <SliderTrack h={3} borderRadius="full">
                 <SliderFilledTrack bg="linear-gradient(90deg, #00CED1, #4169E1)" />
               </SliderTrack>
               <SliderThumb boxSize={6} bg="cyan.400" />
@@ -493,7 +493,7 @@ export default function SoundExperiment() {
               max={10}
               step={1}
             >
-              <SliderTrack bg="whiteAlpha.300" h={3} borderRadius="full">
+              <SliderTrack h={3} borderRadius="full">
                 <SliderFilledTrack bg="linear-gradient(90deg, #3CB371, #90EE90)" />
               </SliderTrack>
               <SliderThumb boxSize={6} bg="green.400" />

@@ -13,6 +13,9 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
+  Radio,
+  RadioGroup,
+  Stack,
   Progress,
   CircularProgress,
   Box,
@@ -132,11 +135,12 @@ const SelfPacedOnboarding = ({
     }
   }, [userId, setInterval]);
 
-  const handleSliderChange = (val) => {
-    setInterval(val);
-    setInputValue(val);
+  const handleIntervalChange = (value) => {
+    const nextValue = Number(value);
+    setInterval(nextValue);
+    setInputValue(nextValue);
     soundManager.init().catch(() => {});
-    soundManager.play("sliderTick");
+    soundManager.play("select");
   };
 
   const handleDailyGoalsChange = (val) => {
@@ -321,24 +325,26 @@ const SelfPacedOnboarding = ({
         {translation[userLanguage]["modal.selfPace.instruction"]}
       </Text>
 
-      <Slider
-        aria-label="slider-days"
-        value={interval}
-        min={1440}
-        max={4320}
-        step={1440}
-        onChange={handleSliderChange}
+      <RadioGroup
+        value={String(interval)}
+        onChange={handleIntervalChange}
+        data-sound-ignore-select="true"
       >
-        <SliderTrack bg="whiteAlpha.300" h={3} borderRadius="full">
-          <SliderFilledTrack bg="linear-gradient(90deg, #00CED1, #4169E1)" />
-        </SliderTrack>
-        <SliderThumb boxSize={6} bg="cyan.400" />
-      </Slider>
-      <Text mt={2} color={getMarkColor(interval)}>
-        <Text fontSize="sm" fontWeight="bold">
-          {getMarkLabel(interval)}
-        </Text>
-      </Text>
+        <Stack spacing={2}>
+          {[1440, 2880, 4320].map((option) => (
+            <Radio
+              key={option}
+              value={String(option)}
+              colorScheme="teal"
+              data-sound-ignore-select="true"
+            >
+              <Text color={getMarkColor(option)} fontWeight="semibold">
+                {getMarkLabel(option)}
+              </Text>
+            </Radio>
+          ))}
+        </Stack>
+      </RadioGroup>
 
       <br />
       <br />
@@ -355,7 +361,7 @@ const SelfPacedOnboarding = ({
         onChange={handleDailyGoalsChange}
         mt={2}
       >
-        <SliderTrack bg="whiteAlpha.300" h={3} borderRadius="full">
+        <SliderTrack h={3} borderRadius="full">
           <SliderFilledTrack bg="linear-gradient(90deg, #00CED1, #4169E1)" />
         </SliderTrack>
         <SliderThumb boxSize={6} bg="cyan.400" />
