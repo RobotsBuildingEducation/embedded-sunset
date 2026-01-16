@@ -6825,7 +6825,7 @@ function App({ isShutDown }) {
                     "en"
                 );
               }
-
+              // x
               if (step > 6) {
                 setOnboardingToDone(localStorage.getItem("local_npub"), 0);
 
