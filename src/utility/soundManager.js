@@ -1,213 +1,103 @@
+import * as Tone from "tone";
+
 class SoundManager {
   constructor() {
-    this.ctx = null;
     this.isMuted = false;
+    this.polySynth = new Tone.PolySynth(Tone.Synth).toDestination();
+    this.synth = new Tone.Synth().toDestination();
+    this.membrane = new Tone.MembraneSynth().toDestination();
+    this.metal = new Tone.MetalSynth().toDestination();
+    this.isReady = false;
   }
 
-  getContext() {
-    if (!this.ctx) {
-      const AudioContext = window.AudioContext || window.webkitAudioContext;
-      if (AudioContext) {
-        this.ctx = new AudioContext();
-      }
+  async ensureReady() {
+    if (!this.isReady) {
+      await Tone.start();
+      this.isReady = true;
     }
-    return this.ctx;
+    if (Tone.context.state !== "running") {
+      await Tone.context.resume();
+    }
   }
 
   resume() {
-    const ctx = this.getContext();
-    if (ctx && ctx.state === "suspended") {
-      ctx.resume().catch(() => {});
-    }
+    return this.ensureReady();
   }
 
-  playSelect() {
-    const ctx = this.getContext();
-    if (!ctx || this.isMuted) return;
-    this.resume();
-
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    // "Select" sound: quick, slightly high-pitched blip
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(800, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.1);
-
-    gain.gain.setValueAtTime(0.1, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
-
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.1);
+  async playSelect() {
+    if (this.isMuted) return;
+    await this.ensureReady();
+    // Quick, high-pitched blip
+    this.synth.triggerAttackRelease("C6", "32n");
   }
 
-  playSparkle() {
-    const ctx = this.getContext();
-    if (!ctx || this.isMuted) return;
-    this.resume();
-
-    // "Sparkle": rapid arpeggio
-    const now = ctx.currentTime;
-    const frequencies = [523.25, 659.25, 783.99, 1046.5, 1318.51]; // C major pentatonic
-
-    frequencies.forEach((freq, i) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-
-      osc.type = "sine";
-      osc.frequency.value = freq;
-
-      const startTime = now + i * 0.05;
-      const duration = 0.1;
-
-      gain.gain.setValueAtTime(0.05, startTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-
-      osc.start(startTime);
-      osc.stop(startTime + duration);
-    });
+  async playCorrect() {
+    if (this.isMuted) return;
+    await this.ensureReady();
+    // Ascending major triad: C5, E5, G5, C6
+    const now = Tone.now();
+    this.polySynth.triggerAttackRelease(["C5", "E5", "G5", "C6"], "8n", now);
   }
 
-  playComplete() {
-    const ctx = this.getContext();
-    if (!ctx || this.isMuted) return;
-    this.resume();
-
-    // "Complete": A nice major chord
-    const now = ctx.currentTime;
-    // C Major: C4, E4, G4, C5
-    const frequencies = [261.63, 329.63, 392.0, 523.25];
-
-    frequencies.forEach((freq) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-
-      osc.type = "triangle";
-      osc.frequency.value = freq;
-
-      gain.gain.setValueAtTime(0.1, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 1.5); // Long decay
-
-      osc.start(now);
-      osc.stop(now + 1.5);
-    });
+  async playWrong() {
+    if (this.isMuted) return;
+    await this.ensureReady();
+    // Low dissonant buzz
+    const now = Tone.now();
+    this.polySynth.triggerAttackRelease(["C2", "F#2"], "4n", now);
   }
 
-  playCorrect() {
-    const ctx = this.getContext();
-    if (!ctx || this.isMuted) return;
-    this.resume();
-
-    // "Correct": High ping / arpeggio (C5, E5, G5)
-    const now = ctx.currentTime;
-    const frequencies = [523.25, 659.25, 783.99, 1046.50]; // C Major
-
-    frequencies.forEach((freq, i) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-
-      osc.type = "sine";
-      osc.frequency.value = freq;
-
-      const startTime = now + i * 0.05;
-      const duration = 0.2;
-
-      gain.gain.setValueAtTime(0.05, startTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-
-      osc.start(startTime);
-      osc.stop(startTime + duration);
-    });
+  async playLearn() {
+    if (this.isMuted) return;
+    await this.ensureReady();
+    // Rising magical sweep
+    const now = Tone.now();
+    this.polySynth.triggerAttackRelease(["C4", "E4", "G4", "B4", "C5"], "16n", now);
   }
 
-  playWrong() {
-    const ctx = this.getContext();
-    if (!ctx || this.isMuted) return;
-    this.resume();
+  async playFlashcard() {
+    if (this.isMuted) return;
+    await this.ensureReady();
+    // Quick paper flip sound (approximated with noise)
+    const noise = new Tone.Noise("white").start();
+    const filter = new Tone.Filter(1000, "lowpass");
 
-    // "Wrong": Low dissonant buzz
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    osc.type = "sawtooth";
-    osc.frequency.setValueAtTime(150, ctx.currentTime);
-    osc.frequency.linearRampToValueAtTime(100, ctx.currentTime + 0.3);
-
-    gain.gain.setValueAtTime(0.05, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.3);
-  }
-
-  playLearn() {
-    const ctx = this.getContext();
-    if (!ctx || this.isMuted) return;
-    this.resume();
-
-    // "Learn": Rising magical sweep
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(300, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.5);
-
-    gain.gain.setValueAtTime(0.05, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.0, ctx.currentTime + 0.5);
-
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.5);
-  }
-
-  playFlashcard() {
-    const ctx = this.getContext();
-    if (!ctx || this.isMuted) return;
-    this.resume();
-
-    // "Flashcard": Quick paper flip (filtered noise)
-    const bufferSize = ctx.sampleRate * 0.1; // 0.1 seconds
-    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = Math.random() * 2 - 1;
-    }
-
-    const noise = ctx.createBufferSource();
-    noise.buffer = buffer;
-
-    const filter = ctx.createBiquadFilter();
-    filter.type = "lowpass";
-    filter.frequency.value = 1000;
-
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.05, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+    const env = new Tone.AmplitudeEnvelope({
+      attack: 0.01,
+      decay: 0.1,
+      sustain: 0,
+      release: 0.1,
+    }).toDestination();
 
     noise.connect(filter);
-    filter.connect(gain);
-    gain.connect(ctx.destination);
+    filter.connect(env);
 
-    noise.start(ctx.currentTime);
+    // Trigger and dispose
+    env.triggerAttackRelease(0.1);
+
+    // Clean up after the sound finishes (approx 0.2s + buffer)
+    setTimeout(() => {
+        noise.stop();
+        noise.dispose();
+        filter.dispose();
+        env.dispose();
+    }, 500);
+  }
+
+  async playSparkle() {
+    if (this.isMuted) return;
+    await this.ensureReady();
+    // Rapid arpeggio
+    const now = Tone.now();
+    this.polySynth.triggerAttackRelease(["C5", "E5", "G5", "C6", "E6"], "32n", now);
+  }
+
+  async playComplete() {
+      if (this.isMuted) return;
+      await this.ensureReady();
+      // Full Major Chord
+      const now = Tone.now();
+      this.polySynth.triggerAttackRelease(["C4", "E4", "G4", "C5"], "2n", now);
   }
 }
 
