@@ -29,6 +29,7 @@ import {
 import { deleteToken, getToken } from "firebase/messaging";
 import { doc, updateDoc } from "firebase/firestore";
 import { getToken as getAppCheckToken } from "firebase/app-check";
+import { soundManager } from "../../../utility/soundManager";
 
 // CountdownTimer now supports days along with hours:minutes:seconds and shows a progress bar.
 const CountdownTimer = ({ targetTime, initialTime, label, userLanguage }) => {
@@ -135,6 +136,14 @@ const SelfPacedModal = ({
   const handleSliderChange = (val) => {
     setInterval(val);
     setInputValue(val);
+    soundManager.init().catch(() => {});
+    soundManager.play("sliderTick");
+  };
+
+  const handleDailyGoalsChange = (val) => {
+    setDailyGoals(val);
+    soundManager.init().catch(() => {});
+    soundManager.play("sliderTick");
   };
 
   const debounceTimeout = useRef(null);
@@ -203,6 +212,8 @@ const SelfPacedModal = ({
   };
 
   const handleToggleNotifications = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("modeSwitch");
     const userDocRef = doc(database, "users", userId);
 
     if (!notificationsEnabled) {
@@ -396,7 +407,7 @@ const SelfPacedModal = ({
               min={1}
               max={20}
               step={1}
-              onChange={setDailyGoals}
+              onChange={handleDailyGoalsChange}
               mt={2}
             >
               <SliderTrack>

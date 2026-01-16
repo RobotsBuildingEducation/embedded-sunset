@@ -871,6 +871,8 @@ export const VoiceInput = ({
 
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("pattern");
     // Retrieve the current count from localStorage
     // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
 
@@ -2256,6 +2258,8 @@ const Step = ({
 
   // Initialize items for Select Order question
   const handleToggleChange = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("modeSwitch");
     const newValue = !isAdaptiveLearning;
     setIsAdaptiveLearning(newValue);
 
@@ -3088,6 +3092,8 @@ const Step = ({
 
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("pattern");
     // Retrieve the current count from localStorage
     // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
 
@@ -3311,6 +3317,8 @@ const Step = ({
   }, [newQuestionMessages]);
 
   const handleGenerateNewQuestion = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("submitAction");
     // Retrieve the current count from localStorage
     let gnrtctrl = parseInt(localStorage.getItem("gnrtctrl") || "0", 10);
 
@@ -5273,6 +5281,8 @@ const Home = ({
   }, [view]);
 
   const handleToggle = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("modeSwitch");
     const newLanguage = userLanguage.includes("en") ? "es" : "en";
     setUserLanguage(newLanguage);
 
@@ -6519,6 +6529,11 @@ function App({ isShutDown }) {
   const [hasSubmittedPasscode, setHasSubmittedPasscode] = useState(false);
 
   const [allowPosts, setAllowPosts] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    if (typeof window === "undefined") return true;
+    const stored = localStorage.getItem("soundEnabled");
+    return stored ? stored === "true" : true;
+  });
 
   useEffect(() => {
     const handlePointerDown = (event) => {
@@ -6538,6 +6553,13 @@ function App({ isShutDown }) {
       document.removeEventListener("pointerdown", handlePointerDown);
     };
   }, []);
+
+  useEffect(() => {
+    soundManager.setEnabled(soundEnabled);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("soundEnabled", String(soundEnabled));
+    }
+  }, [soundEnabled]);
 
   const [showClouds, setShowClouds] = useState(false);
   const [pendingPath, setPendingPath] = useState(null);
@@ -6691,6 +6713,8 @@ function App({ isShutDown }) {
   );
 
   const handleToggle = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("modeSwitch");
     const newLanguage = userLanguage.includes("en") ? "es" : "en";
     setUserLanguage(newLanguage);
 
@@ -6997,6 +7021,8 @@ function App({ isShutDown }) {
             menuTourStep={actionBarTourSteps?.[0]}
             allowPosts={allowPosts}
             setAllowPosts={setAllowPosts}
+            soundEnabled={soundEnabled}
+            setSoundEnabled={setSoundEnabled}
           />
         )}
 

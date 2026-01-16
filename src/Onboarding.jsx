@@ -58,6 +58,7 @@ import { useSharedNostr } from "./hooks/useNOSTR";
 import { TechOverview } from "./components/TechOverview/TechOverview";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import WaveBar from "./components/WaveBar";
+import { soundManager } from "./utility/soundManager";
 
 export const Onboarding = ({
   userLanguage,
@@ -128,6 +129,8 @@ export const Onboarding = ({
   }, []);
 
   const handleToggleNotifications = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("modeSwitch");
     const userDocRef = doc(
       database,
       "users",

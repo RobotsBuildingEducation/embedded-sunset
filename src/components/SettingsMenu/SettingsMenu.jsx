@@ -56,6 +56,7 @@ import { useNostrWalletStore } from "../../hooks/useNostrWalletStore";
 import StudyGuideModal from "../StudyGuideModal/StudyGuideModal";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { ChangeLanguageModal } from "../ChangeLanguageModal/ChangeLanguageModal";
+import { soundManager } from "../../utility/soundManager";
 
 const SettingsMenu = ({
   testIsMatch,
@@ -76,6 +77,8 @@ const SettingsMenu = ({
   menuTourStep,
   allowPosts,
   setAllowPosts,
+  soundEnabled,
+  setSoundEnabled,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
@@ -200,6 +203,8 @@ const SettingsMenu = ({
   };
 
   const handleToggleAllowPosts = async (e) => {
+    soundManager.init().catch(() => {});
+    soundManager.play("modeSwitch");
     const newValue = e.target.checked;
     setAllowPosts(newValue);
     const npub = localStorage.getItem("local_npub");
@@ -207,6 +212,12 @@ const SettingsMenu = ({
       const userDocRef = doc(database, "users", npub);
       await updateDoc(userDocRef, { allowPosts: newValue });
     }
+  };
+
+  const handleToggleSound = (e) => {
+    soundManager.init().catch(() => {});
+    soundManager.play("modeSwitch");
+    setSoundEnabled(e.target.checked);
   };
 
   const handleCopyKeys = (id) => {
@@ -438,6 +449,18 @@ const SettingsMenu = ({
                   id="allow-posts-menu-switch"
                   isChecked={allowPosts}
                   onChange={handleToggleAllowPosts}
+                  colorScheme="pink"
+                />
+              </FormControl>
+
+              <FormControl display="flex" alignItems="center" width="100%">
+                <FormLabel htmlFor="sound-effects-menu-switch" mb="0" flex="1">
+                  Sound effects
+                </FormLabel>
+                <Switch
+                  id="sound-effects-menu-switch"
+                  isChecked={soundEnabled}
+                  onChange={handleToggleSound}
                   colorScheme="pink"
                 />
               </FormControl>

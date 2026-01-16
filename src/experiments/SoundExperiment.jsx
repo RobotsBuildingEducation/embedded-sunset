@@ -128,6 +128,18 @@ export default function SoundExperiment() {
   const [brushSize, setBrushSize] = useState(5);
   const [activeSound, setActiveSound] = useState(null);
 
+  const handleVolumeChange = (value) => {
+    setVolume(value);
+    soundManager.init().catch(() => {});
+    soundManager.play("sliderTick");
+  };
+
+  const handleToggleSoundEnabled = (event) => {
+    soundManager.init().catch(() => {});
+    soundManager.play("modeSwitch");
+    setSoundEnabled(event.target.checked);
+  };
+
   // Initialize sound manager - MUST be called from user gesture
   const initializeAudio = useCallback(async () => {
     if (isInitialized || isInitializing) return;
@@ -306,7 +318,7 @@ export default function SoundExperiment() {
             <Slider
               aria-label="volume"
               value={volume}
-              onChange={setVolume}
+              onChange={handleVolumeChange}
               min={0}
               max={100}
               w="100px"
@@ -324,7 +336,7 @@ export default function SoundExperiment() {
           <HStack spacing={2}>
             <Switch
               isChecked={soundEnabled}
-              onChange={(e) => setSoundEnabled(e.target.checked)}
+              onChange={handleToggleSoundEnabled}
               colorScheme="teal"
             />
             {soundEnabled ? (
@@ -432,6 +444,8 @@ export default function SoundExperiment() {
               value={hoverValue}
               onChange={(val) => {
                 setHoverValue(val);
+                soundManager.init().catch(() => {});
+                soundManager.play("sliderTick");
                 playHoverSound(val);
               }}
               min={0}
@@ -471,6 +485,8 @@ export default function SoundExperiment() {
               value={brushSize}
               onChange={(val) => {
                 setBrushSize(val);
+                soundManager.init().catch(() => {});
+                soundManager.play("sliderTick");
                 playBrushSizeSound(val);
               }}
               min={1}

@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { CloudCanvas } from "../../elements/SunsetCanvas";
 import { translation } from "../../utility/translation";
 import { PiClockCountdownDuotone } from "react-icons/pi";
+import { soundManager } from "../../utility/soundManager";
 
 export const Landing = ({
   userLanguage,
@@ -26,6 +27,11 @@ export const Landing = ({
   loadingMessage,
 }) => {
   const navigate = useNavigate();
+  const handleLanguageToggle = () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("modeSwitch");
+    handleToggle();
+  };
 
   return (
     <VStack spacing={4}>
@@ -120,7 +126,7 @@ export const Landing = ({
         <Switch
           colorScheme="pink"
           isChecked={userLanguage === "es"}
-          onChange={handleToggle}
+          onChange={handleLanguageToggle}
         />
       </FormControl>
 

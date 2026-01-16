@@ -38,6 +38,7 @@ import "./CalendarStyles.css";
 import { FaFireAlt } from "react-icons/fa";
 import { RiSlowDownLine, RiSpeedUpLine } from "react-icons/ri";
 import { COURSE_LESSON_COUNT } from "../../../utility/nosql";
+import { soundManager } from "../../../utility/soundManager";
 
 // CountdownTimer now supports days along with hours:minutes:seconds and shows a progress bar.
 const CountdownTimer = ({ targetTime, initialTime, label, userLanguage }) => {
@@ -134,6 +135,14 @@ const SelfPacedOnboarding = ({
   const handleSliderChange = (val) => {
     setInterval(val);
     setInputValue(val);
+    soundManager.init().catch(() => {});
+    soundManager.play("sliderTick");
+  };
+
+  const handleDailyGoalsChange = (val) => {
+    setDailyGoals(val);
+    soundManager.init().catch(() => {});
+    soundManager.play("sliderTick");
   };
 
   const debounceTimeout = useRef(null);
@@ -345,7 +354,7 @@ const SelfPacedOnboarding = ({
         min={1}
         max={20}
         step={1}
-        onChange={setDailyGoals}
+        onChange={handleDailyGoalsChange}
         mt={2}
       >
         <SliderTrack>
