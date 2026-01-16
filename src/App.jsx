@@ -118,6 +118,7 @@ import { analytics, database } from "./database/firebaseResources";
 
 import { pickProgrammingLanguage, translation } from "./utility/translation";
 import { subscribeToTeamInvites } from "./utility/nosql";
+import { soundManager } from "./utility/soundManager";
 
 import { Dashboard } from "./components/Dashboard/Dashboard";
 import { isUnsupportedBrowser } from "./utility/browser";
@@ -2419,6 +2420,14 @@ const Step = ({
     }
   }, [isCorrect]);
 
+  useEffect(() => {
+    if (isCorrect === true) {
+      soundManager.playSuccess();
+    } else if (isCorrect === false) {
+      soundManager.playError();
+    }
+  }, [isCorrect]);
+
   const calculateBalance = () => {
     // walletBalance is now tracked as a number in the store
     const totalBalance = typeof walletBalance === "number" ? walletBalance : 0;
@@ -2485,6 +2494,7 @@ const Step = ({
 
   // Handle answer submission
   const handleAnswerClick = async () => {
+    soundManager.playClick();
     // Retrieve the current count from localStorage
     // let ansrctrl = parseInt(localStorage.getItem("ansrctrl") || "0", 10);
 
@@ -2891,6 +2901,7 @@ const Step = ({
 
   // Navigate to the next step
   const handleNextClick = async () => {
+    soundManager.playClick();
     const hostname = window.location.hostname;
     const isValidHost =
       hostname === "embedded-sunset.app" ||

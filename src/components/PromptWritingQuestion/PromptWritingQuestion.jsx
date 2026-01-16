@@ -3,6 +3,7 @@ import { VStack, Textarea, Button, Box } from "@chakra-ui/react";
 import Markdown from "react-markdown";
 import { useSimpleGeminiChat } from "../../hooks/useGeminiChat";
 import { useChatCompletion } from "../../hooks/useChatCompletion";
+import { soundManager } from "../../utility/soundManager";
 
 export default function PromptWritingQuestion({
   question,
@@ -22,6 +23,7 @@ export default function PromptWritingQuestion({
 
   // whenever the user clicks “Run Prompt”
   const handleRun = () => {
+    soundManager.playClick();
     runPrompt(promptText);
   };
 
@@ -34,6 +36,7 @@ export default function PromptWritingQuestion({
   }, [streamMsgs]);
 
   const handleSubmit = async () => {
+    soundManager.playClick();
     // build a grading prompt
     await gradePrompt([
       {
