@@ -20,6 +20,7 @@ import {
 } from "../../utility/transcript";
 import { CloudCanvas } from "../../elements/SunsetCanvas";
 import { useSharedNostr } from "../../hooks/useNOSTR";
+import { soundManager } from "../../utility/soundManager";
 
 const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
   const langKey = useMemo(
@@ -55,6 +56,12 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
   const [areBadgesLoading, setAreBadgesLoading] = useState(false);
   const [badges, setBadges] = useState([]);
   const inFlightRef = useRef(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    soundManager.init().catch(() => {});
+    soundManager.play("sparkle");
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen || !getUserBadges) return;

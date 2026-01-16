@@ -26,6 +26,7 @@ import { useNostrWalletStore } from "../../hooks/useNostrWalletStore";
 import { database } from "../../database/firebaseResources";
 import { doc, updateDoc } from "firebase/firestore";
 import { IdentityCard } from "../../elements/IdentityCard";
+import { soundManager } from "../../utility/soundManager";
 
 const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
   const toast = useToast();
@@ -162,6 +163,8 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
   }, [isRefreshingAfterDeposit, toast, refreshDescription]);
 
   const handleIdentityChange = async (value) => {
+    soundManager.init().catch(() => {});
+    soundManager.play("select");
     setSelectedIdentity(value);
 
     try {
@@ -314,12 +317,18 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
           </AccordionButton>
           <AccordionPanel pb={4}>
             <RadioGroup
+              data-sound-ignore-select="true"
               onChange={handleIdentityChange}
               value={selectedIdentity}
             >
               <VStack align="start">
                 {recipientOptions.map(({ value, label }) => (
-                  <Radio colorScheme="pink" value={value} key={value}>
+                  <Radio
+                    colorScheme="pink"
+                    value={value}
+                    key={value}
+                    data-sound-ignore-select="true"
+                  >
                     {label}
                   </Radio>
                 ))}
@@ -415,12 +424,18 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
             {/* </AccordionButton>
                 <AccordionPanel> */}
             <RadioGroup
+              data-sound-ignore-select="true"
               onChange={handleIdentityChange}
               value={selectedIdentity}
             >
               <VStack align="start">
                 {recipientOptions.map(({ value, label }) => (
-                  <Radio colorScheme="pink" value={value} key={value}>
+                  <Radio
+                    colorScheme="pink"
+                    value={value}
+                    key={value}
+                    data-sound-ignore-select="true"
+                  >
                     {label}
                   </Radio>
                 ))}

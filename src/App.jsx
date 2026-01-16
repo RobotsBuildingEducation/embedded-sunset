@@ -1947,6 +1947,7 @@ const Step = ({
 
   const { openPasscodeModal } = usePasscodeModalStore();
   const [suggestionMessage, setSuggestionMessage] = useState("");
+  const lastSuggestionRef = useRef("");
   const [suggestionLoading, setSuggestionLoading] = useState(false);
   const [isAdaptiveLearning, setIsAdaptiveLearning] = useState(false);
 
@@ -2394,6 +2395,14 @@ const Step = ({
       }
     }
   }, [suggestionMessages]);
+
+  useEffect(() => {
+    if (!suggestionMessage) return;
+    if (lastSuggestionRef.current === suggestionMessage) return;
+    lastSuggestionRef.current = suggestionMessage;
+    soundManager.init().catch(() => {});
+    soundManager.play("pattern");
+  }, [suggestionMessage]);
 
   useEffect(() => {
     if (isCorrect) {

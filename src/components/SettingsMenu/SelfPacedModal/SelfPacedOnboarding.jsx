@@ -322,7 +322,6 @@ const SelfPacedOnboarding = ({
       </Text>
 
       <Slider
-        colorScheme="blackAlpha"
         aria-label="slider-days"
         value={interval}
         min={1440}
@@ -330,7 +329,7 @@ const SelfPacedOnboarding = ({
         step={1440}
         onChange={handleSliderChange}
       >
-        <SliderTrack bg="gray.700" h={3} borderRadius="full">
+        <SliderTrack bg="whiteAlpha.300" h={3} borderRadius="full">
           <SliderFilledTrack bg="linear-gradient(90deg, #00CED1, #4169E1)" />
         </SliderTrack>
         <SliderThumb boxSize={6} bg="cyan.400" />
@@ -348,7 +347,6 @@ const SelfPacedOnboarding = ({
       </Text>
 
       <Slider
-        colorScheme="blackAlpha"
         aria-label="slider-daily-goals"
         value={dailyGoals}
         min={1}
@@ -357,7 +355,7 @@ const SelfPacedOnboarding = ({
         onChange={handleDailyGoalsChange}
         mt={2}
       >
-        <SliderTrack bg="gray.700" h={3} borderRadius="full">
+        <SliderTrack bg="whiteAlpha.300" h={3} borderRadius="full">
           <SliderFilledTrack bg="linear-gradient(90deg, #00CED1, #4169E1)" />
         </SliderTrack>
         <SliderThumb boxSize={6} bg="cyan.400" />
