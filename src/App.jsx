@@ -67,6 +67,7 @@ import {
   useLocation,
 } from "react-router-dom";
 
+import { soundManager } from "./utility/soundManager";
 import { useChatCompletion } from "./hooks/useChatCompletion";
 import {
   // CloudCanvas,
@@ -869,6 +870,7 @@ export const VoiceInput = ({
 
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
+    soundManager.playLearn();
     // Retrieve the current count from localStorage
     // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
 
@@ -2848,8 +2850,10 @@ const Step = ({
           setIsSending(false); // <— only now clear it
 
           if (jsonResponse.isCorrect) {
+            soundManager.playCorrect();
             setGrade(jsonResponse.grade);
           } else {
+            soundManager.playWrong();
             const newAttempts = incorrectAttempts + 1;
             setIncorrectAttempts(newAttempts);
             localStorage.setItem("incorrectAttempts", newAttempts);
@@ -3078,6 +3082,7 @@ const Step = ({
 
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
+    soundManager.playLearn();
     // Retrieve the current count from localStorage
     // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
 
@@ -4498,6 +4503,7 @@ const Step = ({
                         }
                         icon={<RiCodeAiFill fontSize="22px" />}
                         onMouseDown={() => {
+                          soundManager.playFlashcard();
                           onKnowledgeLedgerOpen();
                         }}
                         onKeyDown={(e) => {
@@ -6534,6 +6540,19 @@ function App({ isShutDown }) {
     defaultTransitionStats
   );
   const resetStatsTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    const handleUserInteraction = (e) => {
+      soundManager.resume();
+      const btn =
+        e.target.closest("button") || e.target.closest('[role="button"]');
+      if (btn) {
+        soundManager.playSelect();
+      }
+    };
+    window.addEventListener("mousedown", handleUserInteraction);
+    return () => window.removeEventListener("mousedown", handleUserInteraction);
+  }, []);
 
   const actionBarTourSteps = useMemo(
     () => [
