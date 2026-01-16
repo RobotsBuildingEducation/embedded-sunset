@@ -8,6 +8,7 @@ import "prismjs/themes/prism.css";
 import { translation } from "../../utility/translation";
 import Editor from "react-simple-code-editor";
 import { IoChatbubblesOutline } from "react-icons/io5";
+import { playSoundEffect } from "../../utility/soundEffects";
 
 const CodeCompletionQuestion = ({
   step,
@@ -49,6 +50,7 @@ const CodeCompletionQuestion = ({
         e.preventDefault();
         if (focusedIndex >= 0) {
           setSelectedOption(question.options[focusedIndex]);
+          playSoundEffect("select");
         }
         break;
       case "Tab":
@@ -66,6 +68,12 @@ const CodeCompletionQuestion = ({
     setSelectedOption(option);
     setFocusedIndex(index);
     setIsComponentFocused(true); // Set component as focused on click
+    playSoundEffect("select");
+  };
+
+  const handleLearnClick = () => {
+    playSoundEffect("select");
+    handleModalCheck(onLearnClick);
   };
 
   // Set focus to the current option when the focusedIndex changes
@@ -112,10 +120,10 @@ const CodeCompletionQuestion = ({
       {/* Learn Button */}
       <Button
         ref={learnButtonRef}
-        onMouseDown={() => handleModalCheck(onLearnClick)}
+        onMouseDown={handleLearnClick}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
-            handleModalCheck(onLearnClick);
+            handleLearnClick();
           }
         }}
         colorScheme="pink"

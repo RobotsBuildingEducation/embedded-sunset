@@ -68,7 +68,6 @@ import {
 } from "react-router-dom";
 
 import { useChatCompletion } from "./hooks/useChatCompletion";
-import { useGlobalButtonSound } from "./hooks/useGlobalButtonSound";
 import {
   // CloudCanvas,
   SunsetCanvas,
@@ -6505,8 +6504,6 @@ function App({ isShutDown }) {
   const [hasSubmittedPasscode, setHasSubmittedPasscode] = useState(false);
 
   const [allowPosts, setAllowPosts] = useState(true);
-
-  useGlobalButtonSound();
 
   const [showClouds, setShowClouds] = useState(false);
   const [pendingPath, setPendingPath] = useState(null);
