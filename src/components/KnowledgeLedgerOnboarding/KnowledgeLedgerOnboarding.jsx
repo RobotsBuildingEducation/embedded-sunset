@@ -176,6 +176,12 @@ export default function KnowledgeLedgerOnboarding({
     }
   };
 
+  const handleSkip = () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("colorSwitch");
+    moveToNext();
+  };
+
   const triggerSuggestion = async (idea) => {
     resetMessages();
 
@@ -318,7 +324,7 @@ export default function KnowledgeLedgerOnboarding({
               ? translation[userLanguage]["buildYourApp.button.label.2"]
               : translation[userLanguage]["buildYourApp.button.label.1"]}
           </Button>
-          <Button onClick={moveToNext} data-sound-ignore-select="true">
+          <Button onClick={handleSkip} data-sound-ignore-select="true">
             {" "}
             {translation[userLanguage]["skip"]}
           </Button>

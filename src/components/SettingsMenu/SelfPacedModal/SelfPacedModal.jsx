@@ -375,13 +375,29 @@ const SelfPacedModal = ({
               onChange={handleIntervalChange}
               data-sound-ignore-select="true"
             >
-              <Stack spacing={2}>
+              <Stack direction="row" spacing={3} flexWrap="wrap">
                 {[1440, 2880, 4320].map((option) => (
                   <Radio
                     key={option}
                     value={String(option)}
-                    colorScheme="teal"
                     data-sound-ignore-select="true"
+                    sx={{
+                      ".chakra-radio__control": { display: "none" },
+                      ".chakra-radio__label": {
+                        borderWidth: "1px",
+                        borderColor: "gray.200",
+                        borderRadius: "md",
+                        px: 3,
+                        py: 2,
+                        fontWeight: 600,
+                        transition: "all 0.2s ease",
+                      },
+                      "&[data-checked] .chakra-radio__label": {
+                        borderColor: "teal.400",
+                        boxShadow: "0 0 0 2px rgba(56, 178, 172, 0.2)",
+                        bg: "teal.50",
+                      },
+                    }}
                   >
                     <Text color={getMarkColor(option)} fontWeight="semibold">
                       {getMarkLabel(option)}

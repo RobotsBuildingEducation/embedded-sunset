@@ -313,6 +313,12 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
     onContinue();
   };
 
+  const handleSkip = () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("colorSwitch");
+    onContinue();
+  };
+
   const currentIdx = steps[userLanguage].indexOf(step);
   return (
     <VStack
@@ -359,7 +365,11 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
         >
           {translation[userLanguage]["nextStep"]}
         </Button>
-        <Button variant="outline" onClick={onContinue}>
+        <Button
+          variant="outline"
+          onClick={handleSkip}
+          data-sound-ignore-select="true"
+        >
           {translation[userLanguage]["skip"]}
         </Button>
       </HStack>
