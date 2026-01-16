@@ -718,9 +718,9 @@ const CloudTransition = ({
     const id = setTimeout(() => setCanContinue(true), 200);
 
     if (String(clonedStep).toLowerCase() !== "night") {
-      soundManager.playSparkle();
+      soundManager.play("sparkle");
     } else {
-      soundManager.playComplete();
+      soundManager.play("dailyGoal");
     }
 
     return () => clearTimeout(id);

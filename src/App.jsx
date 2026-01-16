@@ -870,7 +870,7 @@ export const VoiceInput = ({
 
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
-    soundManager.playLearn();
+    soundManager.play("learn");
     // Retrieve the current count from localStorage
     // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
 
@@ -2850,10 +2850,10 @@ const Step = ({
           setIsSending(false); // <— only now clear it
 
           if (jsonResponse.isCorrect) {
-            soundManager.playCorrect();
+            soundManager.play("correct");
             setGrade(jsonResponse.grade);
           } else {
-            soundManager.playWrong();
+            soundManager.play("incorrect");
             const newAttempts = incorrectAttempts + 1;
             setIncorrectAttempts(newAttempts);
             localStorage.setItem("incorrectAttempts", newAttempts);
@@ -3082,7 +3082,7 @@ const Step = ({
 
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
-    soundManager.playLearn();
+    soundManager.play("learn");
     // Retrieve the current count from localStorage
     // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
 
@@ -4503,7 +4503,7 @@ const Step = ({
                         }
                         icon={<RiCodeAiFill fontSize="22px" />}
                         onMouseDown={() => {
-                          soundManager.playFlashcard();
+                          soundManager.play("flashcard");
                           onKnowledgeLedgerOpen();
                         }}
                         onKeyDown={(e) => {
@@ -6547,7 +6547,7 @@ function App({ isShutDown }) {
       const btn =
         e.target.closest("button") || e.target.closest('[role="button"]');
       if (btn) {
-        soundManager.playSelect();
+        soundManager.play("select");
       }
     };
     window.addEventListener("mousedown", handleUserInteraction);
