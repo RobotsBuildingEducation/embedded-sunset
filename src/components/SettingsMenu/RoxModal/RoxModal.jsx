@@ -79,6 +79,7 @@ const RoxModal = ({ isOpen, onClose, userLanguage }) => {
             mr={3}
             onMouseDown={onClose}
             boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+            data-sound-close="true"
           >
             {translation[userLanguage]["button.close"]}
           </Button>

@@ -13,6 +13,7 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
+  Stack,
   Progress,
   CircularProgress,
   Box,
@@ -38,6 +39,7 @@ import "./CalendarStyles.css";
 import { FaFireAlt } from "react-icons/fa";
 import { RiSlowDownLine, RiSpeedUpLine } from "react-icons/ri";
 import { COURSE_LESSON_COUNT } from "../../../utility/nosql";
+import { soundManager } from "../../../utility/soundManager";
 
 // CountdownTimer now supports days along with hours:minutes:seconds and shows a progress bar.
 const CountdownTimer = ({ targetTime, initialTime, label, userLanguage }) => {
@@ -131,9 +133,18 @@ const SelfPacedOnboarding = ({
     }
   }, [userId, setInterval]);
 
-  const handleSliderChange = (val) => {
-    setInterval(val);
-    setInputValue(val);
+  const handleIntervalChange = (value) => {
+    const nextValue = Number(value);
+    setInterval(nextValue);
+    setInputValue(nextValue);
+    soundManager.init().catch(() => {});
+    soundManager.play("select");
+  };
+
+  const handleDailyGoalsChange = (val) => {
+    setDailyGoals(val);
+    soundManager.init().catch(() => {});
+    soundManager.play("sliderTick");
   };
 
   const debounceTimeout = useRef(null);
@@ -312,25 +323,35 @@ const SelfPacedOnboarding = ({
         {translation[userLanguage]["modal.selfPace.instruction"]}
       </Text>
 
-      <Slider
-        colorScheme="blackAlpha"
-        aria-label="slider-days"
-        value={interval}
-        min={1440}
-        max={4320}
-        step={1440}
-        onChange={handleSliderChange}
-      >
-        <SliderTrack>
-          <SliderFilledTrack />
-        </SliderTrack>
-        <SliderThumb border="1px solid black" />
-      </Slider>
-      <Text mt={2} color={getMarkColor(interval)}>
-        <Text fontSize="sm" fontWeight="bold">
-          {getMarkLabel(interval)}
-        </Text>
-      </Text>
+      <Stack direction="row" spacing={3} flexWrap="wrap">
+        {[1440, 2880, 4320].map((option) => {
+          const isSelected = interval === option;
+          return (
+            <Button
+              key={option}
+              type="button"
+              variant="outline"
+              data-sound-ignore-select="true"
+              aria-pressed={isSelected}
+              borderColor={isSelected ? "teal.400" : "gray.200"}
+              bg={isSelected ? "teal.50" : "transparent"}
+              boxShadow={
+                isSelected
+                  ? "0 0 0 2px rgba(56, 178, 172, 0.2)"
+                  : "none"
+              }
+              onMouseDown={() => handleIntervalChange(String(option))}
+              _hover={{
+                borderColor: "teal.300",
+              }}
+            >
+              <Text color={getMarkColor(option)} fontWeight="semibold">
+                {getMarkLabel(option)}
+              </Text>
+            </Button>
+          );
+        })}
+      </Stack>
 
       <br />
       <br />
@@ -339,19 +360,18 @@ const SelfPacedOnboarding = ({
       </Text>
 
       <Slider
-        colorScheme="blackAlpha"
         aria-label="slider-daily-goals"
         value={dailyGoals}
         min={1}
         max={20}
         step={1}
-        onChange={setDailyGoals}
+        onChange={handleDailyGoalsChange}
         mt={2}
       >
-        <SliderTrack>
-          <SliderFilledTrack />
+        <SliderTrack h={3} borderRadius="full">
+          <SliderFilledTrack bg="linear-gradient(90deg, #00CED1, #4169E1)" />
         </SliderTrack>
-        <SliderThumb border="1px solid black" />
+        <SliderThumb boxSize={6} bg="cyan.400" />
       </Slider>
       <Text mt={2} fontSize="sm" color="green.500" fontWeight="bold">
         {translation[userLanguage]["modal.dailyGoal.dailyGoalLabel"]}{" "}

@@ -33,6 +33,7 @@ import {
 import { translation } from "../../utility/translation";
 import LiveReactEditorModal from "../LiveCodeEditor/LiveCodeEditor";
 import { CloudCanvas, SunsetCanvas } from "../../elements/SunsetCanvas";
+import { soundManager } from "../../utility/soundManager";
 
 export const transcriptDisplay = {
   tutorial: {
@@ -266,6 +267,8 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
   };
 
   const handleSaveIdeaAndGenerate = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("submitAction");
     try {
       const userId = localStorage.getItem("local_npub");
       if (userId) {
@@ -310,6 +313,12 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
     onContinue();
   };
 
+  const handleSkip = () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("colorSwitch");
+    onContinue();
+  };
+
   const currentIdx = steps[userLanguage].indexOf(step);
   return (
     <VStack
@@ -343,6 +352,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
           isDisabled={isLoading || idea.length < 1}
           colorScheme="pink"
           background="pink.300"
+          data-sound-ignore-select="true"
         >
           {savedIdea
             ? translation[userLanguage]["buildYourApp.button.label.2"]
@@ -355,7 +365,11 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
         >
           {translation[userLanguage]["nextStep"]}
         </Button>
-        <Button variant="outline" onClick={onContinue}>
+        <Button
+          variant="outline"
+          onClick={handleSkip}
+          data-sound-ignore-select="true"
+        >
           {translation[userLanguage]["skip"]}
         </Button>
       </HStack>

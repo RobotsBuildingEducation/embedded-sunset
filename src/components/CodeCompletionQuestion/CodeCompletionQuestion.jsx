@@ -8,6 +8,7 @@ import "prismjs/themes/prism.css";
 import { translation } from "../../utility/translation";
 import Editor from "react-simple-code-editor";
 import { IoChatbubblesOutline } from "react-icons/io5";
+import { soundManager } from "../../utility/soundManager";
 
 const CodeCompletionQuestion = ({
   step,
@@ -49,6 +50,9 @@ const CodeCompletionQuestion = ({
         e.preventDefault();
         if (focusedIndex >= 0) {
           setSelectedOption(question.options[focusedIndex]);
+          soundManager.init().catch(() => {});
+          soundManager.playHover(Math.random());
+          soundManager.play("select");
         }
         break;
       case "Tab":
@@ -66,6 +70,9 @@ const CodeCompletionQuestion = ({
     setSelectedOption(option);
     setFocusedIndex(index);
     setIsComponentFocused(true); // Set component as focused on click
+    soundManager.init().catch(() => {});
+    soundManager.playHover(Math.random());
+    soundManager.play("select");
   };
 
   // Set focus to the current option when the focusedIndex changes

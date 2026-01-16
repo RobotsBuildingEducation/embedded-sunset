@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { DataTags } from "./elements/DataTag";
 import { IoReturnUpBack } from "react-icons/io5";
 import { IoMdReturnRight } from "react-icons/io";
+import { soundManager } from "./utility/soundManager";
 
 const Content = ({ children }) => {
   return <Text fontSize="sm">{children}</Text>;
@@ -23,6 +24,11 @@ const Content = ({ children }) => {
 
 export const About = ({ userLanguage, handleToggle }) => {
   let navigate = useNavigate();
+  const handleLanguageToggle = () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("modeSwitch");
+    handleToggle();
+  };
 
   return (
     <Box p={4}>
@@ -69,7 +75,7 @@ export const About = ({ userLanguage, handleToggle }) => {
           colorScheme="pink"
           id="language-toggle"
           isChecked={userLanguage === "es"}
-          onChange={handleToggle}
+          onChange={handleLanguageToggle}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               navigate(-1);

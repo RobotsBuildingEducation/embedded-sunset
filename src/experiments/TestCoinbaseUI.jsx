@@ -17,6 +17,7 @@ import { CloudCanvas, SunsetCanvas } from "../elements/SunsetCanvas";
 import { translation } from "../utility/translation";
 import { doc, updateDoc } from "firebase/firestore";
 import { database } from "../database/firebaseResources";
+import { soundManager } from "../utility/soundManager";
 let totalSteps = steps["en"].length;
 
 const getColorScheme = (group) => {
@@ -161,6 +162,8 @@ export const TestFeed = ({ userLanguage, allowPosts, setAllowPosts }) => {
   };
 
   const handleToggleAllowPosts = async (e) => {
+    soundManager.init().catch(() => {});
+    soundManager.play("modeSwitch");
     const newValue = e.target.checked;
     setAllowPosts(newValue);
     const userDocRef = doc(

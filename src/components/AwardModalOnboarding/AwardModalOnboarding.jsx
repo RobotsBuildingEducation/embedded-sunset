@@ -21,6 +21,7 @@ import { translation } from "../../utility/translation";
 import { onboardingTranscript } from "../../utility/transcript";
 import ReactConfetti from "react-confetti";
 import { useSharedNostr } from "../../hooks/useNOSTR";
+import { soundManager } from "../../utility/soundManager";
 
 const AwardModalOnboarding = ({
   isOpen,
@@ -43,6 +44,12 @@ const AwardModalOnboarding = ({
 
     getBadges();
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    soundManager.init().catch(() => {});
+    soundManager.play("sparkle");
+  }, [isOpen]);
 
   return (
     <Modal

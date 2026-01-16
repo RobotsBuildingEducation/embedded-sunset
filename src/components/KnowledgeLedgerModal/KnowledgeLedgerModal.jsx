@@ -29,6 +29,7 @@ import { useThinkingGeminiChat } from "../../hooks/useGeminiChat";
 import { translation } from "../../utility/translation";
 import LiveReactEditorModal from "../LiveCodeEditor/LiveCodeEditor";
 import { CloudCanvas } from "../../elements/SunsetCanvas";
+import { soundManager } from "../../utility/soundManager";
 
 // --- tiny parser to safely stream fenced code
 function parseFenced(text = "") {
@@ -230,6 +231,8 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
   };
 
   const handleSaveIdeaAndGenerate = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("submitAction");
     try {
       const userId = localStorage.getItem("local_npub");
       if (userId) {
@@ -313,6 +316,7 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
             colorScheme="pink"
             background="pink.300"
             width="300px"
+            data-sound-ignore-select="true"
           >
             {savedIdea
               ? translation[userLanguage]["buildYourApp.button.label.2"]
@@ -445,7 +449,7 @@ export default function KnowledgeLedgerModal({
           boxShadow="sm"
           justifyContent="flex-end"
         >
-          <Button size="lg" onClick={onClose}>
+          <Button size="lg" onClick={onClose} data-sound-close="true">
             {translation?.[userLanguage]?.["button.close"] || "Close"}
           </Button>
         </DrawerFooter>

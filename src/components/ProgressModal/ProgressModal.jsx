@@ -195,7 +195,7 @@ const ProgressModal = ({
           //   borderColor="gray.200"
           zIndex={2}
         >
-          <Button onClick={onClose}>
+          <Button onClick={onClose} data-sound-close="true">
             {translation[userLanguage]["button.close"]}
           </Button>
         </ModalFooter>

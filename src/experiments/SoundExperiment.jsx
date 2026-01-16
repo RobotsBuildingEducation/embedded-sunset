@@ -128,6 +128,18 @@ export default function SoundExperiment() {
   const [brushSize, setBrushSize] = useState(5);
   const [activeSound, setActiveSound] = useState(null);
 
+  const handleVolumeChange = (value) => {
+    setVolume(value);
+    soundManager.init().catch(() => {});
+    soundManager.play("sliderTick");
+  };
+
+  const handleToggleSoundEnabled = (event) => {
+    soundManager.init().catch(() => {});
+    soundManager.play("modeSwitch");
+    setSoundEnabled(event.target.checked);
+  };
+
   // Initialize sound manager - MUST be called from user gesture
   const initializeAudio = useCallback(async () => {
     if (isInitialized || isInitializing) return;
@@ -306,12 +318,12 @@ export default function SoundExperiment() {
             <Slider
               aria-label="volume"
               value={volume}
-              onChange={setVolume}
+              onChange={handleVolumeChange}
               min={0}
               max={100}
               w="100px"
             >
-              <SliderTrack bg="gray.700">
+              <SliderTrack>
                 <SliderFilledTrack bg="duo.500" />
               </SliderTrack>
               <SliderThumb boxSize={4} />
@@ -324,7 +336,7 @@ export default function SoundExperiment() {
           <HStack spacing={2}>
             <Switch
               isChecked={soundEnabled}
-              onChange={(e) => setSoundEnabled(e.target.checked)}
+              onChange={handleToggleSoundEnabled}
               colorScheme="teal"
             />
             {soundEnabled ? (
@@ -432,13 +444,15 @@ export default function SoundExperiment() {
               value={hoverValue}
               onChange={(val) => {
                 setHoverValue(val);
+                soundManager.init().catch(() => {});
+                soundManager.play("sliderTick");
                 playHoverSound(val);
               }}
               min={0}
               max={100}
               step={1}
             >
-              <SliderTrack bg="gray.700" h={3} borderRadius="full">
+              <SliderTrack h={3} borderRadius="full">
                 <SliderFilledTrack bg="linear-gradient(90deg, #00CED1, #4169E1)" />
               </SliderTrack>
               <SliderThumb boxSize={6} bg="cyan.400" />
@@ -471,13 +485,15 @@ export default function SoundExperiment() {
               value={brushSize}
               onChange={(val) => {
                 setBrushSize(val);
+                soundManager.init().catch(() => {});
+                soundManager.play("sliderTick");
                 playBrushSizeSound(val);
               }}
               min={1}
               max={10}
               step={1}
             >
-              <SliderTrack bg="gray.700" h={3} borderRadius="full">
+              <SliderTrack h={3} borderRadius="full">
                 <SliderFilledTrack bg="linear-gradient(90deg, #3CB371, #90EE90)" />
               </SliderTrack>
               <SliderThumb boxSize={6} bg="green.400" />

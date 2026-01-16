@@ -143,6 +143,7 @@ export const InstallAppModal = ({
                 onClose();
               }
             }}
+            data-sound-close="true"
           >
             {translation?.[userLanguage]?.["button.close"] || "Close"}
           </Button>

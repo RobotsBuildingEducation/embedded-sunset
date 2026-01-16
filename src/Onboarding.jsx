@@ -58,6 +58,7 @@ import { useSharedNostr } from "./hooks/useNOSTR";
 import { TechOverview } from "./components/TechOverview/TechOverview";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import WaveBar from "./components/WaveBar";
+import { soundManager } from "./utility/soundManager";
 
 export const Onboarding = ({
   userLanguage,
@@ -73,6 +74,10 @@ export const Onboarding = ({
   const navigate = useNavigate();
   const toast = useToast();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const playOnboardingChord = () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("next");
+  };
 
   const {
     isOpen: isAwardModalOpen,
@@ -81,6 +86,7 @@ export const Onboarding = ({
   } = useDisclosure();
 
   const handleActuallyLaunchApp = () => {
+    playOnboardingChord();
     // setOnboardingToDone(localStorage.getItem("local_npub"));
     assignExistingBadgeToNpub(
       onboardingTranscript["name"][userLanguage].replace(/ /g, "-")
@@ -128,6 +134,8 @@ export const Onboarding = ({
   }, []);
 
   const handleToggleNotifications = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("modeSwitch");
     const userDocRef = doc(
       database,
       "users",
@@ -181,6 +189,7 @@ export const Onboarding = ({
 
   // inside Onboarding, before the return
   const handleLanguageSelect = async (e) => {
+    playOnboardingChord();
     const newLanguage = e.target.value;
     setUserLanguage(newLanguage);
     localStorage.setItem("userLanguage", newLanguage);
@@ -303,6 +312,7 @@ export const Onboarding = ({
           <KnowledgeLedgerOnboarding
             userLanguage={userLanguage}
             moveToNext={() => {
+              playOnboardingChord();
               incrementUserOnboardingStep(localStorage.getItem("local_npub"));
               setCurrentStep(0);
               navigate("/q/0");
@@ -770,6 +780,7 @@ export const Onboarding = ({
                   <br />
                   <Button
                     onClick={() => {
+                      playOnboardingChord();
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
@@ -778,6 +789,7 @@ export const Onboarding = ({
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
                     mb={18}
+                    data-sound-ignore-select="true"
                   >
                     {translation[userLanguage]["onboarding.step1.buttonLabel"]}
                   </Button>
@@ -1058,6 +1070,7 @@ export const Onboarding = ({
                   <br />
                   <Button
                     onClick={() => {
+                      playOnboardingChord();
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
@@ -1066,6 +1079,7 @@ export const Onboarding = ({
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
                     mb={18}
+                    data-sound-ignore-select="true"
                   >
                     {translation[userLanguage]["button.setLanguage"]}
                   </Button>
@@ -1140,6 +1154,7 @@ export const Onboarding = ({
                   {renderNotifications()}
                   <Button
                     onClick={() => {
+                      playOnboardingChord();
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
@@ -1148,6 +1163,7 @@ export const Onboarding = ({
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
                     mb={18}
+                    data-sound-ignore-select="true"
                   >
                     {translation[userLanguage].gotItButton}
                   </Button>
@@ -1260,6 +1276,7 @@ export const Onboarding = ({
                   colorScheme="pink"
                   // backgroundColor="pink.50"
                   variant="outline"
+                  data-sound-ignore-select="true"
                 >
                   {
                     translation[userLanguage][

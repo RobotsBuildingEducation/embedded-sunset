@@ -118,6 +118,7 @@ import { analytics, database } from "./database/firebaseResources";
 
 import { pickProgrammingLanguage, translation } from "./utility/translation";
 import { subscribeToTeamInvites } from "./utility/nosql";
+import { soundManager } from "./utility/soundManager";
 
 import { Dashboard } from "./components/Dashboard/Dashboard";
 import { isUnsupportedBrowser } from "./utility/browser";
@@ -870,6 +871,8 @@ export const VoiceInput = ({
 
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("pattern");
     // Retrieve the current count from localStorage
     // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
 
@@ -1944,6 +1947,7 @@ const Step = ({
 
   const { openPasscodeModal } = usePasscodeModalStore();
   const [suggestionMessage, setSuggestionMessage] = useState("");
+  const lastSuggestionRef = useRef("");
   const [suggestionLoading, setSuggestionLoading] = useState(false);
   const [isAdaptiveLearning, setIsAdaptiveLearning] = useState(false);
 
@@ -2255,6 +2259,8 @@ const Step = ({
 
   // Initialize items for Select Order question
   const handleToggleChange = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("modeSwitch");
     const newValue = !isAdaptiveLearning;
     setIsAdaptiveLearning(newValue);
 
@@ -2391,6 +2397,14 @@ const Step = ({
   }, [suggestionMessages]);
 
   useEffect(() => {
+    if (!suggestionMessage) return;
+    if (lastSuggestionRef.current === suggestionMessage) return;
+    lastSuggestionRef.current = suggestionMessage;
+    soundManager.init().catch(() => {});
+    soundManager.play("pattern");
+  }, [suggestionMessage]);
+
+  useEffect(() => {
     if (isCorrect) {
       localStorage.setItem("incorrectAttempts", 0);
       setIncorrectAttempts(0);
@@ -2417,6 +2431,14 @@ const Step = ({
 
         onAwardModalOpen();
       }
+    }
+  }, [isCorrect]);
+
+  useEffect(() => {
+    if (isCorrect === true) {
+      soundManager.play("correct");
+    } else if (isCorrect === false) {
+      soundManager.play("incorrect");
     }
   }, [isCorrect]);
 
@@ -3079,6 +3101,8 @@ const Step = ({
 
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("pattern");
     // Retrieve the current count from localStorage
     // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
 
@@ -3302,6 +3326,8 @@ const Step = ({
   }, [newQuestionMessages]);
 
   const handleGenerateNewQuestion = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("submitAction");
     // Retrieve the current count from localStorage
     let gnrtctrl = parseInt(localStorage.getItem("gnrtctrl") || "0", 10);
 
@@ -3428,6 +3454,20 @@ const Step = ({
       ? `${accent}, ${actionBarShadow}`
       : actionBarShadow;
   })();
+
+  const playActionBarSound = (id) => {
+    soundManager.init().catch(() => {});
+    const soundMap = {
+      bitcoin: "next",
+      selfPaced: "colorSwitch",
+      theme: "colorSwitch",
+      social: "next",
+      helper: "submit",
+      patreon: "submitAction",
+    };
+    const soundName = soundMap[id] || "next";
+    soundManager.play(soundName);
+  };
 
   const renderActionTourPopover = (id, ref, element) => {
     const step = actionBarTourSteps.find((item) => item.id === id);
@@ -4196,12 +4236,19 @@ const Step = ({
                 isTimerExpired ? (
                   <Button
                     fontSize="sm"
-                    onMouseDown={handleAnswerClick}
+                    data-sound-ignore-select="true"
+                    onMouseDown={() => {
+                      soundManager.init().catch(() => {});
+                      soundManager.play("submit");
+                      handleAnswerClick();
+                    }}
                     isLoading={isSending}
                     mb={4}
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
+                        soundManager.init().catch(() => {});
+                        soundManager.play("submit");
                         handleAnswerClick();
                       }
                     }}
@@ -4262,11 +4309,18 @@ const Step = ({
                       <Button
                         background="white"
                         variant={"outline"}
-                        onClick={handleNextClick}
+                        data-sound-ignore-select="true"
+                        onClick={() => {
+                          soundManager.init().catch(() => {});
+                          soundManager.play("next");
+                          handleNextClick();
+                        }}
                         mb={4}
                         boxShadow={"0.5px 0.5px 1px 0px black"}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            soundManager.init().catch(() => {});
+                            soundManager.play("next");
                             handleNextClick();
                           }
                         }}
@@ -4424,13 +4478,16 @@ const Step = ({
                       bitcoinButtonRef,
                       <IconButton
                         {...actionBarButtonProps}
+                        data-sound-ignore-select="true"
                         aria-label="Open Bitcoin mode"
                         icon={<FaBitcoin fontSize="20px" />}
                         onMouseDown={() => {
+                          playActionBarSound("bitcoin");
                           onBitcoinModeOpen();
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            playActionBarSound("bitcoin");
                             onBitcoinModeOpen();
                           }
                         }}
@@ -4441,13 +4498,16 @@ const Step = ({
                       selfPacedButtonRef,
                       <IconButton
                         {...actionBarButtonProps}
+                        data-sound-ignore-select="true"
                         aria-label="Open self-paced mode"
                         icon={<PiClockCountdownFill fontSize="22px" />}
                         onMouseDown={() => {
+                          playActionBarSound("selfPaced");
                           onSelfPacedOpen();
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            playActionBarSound("selfPaced");
                             onSelfPacedOpen();
                           }
                         }}
@@ -4461,6 +4521,15 @@ const Step = ({
                         buttonProps={{
                           ...actionBarButtonProps,
                           color: actionBarButtonProps.color,
+                          "data-sound-ignore-select": "true",
+                          onMouseDown: () => {
+                            playActionBarSound("theme");
+                          },
+                          onKeyDown: (e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              playActionBarSound("theme");
+                            }
+                          },
                         }}
                       />
                     )}
@@ -4469,6 +4538,7 @@ const Step = ({
                       socialButtonRef,
                       <IconButton
                         {...actionBarButtonProps}
+                        data-sound-ignore-select="true"
                         aria-label={
                           translation[userLanguage][
                             "settings.button.socialProgress"
@@ -4476,10 +4546,12 @@ const Step = ({
                         }
                         icon={<PiUsersBold fontSize="20px" />}
                         onMouseDown={() => {
+                          playActionBarSound("social");
                           onSocialFeedOpen();
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            playActionBarSound("social");
                             onSocialFeedOpen();
                           }
                         }}
@@ -4497,6 +4569,7 @@ const Step = ({
                       helperButtonRef,
                       <IconButton
                         {...actionBarButtonProps}
+                        data-sound-ignore-select="true"
                         aria-label={
                           translation[userLanguage]?.[
                             "settings.button.algorithmHelper"
@@ -4504,10 +4577,12 @@ const Step = ({
                         }
                         icon={<RiCodeAiFill fontSize="22px" />}
                         onMouseDown={() => {
+                          playActionBarSound("helper");
                           onKnowledgeLedgerOpen();
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            playActionBarSound("helper");
                             onKnowledgeLedgerOpen();
                           }
                         }}
@@ -4518,16 +4593,19 @@ const Step = ({
                       patreonButtonRef,
                       <IconButton
                         {...actionBarButtonProps}
+                        data-sound-ignore-select="true"
                         aria-label="Support on Patreon"
                         icon={<PiPatreonLogoFill fontSize="20px" />}
                         // boxShadow={patreonButtonShadow}
                         borderColor={hexToRgba(actionPalette[200], 0.85)}
                         onMouseDown={() => {
+                          playActionBarSound("patreon");
                           window.location.href =
                             "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            playActionBarSound("patreon");
                             window.location.href =
                               "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
                           }
@@ -5264,6 +5342,8 @@ const Home = ({
   }, [view]);
 
   const handleToggle = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("modeSwitch");
     const newLanguage = userLanguage.includes("en") ? "es" : "en";
     setUserLanguage(newLanguage);
 
@@ -6510,6 +6590,47 @@ function App({ isShutDown }) {
   const [hasSubmittedPasscode, setHasSubmittedPasscode] = useState(false);
 
   const [allowPosts, setAllowPosts] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    if (typeof window === "undefined") return true;
+    const stored = localStorage.getItem("soundEnabled");
+    return stored ? stored === "true" : true;
+  });
+
+  useEffect(() => {
+    const handlePointerDown = (event) => {
+      if (!(event.target instanceof Element)) return;
+      const interactive = event.target.closest(
+        "button, [role='button'], a, input, select, textarea"
+      );
+      if (!interactive) return;
+      const closeTarget = interactive.closest(
+        '[data-sound-close="true"], [aria-label="Close"], .chakra-modal__close-btn, .chakra-drawer__close-btn, .chakra-popover__close-btn, .chakra-alert-dialog__close-btn, .chakra-close-button, .chakra-tag__close-button'
+      );
+      if (closeTarget) {
+        soundManager.init().catch(() => {});
+        soundManager.play("erase");
+        return;
+      }
+      if (interactive.closest('[data-sound-ignore-select="true"]')) return;
+      if (interactive.hasAttribute("disabled")) return;
+      if (interactive.getAttribute("aria-disabled") === "true") return;
+      soundManager.init().catch(() => {});
+      soundManager.playHover(Math.random());
+      soundManager.play("select");
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, []);
+
+  useEffect(() => {
+    soundManager.setEnabled(soundEnabled);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("soundEnabled", String(soundEnabled));
+    }
+  }, [soundEnabled]);
 
   const [showClouds, setShowClouds] = useState(false);
   const [pendingPath, setPendingPath] = useState(null);
@@ -6663,6 +6784,8 @@ function App({ isShutDown }) {
   );
 
   const handleToggle = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("modeSwitch");
     const newLanguage = userLanguage.includes("en") ? "es" : "en";
     setUserLanguage(newLanguage);
 
@@ -6969,6 +7092,8 @@ function App({ isShutDown }) {
             menuTourStep={actionBarTourSteps?.[0]}
             allowPosts={allowPosts}
             setAllowPosts={setAllowPosts}
+            soundEnabled={soundEnabled}
+            setSoundEnabled={setSoundEnabled}
           />
         )}
 

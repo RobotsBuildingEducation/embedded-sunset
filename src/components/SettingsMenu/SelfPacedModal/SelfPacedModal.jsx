@@ -13,6 +13,7 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
+  Stack,
   Progress,
   CircularProgress,
   Box,
@@ -29,6 +30,7 @@ import {
 import { deleteToken, getToken } from "firebase/messaging";
 import { doc, updateDoc } from "firebase/firestore";
 import { getToken as getAppCheckToken } from "firebase/app-check";
+import { soundManager } from "../../../utility/soundManager";
 
 // CountdownTimer now supports days along with hours:minutes:seconds and shows a progress bar.
 const CountdownTimer = ({ targetTime, initialTime, label, userLanguage }) => {
@@ -132,9 +134,18 @@ const SelfPacedModal = ({
     }
   }, [userId, isOpen, setInterval]);
 
-  const handleSliderChange = (val) => {
-    setInterval(val);
-    setInputValue(val);
+  const handleIntervalChange = (value) => {
+    const nextValue = Number(value);
+    setInterval(nextValue);
+    setInputValue(nextValue);
+    soundManager.init().catch(() => {});
+    soundManager.play("select");
+  };
+
+  const handleDailyGoalsChange = (val) => {
+    setDailyGoals(val);
+    soundManager.init().catch(() => {});
+    soundManager.play("sliderTick");
   };
 
   const debounceTimeout = useRef(null);
@@ -192,7 +203,12 @@ const SelfPacedModal = ({
       dayLabel = "";
       signal = "";
     }
-    return `${dayLabel} (${signal})`;
+    return (
+      <div>
+        {dayLabel}
+        <br />({signal})
+      </div>
+    );
   };
 
   const getMarkColor = (interval) => {
@@ -203,6 +219,8 @@ const SelfPacedModal = ({
   };
 
   const handleToggleNotifications = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("modeSwitch");
     const userDocRef = doc(database, "users", userId);
 
     if (!notificationsEnabled) {
@@ -355,33 +373,56 @@ const SelfPacedModal = ({
             <Text fontSize="xs">
               {translation[userLanguage]["modal.selfPace.instruction"]}
             </Text>
-            <Slider
-              colorScheme="blackAlpha"
-              aria-label="slider-days"
-              value={interval}
-              min={1440}
-              max={4320}
-              step={1440}
-              onChange={handleSliderChange}
+            <Stack
+              direction="row"
+              spacing={3}
+              flexWrap="wrap"
+              justifyContent={"center"}
             >
-              <SliderTrack>
-                <SliderFilledTrack />
-              </SliderTrack>
-              <SliderThumb />
-            </Slider>
-            <Text mt={2} color={getMarkColor(interval)}>
-              <b>{getMarkLabel(interval)}</b>
-            </Text>
+              {[1440, 2880, 4320].map((option) => {
+                const isSelected = interval === option;
+                return (
+                  <Button
+                    key={option}
+                    type="button"
+                    variant="outline"
+                    data-sound-ignore-select="true"
+                    aria-pressed={isSelected}
+                    borderColor={isSelected ? "teal.400" : "gray.200"}
+                    bg={isSelected ? "teal.50" : "transparent"}
+                    boxShadow={
+                      isSelected ? "0 0 0 2px rgba(56, 178, 172, 0.2)" : "none"
+                    }
+                    onMouseDown={() => handleIntervalChange(String(option))}
+                    _hover={{
+                      borderColor: "teal.300",
+                    }}
+                  >
+                    <Text
+                      color={getMarkColor(option)}
+                      fontWeight="semibold"
+                      fontSize={"sm"}
+                    >
+                      {getMarkLabel(option)}
+                    </Text>
+                  </Button>
+                );
+              })}
+            </Stack>
             {/* Render the streak timer countdown only if endTime is defined */}
             {endTime && (
-              <Text mt={2} fontSize="sm">
-                <CountdownTimer
-                  userLanguage={userLanguage}
-                  targetTime={endTime}
-                  initialTime={startTime}
-                  label={translation[userLanguage]["countdown.streakTimeLeft"]}
-                />
-              </Text>
+              <Box display="flex" justifyContent={"center"} mt={2}>
+                <Text mt={2} fontSize="sm">
+                  <CountdownTimer
+                    userLanguage={userLanguage}
+                    targetTime={endTime}
+                    initialTime={startTime}
+                    label={
+                      translation[userLanguage]["countdown.streakTimeLeft"]
+                    }
+                  />
+                </Text>
+              </Box>
             )}
             <br />
             <br />
@@ -390,19 +431,18 @@ const SelfPacedModal = ({
               {translation[userLanguage]["modal.dailyGoal.instruction"]}
             </Text>
             <Slider
-              colorScheme="blackAlpha"
               aria-label="slider-daily-goals"
               value={dailyGoals}
               min={1}
               max={20}
               step={1}
-              onChange={setDailyGoals}
+              onChange={handleDailyGoalsChange}
               mt={2}
             >
-              <SliderTrack>
-                <SliderFilledTrack />
+              <SliderTrack h={3} borderRadius="full">
+                <SliderFilledTrack bg="linear-gradient(90deg, #00CED1, #4169E1)" />
               </SliderTrack>
-              <SliderThumb />
+              <SliderThumb boxSize={6} bg="cyan.400" />
             </Slider>
             <Text mt={2} fontSize="sm" color={"green.500"} fontWeight="bold">
               {translation[userLanguage]["modal.dailyGoal.dailyGoalLabel"]}{" "}
@@ -452,6 +492,7 @@ const SelfPacedModal = ({
             boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
             mr={3}
             onMouseDown={onClose}
+            data-sound-close="true"
           >
             {translation[userLanguage]["button.close"]}
           </Button>
