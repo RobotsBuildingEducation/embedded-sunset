@@ -870,6 +870,7 @@ export const VoiceInput = ({
 
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
+    soundManager.playLearn();
     // Retrieve the current count from localStorage
     // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
 
@@ -2849,8 +2850,10 @@ const Step = ({
           setIsSending(false); // <— only now clear it
 
           if (jsonResponse.isCorrect) {
+            soundManager.playCorrect();
             setGrade(jsonResponse.grade);
           } else {
+            soundManager.playWrong();
             const newAttempts = incorrectAttempts + 1;
             setIncorrectAttempts(newAttempts);
             localStorage.setItem("incorrectAttempts", newAttempts);
@@ -3079,6 +3082,7 @@ const Step = ({
 
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
+    soundManager.playLearn();
     // Retrieve the current count from localStorage
     // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
 
@@ -4499,6 +4503,7 @@ const Step = ({
                         }
                         icon={<RiCodeAiFill fontSize="22px" />}
                         onMouseDown={() => {
+                          soundManager.playFlashcard();
                           onKnowledgeLedgerOpen();
                         }}
                         onKeyDown={(e) => {
