@@ -117,6 +117,7 @@ import {
 import { analytics, database } from "./database/firebaseResources";
 
 import { pickProgrammingLanguage, translation } from "./utility/translation";
+import { playSoundEffect } from "./utility/soundEffects";
 import { subscribeToTeamInvites } from "./utility/nosql";
 
 import { Dashboard } from "./components/Dashboard/Dashboard";
@@ -7077,6 +7078,37 @@ export const AppWrapper = () => {
   // const isBroken = true;
   const [isShutDown, setIsShutDown] = useState(false);
   const [isBroken, setIsBroken] = useState(false);
+
+  useEffect(() => {
+    const selector =
+      'button, [href], input, select, textarea, [role="button"], [tabindex]:not([tabindex="-1"])';
+
+    const handlePointerDown = (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) {
+        return;
+      }
+
+      const interactive = target.closest(selector);
+      if (!interactive) {
+        return;
+      }
+
+      if (
+        interactive.hasAttribute("disabled") ||
+        interactive.getAttribute("aria-disabled") === "true"
+      ) {
+        return;
+      }
+
+      playSoundEffect("select");
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, []);
 
   // useEffect(() => {
   //   if (localStorage.getItem("security") === import.meta.env.VITE_SECURITY) {
