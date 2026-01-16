@@ -33,6 +33,7 @@ import {
 import { translation } from "../../utility/translation";
 import LiveReactEditorModal from "../LiveCodeEditor/LiveCodeEditor";
 import { CloudCanvas, SunsetCanvas } from "../../elements/SunsetCanvas";
+import { soundManager } from "../../utility/soundManager";
 
 export const transcriptDisplay = {
   tutorial: {
@@ -266,6 +267,8 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
   };
 
   const handleSaveIdeaAndGenerate = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("intro");
     try {
       const userId = localStorage.getItem("local_npub");
       if (userId) {

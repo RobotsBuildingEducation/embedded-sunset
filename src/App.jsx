@@ -3446,6 +3446,20 @@ const Step = ({
       : actionBarShadow;
   })();
 
+  const playActionBarSound = (id) => {
+    soundManager.init().catch(() => {});
+    const soundMap = {
+      bitcoin: "intro",
+      selfPaced: "pattern",
+      theme: "colorSwitch",
+      social: "success",
+      helper: "submit",
+      patreon: "dailyGoal",
+    };
+    const soundName = soundMap[id] || "pattern";
+    soundManager.play(soundName);
+  };
+
   const renderActionTourPopover = (id, ref, element) => {
     const step = actionBarTourSteps.find((item) => item.id === id);
     const isOpen =
@@ -4444,10 +4458,12 @@ const Step = ({
                         aria-label="Open Bitcoin mode"
                         icon={<FaBitcoin fontSize="20px" />}
                         onMouseDown={() => {
+                          playActionBarSound("bitcoin");
                           onBitcoinModeOpen();
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            playActionBarSound("bitcoin");
                             onBitcoinModeOpen();
                           }
                         }}
@@ -4461,10 +4477,12 @@ const Step = ({
                         aria-label="Open self-paced mode"
                         icon={<PiClockCountdownFill fontSize="22px" />}
                         onMouseDown={() => {
+                          playActionBarSound("selfPaced");
                           onSelfPacedOpen();
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            playActionBarSound("selfPaced");
                             onSelfPacedOpen();
                           }
                         }}
@@ -4478,6 +4496,14 @@ const Step = ({
                         buttonProps={{
                           ...actionBarButtonProps,
                           color: actionBarButtonProps.color,
+                          onMouseDown: () => {
+                            playActionBarSound("theme");
+                          },
+                          onKeyDown: (e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              playActionBarSound("theme");
+                            }
+                          },
                         }}
                       />
                     )}
@@ -4493,10 +4519,12 @@ const Step = ({
                         }
                         icon={<PiUsersBold fontSize="20px" />}
                         onMouseDown={() => {
+                          playActionBarSound("social");
                           onSocialFeedOpen();
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            playActionBarSound("social");
                             onSocialFeedOpen();
                           }
                         }}
@@ -4521,10 +4549,12 @@ const Step = ({
                         }
                         icon={<RiCodeAiFill fontSize="22px" />}
                         onMouseDown={() => {
+                          playActionBarSound("helper");
                           onKnowledgeLedgerOpen();
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            playActionBarSound("helper");
                             onKnowledgeLedgerOpen();
                           }
                         }}
@@ -4540,11 +4570,13 @@ const Step = ({
                         // boxShadow={patreonButtonShadow}
                         borderColor={hexToRgba(actionPalette[200], 0.85)}
                         onMouseDown={() => {
+                          playActionBarSound("patreon");
                           window.location.href =
                             "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            playActionBarSound("patreon");
                             window.location.href =
                               "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
                           }
@@ -6545,6 +6577,7 @@ function App({ isShutDown }) {
       if (interactive.hasAttribute("disabled")) return;
       if (interactive.getAttribute("aria-disabled") === "true") return;
       soundManager.init().catch(() => {});
+      soundManager.playHover(Math.random());
       soundManager.play("select");
     };
 

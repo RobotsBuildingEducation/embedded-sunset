@@ -29,6 +29,7 @@ import { useThinkingGeminiChat } from "../../hooks/useGeminiChat";
 import { translation } from "../../utility/translation";
 import LiveReactEditorModal from "../LiveCodeEditor/LiveCodeEditor";
 import { CloudCanvas } from "../../elements/SunsetCanvas";
+import { soundManager } from "../../utility/soundManager";
 
 // --- tiny parser to safely stream fenced code
 function parseFenced(text = "") {
@@ -230,6 +231,8 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
   };
 
   const handleSaveIdeaAndGenerate = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("intro");
     try {
       const userId = localStorage.getItem("local_npub");
       if (userId) {

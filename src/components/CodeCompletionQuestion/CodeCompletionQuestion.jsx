@@ -51,6 +51,7 @@ const CodeCompletionQuestion = ({
         if (focusedIndex >= 0) {
           setSelectedOption(question.options[focusedIndex]);
           soundManager.init().catch(() => {});
+          soundManager.playHover(Math.random());
           soundManager.play("select");
         }
         break;
@@ -70,6 +71,7 @@ const CodeCompletionQuestion = ({
     setFocusedIndex(index);
     setIsComponentFocused(true); // Set component as focused on click
     soundManager.init().catch(() => {});
+    soundManager.playHover(Math.random());
     soundManager.play("select");
   };
 

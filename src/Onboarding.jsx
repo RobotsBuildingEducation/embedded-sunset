@@ -74,6 +74,10 @@ export const Onboarding = ({
   const navigate = useNavigate();
   const toast = useToast();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const playOnboardingChord = () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("intro");
+  };
 
   const {
     isOpen: isAwardModalOpen,
@@ -82,6 +86,7 @@ export const Onboarding = ({
   } = useDisclosure();
 
   const handleActuallyLaunchApp = () => {
+    playOnboardingChord();
     // setOnboardingToDone(localStorage.getItem("local_npub"));
     assignExistingBadgeToNpub(
       onboardingTranscript["name"][userLanguage].replace(/ /g, "-")
@@ -184,6 +189,7 @@ export const Onboarding = ({
 
   // inside Onboarding, before the return
   const handleLanguageSelect = async (e) => {
+    playOnboardingChord();
     const newLanguage = e.target.value;
     setUserLanguage(newLanguage);
     localStorage.setItem("userLanguage", newLanguage);
@@ -306,6 +312,7 @@ export const Onboarding = ({
           <KnowledgeLedgerOnboarding
             userLanguage={userLanguage}
             moveToNext={() => {
+              playOnboardingChord();
               incrementUserOnboardingStep(localStorage.getItem("local_npub"));
               setCurrentStep(0);
               navigate("/q/0");
@@ -773,6 +780,7 @@ export const Onboarding = ({
                   <br />
                   <Button
                     onClick={() => {
+                      playOnboardingChord();
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
@@ -1061,6 +1069,7 @@ export const Onboarding = ({
                   <br />
                   <Button
                     onClick={() => {
+                      playOnboardingChord();
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
@@ -1143,6 +1152,7 @@ export const Onboarding = ({
                   {renderNotifications()}
                   <Button
                     onClick={() => {
+                      playOnboardingChord();
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
