@@ -19,9 +19,7 @@ import {
 import { BsCodeSquare } from "react-icons/bs";
 
 import { motion, AnimatePresence } from "framer-motion";
-import sparkle from "../assets/sparkle.mp3";
-import complete from "../assets/complete.mp3";
-import { useOneShotAudio } from "../hooks/useOneShotAudio";
+import { soundManager } from "../utility/soundManager";
 import WaveBar from "../components/WaveBar";
 import {
   BASE_QUESTION_COUNT,
@@ -334,8 +332,6 @@ const CloudTransition = ({
   const [canContinue, setCanContinue] = useState(false);
   const [displaySalary, setDisplaySalary] = useState(salary);
   const prevSalary = useRef(salary);
-  const playSparkle = useOneShotAudio(sparkle);
-  const playComplete = useOneShotAudio(complete);
 
   const [questionsAnswered, setQuestionsAnswered] =
     useState(BASE_QUESTION_COUNT);
@@ -722,13 +718,13 @@ const CloudTransition = ({
     const id = setTimeout(() => setCanContinue(true), 200);
 
     if (String(clonedStep).toLowerCase() !== "night") {
-      playSparkle();
+      soundManager.playTransition("sparkle");
     } else {
-      playComplete();
+      soundManager.playTransition("complete");
     }
 
     return () => clearTimeout(id);
-  }, [isActive, clonedStep, playSparkle, playComplete]);
+  }, [isActive, clonedStep]);
 
   // salary count-up
   useEffect(() => {
