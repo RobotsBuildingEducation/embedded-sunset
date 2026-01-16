@@ -6,11 +6,7 @@ const BUTTON_SELECTOR =
 
 export const useGlobalButtonSound = () => {
   useEffect(() => {
-    const handlePointerDown = (event) => {
-      if (event.button && event.button !== 0) {
-        return;
-      }
-
+    const handleClick = (event) => {
       const target = event.target;
       if (!(target instanceof Element)) {
         return;
@@ -28,10 +24,10 @@ export const useGlobalButtonSound = () => {
       playSoundEffect("select");
     };
 
-    document.addEventListener("pointerdown", handlePointerDown, true);
+    document.addEventListener("click", handleClick, true);
 
     return () => {
-      document.removeEventListener("pointerdown", handlePointerDown, true);
+      document.removeEventListener("click", handleClick, true);
     };
   }, []);
 };
