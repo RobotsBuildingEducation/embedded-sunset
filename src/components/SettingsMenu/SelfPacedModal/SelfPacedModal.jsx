@@ -13,8 +13,6 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
-  Radio,
-  RadioGroup,
   Stack,
   Progress,
   CircularProgress,
@@ -370,42 +368,35 @@ const SelfPacedModal = ({
             <Text fontSize="xs">
               {translation[userLanguage]["modal.selfPace.instruction"]}
             </Text>
-            <RadioGroup
-              value={String(interval)}
-              onChange={handleIntervalChange}
-              data-sound-ignore-select="true"
-            >
-              <Stack direction="row" spacing={3} flexWrap="wrap">
-                {[1440, 2880, 4320].map((option) => (
-                  <Radio
+            <Stack direction="row" spacing={3} flexWrap="wrap">
+              {[1440, 2880, 4320].map((option) => {
+                const isSelected = interval === option;
+                return (
+                  <Button
                     key={option}
-                    value={String(option)}
+                    type="button"
+                    variant="outline"
                     data-sound-ignore-select="true"
-                    sx={{
-                      ".chakra-radio__control": { display: "none" },
-                      ".chakra-radio__label": {
-                        borderWidth: "1px",
-                        borderColor: "gray.200",
-                        borderRadius: "md",
-                        px: 3,
-                        py: 2,
-                        fontWeight: 600,
-                        transition: "all 0.2s ease",
-                      },
-                      "&[data-checked] .chakra-radio__label": {
-                        borderColor: "teal.400",
-                        boxShadow: "0 0 0 2px rgba(56, 178, 172, 0.2)",
-                        bg: "teal.50",
-                      },
+                    aria-pressed={isSelected}
+                    borderColor={isSelected ? "teal.400" : "gray.200"}
+                    bg={isSelected ? "teal.50" : "transparent"}
+                    boxShadow={
+                      isSelected
+                        ? "0 0 0 2px rgba(56, 178, 172, 0.2)"
+                        : "none"
+                    }
+                    onMouseDown={() => handleIntervalChange(String(option))}
+                    _hover={{
+                      borderColor: "teal.300",
                     }}
                   >
                     <Text color={getMarkColor(option)} fontWeight="semibold">
                       {getMarkLabel(option)}
                     </Text>
-                  </Radio>
-                ))}
-              </Stack>
-            </RadioGroup>
+                  </Button>
+                );
+              })}
+            </Stack>
             {/* Render the streak timer countdown only if endTime is defined */}
             {endTime && (
               <Text mt={2} fontSize="sm">
@@ -485,6 +476,7 @@ const SelfPacedModal = ({
             boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
             mr={3}
             onMouseDown={onClose}
+            data-sound-close="true"
           >
             {translation[userLanguage]["button.close"]}
           </Button>

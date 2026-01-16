@@ -449,7 +449,7 @@ export default function KnowledgeLedgerModal({
           boxShadow="sm"
           justifyContent="flex-end"
         >
-          <Button size="lg" onClick={onClose}>
+          <Button size="lg" onClick={onClose} data-sound-close="true">
             {translation?.[userLanguage]?.["button.close"] || "Close"}
           </Button>
         </DrawerFooter>

@@ -29,7 +29,7 @@ const StudyGuideModal = ({ isOpen, onClose, content, userLanguage }) => {
           <Markdown components={ChakraUIRenderer(newTheme)}>{content}</Markdown>
         </ModalBody>
         <ModalFooter>
-          <Button onClick={onClose}>
+          <Button onClick={onClose} data-sound-close="true">
             {" "}
             {translation[userLanguage]["button.close"]}
           </Button>

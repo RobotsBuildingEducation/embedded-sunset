@@ -241,6 +241,7 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") onClose();
             }}
+            data-sound-close="true"
           >
             {translation?.[userLanguage]?.["button.close"] ||
               translation?.[langKey]?.["button.close"] ||

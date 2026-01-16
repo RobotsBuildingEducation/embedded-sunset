@@ -6603,6 +6603,14 @@ function App({ isShutDown }) {
         "button, [role='button'], a, input, select, textarea"
       );
       if (!interactive) return;
+      const closeTarget = interactive.closest(
+        '[data-sound-close="true"], [aria-label="Close"], .chakra-modal__close-btn, .chakra-drawer__close-btn, .chakra-popover__close-btn, .chakra-alert-dialog__close-btn, .chakra-close-button, .chakra-tag__close-button'
+      );
+      if (closeTarget) {
+        soundManager.init().catch(() => {});
+        soundManager.play("erase");
+        return;
+      }
       if (interactive.closest('[data-sound-ignore-select="true"]')) return;
       if (interactive.hasAttribute("disabled")) return;
       if (interactive.getAttribute("aria-disabled") === "true") return;
