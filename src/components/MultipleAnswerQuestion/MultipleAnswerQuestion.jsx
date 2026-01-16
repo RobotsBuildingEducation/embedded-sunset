@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button, VStack, HStack, Box, Text } from "@chakra-ui/react";
 import { translation } from "../../utility/translation";
 import { IoChatbubblesOutline } from "react-icons/io5";
+import { playSoundEffect } from "../../utility/soundEffects";
 
 const MultipleAnswerQuestion = ({
   question,
@@ -57,6 +58,12 @@ const MultipleAnswerQuestion = ({
     } else {
       setSelectedOptions([...selectedOptions, option]); // Select if not selected
     }
+    playSoundEffect("select");
+  };
+
+  const handleLearnClick = () => {
+    playSoundEffect("select");
+    handleModalCheck(onLearnClick);
   };
 
   // Remove focus when the user navigates away from the list using Tab or clicks elsewhere
@@ -99,11 +106,11 @@ const MultipleAnswerQuestion = ({
     <VStack spacing={4} onBlur={handleBlur}>
       {/* Learn Button */}
       <Button
-        onMouseDown={() => handleModalCheck(onLearnClick)}
+        onMouseDown={handleLearnClick}
         colorScheme="pink"
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
-            handleModalCheck(onLearnClick);
+            handleLearnClick();
           }
         }}
         background="pink.400"

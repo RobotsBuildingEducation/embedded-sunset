@@ -3,6 +3,7 @@ import { VStack, Button, Text } from "@chakra-ui/react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { translation } from "../../utility/translation";
 import { IoChatbubblesOutline } from "react-icons/io5";
+import { playSoundEffect } from "../../utility/soundEffects";
 
 const SelectOrderQuestion = ({
   step,
@@ -33,6 +34,7 @@ const SelectOrderQuestion = ({
     reorderedItems.splice(result.destination.index, 0, removed);
     setItems(reorderedItems);
     setFocusedIndex(null);
+    playSoundEffect("select");
   };
 
   const handleKeyDown = (e) => {
@@ -66,12 +68,14 @@ const SelectOrderQuestion = ({
           if (draggedIndex === null) {
             setSelectedIndex(focusedIndex);
             setDraggedIndex(focusedIndex);
+            playSoundEffect("select");
           } else {
             const reorderedItems = Array.from(items);
             const [removed] = reorderedItems.splice(draggedIndex, 1);
             reorderedItems.splice(focusedIndex, 0, removed);
             setItems(reorderedItems);
             setDraggedIndex(null);
+            playSoundEffect("select");
           }
         }
         break;
@@ -89,6 +93,11 @@ const SelectOrderQuestion = ({
     indexMatcher(items);
   }, [items]);
 
+  const handleLearnClick = () => {
+    playSoundEffect("select");
+    handleModalCheck(onLearnClick);
+  };
+
   // Attach the keydown event listener directly to the component's wrapper
   return (
     <VStack
@@ -99,11 +108,11 @@ const SelectOrderQuestion = ({
       style={{ outline: "none" }} // Remove default focus outline
     >
       <Button
-        onMouseDown={() => handleModalCheck(onLearnClick)}
+        onMouseDown={handleLearnClick}
         colorScheme="pink"
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
-            handleModalCheck(onLearnClick);
+            handleLearnClick();
           }
         }}
         background="pink.400"
@@ -125,7 +134,10 @@ const SelectOrderQuestion = ({
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                       tabIndex={0}
-                      onClick={() => setFocusedIndex(index)}
+                      onClick={() => {
+                        setFocusedIndex(index);
+                        playSoundEffect("select");
+                      }}
                       onFocus={() => setFocusedIndex(index)}
                       style={{
                         ...provided.draggableProps.style,
