@@ -330,10 +330,10 @@ const SelfPacedOnboarding = ({
         step={1440}
         onChange={handleSliderChange}
       >
-        <SliderTrack>
-          <SliderFilledTrack />
+        <SliderTrack bg="gray.700" h={3} borderRadius="full">
+          <SliderFilledTrack bg="linear-gradient(90deg, #00CED1, #4169E1)" />
         </SliderTrack>
-        <SliderThumb border="1px solid black" />
+        <SliderThumb boxSize={6} bg="cyan.400" />
       </Slider>
       <Text mt={2} color={getMarkColor(interval)}>
         <Text fontSize="sm" fontWeight="bold">
@@ -357,10 +357,10 @@ const SelfPacedOnboarding = ({
         onChange={handleDailyGoalsChange}
         mt={2}
       >
-        <SliderTrack>
-          <SliderFilledTrack />
+        <SliderTrack bg="gray.700" h={3} borderRadius="full">
+          <SliderFilledTrack bg="linear-gradient(90deg, #00CED1, #4169E1)" />
         </SliderTrack>
-        <SliderThumb border="1px solid black" />
+        <SliderThumb boxSize={6} bg="cyan.400" />
       </Slider>
       <Text mt={2} fontSize="sm" color="green.500" fontWeight="bold">
         {translation[userLanguage]["modal.dailyGoal.dailyGoalLabel"]}{" "}

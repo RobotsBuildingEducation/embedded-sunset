@@ -4227,12 +4227,19 @@ const Step = ({
                 isTimerExpired ? (
                   <Button
                     fontSize="sm"
-                    onMouseDown={handleAnswerClick}
+                    data-sound-ignore-select="true"
+                    onMouseDown={() => {
+                      soundManager.init().catch(() => {});
+                      soundManager.play("submit");
+                      handleAnswerClick();
+                    }}
                     isLoading={isSending}
                     mb={4}
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
+                        soundManager.init().catch(() => {});
+                        soundManager.play("submit");
                         handleAnswerClick();
                       }
                     }}
@@ -4293,11 +4300,18 @@ const Step = ({
                       <Button
                         background="white"
                         variant={"outline"}
-                        onClick={handleNextClick}
+                        data-sound-ignore-select="true"
+                        onClick={() => {
+                          soundManager.init().catch(() => {});
+                          soundManager.play("next");
+                          handleNextClick();
+                        }}
                         mb={4}
                         boxShadow={"0.5px 0.5px 1px 0px black"}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            soundManager.init().catch(() => {});
+                            soundManager.play("next");
                             handleNextClick();
                           }
                         }}
