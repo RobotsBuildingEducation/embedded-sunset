@@ -226,6 +226,7 @@ import CloudTransition from "./elements/CloudTransition";
 import KnowledgeLedgerModal from "./components/KnowledgeLedgerModal/KnowledgeLedgerModal";
 import { TbWorld } from "react-icons/tb";
 import SoundExperiment from "./experiments/SoundExperiment";
+import { soundManager } from "./utility/soundManager";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -498,7 +499,10 @@ const AwardScreen = (userLanguage) => {
         <HStack spacing={4} justifyContent="center" flexWrap="wrap">
           <Button
             boxShadow="0.5px 0.5px 1px black"
-            onClick={() => navigate("/q/0")}
+            onClick={() => {
+              soundManager.play("clear");
+              navigate("/q/0");
+            }}
           >
             {translation[userLanguage.userLanguage]?.["button.returnToApp"] ||
               "Return to app"}
@@ -508,6 +512,7 @@ const AwardScreen = (userLanguage) => {
             boxShadow="0.5px 0.5px 1px black"
             leftIcon={<RiAiGenerate />}
             onClick={() => {
+              soundManager.play("pattern");
               localStorage.setItem("aiLearningMode", "true");
               const totalSteps = steps[userLanguage.userLanguage]?.length || 1;
               navigate(`/q/${totalSteps - 1}`);
@@ -2849,8 +2854,10 @@ const Step = ({
           setIsSending(false); // <— only now clear it
 
           if (jsonResponse.isCorrect) {
+            soundManager.play("correct");
             setGrade(jsonResponse.grade);
           } else {
+            soundManager.play("incorrect");
             const newAttempts = incorrectAttempts + 1;
             setIncorrectAttempts(newAttempts);
             localStorage.setItem("incorrectAttempts", newAttempts);
@@ -3904,10 +3911,14 @@ const Step = ({
                 <HStack>
                   <Button
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                    onMouseDown={onStudyGuideModalOpen}
+                    onMouseDown={() => {
+                      soundManager.play("intro");
+                      onStudyGuideModalOpen();
+                    }}
                     mb={4}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
+                        soundManager.play("intro");
                         onStudyGuideModalOpen();
                       }
                     }}
@@ -3917,11 +3928,15 @@ const Step = ({
                   </Button>
                   &nbsp;&nbsp; &nbsp;&nbsp;
                   <Button
-                    onClick={handleNextClick}
+                    onClick={() => {
+                      soundManager.play("next");
+                      handleNextClick();
+                    }}
                     mb={4}
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
+                        soundManager.play("next");
                         handleNextClick();
                       }
                     }}
@@ -4196,12 +4211,16 @@ const Step = ({
                 isTimerExpired ? (
                   <Button
                     fontSize="sm"
-                    onMouseDown={handleAnswerClick}
+                    onMouseDown={() => {
+                      soundManager.play("submitAction");
+                      handleAnswerClick();
+                    }}
                     isLoading={isSending}
                     mb={4}
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
+                        soundManager.play("submitAction");
                         handleAnswerClick();
                       }
                     }}
@@ -4234,6 +4253,7 @@ const Step = ({
                         background="white"
                         variant={"outline"}
                         onClick={() => {
+                          soundManager.play("pattern");
                           setIsCorrect(null);
                           setFeedback("");
                           setInputValue("");
@@ -4245,6 +4265,7 @@ const Step = ({
                         boxShadow={"0.5px 0.5px 1px 0px black"}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            soundManager.play("pattern");
                             setIsCorrect(null);
                             setFeedback("");
                             setInputValue("");
@@ -4262,11 +4283,15 @@ const Step = ({
                       <Button
                         background="white"
                         variant={"outline"}
-                        onClick={handleNextClick}
+                        onClick={() => {
+                          soundManager.play("next");
+                          handleNextClick();
+                        }}
                         mb={4}
                         boxShadow={"0.5px 0.5px 1px 0px black"}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            soundManager.play("next");
                             handleNextClick();
                           }
                         }}
@@ -4427,10 +4452,12 @@ const Step = ({
                         aria-label="Open Bitcoin mode"
                         icon={<FaBitcoin fontSize="20px" />}
                         onMouseDown={() => {
+                          soundManager.play("colorSwitch");
                           onBitcoinModeOpen();
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            soundManager.play("colorSwitch");
                             onBitcoinModeOpen();
                           }
                         }}
@@ -4444,10 +4471,12 @@ const Step = ({
                         aria-label="Open self-paced mode"
                         icon={<PiClockCountdownFill fontSize="22px" />}
                         onMouseDown={() => {
+                          soundManager.play("sliderTick");
                           onSelfPacedOpen();
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            soundManager.play("sliderTick");
                             onSelfPacedOpen();
                           }
                         }}
@@ -4476,10 +4505,12 @@ const Step = ({
                         }
                         icon={<PiUsersBold fontSize="20px" />}
                         onMouseDown={() => {
+                          soundManager.play("pattern");
                           onSocialFeedOpen();
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            soundManager.play("pattern");
                             onSocialFeedOpen();
                           }
                         }}
@@ -4504,10 +4535,12 @@ const Step = ({
                         }
                         icon={<RiCodeAiFill fontSize="22px" />}
                         onMouseDown={() => {
+                          soundManager.play("submit");
                           onKnowledgeLedgerOpen();
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            soundManager.play("submit");
                             onKnowledgeLedgerOpen();
                           }
                         }}
@@ -4523,11 +4556,13 @@ const Step = ({
                         // boxShadow={patreonButtonShadow}
                         borderColor={hexToRgba(actionPalette[200], 0.85)}
                         onMouseDown={() => {
+                          soundManager.play("intro");
                           window.location.href =
                             "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            soundManager.play("intro");
                             window.location.href =
                               "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
                           }

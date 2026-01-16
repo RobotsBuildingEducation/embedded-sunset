@@ -29,6 +29,7 @@ import { useThinkingGeminiChat } from "../../hooks/useGeminiChat";
 import { translation } from "../../utility/translation";
 import LiveReactEditorModal from "../LiveCodeEditor/LiveCodeEditor";
 import { CloudCanvas } from "../../elements/SunsetCanvas";
+import { soundManager } from "../../utility/soundManager";
 
 // --- tiny parser to safely stream fenced code
 function parseFenced(text = "") {
@@ -308,7 +309,10 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
         />
         <HStack>
           <Button
-            onClick={handleSaveIdeaAndGenerate}
+            onClick={() => {
+              soundManager.play("submitAction");
+              handleSaveIdeaAndGenerate();
+            }}
             isDisabled={idea.length < 1}
             colorScheme="pink"
             background="pink.300"
@@ -445,7 +449,13 @@ export default function KnowledgeLedgerModal({
           boxShadow="sm"
           justifyContent="flex-end"
         >
-          <Button size="lg" onClick={onClose}>
+          <Button
+            size="lg"
+            onClick={() => {
+              soundManager.play("clear");
+              onClose();
+            }}
+          >
             {translation?.[userLanguage]?.["button.close"] || "Close"}
           </Button>
         </DrawerFooter>

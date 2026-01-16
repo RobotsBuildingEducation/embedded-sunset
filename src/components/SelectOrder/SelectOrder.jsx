@@ -3,6 +3,7 @@ import { VStack, Button, Text } from "@chakra-ui/react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { translation } from "../../utility/translation";
 import { IoChatbubblesOutline } from "react-icons/io5";
+import { soundManager } from "../../utility/soundManager";
 
 const SelectOrderQuestion = ({
   step,
@@ -28,6 +29,7 @@ const SelectOrderQuestion = ({
 
   const handleDragEnd = (result) => {
     if (!result.destination) return;
+    soundManager.play("paint");
     const reorderedItems = Array.from(items);
     const [removed] = reorderedItems.splice(result.source.index, 1);
     reorderedItems.splice(result.destination.index, 0, removed);
@@ -64,9 +66,11 @@ const SelectOrderQuestion = ({
         e.preventDefault();
         if (focusedIndex !== null) {
           if (draggedIndex === null) {
+            soundManager.play("select");
             setSelectedIndex(focusedIndex);
             setDraggedIndex(focusedIndex);
           } else {
+            soundManager.play("paint");
             const reorderedItems = Array.from(items);
             const [removed] = reorderedItems.splice(draggedIndex, 1);
             reorderedItems.splice(focusedIndex, 0, removed);
@@ -99,10 +103,14 @@ const SelectOrderQuestion = ({
       style={{ outline: "none" }} // Remove default focus outline
     >
       <Button
-        onMouseDown={() => handleModalCheck(onLearnClick)}
+        onMouseDown={() => {
+          soundManager.play("intro");
+          handleModalCheck(onLearnClick);
+        }}
         colorScheme="pink"
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
+            soundManager.play("intro");
             handleModalCheck(onLearnClick);
           }
         }}

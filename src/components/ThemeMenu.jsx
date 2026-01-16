@@ -14,6 +14,7 @@ import { FaPaintBrush } from "react-icons/fa";
 import { useThemeStore } from "../useThemeStore";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { translation } from "../utility/translation";
+import { soundManager } from "../utility/soundManager";
 
 const colors = ["purple", "orange", "green", "blue", "pink"];
 // Map each color to its base hex so menu swatches don't change with theme
@@ -50,10 +51,11 @@ const ThemeMenu = ({ userLanguage, isIcon = true, buttonProps = {} }) => {
         {isIcon ? null : translation[userLanguage]["settings.theme.select"]}
       </MenuButton>
       <MenuList>
-        {colors.map((c) => (
+        {colors.map((c, index) => (
           <MenuItem
             key={c}
             onClick={() => {
+              soundManager.playColorSwitch(index, colors.length);
               setThemeColor(c);
             }}
           >
