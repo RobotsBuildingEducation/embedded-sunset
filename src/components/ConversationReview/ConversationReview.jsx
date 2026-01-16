@@ -31,6 +31,7 @@ import { translation } from "../../utility/translation";
 import { getObjectsByGroup } from "../../utility/content";
 import ReactConfetti from "react-confetti";
 import { useSimpleGeminiChat } from "../../hooks/useGeminiChat";
+import { soundManager } from "../../utility/soundManager";
 
 import PreConversation from "./PreConversation";
 
@@ -367,12 +368,16 @@ const ConversationReview = ({
 
       <Button
         isDisabled={response?.length < 1}
-        onMouseDown={handleSubmit}
+        onMouseDown={() => {
+          soundManager.play("submit");
+          handleSubmit();
+        }}
         colorScheme="pink"
         background={"pink.300"}
         mt={4}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
+            soundManager.play("submit");
             handleSubmit();
           }
         }}

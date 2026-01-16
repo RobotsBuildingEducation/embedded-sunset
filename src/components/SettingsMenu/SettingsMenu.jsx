@@ -56,6 +56,7 @@ import { useNostrWalletStore } from "../../hooks/useNostrWalletStore";
 import StudyGuideModal from "../StudyGuideModal/StudyGuideModal";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { ChangeLanguageModal } from "../ChangeLanguageModal/ChangeLanguageModal";
+import { soundManager } from "../../utility/soundManager";
 
 const SettingsMenu = ({
   testIsMatch,
@@ -286,9 +287,13 @@ const SettingsMenu = ({
     <IconButton
       ref={btnRef}
       icon={<IoAppsOutline />}
-      onMouseDown={onOpen}
+      onMouseDown={() => {
+        soundManager.play("click");
+        onOpen();
+      }}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
+          soundManager.play("click");
           onOpen();
         }
       }}
@@ -506,14 +511,20 @@ const SettingsMenu = ({
                 background="pink.300"
                 color="white"
                 width="100%"
-                onClick={onLangOpen}
+                onClick={() => {
+                  soundManager.play("select");
+                  onLangOpen();
+                }}
                 ref={firstButtonRef}
               >
                 {translation[userLanguage]["settings.button.changeLanguage"]}
               </Button>
 
               <Button
-                onMouseDown={onStudyGuideModalOpen}
+                onMouseDown={() => {
+                  soundManager.play("intro");
+                  onStudyGuideModalOpen();
+                }}
                 p={6}
                 colorScheme="pink"
                 background="pink.300"
@@ -521,6 +532,7 @@ const SettingsMenu = ({
                 style={{ width: "100%" }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
+                    soundManager.play("intro");
                     onStudyGuideModalOpen();
                   }
                 }}
@@ -533,9 +545,13 @@ const SettingsMenu = ({
                 background="pink.300"
                 boxShadow="1px 1px 2px 0px rgba(0, 0, 0,0.75)"
                 style={{ width: "100%" }}
-                onMouseDown={onTranscriptOpen}
+                onMouseDown={() => {
+                  soundManager.play("select");
+                  onTranscriptOpen();
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
+                    soundManager.play("select");
                     onTranscriptOpen();
                   }
                 }}
@@ -549,9 +565,13 @@ const SettingsMenu = ({
                 background="pink.300"
                 boxShadow="1px 1px 2px 0px rgba(0, 0, 0,0.75)"
                 style={{ width: "100%" }}
-                onMouseDown={onInstallModalOpen}
+                onMouseDown={() => {
+                  soundManager.play("select");
+                  onInstallModalOpen();
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
+                    soundManager.play("select");
                     onInstallModalOpen();
                   }
                 }}
@@ -561,9 +581,13 @@ const SettingsMenu = ({
               <Button
                 p={6}
                 style={{ width: "100%" }}
-                onMouseDown={onSocialWalletOpen}
+                onMouseDown={() => {
+                  soundManager.play("select");
+                  onSocialWalletOpen();
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
+                    soundManager.play("select");
                     onSocialWalletOpen();
                   }
                 }}
@@ -608,6 +632,7 @@ const SettingsMenu = ({
               <Button
                 style={{ width: "100%" }}
                 onMouseDown={() => {
+                  soundManager.play("clear");
                   // walletService.stop();
                   resetState();
                   const translateValue = localStorage.getItem("userLanguage");
@@ -626,6 +651,7 @@ const SettingsMenu = ({
                   resetState();
                   setIsSignedIn(false);
                   if (e.key === "Enter" || e.key === " ") {
+                    soundManager.play("clear");
                     const translateValue = localStorage.getItem("userLanguage");
                     localStorage.removeItem("local_nsec");
                     localStorage.removeItem("local_npub");

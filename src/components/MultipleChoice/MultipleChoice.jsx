@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button, VStack, HStack, Box, Text } from "@chakra-ui/react";
 import { translation } from "../../utility/translation";
 import { IoChatbubblesOutline } from "react-icons/io5";
+import { soundManager } from "../../utility/soundManager";
 
 const MultipleChoiceQuestion = ({
   question,
@@ -33,6 +34,7 @@ const MultipleChoiceQuestion = ({
       case " ":
         e.preventDefault();
         if (focusedIndex >= 0) {
+          soundManager.play("select");
           setSelectedOption(question.options[focusedIndex]);
         }
         break;
@@ -42,6 +44,7 @@ const MultipleChoiceQuestion = ({
   };
 
   const handleOptionClick = (option, index) => {
+    soundManager.play("select");
     setSelectedOption(option);
     setFocusedIndex(index);
   };
@@ -64,11 +67,15 @@ const MultipleChoiceQuestion = ({
     <VStack spacing={4} onKeyDown={handleKeyDown}>
       <Button
         ref={learnButtonRef}
-        onMouseDown={() => handleModalCheck(onLearnClick)}
+        onMouseDown={() => {
+          soundManager.play("intro");
+          handleModalCheck(onLearnClick);
+        }}
         colorScheme="pink"
         tabIndex={0}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
+            soundManager.play("intro");
             handleModalCheck(onLearnClick);
           }
         }}

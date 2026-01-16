@@ -58,6 +58,7 @@ import { useSharedNostr } from "./hooks/useNOSTR";
 import { TechOverview } from "./components/TechOverview/TechOverview";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import WaveBar from "./components/WaveBar";
+import { soundManager } from "./utility/soundManager";
 
 export const Onboarding = ({
   userLanguage,
@@ -770,6 +771,7 @@ export const Onboarding = ({
                   <br />
                   <Button
                     onClick={() => {
+                      soundManager.play("next");
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
@@ -1058,6 +1060,7 @@ export const Onboarding = ({
                   <br />
                   <Button
                     onClick={() => {
+                      soundManager.play("next");
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
@@ -1140,6 +1143,7 @@ export const Onboarding = ({
                   {renderNotifications()}
                   <Button
                     onClick={() => {
+                      soundManager.play("next");
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
                       );
@@ -1251,9 +1255,13 @@ export const Onboarding = ({
                 {/* Optional back button */}
 
                 <Button
-                  onMouseDown={handleActuallyLaunchApp}
+                  onMouseDown={() => {
+                    soundManager.play("success");
+                    handleActuallyLaunchApp();
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
+                      soundManager.play("success");
                       handleActuallyLaunchApp();
                     }
                   }}
