@@ -68,6 +68,7 @@ import {
 } from "react-router-dom";
 
 import { useChatCompletion } from "./hooks/useChatCompletion";
+import { soundManager } from "./utility/soundManager";
 import {
   // CloudCanvas,
   SunsetCanvas,
@@ -2848,8 +2849,10 @@ const Step = ({
           setIsSending(false); // <— only now clear it
 
           if (jsonResponse.isCorrect) {
+            soundManager.playCorrect();
             setGrade(jsonResponse.grade);
           } else {
+            soundManager.playWrong();
             const newAttempts = incorrectAttempts + 1;
             setIncorrectAttempts(newAttempts);
             localStorage.setItem("incorrectAttempts", newAttempts);
@@ -3916,11 +3919,15 @@ const Step = ({
                   </Button>
                   &nbsp;&nbsp; &nbsp;&nbsp;
                   <Button
-                    onClick={handleNextClick}
+                    onClick={() => {
+                      soundManager.playSelect();
+                      handleNextClick();
+                    }}
                     mb={4}
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
+                        soundManager.playSelect();
                         handleNextClick();
                       }
                     }}
@@ -4190,12 +4197,16 @@ const Step = ({
                 isTimerExpired ? (
                   <Button
                     fontSize="sm"
-                    onMouseDown={handleAnswerClick}
+                    onMouseDown={() => {
+                      soundManager.playSelect();
+                      handleAnswerClick();
+                    }}
                     isLoading={isSending}
                     mb={4}
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
+                        soundManager.playSelect();
                         handleAnswerClick();
                       }
                     }}
@@ -4228,6 +4239,7 @@ const Step = ({
                         background="white"
                         variant={"outline"}
                         onClick={() => {
+                          soundManager.playSelect();
                           setIsCorrect(null);
                           setFeedback("");
                           setInputValue("");
@@ -4239,6 +4251,7 @@ const Step = ({
                         boxShadow={"0.5px 0.5px 1px 0px black"}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            soundManager.playSelect();
                             setIsCorrect(null);
                             setFeedback("");
                             setInputValue("");
@@ -4256,11 +4269,15 @@ const Step = ({
                       <Button
                         background="white"
                         variant={"outline"}
-                        onClick={handleNextClick}
+                        onClick={() => {
+                          soundManager.playSelect();
+                          handleNextClick();
+                        }}
                         mb={4}
                         boxShadow={"0.5px 0.5px 1px 0px black"}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            soundManager.playSelect();
                             handleNextClick();
                           }
                         }}
