@@ -3449,14 +3449,14 @@ const Step = ({
   const playActionBarSound = (id) => {
     soundManager.init().catch(() => {});
     const soundMap = {
-      bitcoin: "intro",
-      selfPaced: "pattern",
+      bitcoin: "next",
+      selfPaced: "colorSwitch",
       theme: "colorSwitch",
-      social: "success",
+      social: "next",
       helper: "submit",
-      patreon: "dailyGoal",
+      patreon: "submitAction",
     };
-    const soundName = soundMap[id] || "pattern";
+    const soundName = soundMap[id] || "next";
     soundManager.play(soundName);
   };
 
@@ -4455,6 +4455,7 @@ const Step = ({
                       bitcoinButtonRef,
                       <IconButton
                         {...actionBarButtonProps}
+                        data-sound-ignore-select="true"
                         aria-label="Open Bitcoin mode"
                         icon={<FaBitcoin fontSize="20px" />}
                         onMouseDown={() => {
@@ -4474,6 +4475,7 @@ const Step = ({
                       selfPacedButtonRef,
                       <IconButton
                         {...actionBarButtonProps}
+                        data-sound-ignore-select="true"
                         aria-label="Open self-paced mode"
                         icon={<PiClockCountdownFill fontSize="22px" />}
                         onMouseDown={() => {
@@ -4496,6 +4498,7 @@ const Step = ({
                         buttonProps={{
                           ...actionBarButtonProps,
                           color: actionBarButtonProps.color,
+                          "data-sound-ignore-select": "true",
                           onMouseDown: () => {
                             playActionBarSound("theme");
                           },
@@ -4512,6 +4515,7 @@ const Step = ({
                       socialButtonRef,
                       <IconButton
                         {...actionBarButtonProps}
+                        data-sound-ignore-select="true"
                         aria-label={
                           translation[userLanguage][
                             "settings.button.socialProgress"
@@ -4542,6 +4546,7 @@ const Step = ({
                       helperButtonRef,
                       <IconButton
                         {...actionBarButtonProps}
+                        data-sound-ignore-select="true"
                         aria-label={
                           translation[userLanguage]?.[
                             "settings.button.algorithmHelper"
@@ -4565,6 +4570,7 @@ const Step = ({
                       patreonButtonRef,
                       <IconButton
                         {...actionBarButtonProps}
+                        data-sound-ignore-select="true"
                         aria-label="Support on Patreon"
                         icon={<PiPatreonLogoFill fontSize="20px" />}
                         // boxShadow={patreonButtonShadow}
@@ -6574,6 +6580,7 @@ function App({ isShutDown }) {
         "button, [role='button'], a, input, select, textarea"
       );
       if (!interactive) return;
+      if (interactive.closest('[data-sound-ignore-select="true"]')) return;
       if (interactive.hasAttribute("disabled")) return;
       if (interactive.getAttribute("aria-disabled") === "true") return;
       soundManager.init().catch(() => {});

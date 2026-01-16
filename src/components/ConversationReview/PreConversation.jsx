@@ -268,7 +268,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
 
   const handleSaveIdeaAndGenerate = async () => {
     soundManager.init().catch(() => {});
-    soundManager.play("intro");
+    soundManager.play("submitAction");
     try {
       const userId = localStorage.getItem("local_npub");
       if (userId) {
@@ -346,6 +346,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
           isDisabled={isLoading || idea.length < 1}
           colorScheme="pink"
           background="pink.300"
+          data-sound-ignore-select="true"
         >
           {savedIdea
             ? translation[userLanguage]["buildYourApp.button.label.2"]

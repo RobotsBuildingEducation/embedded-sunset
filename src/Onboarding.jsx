@@ -76,7 +76,7 @@ export const Onboarding = ({
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const playOnboardingChord = () => {
     soundManager.init().catch(() => {});
-    soundManager.play("intro");
+    soundManager.play("next");
   };
 
   const {
@@ -789,6 +789,7 @@ export const Onboarding = ({
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
                     mb={18}
+                    data-sound-ignore-select="true"
                   >
                     {translation[userLanguage]["onboarding.step1.buttonLabel"]}
                   </Button>
@@ -1078,6 +1079,7 @@ export const Onboarding = ({
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
                     mb={18}
+                    data-sound-ignore-select="true"
                   >
                     {translation[userLanguage]["button.setLanguage"]}
                   </Button>
@@ -1161,6 +1163,7 @@ export const Onboarding = ({
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
                     mb={18}
+                    data-sound-ignore-select="true"
                   >
                     {translation[userLanguage].gotItButton}
                   </Button>
@@ -1273,6 +1276,7 @@ export const Onboarding = ({
                   colorScheme="pink"
                   // backgroundColor="pink.50"
                   variant="outline"
+                  data-sound-ignore-select="true"
                 >
                   {
                     translation[userLanguage][

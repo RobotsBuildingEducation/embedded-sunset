@@ -1102,9 +1102,10 @@ const CloudTransition = ({
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.985 }}
                 transition={{ duration: 0.2, delay: 0.35 }}
+                data-sound-ignore-select="true"
                 onClick={() => {
                   soundManager.init().catch(() => {});
-                  soundManager.play("intro");
+                  soundManager.play("next");
                   onContinue();
                 }}
                 disabled={!canContinue}

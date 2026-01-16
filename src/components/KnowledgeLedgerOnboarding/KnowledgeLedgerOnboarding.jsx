@@ -30,6 +30,7 @@ import { translation } from "../../utility/translation";
 import { doc, updateDoc } from "firebase/firestore";
 import { database } from "../../database/firebaseResources";
 import WaveBar from "../WaveBar";
+import { soundManager } from "../../utility/soundManager";
 
 export const transcriptDisplay = {
   tutorial: {
@@ -158,6 +159,8 @@ export default function KnowledgeLedgerOnboarding({
   }, []);
 
   const saveUserInput = async () => {
+    soundManager.init().catch(() => {});
+    soundManager.play("submitAction");
     try {
       setIsLoading(true);
       const userId = localStorage.getItem("local_npub");
@@ -309,12 +312,13 @@ export default function KnowledgeLedgerOnboarding({
             isDisabled={!userInput.trim()}
             colorScheme="pink"
             variant={"outline"}
+            data-sound-ignore-select="true"
           >
             {userIdea
               ? translation[userLanguage]["buildYourApp.button.label.2"]
               : translation[userLanguage]["buildYourApp.button.label.1"]}
           </Button>
-          <Button onClick={moveToNext}>
+          <Button onClick={moveToNext} data-sound-ignore-select="true">
             {" "}
             {translation[userLanguage]["skip"]}
           </Button>
@@ -377,6 +381,7 @@ export default function KnowledgeLedgerOnboarding({
                     onClick={moveToNext}
                     mb={2}
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                    data-sound-ignore-select="true"
                   >
                     {translation[userLanguage]["nextStep"]}
                   </Button>

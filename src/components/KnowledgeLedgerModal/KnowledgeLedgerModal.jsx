@@ -232,7 +232,7 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
 
   const handleSaveIdeaAndGenerate = async () => {
     soundManager.init().catch(() => {});
-    soundManager.play("intro");
+    soundManager.play("submitAction");
     try {
       const userId = localStorage.getItem("local_npub");
       if (userId) {
@@ -316,6 +316,7 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
             colorScheme="pink"
             background="pink.300"
             width="300px"
+            data-sound-ignore-select="true"
           >
             {savedIdea
               ? translation[userLanguage]["buildYourApp.button.label.2"]
