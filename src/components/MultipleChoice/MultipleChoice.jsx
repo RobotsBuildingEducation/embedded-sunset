@@ -68,14 +68,14 @@ const MultipleChoiceQuestion = ({
       <Button
         ref={learnButtonRef}
         onMouseDown={() => {
-          soundManager.play("intro");
+          soundManager.play("sparkle");
           handleModalCheck(onLearnClick);
         }}
         colorScheme="pink"
         tabIndex={0}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
-            soundManager.play("intro");
+            soundManager.play("sparkle");
             handleModalCheck(onLearnClick);
           }
         }}

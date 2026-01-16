@@ -3912,13 +3912,13 @@ const Step = ({
                   <Button
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                     onMouseDown={() => {
-                      soundManager.play("intro");
+                      soundManager.play("sparkle");
                       onStudyGuideModalOpen();
                     }}
                     mb={4}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
-                        soundManager.play("intro");
+                        soundManager.play("sparkle");
                         onStudyGuideModalOpen();
                       }
                     }}
@@ -4556,13 +4556,13 @@ const Step = ({
                         // boxShadow={patreonButtonShadow}
                         borderColor={hexToRgba(actionPalette[200], 0.85)}
                         onMouseDown={() => {
-                          soundManager.play("intro");
+                          soundManager.play("success");
                           window.location.href =
                             "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
-                            soundManager.play("intro");
+                            soundManager.play("success");
                             window.location.href =
                               "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
                           }

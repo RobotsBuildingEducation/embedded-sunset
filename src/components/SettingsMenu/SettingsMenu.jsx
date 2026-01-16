@@ -522,7 +522,7 @@ const SettingsMenu = ({
 
               <Button
                 onMouseDown={() => {
-                  soundManager.play("intro");
+                  soundManager.play("sparkle");
                   onStudyGuideModalOpen();
                 }}
                 p={6}
@@ -532,7 +532,7 @@ const SettingsMenu = ({
                 style={{ width: "100%" }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
-                    soundManager.play("intro");
+                    soundManager.play("sparkle");
                     onStudyGuideModalOpen();
                   }
                 }}

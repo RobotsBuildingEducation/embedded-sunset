@@ -102,13 +102,13 @@ const MultipleAnswerQuestion = ({
       {/* Learn Button */}
       <Button
         onMouseDown={() => {
-          soundManager.play("intro");
+          soundManager.play("sparkle");
           handleModalCheck(onLearnClick);
         }}
         colorScheme="pink"
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
-            soundManager.play("intro");
+            soundManager.play("sparkle");
             handleModalCheck(onLearnClick);
           }
         }}
