@@ -67,6 +67,7 @@ import {
   useLocation,
 } from "react-router-dom";
 
+import { soundManager } from "./utility/soundManager";
 import { useChatCompletion } from "./hooks/useChatCompletion";
 import {
   // CloudCanvas,
@@ -6534,6 +6535,19 @@ function App({ isShutDown }) {
     defaultTransitionStats
   );
   const resetStatsTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    const handleUserInteraction = (e) => {
+      soundManager.resume();
+      const btn =
+        e.target.closest("button") || e.target.closest('[role="button"]');
+      if (btn) {
+        soundManager.playSelect();
+      }
+    };
+    window.addEventListener("mousedown", handleUserInteraction);
+    return () => window.removeEventListener("mousedown", handleUserInteraction);
+  }, []);
 
   const actionBarTourSteps = useMemo(
     () => [
