@@ -242,6 +242,7 @@ import {
   doc,
   getDocs,
 } from "firebase/firestore";
+import { soundManager } from "../../utility/soundManager";
 
 /**
  * LiveReactEditorModal
@@ -434,7 +435,10 @@ const LiveReactEditorModal = ({
         <Button
           variant="outline"
           mt={4}
-          onClick={runCode}
+          onClick={() => {
+            soundManager.playSelect();
+            runCode();
+          }}
           mb={4}
           boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
         >

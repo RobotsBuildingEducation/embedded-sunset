@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button, VStack, HStack, Box, Text } from "@chakra-ui/react";
 import { translation } from "../../utility/translation";
 import { IoChatbubblesOutline } from "react-icons/io5";
+import { soundManager } from "../../utility/soundManager";
 
 const MultipleAnswerQuestion = ({
   question,
@@ -52,6 +53,7 @@ const MultipleAnswerQuestion = ({
 
   // Toggle selection of an option
   const handleOptionClick = (option) => {
+    soundManager.playSelect();
     if (selectedOptions.includes(option)) {
       setSelectedOptions(selectedOptions.filter((opt) => opt !== option)); // Deselect if already selected
     } else {
@@ -99,10 +101,14 @@ const MultipleAnswerQuestion = ({
     <VStack spacing={4} onBlur={handleBlur}>
       {/* Learn Button */}
       <Button
-        onMouseDown={() => handleModalCheck(onLearnClick)}
+        onMouseDown={() => {
+          soundManager.playLearn();
+          handleModalCheck(onLearnClick);
+        }}
         colorScheme="pink"
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
+            soundManager.playLearn();
             handleModalCheck(onLearnClick);
           }
         }}

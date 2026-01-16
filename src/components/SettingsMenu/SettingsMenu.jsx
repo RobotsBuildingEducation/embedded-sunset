@@ -35,6 +35,7 @@ import {
 
 import { useNavigate } from "react-router-dom";
 import { IoAppsOutline } from "react-icons/io5";
+import { soundManager } from "../../utility/soundManager";
 
 import BitcoinModeModal from "./BitcoinModeModal/BitcoinModeModal";
 import RoxModal from "./RoxModal/RoxModal";
@@ -286,9 +287,13 @@ const SettingsMenu = ({
     <IconButton
       ref={btnRef}
       icon={<IoAppsOutline />}
-      onMouseDown={onOpen}
+      onMouseDown={() => {
+        soundManager.playSelect();
+        onOpen();
+      }}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
+          soundManager.playSelect();
           onOpen();
         }
       }}
