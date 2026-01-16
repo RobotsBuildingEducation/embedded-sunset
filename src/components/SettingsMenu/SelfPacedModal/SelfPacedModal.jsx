@@ -203,7 +203,12 @@ const SelfPacedModal = ({
       dayLabel = "";
       signal = "";
     }
-    return `${dayLabel} (${signal})`;
+    return (
+      <div>
+        {dayLabel}
+        <br />({signal})
+      </div>
+    );
   };
 
   const getMarkColor = (interval) => {
@@ -368,7 +373,12 @@ const SelfPacedModal = ({
             <Text fontSize="xs">
               {translation[userLanguage]["modal.selfPace.instruction"]}
             </Text>
-            <Stack direction="row" spacing={3} flexWrap="wrap">
+            <Stack
+              direction="row"
+              spacing={3}
+              flexWrap="wrap"
+              justifyContent={"center"}
+            >
               {[1440, 2880, 4320].map((option) => {
                 const isSelected = interval === option;
                 return (
@@ -381,16 +391,18 @@ const SelfPacedModal = ({
                     borderColor={isSelected ? "teal.400" : "gray.200"}
                     bg={isSelected ? "teal.50" : "transparent"}
                     boxShadow={
-                      isSelected
-                        ? "0 0 0 2px rgba(56, 178, 172, 0.2)"
-                        : "none"
+                      isSelected ? "0 0 0 2px rgba(56, 178, 172, 0.2)" : "none"
                     }
                     onMouseDown={() => handleIntervalChange(String(option))}
                     _hover={{
                       borderColor: "teal.300",
                     }}
                   >
-                    <Text color={getMarkColor(option)} fontWeight="semibold">
+                    <Text
+                      color={getMarkColor(option)}
+                      fontWeight="semibold"
+                      fontSize={"sm"}
+                    >
                       {getMarkLabel(option)}
                     </Text>
                   </Button>
@@ -399,14 +411,18 @@ const SelfPacedModal = ({
             </Stack>
             {/* Render the streak timer countdown only if endTime is defined */}
             {endTime && (
-              <Text mt={2} fontSize="sm">
-                <CountdownTimer
-                  userLanguage={userLanguage}
-                  targetTime={endTime}
-                  initialTime={startTime}
-                  label={translation[userLanguage]["countdown.streakTimeLeft"]}
-                />
-              </Text>
+              <Box display="flex" justifyContent={"center"} mt={2}>
+                <Text mt={2} fontSize="sm">
+                  <CountdownTimer
+                    userLanguage={userLanguage}
+                    targetTime={endTime}
+                    initialTime={startTime}
+                    label={
+                      translation[userLanguage]["countdown.streakTimeLeft"]
+                    }
+                  />
+                </Text>
+              </Box>
             )}
             <br />
             <br />
