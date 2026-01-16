@@ -18,6 +18,7 @@ const VOL = Object.freeze({
 
 class SoundManager {
   initialized = false;
+  initPromise = null;
   enabled = true;
   volume = 0.7;
 
@@ -33,10 +34,20 @@ class SoundManager {
 
   async init() {
     if (this.initialized) return;
-    await Tone.start();
-    Tone.Destination.volume.value = Tone.gainToDb(this.volume);
-    this.initialized = true;
-    console.log("[SoundManager] Audio initialized");
+    if (this.initPromise) return this.initPromise;
+
+    this.initPromise = Tone.start()
+      .then(() => {
+        Tone.Destination.volume.value = Tone.gainToDb(this.volume);
+        this.initialized = true;
+        console.log("[SoundManager] Audio initialized");
+      })
+      .catch((error) => {
+        this.initPromise = null;
+        throw error;
+      });
+
+    return this.initPromise;
   }
 
   isReady() {
@@ -63,11 +74,21 @@ class SoundManager {
   }
 
   play(name) {
-    if (!this.initialized || !this.enabled) return;
     const soundFn = this.sounds[name];
-    if (soundFn) {
+    if (!soundFn || !this.enabled) return;
+
+    if (this.initialized) {
       soundFn();
+      return;
     }
+
+    this.init()
+      .then(() => {
+        if (this.initialized && this.enabled) {
+          soundFn();
+        }
+      })
+      .catch(() => {});
   }
 
   /**
