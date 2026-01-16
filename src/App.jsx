@@ -6598,6 +6598,10 @@ function App({ isShutDown }) {
   });
 
   useEffect(() => {
+    const unlockAudio = () => {
+      soundManager.init().catch(() => {});
+    };
+
     const handlePointerDown = (event) => {
       if (!(event.target instanceof Element)) return;
       const interactive = event.target.closest(
@@ -6621,8 +6625,12 @@ function App({ isShutDown }) {
     };
 
     document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("touchstart", unlockAudio, { once: true });
+    document.addEventListener("mousedown", unlockAudio, { once: true });
     return () => {
       document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("touchstart", unlockAudio);
+      document.removeEventListener("mousedown", unlockAudio);
     };
   }, []);
 
