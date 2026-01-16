@@ -225,6 +225,7 @@ import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWrit
 import CloudTransition from "./elements/CloudTransition";
 import KnowledgeLedgerModal from "./components/KnowledgeLedgerModal/KnowledgeLedgerModal";
 import { TbWorld } from "react-icons/tb";
+import SoundExperiment from "./experiments/SoundExperiment";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -6972,7 +6973,7 @@ function App({ isShutDown }) {
         )}
 
         <Routes>
-          {/* <Route path="/experiment" element={<TestFeed />} /> */}
+          <Route path="/experiment" element={<SoundExperiment />} />
           <Route
             path="/"
             element={
