@@ -118,6 +118,7 @@ import { analytics, database } from "./database/firebaseResources";
 
 import { pickProgrammingLanguage, translation } from "./utility/translation";
 import { subscribeToTeamInvites } from "./utility/nosql";
+import { soundManager } from "./utility/soundManager";
 
 import { Dashboard } from "./components/Dashboard/Dashboard";
 import { isUnsupportedBrowser } from "./utility/browser";
@@ -2417,6 +2418,14 @@ const Step = ({
 
         onAwardModalOpen();
       }
+    }
+  }, [isCorrect]);
+
+  useEffect(() => {
+    if (isCorrect === true) {
+      soundManager.play("correct");
+    } else if (isCorrect === false) {
+      soundManager.play("incorrect");
     }
   }, [isCorrect]);
 
@@ -6510,6 +6519,25 @@ function App({ isShutDown }) {
   const [hasSubmittedPasscode, setHasSubmittedPasscode] = useState(false);
 
   const [allowPosts, setAllowPosts] = useState(true);
+
+  useEffect(() => {
+    const handlePointerDown = (event) => {
+      if (!(event.target instanceof Element)) return;
+      const interactive = event.target.closest(
+        "button, [role='button'], a, input, select, textarea"
+      );
+      if (!interactive) return;
+      if (interactive.hasAttribute("disabled")) return;
+      if (interactive.getAttribute("aria-disabled") === "true") return;
+      soundManager.init().catch(() => {});
+      soundManager.play("select");
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, []);
 
   const [showClouds, setShowClouds] = useState(false);
   const [pendingPath, setPendingPath] = useState(null);
