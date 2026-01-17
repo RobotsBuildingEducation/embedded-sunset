@@ -138,13 +138,13 @@ const SelfPacedModal = ({
     const nextValue = Number(value);
     setInterval(nextValue);
     setInputValue(nextValue);
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("select");
   };
 
   const handleDailyGoalsChange = (val) => {
     setDailyGoals(val);
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("sliderTick");
   };
 
@@ -219,7 +219,7 @@ const SelfPacedModal = ({
   };
 
   const handleToggleNotifications = async () => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("modeSwitch");
     const userDocRef = doc(database, "users", userId);
 

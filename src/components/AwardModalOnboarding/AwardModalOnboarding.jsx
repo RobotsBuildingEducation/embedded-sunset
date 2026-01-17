@@ -48,7 +48,7 @@ const AwardModalOnboarding = ({
 
   useEffect(() => {
     if (!isOpen) return;
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("sparkle");
   }, [isOpen]);
 

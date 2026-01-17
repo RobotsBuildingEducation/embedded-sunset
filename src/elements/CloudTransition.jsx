@@ -1106,7 +1106,7 @@ const CloudTransition = ({
                 data-sound-ignore-select="true"
                 onClick={() => {
                   triggerHaptic();
-                  soundManager.init().catch(() => {});
+                  soundManager.resume();
                   soundManager.play("next");
                   onContinue();
                 }}

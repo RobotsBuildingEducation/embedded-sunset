@@ -203,7 +203,7 @@ const SettingsMenu = ({
   };
 
   const handleToggleAllowPosts = async (e) => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("modeSwitch");
     const newValue = e.target.checked;
     setAllowPosts(newValue);
@@ -215,7 +215,7 @@ const SettingsMenu = ({
   };
 
   const handleToggleSound = (e) => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("modeSwitch");
     setSoundEnabled(e.target.checked);
   };

@@ -165,7 +165,7 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
 
   const handleIdentityChange = async (value) => {
     triggerHaptic();
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("select");
     setSelectedIdentity(value);
 

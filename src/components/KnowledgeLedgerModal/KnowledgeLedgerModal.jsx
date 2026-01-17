@@ -231,7 +231,7 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
   };
 
   const handleSaveIdeaAndGenerate = async () => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("submitAction");
     try {
       const userId = localStorage.getItem("local_npub");

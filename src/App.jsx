@@ -872,7 +872,7 @@ export const VoiceInput = ({
 
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("pattern");
     // Retrieve the current count from localStorage
     // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
@@ -2264,7 +2264,7 @@ const Step = ({
 
   // Initialize items for Select Order question
   const handleToggleChange = async () => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("modeSwitch");
     const newValue = !isAdaptiveLearning;
     setIsAdaptiveLearning(newValue);
@@ -2405,7 +2405,7 @@ const Step = ({
     if (!suggestionMessage) return;
     if (lastSuggestionRef.current === suggestionMessage) return;
     lastSuggestionRef.current = suggestionMessage;
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("pattern");
   }, [suggestionMessage]);
 
@@ -3106,7 +3106,7 @@ const Step = ({
 
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("pattern");
     // Retrieve the current count from localStorage
     // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
@@ -3331,7 +3331,7 @@ const Step = ({
   }, [newQuestionMessages]);
 
   const handleGenerateNewQuestion = async () => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("submitAction");
     // Retrieve the current count from localStorage
     let gnrtctrl = parseInt(localStorage.getItem("gnrtctrl") || "0", 10);
@@ -3461,7 +3461,7 @@ const Step = ({
   })();
 
   const playActionBarSound = (id) => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     const soundMap = {
       bitcoin: "next",
       selfPaced: "colorSwitch",
@@ -4248,7 +4248,7 @@ const Step = ({
                     data-sound-ignore-select="true"
                     onMouseDown={() => {
                       triggerHaptic();
-                      soundManager.init().catch(() => {});
+                      soundManager.resume();
                       soundManager.play("submit");
                       handleAnswerClick();
                     }}
@@ -4258,7 +4258,7 @@ const Step = ({
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
                         triggerHaptic();
-                        soundManager.init().catch(() => {});
+                        soundManager.resume();
                         soundManager.play("submit");
                         handleAnswerClick();
                       }
@@ -4325,7 +4325,7 @@ const Step = ({
                         data-sound-ignore-select="true"
                         onClick={() => {
                           triggerHaptic();
-                          soundManager.init().catch(() => {});
+                          soundManager.resume();
                           soundManager.play("next");
                           handleNextClick();
                         }}
@@ -4334,7 +4334,7 @@ const Step = ({
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
                             triggerHaptic();
-                            soundManager.init().catch(() => {});
+                            soundManager.resume();
                             soundManager.play("next");
                             handleNextClick();
                           }
@@ -5370,7 +5370,7 @@ const Home = ({
   }, [view]);
 
   const handleToggle = async () => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("modeSwitch");
     const newLanguage = userLanguage.includes("en") ? "es" : "en";
     setUserLanguage(newLanguage);
@@ -6825,7 +6825,7 @@ function App({ isShutDown }) {
   );
 
   const handleToggle = async () => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("modeSwitch");
     const newLanguage = userLanguage.includes("en") ? "es" : "en";
     setUserLanguage(newLanguage);

@@ -267,7 +267,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
   };
 
   const handleSaveIdeaAndGenerate = async () => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("submitAction");
     try {
       const userId = localStorage.getItem("local_npub");
@@ -314,7 +314,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
   };
 
   const handleSkip = () => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("colorSwitch");
     onContinue();
   };

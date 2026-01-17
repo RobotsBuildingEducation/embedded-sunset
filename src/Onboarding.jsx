@@ -76,7 +76,7 @@ export const Onboarding = ({
   const toast = useToast();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const playOnboardingChord = () => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("next");
   };
 
@@ -136,7 +136,7 @@ export const Onboarding = ({
 
   const handleToggleNotifications = async () => {
     triggerHaptic();
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("modeSwitch");
     const userDocRef = doc(
       database,

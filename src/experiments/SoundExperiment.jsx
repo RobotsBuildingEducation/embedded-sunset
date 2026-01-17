@@ -130,12 +130,12 @@ export default function SoundExperiment() {
 
   const handleVolumeChange = (value) => {
     setVolume(value);
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("sliderTick");
   };
 
   const handleToggleSoundEnabled = (event) => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("modeSwitch");
     setSoundEnabled(event.target.checked);
   };
@@ -444,7 +444,7 @@ export default function SoundExperiment() {
               value={hoverValue}
               onChange={(val) => {
                 setHoverValue(val);
-                soundManager.init().catch(() => {});
+                soundManager.resume();
                 soundManager.play("sliderTick");
                 playHoverSound(val);
               }}
@@ -485,7 +485,7 @@ export default function SoundExperiment() {
               value={brushSize}
               onChange={(val) => {
                 setBrushSize(val);
-                soundManager.init().catch(() => {});
+                soundManager.resume();
                 soundManager.play("sliderTick");
                 playBrushSizeSound(val);
               }}

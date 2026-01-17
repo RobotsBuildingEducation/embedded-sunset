@@ -59,7 +59,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
 
   useEffect(() => {
     if (!isOpen) return;
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("sparkle");
   }, [isOpen]);
 
