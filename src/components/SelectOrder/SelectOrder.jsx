@@ -3,6 +3,7 @@ import { VStack, Button, Text } from "@chakra-ui/react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { translation } from "../../utility/translation";
 import { IoChatbubblesOutline } from "react-icons/io5";
+import { triggerHaptic } from "tactus";
 
 const SelectOrderQuestion = ({
   step,
@@ -99,10 +100,14 @@ const SelectOrderQuestion = ({
       style={{ outline: "none" }} // Remove default focus outline
     >
       <Button
-        onMouseDown={() => handleModalCheck(onLearnClick)}
+        onMouseDown={() => {
+          triggerHaptic();
+          handleModalCheck(onLearnClick);
+        }}
         colorScheme="pink"
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
+            triggerHaptic();
             handleModalCheck(onLearnClick);
           }
         }}

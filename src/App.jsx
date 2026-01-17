@@ -58,6 +58,7 @@ import ReactBash from "react-bash";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
+import { triggerHaptic } from "tactus";
 import {
   BrowserRouter as Router,
   Route,
@@ -1004,9 +1005,13 @@ export const VoiceInput = ({
           </Button>
           <Button
             colorScheme="pink"
-            onMouseDown={() => handleModalCheck(handleLearnClick)}
+            onMouseDown={() => {
+              triggerHaptic();
+              handleModalCheck(handleLearnClick);
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
+                triggerHaptic();
                 handleModalCheck(handleLearnClick);
               }
             }}
@@ -3724,11 +3729,13 @@ const Step = ({
                       mr={2}
                       mt="-0.5"
                       boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                      onMouseDown={() =>
-                        handleModalCheck(handleGenerateNewQuestion)
-                      }
+                      onMouseDown={() => {
+                        triggerHaptic();
+                        handleModalCheck(handleGenerateNewQuestion);
+                      }}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
+                          triggerHaptic();
                           handleModalCheck(handleGenerateNewQuestion);
                         }
                       }}
@@ -3791,6 +3798,7 @@ const Step = ({
                             <>
                               <MenuItem
                                 onClick={() => {
+                                  triggerHaptic();
                                   handleExitAILearningMode();
                                 }}
                                 fontWeight="bold"
@@ -3803,6 +3811,7 @@ const Step = ({
                               </MenuItem>
                               <MenuItem
                                 onClick={() => {
+                                  triggerHaptic();
                                   handleGenerateNewQuestion();
                                 }}
                                 icon={<RiAiGenerate />}
@@ -4238,6 +4247,7 @@ const Step = ({
                     fontSize="sm"
                     data-sound-ignore-select="true"
                     onMouseDown={() => {
+                      triggerHaptic();
                       soundManager.init().catch(() => {});
                       soundManager.play("submit");
                       handleAnswerClick();
@@ -4247,6 +4257,7 @@ const Step = ({
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
+                        triggerHaptic();
                         soundManager.init().catch(() => {});
                         soundManager.play("submit");
                         handleAnswerClick();
@@ -4281,6 +4292,7 @@ const Step = ({
                         background="white"
                         variant={"outline"}
                         onClick={() => {
+                          triggerHaptic();
                           setIsCorrect(null);
                           setFeedback("");
                           setInputValue("");
@@ -4292,6 +4304,7 @@ const Step = ({
                         boxShadow={"0.5px 0.5px 1px 0px black"}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            triggerHaptic();
                             setIsCorrect(null);
                             setFeedback("");
                             setInputValue("");
@@ -4311,6 +4324,7 @@ const Step = ({
                         variant={"outline"}
                         data-sound-ignore-select="true"
                         onClick={() => {
+                          triggerHaptic();
                           soundManager.init().catch(() => {});
                           soundManager.play("next");
                           handleNextClick();
@@ -4319,6 +4333,7 @@ const Step = ({
                         boxShadow={"0.5px 0.5px 1px 0px black"}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            triggerHaptic();
                             soundManager.init().catch(() => {});
                             soundManager.play("next");
                             handleNextClick();
@@ -4483,11 +4498,13 @@ const Step = ({
                         aria-label="Open Bitcoin mode"
                         icon={<FaBitcoin fontSize="20px" />}
                         onMouseDown={() => {
+                          triggerHaptic();
                           playActionBarSound("bitcoin");
                           onBitcoinModeOpen();
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            triggerHaptic();
                             playActionBarSound("bitcoin");
                             onBitcoinModeOpen();
                           }
@@ -4503,11 +4520,13 @@ const Step = ({
                         aria-label="Open self-paced mode"
                         icon={<PiClockCountdownFill fontSize="22px" />}
                         onMouseDown={() => {
+                          triggerHaptic();
                           playActionBarSound("selfPaced");
                           onSelfPacedOpen();
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            triggerHaptic();
                             playActionBarSound("selfPaced");
                             onSelfPacedOpen();
                           }
@@ -4524,10 +4543,12 @@ const Step = ({
                           color: actionBarButtonProps.color,
                           "data-sound-ignore-select": "true",
                           onMouseDown: () => {
+                            triggerHaptic();
                             playActionBarSound("theme");
                           },
                           onKeyDown: (e) => {
                             if (e.key === "Enter" || e.key === " ") {
+                              triggerHaptic();
                               playActionBarSound("theme");
                             }
                           },
@@ -4547,11 +4568,13 @@ const Step = ({
                         }
                         icon={<PiUsersBold fontSize="20px" />}
                         onMouseDown={() => {
+                          triggerHaptic();
                           playActionBarSound("social");
                           onSocialFeedOpen();
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            triggerHaptic();
                             playActionBarSound("social");
                             onSocialFeedOpen();
                           }
@@ -4578,11 +4601,13 @@ const Step = ({
                         }
                         icon={<RiCodeAiFill fontSize="22px" />}
                         onMouseDown={() => {
+                          triggerHaptic();
                           playActionBarSound("helper");
                           onKnowledgeLedgerOpen();
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            triggerHaptic();
                             playActionBarSound("helper");
                             onKnowledgeLedgerOpen();
                           }
@@ -4600,12 +4625,14 @@ const Step = ({
                         // boxShadow={patreonButtonShadow}
                         borderColor={hexToRgba(actionPalette[200], 0.85)}
                         onMouseDown={() => {
+                          triggerHaptic();
                           playActionBarSound("patreon");
                           window.location.href =
                             "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
+                            triggerHaptic();
                             playActionBarSound("patreon");
                             window.location.href =
                               "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";

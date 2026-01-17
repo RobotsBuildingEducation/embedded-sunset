@@ -40,6 +40,7 @@ import { FaFireAlt } from "react-icons/fa";
 import { RiSlowDownLine, RiSpeedUpLine } from "react-icons/ri";
 import { COURSE_LESSON_COUNT } from "../../../utility/nosql";
 import { soundManager } from "../../../utility/soundManager";
+import { triggerHaptic } from "tactus";
 
 // CountdownTimer now supports days along with hours:minutes:seconds and shows a progress bar.
 const CountdownTimer = ({ targetTime, initialTime, label, userLanguage }) => {
@@ -287,13 +288,17 @@ const SelfPacedOnboarding = ({
         fontSize="sm"
         textAlign="left"
         mb={4}
-        onMouseDown={(event) => setPresetGoal(event, "week")}
+        onMouseDown={(event) => {
+          triggerHaptic();
+          setPresetGoal(event, "week");
+        }}
         colorScheme="orange"
         variant={"outline"}
         width="100%"
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
-            setPresetGoal(event, "week"); // Select the option on Enter or Space key
+            triggerHaptic();
+            setPresetGoal(e, "week"); // Select the option on Enter or Space key
           }
         }}
       >
@@ -305,10 +310,14 @@ const SelfPacedOnboarding = ({
         fontSize="sm"
         textAlign="left"
         mb={10}
-        onMouseDown={(event) => setPresetGoal(event, "month")}
+        onMouseDown={(event) => {
+          triggerHaptic();
+          setPresetGoal(event, "month");
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
-            setPresetGoal(event, "month"); // Select the option on Enter or Space key
+            triggerHaptic();
+            setPresetGoal(e, "month"); // Select the option on Enter or Space key
           }
         }}
         colorScheme="yellow"
@@ -340,7 +349,10 @@ const SelfPacedOnboarding = ({
                   ? "0 0 0 2px rgba(56, 178, 172, 0.2)"
                   : "none"
               }
-              onMouseDown={() => handleIntervalChange(String(option))}
+              onMouseDown={() => {
+                triggerHaptic();
+                handleIntervalChange(String(option));
+              }}
               _hover={{
                 borderColor: "teal.300",
               }}
@@ -458,7 +470,10 @@ const SelfPacedOnboarding = ({
       <Button
         boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
         mr={3}
-        onMouseDown={handleSave}
+        onMouseDown={() => {
+          triggerHaptic();
+          handleSave();
+        }}
       >
         {translation[userLanguage]["button.save"]}
       </Button>

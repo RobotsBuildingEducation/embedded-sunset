@@ -9,6 +9,7 @@ import { translation } from "../../utility/translation";
 import Editor from "react-simple-code-editor";
 import { IoChatbubblesOutline } from "react-icons/io5";
 import { soundManager } from "../../utility/soundManager";
+import { triggerHaptic } from "tactus";
 
 const CodeCompletionQuestion = ({
   step,
@@ -119,9 +120,13 @@ const CodeCompletionQuestion = ({
       {/* Learn Button */}
       <Button
         ref={learnButtonRef}
-        onMouseDown={() => handleModalCheck(onLearnClick)}
+        onMouseDown={() => {
+          triggerHaptic();
+          handleModalCheck(onLearnClick);
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
+            triggerHaptic();
             handleModalCheck(onLearnClick);
           }
         }}

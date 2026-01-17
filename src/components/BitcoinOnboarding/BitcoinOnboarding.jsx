@@ -27,6 +27,7 @@ import { database } from "../../database/firebaseResources";
 import { doc, updateDoc } from "firebase/firestore";
 import { IdentityCard } from "../../elements/IdentityCard";
 import { soundManager } from "../../utility/soundManager";
+import { triggerHaptic } from "tactus";
 
 const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
   const toast = useToast();
@@ -403,9 +404,13 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
               </Box>
             )}
             <Button
-              onMouseDown={handleCreateWallet}
+              onMouseDown={() => {
+                triggerHaptic();
+                handleCreateWallet();
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
+                  triggerHaptic();
                   handleCreateWallet();
                 }
               }}
@@ -558,9 +563,13 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
                     {translation[userLanguage]["or"]} &nbsp;
                     <Button
                       boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                      onMouseDown={() => handleCopyInvoice()}
+                      onMouseDown={() => {
+                        triggerHaptic();
+                        handleCopyInvoice();
+                      }}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
+                          triggerHaptic();
                           handleCopyInvoice();
                         }
                       }}
@@ -602,9 +611,13 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
               <Button
                 mt={2}
                 boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                onMouseDown={() => generateNewQR()}
+                onMouseDown={() => {
+                  triggerHaptic();
+                  generateNewQR();
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
+                    triggerHaptic();
                     generateNewQR();
                   }
                 }}
@@ -653,9 +666,13 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
             <VStack>
               {/* <SunsetCanvas /> */}
               <Button
-                onMouseDown={() => handleInitiateDeposit()}
+                onMouseDown={() => {
+                  triggerHaptic();
+                  handleInitiateDeposit();
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
+                    triggerHaptic();
                     handleInitiateDeposit();
                   }
                 }}

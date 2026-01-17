@@ -25,6 +25,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { GiBullseye } from "react-icons/gi";
 import { TbBellHeart } from "react-icons/tb";
+import { triggerHaptic } from "tactus";
 
 import {
   incrementUserOnboardingStep,
@@ -780,6 +781,7 @@ export const Onboarding = ({
                   <br />
                   <Button
                     onClick={() => {
+                      triggerHaptic();
                       playOnboardingChord();
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
@@ -998,9 +1000,10 @@ export const Onboarding = ({
                       <MenuItem
                         p={6}
                         borderBottom="1px solid #ececec"
-                        onClick={() =>
-                          handleLanguageSelect({ target: { value: "en" } })
-                        }
+                        onClick={() => {
+                          triggerHaptic();
+                          handleLanguageSelect({ target: { value: "en" } });
+                        }}
                       >
                         {
                           translation[userLanguage][
@@ -1011,9 +1014,10 @@ export const Onboarding = ({
                       <MenuItem
                         p={6}
                         borderBottom="1px solid #ececec"
-                        onClick={() =>
-                          handleLanguageSelect({ target: { value: "es" } })
-                        }
+                        onClick={() => {
+                          triggerHaptic();
+                          handleLanguageSelect({ target: { value: "es" } });
+                        }}
                       >
                         {
                           translation[userLanguage][
@@ -1024,41 +1028,45 @@ export const Onboarding = ({
                       <MenuItem
                         p={6}
                         borderBottom="1px solid #ececec"
-                        onClick={() =>
-                          handleLanguageSelect({ target: { value: "py-en" } })
-                        }
+                        onClick={() => {
+                          triggerHaptic();
+                          handleLanguageSelect({ target: { value: "py-en" } });
+                        }}
                       >
                         {translation[userLanguage]["language.python.english"]}
                       </MenuItem>
                       <MenuItem
                         p={6}
                         borderBottom="1px solid #ececec"
-                        onClick={() =>
+                        onClick={() => {
+                          triggerHaptic();
                           handleLanguageSelect({
                             target: { value: "swift-en" },
-                          })
-                        }
+                          });
+                        }}
                       >
                         {translation[userLanguage]["language.swift.english"]}
                       </MenuItem>
                       <MenuItem
                         p={6}
-                        onClick={() =>
+                        onClick={() => {
+                          triggerHaptic();
                           handleLanguageSelect({
                             target: { value: "android-en" },
-                          })
-                        }
+                          });
+                        }}
                       >
                         {translation[userLanguage]["language.android.english"]}
                       </MenuItem>
 
                       <MenuItem
                         p={6}
-                        onClick={() =>
+                        onClick={() => {
+                          triggerHaptic();
                           handleLanguageSelect({
                             target: { value: "compsci-en" },
-                          })
-                        }
+                          });
+                        }}
                       >
                         {translation[userLanguage]["language.compsci.english"]}
                       </MenuItem>
@@ -1070,6 +1078,7 @@ export const Onboarding = ({
                   <br />
                   <Button
                     onClick={() => {
+                      triggerHaptic();
                       playOnboardingChord();
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
@@ -1154,6 +1163,7 @@ export const Onboarding = ({
                   {renderNotifications()}
                   <Button
                     onClick={() => {
+                      triggerHaptic();
                       playOnboardingChord();
                       incrementUserOnboardingStep(
                         localStorage.getItem("local_npub")
@@ -1267,9 +1277,13 @@ export const Onboarding = ({
                 {/* Optional back button */}
 
                 <Button
-                  onMouseDown={handleActuallyLaunchApp}
+                  onMouseDown={() => {
+                    triggerHaptic();
+                    handleActuallyLaunchApp();
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
+                      triggerHaptic();
                       handleActuallyLaunchApp();
                     }
                   }}
