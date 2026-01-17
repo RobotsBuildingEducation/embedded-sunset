@@ -107,9 +107,8 @@ class SoundManager {
    * Play hover sound with pitch based on distance from center
    */
   playHover(normalizedDistance) {
-    if (!this.initialized || !this.enabled) return;
-
     this.triggerHapticPulse();
+    if (!this.initialized || !this.enabled) return;
 
     const BASE_NOTE = 72; // C5
     const SEMITONE_RANGE = 12;
@@ -134,9 +133,8 @@ class SoundManager {
    * Play brush size change sound - rising or falling tone
    */
   playBrushSize(size, maxSize) {
-    if (!this.initialized || !this.enabled) return;
-
     this.triggerHapticPulse();
+    if (!this.initialized || !this.enabled) return;
 
     const t = (size - 1) / (maxSize - 1);
     const midiNote = 60 + t * 12; // C4 to C5
@@ -161,9 +159,8 @@ class SoundManager {
    * @param {number} max - Maximum slider value
    */
   playSliderTick(value, min = 0, max = 100) {
-    if (!this.initialized || !this.enabled) return;
-
     this.triggerHapticPulse();
+    if (!this.initialized || !this.enabled) return;
 
     const t = (value - min) / (max - min);
     const midiNote = 60 + t * 12; // C4 to C5
@@ -195,9 +192,8 @@ class SoundManager {
    * Each color has a chord that matches its emotional vibe
    */
   playColorSwitch(index, _total) {
-    if (!this.initialized || !this.enabled) return;
-
     this.triggerHapticPulse();
+    if (!this.initialized || !this.enabled) return;
 
     // Chords mapped to colors (index 0-9):
     // 0: Cyan    - Cmaj9 (crystalline, airy)
