@@ -29,6 +29,7 @@ import { database } from "../database/firebaseResources";
 import { doc, onSnapshot } from "firebase/firestore";
 import { steps as defaultSteps } from "../utility/content";
 import { soundManager } from "../utility/soundManager";
+import { triggerHaptic } from "tactus";
 
 const MotionBox = motion(Box);
 
@@ -1104,6 +1105,7 @@ const CloudTransition = ({
                 transition={{ duration: 0.2, delay: 0.35 }}
                 data-sound-ignore-select="true"
                 onClick={() => {
+                  triggerHaptic();
                   soundManager.init().catch(() => {});
                   soundManager.play("next");
                   onContinue();

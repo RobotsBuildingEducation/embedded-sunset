@@ -22,6 +22,7 @@ import { onboardingTranscript } from "../../utility/transcript";
 import ReactConfetti from "react-confetti";
 import { useSharedNostr } from "../../hooks/useNOSTR";
 import { soundManager } from "../../utility/soundManager";
+import { triggerHaptic } from "tactus";
 
 const AwardModalOnboarding = ({
   isOpen,
@@ -297,12 +298,16 @@ const AwardModalOnboarding = ({
         </ModalBody>
         <ModalFooter margin={0} padding={3}>
           <Button
-            onMouseDown={handleActuallyReallySeriouslyLaunchApp}
+            onMouseDown={() => {
+              triggerHaptic();
+              handleActuallyReallySeriouslyLaunchApp();
+            }}
             variant="solid"
             size="md"
             boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
+                triggerHaptic();
                 handleActuallyReallySeriouslyLaunchApp();
               }
             }}

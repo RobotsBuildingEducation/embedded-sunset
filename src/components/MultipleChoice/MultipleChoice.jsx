@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Button, VStack, HStack, Box, Text } from "@chakra-ui/react";
 import { translation } from "../../utility/translation";
 import { IoChatbubblesOutline } from "react-icons/io5";
+import { triggerHaptic } from "tactus";
 
 const MultipleChoiceQuestion = ({
   question,
@@ -64,11 +65,15 @@ const MultipleChoiceQuestion = ({
     <VStack spacing={4} onKeyDown={handleKeyDown}>
       <Button
         ref={learnButtonRef}
-        onMouseDown={() => handleModalCheck(onLearnClick)}
+        onMouseDown={() => {
+          triggerHaptic();
+          handleModalCheck(onLearnClick);
+        }}
         colorScheme="pink"
         tabIndex={0}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
+            triggerHaptic();
             handleModalCheck(onLearnClick);
           }
         }}
