@@ -117,7 +117,19 @@ class SoundManager {
    * Play hover sound with pitch based on distance from center
    */
   playHover(normalizedDistance) {
-    if (!this.initialized || !this.enabled) return;
+    if (!this.enabled) return;
+    if (!this.initialized) {
+      this.init()
+        .then(() => this.playHover(normalizedDistance))
+        .catch(() => {});
+      return;
+    }
+    if (Tone.context.state !== "running") {
+      this.ensureRunning()
+        .then(() => this.playHover(normalizedDistance))
+        .catch(() => {});
+      return;
+    }
 
     const BASE_NOTE = 72; // C5
     const SEMITONE_RANGE = 12;
@@ -142,7 +154,19 @@ class SoundManager {
    * Play brush size change sound - rising or falling tone
    */
   playBrushSize(size, maxSize) {
-    if (!this.initialized || !this.enabled) return;
+    if (!this.enabled) return;
+    if (!this.initialized) {
+      this.init()
+        .then(() => this.playBrushSize(size, maxSize))
+        .catch(() => {});
+      return;
+    }
+    if (Tone.context.state !== "running") {
+      this.ensureRunning()
+        .then(() => this.playBrushSize(size, maxSize))
+        .catch(() => {});
+      return;
+    }
 
     const t = (size - 1) / (maxSize - 1);
     const midiNote = 60 + t * 12; // C4 to C5
@@ -167,7 +191,19 @@ class SoundManager {
    * @param {number} max - Maximum slider value
    */
   playSliderTick(value, min = 0, max = 100) {
-    if (!this.initialized || !this.enabled) return;
+    if (!this.enabled) return;
+    if (!this.initialized) {
+      this.init()
+        .then(() => this.playSliderTick(value, min, max))
+        .catch(() => {});
+      return;
+    }
+    if (Tone.context.state !== "running") {
+      this.ensureRunning()
+        .then(() => this.playSliderTick(value, min, max))
+        .catch(() => {});
+      return;
+    }
 
     const t = (value - min) / (max - min);
     const midiNote = 60 + t * 12; // C4 to C5
@@ -189,7 +225,19 @@ class SoundManager {
    * Play a random chord from the color palette
    */
   playRandomChord() {
-    if (!this.initialized || !this.enabled) return;
+    if (!this.enabled) return;
+    if (!this.initialized) {
+      this.init()
+        .then(() => this.playRandomChord())
+        .catch(() => {});
+      return;
+    }
+    if (Tone.context.state !== "running") {
+      this.ensureRunning()
+        .then(() => this.playRandomChord())
+        .catch(() => {});
+      return;
+    }
     const randomIndex = Math.floor(Math.random() * 10);
     this.playColorSwitch(randomIndex, 10);
   }
@@ -199,7 +247,19 @@ class SoundManager {
    * Each color has a chord that matches its emotional vibe
    */
   playColorSwitch(index, _total) {
-    if (!this.initialized || !this.enabled) return;
+    if (!this.enabled) return;
+    if (!this.initialized) {
+      this.init()
+        .then(() => this.playColorSwitch(index, _total))
+        .catch(() => {});
+      return;
+    }
+    if (Tone.context.state !== "running") {
+      this.ensureRunning()
+        .then(() => this.playColorSwitch(index, _total))
+        .catch(() => {});
+      return;
+    }
 
     // Chords mapped to colors (index 0-9):
     // 0: Cyan    - Cmaj9 (crystalline, airy)
