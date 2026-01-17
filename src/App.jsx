@@ -6636,15 +6636,17 @@ function App({ isShutDown }) {
       );
       if (closeTarget) {
         soundManager.init().catch(() => {});
-        soundManager.play("erase");
+        soundManager.triggerHapticPulse();
+        soundManager.play("erase", { haptic: false });
         return;
       }
       if (interactive.closest('[data-sound-ignore-select="true"]')) return;
       if (interactive.hasAttribute("disabled")) return;
       if (interactive.getAttribute("aria-disabled") === "true") return;
       soundManager.init().catch(() => {});
-      soundManager.playHover(Math.random());
-      soundManager.play("select");
+      soundManager.triggerHapticPulse();
+      soundManager.playHover(Math.random(), { haptic: false });
+      soundManager.play("select", { haptic: false });
     };
 
     document.addEventListener("pointerdown", handlePointerDown);

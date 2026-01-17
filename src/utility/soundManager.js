@@ -6,6 +6,7 @@
  */
 
 import * as Tone from "tone";
+import { triggerHaptic } from "tactus";
 
 // Volume Levels (dB)
 const VOL = Object.freeze({
@@ -73,9 +74,22 @@ class SoundManager {
     return this.volume;
   }
 
-  play(name) {
+  triggerHapticPulse(duration) {
+    if (!this.enabled) return;
+    try {
+      triggerHaptic(duration);
+    } catch {
+      // Ignore haptic errors in unsupported environments.
+    }
+  }
+
+  play(name, { haptic = true } = {}) {
     const soundFn = this.sounds[name];
     if (!soundFn || !this.enabled) return;
+
+    if (haptic) {
+      this.triggerHapticPulse();
+    }
 
     if (this.initialized) {
       soundFn();
@@ -94,7 +108,10 @@ class SoundManager {
   /**
    * Play hover sound with pitch based on distance from center
    */
-  playHover(normalizedDistance) {
+  playHover(normalizedDistance, { haptic = true } = {}) {
+    if (haptic) {
+      this.triggerHapticPulse();
+    }
     if (!this.initialized || !this.enabled) return;
 
     const BASE_NOTE = 72; // C5
@@ -120,6 +137,7 @@ class SoundManager {
    * Play brush size change sound - rising or falling tone
    */
   playBrushSize(size, maxSize) {
+    this.triggerHapticPulse();
     if (!this.initialized || !this.enabled) return;
 
     const t = (size - 1) / (maxSize - 1);
@@ -145,6 +163,7 @@ class SoundManager {
    * @param {number} max - Maximum slider value
    */
   playSliderTick(value, min = 0, max = 100) {
+    this.triggerHapticPulse();
     if (!this.initialized || !this.enabled) return;
 
     const t = (value - min) / (max - min);
@@ -177,6 +196,7 @@ class SoundManager {
    * Each color has a chord that matches its emotional vibe
    */
   playColorSwitch(index, _total) {
+    this.triggerHapticPulse();
     if (!this.initialized || !this.enabled) return;
 
     // Chords mapped to colors (index 0-9):
