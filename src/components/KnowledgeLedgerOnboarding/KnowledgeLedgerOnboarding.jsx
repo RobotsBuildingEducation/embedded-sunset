@@ -31,6 +31,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { database } from "../../database/firebaseResources";
 import WaveBar from "../WaveBar";
 import { soundManager } from "../../utility/soundManager";
+import { triggerHaptic } from "tactus";
 
 export const transcriptDisplay = {
   tutorial: {
