@@ -83,11 +83,13 @@ class SoundManager {
     }
   }
 
-  play(name) {
+  play(name, { haptic = true } = {}) {
     const soundFn = this.sounds[name];
     if (!soundFn || !this.enabled) return;
 
-    this.triggerHapticPulse();
+    if (haptic) {
+      this.triggerHapticPulse();
+    }
 
     if (this.initialized) {
       soundFn();
@@ -106,8 +108,10 @@ class SoundManager {
   /**
    * Play hover sound with pitch based on distance from center
    */
-  playHover(normalizedDistance) {
-    this.triggerHapticPulse();
+  playHover(normalizedDistance, { haptic = true } = {}) {
+    if (haptic) {
+      this.triggerHapticPulse();
+    }
     if (!this.initialized || !this.enabled) return;
 
     const BASE_NOTE = 72; // C5
