@@ -6,6 +6,7 @@
  */
 
 import * as Tone from "tone";
+import { triggerHaptic } from "tactus";
 
 // Volume Levels (dB)
 const VOL = Object.freeze({
@@ -73,9 +74,20 @@ class SoundManager {
     return this.volume;
   }
 
+  triggerHapticPulse(duration) {
+    if (!this.enabled) return;
+    try {
+      triggerHaptic(duration);
+    } catch {
+      // Ignore haptic errors in unsupported environments.
+    }
+  }
+
   play(name) {
     const soundFn = this.sounds[name];
     if (!soundFn || !this.enabled) return;
+
+    this.triggerHapticPulse();
 
     if (this.initialized) {
       soundFn();
@@ -96,6 +108,8 @@ class SoundManager {
    */
   playHover(normalizedDistance) {
     if (!this.initialized || !this.enabled) return;
+
+    this.triggerHapticPulse();
 
     const BASE_NOTE = 72; // C5
     const SEMITONE_RANGE = 12;
@@ -122,6 +136,8 @@ class SoundManager {
   playBrushSize(size, maxSize) {
     if (!this.initialized || !this.enabled) return;
 
+    this.triggerHapticPulse();
+
     const t = (size - 1) / (maxSize - 1);
     const midiNote = 60 + t * 12; // C4 to C5
     const frequency = 440 * Math.pow(2, (midiNote - 69) / 12);
@@ -146,6 +162,8 @@ class SoundManager {
    */
   playSliderTick(value, min = 0, max = 100) {
     if (!this.initialized || !this.enabled) return;
+
+    this.triggerHapticPulse();
 
     const t = (value - min) / (max - min);
     const midiNote = 60 + t * 12; // C4 to C5
@@ -178,6 +196,8 @@ class SoundManager {
    */
   playColorSwitch(index, _total) {
     if (!this.initialized || !this.enabled) return;
+
+    this.triggerHapticPulse();
 
     // Chords mapped to colors (index 0-9):
     // 0: Cyan    - Cmaj9 (crystalline, airy)
