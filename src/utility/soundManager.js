@@ -92,7 +92,9 @@ class SoundManager {
         playSound();
         return;
       }
-      this.ensureRunning().then(playSound).catch(() => {});
+      this.ensureRunning()
+        .then(playSound)
+        .catch(() => {});
       return;
     }
 
@@ -103,7 +105,9 @@ class SoundManager {
             playSound();
             return;
           }
-          this.ensureRunning().then(playSound).catch(() => {});
+          this.ensureRunning()
+            .then(playSound)
+            .catch(() => {});
         }
       })
       .catch(() => {});
