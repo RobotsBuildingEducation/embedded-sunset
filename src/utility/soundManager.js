@@ -73,19 +73,37 @@ class SoundManager {
     return this.volume;
   }
 
+  async ensureRunning() {
+    if (Tone.context.state !== "running") {
+      await Tone.start();
+    }
+  }
+
   play(name) {
     const soundFn = this.sounds[name];
     if (!soundFn || !this.enabled) return;
+    const playSound = () => {
+      if (!this.enabled) return;
+      soundFn();
+    };
 
     if (this.initialized) {
-      soundFn();
+      if (Tone.context.state === "running") {
+        playSound();
+        return;
+      }
+      this.ensureRunning().then(playSound).catch(() => {});
       return;
     }
 
     this.init()
       .then(() => {
         if (this.initialized && this.enabled) {
-          soundFn();
+          if (Tone.context.state === "running") {
+            playSound();
+            return;
+          }
+          this.ensureRunning().then(playSound).catch(() => {});
         }
       })
       .catch(() => {});

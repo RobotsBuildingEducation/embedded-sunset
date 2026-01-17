@@ -135,6 +135,7 @@ export const Onboarding = ({
   }, []);
 
   const handleToggleNotifications = async () => {
+    triggerHaptic();
     soundManager.init().catch(() => {});
     soundManager.play("modeSwitch");
     const userDocRef = doc(

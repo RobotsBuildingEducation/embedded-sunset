@@ -159,6 +159,7 @@ export default function KnowledgeLedgerOnboarding({
   }, []);
 
   const saveUserInput = async () => {
+    triggerHaptic();
     soundManager.init().catch(() => {});
     soundManager.play("submitAction");
     try {
@@ -177,6 +178,7 @@ export default function KnowledgeLedgerOnboarding({
   };
 
   const handleSkip = () => {
+    triggerHaptic();
     soundManager.init().catch(() => {});
     soundManager.play("colorSwitch");
     moveToNext();
