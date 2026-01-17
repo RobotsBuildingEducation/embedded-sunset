@@ -138,12 +138,14 @@ const SelfPacedOnboarding = ({
     const nextValue = Number(value);
     setInterval(nextValue);
     setInputValue(nextValue);
+    triggerHaptic();
     soundManager.init().catch(() => {});
     soundManager.play("select");
   };
 
   const handleDailyGoalsChange = (val) => {
     setDailyGoals(val);
+    triggerHaptic();
     soundManager.init().catch(() => {});
     soundManager.play("sliderTick");
   };
