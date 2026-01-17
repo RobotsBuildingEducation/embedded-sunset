@@ -872,7 +872,7 @@ export const VoiceInput = ({
 
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("pattern");
     // Retrieve the current count from localStorage
     // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
@@ -2264,7 +2264,7 @@ const Step = ({
 
   // Initialize items for Select Order question
   const handleToggleChange = async () => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("modeSwitch");
     const newValue = !isAdaptiveLearning;
     setIsAdaptiveLearning(newValue);
@@ -2405,7 +2405,7 @@ const Step = ({
     if (!suggestionMessage) return;
     if (lastSuggestionRef.current === suggestionMessage) return;
     lastSuggestionRef.current = suggestionMessage;
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("pattern");
   }, [suggestionMessage]);
 
@@ -3106,7 +3106,7 @@ const Step = ({
 
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("pattern");
     // Retrieve the current count from localStorage
     // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
@@ -3331,7 +3331,7 @@ const Step = ({
   }, [newQuestionMessages]);
 
   const handleGenerateNewQuestion = async () => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("submitAction");
     // Retrieve the current count from localStorage
     let gnrtctrl = parseInt(localStorage.getItem("gnrtctrl") || "0", 10);
@@ -3461,7 +3461,7 @@ const Step = ({
   })();
 
   const playActionBarSound = (id) => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     const soundMap = {
       bitcoin: "next",
       selfPaced: "colorSwitch",
@@ -4248,7 +4248,7 @@ const Step = ({
                     data-sound-ignore-select="true"
                     onMouseDown={() => {
                       triggerHaptic();
-                      soundManager.init().catch(() => {});
+                      soundManager.resume();
                       soundManager.play("submit");
                       handleAnswerClick();
                     }}
@@ -4258,7 +4258,7 @@ const Step = ({
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
                         triggerHaptic();
-                        soundManager.init().catch(() => {});
+                        soundManager.resume();
                         soundManager.play("submit");
                         handleAnswerClick();
                       }
@@ -4325,7 +4325,7 @@ const Step = ({
                         data-sound-ignore-select="true"
                         onClick={() => {
                           triggerHaptic();
-                          soundManager.init().catch(() => {});
+                          soundManager.resume();
                           soundManager.play("next");
                           handleNextClick();
                         }}
@@ -4334,7 +4334,7 @@ const Step = ({
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
                             triggerHaptic();
-                            soundManager.init().catch(() => {});
+                            soundManager.resume();
                             soundManager.play("next");
                             handleNextClick();
                           }
@@ -5370,7 +5370,7 @@ const Home = ({
   }, [view]);
 
   const handleToggle = async () => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("modeSwitch");
     const newLanguage = userLanguage.includes("en") ? "es" : "en";
     setUserLanguage(newLanguage);
@@ -6625,16 +6625,16 @@ function App({ isShutDown }) {
   });
 
   useEffect(() => {
-    const unlockAudio = () => {
-      soundManager.init().catch(() => {});
-      document.removeEventListener("pointerdown", unlockAudio);
-      document.removeEventListener("keydown", unlockAudio);
+    // Resume audio on any user interaction - iOS Safari can suspend audio context
+    // when switching apps, so we need to try resuming on every interaction
+    const resumeAudio = () => {
+      soundManager.resume();
     };
 
-    document.addEventListener("pointerdown", unlockAudio);
-    document.addEventListener("keydown", unlockAudio);
-
     const handlePointerDown = (event) => {
+      // Always try to resume audio first
+      resumeAudio();
+
       if (!(event.target instanceof Element)) return;
       const interactive = event.target.closest(
         "button, [role='button'], a, input, select, textarea"
@@ -6644,23 +6644,25 @@ function App({ isShutDown }) {
         '[data-sound-close="true"], [aria-label="Close"], .chakra-modal__close-btn, .chakra-drawer__close-btn, .chakra-popover__close-btn, .chakra-alert-dialog__close-btn, .chakra-close-button, .chakra-tag__close-button'
       );
       if (closeTarget) {
-        soundManager.init().catch(() => {});
         soundManager.play("erase");
         return;
       }
       if (interactive.closest('[data-sound-ignore-select="true"]')) return;
       if (interactive.hasAttribute("disabled")) return;
       if (interactive.getAttribute("aria-disabled") === "true") return;
-      soundManager.init().catch(() => {});
       soundManager.playHover(Math.random());
       soundManager.play("select");
     };
 
+    // Use both pointer and touch events for maximum compatibility
     document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("touchstart", resumeAudio, { passive: true });
+    document.addEventListener("keydown", resumeAudio);
+
     return () => {
-      document.removeEventListener("pointerdown", unlockAudio);
-      document.removeEventListener("keydown", unlockAudio);
       document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("touchstart", resumeAudio);
+      document.removeEventListener("keydown", resumeAudio);
     };
   }, []);
 
@@ -6823,7 +6825,7 @@ function App({ isShutDown }) {
   );
 
   const handleToggle = async () => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("modeSwitch");
     const newLanguage = userLanguage.includes("en") ? "es" : "en";
     setUserLanguage(newLanguage);

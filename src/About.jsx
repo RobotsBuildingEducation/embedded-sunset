@@ -25,7 +25,7 @@ const Content = ({ children }) => {
 export const About = ({ userLanguage, handleToggle }) => {
   let navigate = useNavigate();
   const handleLanguageToggle = () => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("modeSwitch");
     handleToggle();
   };

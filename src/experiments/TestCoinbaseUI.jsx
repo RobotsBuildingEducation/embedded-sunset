@@ -162,7 +162,7 @@ export const TestFeed = ({ userLanguage, allowPosts, setAllowPosts }) => {
   };
 
   const handleToggleAllowPosts = async (e) => {
-    soundManager.init().catch(() => {});
+    soundManager.resume();
     soundManager.play("modeSwitch");
     const newValue = e.target.checked;
     setAllowPosts(newValue);

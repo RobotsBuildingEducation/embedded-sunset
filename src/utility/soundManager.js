@@ -79,6 +79,20 @@ class SoundManager {
     }
   }
 
+  /**
+   * Resume audio context - call this on every user interaction
+   * iOS Safari can suspend audio context when switching apps
+   */
+  resume() {
+    // Always try to start/resume Tone on user interaction
+    // This is synchronous to maintain the user gesture context
+    Tone.start().catch(() => {});
+
+    if (!this.initialized) {
+      this.init().catch(() => {});
+    }
+  }
+
   play(name) {
     const soundFn = this.sounds[name];
     if (!soundFn || !this.enabled) return;
@@ -117,47 +131,73 @@ class SoundManager {
    * Play hover sound with pitch based on distance from center
    */
   playHover(normalizedDistance) {
-    if (!this.initialized || !this.enabled) return;
+    if (!this.enabled) return;
 
-    const BASE_NOTE = 72; // C5
-    const SEMITONE_RANGE = 12;
+    const doPlay = () => {
+      if (!this.enabled) return;
+      const BASE_NOTE = 72; // C5
+      const SEMITONE_RANGE = 12;
 
-    const t = Math.max(0, Math.min(1, normalizedDistance));
-    const midiNote = BASE_NOTE + t * SEMITONE_RANGE;
-    const frequency = 440 * Math.pow(2, (midiNote - 69) / 12);
+      const t = Math.max(0, Math.min(1, normalizedDistance));
+      const midiNote = BASE_NOTE + t * SEMITONE_RANGE;
+      const frequency = 440 * Math.pow(2, (midiNote - 69) / 12);
 
-    const synth = this.getSynth({
-      type: "sine",
-      attack: 0.001,
-      decay: 0.03,
-      sustain: 0,
-      release: 0.02,
-    });
-    synth.volume.value = VOL.QUIET - 6;
-    synth.triggerAttackRelease(frequency, "64n");
-    this.releaseSynth(synth, 80);
+      const synth = this.getSynth({
+        type: "sine",
+        attack: 0.001,
+        decay: 0.03,
+        sustain: 0,
+        release: 0.02,
+      });
+      synth.volume.value = VOL.QUIET - 6;
+      synth.triggerAttackRelease(frequency, "64n");
+      this.releaseSynth(synth, 80);
+    };
+
+    if (this.initialized && Tone.context.state === "running") {
+      doPlay();
+      return;
+    }
+
+    this.init()
+      .then(() => this.ensureRunning())
+      .then(doPlay)
+      .catch(() => {});
   }
 
   /**
    * Play brush size change sound - rising or falling tone
    */
   playBrushSize(size, maxSize) {
-    if (!this.initialized || !this.enabled) return;
+    if (!this.enabled) return;
 
-    const t = (size - 1) / (maxSize - 1);
-    const midiNote = 60 + t * 12; // C4 to C5
-    const frequency = 440 * Math.pow(2, (midiNote - 69) / 12);
+    const doPlay = () => {
+      if (!this.enabled) return;
+      const t = (size - 1) / (maxSize - 1);
+      const midiNote = 60 + t * 12; // C4 to C5
+      const frequency = 440 * Math.pow(2, (midiNote - 69) / 12);
 
-    const synth = this.getSynth({
-      type: "triangle",
-      attack: 0.005,
-      decay: 0.08,
-      sustain: 0,
-      release: 0.06,
-    });
-    synth.volume.value = VOL.SOFT;
-    synth.triggerAttackRelease(frequency, "32n");
-    this.releaseSynth(synth, 150);
+      const synth = this.getSynth({
+        type: "triangle",
+        attack: 0.005,
+        decay: 0.08,
+        sustain: 0,
+        release: 0.06,
+      });
+      synth.volume.value = VOL.SOFT;
+      synth.triggerAttackRelease(frequency, "32n");
+      this.releaseSynth(synth, 150);
+    };
+
+    if (this.initialized && Tone.context.state === "running") {
+      doPlay();
+      return;
+    }
+
+    this.init()
+      .then(() => this.ensureRunning())
+      .then(doPlay)
+      .catch(() => {});
   }
 
   /**
@@ -167,29 +207,42 @@ class SoundManager {
    * @param {number} max - Maximum slider value
    */
   playSliderTick(value, min = 0, max = 100) {
-    if (!this.initialized || !this.enabled) return;
+    if (!this.enabled) return;
 
-    const t = (value - min) / (max - min);
-    const midiNote = 60 + t * 12; // C4 to C5
-    const frequency = 440 * Math.pow(2, (midiNote - 69) / 12);
+    const doPlay = () => {
+      if (!this.enabled) return;
+      const t = (value - min) / (max - min);
+      const midiNote = 60 + t * 12; // C4 to C5
+      const frequency = 440 * Math.pow(2, (midiNote - 69) / 12);
 
-    const synth = this.getSynth({
-      type: "sine",
-      attack: 0.001,
-      decay: 0.06,
-      sustain: 0,
-      release: 0.05,
-    });
-    synth.volume.value = VOL.SOFT;
-    synth.triggerAttackRelease(frequency, "32n");
-    this.releaseSynth(synth, 100);
+      const synth = this.getSynth({
+        type: "sine",
+        attack: 0.001,
+        decay: 0.06,
+        sustain: 0,
+        release: 0.05,
+      });
+      synth.volume.value = VOL.SOFT;
+      synth.triggerAttackRelease(frequency, "32n");
+      this.releaseSynth(synth, 100);
+    };
+
+    if (this.initialized && Tone.context.state === "running") {
+      doPlay();
+      return;
+    }
+
+    this.init()
+      .then(() => this.ensureRunning())
+      .then(doPlay)
+      .catch(() => {});
   }
 
   /**
    * Play a random chord from the color palette
    */
   playRandomChord() {
-    if (!this.initialized || !this.enabled) return;
+    if (!this.enabled) return;
     const randomIndex = Math.floor(Math.random() * 10);
     this.playColorSwitch(randomIndex, 10);
   }
@@ -199,50 +252,63 @@ class SoundManager {
    * Each color has a chord that matches its emotional vibe
    */
   playColorSwitch(index, _total) {
-    if (!this.initialized || !this.enabled) return;
+    if (!this.enabled) return;
 
-    // Chords mapped to colors (index 0-9):
-    // 0: Cyan    - Cmaj9 (crystalline, airy)
-    // 1: Blue    - Am7 (calm, deep)
-    // 2: Teal    - Em9 (oceanic, flowing)
-    // 3: Green   - Gmaj7 (natural, warm)
-    // 4: Purple  - Bbmaj7 (mystical, dreamy)
-    // 5: Amber   - Dmaj7 (golden, sunny)
-    // 6: Pink    - Fmaj7 (sweet, soft)
-    // 7: Red     - E5 (intense, powerful)
-    // 8: White   - Cadd9 (pure, bright)
-    // 9: Dark    - Bdim (mysterious, void)
-    const chords = [
-      ["C4", "E4", "G4", "B4"], // Cyan - Cmaj7
-      ["A3", "C4", "E4", "G4"], // Blue - Am7
-      ["E3", "G3", "B3", "D4"], // Teal - Em7
-      ["G3", "B3", "D4", "F#4"], // Green - Gmaj7
-      ["Bb3", "D4", "F4", "A4"], // Purple - Bbmaj7
-      ["D4", "F#4", "A4", "C#5"], // Amber - Dmaj7
-      ["F3", "A3", "C4", "E4"], // Pink - Fmaj7
-      ["E3", "B3", "E4"], // Red - E5 power
-      ["C4", "G4", "D5"], // White - Cadd9 (no 3rd, open)
-      ["B3", "D4", "F4", "Ab4"], // Dark - Bdim7
-    ];
+    const doPlay = () => {
+      if (!this.enabled) return;
+      // Chords mapped to colors (index 0-9):
+      // 0: Cyan    - Cmaj9 (crystalline, airy)
+      // 1: Blue    - Am7 (calm, deep)
+      // 2: Teal    - Em9 (oceanic, flowing)
+      // 3: Green   - Gmaj7 (natural, warm)
+      // 4: Purple  - Bbmaj7 (mystical, dreamy)
+      // 5: Amber   - Dmaj7 (golden, sunny)
+      // 6: Pink    - Fmaj7 (sweet, soft)
+      // 7: Red     - E5 (intense, powerful)
+      // 8: White   - Cadd9 (pure, bright)
+      // 9: Dark    - Bdim (mysterious, void)
+      const chords = [
+        ["C4", "E4", "G4", "B4"], // Cyan - Cmaj7
+        ["A3", "C4", "E4", "G4"], // Blue - Am7
+        ["E3", "G3", "B3", "D4"], // Teal - Em7
+        ["G3", "B3", "D4", "F#4"], // Green - Gmaj7
+        ["Bb3", "D4", "F4", "A4"], // Purple - Bbmaj7
+        ["D4", "F#4", "A4", "C#5"], // Amber - Dmaj7
+        ["F3", "A3", "C4", "E4"], // Pink - Fmaj7
+        ["E3", "B3", "E4"], // Red - E5 power
+        ["C4", "G4", "D5"], // White - Cadd9 (no 3rd, open)
+        ["B3", "D4", "F4", "Ab4"], // Dark - Bdim7
+      ];
 
-    const chord = chords[index] || chords[0];
+      const chord = chords[index] || chords[0];
 
-    const synth = this.createDisposablePolySynth(
-      {
-        type: "triangle",
-        attack: 0.01,
-        decay: 0.15,
-        sustain: 0.1,
-        release: 0.3,
-      },
-      VOL.SOFT,
-      600
-    );
+      const synth = this.createDisposablePolySynth(
+        {
+          type: "triangle",
+          attack: 0.01,
+          decay: 0.15,
+          sustain: 0.1,
+          release: 0.3,
+        },
+        VOL.SOFT,
+        600
+      );
 
-    const now = Tone.now();
-    chord.forEach((note, i) => {
-      synth.triggerAttackRelease(note, "8n", now + i * 0.015);
-    });
+      const now = Tone.now();
+      chord.forEach((note, i) => {
+        synth.triggerAttackRelease(note, "8n", now + i * 0.015);
+      });
+    };
+
+    if (this.initialized && Tone.context.state === "running") {
+      doPlay();
+      return;
+    }
+
+    this.init()
+      .then(() => this.ensureRunning())
+      .then(doPlay)
+      .catch(() => {});
   }
 
   getSynth(config) {
