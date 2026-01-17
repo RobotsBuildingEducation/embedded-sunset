@@ -6625,16 +6625,16 @@ function App({ isShutDown }) {
   });
 
   useEffect(() => {
-    const unlockAudio = () => {
-      soundManager.init().catch(() => {});
-      document.removeEventListener("pointerdown", unlockAudio);
-      document.removeEventListener("keydown", unlockAudio);
+    // Resume audio on any user interaction - iOS Safari can suspend audio context
+    // when switching apps, so we need to try resuming on every interaction
+    const resumeAudio = () => {
+      soundManager.resume();
     };
 
-    document.addEventListener("pointerdown", unlockAudio);
-    document.addEventListener("keydown", unlockAudio);
-
     const handlePointerDown = (event) => {
+      // Always try to resume audio first
+      resumeAudio();
+
       if (!(event.target instanceof Element)) return;
       const interactive = event.target.closest(
         "button, [role='button'], a, input, select, textarea"
@@ -6644,23 +6644,25 @@ function App({ isShutDown }) {
         '[data-sound-close="true"], [aria-label="Close"], .chakra-modal__close-btn, .chakra-drawer__close-btn, .chakra-popover__close-btn, .chakra-alert-dialog__close-btn, .chakra-close-button, .chakra-tag__close-button'
       );
       if (closeTarget) {
-        soundManager.init().catch(() => {});
         soundManager.play("erase");
         return;
       }
       if (interactive.closest('[data-sound-ignore-select="true"]')) return;
       if (interactive.hasAttribute("disabled")) return;
       if (interactive.getAttribute("aria-disabled") === "true") return;
-      soundManager.init().catch(() => {});
       soundManager.playHover(Math.random());
       soundManager.play("select");
     };
 
+    // Use both pointer and touch events for maximum compatibility
     document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("touchstart", resumeAudio, { passive: true });
+    document.addEventListener("keydown", resumeAudio);
+
     return () => {
-      document.removeEventListener("pointerdown", unlockAudio);
-      document.removeEventListener("keydown", unlockAudio);
       document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("touchstart", resumeAudio);
+      document.removeEventListener("keydown", resumeAudio);
     };
   }, []);
 

@@ -79,6 +79,20 @@ class SoundManager {
     }
   }
 
+  /**
+   * Resume audio context - call this on every user interaction
+   * iOS Safari can suspend audio context when switching apps
+   */
+  resume() {
+    // Always try to start/resume Tone on user interaction
+    // This is synchronous to maintain the user gesture context
+    Tone.start().catch(() => {});
+
+    if (!this.initialized) {
+      this.init().catch(() => {});
+    }
+  }
+
   play(name) {
     const soundFn = this.sounds[name];
     if (!soundFn || !this.enabled) return;
