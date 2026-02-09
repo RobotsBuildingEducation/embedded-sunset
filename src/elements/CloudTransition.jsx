@@ -339,7 +339,7 @@ const CloudTransition = ({
   const QUESTION_GOAL = 7500;
   const questionProgress = Math.min(
     (questionsAnswered / QUESTION_GOAL) * 100,
-    100
+    100,
   );
 
   const [userNpub, setUserNpub] = useState(() => {
@@ -348,11 +348,7 @@ const CloudTransition = ({
     }
     return localStorage.getItem("local_npub");
   });
-  const [promotionStartTime, setPromotionStartTime] = useState(null);
-  const [promotionDeadline, setPromotionDeadline] = useState(null);
-  const [promotionProgress, setPromotionProgress] = useState(null);
-  const [promotionTimeLeft, setPromotionTimeLeft] = useState("");
-  const [promotionExpired, setPromotionExpired] = useState(false);
+
   const connectorBaseId = useId();
 
   useEffect(() => {
@@ -397,72 +393,6 @@ const CloudTransition = ({
       window.removeEventListener("storage", handleStorage);
     };
   }, [userNpub]);
-
-  useEffect(() => {
-    if (!userNpub) return undefined;
-    const userRef = doc(database, "users", userNpub);
-    const unsubscribe = onSnapshot(userRef, (snapshot) => {
-      if (!snapshot.exists()) {
-        setPromotionStartTime(null);
-        setPromotionDeadline(null);
-        return;
-      }
-      const data = snapshot.data();
-      setPromotionStartTime(
-        data.promotionStartTime ? new Date(data.promotionStartTime) : null
-      );
-      setPromotionDeadline(
-        data.promotionDeadline ? new Date(data.promotionDeadline) : null
-      );
-    });
-    return () => unsubscribe();
-  }, [userNpub]);
-
-  useEffect(() => {
-    if (!promotionStartTime || !promotionDeadline) {
-      setPromotionProgress(null);
-      setPromotionTimeLeft("");
-      setPromotionExpired(false);
-      return;
-    }
-
-    const totalMs = promotionDeadline.getTime() - promotionStartTime.getTime();
-    if (totalMs <= 0) {
-      setPromotionProgress(0);
-      setPromotionTimeLeft("0d 00:00:00");
-      setPromotionExpired(true);
-      return;
-    }
-
-    const formatUnit = (value) => String(value).padStart(2, "0");
-
-    const updateTime = () => {
-      const now = new Date();
-      const remaining = promotionDeadline.getTime() - now.getTime();
-      const clampedRemaining = Math.max(remaining, 0);
-      const remainingPct = Math.min(
-        Math.max((clampedRemaining / totalMs) * 100, 0),
-        100
-      );
-      setPromotionProgress(remainingPct);
-
-      const days = Math.floor(clampedRemaining / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((clampedRemaining / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((clampedRemaining / (1000 * 60)) % 60);
-      const seconds = Math.floor((clampedRemaining / 1000) % 60);
-
-      setPromotionTimeLeft(
-        `${days}d ${formatUnit(hours)}:${formatUnit(minutes)}:${formatUnit(
-          seconds
-        )}`
-      );
-      setPromotionExpired(clampedRemaining === 0);
-    };
-
-    updateTime();
-    const timer = setInterval(updateTime, 1000);
-    return () => clearInterval(timer);
-  }, [promotionStartTime, promotionDeadline]);
 
   // Chapter key
   const groupKey = useMemo(() => {
@@ -579,11 +509,11 @@ const CloudTransition = ({
 
   const currentNode = useMemo(
     () => skillTreeNodes.find((node) => node.type === "current"),
-    [skillTreeNodes]
+    [skillTreeNodes],
   );
   const upcomingNodes = useMemo(
     () => skillTreeNodes.filter((node) => node.type === "upcoming"),
-    [skillTreeNodes]
+    [skillTreeNodes],
   );
   const hasSkillTree = skillTreeNodes.length > 0;
 
@@ -819,13 +749,13 @@ const CloudTransition = ({
           c.x - c.radius * 0.42,
           c.y - c.radius * 0.08,
           c.radius * 0.85,
-          c.color
+          c.color,
         );
         drawCloudLobe(
           c.x + c.radius * 0.46,
           c.y - c.radius * 0.1,
           c.radius * 0.88,
-          c.color
+          c.color,
         );
 
         // glossy highlight
@@ -835,7 +765,7 @@ const CloudTransition = ({
           c.x - c.radius * 0.18,
           c.y - c.radius * 0.28,
           c.radius * 0.9,
-          "rgba(255,255,255,0.9)"
+          "rgba(255,255,255,0.9)",
         );
         ctx.restore();
 
@@ -1063,30 +993,6 @@ const CloudTransition = ({
                     />
                   </Box>
 
-                  {promotionProgress !== null && (
-                    <Box w="50%" mx="auto" mb={0}>
-                      <Text
-                        fontSize="xs"
-                        mt={2}
-                        color={promotionExpired ? "red.500" : "purple.600"}
-                      >
-                        {promotionExpired
-                          ? translation[userLanguage]["promotion.timerExpired"]
-                          : "Refund time left: " + promotionTimeLeft}
-                      </Text>
-                      <WaveBar
-                        value={promotionProgress}
-                        start="#ff8ba7"
-                        end="#ffcc70"
-                        delay={0}
-                        bg="rgba(255,255,255,0.65)"
-                        border="#ededed"
-                      />
-                    </Box>
-                  )}
-
-                  <br />
-                  <br />
                   {message}
                 </Text>
               )}

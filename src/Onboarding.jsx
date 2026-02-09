@@ -68,7 +68,7 @@ export const Onboarding = ({
 }) => {
   const { assignExistingBadgeToNpub } = useSharedNostr(
     localStorage.getItem("local_npub"),
-    localStorage.getItem("local_nsec")
+    localStorage.getItem("local_nsec"),
   );
   const { step } = useParams();
   const [interval, setInterval] = useState(2880);
@@ -90,7 +90,7 @@ export const Onboarding = ({
     playOnboardingChord();
     // setOnboardingToDone(localStorage.getItem("local_npub"));
     assignExistingBadgeToNpub(
-      onboardingTranscript["name"][userLanguage].replace(/ /g, "-")
+      onboardingTranscript["name"][userLanguage].replace(/ /g, "-"),
     );
 
     // navigate("/q/0");
@@ -114,7 +114,7 @@ export const Onboarding = ({
       const userDocRef = doc(
         database,
         "users",
-        localStorage.getItem("local_npub")
+        localStorage.getItem("local_npub"),
       );
       try {
         const userDocSnap = await getDoc(userDocRef);
@@ -141,7 +141,7 @@ export const Onboarding = ({
     const userDocRef = doc(
       database,
       "users",
-      localStorage.getItem("local_npub")
+      localStorage.getItem("local_npub"),
     );
 
     if (!notificationsEnabled) {
@@ -243,7 +243,7 @@ export const Onboarding = ({
           <Text mb={1}>
             {translation[userLanguage].notifications_unavailable_line1.replace(
               "{browser}",
-              isUnsupportedBrowser()
+              isUnsupportedBrowser(),
             )}
           </Text>
 
@@ -785,7 +785,7 @@ export const Onboarding = ({
                       triggerHaptic();
                       playOnboardingChord();
                       incrementUserOnboardingStep(
-                        localStorage.getItem("local_npub")
+                        localStorage.getItem("local_npub"),
                       );
                       setCurrentStep(1);
                       navigate("/q/1");
@@ -980,20 +980,20 @@ export const Onboarding = ({
                           es: translation[userLanguage][
                             "language.javascript.spanish"
                           ],
-                          "py-en":
-                            translation[userLanguage][
-                              "language.python.english"
-                            ],
-                          "swift-en":
-                            translation[userLanguage]["language.swift.english"],
-                          "android-en":
-                            translation[userLanguage][
-                              "language.android.english"
-                            ],
-                          "compsci-en":
-                            translation[userLanguage][
-                              "language.compsci.english"
-                            ],
+                          // "py-en":
+                          //   translation[userLanguage][
+                          //     "language.python.english"
+                          //   ],
+                          // "swift-en":
+                          //   translation[userLanguage]["language.swift.english"],
+                          // "android-en":
+                          //   translation[userLanguage][
+                          //     "language.android.english"
+                          //   ],
+                          // "compsci-en":
+                          //   translation[userLanguage][
+                          //     "language.compsci.english"
+                          //   ],
                         }[userLanguage]
                       }
                     </MenuButton>
@@ -1026,7 +1026,7 @@ export const Onboarding = ({
                           ]
                         }
                       </MenuItem>
-                      <MenuItem
+                      {/* <MenuItem
                         p={6}
                         borderBottom="1px solid #ececec"
                         onClick={() => {
@@ -1070,7 +1070,7 @@ export const Onboarding = ({
                         }}
                       >
                         {translation[userLanguage]["language.compsci.english"]}
-                      </MenuItem>
+                      </MenuItem> */}
                     </MenuList>
                   </Menu>
 
@@ -1082,7 +1082,7 @@ export const Onboarding = ({
                       triggerHaptic();
                       playOnboardingChord();
                       incrementUserOnboardingStep(
-                        localStorage.getItem("local_npub")
+                        localStorage.getItem("local_npub"),
                       );
                       setCurrentStep(3);
                       navigate("/q/3");
@@ -1167,7 +1167,7 @@ export const Onboarding = ({
                       triggerHaptic();
                       playOnboardingChord();
                       incrementUserOnboardingStep(
-                        localStorage.getItem("local_npub")
+                        localStorage.getItem("local_npub"),
                       );
                       setCurrentStep(4);
                       navigate("/q/4");

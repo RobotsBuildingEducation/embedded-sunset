@@ -17,7 +17,7 @@ if ("serviceWorker" in navigator) {
       .then((registration) => {
         console.log(
           "Service Worker registered with scope:",
-          registration.scope
+          registration.scope,
         );
       })
       .catch((error) => {
@@ -69,7 +69,8 @@ const theme = extendTheme({
   // },
 });
 
-localStorage.setItem("CANARY_KEY", "Y2FuYXJ5");
+localStorage.setItem("features_passcode", "ZEPHYR");
+localStorage.setItem("passcode", "ZEPHYR");
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ChakraProvider theme={theme}>
@@ -77,5 +78,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <MiniKitContextProvider>
       <AppWrapper />
     </MiniKitContextProvider>
-  </ChakraProvider>
+  </ChakraProvider>,
 );

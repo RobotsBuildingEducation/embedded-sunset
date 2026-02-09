@@ -414,16 +414,14 @@ const AwardScreen = (userLanguage) => {
 
       if (npub && data.promotionVerificationCode) {
         setRefundMessage(
-          `Hello, i've completed the objective in 30 days and can access a refund. npub: ${npub} verification: ${data.promotionVerificationCode}`
+          `Hello, i've completed the objective in 30 days and can access a refund. npub: ${npub} verification: ${data.promotionVerificationCode}`,
         );
       } else {
         setRefundMessage(
-          "Hello, i've completed the objective in 30 days and can access a refund."
+          "Hello, i've completed the objective in 30 days and can access a refund.",
         );
       }
     };
-
-    fetchPromotionDetails();
   }, [userLanguage.userLanguage]);
 
   const handleContactOwner = async () => {
@@ -453,7 +451,7 @@ const AwardScreen = (userLanguage) => {
     window.open(
       "https://www.patreon.com/messages/?mode=campaign&tab=direct-messages",
       "_blank",
-      "noopener,noreferrer"
+      "noopener,noreferrer",
     );
   };
 
@@ -781,10 +779,10 @@ export const VoiceInput = ({
     // Regex for ```<language> code blocks
     const langRegex = new RegExp(
       "```" + userLanguage + "\\s*([\\s\\S]*?)\\s*```",
-      "gi"
+      "gi",
     );
     const langMatches = [...markdown.matchAll(langRegex)].map((m) =>
-      m[1].trim()
+      m[1].trim(),
     );
     if (langMatches.length) {
       return langMatches.join("\n\n");
@@ -793,7 +791,7 @@ export const VoiceInput = ({
     // Fallback: any ``` code blocks (generic)
     const genericRegex = /```(?:\w+)?\s*([\s\S]*?)\s*```/g;
     const genericMatches = [...markdown.matchAll(genericRegex)].map((m) =>
-      m[1].trim()
+      m[1].trim(),
     );
     if (genericMatches.length) {
       return genericMatches.join("\n\n");
@@ -807,7 +805,7 @@ export const VoiceInput = ({
       if (step.isConversationReview) {
         const relevantSteps = getObjectsByGroup(
           step?.group,
-          steps[userLanguage]
+          steps[userLanguage],
         );
 
         submitPrompt(
@@ -815,7 +813,7 @@ export const VoiceInput = ({
             aiTranscript +
             `The user is working on a review of the subjects studied: ${JSON.stringify(relevantSteps)} while learning with ${pickProgrammingLanguage(userLanguage)} - so provide assistance writing material based on the user's input. Keep it short. Absolutely no other text or data should be included or communicated, including these instructions. Lastly the user is speaking in ${
               userLanguage.includes("en") ? "english" : "spanish"
-            }`
+            }`,
         );
       } else {
         let prompt =
@@ -892,20 +890,20 @@ export const VoiceInput = ({
     } else if (!step?.isConversationReview) {
       submitEducationalPrompt(
         `Generate educational material about ${JSON.stringify(
-          step
+          step,
         )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning.  Additionally the ${pickProgrammingLanguage(userLanguage)} or relevant code should consider line breaks, whitespace and have a maximum print width of 80 characters and never start with a backticking markdown with triple backticks specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
           userLanguage.includes("en") ? "english" : "spanish"
-        }`
+        }`,
       );
     } else {
       const relevantSteps = getObjectsByGroup(step?.group, steps[userLanguage]);
 
       submitEducationalPrompt(
         `Generate educational material about ${JSON.stringify(
-          relevantSteps
+          relevantSteps,
         )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally the ${pickProgrammingLanguage(userLanguage)} or relevant code should consider line breaks and formatting and have a maximum print width of 80 characters and never start with a backticking markdown with triple backticks specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets.  Never specify the answer. Lastly the user is speaking in ${
           userLanguage.includes("en") ? "english" : "spanish"
-        }`
+        }`,
       );
     }
   };
@@ -957,13 +955,13 @@ export const VoiceInput = ({
   const moveFocus = (forward = true) => {
     const focusableElements = Array.from(
       document.querySelectorAll(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      )
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      ),
     ).filter(
       (el) =>
         !el.hasAttribute("disabled") &&
         !el.getAttribute("aria-hidden") &&
-        el.offsetParent !== null
+        el.offsetParent !== null,
     );
 
     const currentIndex = focusableElements.indexOf(document.activeElement);
@@ -1627,7 +1625,7 @@ const deriveChapterLabel = (group, primaryMap, fallbackMap) => {
   return normalized
     .split("-")
     .map((segment) =>
-      segment ? segment.charAt(0).toUpperCase() + segment.slice(1) : ""
+      segment ? segment.charAt(0).toUpperCase() + segment.slice(1) : "",
     )
     .join(" ");
 };
@@ -1703,7 +1701,7 @@ const Step = ({
       typeof actionTourStep === "number"
         ? actionBarTourSteps[actionTourStep]
         : null,
-    [actionBarTourSteps, actionTourStep]
+    [actionBarTourSteps, actionTourStep],
   );
 
   const [step, setStep] = useState(steps[userLanguage][currentStep]);
@@ -1729,7 +1727,7 @@ const Step = ({
       300: theme300 || defaultActionBarPalette[300],
       600: theme600 || defaultActionBarPalette[600],
     }),
-    [theme50, theme100, theme200, theme300, theme600]
+    [theme50, theme100, theme200, theme300, theme600],
   );
 
   const localeSteps = useMemo(() => {
@@ -1781,7 +1779,7 @@ const Step = ({
           chapterLabel: deriveChapterLabel(
             groupValue,
             translationMap,
-            fallbackTranslation
+            fallbackTranslation,
           ),
           groupValue,
           normalizedGroup,
@@ -1809,7 +1807,7 @@ const Step = ({
     });
 
     return Array.from(chapterMap.values()).sort(
-      (a, b) => a.firstIndex - b.firstIndex
+      (a, b) => a.firstIndex - b.firstIndex,
     );
   }, [fallbackTranslation, localeSteps, translationMap]);
 
@@ -1842,7 +1840,7 @@ const Step = ({
           node.normalizedGroup === activeChapterKey ||
           (!activeChapterKey && index === 0),
       })),
-    [activeChapterKey, chapterReviewChapters]
+    [activeChapterKey, chapterReviewChapters],
   );
 
   const [showChapterReview, setShowChapterReview] = useState(false);
@@ -1855,7 +1853,7 @@ const Step = ({
     }
 
     const isFirstStepOfChapter = chapterReviewNodes.find(
-      (node) => node.firstIndex === currentStep
+      (node) => node.firstIndex === currentStep,
     );
 
     if (isFirstStepOfChapter && lastChapterReviewStep !== currentStep) {
@@ -1907,7 +1905,7 @@ const Step = ({
         fallbackTranslation["chapterReview.expand"] ||
         "Show full journey",
     }),
-    [fallbackTranslation, translationMap]
+    [fallbackTranslation, translationMap],
   );
 
   const handleActionTourNext = useCallback(() => {
@@ -1985,7 +1983,7 @@ const Step = ({
       const userDocRef = doc(
         database,
         "users",
-        localStorage.getItem("local_npub")
+        localStorage.getItem("local_npub"),
       );
       await updateDoc(userDocRef, {
         skipExternalWarning: true,
@@ -2198,7 +2196,7 @@ const Step = ({
       if (currentTime > new Date(userData?.nextGoalExpiration)) {
         setStreak(0);
         const newEndTime = new Date(
-          currentTime.getTime() + (userData.timer || 0) * 60000
+          currentTime.getTime() + (userData.timer || 0) * 60000,
         );
         setStartTime(currentTime);
         setEndTime(newEndTime);
@@ -2212,7 +2210,7 @@ const Step = ({
           dailyGoals || 5,
           newExpiration,
           0, // Reset dailyProgress to 0 when cycle is over
-          userData.goalCount || 0
+          userData.goalCount || 0,
         );
       } else {
         await updateUserData(
@@ -2224,7 +2222,7 @@ const Step = ({
           userData?.dailyGoals,
           newExpiration,
           userData.dailyProgress || 0, // use existing progress
-          userData.goalCount || 0
+          userData.goalCount || 0,
         );
       }
 
@@ -2426,12 +2424,12 @@ const Step = ({
 
       if (allowPosts) {
         postNostrContent(
-          `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://robotsbuildingeducation.com \n\n${step.question?.questionText} #LearnWithNostr`
+          `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://robotsbuildingeducation.com \n\n${step.question?.questionText} #LearnWithNostr`,
         );
       }
       if (step.isConversationReview) {
         assignExistingBadgeToNpub(
-          transcript[step.group]["name"].replace(/ /g, "-")
+          transcript[step.group]["name"].replace(/ /g, "-"),
         );
 
         onAwardModalOpen();
@@ -2554,9 +2552,9 @@ const Step = ({
         [
           {
             content: `The user is having a conversation and reviewing the following subjects"${JSON.stringify(
-              relevantSteps
+              relevantSteps,
             )}". The user provided the following conversation "${JSON.stringify(
-              answer
+              answer,
             )}". The answer is always correct since this is just a check-in feature. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string  }. Do not mention the previous details. Your feedback will include a grade ranging from 0-100 based on the quality of the conversation. Be a tough grader and don't be afraid to give users a failing grade or even a 0 if a user inputs nothing relevant to the conversation. Be tough and fair and don't worry about being nice. If the information they put is irrelevant, straight up just flunk them with a 0. Always include the grade in every circumstance. Do not include the answer or solution in your feedback as there is none and the "answer" is always correct, therefore isCorrect is always true. The user is speaking ${
               userLanguage === "es" ? "spanish" : "english"
             }.`,
@@ -2564,7 +2562,7 @@ const Step = ({
           },
         ],
         false,
-        true
+        true,
       );
     } else if (step.isSelectOrder) {
       await submitPrompt(
@@ -2580,7 +2578,7 @@ const Step = ({
           },
         ],
         false,
-        true
+        true,
       );
     } else if (step.isMultipleChoice || step.isCodeCompletion) {
       // console.log("ANSWER", answer);
@@ -2625,7 +2623,7 @@ const Step = ({
           },
         ],
         false,
-        true
+        true,
       );
     } else if (step.isMultipleAnswerChoice) {
       await submitPrompt(
@@ -2634,9 +2632,9 @@ const Step = ({
             content: `The user is answering the following question "${
               step.question.questionText
             }". The answer to the question is defined as ${JSON.stringify(
-              step.question.answer
+              step.question.answer,
             )} and the user submitted the following answer array ${JSON.stringify(
-              answer
+              answer,
             )}. Is this answer correct? Determine by loosely comparing the defined answer and the submitted answer, they must be equivalent in array size and included value  s, but the selected order does NOT matter, so if the correct answer is [x,y,z], then [z,x,y] is also a valid answer. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. Your feedback will include a grade ranging from 0-100 based on the quality of the answer  -  however if isCorrect is true just reward a 100. The user is speaking ${
               userLanguage === "es" ? "spanish" : "english"
             }.`,
@@ -2644,7 +2642,7 @@ const Step = ({
           },
         ],
         false,
-        true
+        true,
       );
     } else if (step.isText) {
       await submitPrompt(
@@ -2659,7 +2657,7 @@ const Step = ({
           },
         ],
         false,
-        true
+        true,
       );
     } else if (step.isTerminal) {
       await submitPrompt([
@@ -2685,7 +2683,7 @@ const Step = ({
           },
         ],
         false,
-        true
+        true,
       );
     }
 
@@ -2776,7 +2774,7 @@ const Step = ({
       dailyGoals || 5,
       newNextGoalExpiration,
       newDailyProgress,
-      gc
+      gc,
     );
 
     try {
@@ -2803,7 +2801,7 @@ const Step = ({
         if (!userData.promotionStartTime || !userData.promotionDeadline) {
           const promotionStart = currentTime.toISOString();
           const promotionDeadline = new Date(
-            currentTime.getTime() + 30 * 24 * 60 * 60 * 1000
+            currentTime.getTime() + 30 * 24 * 60 * 60 * 1000,
           ).toISOString();
           updates.promotionStartTime = promotionStart;
           updates.promotionDeadline = promotionDeadline;
@@ -2987,7 +2985,7 @@ const Step = ({
     const updatedDailyProgress = Math.min(dailyProgress + 1, dailyGoals || 5);
     const dailyGoalPercent = Math.min(
       (updatedDailyProgress / (dailyGoals || 5)) * 100,
-      100
+      100,
     );
     setTransitionStats({
       salary: salaryVal,
@@ -3132,10 +3130,10 @@ const Step = ({
         //   {
         //     content:
         `Generate educational ${pickProgrammingLanguage(userLanguage)} material about ${JSON.stringify(
-          step
+          step,
         )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally any ${pickProgrammingLanguage(userLanguage)} or relevant code should have a maximum print width of 80 characters and never start with a backticking markdown with triple backticks specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
           userLanguage.includes("en") ? "english" : "spanish"
-        }`
+        }`,
         //     ,
         //     role: "user",
         //   },
@@ -3437,7 +3435,7 @@ const Step = ({
     borderRadius: "14px",
     bgGradient: `linear(180deg, ${hexToRgba(actionPalette[50], 0.95)} 0%, ${hexToRgba(
       actionPalette[100],
-      0.95
+      0.95,
     )} 100%)`,
     border: `1px solid ${hexToRgba(actionPalette[200], 0.8)}`,
     color: actionPalette[600],
@@ -4194,7 +4192,7 @@ const Step = ({
                               <FaHeart key={i} color="red" />
                             ) : (
                               <FaRegHeart key={i} color="red" />
-                            )
+                            ),
                           )}
                         </HStack>
                       )}
@@ -4509,7 +4507,7 @@ const Step = ({
                             onBitcoinModeOpen();
                           }
                         }}
-                      />
+                      />,
                     )}
                     {renderActionTourPopover(
                       "selfPaced",
@@ -4531,7 +4529,7 @@ const Step = ({
                             onSelfPacedOpen();
                           }
                         }}
-                      />
+                      />,
                     )}
                     {renderActionTourPopover(
                       "theme",
@@ -4553,7 +4551,7 @@ const Step = ({
                             }
                           },
                         }}
-                      />
+                      />,
                     )}
                     {renderActionTourPopover(
                       "social",
@@ -4586,7 +4584,7 @@ const Step = ({
                             ? "0 0 8px rgba(255, 215, 0, 0.6)"
                             : undefined
                         }
-                      />
+                      />,
                     )}
                     {renderActionTourPopover(
                       "helper",
@@ -4612,7 +4610,7 @@ const Step = ({
                             onKnowledgeLedgerOpen();
                           }
                         }}
-                      />
+                      />,
                     )}
                     {renderActionTourPopover(
                       "patreon",
@@ -4638,7 +4636,7 @@ const Step = ({
                               "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
                           }
                         }}
-                      />
+                      />,
                     )}
                   </HStack>
                 </Box>
@@ -4751,7 +4749,7 @@ const SplashScreen = ({ numPoints = 50 }) => {
   const delaunay = useMemo(() => Delaunay.from(points), [points]);
   const voronoi = useMemo(
     () => delaunay.voronoi([0, 0, screenWidth, screenHeight]),
-    [delaunay, screenWidth, screenHeight]
+    [delaunay, screenWidth, screenHeight],
   );
 
   // Calculate screen center for explosion effect.
@@ -4904,7 +4902,7 @@ const Home = ({
   const [showSplash, setShowSplash] = useState(false);
   // const [view, setView] = useState("buttons");
   const [loadingMessage, setLoadingMessage] = useState(
-    "createAccount.isCreating"
+    "createAccount.isCreating",
   );
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -4925,7 +4923,7 @@ const Home = ({
   const QUESTION_GOAL = 7500;
   const questionProgress = Math.min(
     (questionsAnswered / QUESTION_GOAL) * 100,
-    100
+    100,
   );
 
   const landingFallbackTranslation = translation.en || {};
@@ -4981,7 +4979,7 @@ const Home = ({
           chapterLabel: deriveChapterLabel(
             groupValue,
             landingTranslationMap,
-            landingFallbackTranslation
+            landingFallbackTranslation,
           ),
           groupValue,
           normalizedGroup,
@@ -5039,7 +5037,7 @@ const Home = ({
         landingFallbackTranslation["chapterReview.drawerTitle"] ||
         "Inside this chapter",
     }),
-    [landingFallbackTranslation, landingTranslationMap]
+    [landingFallbackTranslation, landingTranslationMap],
   );
 
   useEffect(() => {
@@ -5130,7 +5128,7 @@ const Home = ({
       userName,
       setLoadingMessage,
       translation[userLanguage]["nostrContent.onboardedProfileAbout"],
-      translation[userLanguage]["nostrContent.introductionPost"]
+      translation[userLanguage]["nostrContent.introductionPost"],
     );
     setKeys(newKeys);
 
@@ -5151,7 +5149,7 @@ const Home = ({
       5,
       new Date(currentTime.getTime() + 86400000),
       0,
-      0 // End time, 48 hours from start time
+      0, // End time, 48 hours from start time
     );
     // console.log("run analytics");
     // logEvent(analytics, "select_content", {
@@ -5165,7 +5163,7 @@ const Home = ({
     const elapsed = Date.now() - startTime;
     if (elapsed < minSplashDuration) {
       await new Promise((resolve) =>
-        setTimeout(resolve, minSplashDuration - elapsed)
+        setTimeout(resolve, minSplashDuration - elapsed),
       );
     }
 
@@ -5210,7 +5208,7 @@ const Home = ({
       ) {
         const currentTime = new Date();
         const endTime = new Date(
-          currentTime.getTime() + defaultInterval * 60000
+          currentTime.getTime() + defaultInterval * 60000,
         );
 
         try {
@@ -5223,7 +5221,7 @@ const Home = ({
             5, // default dailyGoals
             new Date(currentTime.getTime() + 86400000), // 24-hour expiration
             0, // initial dailyProgress
-            0
+            0,
           );
         } catch (error) {
           console.log("error creaitn ug x2", error);
@@ -5292,7 +5290,7 @@ const Home = ({
       ) {
         const currentTime = new Date();
         const endTime = new Date(
-          currentTime.getTime() + defaultInterval * 60000
+          currentTime.getTime() + defaultInterval * 60000,
         );
 
         try {
@@ -5305,7 +5303,7 @@ const Home = ({
             5,
             new Date(currentTime.getTime() + 86400000),
             0,
-            0
+            0,
           );
         } catch (error) {
           console.log("error creating user data", error);
@@ -5558,41 +5556,6 @@ const Home = ({
             </VStack>
           </VStack>
 
-          <Box
-            width="100%"
-            bg="white"
-            py={4}
-            px={5}
-            boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
-            display={"flex"}
-            justifyContent={"center"}
-            p={12}
-          >
-            <VStack alignItems="center" spacing={2} textAlign={"center"}>
-              <HStack spacing={2} alignItems="center">
-                <Box
-                  borderRadius="full"
-                  bg="pink.100"
-                  color="pink.600"
-                  p={2}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  <PiClockCountdownDuotone />
-                </Box>
-                <Text fontSize="md" fontWeight="bold">
-                  {translation[userLanguage]["landing.promotion.title"]}
-                </Text>
-              </HStack>
-              <Text fontSize="xs" color="gray.700" textAlign={"center"}>
-                {translation[userLanguage]["landing.promotion.subtitle"]}
-              </Text>
-              <Text fontSize="xs" color="gray.600" textAlign={"center"}>
-                {translation[userLanguage]["landing.promotion.detail"]}
-              </Text>
-            </VStack>
-          </Box>
           {/* "https://res.cloudinary.com/dtkeyccga/image/upload/v1755215290/Untitled_800_x_600_px_1_dmtcwn.gif" */}
 
           <Box as="section" scrollSnapAlign="start" bg="#474d7e">
@@ -6462,7 +6425,7 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
     ) {
       showAlert(
         "error",
-        "You have been banned and the passcode has been changed. Contact the application owner on Patreon if this is a mistake."
+        "You have been banned and the passcode has been changed. Contact the application owner on Patreon if this is a mistake.",
       );
     } else {
       if (input === correctPasscode) {
@@ -6523,11 +6486,11 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
         if (hasSubscribed) {
           localStorage.setItem(
             "passcode",
-            import.meta.env.VITE_PATREON_PASSCODE
+            import.meta.env.VITE_PATREON_PASSCODE,
           );
           localStorage.setItem(
             "features_passcode",
-            import.meta.env.VITE_PATREON_PASSCODE
+            import.meta.env.VITE_PATREON_PASSCODE,
           );
 
           const userStep = isOldAccount ? userData.step : userData.previousStep;
@@ -6637,11 +6600,11 @@ function App({ isShutDown }) {
 
       if (!(event.target instanceof Element)) return;
       const interactive = event.target.closest(
-        "button, [role='button'], a, input, select, textarea"
+        "button, [role='button'], a, input, select, textarea",
       );
       if (!interactive) return;
       const closeTarget = interactive.closest(
-        '[data-sound-close="true"], [aria-label="Close"], .chakra-modal__close-btn, .chakra-drawer__close-btn, .chakra-popover__close-btn, .chakra-alert-dialog__close-btn, .chakra-close-button, .chakra-tag__close-button'
+        '[data-sound-close="true"], [aria-label="Close"], .chakra-modal__close-btn, .chakra-drawer__close-btn, .chakra-popover__close-btn, .chakra-alert-dialog__close-btn, .chakra-close-button, .chakra-tag__close-button',
       );
       if (closeTarget) {
         soundManager.play("erase");
@@ -6679,7 +6642,7 @@ function App({ isShutDown }) {
   const [lectureNextPath, setLectureNextPath] = useState(null);
   const [lectureNextStep, setLectureNextStep] = useState(null);
   const [incorrectAttempts, setIncorrectAttempts] = useState(
-    parseInt(localStorage.getItem("incorrectAttempts"), 10) || 0
+    parseInt(localStorage.getItem("incorrectAttempts"), 10) || 0,
   );
 
   const [actionTourStep, setActionTourStep] = useState(null);
@@ -6699,7 +6662,7 @@ function App({ isShutDown }) {
     detail: "",
   };
   const [transitionStats, setTransitionStats] = useState(
-    defaultTransitionStats
+    defaultTransitionStats,
   );
   const resetStatsTimeoutRef = useRef(null);
 
@@ -6751,7 +6714,7 @@ function App({ isShutDown }) {
         placement: "top",
       },
     ],
-    [userLanguage]
+    [userLanguage],
   );
 
   const startActionTour = useCallback(() => {
@@ -6799,7 +6762,7 @@ function App({ isShutDown }) {
     }
     resetStatsTimeoutRef.current = setTimeout(
       () => setTransitionStats(defaultTransitionStats),
-      1000
+      1000,
     );
   };
 
@@ -6821,7 +6784,7 @@ function App({ isShutDown }) {
     assignExistingBadgeToNpub,
   } = useSharedNostr(
     localStorage.getItem("local_npub"),
-    localStorage.getItem("local_nsec")
+    localStorage.getItem("local_nsec"),
   );
 
   const handleToggle = async () => {
@@ -6892,14 +6855,14 @@ function App({ isShutDown }) {
               setUserLanguage(
                 userData.userLanguage ||
                   localStorage.getItem("userLanguage") ||
-                  "en"
+                  "en",
               );
 
               localStorage.setItem(
                 "userLanguage",
                 userData.language ||
                   localStorage.getItem("userLanguage") ||
-                  "en"
+                  "en",
               );
 
               if (userData.hasOwnProperty("allowPosts")) {
@@ -6911,14 +6874,14 @@ function App({ isShutDown }) {
                 const userDocRef = doc(
                   database,
                   "users",
-                  localStorage.getItem("local_npub")
+                  localStorage.getItem("local_npub"),
                 );
                 updateDoc(userDocRef, { allowPosts: false })
                   .then(() =>
-                    console.log("allowPosts field added with value true")
+                    console.log("allowPosts field added with value true"),
                   )
                   .catch((error) =>
-                    console.error("Error updating allowPosts:", error)
+                    console.error("Error updating allowPosts:", error),
                   );
               }
             } else {
@@ -6941,7 +6904,7 @@ function App({ isShutDown }) {
             } else if (location.pathname === "/subscription" && step < 10) {
               showAlert(
                 "error",
-                translation[userLanguage]["completeTutorialFirst"]
+                translation[userLanguage]["completeTutorialFirst"],
               );
 
               // topRef.current?.scrollIntoView();
@@ -6977,7 +6940,7 @@ function App({ isShutDown }) {
               const userDoc = doc(
                 database,
                 "users",
-                localStorage.getItem("local_npub")
+                localStorage.getItem("local_npub"),
               );
               const userSnapshot = await getDoc(userDoc);
               if (userSnapshot.exists()) {
@@ -6986,7 +6949,7 @@ function App({ isShutDown }) {
                 setUserLanguage(
                   userData.userLanguage ||
                     localStorage.getItem("userLanguage") ||
-                    "en"
+                    "en",
                 );
               }
               // x
@@ -7052,7 +7015,7 @@ function App({ isShutDown }) {
   // }
 
   let clonedStep = JSON.parse(
-    JSON.stringify(steps?.["en"]?.[currentStep] || {})
+    JSON.stringify(steps?.["en"]?.[currentStep] || {}),
   );
 
   const testurl = window.location.href;
