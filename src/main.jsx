@@ -69,8 +69,8 @@ const theme = extendTheme({
   // },
 });
 
-localStorage.setItem("features_passcode", "ZEPHYR");
-localStorage.setItem("passcode", "ZEPHYR");
+// localStorage.setItem("features_passcode", "ZEPHYR");
+// localStorage.setItem("passcode", "ZEPHYR");
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ChakraProvider theme={theme}>

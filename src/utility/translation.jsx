@@ -1083,7 +1083,8 @@ reverse(head) {
     "signIn.or": "or",
     "signIn.nip07": "Sign in with Extension",
     "nsecPrompt.title": "Optional: Add Your Secret Key",
-    "nsecPrompt.description": "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",
+    "nsecPrompt.description":
+      "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",
     "nsecPrompt.placeholder": "nsec1...",
     "nsecPrompt.skip": "Skip for now",
     "nsecPrompt.save": "Save",
@@ -1700,29 +1701,12 @@ reverse(head) {
             color: "#63b3ed",
             fontWeight: "bold",
           }}
-          href="https://www.patreon.com/posts/start-learning-86153437?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_fan&utm_content=web_share"
+          href="https://www.patreon.com/posts/146522893?forSale=true"
           target="_blank"
         >
           Pay for apps once without subscribing
         </a>
         <br />
-        <br />
-        <a
-          style={{
-            fontSize: "0.95rem",
-            textDecoration: "underline",
-            color: "#63b3ed",
-            fontWeight: "bold",
-          }}
-          href="https://www.patreon.com/posts/syllabus-getting-86153437?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link"
-          target="_blank"
-        >
-          Get the passcode
-        </a>{" "}
-        <span style={{ fontSize: "0.95rem" }}>
-          or find it by going to the Start Learning collection after
-          subscribing.
-        </span>
       </div>
     ),
     "passcode.label": "Enter passcode",
@@ -2942,6 +2926,22 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
         >
           Suscríbete y obtén el código de acceso
         </a>
+        <br />
+        <br />
+        <a
+          style={{
+            fontSize: "0.95rem",
+            textDecoration: "underline",
+            color: "#63b3ed",
+            fontWeight: "bold",
+          }}
+          href="https://www.patreon.com/posts/146522893?forSale=true"
+          target="_blank"
+        >
+          Paga una sola vez por las apps sin suscribirte.{" "}
+        </a>
+        <br />
+        <br />
       </div>
     ),
 
@@ -3030,7 +3030,8 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "signIn.or": "o",
     "signIn.nip07": "Iniciar sesión con Extensión",
     "nsecPrompt.title": "Opcional: Agregar Tu Clave Secreta",
-    "nsecPrompt.description": "Para usar funciones como publicar contenido y depósitos de billetera, puedes proporcionar opcionalmente tu clave secreta (nsec). Esto se almacena localmente en tu dispositivo.",
+    "nsecPrompt.description":
+      "Para usar funciones como publicar contenido y depósitos de billetera, puedes proporcionar opcionalmente tu clave secreta (nsec). Esto se almacena localmente en tu dispositivo.",
     "nsecPrompt.placeholder": "nsec1...",
     "nsecPrompt.skip": "Omitir por ahora",
     "nsecPrompt.save": "Guardar",
@@ -4460,7 +4461,8 @@ reverse(head) {
     "signIn.or": "or",
     "signIn.nip07": "Sign in with Extension",
     "nsecPrompt.title": "Optional: Add Your Secret Key",
-    "nsecPrompt.description": "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",
+    "nsecPrompt.description":
+      "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",
     "nsecPrompt.placeholder": "nsec1...",
     "nsecPrompt.skip": "Skip for now",
     "nsecPrompt.save": "Save",
@@ -5044,29 +5046,13 @@ reverse(head) {
             color: "#63b3ed",
             fontWeight: "bold",
           }}
-          href="https://www.patreon.com/NotesAndOtherStuff/about"
+          href="https://www.patreon.com/NotesAndOtherStuff/membership"
           target="_blank"
         >
           Register and subscribe as a member
         </a>
         <br />
         <br />
-        <a
-          style={{
-            fontSize: "0.95rem",
-            textDecoration: "underline",
-            color: "#63b3ed",
-            fontWeight: "bold",
-          }}
-          href="https://www.patreon.com/posts/syllabus-getting-86153437?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link"
-          target="_blank"
-        >
-          Get the passcode
-        </a>{" "}
-        <span style={{ fontSize: "0.95rem" }}>
-          or find it by going to the Start Learning collection after
-          subscribing.
-        </span>
       </div>
     ),
     "passcode.label": "Enter passcode",
@@ -6099,7 +6085,8 @@ reverse(head) {
     "signIn.or": "or",
     "signIn.nip07": "Sign in with Extension",
     "nsecPrompt.title": "Optional: Add Your Secret Key",
-    "nsecPrompt.description": "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",
+    "nsecPrompt.description":
+      "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",
     "nsecPrompt.placeholder": "nsec1...",
     "nsecPrompt.skip": "Skip for now",
     "nsecPrompt.save": "Save",
@@ -7738,7 +7725,8 @@ reverse(head) {
     "signIn.or": "or",
     "signIn.nip07": "Sign in with Extension",
     "nsecPrompt.title": "Optional: Add Your Secret Key",
-    "nsecPrompt.description": "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",
+    "nsecPrompt.description":
+      "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",
     "nsecPrompt.placeholder": "nsec1...",
     "nsecPrompt.skip": "Skip for now",
     "nsecPrompt.save": "Save",
@@ -9375,7 +9363,8 @@ reverse(head) {
     "signIn.or": "or",
     "signIn.nip07": "Sign in with Extension",
     "nsecPrompt.title": "Optional: Add Your Secret Key",
-    "nsecPrompt.description": "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",
+    "nsecPrompt.description":
+      "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",
     "nsecPrompt.placeholder": "nsec1...",
     "nsecPrompt.skip": "Skip for now",
     "nsecPrompt.save": "Save",
