@@ -2281,6 +2281,23 @@ const Step = ({
     onClose: onSelfPacedClose,
   } = useDisclosure();
 
+  const handleSelfPacedSettingsSaved = useCallback((settings = {}) => {
+    const nextDailyGoals = settings.dailyGoals ?? 5;
+
+    setInterval(settings.interval ?? 0);
+    setStreak(settings.streak ?? 0);
+    setStartTime(settings.startTime ?? null);
+    setEndTime(settings.endTime ?? null);
+    setDailyGoals(nextDailyGoals);
+    setNextGoalExpiration(settings.nextGoalExpiration ?? null);
+    setDailyProgress(settings.dailyProgress ?? 0);
+    setGoalCount(settings.goalCount ?? 0);
+    setDailyGoalCelebration((currentCelebration) => ({
+      ...currentCelebration,
+      dailyGoals: nextDailyGoals,
+    }));
+  }, []);
+
   const {
     isOpen: isSocialFeedOpen,
     onOpen: onSocialFeedOpen,
@@ -2420,8 +2437,12 @@ const Step = ({
 
       setSkipExternalWarning(userData?.skipExternalWarning);
 
-      setDailyGoals(userData.dailyGoals || 5);
-      setGoalCount(userData.goalCount);
+      const savedDailyGoals = userData.dailyGoals ?? 5;
+      const savedGoalCount = userData.goalCount ?? 0;
+      const savedDailyProgress = userData.dailyProgress ?? 0;
+
+      setDailyGoals(savedDailyGoals);
+      setGoalCount(savedGoalCount);
       const currentTime = new Date();
       let newExpiration = new Date(currentTime.getTime() + 86400000);
 
@@ -2432,18 +2453,10 @@ const Step = ({
           newExpiration = new Date(newExpiration.getTime() + 86400000);
         }
         setNextGoalExpiration(newExpiration);
-        // Reset daily progress since the user missed prior cycles.
-        if (userData.dailyProgress) {
-          setDailyProgress(userData.dailyProgress);
-        } else setDailyProgress(0);
+        setDailyProgress(savedDailyProgress);
       } else {
         setNextGoalExpiration(newExpiration);
-
-        if (userData.dailyProgress) {
-          setDailyProgress(userData.dailyProgress);
-        } else {
-          setDailyProgress(0);
-        }
+        setDailyProgress(savedDailyProgress);
       }
 
       // if (userData.identity) {
@@ -2452,6 +2465,7 @@ const Step = ({
 
       if (currentTime > new Date(userData?.nextGoalExpiration)) {
         setStreak(0);
+        setDailyProgress(0);
         const newEndTime = new Date(
           currentTime.getTime() + (userData.timer || 0) * 60000,
         );
@@ -2464,10 +2478,10 @@ const Step = ({
           0,
           currentTime,
           newEndTime,
-          dailyGoals || 5,
+          savedDailyGoals,
           newExpiration,
           0, // Reset dailyProgress to 0 when cycle is over
-          userData.goalCount || 0,
+          savedGoalCount,
         );
       } else {
         await updateUserData(
@@ -2476,10 +2490,10 @@ const Step = ({
           userData.streak, // keep current streak
           new Date(userData.startTime),
           new Date(userData.endTime),
-          userData?.dailyGoals,
+          savedDailyGoals,
           newExpiration,
-          userData.dailyProgress || 0, // use existing progress
-          userData.goalCount || 0,
+          savedDailyProgress, // use existing progress
+          savedGoalCount,
         );
       }
 
@@ -3002,9 +3016,10 @@ const Step = ({
     setEndTime(newEndTime);
     setStreak(newStreak);
 
+    const dailyGoalTarget = dailyGoals ?? 5;
     let newDailyProgress = dailyProgress + 1;
     let newNextGoalExpiration = nextGoalExpiration;
-    if (newDailyProgress > dailyGoals) {
+    if (newDailyProgress > dailyGoalTarget) {
       // newDailyProgress = 0;
       newDailyProgress = newDailyProgress - 1;
       // newNextGoalExpiration = new Date(currentTime.getTime() + 86400000);
@@ -3016,7 +3031,7 @@ const Step = ({
 
     let gc = goalCount;
 
-    if (dailyProgress + 1 === dailyGoals) {
+    if (dailyProgress + 1 === dailyGoalTarget) {
       gc = gc + 1;
     }
 
@@ -3028,7 +3043,7 @@ const Step = ({
       newStreak,
       currentTime,
       newEndTime,
-      dailyGoals || 5,
+      dailyGoalTarget,
       newNextGoalExpiration,
       newDailyProgress,
       gc,
@@ -3132,7 +3147,7 @@ const Step = ({
 
           if (jsonResponse.isCorrect) {
             setGrade(jsonResponse.grade);
-            const dailyGoalTarget = dailyGoals || 5;
+            const dailyGoalTarget = dailyGoals ?? 5;
             const completesDailyGoal =
               dailyGoalTarget > 0 &&
               dailyProgress < dailyGoalTarget &&
@@ -3220,9 +3235,10 @@ const Step = ({
       const stepProgress = ((currentStep + 1) / totalSteps) * 100;
       const balanceProgress = calculateBalance();
       const salaryText = loot[currentStep][userLanguage];
-      const updatedDailyProgress = Math.min(dailyProgress + 1, dailyGoals || 5);
+      const dailyGoalTarget = dailyGoals ?? 5;
+      const updatedDailyProgress = Math.min(dailyProgress + 1, dailyGoalTarget);
       const dailyGoalPercent = Math.min(
-        (updatedDailyProgress / (dailyGoals || 5)) * 100,
+        (updatedDailyProgress / dailyGoalTarget) * 100,
         100,
       );
 
@@ -3233,7 +3249,7 @@ const Step = ({
         balanceProgress,
         dailyGoalProgress: dailyGoalPercent,
         dailyProgress: updatedDailyProgress,
-        dailyGoals: dailyGoals || 5,
+        dailyGoals: dailyGoalTarget,
         dailyGoalLabel: translation[userLanguage]["dailyGoal"],
         message: celebrationMessage,
         detail: salaryText,
@@ -4783,6 +4799,7 @@ const Step = ({
               setInterval={setInterval}
               userId={localStorage.getItem("local_npub")}
               userLanguage={userLanguage}
+              onSettingsSaved={handleSelfPacedSettingsSaved}
             />
           ) : null}
 

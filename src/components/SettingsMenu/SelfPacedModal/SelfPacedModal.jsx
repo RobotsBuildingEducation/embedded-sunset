@@ -135,6 +135,7 @@ const SelfPacedModal = ({
   setInterval,
   userId,
   userLanguage,
+  onSettingsSaved = () => {},
 }) => {
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
@@ -165,10 +166,10 @@ const SelfPacedModal = ({
       setStartTime(userData.startTime ? new Date(userData.startTime) : null);
       setEndTime(userData.endTime ? new Date(userData.endTime) : null);
       setInterval(userData.timer);
-      setDailyGoals(userData.dailyGoals || 5);
-      setGoalCount(userData.goalCount || 0);
+      setDailyGoals(userData.dailyGoals ?? 5);
+      setGoalCount(userData.goalCount ?? 0);
       // Initialize dailyProgress from stored data (or default to 0).
-      setDailyProgress(userData.dailyProgress || 0);
+      setDailyProgress(userData.dailyProgress ?? 0);
 
       if (userData.nextGoalExpiration) {
         setNextGoalExpiration(new Date(userData.nextGoalExpiration));
@@ -227,6 +228,16 @@ const SelfPacedModal = ({
       dailyProgress, // include dailyProgress in the update
       goalCount,
     );
+    onSettingsSaved({
+      interval,
+      streak,
+      startTime: currentTime,
+      endTime: newEndTime,
+      dailyGoals,
+      nextGoalExpiration: newNextGoalExpiration,
+      dailyProgress,
+      goalCount,
+    });
     onClose();
   };
 

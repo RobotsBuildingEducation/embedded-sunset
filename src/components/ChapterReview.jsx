@@ -1,5 +1,11 @@
 // ChapterReview.jsx
-import { useCallback, useEffect, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import {
   Box,
   Button,
@@ -185,17 +191,32 @@ const getStyleForKind = (kind) => {
 /** -------------------- Skill-tree Flow Layout Helpers -------------------- */
 
 const FLOW_CARD_PATTERNS = [
-  { alignSelf: "flex-start", translateX: "-12%", rotate: "-4deg", anchor: 80 },
-  { alignSelf: "center", translateX: "0%", rotate: "3deg", anchor: 200 },
-  { alignSelf: "flex-end", translateX: "12%", rotate: "-3deg", anchor: 320 },
-  { alignSelf: "center", translateX: "-6%", rotate: "2deg", anchor: 200 },
+  { alignSelf: "flex-start", translateX: "-12%", rotate: "-4deg" },
+  { alignSelf: "center", translateX: "0%", rotate: "3deg" },
+  { alignSelf: "flex-end", translateX: "12%", rotate: "-3deg" },
+  { alignSelf: "center", translateX: "-6%", rotate: "2deg" },
 ];
 
-const createFlowConnectorPath = (startAnchor, endAnchor) => {
-  const controlOffset = (endAnchor - startAnchor) * 0.5;
-  const controlPoint1 = startAnchor + controlOffset * 0.6;
-  const controlPoint2 = endAnchor - controlOffset * 0.6;
-  return `M ${startAnchor} 10 C ${controlPoint1} -6, ${controlPoint2} 70, ${endAnchor} 54`;
+const roundPoint = (value) => Math.round(value * 10) / 10;
+
+const createFlowConnectorPath = (start, end, fallbackDirection = 1) => {
+  const deltaX = end.x - start.x;
+  const deltaY = Math.max(1, end.y - start.y);
+  const direction =
+    Math.abs(deltaX) > 8 ? Math.sign(deltaX) : fallbackDirection;
+  const wave = Math.min(72, Math.max(28, Math.abs(deltaX) * 0.22 + 24));
+  const midpointX =
+    (start.x + end.x) / 2 + (Math.abs(deltaX) <= 8 ? direction * wave * 0.6 : 0);
+  const midpointY = start.y + deltaY * 0.5;
+
+  return [
+    `M ${roundPoint(start.x)} ${roundPoint(start.y)}`,
+    `C ${roundPoint(start.x)} ${roundPoint(start.y + deltaY * 0.28)},`,
+    `${roundPoint(start.x + direction * wave)} ${roundPoint(start.y + deltaY * 0.3)},`,
+    `${roundPoint(midpointX)} ${roundPoint(midpointY)}`,
+    `S ${roundPoint(end.x - direction * wave)} ${roundPoint(end.y - deltaY * 0.3)},`,
+    `${roundPoint(end.x)} ${roundPoint(end.y)}`,
+  ].join(" ");
 };
 
 const resolvePattern = (index) =>
@@ -230,6 +251,9 @@ const ChapterReview = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [selectedChapter, setSelectedChapter] = useState(null);
+  const [connectorPaths, setConnectorPaths] = useState([]);
+  const treeRef = useRef(null);
+  const cardRefs = useRef([]);
   const chapterCardBg = useColorModeValue(
     "rgba(255,255,255,0.94)",
     "rgba(12,21,40,0.98)",
@@ -309,6 +333,82 @@ const ChapterReview = ({
     onChapterDrawerClose();
   };
 
+  const updateConnectorPaths = useCallback(() => {
+    const treeElement = treeRef.current;
+    if (!treeElement || visibleNodes.length < 2) {
+      setConnectorPaths((previousPaths) =>
+        previousPaths.length ? [] : previousPaths,
+      );
+      return;
+    }
+
+    const treeRect = treeElement.getBoundingClientRect();
+    const nextPaths = visibleNodes
+      .slice(0, -1)
+      .map((node, index) => {
+        const currentCard = cardRefs.current[index];
+        const nextCard = cardRefs.current[index + 1];
+        if (!currentCard || !nextCard) return null;
+
+        const currentRect = currentCard.getBoundingClientRect();
+        const nextRect = nextCard.getBoundingClientRect();
+        const start = {
+          x: currentRect.left + currentRect.width / 2 - treeRect.left,
+          y: currentRect.bottom - treeRect.top,
+        };
+        const end = {
+          x: nextRect.left + nextRect.width / 2 - treeRect.left,
+          y: nextRect.top - treeRect.top,
+        };
+
+        return {
+          id: `${node.id || index}-${visibleNodes[index + 1]?.id || index + 1}`,
+          accent: getStyleForKind(node.questionKind).accent,
+          d: createFlowConnectorPath(
+            start,
+            end,
+            index % 2 === 0 ? 1 : -1,
+          ),
+        };
+      })
+      .filter(Boolean);
+
+    setConnectorPaths((previousPaths) => {
+      const previousSignature = JSON.stringify(previousPaths);
+      const nextSignature = JSON.stringify(nextPaths);
+      return previousSignature === nextSignature ? previousPaths : nextPaths;
+    });
+  }, [visibleNodes]);
+
+  useLayoutEffect(() => {
+    let frameId;
+    const scheduleConnectorUpdate = () => {
+      cancelAnimationFrame(frameId);
+      frameId = requestAnimationFrame(updateConnectorPaths);
+    };
+
+    scheduleConnectorUpdate();
+    window.addEventListener("resize", scheduleConnectorUpdate);
+
+    const resizeObserver =
+      typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(scheduleConnectorUpdate)
+        : null;
+
+    if (resizeObserver) {
+      if (treeRef.current) resizeObserver.observe(treeRef.current);
+      cardRefs.current.forEach((card) => {
+        if (card) resizeObserver.observe(card);
+      });
+    }
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      window.removeEventListener("resize", scheduleConnectorUpdate);
+      resizeObserver?.disconnect();
+    };
+  }, [updateConnectorPaths]);
+
   return (
     <Box
       width="100%"
@@ -350,186 +450,190 @@ const ChapterReview = ({
         </Box>
 
         {/* ---------- SKILL TREE (restored) ---------- */}
-        <VStack
-          align="stretch"
-          spacing={{ base: 3, md: 8 }}
+        <Box
+          ref={treeRef}
           w="100%"
           px={{ base: 0, md: 3 }}
+          position="relative"
         >
-          {visibleNodes.map((node, index) => {
-            const typeStyle = getStyleForKind(node.questionKind);
-            const IconComponent = typeStyle.icon || StarIcon;
-            const accent = typeStyle.accent;
-            const gradient = typeStyle.gradient;
-            const pattern = resolvePattern(index);
-            const nextPattern = resolvePattern(index + 1);
-            const justifyContent = getJustifyContent(pattern.alignSelf);
-            const isClickable = node?.questions?.length > 0;
-
-            return (
-              <Box
-                key={node.id}
-                display="flex"
-                flexDirection="column"
-                gap={{ base: 2, md: 4 }}
-              >
-                <Flex justify={{ base: "center", md: justifyContent }} w="100%">
-                  <Box
-                    as={motion.div}
-                    role={isClickable ? "button" : undefined}
-                    tabIndex={isClickable ? 0 : -1}
-                    onClick={() => handleChapterSelect(node)}
-                    onKeyDown={(event) => handleChapterKeyDown(event, node)}
-                    initial={{ opacity: 0, y: 24, scale: 0.94 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ duration: 0.45, delay: index * 0.06 }}
-                    px={{ base: 3, md: 5 }}
-                    py={{ base: 3, md: 5 }}
-                    borderRadius="full"
-                    bg={chapterCardBg}
-                    borderWidth="1px"
-                    borderColor={node.isActive ? `${accent}85` : `${accent}45`}
-                    boxShadow={
-                      node.isActive
-                        ? `${activeChapterCardShadow}, 0 0 0 1px ${accent}30`
-                        : `${chapterCardShadow}, 0 0 0 1px ${accent}18`
-                    }
-                    display="flex"
-                    alignItems="center"
-                    gap={{ base: 3, md: 5 }}
-                    position="relative"
-                    overflow="hidden"
-                    cursor={isClickable ? "pointer" : "default"}
-                    transform={{
-                      base: "none",
-                      md: `translateX(${pattern.translateX}) rotate(${pattern.rotate})`,
-                    }}
-                    _hover={
-                      isClickable
-                        ? {
-                            transform: {
-                              base: "scale(1.01)",
-                              md: `translateX(${pattern.translateX}) rotate(${pattern.rotate}) scale(1.02)`,
-                            },
-                          }
-                        : undefined
-                    }
-                    _focusVisible={{ boxShadow: `0 0 0 3px ${accent}55` }}
-                  >
-                    <Box
-                      position="absolute"
-                      inset={0}
-                      borderRadius="inherit"
-                      bgGradient={gradient}
-                      opacity={0.32}
-                      pointerEvents="none"
-                    />
-                    <Flex
-                      align="center"
-                      gap={{ base: 3, md: 5 }}
-                      position="relative"
-                      zIndex={1}
-                      w="100%"
-                    >
-                      <Box
-                        w={{ base: "44px", md: "64px" }}
-                        h={{ base: "44px", md: "64px" }}
-                        borderRadius="full"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        bgGradient={`radial-gradient(circle at 30% 30%, ${accent}33, transparent 70%)`}
-                        boxShadow={`0 20px 40px ${accent}30`}
-                      >
-                        <Icon
-                          as={IconComponent}
-                          boxSize={{ base: 5, md: 7 }}
-                          color={accent}
-                        />
-                      </Box>
-                      <Text
-                        fontSize={{ base: "md", md: "xl" }}
-                        lineHeight={{ base: "1.2", md: "1.3" }}
-                        fontWeight={node.isActive ? "extrabold" : "semibold"}
-                        color="appText"
-                        letterSpacing={0}
-                        textAlign={{ base: "center", md: "left" }}
-                      >
-                        {node.chapterLabel || node.title}
-                      </Text>
-                    </Flex>
-                  </Box>
-                </Flex>
-
-                {/* connector between cards */}
-                {index < visibleNodes.length - 1 ? (
-                  <Box
-                    h={{ base: 10, md: 20 }}
-                    w="100%"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    px={{ base: 10, md: 8 }}
-                  >
-                    <Box
-                      as="svg"
-                      width="100%"
-                      height="100%"
-                      viewBox="0 0 400 80"
-                      fill="none"
-                      preserveAspectRatio="none"
-                    >
-                      <path
-                        d={createFlowConnectorPath(
-                          pattern.anchor,
-                          nextPattern.anchor,
-                        )}
-                        stroke={connectorBaseStroke}
-                        strokeWidth="10"
-                        strokeLinecap="round"
-                      />
-                      <path
-                        d={createFlowConnectorPath(
-                          pattern.anchor,
-                          nextPattern.anchor,
-                        )}
-                        stroke={`${accent}55`}
-                        strokeWidth="5"
-                        strokeLinecap="round"
-                      />
-                    </Box>
-                  </Box>
-                ) : null}
-              </Box>
-            );
-          })}
-
-          {showExpandControl && hasHiddenNodes && !isExpanded ? (
+          {connectorPaths.length ? (
             <Box
-              as={motion.div}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.45,
-                delay: visibleNodes.length * 0.06,
-              }}
-              pt={{ base: 2, md: 4 }}
+              as="svg"
+              position="absolute"
+              inset={0}
+              width="100%"
+              height="100%"
+              overflow="visible"
+              pointerEvents="none"
+              zIndex={0}
             >
-              <Button
-                variant="ghost"
-                size={{ base: "sm", md: "lg" }}
-                borderRadius="full"
-                px={{ base: 4, md: 8 }}
-                py={{ base: 2, md: 5 }}
-                fontSize={{ base: "sm", md: "lg" }}
-                colorScheme="purple"
-                onClick={() => setIsExpanded(true)}
-              >
-                {text?.expand || "Show more"}
-              </Button>
+              {connectorPaths.map((connector) => (
+                <g key={connector.id}>
+                  <path
+                    d={connector.d}
+                    stroke={connectorBaseStroke}
+                    strokeWidth="14"
+                    strokeLinecap="round"
+                    fill="none"
+                    opacity="0.9"
+                  />
+                  <path
+                    d={connector.d}
+                    stroke={`${connector.accent}80`}
+                    strokeWidth="6"
+                    strokeLinecap="round"
+                    fill="none"
+                  />
+                </g>
+              ))}
             </Box>
           ) : null}
-        </VStack>
+
+          <VStack
+            align="stretch"
+            spacing={{ base: 4, md: 10 }}
+            w="100%"
+            position="relative"
+            zIndex={1}
+          >
+            {visibleNodes.map((node, index) => {
+              const typeStyle = getStyleForKind(node.questionKind);
+              const IconComponent = typeStyle.icon || StarIcon;
+              const accent = typeStyle.accent;
+              const gradient = typeStyle.gradient;
+              const pattern = resolvePattern(index);
+              const justifyContent = getJustifyContent(pattern.alignSelf);
+              const isClickable = node?.questions?.length > 0;
+
+              return (
+                <Box key={node.id} position="relative">
+                  <Flex
+                    justify={{ base: "center", md: justifyContent }}
+                    w="100%"
+                  >
+                    <Box
+                      as={motion.div}
+                      ref={(element) => {
+                        cardRefs.current[index] = element;
+                      }}
+                      role={isClickable ? "button" : undefined}
+                      tabIndex={isClickable ? 0 : -1}
+                      onClick={() => handleChapterSelect(node)}
+                      onKeyDown={(event) => handleChapterKeyDown(event, node)}
+                      initial={{ opacity: 0, y: 24, scale: 0.94 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ duration: 0.45, delay: index * 0.06 }}
+                      px={{ base: 3, md: 5 }}
+                      py={{ base: 3, md: 5 }}
+                      borderRadius="full"
+                      bg={chapterCardBg}
+                      borderWidth="1px"
+                      borderColor={
+                        node.isActive ? `${accent}85` : `${accent}45`
+                      }
+                      boxShadow={
+                        node.isActive
+                          ? `${activeChapterCardShadow}, 0 0 0 1px ${accent}30`
+                          : `${chapterCardShadow}, 0 0 0 1px ${accent}18`
+                      }
+                      display="flex"
+                      alignItems="center"
+                      gap={{ base: 3, md: 5 }}
+                      position="relative"
+                      overflow="hidden"
+                      cursor={isClickable ? "pointer" : "default"}
+                      transform={{
+                        base: "none",
+                        md: `translateX(${pattern.translateX}) rotate(${pattern.rotate})`,
+                      }}
+                      _hover={
+                        isClickable
+                          ? {
+                              transform: {
+                                base: "scale(1.01)",
+                                md: `translateX(${pattern.translateX}) rotate(${pattern.rotate}) scale(1.02)`,
+                              },
+                            }
+                          : undefined
+                      }
+                      _focusVisible={{ boxShadow: `0 0 0 3px ${accent}55` }}
+                    >
+                      <Box
+                        position="absolute"
+                        inset={0}
+                        borderRadius="inherit"
+                        bgGradient={gradient}
+                        opacity={0.32}
+                        pointerEvents="none"
+                      />
+                      <Flex
+                        align="center"
+                        gap={{ base: 3, md: 5 }}
+                        position="relative"
+                        zIndex={1}
+                        w="100%"
+                      >
+                        <Box
+                          w={{ base: "44px", md: "64px" }}
+                          h={{ base: "44px", md: "64px" }}
+                          borderRadius="full"
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          bgGradient={`radial-gradient(circle at 30% 30%, ${accent}33, transparent 70%)`}
+                          boxShadow={`0 20px 40px ${accent}30`}
+                        >
+                          <Icon
+                            as={IconComponent}
+                            boxSize={{ base: 5, md: 7 }}
+                            color={accent}
+                          />
+                        </Box>
+                        <Text
+                          fontSize={{ base: "md", md: "xl" }}
+                          lineHeight={{ base: "1.2", md: "1.3" }}
+                          fontWeight={node.isActive ? "extrabold" : "semibold"}
+                          color="appText"
+                          letterSpacing={0}
+                          textAlign={{ base: "center", md: "left" }}
+                        >
+                          {node.chapterLabel || node.title}
+                        </Text>
+                      </Flex>
+                    </Box>
+                  </Flex>
+                </Box>
+              );
+            })}
+
+            {showExpandControl && hasHiddenNodes && !isExpanded ? (
+              <Box
+                as={motion.div}
+                position="relative"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.45,
+                  delay: visibleNodes.length * 0.06,
+                }}
+                pt={{ base: 2, md: 4 }}
+              >
+                <Button
+                  variant="ghost"
+                  size={{ base: "sm", md: "lg" }}
+                  borderRadius="full"
+                  px={{ base: 4, md: 8 }}
+                  py={{ base: 2, md: 5 }}
+                  fontSize={{ base: "sm", md: "lg" }}
+                  colorScheme="purple"
+                  onClick={() => setIsExpanded(true)}
+                >
+                  {text?.expand || "Show more"}
+                </Button>
+              </Box>
+            ) : null}
+          </VStack>
+        </Box>
 
         {showStartButton && text?.cta ? (
           <Button
