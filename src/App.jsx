@@ -1849,6 +1849,7 @@ const Step = ({
   const socialButtonRef = useRef(null);
   const helperButtonRef = useRef(null);
   const patreonButtonRef = useRef(null);
+  const nextQuestionPressLockRef = useRef(false);
 
   const currentTourStep = useMemo(
     () =>
@@ -3150,6 +3151,7 @@ const Step = ({
 
   // Reset state for a new step
   useEffect(() => {
+    nextQuestionPressLockRef.current = false;
     setInputValue("");
 
     setSuggestionMessage("");
@@ -3164,10 +3166,53 @@ const Step = ({
 
   // Navigate to the next step
   const handleNextClick = async () => {
+    const runAfterTransitionPaint = (task) => {
+      const runTask = () => {
+        setIsPostingWithNostr(true);
+        Promise.resolve(task())
+          .catch((error) => {
+            console.error("Failed to persist question completion", error);
+          })
+          .finally(() => {
+            setIsPostingWithNostr(false);
+          });
+      };
+
+      if (typeof window !== "undefined") {
+        window.requestAnimationFrame(() => {
+          window.setTimeout(runTask, 0);
+        });
+      } else {
+        runTask();
+      }
+    };
+
     const hostname = window.location.hostname;
     const isValidHost =
       hostname === "embedded-sunset.app" ||
       hostname === "robotsbuildingeducation.com";
+    const recordQuestionCompletion = () => {
+      if (!isValidHost) return;
+
+      logEvent(analytics, "handleNextClick", {
+        action: "completed_question",
+      });
+      incrementQuestionsAnswered().catch((error) => {
+        console.error("Failed to increment question count", error);
+      });
+    };
+    const clearQuestionState = () => {
+      localStorage.removeItem("lrnctrl");
+      localStorage.removeItem("knwldctrl");
+      localStorage.removeItem("gnrtctrl");
+      localStorage.removeItem("ansrctrl");
+
+      setGeneratedQuestion([]);
+      resetNewQuestionMessages();
+      resetSuggestionMessages();
+      resetEducationalMessages();
+      setEducationalContent([]);
+    };
     // const username = localStorage.getItem("displayName").toLowerCase() || '';
     // const bannedNames = [
     //   "data",
@@ -3184,33 +3229,14 @@ const Step = ({
     //   "testing",
     //   "ok",
     // ];
-    if (
-      isValidHost
-      // && !bannedNames.includes(username)
-    ) {
-      logEvent(analytics, "handleNextClick", {
-        action: "completed_question",
-      });
-      incrementQuestionsAnswered();
-    } else {
-      // window.alert("you cant do that buddy");
-    }
 
     // console.log("currentStep...", currentStep);
     // console.log("fSTEPS", steps);
-    localStorage.removeItem("lrnctrl");
-    localStorage.removeItem("knwldctrl");
-    localStorage.removeItem("gnrtctrl");
-    localStorage.removeItem("ansrctrl");
-
-    setGeneratedQuestion([]);
-    resetNewQuestionMessages();
-    resetSuggestionMessages();
-    resetEducationalMessages();
-    setEducationalContent([]);
     const nextStep = currentStep + 1;
 
     if (currentStep === 0) {
+      recordQuestionCompletion();
+      clearQuestionState();
       setIsPostingWithNostr(true);
       const npub = localStorage.getItem("local_npub");
       try {
@@ -3234,7 +3260,7 @@ const Step = ({
       (updatedDailyProgress / (dailyGoals || 5)) * 100,
       100,
     );
-    setTransitionStats({
+    const nextTransitionStats = {
       salary: salaryVal,
       salaryProgress,
       stepProgress,
@@ -3245,80 +3271,72 @@ const Step = ({
       dailyGoalLabel: translation[userLanguage]["dailyGoal"],
       message: celebrationMessage,
       detail: salaryText,
-    });
+    };
 
-    if (step.isConversationReview) {
-      const npub = localStorage.getItem("local_npub");
-      setIsPostingWithNostr(true);
-      try {
-        if (currentStep > 4) incrementUserStep(npub, currentStep);
-        else await incrementUserStep(npub, currentStep);
-        if (currentStep > 0) {
-          storeCorrectAnswer(step, feedback).catch(console.error);
-        }
-      } finally {
-        setIsPostingWithNostr(false);
-      }
-      const path =
-        currentStep <= 4
+    const npub = localStorage.getItem("local_npub");
+    const shouldGoToSubscription =
+      currentStep === 9 &&
+      localStorage.getItem("passcode") !==
+        import.meta.env.VITE_PATREON_PASSCODE;
+    const isFinalStep = currentStep >= steps[userLanguage].length - 1;
+    const nextPath = shouldGoToSubscription
+      ? "/subscription"
+      : isFinalStep
+        ? "/award"
+        : currentStep <= 4
           ? `/onboarding/${currentStep + 2}`
           : `/q/${currentStep + 1}`;
-      setLectureNextPath(path);
+
+    if (step.isConversationReview) {
+      setLectureNextPath(nextPath);
       setLectureNextStep(nextStep);
     }
 
-    if (currentStep === 9) {
-      const npub = localStorage.getItem("local_npub");
+    navigateWithTransition(nextPath, nextStep, nextTransitionStats);
 
-      if (
-        localStorage.getItem("passcode") !==
-        import.meta.env.VITE_PATREON_PASSCODE
-      ) {
+    runAfterTransitionPaint(async () => {
+      recordQuestionCompletion();
+      clearQuestionState();
+
+      if (shouldGoToSubscription) {
         await incrementToSubscription(npub, currentStep);
-
-        navigateWithTransition("/subscription", nextStep);
-      } else {
-        setIsPostingWithNostr(true);
-
-        try {
-          incrementUserStep(npub, currentStep);
-          storeCorrectAnswer(step, feedback).catch(console.error);
-          if (currentStep <= 4) {
-            navigateWithTransition(`/onboarding/${currentStep + 2}`, nextStep);
-          } else {
-            navigateWithTransition(`/q/${currentStep + 1}`, nextStep);
-          }
-        } finally {
-          setIsPostingWithNostr(false);
-        }
+        return;
       }
-    } else if (currentStep >= steps[userLanguage].length - 1) {
-      const npub = localStorage.getItem("local_npub");
-      await incrementToFinalAward(npub);
-      navigateWithTransition("/award", nextStep);
-    } else {
-      setIsPostingWithNostr(true);
 
-      const npub = localStorage.getItem("local_npub");
-
-      try {
-        if (currentStep > 4) incrementUserStep(npub, currentStep);
-        else {
-          await incrementUserStep(npub, currentStep);
-        }
-        if (currentStep > 0) {
-          storeCorrectAnswer(step, feedback).catch(console.error);
-        }
-
-        if (currentStep <= 4) {
-          navigateWithTransition(`/onboarding/${currentStep + 2}`, nextStep);
-        } else {
-          navigateWithTransition(`/q/${currentStep + 1}`, nextStep);
-        }
-      } finally {
-        setIsPostingWithNostr(false);
+      if (isFinalStep) {
+        await incrementToFinalAward(npub);
+        return;
       }
+
+      await incrementUserStep(npub, currentStep);
+
+      if (currentStep > 0) {
+        await storeCorrectAnswer(step, feedback);
+      }
+    });
+  };
+
+  const handleNextQuestionButtonPress = (event, beforeNext) => {
+    if (event?.type === "pointerdown" && event.pointerType === "mouse") {
+      return;
     }
+
+    if (nextQuestionPressLockRef.current) {
+      return;
+    }
+
+    nextQuestionPressLockRef.current = true;
+    beforeNext?.();
+
+    Promise.resolve(handleNextClick()).finally(() => {
+      if (typeof window !== "undefined") {
+        window.setTimeout(() => {
+          nextQuestionPressLockRef.current = false;
+        }, 900);
+      } else {
+        nextQuestionPressLockRef.current = false;
+      }
+    });
   };
 
   // Navigate back to the previous step
@@ -4217,12 +4235,14 @@ const Step = ({
                   </Button>
                   &nbsp;&nbsp; &nbsp;&nbsp;
                   <Button
-                    onClick={handleNextClick}
+                    onPointerDown={handleNextQuestionButtonPress}
+                    onClick={handleNextQuestionButtonPress}
                     mb={4}
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
-                        handleNextClick();
+                        e.preventDefault();
+                        handleNextQuestionButtonPress(e);
                       }
                     }}
                     disabled={isPostingWithNostr || isActionTourActive}
@@ -4585,20 +4605,30 @@ const Step = ({
                         background="appSurface"
                         variant={"outline"}
                         data-sound-ignore-select="true"
-                        onClick={() => {
-                          triggerHaptic();
-                          soundManager.resume();
-                          soundManager.play("next");
-                          handleNextClick();
+                        onPointerDown={(event) =>
+                          handleNextQuestionButtonPress(event, () => {
+                            triggerHaptic();
+                            soundManager.resume();
+                            soundManager.play("next");
+                          })
+                        }
+                        onClick={(event) => {
+                          handleNextQuestionButtonPress(event, () => {
+                            triggerHaptic();
+                            soundManager.resume();
+                            soundManager.play("next");
+                          });
                         }}
                         mb={4}
                         boxShadow={"0.5px 0.5px 1px 0px black"}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
-                            triggerHaptic();
-                            soundManager.resume();
-                            soundManager.play("next");
-                            handleNextClick();
+                            e.preventDefault();
+                            handleNextQuestionButtonPress(e, () => {
+                              triggerHaptic();
+                              soundManager.resume();
+                              soundManager.play("next");
+                            });
                           }
                         }}
                         disabled={isPostingWithNostr}
@@ -4614,7 +4644,6 @@ const Step = ({
             </>
             {/* )} */}
           </>
-
           {!step.isTerminal && (
             <Box
               display="flex"
@@ -4753,7 +4782,7 @@ const Step = ({
                   paddingBottom={6}
                   paddingTop={4}
                 >
-                  <HStack spacing={{ base: 2, md: 3 }} justify="center">
+                  <HStack spacing={0} justify="space-around" width="100%">
                     {renderActionTourPopover(
                       "bitcoin",
                       bitcoinButtonRef,
@@ -7111,7 +7140,11 @@ function App({ isShutDown }) {
     }
   }, []);
 
-  const navigateWithTransition = (path, nextStep = null) => {
+  const navigateWithTransition = (
+    path,
+    nextStep = null,
+    nextTransitionStats = null,
+  ) => {
     if (resetStatsTimeoutRef.current) {
       clearTimeout(resetStatsTimeoutRef.current);
       resetStatsTimeoutRef.current = null;
@@ -7124,7 +7157,16 @@ function App({ isShutDown }) {
     });
 
     if (typeof window !== "undefined") {
-      window.requestAnimationFrame(scrollToTopInstantly);
+      window.requestAnimationFrame(() => {
+        scrollToTopInstantly();
+        if (nextTransitionStats) {
+          window.setTimeout(() => {
+            setTransitionStats(nextTransitionStats);
+          }, 0);
+        }
+      });
+    } else if (nextTransitionStats) {
+      setTransitionStats(nextTransitionStats);
     }
   };
 

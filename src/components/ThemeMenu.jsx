@@ -47,7 +47,7 @@ const ThemeMenu = ({ userLanguage, isIcon = true, buttonProps = {} }) => {
   }[languageKey];
 
   return (
-    <Menu>
+    <Menu closeOnSelect={false}>
       <MenuButton
         as={isIcon ? IconButton : Button}
         aria-label={translation[userLanguage]["settings.theme.select"]}

@@ -385,6 +385,7 @@ const CloudTransition = ({
   const isDarkMode = colorMode === "dark";
   const canvasRef = useRef(null);
   const [canContinue, setCanContinue] = useState(false);
+  const [renderRichContent, setRenderRichContent] = useState(false);
   const [displaySalary, setDisplaySalary] = useState(salary);
   const prevSalary = useRef(salary);
 
@@ -406,11 +407,47 @@ const CloudTransition = ({
   const connectorBaseId = useId();
 
   useEffect(() => {
-    const unsubscribe = subscribeToQuestionsAnswered(setQuestionsAnswered);
-    return () => unsubscribe();
-  }, []);
+    if (!isActive) {
+      setRenderRichContent(false);
+      return undefined;
+    }
+
+    if (typeof window === "undefined") {
+      setRenderRichContent(true);
+      return undefined;
+    }
+
+    let firstFrameId;
+    let secondFrameId;
+    let timeoutId;
+
+    firstFrameId = window.requestAnimationFrame(() => {
+      secondFrameId = window.requestAnimationFrame(() => {
+        timeoutId = window.setTimeout(() => {
+          setRenderRichContent(true);
+        }, 0);
+      });
+    });
+
+    return () => {
+      window.cancelAnimationFrame(firstFrameId);
+      window.cancelAnimationFrame(secondFrameId);
+      window.clearTimeout(timeoutId);
+    };
+  }, [isActive]);
 
   useEffect(() => {
+    if (!renderRichContent) return undefined;
+
+    const unsubscribe = subscribeToQuestionsAnswered(setQuestionsAnswered);
+    return () => unsubscribe();
+  }, [renderRichContent]);
+
+  useEffect(() => {
+    if (!renderRichContent) {
+      return undefined;
+    }
+
     if (typeof window === "undefined") {
       return undefined;
     }
@@ -446,7 +483,7 @@ const CloudTransition = ({
     return () => {
       window.removeEventListener("storage", handleStorage);
     };
-  }, [userNpub]);
+  }, [renderRichContent, userNpub]);
 
   // Chapter key
   const groupKey = useMemo(() => {
@@ -475,6 +512,10 @@ const CloudTransition = ({
     : "0 14px 32px rgba(15,23,42,0.10)";
 
   const skillTreeNodes = useMemo(() => {
+    if (!renderRichContent) {
+      return [];
+    }
+
     const mapSource = stepsMap ?? defaultSteps;
     const availableMap = mapSource ?? {};
     const mapKeys = Object.keys(availableMap);
@@ -576,7 +617,7 @@ const CloudTransition = ({
     }
 
     return nodes;
-  }, [clonedStep, currentStepIndex, stepsMap, userLanguage]);
+  }, [clonedStep, currentStepIndex, renderRichContent, stepsMap, userLanguage]);
 
   const currentNode = useMemo(
     () => skillTreeNodes.find((node) => node.type === "current"),
@@ -759,16 +800,24 @@ const CloudTransition = ({
 
   // level-based canvas sky
   useEffect(() => {
-    if (!isActive) return;
+    if (!isActive || !renderRichContent) return;
     const canvas = canvasRef.current;
+    if (!canvas) return;
+
     const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
     let animationId;
 
     let width = window.innerWidth;
     let height = window.innerHeight;
 
     const setSize = () => {
-      const ratio = window.devicePixelRatio || 1;
+      const isCompactViewport = window.innerWidth < 768;
+      const ratio = Math.min(
+        window.devicePixelRatio || 1,
+        isCompactViewport ? 1.5 : 2,
+      );
       width = window.innerWidth;
       height = window.innerHeight;
       canvas.width = Math.floor(window.innerWidth * ratio);
@@ -780,11 +829,29 @@ const CloudTransition = ({
 
     setSize();
 
+    const isCompactViewport = width < 768 || height < 720;
+    const cloudCount = isCompactViewport
+      ? isDarkMode
+        ? 7
+        : 8
+      : isDarkMode
+        ? 14
+        : 16;
+    const sparkleCount = isCompactViewport
+      ? isDarkMode
+        ? 42
+        : 52
+      : isDarkMode
+        ? 110
+        : 130;
+    const cloudBaseRadius = isCompactViewport ? 64 : 90;
+    const cloudRadiusVariance = isCompactViewport ? 92 : 150;
+
     // Bigger, multi-lobe clouds for visibility
-    const clouds = Array.from({ length: isDarkMode ? 14 : 16 }, () => ({
+    const clouds = Array.from({ length: cloudCount }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
-      radius: 90 + Math.random() * 150,
+      radius: cloudBaseRadius + Math.random() * cloudRadiusVariance,
       speedY: 0.24 + Math.random() * 0.32,
       speedX: (Math.random() - 0.5) * 0.16,
       wobble: Math.random() * Math.PI * 2,
@@ -794,7 +861,7 @@ const CloudTransition = ({
         ],
     }));
 
-    const sparkles = Array.from({ length: isDarkMode ? 110 : 130 }, () => ({
+    const sparkles = Array.from({ length: sparkleCount }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
       r: 0.9 + Math.random() * 1.9,
@@ -929,7 +996,7 @@ const CloudTransition = ({
       cancelAnimationFrame(animationId);
       window.removeEventListener("resize", onResize);
     };
-  }, [isActive, transitionTheme, isDarkMode]);
+  }, [isActive, renderRichContent, transitionTheme, isDarkMode]);
 
   return (
     <AnimatePresence>
@@ -951,23 +1018,25 @@ const CloudTransition = ({
           flexDirection="column"
           alignItems="center"
         >
-          <Box
-            as="canvas"
-            ref={canvasRef}
-            position="fixed"
-            top={0}
-            left={0}
-            w="100%"
-            h="100%"
-            zIndex={0}
-            pointerEvents="none"
-          />
+          {renderRichContent && (
+            <Box
+              as="canvas"
+              ref={canvasRef}
+              position="fixed"
+              top={0}
+              left={0}
+              w="100%"
+              h="100%"
+              zIndex={0}
+              pointerEvents="none"
+            />
+          )}
 
-          {children ? (
+          {renderRichContent && children ? (
             <Box w="100%" maxW="600px" zIndex={1}>
               {children}
             </Box>
-          ) : (
+          ) : renderRichContent ? (
             <MotionBox
               initial={{ opacity: 0, y: 18, scale: 0.99 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -1173,7 +1242,7 @@ const CloudTransition = ({
                 </MotionBox>
               )}
             </MotionBox>
-          )}
+          ) : null}
         </Box>
       )}
     </AnimatePresence>
