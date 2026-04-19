@@ -75,7 +75,7 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
   const { submitPrompt, messages, resetMessages } = useThinkingGeminiChat();
   const groupId = useMemo(
     () => String(step?.group ?? "default"),
-    [step?.group]
+    [step?.group],
   );
 
   const wrapFenced = (body, language = lang || "jsx") =>
@@ -109,7 +109,7 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
         }
 
         const codeSnap = await getDoc(
-          doc(database, "users", userId, "buildHistory", groupId)
+          doc(database, "users", userId, "buildHistory", groupId),
         );
         if (codeSnap.exists()) {
           const d = codeSnap.data() || {};
@@ -162,7 +162,7 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
       setPreviewKey((k) => k + 1);
 
       saveBuild(finalBlock, "build").catch((e) =>
-        console.error("saveBuild error", e)
+        console.error("saveBuild error", e),
       );
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -201,7 +201,7 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
     let prompt =
       `This is extremely important to understand and follow:
       The individual is using an education app and learning about computer science and how to code, starting with elementary knowledge and ending with the ability to create apps. Based on the user's completed steps: ${JSON.stringify(
-        completed
+        completed,
       )}, write an app that the user can copy and experiment with HTML or React (determine whichever is appropriate based on the user's progress). Again it's more important than anything to determine what's appropriate - this is the true task, everything else is just here to help direct you.` +
       (history.length
         ? ` Previous code snippets in order: ${JSON.stringify(history)}.`
@@ -242,7 +242,7 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
           await setDoc(
             doc(database, "users", userId),
             { userBuild: idea },
-            { merge: true }
+            { merge: true },
           );
         }
         setSavedIdea(idea);
@@ -272,14 +272,14 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
         await setDoc(
           userDocRef,
           { userBuild: idea, buildCode: { ...buildCode, [groupId]: content } },
-          { merge: true }
+          { merge: true },
         );
       }
 
       await setDoc(
         doc(database, "users", userId, "buildHistory", groupId),
         { code: content, updatedAt: Date.now(), stage },
-        { merge: true }
+        { merge: true },
       );
     } catch (err) {
       console.error("Error saving build", err);
@@ -305,7 +305,7 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
           placeholder={translation[userLanguage]["buildYourApp.input.label"]}
           value={idea}
           onChange={(e) => setIdea(e.target.value)}
-          backgroundColor="white"
+          backgroundColor="appSurface"
           boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
           width={{ base: 300, md: 300 }}
         />
@@ -335,7 +335,7 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
             p={3}
             borderWidth="1px"
             borderRadius="md"
-            bg="gray.50"
+            bg="appSurfaceMuted"
             fontFamily="mono"
             fontSize="sm"
             whiteSpace="pre-wrap"
@@ -409,7 +409,13 @@ export default function KnowledgeLedgerModal({
       blockScrollOnMount
     >
       <DrawerOverlay />
-      <DrawerContent display="flex" flexDirection="column" maxH="100vh">
+      <DrawerContent
+        display="flex"
+        flexDirection="column"
+        maxH="100vh"
+        bg="appSurfaceElevated"
+        color="appText"
+      >
         <DrawerCloseButton />
         <DrawerHeader>{title}</DrawerHeader>
         <DrawerBody
@@ -443,13 +449,24 @@ export default function KnowledgeLedgerModal({
         <DrawerFooter
           position="sticky"
           bottom="0"
-          bg="chakra-body-bg"
+          bg="appSurfaceElevated"
           borderTopWidth="1px"
-          borderColor="blackAlpha.200"
-          boxShadow="sm"
+          borderColor="appBorder"
+          boxShadow="none"
           justifyContent="flex-end"
         >
-          <Button size="lg" onClick={onClose} data-sound-close="true">
+          <Button
+            size="lg"
+            onClick={onClose}
+            data-sound-close="true"
+            bg="appSurfaceStrong"
+            color="appText"
+            borderWidth="1px"
+            borderColor="appBorderStrong"
+            boxShadow="sm"
+            _hover={{ bg: "appSurfaceMuted" }}
+            _active={{ bg: "appSurfaceInset" }}
+          >
             {translation?.[userLanguage]?.["button.close"] || "Close"}
           </Button>
         </DrawerFooter>

@@ -55,10 +55,12 @@ export const InstallAppModal = ({
         flexDirection="column"
         maxH="90vh"
         overflow="hidden"
+        bg="appSurfaceElevated"
+        color="appText"
       >
         <ModalHeader>{translation[userLanguage].installApp}</ModalHeader>
         <ModalCloseButton />
-        <ModalBody flex="1" overflowY="auto">
+        <ModalBody flex="1" overflowY="auto" color="appText">
           {vocalRequest ? (
             <>
               {" "}
@@ -68,7 +70,7 @@ export const InstallAppModal = ({
                   {translation[userLanguage]["badBrowser.install"]}
                 </Text>
               </Flex>
-              <Divider mb={6} />
+              <Divider mb={6} borderColor="appBorder" />
             </>
           ) : null}
           <Flex direction="column" pb={6}>
@@ -77,7 +79,7 @@ export const InstallAppModal = ({
               1. {translation[userLanguage].installAppInstructions1}
             </Text>
           </Flex>
-          <Divider mb={6} />
+          <Divider mb={6} borderColor="appBorder" />
 
           <Flex direction="column" pb={6}>
             <IoShareOutline size={32} />
@@ -85,7 +87,7 @@ export const InstallAppModal = ({
               2. {translation[userLanguage].installAppInstructions2}
             </Text>
           </Flex>
-          <Divider mb={6} />
+          <Divider mb={6} borderColor="appBorder" />
 
           <Flex direction="column" pb={6}>
             <BsPlusSquare size={32} />
@@ -93,7 +95,7 @@ export const InstallAppModal = ({
               3. {translation[userLanguage].installAppInstructions3}
             </Text>
           </Flex>
-          <Divider mb={6} />
+          <Divider mb={6} borderColor="appBorder" />
 
           <Flex direction="column" pb={6}>
             <LuBadgeCheck size={32} />
@@ -101,14 +103,14 @@ export const InstallAppModal = ({
               4. {translation[userLanguage].installAppInstructions4}
             </Text>
           </Flex>
-          <Divider mb={6} />
+          <Divider mb={6} borderColor="appBorder" />
 
           <Flex direction="column" pb={2}>
             <LuKey size={32} />
             <Text mt={2}>
               {translation[userLanguage]["installApp.secretTitle"]}
             </Text>
-            <Text fontSize="sm" color="gray.700" mt={1}>
+            <Text fontSize="sm" color="appTextMuted" mt={1}>
               {translation[userLanguage]["installApp.secretDescription"]}
             </Text>
             <Button
@@ -120,6 +122,12 @@ export const InstallAppModal = ({
                   handleCopySecretKey();
                 }
               }}
+              bg="appSurfaceStrong"
+              color="appText"
+              borderWidth="1px"
+              borderColor="appBorderStrong"
+              _hover={{ bg: "appSurfaceMuted" }}
+              _active={{ bg: "appSurfaceInset" }}
             >
               🔑 {translation[userLanguage]["button.copyKey"]}
             </Button>
@@ -129,10 +137,10 @@ export const InstallAppModal = ({
         <ModalFooter
           position="sticky"
           bottom="0"
-          bg="chakra-body-bg"
-          borderTopWidth="1px"
-          borderColor="blackAlpha.200"
-          boxShadow="sm"
+          bg="appSurfaceElevated"
+          borderTopWidth="0"
+          borderColor="transparent"
+          boxShadow="none"
           justifyContent="flex-end"
         >
           <Button
@@ -144,6 +152,12 @@ export const InstallAppModal = ({
               }
             }}
             data-sound-close="true"
+            bg="appSurfaceStrong"
+            color="appText"
+            borderWidth="1px"
+            borderColor="appBorderStrong"
+            _hover={{ bg: "appSurfaceMuted" }}
+            _active={{ bg: "appSurfaceInset" }}
           >
             {translation?.[userLanguage]?.["button.close"] || "Close"}
           </Button>

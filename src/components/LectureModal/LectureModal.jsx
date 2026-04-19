@@ -337,7 +337,13 @@ const LectureModal = ({
       isClosable: true,
       position: "top",
       render: () => (
-        <Box color="black" p={3} bg="#FEEBC8" borderRadius="md" boxShadow="lg">
+        <Box
+          color="appToastColor"
+          p={3}
+          bg="appToastBg"
+          borderRadius="md"
+          boxShadow="lg"
+        >
           <Text fontWeight="bold">
             {translation[userLanguage]["toast.title.keysCopied"]}
           </Text>
@@ -547,7 +553,7 @@ const LectureModal = ({
                             left="0"
                             right="0"
                             bottom="0"
-                            bg="white"
+                            bg="appSurface"
                             opacity="0.7"
                             borderRadius="20px"
                           />

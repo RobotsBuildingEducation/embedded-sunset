@@ -111,7 +111,8 @@ const CodeBlock = ({ inline, className, children, ...props }) => {
   ) : (
     <Box
       as="code"
-      backgroundColor="gray.100"
+      backgroundColor="appCodeInlineBg"
+      color="appCodeColor"
       p={1}
       borderRadius="md"
       fontSize="sm"
@@ -341,7 +342,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
         placeholder={translation[userLanguage]["buildYourApp.input.label"]}
         value={idea}
         onChange={(e) => setIdea(e.target.value)}
-        backgroundColor="white"
+        backgroundColor="appSurface"
         boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
         marginTop="-20px"
         width="75%"

@@ -51,6 +51,15 @@
 </head>
 
 <body>
+  <script>
+    (() => {
+      const mode = localStorage.getItem("chakra-ui-color-mode") === "dark" ? "dark" : "light";
+      const root = document.documentElement;
+      root.dataset.theme = mode;
+      root.dataset.themeMode = mode;
+      root.style.colorScheme = mode;
+    })();
+  </script>
   <div id="root"></div>
   <script type="module" src="./src/main.jsx"></script>
 </body>

@@ -109,14 +109,14 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
       isCentered
       closeOnOverlayClick={false}
     >
-      <ModalOverlay bg="rgba(255,255,255,0.8)" backdropFilter="blur(8px)" />
+      <ModalOverlay bg="appOverlay" backdropFilter="blur(8px)" />
       <ModalContent
         as={motion.div}
         initial={{ y: 80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 80, opacity: 0 }}
         transition={{ duration: 0.4 }}
-        bg="white"
+        bg="appSurfaceElevated"
         borderRadius="xl"
         boxShadow="xl"
         p={0}
@@ -124,7 +124,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
           position: "relative",
           border: "8px solid transparent",
           background:
-            "linear-gradient(white, white) padding-box, linear-gradient(135deg,#FFD700,#FF69B4,#DA70D6,#FFA500) border-box",
+            "linear-gradient(var(--chakra-colors-appSurfaceElevated), var(--chakra-colors-appSurfaceElevated)) padding-box, linear-gradient(135deg,#FFD700,#FF69B4,#DA70D6,#FFA500) border-box",
           "&::before": {
             content: '""',
             position: "absolute",
@@ -138,7 +138,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
           },
         }}
       >
-        <ModalBody p={6} textAlign="center" color="gray.800">
+        <ModalBody p={6} textAlign="center" color="appText">
           <HStack justifyContent="center" mb={4}>
             <Text fontSize="xl" fontWeight="bold">
               {displayName ||

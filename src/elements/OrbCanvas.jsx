@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { useColorMode } from "@chakra-ui/react";
 import StreamLoader from "./StreamLoader";
 
 export function OrbCanvas({
@@ -6,14 +7,17 @@ export function OrbCanvas({
   instructions,
   hasStreamedText = true,
 }) {
+  const { colorMode } = useColorMode();
+  const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const offscreenCanvas = useRef(null);
   const particles = useRef([]);
   const animationFrameId = useRef();
 
   useEffect(() => {
+    const container = containerRef.current;
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!container || !canvas) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -24,30 +28,46 @@ export function OrbCanvas({
 
     // Resize canvas to fit its container
     const resizeCanvas = () => {
-      canvas.width = canvas.parentElement.clientWidth;
-      canvas.height = canvas.parentElement.clientHeight;
+      const nextWidth = container.clientWidth;
+      const nextHeight = container.clientHeight;
+      if (!nextWidth || !nextHeight) return;
+
+      canvas.width = nextWidth;
+      canvas.height = nextHeight;
 
       offscreenCanvas.current.width = canvas.width;
       offscreenCanvas.current.height = canvas.height;
+
+      particles.current = particles.current.map((particle) => ({
+        ...particle,
+        x: Math.min(particle.x, canvas.width),
+        y: Math.min(particle.y, canvas.height),
+      }));
     };
 
     resizeCanvas();
 
-    const width = canvas.width;
-    const height = canvas.height;
-
     // Gradient colors for orbs
-    const colors = [
-      "rgba(147, 51, 234, 0.8)", // Purple
-      "rgba(236, 72, 153, 0.8)", // Pink
-      "rgba(249, 115, 22, 0.8)", // Orange
-    ];
+    const colors =
+      colorMode === "dark"
+        ? [
+            "rgba(114, 146, 255, 0.45)",
+            "rgba(136, 93, 255, 0.5)",
+            "rgba(64, 209, 255, 0.35)",
+          ]
+        : [
+            "rgba(147, 51, 234, 0.8)",
+            "rgba(236, 72, 153, 0.8)",
+            "rgba(249, 115, 22, 0.8)",
+          ];
+    const backgroundFade =
+      colorMode === "dark" ? "rgba(8, 13, 30, 0.18)" : "rgba(255, 255, 255, 0.12)";
 
     // Initialize particles
     const particleCount = 30; // Reduced count for optimization
     particles.current = Array.from({ length: particleCount }, (_, index) => ({
-      x: Math.random() * width,
-      y: Math.random() * height,
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
       vx: (Math.random() - 0.5) * 5, // Slower velocity
       vy: (Math.random() - 0.5) * 5,
       radius: Math.random() * 3 + 2,
@@ -56,6 +76,8 @@ export function OrbCanvas({
     }));
 
     const drawParticles = () => {
+      const width = canvas.width;
+      const height = canvas.height;
       offCtx.clearRect(0, 0, width, height);
 
       particles.current.forEach((particle, i) => {
@@ -81,8 +103,11 @@ export function OrbCanvas({
     };
 
     const animate = () => {
+      const width = canvas.width;
+      const height = canvas.height;
+
       // Fade effect for the main canvas
-      ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+      ctx.fillStyle = backgroundFade;
       ctx.fillRect(0, 0, width, height);
 
       // Render particles onto the offscreen canvas
@@ -130,44 +155,93 @@ export function OrbCanvas({
 
     animate();
 
-    // Listen for window resize events
-    window.addEventListener("resize", resizeCanvas);
+    let resizeObserver;
+    if (typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver(resizeCanvas);
+      resizeObserver.observe(container);
+    } else {
+      window.addEventListener("resize", resizeCanvas);
+    }
 
     return () => {
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
-      window.removeEventListener("resize", resizeCanvas);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      } else {
+        window.removeEventListener("resize", resizeCanvas);
+      }
     };
-  }, []);
+  }, [colorMode]);
+
+  const absoluteContainerStyles = {
+    position: "relative",
+    width: "100%",
+    height: "100%",
+    minHeight: "100%",
+    overflow: "hidden",
+    background: "var(--chakra-colors-appBg)",
+  };
+
+  const absoluteCanvasStyles = {
+    position: "absolute",
+    inset: 0,
+    display: "block",
+    width: "100%",
+    height: "100%",
+  };
+
+  const inlineContainerStyles = {
+    position: "relative",
+    width: "200px",
+    margin: "0 auto",
+  };
+
+  const inlineCanvasStyles = {
+    display: "block",
+    width: "200px",
+    height: "250px",
+    minHeight: "min-content",
+    borderRadius: "25px",
+  };
 
   return (
-    <>
-      {isAbsolute ? (
-        <StreamLoader
-          isAbsolute={isAbsolute}
-          instructions={instructions}
-          hasStreamedText={hasStreamedText}
-        />
-      ) : null}
-
+    <div
+      ref={containerRef}
+      style={isAbsolute ? absoluteContainerStyles : inlineContainerStyles}
+    >
       <canvas
         ref={canvasRef}
-        style={{
-          display: "block",
-          width: isAbsolute ? "100%" : "200px",
-          height: isAbsolute ? "100%" : "250px",
-          minHeight: isAbsolute ? "100vh" : "min-content",
-          borderRadius: isAbsolute ? "0px" : "25px",
-        }}
+        style={isAbsolute ? absoluteCanvasStyles : inlineCanvasStyles}
       ></canvas>
-      {!isAbsolute ? (
+      {isAbsolute ? (
+        <div
+          style={{
+            position: "relative",
+            zIndex: 1,
+            width: "100%",
+            height: "100%",
+            minHeight: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "24px",
+          }}
+        >
+          <StreamLoader
+            isAbsolute={isAbsolute}
+            instructions={instructions}
+            hasStreamedText={hasStreamedText}
+          />
+        </div>
+      ) : (
         <StreamLoader
           isAbsolute={isAbsolute}
           instructions={instructions}
           hasStreamedText={hasStreamedText}
         />
-      ) : null}
-    </>
+      )}
+    </div>
   );
 }

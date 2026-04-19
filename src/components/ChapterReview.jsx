@@ -16,6 +16,7 @@ import {
   Text,
   VStack,
   useDisclosure,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import {
   CheckCircleIcon,
@@ -229,6 +230,30 @@ const ChapterReview = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [selectedChapter, setSelectedChapter] = useState(null);
+  const chapterCardBg = useColorModeValue(
+    "rgba(255,255,255,0.94)",
+    "rgba(12,21,40,0.98)",
+  );
+  const chapterCardShadow = useColorModeValue(
+    "0 18px 38px rgba(15,23,42,0.14)",
+    "0 24px 46px rgba(2,6,23,0.42)",
+  );
+  const activeChapterCardShadow = useColorModeValue(
+    "0 24px 48px rgba(14,165,233,0.2)",
+    "0 28px 56px rgba(2,6,23,0.48)",
+  );
+  const connectorBaseStroke = useColorModeValue(
+    "rgba(148,163,184,0.26)",
+    "rgba(148,163,184,0.2)",
+  );
+  const drawerQuestionBg = useColorModeValue(
+    "rgba(255,255,255,0.96)",
+    "rgba(12,21,40,0.96)",
+  );
+  const drawerQuestionShadow = useColorModeValue(
+    "0 18px 36px rgba(15,23,42,0.1)",
+    "0 20px 40px rgba(2,6,23,0.34)",
+  );
 
   const {
     isOpen: isChapterDrawerOpen,
@@ -239,14 +264,21 @@ const ChapterReview = ({
   const previewCount = 2;
   const activeNodeIndex = Math.max(
     0,
-    nodes.findIndex((node) => node.isActive)
+    nodes.findIndex((node) => node.isActive),
   );
   const collapsedNodes = nodes.slice(
     activeNodeIndex,
-    activeNodeIndex + previewCount
+    activeNodeIndex + previewCount,
   );
   const visibleNodes = isExpanded ? nodes : collapsedNodes;
   const hasHiddenNodes = nodes.length > visibleNodes.length;
+  const isShowingExpandButton =
+    showExpandControl && hasHiddenNodes && !isExpanded;
+  const startButtonMarginTop = isExpanded
+    ? { base: 0, md: 2 }
+    : isShowingExpandButton
+      ? { base: -4, md: -4 }
+      : { base: -6, md: -8 };
 
   const closeChapterDrawer = useCallback(() => {
     setSelectedChapter(null);
@@ -282,202 +314,207 @@ const ChapterReview = ({
       width="100%"
       display="flex"
       justifyContent="center"
-      py={{ base: 10, md: 14 }}
+      pt={{ base: 4, md: 10 }}
+      pb={{ base: 6, md: 12 }}
       px={{ base: 3, md: 6 }}
     >
       <VStack
-        spacing={{ base: 10, md: 12 }}
+        spacing={{ base: 6, md: 10 }}
         width="100%"
         maxW={{ base: "680px", lg: "820px" }}
         align="center"
       >
-        <Box textAlign="center" px={{ base: 4, md: 6 }}>
+        <Box textAlign="center" px={{ base: 3, md: 6 }}>
           <Text
-            fontSize="sm"
+            fontSize={{ base: "xs", md: "sm" }}
             fontWeight="semibold"
             textTransform="uppercase"
             letterSpacing="widest"
-            color="purple.400"
-            mb={2}
+            color="purple.300"
+            mb={{ base: 1, md: 2 }}
           >
             {text?.title}
           </Text>
-          <Text fontSize={{ base: "xl", md: "2xl" }} color="gray.600">
+          <Text
+            fontSize={{ base: "sm", md: "md" }}
+            lineHeight={{ base: "1.45", md: "1.6" }}
+            color="appTextMuted"
+            maxW={{ base: "440px", md: "620px" }}
+            mx="auto"
+          >
             {text?.subtitle}
           </Text>
         </Box>
 
         {/* ---------- SKILL TREE (restored) ---------- */}
-        <Box w="100%" borderRadius="4xl" p={{ base: 6, md: 8 }}>
-          <VStack align="stretch" spacing={{ base: 6, md: 8 }}>
-            {visibleNodes.map((node, index) => {
-              const typeStyle = getStyleForKind(node.questionKind);
-              const IconComponent = typeStyle.icon || StarIcon;
-              const accent = typeStyle.accent;
-              const gradient = typeStyle.gradient;
-              const pattern = resolvePattern(index);
-              const nextPattern = resolvePattern(index + 1);
-              const justifyContent = getJustifyContent(pattern.alignSelf);
-              const isClickable = node?.questions?.length > 0;
+        <VStack
+          align="stretch"
+          spacing={{ base: 6, md: 8 }}
+          w="100%"
+          px={{ base: 2, md: 3 }}
+        >
+          {visibleNodes.map((node, index) => {
+            const typeStyle = getStyleForKind(node.questionKind);
+            const IconComponent = typeStyle.icon || StarIcon;
+            const accent = typeStyle.accent;
+            const gradient = typeStyle.gradient;
+            const pattern = resolvePattern(index);
+            const nextPattern = resolvePattern(index + 1);
+            const justifyContent = getJustifyContent(pattern.alignSelf);
+            const isClickable = node?.questions?.length > 0;
 
-              return (
-                <Box
-                  key={node.id}
-                  display="flex"
-                  flexDirection="column"
-                  gap={4}
-                >
-                  <Flex justify={justifyContent} w="100%">
+            return (
+              <Box key={node.id} display="flex" flexDirection="column" gap={4}>
+                <Flex justify={justifyContent} w="100%">
+                  <Box
+                    as={motion.div}
+                    role={isClickable ? "button" : undefined}
+                    tabIndex={isClickable ? 0 : -1}
+                    onClick={() => handleChapterSelect(node)}
+                    onKeyDown={(event) => handleChapterKeyDown(event, node)}
+                    initial={{ opacity: 0, y: 24, scale: 0.94 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ duration: 0.45, delay: index * 0.06 }}
+                    px={{ base: 4, md: 5 }}
+                    py={{ base: 4, md: 5 }}
+                    borderRadius="full"
+                    bg={chapterCardBg}
+                    borderWidth="1px"
+                    borderColor={node.isActive ? `${accent}85` : `${accent}45`}
+                    boxShadow={
+                      node.isActive
+                        ? `${activeChapterCardShadow}, 0 0 0 1px ${accent}30`
+                        : `${chapterCardShadow}, 0 0 0 1px ${accent}18`
+                    }
+                    display="flex"
+                    alignItems="center"
+                    gap={{ base: 4, md: 5 }}
+                    position="relative"
+                    overflow="hidden"
+                    cursor={isClickable ? "pointer" : "default"}
+                    style={{
+                      transform: `translateX(${pattern.translateX}) rotate(${pattern.rotate})`,
+                    }}
+                    _hover={
+                      isClickable
+                        ? {
+                            transform: `translateX(${pattern.translateX}) rotate(${pattern.rotate}) scale(1.02)`,
+                          }
+                        : undefined
+                    }
+                    _focusVisible={{ boxShadow: `0 0 0 3px ${accent}55` }}
+                  >
                     <Box
-                      as={motion.div}
-                      role={isClickable ? "button" : undefined}
-                      tabIndex={isClickable ? 0 : -1}
-                      onClick={() => handleChapterSelect(node)}
-                      onKeyDown={(event) => handleChapterKeyDown(event, node)}
-                      initial={{ opacity: 0, y: 24, scale: 0.94 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ duration: 0.45, delay: index * 0.06 }}
-                      px={{ base: 4, md: 5 }}
-                      py={{ base: 4, md: 5 }}
-                      borderRadius="full"
-                      bg="rgba(255,255,255,0.96)"
-                      borderWidth="1px"
-                      borderColor={
-                        node.isActive ? `${accent}85` : `${accent}45`
-                      }
-                      boxShadow={
-                        node.isActive
-                          ? `0 28px 54px ${accent}35`
-                          : `0 18px 38px rgba(15,23,42,0.14)`
-                      }
-                      display="flex"
-                      alignItems="center"
+                      position="absolute"
+                      inset={0}
+                      borderRadius="inherit"
+                      bgGradient={gradient}
+                      opacity={0.32}
+                      pointerEvents="none"
+                    />
+                    <Flex
+                      align="center"
                       gap={{ base: 4, md: 5 }}
                       position="relative"
-                      cursor={isClickable ? "pointer" : "default"}
-                      style={{
-                        transform: `translateX(${pattern.translateX}) rotate(${pattern.rotate})`,
-                      }}
-                      _hover={
-                        isClickable
-                          ? {
-                              transform: `translateX(${pattern.translateX}) rotate(${pattern.rotate}) scale(1.02)`,
-                            }
-                          : undefined
-                      }
-                      _focusVisible={{ boxShadow: `0 0 0 3px ${accent}55` }}
-                    >
-                      <Box
-                        position="absolute"
-                        inset={0}
-                        // bgGradient={gradient}
-                        opacity={0.22}
-                        pointerEvents="none"
-                      />
-                      <Flex
-                        align="center"
-                        gap={{ base: 4, md: 5 }}
-                        position="relative"
-                        zIndex={1}
-                        w="100%"
-                      >
-                        <Box
-                          w={{ base: "56px", md: "64px" }}
-                          h={{ base: "56px", md: "64px" }}
-                          borderRadius="full"
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="center"
-                          bgGradient={`radial-gradient(circle at 30% 30%, ${accent}33, transparent 70%)`}
-                          boxShadow={`0 20px 40px ${accent}30`}
-                        >
-                          <Icon
-                            as={IconComponent}
-                            boxSize={{ base: 6, md: 7 }}
-                            color={accent}
-                          />
-                        </Box>
-                        <Text
-                          fontSize={{ base: "lg", md: "xl" }}
-                          fontWeight={node.isActive ? "extrabold" : "semibold"}
-                          color="gray.800"
-                          letterSpacing="tight"
-                        >
-                          {node.chapterLabel || node.title}
-                        </Text>
-                      </Flex>
-                    </Box>
-                  </Flex>
-
-                  {/* connector between cards */}
-                  {index < visibleNodes.length - 1 ? (
-                    <Box
-                      h={{ base: 16, md: 20 }}
+                      zIndex={1}
                       w="100%"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      px={{ base: 6, md: 8 }}
                     >
                       <Box
-                        as="svg"
-                        width="100%"
-                        height="100%"
-                        viewBox="0 0 400 80"
-                        fill="none"
-                        preserveAspectRatio="none"
+                        w={{ base: "56px", md: "64px" }}
+                        h={{ base: "56px", md: "64px" }}
+                        borderRadius="full"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        bgGradient={`radial-gradient(circle at 30% 30%, ${accent}33, transparent 70%)`}
+                        boxShadow={`0 20px 40px ${accent}30`}
                       >
-                        <path
-                          d={createFlowConnectorPath(
-                            pattern.anchor,
-                            nextPattern.anchor
-                          )}
-                          stroke="rgba(148,163,184,0.18)"
-                          strokeWidth="10"
-                          strokeLinecap="round"
-                        />
-                        <path
-                          d={createFlowConnectorPath(
-                            pattern.anchor,
-                            nextPattern.anchor
-                          )}
-                          stroke={`${accent}55`}
-                          strokeWidth="5"
-                          strokeLinecap="round"
+                        <Icon
+                          as={IconComponent}
+                          boxSize={{ base: 6, md: 7 }}
+                          color={accent}
                         />
                       </Box>
-                    </Box>
-                  ) : null}
-                </Box>
-              );
-            })}
+                      <Text
+                        fontSize={{ base: "lg", md: "xl" }}
+                        fontWeight={node.isActive ? "extrabold" : "semibold"}
+                        color="appText"
+                        letterSpacing="tight"
+                      >
+                        {node.chapterLabel || node.title}
+                      </Text>
+                    </Flex>
+                  </Box>
+                </Flex>
 
-            {showExpandControl && hasHiddenNodes && !isExpanded ? (
-              <Box
-                as={motion.div}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: 0.45,
-                  delay: visibleNodes.length * 0.06,
-                }}
-                pt={{ base: 2, md: 4 }}
-              >
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  borderRadius="full"
-                  px={{ base: 6, md: 8 }}
-                  py={{ base: 4, md: 5 }}
-                  colorScheme="purple"
-                  onClick={() => setIsExpanded(true)}
-                >
-                  {text?.expand || "Show more"}
-                </Button>
+                {/* connector between cards */}
+                {index < visibleNodes.length - 1 ? (
+                  <Box
+                    h={{ base: 16, md: 20 }}
+                    w="100%"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    px={{ base: 6, md: 8 }}
+                  >
+                    <Box
+                      as="svg"
+                      width="100%"
+                      height="100%"
+                      viewBox="0 0 400 80"
+                      fill="none"
+                      preserveAspectRatio="none"
+                    >
+                      <path
+                        d={createFlowConnectorPath(
+                          pattern.anchor,
+                          nextPattern.anchor,
+                        )}
+                        stroke={connectorBaseStroke}
+                        strokeWidth="10"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d={createFlowConnectorPath(
+                          pattern.anchor,
+                          nextPattern.anchor,
+                        )}
+                        stroke={`${accent}55`}
+                        strokeWidth="5"
+                        strokeLinecap="round"
+                      />
+                    </Box>
+                  </Box>
+                ) : null}
               </Box>
-            ) : null}
-          </VStack>
-        </Box>
+            );
+          })}
+
+          {showExpandControl && hasHiddenNodes && !isExpanded ? (
+            <Box
+              as={motion.div}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.45,
+                delay: visibleNodes.length * 0.06,
+              }}
+              pt={{ base: 2, md: 4 }}
+            >
+              <Button
+                variant="ghost"
+                size="lg"
+                borderRadius="full"
+                px={{ base: 6, md: 8 }}
+                py={{ base: 4, md: 5 }}
+                colorScheme="purple"
+                onClick={() => setIsExpanded(true)}
+              >
+                {text?.expand || "Show more"}
+              </Button>
+            </Box>
+          ) : null}
+        </VStack>
 
         {showStartButton && text?.cta ? (
           <Button
@@ -487,7 +524,7 @@ const ChapterReview = ({
             px={{ base: 8, md: 12 }}
             py={{ base: 6, md: 7 }}
             onMouseDown={onStart}
-            mt="-48px"
+            mt={startButtonMarginTop}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 onStart();
@@ -505,10 +542,13 @@ const ChapterReview = ({
           placement="bottom"
           onClose={handleDrawerClose}
         >
-          <DrawerOverlay bg="blackAlpha.400" backdropFilter="blur(8px)" />
+          <DrawerOverlay bg="appOverlay" backdropFilter="blur(8px)" />
           <DrawerContent
             borderTopRadius={{ base: "3xl", md: "4xl" }}
-            bg="rgba(255,255,255,0.96)"
+            bg="appSurfaceElevated"
+            color="appText"
+            borderWidth="1px"
+            borderColor="appBorder"
             maxH="80vh"
           >
             <DrawerCloseButton
@@ -522,7 +562,7 @@ const ChapterReview = ({
                   fontWeight="semibold"
                   letterSpacing="widest"
                   textTransform="uppercase"
-                  color="purple.400"
+                  color="purple.300"
                 >
                   {text?.drawerTitle || "Inside this chapter"}
                 </Text>
@@ -530,7 +570,7 @@ const ChapterReview = ({
                 <Text
                   fontSize={{ base: "2xl", md: "3xl" }}
                   fontWeight="bold"
-                  color="gray.800"
+                  color="appText"
                 >
                   {selectedChapter?.chapterLabel || selectedChapter?.title}
                 </Text>
@@ -542,7 +582,7 @@ const ChapterReview = ({
                 <VStack align="stretch" spacing={{ base: 3, md: 4 }}>
                   {selectedChapter.questions.map((question, index) => {
                     const questionStyle = getStyleForKind(
-                      question.questionKind
+                      question.questionKind,
                     );
                     const QuestionIconComponent =
                       questionStyle.icon || StarIcon;
@@ -560,10 +600,10 @@ const ChapterReview = ({
                         borderRadius="2xl"
                         px={{ base: 3, md: 4 }}
                         py={{ base: 3, md: 4 }}
-                        bg="rgba(255,255,255,0.95)"
+                        bg={drawerQuestionBg}
                         borderWidth="1px"
-                        borderColor={`${questionAccent}40`}
-                        boxShadow={`0 18px 36px ${questionAccent}26`}
+                        borderColor={`${questionAccent}55`}
+                        boxShadow={`${drawerQuestionShadow}, 0 0 0 1px ${questionAccent}18`}
                         position="relative"
                         // important: NO overflow hiding (no clipping of long text)
                       >
@@ -602,7 +642,7 @@ const ChapterReview = ({
                           <Text
                             fontSize={{ base: "md", md: "lg" }}
                             fontWeight="semibold"
-                            color="gray.900"
+                            color="appText"
                             whiteSpace="normal"
                             wordBreak="normal"
                             overflow="visible"
@@ -615,7 +655,7 @@ const ChapterReview = ({
                   })}
                 </VStack>
               ) : (
-                <Text color="gray.500" fontSize="md">
+                <Text color="appTextMuted" fontSize="md">
                   {text?.emptyChapter || "Lessons will appear here."}
                 </Text>
               )}

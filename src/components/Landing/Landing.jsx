@@ -39,7 +39,7 @@ export const Landing = ({
         <HStack spacing={2} alignItems="center">
           <CloudCanvas />
           {isCreatingAccount && (
-            <Text fontSize="smaller" backgroundColor="white" p={2}>
+            <Text fontSize="smaller" backgroundColor="appSurface" p={2}>
               {translation[userLanguage][loadingMessage]}
             </Text>
           )}
@@ -52,7 +52,7 @@ export const Landing = ({
 
       <Box
         width="100%"
-        bg="white"
+        bg="appSurface"
         py={6}
         px={6}
         borderRadius="24px"
@@ -76,10 +76,10 @@ export const Landing = ({
               {translation[userLanguage]["landing.promotion.title"]}
             </Text>
           </HStack>
-          <Text fontSize="sm" color="gray.700">
+          <Text fontSize="sm" color="appTextMuted">
             {translation[userLanguage]["landing.promotion.subtitle"]}
           </Text>
-          <Text fontSize="sm" color="gray.600">
+          <Text fontSize="sm" color="appTextSubtle">
             {translation[userLanguage]["landing.promotion.detail"]}
           </Text>
         </VStack>
@@ -96,7 +96,7 @@ export const Landing = ({
           translation[userLanguage]["createAccount.input.placeholder"]
         }
         maxWidth={300}
-        backgroundColor="white"
+        backgroundColor="appSurface"
         boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
       />
 
@@ -113,7 +113,7 @@ export const Landing = ({
           onMouseDown={() => setView("signIn")}
           colorScheme="pink"
           variant="outline"
-          bg="pink.50"
+          bg="appAccentSoft"
         >
           {translation[userLanguage]["landing.button.signIn"]}
         </Button>

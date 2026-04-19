@@ -221,6 +221,7 @@ import {
   Slide,
   SlideFade,
   useClipboard,
+  useColorMode,
   Img,
   Mark,
   RequiredIndicator,
@@ -230,6 +231,7 @@ import {
 
 import Editor from "@monaco-editor/react";
 import { LiveError, LivePreview, LiveProvider } from "react-live";
+import { appTheme } from "../../theme";
 
 import { database } from "../../database/firebaseResources";
 import {
@@ -272,6 +274,7 @@ const LiveReactEditorModal = ({
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [error, setError] = useState("");
   const [consoleLogs, setConsoleLogs] = useState([]);
+  const { colorMode } = useColorMode();
   const iframeRef = useRef(null);
 
   const { hasCopied, onCopy } = useClipboard(editorCode || "");
@@ -446,7 +449,15 @@ const LiveReactEditorModal = ({
         <Box
           width="100%"
           mb={{ base: 4, md: 0 }}
-          boxShadow="0.5px 0.5px 1px 0px rgba(0, 0, 0, 0.75)"
+          boxShadow={
+            colorMode === "dark"
+              ? "0 20px 45px rgba(2, 6, 23, 0.45)"
+              : "0.5px 0.5px 1px 0px rgba(0, 0, 0, 0.75)"
+          }
+          border="1px solid"
+          borderColor="appBorder"
+          borderRadius="xl"
+          overflow="hidden"
           height={editorHeight}
         >
           <Editor
@@ -455,7 +466,7 @@ const LiveReactEditorModal = ({
             language={looksLikeHTML(currentCode) ? "html" : "javascript"}
             value={currentCode}
             onChange={handleEditChange}
-            theme="light"
+            theme={colorMode === "dark" ? "vs-dark" : "light"}
             width="100%"
             options={{
               minimap: { enabled: false },
@@ -473,7 +484,8 @@ const LiveReactEditorModal = ({
           width="100%"
           borderRadius="2xl"
           mt="8px"
-          border="1px solid black"
+          border="1px solid"
+          borderColor="appBorderStrong"
           boxSizing="border-box"
           height={previewHeight}
           overflow="hidden"
@@ -481,7 +493,7 @@ const LiveReactEditorModal = ({
           {/* React preview */}
           {looksLikeReact(codeForPreview) && (isPreviewing || autoRun) ? (
             <Box height="100%">
-              <ChakraProvider>
+              <ChakraProvider theme={appTheme}>
                 <LiveProvider
                   key={instanceKey} // force re-mount if needed
                   code={codeForPreview}

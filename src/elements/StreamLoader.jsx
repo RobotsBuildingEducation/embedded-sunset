@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ChakraProvider, Box, Text, CSSReset } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { translation } from "../utility/translation";
 
 // Utility function to generate a random binary string of fixed length
@@ -78,35 +78,33 @@ export const StreamLoader = ({
   }, []);
 
   return (
-    <ChakraProvider>
-      <CSSReset />
-      <Box
-        p={6}
-        borderRadius="md"
-        overflow="hidden"
-        // whiteSpace="pre-wrap"
-        wordBreak={"break-all"}
-        // margin="20px auto"
-        maxWidth="600px"
-        fontFamily="monospace"
-        width="100%"
-        // position={isAbsolute ? "absolute" : ""}
-      >
-        {/* Display the single JSON object with the "thinking" key */}
+    <Box
+      p={6}
+      borderRadius="md"
+      overflow="hidden"
+      wordBreak="break-word"
+      maxWidth="600px"
+      width="100%"
+      mx="auto"
+      textAlign={isAbsolute ? "center" : "left"}
+      color={isAbsolute ? "appMuted" : "appText"}
+      textShadow={isAbsolute ? "0 1px 10px rgba(4, 7, 18, 0.35)" : "none"}
+    >
+      <Box fontSize={isAbsolute ? "sm" : "lg"} lineHeight="1.7">
+        {instructions}
+      </Box>
+      {displayedText !== undefined && displayedText !== null ? (
         <Text
+          mt={4}
           fontSize={isAbsolute ? "sm" : "lg"}
           lineHeight="1.6"
-          color={isAbsolute ? "gray" : ""}
-          textShadow={"1px 1px 1px solid black"}
+          fontFamily="mono"
+          wordBreak="break-all"
         >
-          {instructions}
-          <br />
-          {displayedText !== undefined && displayedText !== null
-            ? displayedText
-            : ""}
+          {displayedText}
         </Text>
-      </Box>
-    </ChakraProvider>
+      ) : null}
+    </Box>
   );
 };
 

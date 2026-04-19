@@ -39,6 +39,8 @@ const BitcoinModeModal = ({
         flexDirection="column"
         maxH="90vh"
         overflow="hidden"
+        bg="appSurfaceElevated"
+        color="appText"
       >
         <ModalHeader>
           {translation[userLanguage]["modal.bitcoinMode.title"]}
@@ -51,13 +53,24 @@ const BitcoinModeModal = ({
         <ModalFooter
           position="sticky"
           bottom="0"
-          bg="chakra-body-bg"
-          borderTopWidth="1px"
-          borderColor="blackAlpha.200"
-          boxShadow="sm"
+          bg="appSurfaceElevated"
+          borderTopWidth="0"
+          borderColor="transparent"
+          boxShadow="none"
           justifyContent="flex-end"
         >
-          <Button size="lg" onClick={onClose} data-sound-close="true">
+          <Button
+            size="lg"
+            onClick={onClose}
+            data-sound-close="true"
+            bg="appSurfaceStrong"
+            color="appText"
+            borderWidth="1px"
+            borderColor="appBorderStrong"
+            boxShadow="sm"
+            _hover={{ bg: "appSurfaceMuted" }}
+            _active={{ bg: "appSurfaceInset" }}
+          >
             {translation?.[userLanguage]?.["button.close"] || "Close"}
           </Button>
         </ModalFooter>

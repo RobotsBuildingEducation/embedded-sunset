@@ -49,5 +49,5 @@
   outline: none;
   background: transparent;
   color: transparent; /* only the caret shows */
-  caret-color: black;
+  caret-color: var(--chakra-colors-appText);
 }

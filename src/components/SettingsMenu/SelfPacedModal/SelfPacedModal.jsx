@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -13,12 +13,10 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
-  Stack,
   Progress,
-  CircularProgress,
   Box,
   Switch,
-  Spinner,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { getUserData, updateUserData } from "../../../utility/nosql";
 import { translation } from "../../../utility/translation";
@@ -32,9 +30,23 @@ import { doc, updateDoc } from "firebase/firestore";
 import { getToken as getAppCheckToken } from "firebase/app-check";
 import { soundManager } from "../../../utility/soundManager";
 
-// CountdownTimer now supports days along with hours:minutes:seconds and shows a progress bar.
-const CountdownTimer = ({ targetTime, initialTime, label, userLanguage }) => {
+// CountdownTimer keeps a stable footprint even before saved dates load.
+const CountdownTimer = ({
+  targetTime,
+  label,
+  userLanguage,
+  isLoading = false,
+  loadingLabel = "Loading timer",
+  inactiveLabel = "Not started yet",
+}) => {
+  const hasTargetTime =
+    targetTime instanceof Date && !Number.isNaN(targetTime.getTime());
+
   const calculateTimeLeft = () => {
+    if (!hasTargetTime) {
+      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+    }
+
     const difference = targetTime.getTime() - new Date().getTime();
     if (difference > 0) {
       const days = Math.floor(difference / (1000 * 60 * 60 * 24));
@@ -47,38 +59,72 @@ const CountdownTimer = ({ targetTime, initialTime, label, userLanguage }) => {
   };
 
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
-  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    if (!hasTargetTime) {
+      setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      return undefined;
+    }
+
+    setTimeLeft(calculateTimeLeft());
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
-      if (initialTime) {
-        const totalTime = targetTime.getTime() - initialTime.getTime();
-        const elapsed = new Date().getTime() - initialTime.getTime();
-        let p = (elapsed / totalTime) * 100;
-        if (p > 100) p = 100;
-        if (p < 0) p = 0;
-        setProgress(p);
-      }
     }, 1000);
+
     return () => clearInterval(timer);
-  }, [targetTime, initialTime]);
+  }, [hasTargetTime, targetTime]);
 
   const pad = (num) => String(num).padStart(2, "0");
+  const formattedTime = isLoading
+    ? "--:--:--"
+    : hasTargetTime
+      ? `${
+          timeLeft.days > 0
+            ? `${timeLeft.days} ${translation[userLanguage]["modal.selfPace.day"]}${timeLeft.days === 1 ? "" : "s"}  `
+            : ""
+        }${pad(timeLeft.hours)}:${pad(timeLeft.minutes)}:${pad(timeLeft.seconds)}`
+      : "--:--:--";
+  const supportingLabel = isLoading ? loadingLabel : inactiveLabel;
+  const showSupportingLabel = isLoading || !hasTargetTime;
 
   return (
-    <>
-      <Text as="span">
-        {initialTime && (
-          <CircularProgress color="#82EBAC" value={100 - progress} size={8} />
-        )}
-        &nbsp;{label}
-        {timeLeft.days > 0
-          ? `${timeLeft.days} ${translation[userLanguage]["modal.selfPace.day"]}${timeLeft.days === 1 ? "" : "s"} & `
-          : ""}
-        {pad(timeLeft.hours)}:{pad(timeLeft.minutes)}:{pad(timeLeft.seconds)}
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="space-between"
+      gap={4}
+      width="100%"
+      minH="52px"
+      borderRadius="18px"
+      bg="appSurfaceInset"
+      border="1px solid var(--chakra-colors-appBorder)"
+      px={4}
+      py={3}
+    >
+      <Text fontSize="xs" color="appTextMuted" lineHeight="1.2">
+        {label}
       </Text>
-    </>
+      <Box textAlign="right">
+        <Text
+          fontSize="sm"
+          fontWeight="bold"
+          color={hasTargetTime && !isLoading ? "appText" : "appTextMuted"}
+          fontFamily='"Fira Code", monospace'
+          whiteSpace="nowrap"
+        >
+          {formattedTime}
+        </Text>
+        <Text
+          fontSize="2xs"
+          color="appTextMuted"
+          minH="14px"
+          lineHeight="14px"
+          visibility={showSupportingLabel ? "visible" : "hidden"}
+        >
+          {supportingLabel}
+        </Text>
+      </Box>
+    </Box>
   );
 };
 
@@ -94,7 +140,6 @@ const SelfPacedModal = ({
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const [goalCount, setGoalCount] = useState(0);
-  const [inputValue, setInputValue] = useState(interval);
   const [streak, setStreak] = useState(0);
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
@@ -107,9 +152,15 @@ const SelfPacedModal = ({
 
   // On mount, fetch the stored user data and update our state.
   useEffect(() => {
+    let isMounted = true;
+
     const fetchUserData = async () => {
       const userData = await getUserData(userId);
-      console.log("USER DATA....", userData);
+
+      if (!isMounted) {
+        return;
+      }
+
       setStreak(userData.streak || 0);
       setStartTime(userData.startTime ? new Date(userData.startTime) : null);
       setEndTime(userData.endTime ? new Date(userData.endTime) : null);
@@ -119,7 +170,6 @@ const SelfPacedModal = ({
       // Initialize dailyProgress from stored data (or default to 0).
       setDailyProgress(userData.dailyProgress || 0);
 
-      console.log("userData", userData);
       if (userData.nextGoalExpiration) {
         setNextGoalExpiration(new Date(userData.nextGoalExpiration));
       }
@@ -127,17 +177,23 @@ const SelfPacedModal = ({
       setNotificationsEnabled(!!userData.fcmToken);
     };
 
-    if (userId || isOpen) {
-      fetchUserData().then(() => {
-        setIsDataLoading(false);
+    if (userId && isOpen) {
+      setIsDataLoading(true);
+      fetchUserData().finally(() => {
+        if (isMounted) {
+          setIsDataLoading(false);
+        }
       });
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [userId, isOpen, setInterval]);
 
   const handleIntervalChange = (value) => {
     const nextValue = Number(value);
     setInterval(nextValue);
-    setInputValue(nextValue);
     soundManager.resume();
     soundManager.play("select");
   };
@@ -147,15 +203,6 @@ const SelfPacedModal = ({
     soundManager.resume();
     soundManager.play("sliderTick");
   };
-
-  const debounceTimeout = useRef(null);
-  useEffect(() => {
-    return () => {
-      if (debounceTimeout.current) {
-        clearTimeout(debounceTimeout.current);
-      }
-    };
-  }, []);
 
   const handleSave = async () => {
     const currentTime = new Date();
@@ -178,7 +225,7 @@ const SelfPacedModal = ({
       dailyGoals,
       newNextGoalExpiration,
       dailyProgress, // include dailyProgress in the update
-      goalCount
+      goalCount,
     );
     onClose();
   };
@@ -211,12 +258,58 @@ const SelfPacedModal = ({
     );
   };
 
-  const getMarkColor = (interval) => {
-    if (interval === 1440) return "purple.500";
-    if (interval === 2880) return "green.500";
-    if (interval === 4320) return "blue.500";
-    return "gray.500";
+  const intervalButtonBorder = useColorModeValue(
+    "rgba(148, 163, 184, 0.46)",
+    "rgba(148, 163, 184, 0.36)",
+  );
+  const intervalButtonBg = useColorModeValue(
+    "rgba(255, 255, 255, 0.92)",
+    "rgba(15, 23, 42, 0.9)",
+  );
+  const selectedIntervalButtonBg = useColorModeValue(
+    "rgba(241, 245, 249, 0.98)",
+    "rgba(30, 41, 59, 0.98)",
+  );
+  const selectedIntervalButtonBorder = useColorModeValue(
+    "rgba(71, 85, 105, 0.76)",
+    "rgba(226, 232, 240, 0.68)",
+  );
+  const intervalButtonTextColor = useColorModeValue("#0f172a", "#f8fafc");
+  const modalShadow = useColorModeValue(
+    "0 24px 60px rgba(15, 23, 42, 0.16)",
+    "0 28px 70px rgba(2, 6, 23, 0.54)",
+  );
+  const sectionBg = useColorModeValue(
+    "rgba(255, 255, 255, 0.76)",
+    "rgba(15, 23, 42, 0.72)",
+  );
+  const sectionBorder = useColorModeValue(
+    "rgba(148, 163, 184, 0.24)",
+    "rgba(148, 163, 184, 0.22)",
+  );
+  const sectionShadow = useColorModeValue(
+    "0 12px 24px rgba(15, 23, 42, 0.06)",
+    "0 16px 32px rgba(2, 6, 23, 0.28)",
+  );
+  const sliderTrackBg = useColorModeValue("gray.200", "whiteAlpha.200");
+  const isSpanish = userLanguage?.startsWith("es");
+  const modalCopy = {
+    notificationsTitle: isSpanish ? "Recordatorios" : "Reminders",
+    streakTitle: isSpanish ? "Ventana de racha" : "Streak window",
+    dailyGoalTitle: translation[userLanguage]["dailyGoal"] || "Daily goal",
+    progressTitle: isSpanish ? "Progreso de hoy" : "Today's progress",
+    inactiveTimer: isSpanish ? "Aun no inicia" : "Not started yet",
+    settingsLoading: isSpanish
+      ? "Cargando ajustes guardados"
+      : "Loading saved settings",
+    timerLoading: isSpanish ? "Cargando temporizador" : "Loading timer",
+    notificationLoading: isSpanish
+      ? "Revisando recordatorios"
+      : "Checking reminder status",
+    valueLoading: isSpanish ? "..." : "...",
   };
+  const dailyProgressPercent =
+    dailyGoals > 0 ? Math.min((dailyProgress / dailyGoals) * 100, 100) : 0;
 
   const handleToggleNotifications = async () => {
     soundManager.resume();
@@ -279,7 +372,7 @@ const SelfPacedModal = ({
       });
       if (!token) {
         console.error(
-          "No FCM token available. Make sure notifications are enabled."
+          "No FCM token available. Make sure notifications are enabled.",
         );
         return;
       }
@@ -298,7 +391,7 @@ const SelfPacedModal = ({
             "X-Firebase-AppCheck": appCheckToken,
           },
           body: JSON.stringify({ token }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -308,199 +401,282 @@ const SelfPacedModal = ({
     }
   };
 
-  console.log("messaging from modal", messaging);
-
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>
-          {translation[userLanguage]["modal.title.selfPace"]}
+    <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
+      <ModalOverlay bg="appOverlay" backdropFilter="blur(8px)" />
+      <ModalContent
+        bg="appSurfaceElevated"
+        color="appText"
+        borderRadius="32px"
+        border="1px solid var(--chakra-colors-appBorder)"
+        boxShadow={modalShadow}
+        overflow="hidden"
+        maxH="92dvh"
+      >
+        <ModalHeader px={6} pt={6} pb={3}>
+          <Text fontSize="2xl" fontWeight="bold">
+            {translation[userLanguage]["modal.title.selfPace"]}
+          </Text>
+          <Text
+            mt={1}
+            fontSize="xs"
+            color="appTextMuted"
+            minH="16px"
+            lineHeight="16px"
+            visibility={isDataLoading ? "visible" : "hidden"}
+          >
+            {modalCopy.settingsLoading}
+          </Text>
         </ModalHeader>
         <ModalCloseButton />
-        <ModalBody>
-          <>
+        <ModalBody px={6} py={2} overflowY="auto">
+          <Box display="flex" flexDirection="column" gap={4}>
             <Box
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              textAlign="left"
+              bg={sectionBg}
+              border={`1px solid ${sectionBorder}`}
+              borderRadius="24px"
+              boxShadow={sectionShadow}
+              p={4}
             >
-              <Text width="100%" mb={3}>
-                {
-                  translation[userLanguage][
-                    "modal.selfPace.notificationDescription"
-                  ]
-                }
-              </Text>
-
-              <Text>
-                {!messaging
-                  ? translation[userLanguage][
-                      "modal.selfPace.notificationsUnavailable"
-                    ]
-                  : null}
-              </Text>
-              <Text fontSize="sm" mb={2}>
-                {notificationsEnabled
-                  ? translation[userLanguage].notificationsEnabled
-                  : translation[userLanguage].notificationsDisabled}
-              </Text>
-
-              {isDataLoading ? (
-                <Spinner />
-              ) : (
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+                gap={4}
+              >
+                <Box textAlign="left">
+                  <Text fontSize="sm" fontWeight="bold">
+                    {modalCopy.notificationsTitle}
+                  </Text>
+                  <Text mt={1} fontSize="xs" color="appTextMuted">
+                    {messaging
+                      ? translation[userLanguage][
+                          "modal.selfPace.notificationDescription"
+                        ]
+                      : translation[userLanguage][
+                          "modal.selfPace.notificationsUnavailable"
+                        ]}
+                  </Text>
+                  <Text mt={2} fontSize="xs" color="appTextMuted">
+                    {isDataLoading
+                      ? modalCopy.notificationLoading
+                      : notificationsEnabled
+                        ? translation[userLanguage].notificationsEnabled
+                        : translation[userLanguage].notificationsDisabled}
+                  </Text>
+                </Box>
                 <Switch
                   isChecked={notificationsEnabled}
                   onChange={handleToggleNotifications}
                   size="lg"
                   colorScheme="green"
-                  disabled={!messaging}
+                  disabled={!messaging || isDataLoading}
+                  aria-busy={isDataLoading}
+                  flexShrink={0}
                 />
-              )}
-            </Box>{" "}
-            <br />
-            {localStorage.getItem("local_nsec") ===
-            "nsec1scxshk3tw8svuqmt676mnjqn4zsuskgmjzgy9j5kcc94jdj072jsud8gnz" ? (
-              <>
-                <Button onClick={handlePushNotification} colorScheme="blue">
+              </Box>
+
+              {localStorage.getItem("local_nsec") ===
+              "nsec1scxshk3tw8svuqmt676mnjqn4zsuskgmjzgy9j5kcc94jdj072jsud8gnz" ? (
+                <Button
+                  onClick={handlePushNotification}
+                  colorScheme="blue"
+                  size="sm"
+                  mt={4}
+                  width="100%"
+                >
                   Demo phone notification
                 </Button>
-                <br />
-                <br />
-              </>
-            ) : null}
-            <Text fontSize="xs">
-              {translation[userLanguage]["modal.selfPace.instruction"]}
-            </Text>
-            <Stack
-              direction="row"
-              spacing={3}
-              flexWrap="wrap"
-              justifyContent={"center"}
+              ) : null}
+            </Box>
+
+            <Box
+              bg={sectionBg}
+              border={`1px solid ${sectionBorder}`}
+              borderRadius="24px"
+              boxShadow={sectionShadow}
+              p={4}
             >
-              {[1440, 2880, 4320].map((option) => {
-                const isSelected = interval === option;
-                return (
-                  <Button
-                    key={option}
-                    type="button"
-                    variant="outline"
-                    data-sound-ignore-select="true"
-                    aria-pressed={isSelected}
-                    borderColor={isSelected ? "teal.400" : "gray.200"}
-                    bg={isSelected ? "teal.50" : "transparent"}
-                    boxShadow={
-                      isSelected ? "0 0 0 2px rgba(56, 178, 172, 0.2)" : "none"
-                    }
-                    onMouseDown={() => handleIntervalChange(String(option))}
-                    _hover={{
-                      borderColor: "teal.300",
-                    }}
-                  >
-                    <Text
-                      color={getMarkColor(option)}
-                      fontWeight="semibold"
-                      fontSize={"sm"}
+              <Text fontSize="sm" fontWeight="bold" textAlign="left">
+                {modalCopy.streakTitle}
+              </Text>
+              <Text mt={1} fontSize="xs" color="appTextMuted" lineHeight="1.7">
+                {translation[userLanguage]["modal.selfPace.instruction"]}
+              </Text>
+
+              <Box
+                width="100%"
+                display="flex"
+                flexDirection={{ base: "column", md: "row" }}
+                flexWrap="wrap"
+                justifyContent="center"
+                alignItems="center"
+                gap={3}
+                mt={4}
+              >
+                {[1440, 2880, 4320].map((option) => {
+                  const isSelected = interval === option;
+                  return (
+                    <Button
+                      key={option}
+                      type="button"
+                      variant="outline"
+                      data-sound-ignore-select="true"
+                      aria-pressed={isSelected}
+                      width={{ base: "100%", md: "auto" }}
+                      maxW={{ base: "360px", md: "none" }}
+                      minW={{ md: "150px" }}
+                      minH="56px"
+                      px={4}
+                      py={3}
+                      justifyContent="center"
+                      borderColor={
+                        isSelected
+                          ? selectedIntervalButtonBorder
+                          : intervalButtonBorder
+                      }
+                      bg={
+                        isSelected ? selectedIntervalButtonBg : intervalButtonBg
+                      }
+                      boxShadow={
+                        isSelected
+                          ? "0 0 0 2px rgba(148, 163, 184, 0.18)"
+                          : "none"
+                      }
+                      onMouseDown={() => handleIntervalChange(String(option))}
+                      _hover={{
+                        borderColor: selectedIntervalButtonBorder,
+                        bg: isSelected
+                          ? selectedIntervalButtonBg
+                          : "appSurfaceMuted",
+                      }}
                     >
-                      {getMarkLabel(option)}
-                    </Text>
-                  </Button>
-                );
-              })}
-            </Stack>
-            {/* Render the streak timer countdown only if endTime is defined */}
-            {endTime && (
-              <Box display="flex" justifyContent={"center"} mt={2}>
-                <Text mt={2} fontSize="sm">
-                  <CountdownTimer
-                    userLanguage={userLanguage}
-                    targetTime={endTime}
-                    initialTime={startTime}
-                    label={
-                      translation[userLanguage]["countdown.streakTimeLeft"]
-                    }
-                  />
+                      <Text
+                        color={intervalButtonTextColor}
+                        fontWeight="semibold"
+                        fontSize="sm"
+                        textAlign="center"
+                        lineHeight="1.35"
+                      >
+                        {getMarkLabel(option)}
+                      </Text>
+                    </Button>
+                  );
+                })}
+              </Box>
+
+              <Box mt={4}>
+                <CountdownTimer
+                  userLanguage={userLanguage}
+                  targetTime={endTime}
+                  label={translation[userLanguage]["countdown.streakTimeLeft"]}
+                  isLoading={isDataLoading}
+                  loadingLabel={modalCopy.timerLoading}
+                  inactiveLabel={modalCopy.inactiveTimer}
+                />
+              </Box>
+            </Box>
+
+            <Box
+              bg={sectionBg}
+              border={`1px solid ${sectionBorder}`}
+              borderRadius="24px"
+              boxShadow={sectionShadow}
+              p={4}
+            >
+              <Box
+                display="flex"
+                alignItems="baseline"
+                justifyContent="space-between"
+                gap={4}
+              >
+                <Box textAlign="left">
+                  <Text fontSize="sm" fontWeight="bold">
+                    {modalCopy.dailyGoalTitle}
+                  </Text>
+                  <Text
+                    mt={1}
+                    fontSize="xs"
+                    color="appTextMuted"
+                    lineHeight="1.7"
+                  >
+                    {translation[userLanguage]["modal.dailyGoal.instruction"]}
+                  </Text>
+                </Box>
+                <Text
+                  fontSize="lg"
+                  color="green.500"
+                  fontWeight="bold"
+                  whiteSpace="nowrap"
+                >
+                  {isDataLoading ? modalCopy.valueLoading : dailyGoals}
                 </Text>
               </Box>
-            )}
-            <br />
-            <br />
-            <Text fontSize="xs">
-              {" "}
-              {translation[userLanguage]["modal.dailyGoal.instruction"]}
-            </Text>
-            <Slider
-              aria-label="slider-daily-goals"
-              value={dailyGoals}
-              min={1}
-              max={20}
-              step={1}
-              onChange={handleDailyGoalsChange}
-              mt={2}
-            >
-              <SliderTrack h={3} borderRadius="full">
-                <SliderFilledTrack bg="linear-gradient(90deg, #00CED1, #4169E1)" />
-              </SliderTrack>
-              <SliderThumb boxSize={6} bg="cyan.400" />
-            </Slider>
-            <Text mt={2} fontSize="sm" color={"green.500"} fontWeight="bold">
-              {translation[userLanguage]["modal.dailyGoal.dailyGoalLabel"]}{" "}
-              {dailyGoals}
-            </Text>
-            {/* Render the daily progress tracking */}
-            {/* Render the daily goals timer countdown only if nextGoalExpiration is defined */}
-            {nextGoalExpiration && (
-              <Text mt={2} fontSize="sm">
+
+              <Slider
+                aria-label="slider-daily-goals"
+                value={dailyGoals}
+                min={1}
+                max={20}
+                step={1}
+                onChange={handleDailyGoalsChange}
+                mt={4}
+              >
+                <SliderTrack h={3} borderRadius="full" bg={sliderTrackBg}>
+                  <SliderFilledTrack bg="linear-gradient(90deg, #00CED1, #4169E1)" />
+                </SliderTrack>
+                <SliderThumb boxSize={6} bg="cyan.400" />
+              </Slider>
+
+              <Box mt={4}>
                 <CountdownTimer
                   userLanguage={userLanguage}
                   label={
                     translation[userLanguage]["countdown.dailyGoalsTimeLeft"]
                   }
-                  capIsRound
                   targetTime={nextGoalExpiration}
-                  initialTime={
-                    new Date(nextGoalExpiration.getTime() - 86400000)
-                  }
+                  isLoading={isDataLoading}
+                  loadingLabel={modalCopy.timerLoading}
+                  inactiveLabel={modalCopy.inactiveTimer}
                 />
-              </Text>
-            )}
-            <br />
-            <Progress
-              value={(dailyProgress / dailyGoals) * 100}
-              size="sm"
-              mt={2}
-              borderRadius="md"
-              colorScheme="green"
-            />
-            <Text mt={1} fontSize="sm">
-              {/* {translation[userLanguage]["Progress"]}:  */}
-              {dailyProgress}/{dailyGoals}{" "}
-              {translation[userLanguage]["questions"]}{" "}
-              {translation[userLanguage]["completed"]}
-            </Text>
-            {/* <Text mt={1} fontSize="sm">
-            {goalCount} {translation[userLanguage]["goal"]}
-            {goalCount > 1 || goalCount === 0 ? "s" : ""}{" "}
-            {translation[userLanguage]["completed"]}!
-          </Text> */}
-          </>
+              </Box>
+
+              <Box mt={4}>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  mb={2}
+                >
+                  <Text fontSize="xs" color="appTextMuted">
+                    {modalCopy.progressTitle}
+                  </Text>
+                  <Text fontSize="xs" color="appTextMuted">
+                    {isDataLoading ? modalCopy.valueLoading : dailyProgress}/
+                    {isDataLoading ? modalCopy.valueLoading : dailyGoals}{" "}
+                    {translation[userLanguage]["questions"]}
+                  </Text>
+                </Box>
+                <Progress
+                  value={dailyProgressPercent}
+                  size="sm"
+                  borderRadius="full"
+                  colorScheme="green"
+                  bg="appSurfaceInset"
+                />
+              </Box>
+            </Box>
+          </Box>
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter px={6} py={5} justifyContent="flex-end" gap={3}>
           <Button
-            variant={"secondary"}
-            boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-            mr={3}
+            variant="secondary"
             onMouseDown={onClose}
             data-sound-close="true"
           >
             {translation[userLanguage]["button.close"]}
           </Button>
-          <Button
-            boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-            mr={3}
-            onMouseDown={handleSave}
-          >
+          <Button onMouseDown={handleSave}>
             {translation[userLanguage]["button.save"]}
           </Button>
         </ModalFooter>

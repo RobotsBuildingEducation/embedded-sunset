@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { VStack, Button, Text } from "@chakra-ui/react";
+import { VStack, Button, Text, Box, useColorModeValue } from "@chakra-ui/react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { translation } from "../../utility/translation";
 import { IoChatbubblesOutline } from "react-icons/io5";
@@ -17,6 +17,26 @@ const SelectOrderQuestion = ({
   const [focusedIndex, setFocusedIndex] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [draggedIndex, setDraggedIndex] = useState(null);
+  const cardShadow = useColorModeValue(
+    "0 14px 30px rgba(15, 23, 42, 0.08)",
+    "0px 4px 0px rgba(0, 0, 0, 0.58)",
+  );
+  const interactiveCardShadow = useColorModeValue(
+    "0 16px 32px rgba(15, 23, 42, 0.1)",
+    "0px 4px 0px rgba(0, 0, 0, 0.72)",
+  );
+  const selectedCardShadow = useColorModeValue(
+    "0 16px 34px rgba(15, 23, 42, 0.11)",
+    "0px 4px 0px rgba(0, 0, 0, 0.68)",
+  );
+  const actionShadow = useColorModeValue(
+    "0 12px 24px rgba(15, 23, 42, 0.12)",
+    "0 16px 34px rgba(2, 6, 23, 0.42)",
+  );
+  const focusRing = useColorModeValue(
+    "0 0 0 3px rgba(236, 72, 153, 0.22)",
+    "0 0 0 3px rgba(244, 114, 182, 0.3)",
+  );
 
   const indexMatcher = (newItems) => {
     let answerSet = step.question.answer;
@@ -46,7 +66,7 @@ const SelectOrderQuestion = ({
             ? prevIndex > 0
               ? prevIndex - 1
               : items.length - 1
-            : 0
+            : 0,
         );
         break;
       case "ArrowDown":
@@ -57,7 +77,7 @@ const SelectOrderQuestion = ({
             ? prevIndex < items.length - 1
               ? prevIndex + 1
               : 0
-            : 0
+            : 0,
         );
         break;
       // case " ":
@@ -94,6 +114,9 @@ const SelectOrderQuestion = ({
   return (
     <VStack
       spacing={4}
+      width="100%"
+      maxWidth="600px"
+      align="stretch"
       tabIndex={0} // Make this container focusable
       onKeyDown={handleKeyDown} // Attach the listener directly to the component
       onBlur={() => setFocusedIndex(null)}
@@ -112,7 +135,11 @@ const SelectOrderQuestion = ({
           }
         }}
         background="pink.400"
-        boxShadow="0.5px 0.5px 0px 0px rgba(0, 0, 0,0.75)"
+        color="white"
+        boxShadow={actionShadow}
+        alignSelf="center"
+        _hover={{ bg: "pink.500" }}
+        _active={{ bg: "pink.500" }}
       >
         <IoChatbubblesOutline />
         &nbsp;
@@ -121,51 +148,74 @@ const SelectOrderQuestion = ({
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="droppable">
           {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef}>
+            <Box
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              width="100%"
+            >
               {items.map((item, index) => (
                 <Draggable key={item} draggableId={item} index={index}>
                   {(provided) => (
-                    <div
+                    <Box
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                       tabIndex={0}
                       onClick={() => setFocusedIndex(index)}
                       onFocus={() => setFocusedIndex(index)}
+                      aria-pressed={draggedIndex === index}
+                      mb={2}
+                      px={6}
+                      py={5}
+                      borderRadius="2xl"
+                      borderWidth={borderSwitches[index] ? "2px" : "1px"}
+                      borderColor={
+                        borderSwitches[index] ? "green.300" : "appBorder"
+                      }
+                      bg={
+                        draggedIndex === index
+                          ? "appSurfaceStrong"
+                          : selectedIndex === index
+                            ? "appSurfaceMuted"
+                            : "appSurface"
+                      }
+                      color="appText"
+                      boxShadow={
+                        focusedIndex === index
+                          ? `${interactiveCardShadow}, ${focusRing}`
+                          : draggedIndex === index || selectedIndex === index
+                            ? selectedCardShadow
+                            : cardShadow
+                      }
+                      textAlign="left"
+                      cursor={draggedIndex === index ? "grabbing" : "grab"}
+                      transition="background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease"
+                      _hover={{
+                        bg:
+                          draggedIndex === index
+                            ? "appSurfaceStrong"
+                            : "appSurfaceMuted",
+                        borderColor: borderSwitches[index]
+                          ? "green.300"
+                          : "appBorderStrong",
+                        boxShadow: interactiveCardShadow,
+                      }}
                       style={{
                         ...provided.draggableProps.style,
-                        marginBottom: "8px",
-                        padding: "16px",
-                        border: `${borderSwitches[index] ? "3" : "1"}px solid ${
-                          borderSwitches[index] ? "#5ad5ac" : "transparent"
-                        }`,
-                        borderRadius: "4px",
-                        backgroundColor:
-                          draggedIndex === index
-                            ? "#e2e8f0"
-                            : selectedIndex === index
-                              ? "#e6f7ff"
-                              : "white",
-                        boxShadow:
-                          focusedIndex === index
-                            ? "0 0 0 2px #3182ce"
-                            : "0.5px 0.5px 1px 0px rgba(0, 0, 0, 0.75)",
-                        textAlign: "left",
-                        cursor: "pointer",
                       }}
                     >
                       {index + 1 + ". " + item}
                       {draggedIndex === index && (
-                        <Text fontSize="sm" color="gray.500">
+                        <Text mt={2} fontSize="sm" color="appTextMuted">
                           (Picked up)
                         </Text>
                       )}
-                    </div>
+                    </Box>
                   )}
                 </Draggable>
               ))}
               {provided.placeholder}
-            </div>
+            </Box>
           )}
         </Droppable>
       </DragDropContext>

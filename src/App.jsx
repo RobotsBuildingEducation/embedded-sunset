@@ -3,6 +3,7 @@ import "@babel/polyfill";
 import React, {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -52,6 +53,8 @@ import {
   Image,
   useToken,
   Divider,
+  useColorMode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
@@ -67,6 +70,7 @@ import {
   useParams,
   useLocation,
 } from "react-router-dom";
+import { flushSync } from "react-dom";
 
 import { useChatCompletion } from "./hooks/useChatCompletion";
 import {
@@ -80,6 +84,8 @@ import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
 import ThemeMenu from "./components/ThemeMenu";
 import WaveBar from "./components/WaveBar";
 import ChapterReview from "./components/ChapterReview";
+import AnimatedBackground from "./components/AnimatedBackground/AnimatedBackground";
+import DailyGoalCelebrationModal from "./components/DailyGoalCelebrationModal/DailyGoalCelebrationModal";
 
 import {
   createUser,
@@ -204,6 +210,8 @@ import {
   FaRegHeart,
   FaHeartBroken,
   FaFire,
+  FaMoon,
+  FaSun,
 } from "react-icons/fa";
 import { FiTrendingUp } from "react-icons/fi";
 import MiniKitInitializer from "./MiniKitInitializer";
@@ -228,6 +236,29 @@ import CloudTransition from "./elements/CloudTransition";
 import KnowledgeLedgerModal from "./components/KnowledgeLedgerModal/KnowledgeLedgerModal";
 import { TbWorld } from "react-icons/tb";
 import SoundExperiment from "./experiments/SoundExperiment";
+
+const StableReactBash = class extends ReactBash {
+  scrollPromptIntoTerminalView() {
+    const inputElement = this.refs?.input;
+    const terminalBody = inputElement?.closest("form")?.parentElement;
+
+    if (terminalBody) {
+      terminalBody.scrollTop = terminalBody.scrollHeight;
+    }
+  }
+
+  // ReactBash auto-focuses and scrollIntoView's its prompt on render, which
+  // pulls terminal question pages downward before students can read them.
+  componentDidMount() {
+    this.scrollPromptIntoTerminalView();
+  }
+
+  componentDidUpdate() {
+    this.scrollPromptIntoTerminalView();
+  }
+};
+
+StableReactBash.Themes = ReactBash.Themes;
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://embedded-rox.app/",
@@ -264,6 +295,20 @@ const progressGradient = keyframes`
 `;
 
 const MotionProgress = motion(Progress);
+
+const scrollToTopInstantly = () => {
+  if (typeof window === "undefined") return;
+
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+
+  if (document.documentElement) {
+    document.documentElement.scrollTop = 0;
+  }
+
+  if (document.body) {
+    document.body.scrollTop = 0;
+  }
+};
 
 const getBoxShadow = (group) => {
   switch (group) {
@@ -523,7 +568,7 @@ const AwardScreen = (userLanguage) => {
           <Box
             mt={6}
             textAlign="left"
-            bg="white"
+            bg="appSurface"
             borderRadius="24px"
             p={5}
             boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
@@ -645,6 +690,14 @@ export const VoiceInput = ({
 
   const pauseTimeoutRef = useRef(null);
   const toast = useToast();
+  const actionShadow = useColorModeValue(
+    "0 12px 24px rgba(15, 23, 42, 0.12)",
+    "0 16px 34px rgba(2, 6, 23, 0.42)",
+  );
+  const inputShadow = useColorModeValue(
+    "0 14px 30px rgba(15, 23, 42, 0.08)",
+    "0 18px 38px rgba(2, 6, 23, 0.42)",
+  );
 
   useEffect(() => {
     let modifiedTranscript = transcript;
@@ -706,9 +759,9 @@ export const VoiceInput = ({
       position: "top",
       render: () => (
         <Box
-          color="black"
+          color="appToastColor"
           p={3}
-          bg="#FEEBC8" // Custom background color here!
+          bg="appToastBg"
           borderRadius="md"
           boxShadow="lg"
         >
@@ -988,9 +1041,16 @@ export const VoiceInput = ({
           </Button> */}
           <Button
             onMouseDown={handleAiStart}
-            colorScheme="pink"
             variant={"outline"}
-            border="1px solid rgb(254,224,232)"
+            bg="appSurface"
+            color="appText"
+            border="1px solid var(--chakra-colors-appBorder)"
+            boxShadow={actionShadow}
+            _hover={{
+              bg: "appSurfaceMuted",
+              borderColor: "var(--chakra-colors-appBorderStrong)",
+            }}
+            _active={{ bg: "appSurfaceInset" }}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 handleAiStart(); // Select the option on Enter or Space key
@@ -1014,7 +1074,10 @@ export const VoiceInput = ({
               }
             }}
             background="pink.400"
-            boxShadow="0.5px 0.5px 0px 0px rgba(0, 0, 0,0.75)"
+            color="white"
+            boxShadow={actionShadow}
+            _hover={{ bg: "pink.500" }}
+            _active={{ bg: "pink.500" }}
           >
             <IoChatbubblesOutline />
             &nbsp;
@@ -1085,8 +1148,8 @@ export const VoiceInput = ({
           <FadeInComponent speed="0.25s">
             <Text
               fontSize={"smaller"}
-              backgroundColor="white"
-              color="black"
+              backgroundColor="appSurface"
+              color="appText"
               fontWeight={"bold"}
               borderRadius="8px"
               padding="10px"
@@ -1103,8 +1166,8 @@ export const VoiceInput = ({
           <FadeInComponent speed="0.25s">
             <Text
               fontSize={"smaller"}
-              backgroundColor="white"
-              color="black"
+              backgroundColor="appSurface"
+              color="appText"
               fontWeight={"bold"}
               borderRadius="8px"
               padding="10px"
@@ -1188,19 +1251,19 @@ export const VoiceInput = ({
           placeholder={translation[userLanguage]["app.input.placeholder"]}
           maxWidth="400px"
           width="100%"
-          style={{ boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)" }}
-          backgroundColor="white"
+          boxShadow={inputShadow}
+          backgroundColor="appSurface"
 
           // border="1px solid black"
         />
       ) : (
         <Textarea
           ref={textareaRef}
-          style={{ boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)" }}
+          boxShadow={inputShadow}
           type="textarea"
           maxWidth={"100%"}
           minHeight={isTerminal ? "100px" : "100px"}
-          backgroundColor="white"
+          backgroundColor="appSurface"
           value={
             generateResponse
               ? translation[userLanguage]["thinking"]
@@ -1291,6 +1354,11 @@ function TerminalComponent({
     },
   ]);
   const [cwd, setCwd] = useState("/");
+  const { colorMode } = useColorMode();
+  const terminalShadow = useColorModeValue(
+    "0 16px 36px rgba(15, 23, 42, 0.1)",
+    "0 22px 44px rgba(2, 6, 23, 0.48)",
+  );
 
   useEffect(() => {
     if (isSending) {
@@ -1514,6 +1582,82 @@ function TerminalComponent({
 
   const bashRef = useRef(null);
 
+  useLayoutEffect(() => {
+    if (!isTerminal || typeof window === "undefined") return;
+
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [isTerminal, step?.title]);
+
+  const terminalStyles = {
+    ReactBash: {
+      borderRadius: "24px",
+      display: "flex",
+      flexDirection: "column",
+      fontFamily: '"Fira Code", "SFMono-Regular", monospace',
+      fontSize: "13px",
+      fontWeight: "400",
+      height: "100%",
+      overflow: "hidden",
+      textAlign: "left",
+      border: "1px solid var(--chakra-colors-appBorder)",
+      boxShadow: terminalShadow,
+    },
+    header: {
+      padding: "10px 14px 0",
+      backgroundColor: "var(--chakra-colors-appSurfaceMuted)",
+      borderBottom: "1px solid var(--chakra-colors-appBorder)",
+    },
+    redCircle: {
+      borderRadius: "50%",
+      display: "inline-block",
+      height: "15px",
+      marginRight: "5px",
+      width: "15px",
+      backgroundColor: "#f87171",
+    },
+    yellowCircle: {
+      borderRadius: "50%",
+      display: "inline-block",
+      height: "15px",
+      marginRight: "5px",
+      width: "15px",
+      backgroundColor: "#fbbf24",
+    },
+    greenCircle: {
+      borderRadius: "50%",
+      display: "inline-block",
+      height: "15px",
+      marginRight: "5px",
+      width: "15px",
+      backgroundColor: "#34d399",
+    },
+    body: {
+      flexGrow: 1,
+      overflowY: "scroll",
+      padding: "14px",
+      backgroundColor: "var(--chakra-colors-appCodeBg)",
+      color: "var(--chakra-colors-appCodeColor)",
+    },
+    form: {
+      display: "flex",
+    },
+    input: {
+      background: "none",
+      border: "none",
+      color: "var(--chakra-colors-appCodeColor)",
+      flexGrow: "1",
+      fontFamily: "inherit",
+      fontSize: "inherit",
+      outline: "none !important",
+      padding: 0,
+      caretColor: "var(--chakra-colors-appCodeColor)",
+    },
+    prefix: {
+      marginRight: "5px",
+      color: "var(--chakra-colors-pink-300)",
+    },
+  };
+
   useEffect(() => {
     if (bashRef.current) {
       // Find the input element within ReactBash
@@ -1535,6 +1679,7 @@ function TerminalComponent({
       }
     }
   }, [bashRef.current]);
+
   return (
     <>
       <VoiceInput
@@ -1551,15 +1696,20 @@ function TerminalComponent({
         userLanguage={userLanguage}
       />
       <Box
-        boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
         style={{ width: "100%", maxWidth: "600px", marginTop: 12, height: 300 }}
         ref={bashRef}
       >
-        <ReactBash
+        <StableReactBash
           isDisabled
           structure={structure}
           history={history}
           prefix={`${translation[userLanguage]["mockTerminal.userName"]}${cwd}$`}
+          theme={
+            colorMode === "dark"
+              ? StableReactBash.Themes.DARK
+              : StableReactBash.Themes.LIGHT
+          }
+          styles={terminalStyles}
         />
       </Box>
     </>
@@ -1729,6 +1879,82 @@ const Step = ({
     }),
     [theme50, theme100, theme200, theme300, theme600],
   );
+  const actionBarShellBg = useColorModeValue(
+    hexToRgba(actionPalette[50], 0.96),
+    "rgba(12, 21, 40, 0.92)",
+  );
+  const actionBarShellBorder = useColorModeValue(
+    hexToRgba(actionPalette[200], 0.65),
+    "rgba(148, 163, 184, 0.24)",
+  );
+  const actionBarShellGlow = useColorModeValue(
+    hexToRgba(actionPalette[300], 0.2),
+    hexToRgba(actionPalette[200], 0.14),
+  );
+  const actionBarShadow = useColorModeValue(
+    `0 12px 24px ${hexToRgba(actionPalette[300], 0.25)}`,
+    "0 18px 38px rgba(2, 6, 23, 0.5)",
+  );
+  const actionBarButtonBg = useColorModeValue(
+    `linear(180deg, ${hexToRgba(actionPalette[50], 0.95)} 0%, ${hexToRgba(
+      actionPalette[100],
+      0.95,
+    )} 100%)`,
+    "linear(180deg, rgba(17, 28, 51, 0.98) 0%, rgba(27, 41, 69, 0.98) 100%)",
+  );
+  const actionBarButtonHoverBg = useColorModeValue(
+    `linear(180deg, ${hexToRgba(actionPalette[50], 1)} 0%, ${hexToRgba(
+      actionPalette[100],
+      1,
+    )} 100%)`,
+    "linear(180deg, rgba(24, 35, 61, 1) 0%, rgba(34, 49, 79, 1) 100%)",
+  );
+  const actionBarButtonActiveBg = useColorModeValue(
+    `linear(180deg, ${hexToRgba(actionPalette[100], 1)} 0%, ${hexToRgba(
+      actionPalette[200],
+      0.95,
+    )} 100%)`,
+    "linear(180deg, rgba(16, 25, 46, 1) 0%, rgba(21, 33, 58, 1) 100%)",
+  );
+  const actionBarButtonBorder = useColorModeValue(
+    `1px solid ${hexToRgba(actionPalette[200], 0.8)}`,
+    "1px solid rgba(148, 163, 184, 0.22)",
+  );
+  const actionBarButtonColor = useColorModeValue(
+    actionPalette[600],
+    actionPalette[100],
+  );
+  const actionBarButtonShadow = useColorModeValue(
+    `0 8px 18px ${hexToRgba(actionPalette[300], 0.16)}`,
+    "0 10px 24px rgba(2, 6, 23, 0.34)",
+  );
+  const successFeedbackBg = useColorModeValue(
+    "linear-gradient(180deg, rgba(240, 253, 244, 0.98) 0%, rgba(220, 252, 231, 0.98) 100%)",
+    "linear-gradient(180deg, rgba(6, 78, 59, 0.96) 0%, rgba(6, 46, 33, 0.96) 100%)",
+  );
+  const successFeedbackBorder = useColorModeValue(
+    "rgba(22, 163, 74, 0.24)",
+    "rgba(74, 222, 128, 0.42)",
+  );
+  const successFeedbackText = useColorModeValue("#166534", "#D1FAE5");
+  const successFeedbackShadow = useColorModeValue(
+    "0 10px 22px rgba(34, 197, 94, 0.1)",
+    "0 12px 26px rgba(4, 120, 87, 0.22)",
+  );
+  const errorFeedbackBg = useColorModeValue(
+    "linear-gradient(180deg, rgba(254, 242, 242, 0.98) 0%, rgba(254, 226, 226, 0.98) 100%)",
+    "linear-gradient(180deg, rgba(76, 5, 25, 0.96) 0%, rgba(60, 7, 30, 0.96) 100%)",
+  );
+  const errorFeedbackBorder = useColorModeValue(
+    "rgba(220, 38, 38, 0.24)",
+    "rgba(251, 113, 133, 0.42)",
+  );
+  const errorFeedbackText = useColorModeValue("#B91C1C", "#FFE4E6");
+  const errorFeedbackShadow = useColorModeValue(
+    "0 10px 22px rgba(239, 68, 68, 0.09)",
+    "0 12px 26px rgba(127, 29, 29, 0.22)",
+  );
+  const feedbackHeartColor = useColorModeValue("#DC2626", "#FB7185");
 
   const localeSteps = useMemo(() => {
     if (Array.isArray(steps[userLanguage]) && steps[userLanguage].length) {
@@ -1843,26 +2069,16 @@ const Step = ({
     [activeChapterKey, chapterReviewChapters],
   );
 
-  const [showChapterReview, setShowChapterReview] = useState(false);
   const [lastChapterReviewStep, setLastChapterReviewStep] = useState(null);
 
-  useEffect(() => {
-    if (!chapterReviewNodes.length) {
-      setShowChapterReview(false);
-      return;
-    }
+  const firstChapterReviewNode = useMemo(
+    () => chapterReviewNodes.find((node) => node.firstIndex === currentStep),
+    [chapterReviewNodes, currentStep],
+  );
 
-    const isFirstStepOfChapter = chapterReviewNodes.find(
-      (node) => node.firstIndex === currentStep,
-    );
-
-    if (isFirstStepOfChapter && lastChapterReviewStep !== currentStep) {
-      setShowChapterReview(true);
-      setLastChapterReviewStep(currentStep);
-    } else if (!isFirstStepOfChapter) {
-      setShowChapterReview(false);
-    }
-  }, [chapterReviewNodes, currentStep, lastChapterReviewStep]);
+  const showChapterReview = Boolean(
+    firstChapterReviewNode && lastChapterReviewStep !== currentStep,
+  );
 
   useEffect(() => {
     const hasCompletedTour =
@@ -1928,7 +2144,6 @@ const Step = ({
   }, [onActionTourComplete]);
 
   const dismissChapterReview = () => {
-    setShowChapterReview(false);
     setLastChapterReviewStep(currentStep);
   };
 
@@ -1962,6 +2177,11 @@ const Step = ({
   const [dailyGoals, setDailyGoals] = useState(5);
   const [nextGoalExpiration, setNextGoalExpiration] = useState(null);
   const [goalCount, setGoalCount] = useState(0);
+  const [dailyGoalCelebration, setDailyGoalCelebration] = useState({
+    dailyGoals: 5,
+    completedGoalCount: 0,
+  });
+  const hasShownDailyGoalCelebrationRef = useRef(false);
 
   const [celebrationMessage, setCelebrationMessage] = useState("");
 
@@ -2004,6 +2224,11 @@ const Step = ({
     isOpen: isProgressModalOpen,
     onOpen: onProgressModalOpen,
     onClose: onProgressModalClose,
+  } = useDisclosure();
+  const {
+    isOpen: isDailyGoalCelebrationOpen,
+    onOpen: onDailyGoalCelebrationOpen,
+    onClose: onDailyGoalCelebrationClose,
   } = useDisclosure();
 
   const {
@@ -2875,6 +3100,23 @@ const Step = ({
 
           if (jsonResponse.isCorrect) {
             setGrade(jsonResponse.grade);
+            const dailyGoalTarget = dailyGoals || 5;
+            const completesDailyGoal =
+              dailyGoalTarget > 0 &&
+              dailyProgress < dailyGoalTarget &&
+              dailyProgress + 1 >= dailyGoalTarget;
+
+            if (
+              completesDailyGoal &&
+              !hasShownDailyGoalCelebrationRef.current
+            ) {
+              hasShownDailyGoalCelebrationRef.current = true;
+              setDailyGoalCelebration({
+                dailyGoals: dailyGoalTarget,
+                completedGoalCount: goalCount + 1,
+              });
+              onDailyGoalCelebrationOpen();
+            }
           } else {
             const newAttempts = incorrectAttempts + 1;
             setIncorrectAttempts(newAttempts);
@@ -2913,6 +3155,7 @@ const Step = ({
     setEducationalContent([]);
     setIsCorrect(null);
     resetMessages();
+    hasShownDailyGoalCelebrationRef.current = false;
   }, [step]);
 
   // Navigate to the next step
@@ -3427,26 +3670,26 @@ const Step = ({
     localStorage.getItem("passcode") ===
       import.meta.env.VITE_PATREON_PASSCODE || hasSubmittedPasscode;
 
-  const actionBarShadow = `0 12px 24px ${hexToRgba(actionPalette[300], 0.25)}`;
-
   const actionBarButtonProps = {
     width: "48px",
     height: "48px",
     borderRadius: "14px",
-    bgGradient: `linear(180deg, ${hexToRgba(actionPalette[50], 0.95)} 0%, ${hexToRgba(
-      actionPalette[100],
-      0.95,
-    )} 100%)`,
-    border: `1px solid ${hexToRgba(actionPalette[200], 0.8)}`,
-    color: actionPalette[600],
+    variant: "solid",
+    bgGradient: actionBarButtonBg,
+    border: actionBarButtonBorder,
+    color: actionBarButtonColor,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     transition: "all 0.2s ease-in-out",
+    boxShadow: actionBarButtonShadow,
     _hover: {
+      bgGradient: actionBarButtonHoverBg,
       transform: "translateY(-4px)",
+      boxShadow: actionBarShadow,
     },
     _active: {
+      bgGradient: actionBarButtonActiveBg,
       transform: "translateY(-1px)",
     },
   };
@@ -3524,8 +3767,23 @@ const Step = ({
   };
 
   return (
-    <VStack spacing={4} width="100%" mt={6} p={4}>
-      {/* <OrbCanvas width={500} height={500} /> */}
+    <VStack
+      spacing={4}
+      width="100%"
+      px={4}
+      pt={showChapterReview ? { base: 5, md: 8 } : 10}
+      pb={{ base: 40, md: 44 }}
+      minH="100dvh"
+      boxSizing="border-box"
+      bg="transparent"
+    >
+      <DailyGoalCelebrationModal
+        isOpen={isDailyGoalCelebrationOpen}
+        onClose={onDailyGoalCelebrationClose}
+        userLanguage={userLanguage}
+        dailyGoals={dailyGoalCelebration.dailyGoals}
+        completedGoalCount={dailyGoalCelebration.completedGoalCount}
+      />
 
       {showChapterReview && chapterReviewNodes.length > 0 ? (
         <ChapterReview
@@ -3534,39 +3792,39 @@ const Step = ({
           onStart={dismissChapterReview}
         />
       ) : newQuestionMessages.length > 0 && isEmpty(generatedQuestion) ? (
-        <VStack
-          textAlign={"left"}
-          style={{ width: "100%", maxWidth: 400 }}
-          mt={24}
+        <Box
+          width="100%"
+          minH="calc(100dvh - 160px)"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          px={{ base: 2, md: 6 }}
         >
-          {" "}
-          <div
-            style={{
-              backgroundColor: "white",
-              fontWeight: "bold",
-              borderRadius: 8,
-              padding: 8,
-              border: "1px solid #ececec",
-            }}
+          <Box
+            width="100%"
+            maxW="460px"
+            height={{ base: "560px", md: "600px" }}
+            maxH="72dvh"
+            color="appText"
+            bg="appBg"
+            border="1px solid var(--chakra-colors-appBorderStrong)"
+            borderRadius="32px"
+            boxShadow="0 24px 60px rgba(2, 6, 23, 0.34)"
+            overflow="hidden"
           >
-            {translation[userLanguage]["analyzer"]}
-          </div>
-          <OrbCanvas isAbsolute={false} />
-          <Box mt={0} p={4} borderRadius="lg" width="100%" maxWidth={"600px"}>
-            <Text textAlign={"left"}>
-              <br /> <br />
-              {newQuestionMessages[newQuestionMessages.length - 1].content
-                .length < 1 ? null : (
-                // <SunsetCanvas isLoader={true} regulateWidth={false} />
-                <>
-                  {/* <SunsetCanvas isLoader={false} regulateWidth={false} />
-                  <br /> */}
-                  {newQuestionMessages[newQuestionMessages.length - 1].content}
-                </>
-              )}
-            </Text>
+            <OrbCanvas
+              hasStreamedText={false}
+              instructions={
+                <Markdown components={ChakraUIRenderer(newTheme)}>
+                  {`${translation[userLanguage]["analyzer"]}\n\n${
+                    newQuestionMessages[newQuestionMessages.length - 1]
+                      ?.content || ""
+                  }`.trimStart()}
+                </Markdown>
+              }
+            />
           </Box>
-        </VStack>
+        </Box>
       ) : (
         <>
           <VStack
@@ -3591,11 +3849,11 @@ const Step = ({
                   px={2}
                   py={1}
                   borderRadius="full"
-                  background="rgba(247, 252, 255, 0.92)"
+                  background="appInfoSubtle"
                   border="1px solid rgba(102, 133, 255, 0.5)"
                 >
                   <Icon as={RiBookOpenLine} color="blue.400" boxSize={3.5} />
-                  <Text fontSize="sm" fontWeight="medium" color="gray.700">
+                  <Text fontSize="sm" fontWeight="medium" color="appTextMuted">
                     {step.group}
                   </Text>
                 </HStack>
@@ -3604,11 +3862,11 @@ const Step = ({
                   px={2}
                   py={1}
                   borderRadius="full"
-                  background="rgba(255, 249, 242, 0.9)"
+                  background="appWarningSubtle"
                   border="1px solid rgba(246, 173, 85, 0.4)"
                 >
                   <Icon as={FiTrendingUp} color="orange.500" boxSize={3.5} />
-                  <Text fontSize="sm" fontWeight="medium" color="gray.700">
+                  <Text fontSize="sm" fontWeight="medium" color="appTextMuted">
                     {animatedProgress.toFixed(0)}%
                   </Text>
                 </HStack>
@@ -3618,11 +3876,11 @@ const Step = ({
                   px={2}
                   py={1}
                   borderRadius="full"
-                  background="rgba(255, 245, 245, 0.95)"
+                  background="appErrorSubtle"
                   border="1px solid rgba(252, 129, 129, 0.45)"
                 >
                   <Icon as={FaFire} color="red.400" boxSize={3.5} />
-                  <Text fontSize="sm" fontWeight="medium" color="gray.700">
+                  <Text fontSize="sm" fontWeight="medium" color="appTextMuted">
                     {streak}
                   </Text>
                 </HStack>
@@ -3631,11 +3889,11 @@ const Step = ({
                   px={2}
                   py={1}
                   borderRadius="full"
-                  background="rgba(249, 247, 255, 0.95)"
+                  background="appAccentSoft"
                   border="1px solid rgba(183, 148, 244, 0.5)"
                 >
                   <Icon as={RiFlag2Line} color="purple.400" boxSize={3.5} />
-                  <Text fontSize="sm" fontWeight="medium" color="gray.700">
+                  <Text fontSize="sm" fontWeight="medium" color="appTextMuted">
                     {String(goalCount) || "0"}
                   </Text>
                 </HStack>
@@ -3906,18 +4164,12 @@ const Step = ({
 
             {step.question && (
               <Text
-                // mt={"-2"}
-                style={{
-                  width: "100%",
-                  maxWidth: step.isStudyGuide ? 600 : "600px",
-                  width: "fit-content",
-                  color: "gray",
-                }}
+                width="100%"
+                maxWidth={step.isStudyGuide ? 600 : "600px"}
                 fontSize="sm"
+                color="appTextMuted"
                 mb={3}
                 textAlign={step.isStudyGuide ? "left" : "left"}
-
-                // textAlign={"left"}
               >
                 <span style={{ textDecoration: "none" }}>
                   {step.description}
@@ -3927,13 +4179,10 @@ const Step = ({
 
             {step.question && (
               <Text
-                style={{
-                  width: "100%",
-                  maxWidth: step.isStudyGuide ? 600 : 600,
-
-                  width: "fit-content",
-                }}
+                width="100%"
+                maxWidth={step.isStudyGuide ? 600 : 600}
                 fontSize="medium"
+                color="appText"
                 textAlign={"left"}
               >
                 {step.question.questionText}
@@ -4131,7 +4380,7 @@ const Step = ({
                   <div style={{ maxWidth: 600 }}>
                     <Text
                       fontSize="smaller"
-                      background={"white"}
+                      background="appSurface"
                       borderRadius={12}
                       padding={4}
                     >
@@ -4174,8 +4423,15 @@ const Step = ({
                     borderRadius="3xl"
                     width="100%"
                     maxWidth="600px"
-                    background={isCorrect ? "orange.100" : "#fcdcdc"}
+                    background={isCorrect ? successFeedbackBg : errorFeedbackBg}
                     transition="0.2s all ease-in-out"
+                    borderWidth="1px"
+                    borderColor={
+                      isCorrect ? successFeedbackBorder : errorFeedbackBorder
+                    }
+                    boxShadow={
+                      isCorrect ? successFeedbackShadow : errorFeedbackShadow
+                    }
                     borderBottomRightRadius={"0px"}
                   >
                     {!isCorrect &&
@@ -4189,16 +4445,20 @@ const Step = ({
                         >
                           {Array.from({ length: 5 }, (_, i) =>
                             i < 5 - incorrectAttempts ? (
-                              <FaHeart key={i} color="red" />
+                              <FaHeart key={i} color={feedbackHeartColor} />
                             ) : (
-                              <FaRegHeart key={i} color="red" />
+                              <FaRegHeart key={i} color={feedbackHeartColor} />
                             ),
                           )}
                         </HStack>
                       )}
                     <Text
                       textAlign={"left"}
-                      color={isCorrect ? "orange.500" : "red.500"}
+                      color={
+                        isCorrect ? successFeedbackText : errorFeedbackText
+                      }
+                      fontWeight="medium"
+                      lineHeight="1.55"
                     >
                       {feedback}{" "}
                       {grade ? (
@@ -4287,7 +4547,7 @@ const Step = ({
                   <>
                     {isAILearningMode ? (
                       <Button
-                        background="white"
+                        background="appSurface"
                         variant={"outline"}
                         onClick={() => {
                           triggerHaptic();
@@ -4318,7 +4578,7 @@ const Step = ({
                       </Button>
                     ) : (
                       <Button
-                        background="white"
+                        background="appSurface"
                         variant={"outline"}
                         data-sound-ignore-select="true"
                         onClick={() => {
@@ -4376,14 +4636,17 @@ const Step = ({
           {suggestionMessages.length > 0 &&
           isEmpty(suggestionMessage) &&
           !step?.isTerminal ? (
-            <Box mt={4} p={4} textAlign="center" mt="-86px">
+            <Box p={4} textAlign="center" mt="-86px">
               {/* <CloudCanvas isLoader={true} /> */}
               <Box marginTop={"-52px"}>
                 <RoleCanvas
                   role={"sphere"}
                   width={400}
                   height={400}
+                  trailOpacity={0.08}
+                  transparentFade
                   backgroundColorX="247,245,239"
+                  backgroundColorDark="9,17,35"
                 />
               </Box>
 
@@ -4401,8 +4664,8 @@ const Step = ({
                 p={4}
                 borderRadius="24px"
                 borderBottomLeftRadius={"0px"}
-                background="white"
-                border="1px solid black"
+                background="appSurface"
+                border="1px solid var(--chakra-colors-appBorderStrong)"
                 textAlign={"left"}
                 width="100%"
                 initial={{ scale: 0.8 }}
@@ -4472,16 +4735,16 @@ const Step = ({
                 px={{ base: 0, md: 4 }}
               >
                 <Box
-                  bg={hexToRgba(actionPalette[50], 0.96)}
+                  bg={actionBarShellBg}
                   borderTopLeftRadius={{ base: "20px", md: "24px" }}
                   borderTopRightRadius={{ base: "20px", md: "24px" }}
                   borderBottomLeftRadius="0px"
                   borderBottomRightRadius="0px"
                   px={{ base: 3, md: 4 }}
                   py={{ base: 2, md: 2.5 }}
-                  border={`1px solid ${hexToRgba(actionPalette[200], 0.65)}`}
+                  border={`1px solid ${actionBarShellBorder}`}
                   borderBottom="0"
-                  boxShadow={`0 -2px 0px ${hexToRgba(actionPalette[300], 0.2)}`}
+                  boxShadow={`0 -2px 0px ${actionBarShellGlow}, ${actionBarShadow}`}
                   backdropFilter="blur(10px)"
                   paddingBottom={6}
                   paddingTop={4}
@@ -4553,6 +4816,7 @@ const Step = ({
                         }}
                       />,
                     )}
+                    {/* Social feed is intentionally hidden from the bottom action bar.
                     {renderActionTourPopover(
                       "social",
                       socialButtonRef,
@@ -4585,7 +4849,7 @@ const Step = ({
                             : undefined
                         }
                       />,
-                    )}
+                    )} */}
                     {renderActionTourPopover(
                       "helper",
                       helperButtonRef,
@@ -4719,7 +4983,27 @@ const Step = ({
   );
 };
 
-const SplashScreen = ({ numPoints = 50 }) => {
+const SPLASH_GRADIENT_COLORS = [
+  "#f2dcfa",
+  "#f9d4fa",
+  "#fca4b3",
+  "#fcb7a4",
+  "#fcd4a4",
+];
+
+const createSeededRandom = (seed) => {
+  let state = seed >>> 0;
+
+  return () => {
+    state += 0x6d2b79f5;
+    let value = state;
+    value = Math.imul(value ^ (value >>> 15), value | 1);
+    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  };
+};
+
+const SplashScreen = React.memo(({ numPoints = 50 }) => {
   const initialDims = useRef({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -4727,23 +5011,23 @@ const SplashScreen = ({ numPoints = 50 }) => {
 
   const screenWidth = initialDims.current.width;
   const screenHeight = initialDims.current.height;
-
-  // Your gradient color palette.
-  const gradientColors = [
-    "#f2dcfa",
-    "#f9d4fa",
-    "#fca4b3",
-    "#fcb7a4",
-    "#fcd4a4",
-  ];
+  const splashSeed = useMemo(
+    () =>
+      (Math.round(screenWidth) * 73856093) ^
+      (Math.round(screenHeight) * 19349663) ^
+      (numPoints * 83492791),
+    [numPoints, screenHeight, screenWidth],
+  );
 
   // 1. Generate random seed points across the screen.
   const points = useMemo(() => {
+    const random = createSeededRandom(splashSeed);
+
     return Array.from({ length: numPoints }, () => [
-      Math.random() * screenWidth,
-      Math.random() * screenHeight,
+      random() * screenWidth,
+      random() * screenHeight,
     ]);
-  }, [numPoints, screenWidth, screenHeight]);
+  }, [numPoints, screenHeight, screenWidth, splashSeed]);
 
   // 2. Create a Delaunay triangulation and corresponding Voronoi diagram.
   const delaunay = useMemo(() => Delaunay.from(points), [points]);
@@ -4762,6 +5046,7 @@ const SplashScreen = ({ numPoints = 50 }) => {
       .map((point, i) => {
         const cell = voronoi.cellPolygon(i);
         if (!cell) return null;
+        const random = createSeededRandom(splashSeed + i * 2654435761);
 
         // Calculate the centroid of the cell.
         let cx = 0,
@@ -4779,14 +5064,14 @@ const SplashScreen = ({ numPoints = 50 }) => {
         const dist = Math.hypot(dx, dy) || 1; // avoid division by zero
 
         // Scale the vector for an explosive effect.
-        const explosionFactor = Math.random() * 100 + 50; // between 50 and 150 pixels
+        const explosionFactor = random() * 100 + 50; // between 50 and 150 pixels
         const targetX = (dx / dist) * explosionFactor;
         const targetY = (dy / dist) * explosionFactor;
 
         // Random rotation between -40 and 40 degrees.
-        const randomRotation = Math.random() * 80 - 40;
+        const randomRotation = random() * 80 - 40;
         // Random delay so the pieces shatter at slightly different times.
-        const delay = Math.random() * 0.3;
+        const delay = random() * 0.3;
 
         // Build the polygon points string.
         const pointsString = cell.map(([x, y]) => `${x},${y}`).join(" ");
@@ -4800,19 +5085,22 @@ const SplashScreen = ({ numPoints = 50 }) => {
         };
       })
       .filter(Boolean);
-  }, [points, voronoi, centerX, centerY]);
+  }, [points, voronoi, centerX, centerY, splashSeed]);
 
   // Pre-calculate gradient settings for each fragment.
   const gradients = useMemo(() => {
     return fragments.map((_, i) => {
+      const random = createSeededRandom(splashSeed + i * 1103515245 + 17);
       // Cycle through the palette.
-      const startColor = gradientColors[i % gradientColors.length];
-      const endColor = gradientColors[(i + 1) % gradientColors.length];
+      const startColor =
+        SPLASH_GRADIENT_COLORS[i % SPLASH_GRADIENT_COLORS.length];
+      const endColor =
+        SPLASH_GRADIENT_COLORS[(i + 1) % SPLASH_GRADIENT_COLORS.length];
       // Set an initial random angle for the gradient.
-      const angle = Math.random() * 360;
+      const angle = random() * 360;
       return { startColor, endColor, angle };
     });
-  }, [fragments, gradientColors]);
+  }, [fragments, splashSeed]);
 
   return (
     <motion.svg
@@ -4826,6 +5114,14 @@ const SplashScreen = ({ numPoints = 50 }) => {
         overflow: "visible",
       }}
     >
+      <motion.rect
+        width={screenWidth}
+        height={screenHeight}
+        fill="#fbf7fb"
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 0 }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      />
       <defs>
         {gradients.map((grad, i) => (
           <linearGradient
@@ -4835,18 +5131,10 @@ const SplashScreen = ({ numPoints = 50 }) => {
             y1="0%"
             x2="100%"
             y2="0%"
+            gradientTransform={`rotate(${grad.angle} 0.5 0.5)`}
           >
             <stop offset="0%" stopColor={grad.startColor} />
             <stop offset="100%" stopColor={grad.endColor} />
-            {/* Animate the gradient rotation to create a swirling effect */}
-            <animateTransform
-              attributeName="gradientTransform"
-              type="rotate"
-              from={`${grad.angle} 0.5 0.5`}
-              to={`${grad.angle + 360} 0.5 0.5`}
-              dur="10s"
-              repeatCount="indefinite"
-            />
           </linearGradient>
         ))}
       </defs>
@@ -4869,11 +5157,16 @@ const SplashScreen = ({ numPoints = 50 }) => {
           fill={`url(#gradient-${i})`}
           stroke="rgba(0,0,0,0.8)"
           strokeWidth="2"
+          style={{
+            transformBox: "fill-box",
+            transformOrigin: "center",
+            willChange: "transform, opacity",
+          }}
         />
       ))}
     </motion.svg>
   );
-};
+});
 
 const Home = ({
   isSignedIn,
@@ -4917,6 +5210,13 @@ const Home = ({
   const socket = "socket";
   const [role, setRole] = useState("chores");
   const topRef = useRef();
+  const themeColor = useThemeStore((s) => s.themeColor);
+  const { colorMode, setColorMode } = useColorMode();
+  const landingThemeToggleColor = useColorModeValue("#1f2937", "#f8fafc");
+  const landingThemeToggleMutedColor = useColorModeValue(
+    "rgba(31, 41, 55, 0.42)",
+    "rgba(248, 250, 252, 0.42)",
+  );
 
   const [questionsAnswered, setQuestionsAnswered] =
     useState(BASE_QUESTION_COUNT);
@@ -5159,7 +5459,7 @@ const Home = ({
     // console.log("end analytics");
     setIsSignedIn(true);
 
-    const minSplashDuration = 1000; // Minimum splash time in ms (2 seconds)
+    const minSplashDuration = 1600; // Keep the shard animation from unmounting mid-shatter.
     const elapsed = Date.now() - startTime;
     if (elapsed < minSplashDuration) {
       await new Promise((resolve) =>
@@ -5398,9 +5698,9 @@ const Home = ({
       position: "top",
       render: () => (
         <Box
-          color="black"
+          color="appToastColor"
           p={3}
-          bg="#FEEBC8" // Custom background color here!
+          bg="appToastBg"
           borderRadius="md"
           boxShadow="lg"
         >
@@ -5434,7 +5734,7 @@ const Home = ({
   };
 
   if (showSplash) {
-    return <>{showSplash && <SplashScreen />}</>;
+    return <SplashScreen />;
   }
 
   return (
@@ -5451,6 +5751,53 @@ const Home = ({
         paddingTop: 16,
       }}
     >
+      <HStack
+        position="fixed"
+        top={{ base: 4, md: 5 }}
+        right={{ base: 4, md: 5 }}
+        zIndex="popover"
+        spacing={2}
+        px={2}
+        py={1.5}
+        borderRadius="full"
+        color={landingThemeToggleColor}
+        data-sound-ignore-select="true"
+      >
+        <Box
+          as={FaSun}
+          fontSize="13px"
+          color={
+            colorMode === "light"
+              ? landingThemeToggleColor
+              : landingThemeToggleMutedColor
+          }
+        />
+        <Switch
+          aria-label={
+            colorMode === "dark"
+              ? "Switch to light mode"
+              : "Switch to dark mode"
+          }
+          isChecked={colorMode === "dark"}
+          size="sm"
+          colorScheme={themeColor}
+          onChange={(event) => {
+            soundManager.resume();
+            soundManager.play("modeSwitch");
+            setColorMode(event.target.checked ? "dark" : "light");
+          }}
+        />
+        <Box
+          as={FaMoon}
+          fontSize="12px"
+          color={
+            colorMode === "dark"
+              ? landingThemeToggleColor
+              : landingThemeToggleMutedColor
+          }
+        />
+      </HStack>
+
       {view === "buttons" && (
         <>
           <VStack spacing={4} height="85vh">
@@ -5460,8 +5807,8 @@ const Home = ({
                 {isCreatingAccount && (
                   <Text
                     fontSize="smaller"
-                    backgroundColor="white"
-                    color="black"
+                    backgroundColor="appSurface"
+                    color="appText"
                     fontWeight="bold"
                     borderRadius="8px"
                     padding="10px"
@@ -5499,7 +5846,7 @@ const Home = ({
               }
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
-              backgroundColor="white"
+              backgroundColor="appSurface"
             />
 
             <VStack>
@@ -5518,9 +5865,9 @@ const Home = ({
               <Text fontSize="xs">{translation[userLanguage]["or"]}</Text>
               <Button
                 colorScheme="pink"
-                backgroundColor="pink.50"
+                backgroundColor="appAccentSoft"
                 variant="outline"
-                border="1px solid rgb(254,224,232)"
+                border="1px solid var(--chakra-colors-appBorder)"
                 style={{ width: "150px" }}
                 onMouseDown={() => setView("signIn")}
                 onKeyDown={(e) =>
@@ -5746,11 +6093,16 @@ const Home = ({
             <Box
               as="section"
               scrollSnapAlign="start"
-              bgGradient="linear(180deg, rgba(71,77,126,0.12), rgba(236,233,252,0.88))"
+              position="relative"
+              overflow="hidden"
               px={{ base: 2, md: 6 }}
               py={{ base: 12, md: 20 }}
               display="flex"
               justifyContent="center"
+              style={{
+                backgroundImage:
+                  "radial-gradient(circle at 50% 6%, rgba(96,165,250,0.14), transparent 34%), linear-gradient(180deg, var(--chakra-colors-appBgMuted) 0%, var(--chakra-colors-appSurfaceMuted) 54%, var(--chakra-colors-appBgMuted) 100%)",
+              }}
             >
               <ChapterReview
                 nodes={landingChapterReviewNodes}
@@ -5767,7 +6119,7 @@ const Home = ({
             height="100%"
             scrollSnapAlign="start"
             p={8}
-            bg="#f5f4f2"
+            bg="appBgMuted"
             display="flex"
             flexDirection="column"
             alignItems="center"
@@ -5833,11 +6185,10 @@ const Home = ({
             height="100%"
             scrollSnapAlign="start"
             p={8}
-            bg="white"
+            bg="appSurfaceMuted"
             display="flex"
             flexDirection="column"
             alignItems="center"
-            backgroundColor="#f0efed"
             pb={24}
           >
             <VStack spacing={6} alignItems="flex-start">
@@ -5865,7 +6216,7 @@ const Home = ({
             height="100%"
             scrollSnapAlign="start"
             p={8}
-            bg="white"
+            bg="appSurface"
             display="flex"
             flexDirection="column"
             alignItems="center"
@@ -6053,7 +6404,7 @@ const Home = ({
                 }
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
-                backgroundColor="white"
+                backgroundColor="appSurface"
               />
             </Box>
             <HStack w="100%" mt={4} mb={12} justifyContent="center">
@@ -6071,9 +6422,9 @@ const Home = ({
               </Button>
               <Button
                 colorScheme="pink"
-                backgroundColor="pink.50"
+                backgroundColor="appAccentSoft"
                 variant="outline"
-                border="1px solid rgb(254,224,232)"
+                border="1px solid var(--chakra-colors-appBorder)"
                 style={{ width: "150px" }}
                 onMouseDown={() => setView("signIn")}
                 onKeyDown={(e) =>
@@ -6101,7 +6452,7 @@ const Home = ({
             {translation[userLanguage]["signIn.instructions"]}
           </Text>
           <Input
-            backgroundColor="white"
+            backgroundColor="appSurface"
             placeholder={translation[userLanguage]["signIn.input.placeholder"]}
             value={secretKey}
             onChange={(e) => setSecretKey(e.target.value)}
@@ -6125,8 +6476,8 @@ const Home = ({
             <Button
               onMouseDown={handleSignIn}
               colorScheme="pink"
-              backgroundColor="pink.50"
-              border="1px solid rgb(254,224,232)"
+              backgroundColor="appAccentSoft"
+              border="1px solid var(--chakra-colors-appBorder)"
               variant={"outline"}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
@@ -6207,8 +6558,8 @@ const Home = ({
                   start="#bf66ff"
                   end="#7300ff"
                   delay={0}
-                  bg="rgba(255,255,255,0.65)"
-                  border="#ededed"
+                  bg="appSurfaceGlass"
+                  border="var(--chakra-colors-appBorder)"
                 />
               </Box>
             </Box>
@@ -6221,7 +6572,7 @@ const Home = ({
               width="100%"
               textAlign={"left"}
               // background="orange.100"
-              backgroundColor="white"
+              backgroundColor="appSurface"
               style={{
                 // backgroundColor: "#dcecfc",
                 display: "flex",
@@ -6320,7 +6671,7 @@ const Home = ({
               }}
               isDisabled={!isCheckboxChecked}
               colorScheme="pink"
-              backgroundColor="pink.50"
+              backgroundColor="appAccentSoft"
               variant={"outline"}
             >
               {translation[userLanguage]["lastStep.button"]}
@@ -6336,7 +6687,8 @@ const Home = ({
               maxWidth="400px"
               width="100%"
               textAlign={"left"}
-              border="1px solid black"
+              border="1px solid var(--chakra-colors-appBorderStrong)"
+              backgroundColor="appSurface"
               style={{
                 // backgroundColor: "#dcecfc",
                 display: "flex",
@@ -6392,7 +6744,7 @@ const Home = ({
               }}
               isDisabled={!isCheckboxChecked}
               colorScheme="pink"
-              backgroundColor="pink.50"
+              backgroundColor="appAccentSoft"
               variant={"outline"}
             >
               {translation[userLanguage]["createAccount.button.launchApp"]}
@@ -6551,7 +6903,7 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
               {translation[userLanguage]["passcode.label"]}
             </Text>
             <Input
-              backgroundColor="white"
+              backgroundColor="appSurface"
               style={{
                 boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
               }}
@@ -6586,6 +6938,15 @@ function App({ isShutDown }) {
     const stored = localStorage.getItem("soundEnabled");
     return stored ? stored === "true" : true;
   });
+
+  useLayoutEffect(() => {
+    if (
+      location.pathname.startsWith("/q/") ||
+      location.pathname.startsWith("/onboarding/")
+    ) {
+      scrollToTopInstantly();
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     // Resume audio on any user interaction - iOS Safari can suspend audio context
@@ -6694,12 +7055,13 @@ function App({ isShutDown }) {
         description: translation[userLanguage]["actionTour.theme.description"],
         placement: "top",
       },
-      {
-        id: "social",
-        title: translation[userLanguage]["actionTour.social.title"],
-        description: translation[userLanguage]["actionTour.social.description"],
-        placement: "top",
-      },
+      // Social feed is intentionally hidden from the bottom action bar.
+      // {
+      //   id: "social",
+      //   title: translation[userLanguage]["actionTour.social.title"],
+      //   description: translation[userLanguage]["actionTour.social.description"],
+      //   placement: "top",
+      // },
       {
         id: "helper",
         title: translation[userLanguage]["actionTour.helper.title"],
@@ -6740,30 +7102,55 @@ function App({ isShutDown }) {
       clearTimeout(resetStatsTimeoutRef.current);
       resetStatsTimeoutRef.current = null;
     }
-    setPendingPath(path);
-    setPendingStep(nextStep);
-    // Defer showing the overlay to avoid the original click
-    // event immediately triggering the continue button
-    setTimeout(() => setShowClouds(true), 50);
+
+    flushSync(() => {
+      setPendingPath(path);
+      setPendingStep(nextStep);
+      setShowClouds(true);
+    });
+
+    if (typeof window !== "undefined") {
+      window.requestAnimationFrame(scrollToTopInstantly);
+    }
   };
 
   const handleTransitionContinue = () => {
-    if (pendingPath) {
-      navigate(pendingPath);
+    const nextPath = pendingPath;
+    const nextStep = pendingStep;
+
+    scrollToTopInstantly();
+
+    if (nextPath) {
+      navigate(nextPath);
     }
-    if (pendingStep !== null) {
-      setCurrentStep(pendingStep);
+
+    if (nextStep !== null) {
+      setCurrentStep(nextStep);
     }
-    setShowClouds(false);
-    setPendingPath(null);
-    setPendingStep(null);
-    if (resetStatsTimeoutRef.current) {
-      clearTimeout(resetStatsTimeoutRef.current);
+
+    const finishTransition = () => {
+      scrollToTopInstantly();
+      setShowClouds(false);
+      setPendingPath(null);
+      setPendingStep(null);
+
+      if (resetStatsTimeoutRef.current) {
+        clearTimeout(resetStatsTimeoutRef.current);
+      }
+
+      resetStatsTimeoutRef.current = setTimeout(
+        () => setTransitionStats(defaultTransitionStats),
+        1000,
+      );
+    };
+
+    if (typeof window !== "undefined") {
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(finishTransition);
+      });
+    } else {
+      finishTransition();
     }
-    resetStatsTimeoutRef.current = setTimeout(
-      () => setTransitionStats(defaultTransitionStats),
-      1000,
-    );
   };
 
   // const {
@@ -6987,18 +7374,23 @@ function App({ isShutDown }) {
 
   if (loading) {
     return (
-      <Box
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          height: "100vh",
-          alignItems: "center",
-        }}
-        textAlign="center"
-        fontSize="xl"
-        p={4}
-      >
-        <CloudCanvas />
+      <Box minH="100dvh" position="relative" overflow="hidden">
+        <AnimatedBackground />
+        <Box
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            height: "100vh",
+            alignItems: "center",
+          }}
+          textAlign="center"
+          fontSize="xl"
+          p={4}
+          position="relative"
+          zIndex={1}
+        >
+          <CloudCanvas />
+        </Box>
       </Box>
     );
   }
@@ -7023,7 +7415,8 @@ function App({ isShutDown }) {
   const testIsMatch = /\/q\/\d+$/.test(testurl);
 
   return (
-    <Box ref={topRef}>
+    <Box ref={topRef} minH="100dvh" position="relative" bg="transparent">
+      <AnimatedBackground />
       <CloudTransition
         userLanguage={userLanguage}
         clonedStep={clonedStep}
@@ -7075,7 +7468,16 @@ function App({ isShutDown }) {
           />
         </Alert>
       )}
-      <Box textAlign="center" fontSize="xl" p={0} pt={0}>
+      <Box
+        textAlign="center"
+        fontSize="xl"
+        p={0}
+        pt={0}
+        minH="100dvh"
+        bg="transparent"
+        position="relative"
+        zIndex={1}
+      >
         {isSignedIn && (
           <SettingsMenu
             testIsMatch={testIsMatch}

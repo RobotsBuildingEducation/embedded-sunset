@@ -113,7 +113,7 @@ const ProgressModal = ({
         <ModalHeader
           position="sticky"
           top="0"
-          bg="white"
+          bg="appSurfaceElevated"
           //   borderBottom="1px solid"
           //   borderColor="gray.200"
           zIndex={2}
@@ -175,7 +175,7 @@ const ProgressModal = ({
                 <Text
                   key={`step-${idx}`}
                   ml={2}
-                  color={idx <= currentStep - 1 ? "green.600" : "gray.500"}
+                  color={idx <= currentStep - 1 ? "green.600" : "appTextSubtle"}
                   fontSize="sm"
                 >
                   {idx}. {step.title}
@@ -190,7 +190,7 @@ const ProgressModal = ({
         <ModalFooter
           position="sticky"
           bottom="0"
-          bg="white"
+          bg="appSurfaceElevated"
           //   borderTop="1px solid"
           //   borderColor="gray.200"
           zIndex={2}

@@ -25,8 +25,9 @@ import {
   Heading,
   UnorderedList,
   ListItem,
-  Input,
+  Textarea,
   IconButton,
+  useColorMode,
 } from "@chakra-ui/react";
 import { BigSunset, SunsetCanvas } from "../../elements/SunsetCanvas";
 
@@ -51,13 +52,24 @@ import {
 import { LuSend } from "react-icons/lu";
 import { isUnsupportedBrowser } from "../../utility/browser";
 import { InstallAppModal } from "../InstallModal/InstallModal";
+import {
+  getThemedCodeBlockStyles,
+  getThemedSyntaxHighlightTheme,
+} from "../../theme";
 
-const highlightColors = [
+const lightHighlightColors = [
   "green.100",
   "blue.100",
   "yellow.100",
   "orange.100",
   "purple.100",
+];
+const darkHighlightColors = [
+  "whiteAlpha.200",
+  "whiteAlpha.200",
+  "whiteAlpha.200",
+  "whiteAlpha.200",
+  "whiteAlpha.200",
 ];
 export const newTheme = () => {
   let highlightIndex = 0;
@@ -70,6 +82,9 @@ export const newTheme = () => {
     h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
     h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
     strong: (props) => {
+      const { colorMode } = useColorMode();
+      const highlightColors =
+        colorMode === "dark" ? darkHighlightColors : lightHighlightColors;
       const color =
         highlightColors[Math.min(highlightIndex, highlightColors.length - 1)];
       highlightIndex += 1;
@@ -77,7 +92,7 @@ export const newTheme = () => {
         <Text
           as="span"
           bg={color}
-          color="black"
+          color="appText"
           px={1}
           borderRadius="md"
           fontWeight="extrabold"
@@ -86,21 +101,15 @@ export const newTheme = () => {
       );
     },
     code: ({ inline, className, children, ...props }) => {
+      const { colorMode } = useColorMode();
       const match = /language-(\w+)/.exec(className || "");
 
       return !inline && match ? (
         <SyntaxHighlighter
-          // backgroundColor="white"
-          // style={"light"}
           language={match[1]}
           PreTag="div"
-          customStyle={{
-            backgroundColor: "white", // Match this with the desired color
-            color: "black", // Ensure the text matches the background
-            padding: "1rem",
-            borderRadius: "8px",
-            fontSize: 12,
-          }}
+          style={getThemedSyntaxHighlightTheme(colorMode)}
+          customStyle={getThemedCodeBlockStyles(colorMode)}
           {...props}
         >
           {String(children).replace(/\n$/, "")}
@@ -108,7 +117,8 @@ export const newTheme = () => {
       ) : (
         <Box
           as="code"
-          backgroundColor="gray.100"
+          backgroundColor="appCodeInlineBg"
+          color="appCodeColor"
           p={1}
           borderRadius="md"
           fontSize="sm"
@@ -263,7 +273,7 @@ const EducationalModal = ({
       setBorderState,
       "2px solid teal",
       "0px solid #793feb",
-      500
+      500,
     );
   };
 
@@ -385,94 +395,48 @@ const EducationalModal = ({
         {/* Add OrbCanvas as a background */}
 
         {educationalMessages.length < 1 ? (
-          // && !educationalContent.length > 0
-          // <ModalOverlay>
-          //   <OrbCanvas
-          //     instructions={
-          //       <b> {translation[userLanguage]["modal.learn.instructions"]}</b>
-          //     }
-          //   />
-          // </ModalOverlay>
           <ModalContent
-            style={{ background: "black" }}
-            // color="white"
-            borderRadius="lg"
-            boxShadow="2xl"
+            bg="transparent"
+            color="appText"
+            borderWidth="0"
+            borderColor="transparent"
+            borderRadius="0"
+            boxShadow="none"
             p={0}
             width="100%"
-
-            // style={{ fontFamily: "Roboto Serif, serif" }}
+            minH="100dvh"
+            display="flex"
+            flexDirection="column"
+            overflow="hidden"
           >
-            {/* <Box ref={topRef}></Box> */}
-            <ModalHeader
-              fontSize="xl"
-              fontWeight="bold"
-              marginTop={0}
-              paddingTop={0}
-              padding={3}
+            <ModalBody
+              p={0}
+              style={{ width: "100%" }}
+              display="flex"
+              flex="1"
+              minH="100dvh"
             >
-              <ModalCloseButton color="white" size="lg" />
-              <HStack>
-                <div style={{ width: "fit-content" }}>
-                  {educationalMessages.length > -1 &&
-                  !educationalContent.length > 0 ? (
-                    <BigSunset />
-                  ) : (
-                    <RandomCharacter />
-                  )}
-                </div>
-                &nbsp;
-                <div style={{ color: "white" }}>
-                  {translation[userLanguage]["modal.learn.title"]}
-                </div>
-              </HStack>
-            </ModalHeader>
-
-            <ModalBody p={2} style={{ width: "100%" }}>
-              {/* {educationalMessages.length === 0 && <Spinner size="xl" />} */}
-
-              {educationalMessages.length > -1 &&
-              !educationalContent.length > 0 ? (
-                <div
-                  style={{
-                    color: "#FAF3E0",
-
-                    width: "100%",
-                  }}
-                >
-                  {/* {educationalMessages[educationalMessages.length - 1]?.content
-                  .length < 1 ? ( */}
-                  <OrbCanvas
-                    hasStreamedText={false}
-                    instructions={
-                      <Markdown components={ChakraUIRenderer(newTheme())}>
-                        {`${translation[userLanguage]["modal.learn.instructions"]}\n\n${
-                          educationalMessages[educationalMessages.length - 1]
-                            ?.content || ""
-                        }`.trimStart()}
-                      </Markdown>
-                    }
-                  />
-                  {/* // ) : ( // )}  */}
-                  {/* <Box ref={bottomRef}></Box> */}
-                </div>
-              ) : null}
+              <Box color="appText" width="100%" flex="1" minH="100dvh">
+                <OrbCanvas
+                  hasStreamedText={false}
+                  instructions={
+                    <Markdown components={ChakraUIRenderer(newTheme())}>
+                      {`${translation[userLanguage]["modal.learn.instructions"]}\n\n${
+                        educationalMessages[educationalMessages.length - 1]
+                          ?.content || ""
+                      }`.trimStart()}
+                    </Markdown>
+                  }
+                />
+              </Box>
             </ModalBody>
-            {/* <ModalFooter margin={0} padding={3}>
-            <Button
-              onMouseDown={onClose}
-              variant="solid"
-              size="lg"
-              boxShadow={"0px 0.5px 0.5px 1px black"}
-            >
-              {translation[userLanguage]["button.close"]}
-            </Button>
-          </ModalFooter> */}
           </ModalContent>
         ) : (
           <ModalContent
-            style={{ backgroundColor: "#F8F5F0" }}
-            // color="white"
+            bg="appSurfaceElevated"
+            color="appText"
+            borderWidth="1px"
+            borderColor="appBorder"
             borderRadius="lg"
             boxShadow="2xl"
             p={0}
@@ -489,6 +453,8 @@ const EducationalModal = ({
               marginTop={0}
               paddingTop={0}
               pb={0}
+              borderBottomWidth="1px"
+              borderBottomColor="appBorder"
 
               // height="100%"
             >
@@ -533,8 +499,11 @@ const EducationalModal = ({
                       fontFamily={"Avenir"}
                       key={index}
                       p={4}
+                      bg="appSurface"
                       borderRadius="md"
                       borderWidth={1}
+                      borderColor="appBorder"
+                      boxShadow="sm"
                       textAlign={"left"}
                       width="100%"
                     >
@@ -557,11 +526,13 @@ const EducationalModal = ({
                         <Box
                           key={idx}
                           p={3}
-                          bg={"white"}
+                          bg="appSurfaceStrong"
                           maxWidth="75%"
                           width="fit-content"
                           borderRadius="16px"
-                          boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                          borderWidth="1px"
+                          borderColor="appBorder"
+                          boxShadow="sm"
                         >
                           <Markdown components={ChakraUIRenderer(newTheme())}>
                             {msg.content.trimStart()}
@@ -572,8 +543,11 @@ const EducationalModal = ({
                         key={idx}
                         ref={isNewest ? newMessageRef : null} // Add ref to latest message
                         p={3}
-                        // bg={msg.role === "user" ? "blue.50" : "gray.50"}
+                        bg="appSurface"
                         borderRadius="md"
+                        borderWidth="1px"
+                        borderColor="appBorder"
+                        boxShadow="sm"
                         width="100%"
                       >
                         <Markdown components={ChakraUIRenderer(newTheme())}>
@@ -585,7 +559,12 @@ const EducationalModal = ({
                 })}
               </VStack>
             </ModalBody>
-            <ModalFooter mb={1} p={0}>
+            <ModalFooter
+              mb={1}
+              p={0}
+              borderTopWidth="1px"
+              borderTopColor="appBorder"
+            >
               <Box width="100%" maxWidth="600px" mx="auto">
                 <HStack
                   width="100%"
@@ -608,11 +587,15 @@ const EducationalModal = ({
                         handleVoiceToggle();
                       }
                     }}
-                    colorScheme={listening ? "blackAlpha" : "gray"}
-                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                    bg={listening ? "appSurfaceStrong" : "appSurface"}
+                    color={listening ? "pink.300" : "appTextMuted"}
+                    borderWidth="1px"
+                    borderColor={listening ? "pink.400" : "appBorder"}
+                    boxShadow="sm"
+                    _hover={{ bg: "appSurfaceMuted" }}
+                    _active={{ bg: "appSurfaceInset" }}
                   />
-                  <Input
-                    as="textarea"
+                  <Textarea
                     placeholder={translation[userLanguage]["askForHelp"]}
                     value={inputValue}
                     onChange={(e) => {
@@ -625,16 +608,21 @@ const EducationalModal = ({
                         handleSend();
                       }
                     }}
-                    background="white"
-                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                    variant="outline"
+                    resize="none"
+                    overflowY="hidden"
+                    background="appSurface"
+                    boxShadow="sm"
                     flex="1"
-                    minHeight="fit-content"
+                    minHeight="88px"
                     maxHeight="300px"
                     padding={3}
                   />
                   <Button
                     onClick={handleSend}
-                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                    colorScheme="pink"
+                    isDisabled={!inputValue.trim()}
+                    boxShadow="sm"
                   >
                     <LuSend />
                   </Button>

@@ -33,7 +33,7 @@ const AwardModalOnboarding = ({
   const [areBadgesLoading, setAreBadgesLoading] = useState(true);
   const { getUserBadges } = useSharedNostr(
     localStorage.getItem("local_npub"),
-    localStorage.getItem("local_nsec")
+    localStorage.getItem("local_nsec"),
   );
   const [badges, setBadges] = useState([]);
   useEffect(() => {
@@ -60,22 +60,25 @@ const AwardModalOnboarding = ({
       closeOnOverlayClick={false}
       isCentered
     >
-      <ModalOverlay bg="rgba(255,255,255,0.8)" backdropFilter="blur(8px)" />
+      <ModalOverlay bg="appOverlay" backdropFilter="blur(8px)" />
       <ModalContent
         as={motion.div}
         initial={{ y: 80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 80, opacity: 0 }}
         transition={{ duration: 0.4 }}
-        bg="white"
+        bg="appSurfaceElevated"
         borderRadius="xl"
         boxShadow="xl"
         p={0}
+        display="flex"
+        flexDirection="column"
+        minH={{ base: "min(720px, 92vh)", md: "560px" }}
         sx={{
           position: "relative",
           border: "8px solid transparent",
           background:
-            "linear-gradient(white, white) padding-box, linear-gradient(135deg,#FFD700,#FF69B4,#DA70D6,#FFA500) border-box",
+            "linear-gradient(var(--chakra-colors-appSurfaceElevated), var(--chakra-colors-appSurfaceElevated)) padding-box, linear-gradient(135deg,#FFD700,#FF69B4,#DA70D6,#FFA500) border-box",
           "&::before": {
             content: '""',
             position: "absolute",
@@ -89,7 +92,14 @@ const AwardModalOnboarding = ({
           },
         }}
       >
-        <ModalBody p={6} color="gray.800" textAlign="center">
+        <ModalBody
+          p={6}
+          color="appText"
+          textAlign="center"
+          display="flex"
+          flexDirection="column"
+          flex="1"
+        >
           <HStack justifyContent="center" mb={4}>
             <Text fontSize="xl" fontWeight="bold">
               {translation[userLanguage]["modal.title.decentralizedTranscript"]}
@@ -121,7 +131,7 @@ const AwardModalOnboarding = ({
                   window.open(
                     `https://badges.page/a/${
                       onboardingTranscript["address"] || ""
-                    }`
+                    }`,
                   );
                 }
               }}
@@ -183,9 +193,18 @@ const AwardModalOnboarding = ({
             }
           </b>
           {areBadgesLoading ? (
-            <div style={{ width: "fit-content" }}>
-              <CloudCanvas /> {translation[userLanguage]["loading"]}
-            </div>
+            <Box
+              width="100%"
+              minH="180px"
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+              gap={3}
+            >
+              <CloudCanvas />
+              <Text>{translation[userLanguage]["loading"]}</Text>
+            </Box>
           ) : badges.length < 1 ? (
             <div>{translation[userLanguage]["noTranscriptFound"]}</div>
           ) : (
@@ -214,7 +233,7 @@ const AwardModalOnboarding = ({
                       let matchingTranscript =
                         onboardingTranscript["name"]["en"].replace(
                           /\s+/g,
-                          "-"
+                          "-",
                         ) === badgeName;
 
                       let result = matchingTranscript
@@ -232,14 +251,14 @@ const AwardModalOnboarding = ({
                             let matchingTranscript =
                               onboardingTranscript["name"]["en"].replace(
                                 /\s+/g,
-                                "-"
+                                "-",
                               ) === badgeName;
 
                             let result = matchingTranscript
                               ? onboardingTranscript.address
                               : null;
                             return result;
-                          })()}`
+                          })()}`,
                         );
                       }
                     }}
@@ -296,7 +315,7 @@ const AwardModalOnboarding = ({
             <b>Subscribe</b>
           </Button> */}
         </ModalBody>
-        <ModalFooter margin={0} padding={3}>
+        <ModalFooter margin={0} px={6} pt={2} pb={6} justifyContent="flex-end">
           <Button
             onMouseDown={() => {
               triggerHaptic();
@@ -312,7 +331,7 @@ const AwardModalOnboarding = ({
               }
             }}
           >
-            {translation[userLanguage]["onboarding.final.launch"]}
+            {translation[userLanguage]["lastStep.button"] || "Next"}
           </Button>
         </ModalFooter>
       </ModalContent>

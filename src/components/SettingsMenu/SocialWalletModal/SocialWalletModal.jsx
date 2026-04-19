@@ -106,9 +106,9 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
       position: "top",
       render: () => (
         <Box
-          color="black"
+          color="appToastColor"
           p={3}
-          bg="#FEEBC8" // Custom background color here!
+          bg="appToastBg"
           borderRadius="md"
           boxShadow="lg"
         >

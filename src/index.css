@@ -1,5 +1,15 @@
+:root {
+  color-scheme: light;
+}
+
+html[data-theme-mode="dark"] {
+  color-scheme: dark;
+}
+
 html {
-  scrollbar-color: #ececec #e0e0e0;
+  scrollbar-color: var(--chakra-colors-appScrollThumb)
+    var(--chakra-colors-appScrollTrack);
+  background-color: var(--chakra-colors-appBg);
   /* font-family: */
   /* system-ui, */
   /* "Noto Serif Japanese",
@@ -19,8 +29,16 @@ body {
   overflow: auto;
   overscroll-behavior: none;
   scrollbar-gutter: stable both-edges;
-  scrollbar-color: #ececec #e0e0e0;
+  scrollbar-color: var(--chakra-colors-appScrollThumb)
+    var(--chakra-colors-appScrollTrack);
+  background-color: var(--chakra-colors-appBg);
+  color: var(--chakra-colors-appText);
+  transition:
+    background-color 220ms ease,
+    color 220ms ease,
+    scrollbar-color 220ms ease;
 }
+
 p,
 button,
 header,
@@ -46,4 +64,100 @@ input {
 
 button {
   font-weight: 400 !important;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--chakra-colors-appScrollThumb);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--chakra-colors-appScrollTrack);
+}
+
+html[data-theme-mode="dark"] .hljs {
+  background: transparent;
+  color: #eaf1ff;
+}
+
+html[data-theme-mode="dark"] pre[class*="language-"],
+html[data-theme-mode="dark"] code[class*="language-"] {
+  color: var(--chakra-colors-appCodeColor) !important;
+  text-shadow: none !important;
+  background: transparent !important;
+}
+
+html[data-theme-mode="dark"] .hljs-comment,
+html[data-theme-mode="dark"] .hljs-quote,
+html[data-theme-mode="dark"] .token.comment,
+html[data-theme-mode="dark"] .token.prolog,
+html[data-theme-mode="dark"] .token.doctype,
+html[data-theme-mode="dark"] .token.cdata {
+  color: #7d8aa8;
+}
+
+html[data-theme-mode="dark"] .hljs-keyword,
+html[data-theme-mode="dark"] .hljs-selector-tag,
+html[data-theme-mode="dark"] .hljs-literal,
+html[data-theme-mode="dark"] .token.keyword,
+html[data-theme-mode="dark"] .token.boolean {
+  color: #8ea4ff;
+}
+
+html[data-theme-mode="dark"] .hljs-string,
+html[data-theme-mode="dark"] .hljs-attr,
+html[data-theme-mode="dark"] .hljs-template-tag,
+html[data-theme-mode="dark"] .token.string,
+html[data-theme-mode="dark"] .token.attr-value,
+html[data-theme-mode="dark"] .token.inserted {
+  color: #86efc5;
+}
+
+html[data-theme-mode="dark"] .hljs-number,
+html[data-theme-mode="dark"] .hljs-symbol,
+html[data-theme-mode="dark"] .hljs-bullet,
+html[data-theme-mode="dark"] .token.number,
+html[data-theme-mode="dark"] .token.constant {
+  color: #f8c27a;
+}
+
+html[data-theme-mode="dark"] .hljs-title,
+html[data-theme-mode="dark"] .hljs-function,
+html[data-theme-mode="dark"] .hljs-section,
+html[data-theme-mode="dark"] .token.function,
+html[data-theme-mode="dark"] .token.class-name {
+  color: #7dd3fc;
+}
+
+html[data-theme-mode="dark"] .hljs-built_in,
+html[data-theme-mode="dark"] .hljs-type,
+html[data-theme-mode="dark"] .token.property,
+html[data-theme-mode="dark"] .token.selector {
+  color: #c4b5fd;
+}
+
+html[data-theme-mode="dark"] .hljs-variable,
+html[data-theme-mode="dark"] .hljs-params,
+html[data-theme-mode="dark"] .token.variable {
+  color: #f9fafb;
+}
+
+html[data-theme-mode="dark"] .hljs-operator,
+html[data-theme-mode="dark"] .hljs-punctuation,
+html[data-theme-mode="dark"] .token.operator,
+html[data-theme-mode="dark"] .token.punctuation {
+  color: #9fb0d4;
+}
+
+html[data-theme-mode="dark"] .token.operator,
+html[data-theme-mode="dark"] .token.entity,
+html[data-theme-mode="dark"] .token.url,
+html[data-theme-mode="dark"] .language-css .token.string,
+html[data-theme-mode="dark"] .style .token.string {
+  background: transparent !important;
 }
