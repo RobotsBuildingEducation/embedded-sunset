@@ -70,7 +70,6 @@ import {
   useParams,
   useLocation,
 } from "react-router-dom";
-import { flushSync } from "react-dom";
 
 import { useChatCompletion } from "./hooks/useChatCompletion";
 import {
@@ -1864,6 +1863,7 @@ const Step = ({
 
   const fallbackTranslation = translation.en || {};
   const translationMap = translation[userLanguage] || fallbackTranslation;
+  const { colorMode } = useColorMode();
 
   const themeColor = useThemeStore((state) => state.themeColor);
   const [theme50, theme100, theme200, theme300, theme600] = useToken("colors", [
@@ -1933,6 +1933,28 @@ const Step = ({
     `0 8px 18px ${hexToRgba(actionPalette[300], 0.16)}`,
     "0 10px 24px rgba(2, 6, 23, 0.34)",
   );
+  const showImmediateTransitionShell = useCallback(() => {
+    if (typeof document === "undefined") return;
+    const shellId = "immediate-cloud-transition-shell";
+    if (document.getElementById(shellId)) return;
+
+    const shell = document.createElement("div");
+    shell.id = shellId;
+    shell.setAttribute("aria-hidden", "true");
+    Object.assign(shell.style, {
+      position: "fixed",
+      inset: "0",
+      width: "100vw",
+      height: "100vh",
+      zIndex: "1999",
+      pointerEvents: "none",
+      background:
+        colorMode === "dark"
+          ? "linear-gradient(180deg, #040816 0%, #101836 100%)"
+          : "linear-gradient(180deg, #e3f2fd 0%, #ffffff 100%)",
+    });
+    document.body.appendChild(shell);
+  }, [colorMode]);
   const successFeedbackBg = useColorModeValue(
     "linear-gradient(180deg, rgba(240, 253, 244, 0.98) 0%, rgba(220, 252, 231, 0.98) 100%)",
     "linear-gradient(180deg, rgba(6, 78, 59, 0.96) 0%, rgba(6, 46, 33, 0.96) 100%)",
@@ -3186,6 +3208,32 @@ const Step = ({
         runTask();
       }
     };
+    const buildTransitionStats = () => {
+      const salaryVal = loot[currentStep]["monetaryValue"] || 0;
+      const salaryProgress = (salaryVal / 120000) * 100;
+      const totalSteps = steps[userLanguage].length;
+      const stepProgress = ((currentStep + 1) / totalSteps) * 100;
+      const balanceProgress = calculateBalance();
+      const salaryText = loot[currentStep][userLanguage];
+      const updatedDailyProgress = Math.min(dailyProgress + 1, dailyGoals || 5);
+      const dailyGoalPercent = Math.min(
+        (updatedDailyProgress / (dailyGoals || 5)) * 100,
+        100,
+      );
+
+      return {
+        salary: salaryVal,
+        salaryProgress,
+        stepProgress,
+        balanceProgress,
+        dailyGoalProgress: dailyGoalPercent,
+        dailyProgress: updatedDailyProgress,
+        dailyGoals: dailyGoals || 5,
+        dailyGoalLabel: translation[userLanguage]["dailyGoal"],
+        message: celebrationMessage,
+        detail: salaryText,
+      };
+    };
 
     const hostname = window.location.hostname;
     const isValidHost =
@@ -3233,46 +3281,6 @@ const Step = ({
     // console.log("currentStep...", currentStep);
     // console.log("fSTEPS", steps);
     const nextStep = currentStep + 1;
-
-    if (currentStep === 0) {
-      recordQuestionCompletion();
-      clearQuestionState();
-      setIsPostingWithNostr(true);
-      const npub = localStorage.getItem("local_npub");
-      try {
-        await incrementUserStep(npub, currentStep);
-      } finally {
-        setIsPostingWithNostr(false);
-      }
-      setCurrentStep(nextStep);
-      navigate(`/onboarding/${currentStep + 2}`);
-      return;
-    }
-
-    const salaryVal = loot[currentStep]["monetaryValue"] || 0;
-    const salaryProgress = (salaryVal / 120000) * 100;
-    const totalSteps = steps[userLanguage].length;
-    const stepProgress = ((currentStep + 1) / totalSteps) * 100;
-    const balanceProgress = calculateBalance();
-    const salaryText = loot[currentStep][userLanguage];
-    const updatedDailyProgress = Math.min(dailyProgress + 1, dailyGoals || 5);
-    const dailyGoalPercent = Math.min(
-      (updatedDailyProgress / (dailyGoals || 5)) * 100,
-      100,
-    );
-    const nextTransitionStats = {
-      salary: salaryVal,
-      salaryProgress,
-      stepProgress,
-      balanceProgress,
-      dailyGoalProgress: dailyGoalPercent,
-      dailyProgress: updatedDailyProgress,
-      dailyGoals: dailyGoals || 5,
-      dailyGoalLabel: translation[userLanguage]["dailyGoal"],
-      message: celebrationMessage,
-      detail: salaryText,
-    };
-
     const npub = localStorage.getItem("local_npub");
     const shouldGoToSubscription =
       currentStep === 9 &&
@@ -3287,14 +3295,28 @@ const Step = ({
           ? `/onboarding/${currentStep + 2}`
           : `/q/${currentStep + 1}`;
 
+    if (currentStep === 0) {
+      setCurrentStep(nextStep);
+      navigate(`/onboarding/${currentStep + 2}`);
+
+      runAfterTransitionPaint(async () => {
+        recordQuestionCompletion();
+        clearQuestionState();
+        await incrementUserStep(npub, currentStep);
+      });
+      return;
+    }
+
     if (step.isConversationReview) {
       setLectureNextPath(nextPath);
       setLectureNextStep(nextStep);
     }
 
-    navigateWithTransition(nextPath, nextStep, nextTransitionStats);
+    showImmediateTransitionShell();
+    navigateWithTransition(nextPath, nextStep);
 
     runAfterTransitionPaint(async () => {
+      setTransitionStats(buildTransitionStats());
       recordQuestionCompletion();
       clearQuestionState();
 
@@ -3321,22 +3343,44 @@ const Step = ({
       return;
     }
 
+    event?.preventDefault?.();
+
     if (nextQuestionPressLockRef.current) {
       return;
     }
 
     nextQuestionPressLockRef.current = true;
-    beforeNext?.();
+    if (currentStep !== 0) {
+      showImmediateTransitionShell();
+    }
 
-    Promise.resolve(handleNextClick()).finally(() => {
-      if (typeof window !== "undefined") {
-        window.setTimeout(() => {
+    const runNext = () => {
+      Promise.resolve(handleNextClick()).finally(() => {
+        if (typeof window !== "undefined") {
+          window.setTimeout(() => {
+            nextQuestionPressLockRef.current = false;
+          }, 900);
+        } else {
           nextQuestionPressLockRef.current = false;
-        }, 900);
-      } else {
-        nextQuestionPressLockRef.current = false;
-      }
-    });
+        }
+      });
+    };
+
+    if (typeof window !== "undefined" && currentStep !== 0) {
+      window.requestAnimationFrame(() => {
+        window.setTimeout(runNext, 0);
+      });
+    } else {
+      runNext();
+    }
+
+    if (beforeNext && typeof window !== "undefined") {
+      window.requestAnimationFrame(() => {
+        window.setTimeout(beforeNext, 0);
+      });
+    } else {
+      beforeNext?.();
+    }
   };
 
   // Navigate back to the previous step
@@ -7150,11 +7194,9 @@ function App({ isShutDown }) {
       resetStatsTimeoutRef.current = null;
     }
 
-    flushSync(() => {
-      setPendingPath(path);
-      setPendingStep(nextStep);
-      setShowClouds(true);
-    });
+    setPendingPath(path);
+    setPendingStep(nextStep);
+    setShowClouds(true);
 
     if (typeof window !== "undefined") {
       window.requestAnimationFrame(() => {

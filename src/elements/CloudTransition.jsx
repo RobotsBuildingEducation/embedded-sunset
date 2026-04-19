@@ -407,6 +407,16 @@ const CloudTransition = ({
   const connectorBaseId = useId();
 
   useEffect(() => {
+    if (!isActive || typeof document === "undefined") return undefined;
+
+    const frameId = window.requestAnimationFrame(() => {
+      document.getElementById("immediate-cloud-transition-shell")?.remove();
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [isActive]);
+
+  useEffect(() => {
     if (!isActive) {
       setRenderRichContent(false);
       return undefined;
