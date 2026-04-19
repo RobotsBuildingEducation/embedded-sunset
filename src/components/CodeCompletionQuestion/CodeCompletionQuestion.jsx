@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { VStack, Box, Button } from "@chakra-ui/react";
+import { VStack, Box, Button, useColorModeValue } from "@chakra-ui/react";
 
 import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
@@ -24,6 +24,18 @@ const CodeCompletionQuestion = ({
   const [isComponentFocused, setIsComponentFocused] = useState(false); // Track if the component is focused or not
   const optionRefs = useRef([]); // Track references to each code block option
   const learnButtonRef = useRef(null); // Reference to the Learn button
+  const actionShadow = useColorModeValue(
+    "0 12px 24px rgba(15, 23, 42, 0.12)",
+    "0 16px 34px rgba(2, 6, 23, 0.42)",
+  );
+  const optionShadow = useColorModeValue(
+    "0 16px 36px rgba(15, 23, 42, 0.08)",
+    "0 22px 44px rgba(2, 6, 23, 0.45)",
+  );
+  const focusRing = useColorModeValue(
+    "0 0 0 3px rgba(236, 72, 153, 0.22)",
+    "0 0 0 3px rgba(244, 114, 182, 0.3)",
+  );
 
   // Handle keyboard navigation and selection when the component is focused
   const handleKeyDown = (e) => {
@@ -34,7 +46,7 @@ const CodeCompletionQuestion = ({
           setIsComponentFocused(true);
         }
         setFocusedIndex((prevIndex) =>
-          prevIndex > 0 ? prevIndex - 1 : question.options.length - 1
+          prevIndex > 0 ? prevIndex - 1 : question.options.length - 1,
         );
         break;
       case "ArrowDown":
@@ -43,7 +55,7 @@ const CodeCompletionQuestion = ({
           setIsComponentFocused(true);
         }
         setFocusedIndex((prevIndex) =>
-          prevIndex < question.options.length - 1 ? prevIndex + 1 : 0
+          prevIndex < question.options.length - 1 ? prevIndex + 1 : 0,
         );
         break;
       case "Enter":
@@ -133,7 +145,10 @@ const CodeCompletionQuestion = ({
         colorScheme="pink"
         // Removed tabIndex={0} as Button is focusable by default
         background="pink.400"
-        boxShadow="0.5px 0.5px 0px 0px rgba(0, 0, 0,0.75)"
+        color="white"
+        boxShadow={actionShadow}
+        _hover={{ bg: "pink.500" }}
+        _active={{ bg: "pink.500" }}
       >
         <IoChatbubblesOutline />
         &nbsp;
@@ -144,19 +159,26 @@ const CodeCompletionQuestion = ({
       {question.options.map((option, index) => (
         <Box
           key={index}
-          onClickCapture={() => handleOptionClick(option, index)} // Register click and update focus
+          onMouseDown={() => handleOptionClick(option, index)}
           cursor="pointer"
-          bg={selectedOption === option ? "#FDF8EF" : "#faf3e0"} // Background changes on selection
+          bg={selectedOption === option ? "appCodeBg" : "appSurface"} // Background changes on selection
           borderWidth="2px"
-          borderColor={selectedOption === option ? "pink.500" : "transparent"} // Emphasized border for selected
+          borderColor={selectedOption === option ? "pink.300" : "appBorder"} // Emphasized border for selected
           _hover={{
-            backgroundColor: selectedOption === option ? "#FDF8EF" : "#FDF8EF", // Hover effect
+            backgroundColor:
+              selectedOption === option ? "appCodeBg" : "appSurfaceMuted",
+            borderColor:
+              selectedOption === option ? "pink.300" : "appBorderStrong",
           }}
           textAlign="left"
           width="100%"
           p={4}
-          borderRadius="lg" // Rounded corners
-          boxShadow="0.5px 0.5px 1px 0px black"
+          borderRadius="2xl"
+          boxShadow={
+            focusedIndex === index
+              ? `${optionShadow}, ${focusRing}`
+              : optionShadow
+          }
           tabIndex={0} // Make each option focusable with Tab
           ref={(el) => (optionRefs.current[index] = el)} // Store reference to each code block
           onKeyDown={(e) => {
@@ -167,7 +189,7 @@ const CodeCompletionQuestion = ({
             setIsComponentFocused(true);
           }} // Sync focus state when an option gains focus
           style={{
-            outline: focusedIndex === index ? "2px solid #3182ce" : "none", // Highlight the focused option
+            outline: "none",
           }}
         >
           {/* Render cleaned-up and highlighted code block */}
@@ -182,7 +204,7 @@ const CodeCompletionQuestion = ({
               backgroundColor: "transparent", // Keep it transparent
               whiteSpace: "pre-wrap", // Handle long lines
               width: "100%",
-              color: "#333333", // Ensure dark text for readability
+              color: "var(--chakra-colors-appCodeColor)",
               pointerEvents: "none", // Prevent editor from blocking clicks
             }}
             disabled

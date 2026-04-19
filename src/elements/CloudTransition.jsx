@@ -1,6 +1,6 @@
 // CloudTransition.jsx
 import React, { useEffect, useRef, useState, useMemo, useId } from "react";
-import { Box, Button, Flex, Icon, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Icon, Text, useColorMode } from "@chakra-ui/react";
 import {
   CheckCircleIcon,
   QuestionIcon,
@@ -242,7 +242,7 @@ const detectQuestionKind = (step) => {
 };
 
 // ---- Level-based background ----
-const THEMES = {
+const LIGHT_TRANSITION_THEMES = {
   tutorial: {
     skyTop: "#e3f2fd",
     skyBottom: "#ffffff",
@@ -310,6 +310,58 @@ const THEMES = {
   },
 };
 
+const createDarkTransitionTheme = (glows = []) => ({
+  skyTop: "#040816",
+  skyBottom: "#101836",
+  clouds: [
+    "rgba(168,180,216,0.16)",
+    "rgba(109,128,176,0.14)",
+    "rgba(255,255,255,0.08)",
+  ],
+  cloudHighlight: "rgba(255,255,255,0.18)",
+  sparkleColor: "191,219,254",
+  sparkleCrossColor: "255,255,255",
+  glows,
+});
+
+const DARK_TRANSITION_THEMES = {
+  tutorial: createDarkTransitionTheme([
+    { x: 0.18, y: 0.18, radius: 0.34, color: "rgba(56,189,248,0.16)" },
+    { x: 0.82, y: 0.16, radius: 0.3, color: "rgba(168,85,247,0.14)" },
+    { x: 0.48, y: 0.72, radius: 0.42, color: "rgba(37,99,235,0.10)" },
+  ]),
+  1: createDarkTransitionTheme([
+    { x: 0.2, y: 0.18, radius: 0.34, color: "rgba(34,211,238,0.18)" },
+    { x: 0.78, y: 0.2, radius: 0.28, color: "rgba(59,130,246,0.12)" },
+    { x: 0.42, y: 0.76, radius: 0.4, color: "rgba(14,165,233,0.10)" },
+  ]),
+  2: createDarkTransitionTheme([
+    { x: 0.18, y: 0.18, radius: 0.36, color: "rgba(192,132,252,0.16)" },
+    { x: 0.8, y: 0.24, radius: 0.28, color: "rgba(139,92,246,0.14)" },
+    { x: 0.52, y: 0.74, radius: 0.38, color: "rgba(79,70,229,0.08)" },
+  ]),
+  3: createDarkTransitionTheme([
+    { x: 0.22, y: 0.2, radius: 0.32, color: "rgba(250,204,21,0.12)" },
+    { x: 0.76, y: 0.18, radius: 0.28, color: "rgba(245,158,11,0.10)" },
+    { x: 0.54, y: 0.72, radius: 0.42, color: "rgba(59,130,246,0.08)" },
+  ]),
+  4: createDarkTransitionTheme([
+    { x: 0.16, y: 0.22, radius: 0.34, color: "rgba(45,212,191,0.14)" },
+    { x: 0.82, y: 0.16, radius: 0.26, color: "rgba(34,211,238,0.12)" },
+    { x: 0.46, y: 0.74, radius: 0.42, color: "rgba(14,165,233,0.10)" },
+  ]),
+  5: createDarkTransitionTheme([
+    { x: 0.18, y: 0.18, radius: 0.32, color: "rgba(74,222,128,0.14)" },
+    { x: 0.8, y: 0.18, radius: 0.28, color: "rgba(45,212,191,0.12)" },
+    { x: 0.52, y: 0.76, radius: 0.42, color: "rgba(59,130,246,0.08)" },
+  ]),
+  night: createDarkTransitionTheme([
+    { x: 0.18, y: 0.16, radius: 0.32, color: "rgba(56,189,248,0.12)" },
+    { x: 0.8, y: 0.18, radius: 0.26, color: "rgba(99,102,241,0.14)" },
+    { x: 0.48, y: 0.74, radius: 0.42, color: "rgba(76,29,149,0.10)" },
+  ]),
+};
+
 const CloudTransition = ({
   userLanguage,
   clonedStep,
@@ -329,6 +381,8 @@ const CloudTransition = ({
   stepsMap,
   children,
 }) => {
+  const { colorMode } = useColorMode();
+  const isDarkMode = colorMode === "dark";
   const canvasRef = useRef(null);
   const [canContinue, setCanContinue] = useState(false);
   const [displaySalary, setDisplaySalary] = useState(salary);
@@ -401,7 +455,24 @@ const CloudTransition = ({
     return s === "0" ? "tutorial" : s;
   }, [clonedStep]);
 
-  const theme = THEMES[groupKey] ?? THEMES.tutorial;
+  const transitionTheme = useMemo(() => {
+    const paletteSet = isDarkMode
+      ? DARK_TRANSITION_THEMES
+      : LIGHT_TRANSITION_THEMES;
+    return paletteSet[groupKey] ?? paletteSet.tutorial;
+  }, [groupKey, isDarkMode]);
+
+  const copyColor = isDarkMode ? "appText" : "purple.600";
+  const labelColor = isDarkMode ? "appTextMuted" : "purple.500";
+  const buttonBg = isDarkMode
+    ? "rgba(12,21,40,0.78)"
+    : "rgba(255,255,255,0.14)";
+  const buttonBorder = isDarkMode
+    ? "rgba(250,204,21,0.42)"
+    : "rgba(250,204,21,0.58)";
+  const buttonShadow = isDarkMode
+    ? "0 20px 44px rgba(2,6,23,0.34)"
+    : "0 14px 32px rgba(15,23,42,0.10)";
 
   const skillTreeNodes = useMemo(() => {
     const mapSource = stepsMap ?? defaultSteps;
@@ -547,12 +618,14 @@ const CloudTransition = ({
         borderRadius="full"
         px={{ base: 4, md: 5 }}
         py={{ base: 3, md: 4 }}
-        bg="rgba(255,255,255,0.88)"
+        bg="appSurfaceElevated"
         backdropFilter="blur(10px)"
         boxShadow={
           isCurrent
             ? `0 18px 36px ${accent}40, 0 0 0 2px ${accent}33 inset`
-            : `0 8px 16px rgba(0,0,0,0.06)`
+            : isDarkMode
+              ? "0 14px 30px rgba(2,6,23,0.34)"
+              : "0 8px 16px rgba(0,0,0,0.06)"
         }
         borderWidth={isCurrent ? "2px" : "1px"}
         borderColor={isCurrent ? accent : `${accent}33`}
@@ -565,13 +638,15 @@ const CloudTransition = ({
           position="absolute"
           inset={0}
           bgGradient={gradient}
-          opacity={isCurrent ? 0.26 : 0.14}
+          opacity={
+            isCurrent ? (isDarkMode ? 0.34 : 0.26) : isDarkMode ? 0.18 : 0.14
+          }
           pointerEvents="none"
         />
         <Flex align="center" gap={4} position="relative" zIndex={1}>
           <Box
-            w="52px"
-            h="52px"
+            w={{ base: "46px", md: "52px" }}
+            h={{ base: "46px", md: "52px" }}
             borderRadius="full"
             display="flex"
             alignItems="center"
@@ -581,12 +656,16 @@ const CloudTransition = ({
               isCurrent ? `0 14px 28px ${accent}33` : `0 10px 20px ${accent}22`
             }
           >
-            <Icon as={IconComponent} boxSize={7} color={accent} />
+            <Icon
+              as={IconComponent}
+              boxSize={{ base: "24px", md: "30px" }}
+              color={accent}
+            />
           </Box>
           <Text
             fontSize="lg"
             fontWeight={isCurrent ? "bold" : "semibold"}
-            color={isCurrent ? "purple.700" : "purple.500"}
+            color={isCurrent ? "appText" : "appTextMuted"}
           >
             {node.title}
           </Text>
@@ -612,7 +691,7 @@ const CloudTransition = ({
         height="120px"
         viewBox="0 0 160 120"
         preserveAspectRatio="none"
-        opacity={0.8}
+        opacity={isDarkMode ? 0.92 : 0.8}
         mx="auto"
       >
         <defs>
@@ -685,8 +764,13 @@ const CloudTransition = ({
     const ctx = canvas.getContext("2d");
     let animationId;
 
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+
     const setSize = () => {
       const ratio = window.devicePixelRatio || 1;
+      width = window.innerWidth;
+      height = window.innerHeight;
       canvas.width = Math.floor(window.innerWidth * ratio);
       canvas.height = Math.floor(window.innerHeight * ratio);
       canvas.style.width = "100%";
@@ -696,22 +780,21 @@ const CloudTransition = ({
 
     setSize();
 
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-
     // Bigger, multi-lobe clouds for visibility
-    const clouds = Array.from({ length: 16 }, () => ({
+    const clouds = Array.from({ length: isDarkMode ? 14 : 16 }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
       radius: 90 + Math.random() * 150,
       speedY: 0.24 + Math.random() * 0.32,
       speedX: (Math.random() - 0.5) * 0.16,
       wobble: Math.random() * Math.PI * 2,
-      color: theme.clouds[Math.floor(Math.random() * theme.clouds.length)],
+      color:
+        transitionTheme.clouds[
+          Math.floor(Math.random() * transitionTheme.clouds.length)
+        ],
     }));
 
-    // Warm gold sparkles ✨
-    const sparkles = Array.from({ length: 130 }, () => ({
+    const sparkles = Array.from({ length: isDarkMode ? 110 : 130 }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
       r: 0.9 + Math.random() * 1.9,
@@ -734,10 +817,25 @@ const CloudTransition = ({
     const draw = () => {
       // Sky gradient
       const sky = ctx.createLinearGradient(0, 0, 0, height);
-      sky.addColorStop(0, theme.skyTop);
-      sky.addColorStop(1, theme.skyBottom);
+      sky.addColorStop(0, transitionTheme.skyTop);
+      sky.addColorStop(1, transitionTheme.skyBottom);
       ctx.fillStyle = sky;
       ctx.fillRect(0, 0, width, height);
+
+      transitionTheme.glows?.forEach((glow) => {
+        const glowGradient = ctx.createRadialGradient(
+          width * glow.x,
+          height * glow.y,
+          0,
+          width * glow.x,
+          height * glow.y,
+          Math.max(width, height) * glow.radius,
+        );
+        glowGradient.addColorStop(0, glow.color);
+        glowGradient.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = glowGradient;
+        ctx.fillRect(0, 0, width, height);
+      });
 
       // Clouds
       clouds.forEach((c) => {
@@ -760,12 +858,12 @@ const CloudTransition = ({
 
         // glossy highlight
         ctx.save();
-        ctx.globalAlpha = 0.16;
+        ctx.globalAlpha = isDarkMode ? 0.12 : 0.16;
         drawCloudLobe(
           c.x - c.radius * 0.18,
           c.y - c.radius * 0.28,
           c.radius * 0.9,
-          "rgba(255,255,255,0.9)",
+          transitionTheme.cloudHighlight || "rgba(255,255,255,0.9)",
         );
         ctx.restore();
 
@@ -789,7 +887,7 @@ const CloudTransition = ({
         const a = s.baseA * (0.5 + 0.5 * Math.sin(s.flicker));
         const r = s.r * (0.85 + 0.3 * Math.sin(s.flicker * 1.7));
 
-        ctx.fillStyle = `rgba(255,215,0,${a})`;
+        ctx.fillStyle = `rgba(${transitionTheme.sparkleColor || "255,215,0"},${a})`;
         ctx.beginPath();
         ctx.arc(s.x, s.y, r, 0, Math.PI * 2);
         ctx.fill();
@@ -802,7 +900,7 @@ const CloudTransition = ({
           ctx.moveTo(s.x, s.y - r * 1.8);
           ctx.lineTo(s.x, s.y + r * 1.8);
           ctx.lineWidth = 0.8;
-          ctx.strokeStyle = "rgba(255,215,0,0.9)";
+          ctx.strokeStyle = `rgba(${transitionTheme.sparkleCrossColor || "255,215,0"},0.9)`;
           ctx.stroke();
           ctx.globalAlpha = 1;
         }
@@ -825,16 +923,13 @@ const CloudTransition = ({
 
     const onResize = () => {
       setSize();
-      // Optionally update references if you want clouds to adapt immediately:
-      // width = window.innerWidth;
-      // height = window.innerHeight;
     };
     window.addEventListener("resize", onResize);
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener("resize", onResize);
     };
-  }, [isActive, theme]);
+  }, [isActive, transitionTheme, isDarkMode]);
 
   return (
     <AnimatePresence>
@@ -850,6 +945,7 @@ const CloudTransition = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          bg={`linear-gradient(180deg, ${transitionTheme.skyTop} 0%, ${transitionTheme.skyBottom} 100%)`}
           overflowY="auto"
           display="flex"
           flexDirection="column"
@@ -877,9 +973,19 @@ const CloudTransition = ({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.45, ease: "easeOut" }}
               textAlign="center"
-              color="purple.600"
+              color={copyColor}
               w="90%"
               maxW="420px"
+              px={isDarkMode ? 5 : 0}
+              py={isDarkMode ? 4 : 0}
+              borderRadius="28px"
+              bg={isDarkMode ? "rgba(5,8,21,0.28)" : "transparent"}
+              borderWidth={isDarkMode ? "1px" : "0px"}
+              borderColor={
+                isDarkMode ? "rgba(148,163,184,0.18)" : "transparent"
+              }
+              boxShadow={isDarkMode ? "0 30px 80px rgba(2,6,23,0.32)" : "none"}
+              backdropFilter={isDarkMode ? "blur(14px)" : "none"}
             >
               {message && (
                 <Text
@@ -899,7 +1005,11 @@ const CloudTransition = ({
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.55 }}
                     color="#05f569"
-                    style={{ textShadow: "0 0 12px rgba(5,245,105,0.25)" }}
+                    style={{
+                      textShadow: isDarkMode
+                        ? "0 0 18px rgba(74,222,128,0.22)"
+                        : "0 0 12px rgba(5,245,105,0.25)",
+                    }}
                   >
                     +${(displaySalary ?? 0).toLocaleString()}/yr
                   </Text>
@@ -919,7 +1029,7 @@ const CloudTransition = ({
 
                   {/* Salary bar */}
                   <Box w="100%" mx="auto" mb={6} mt={6}>
-                    <Text fontSize="sm" mb={1} color="purple.500">
+                    <Text fontSize="sm" mb={1} color={labelColor}>
                       Salary
                     </Text>
                     <WaveBar
@@ -927,13 +1037,13 @@ const CloudTransition = ({
                       start="#43e97b"
                       end="#38f9d7"
                       delay={0.2}
-                      bg="rgba(255,255,255,0.65)"
-                      border="#ededed"
+                      bg="appSurfaceGlass"
+                      border="var(--chakra-colors-appBorder)"
                     />
                   </Box>
                   {/* Balance bar */}
                   <Box w="100%" mx="auto" mb={6}>
-                    <Text fontSize="sm" mb={1} color="purple.500">
+                    <Text fontSize="sm" mb={1} color={labelColor}>
                       {balanceProgress === 0 ? "0" : balanceProgress - 1}{" "}
                       Bitcoin sats
                     </Text>
@@ -942,14 +1052,14 @@ const CloudTransition = ({
                       start="#fce09d"
                       end="#fef37b"
                       delay={0}
-                      bg="rgba(255,255,255,0.65)"
-                      border="#ededed"
+                      bg="appSurfaceGlass"
+                      border="var(--chakra-colors-appBorder)"
                     />
                   </Box>
 
                   {/* Step progress bar */}
                   <Box w="100%" mx="auto" mb={6}>
-                    <Text fontSize="sm" mb={1} color="purple.500">
+                    <Text fontSize="sm" mb={1} color={labelColor}>
                       Progress
                     </Text>
                     <WaveBar
@@ -957,14 +1067,14 @@ const CloudTransition = ({
                       start="#0345fc"
                       end="#03f4fc"
                       delay={0.1}
-                      bg="rgba(255,255,255,0.65)"
-                      border="#ededed"
+                      bg="appSurfaceGlass"
+                      border="var(--chakra-colors-appBorder)"
                     />
                   </Box>
 
                   {/* Daily goal bar */}
                   <Box w="100%" mx="auto" mb={6}>
-                    <Text fontSize="sm" mb={1} color="purple.500">
+                    <Text fontSize="sm" mb={1} color={labelColor}>
                       {dailyGoalLabel} {dailyProgress}/{dailyGoals}
                     </Text>
                     <WaveBar
@@ -972,13 +1082,13 @@ const CloudTransition = ({
                       start="#03f4fc"
                       end="#fef37b"
                       delay={0}
-                      bg="rgba(255,255,255,0.65)"
-                      border="#ededed"
+                      bg="appSurfaceGlass"
+                      border="var(--chakra-colors-appBorder)"
                     />
                   </Box>
 
                   <Box w="100%" mx="auto" mb={6}>
-                    <Text fontSize="sm" mb={1} color="purple.500">
+                    <Text fontSize="sm" mb={1} color={labelColor}>
                       {translation[userLanguage]["communityGoal"]}
                       {questionsAnswered}/7500{" "}
                       {translation[userLanguage]["questions"]}
@@ -988,8 +1098,8 @@ const CloudTransition = ({
                       start="#bf66ff"
                       end="#7300ff"
                       delay={0}
-                      bg="rgba(255,255,255,0.65)"
-                      border="#ededed"
+                      bg="appSurfaceGlass"
+                      border="var(--chakra-colors-appBorder)"
                     />
                   </Box>
 
@@ -1000,8 +1110,12 @@ const CloudTransition = ({
               <Button
                 as={motion.button}
                 mt={8}
-                colorScheme="yellow"
+                bg={buttonBg}
+                color="appText"
                 variant="outline"
+                borderColor={buttonBorder}
+                borderWidth="1px"
+                boxShadow={buttonShadow}
                 borderRadius="12px"
                 py={8}
                 initial={{ opacity: 0, y: 8 }}
@@ -1011,6 +1125,8 @@ const CloudTransition = ({
                 transition={{ duration: 0.2, delay: 0.35 }}
                 data-sound-ignore-select="true"
                 onClick={() => {
+                  if (!canContinue) return;
+                  setCanContinue(false);
                   triggerHaptic();
                   soundManager.resume();
                   soundManager.play("next");
@@ -1018,6 +1134,19 @@ const CloudTransition = ({
                 }}
                 disabled={!canContinue}
                 width="100%"
+                _hover={{
+                  bg: isDarkMode ? "appSurfaceMuted" : "rgba(255,255,255,0.34)",
+                  borderColor: isDarkMode
+                    ? "rgba(250,204,21,0.62)"
+                    : "rgba(250,204,21,0.78)",
+                }}
+                _active={{
+                  bg: isDarkMode ? "appSurfaceInset" : "rgba(255,255,255,0.44)",
+                }}
+                _disabled={{
+                  opacity: 0.58,
+                  cursor: "not-allowed",
+                }}
               >
                 Continue
               </Button>

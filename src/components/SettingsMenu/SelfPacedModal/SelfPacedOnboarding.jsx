@@ -1,24 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
   Button,
   Text,
   Slider,
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
-  Stack,
-  Progress,
   CircularProgress,
   Box,
-  Spinner,
-  Switch,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import {
   getUserData,
@@ -41,6 +31,20 @@ import { RiSlowDownLine, RiSpeedUpLine } from "react-icons/ri";
 import { COURSE_LESSON_COUNT } from "../../../utility/nosql";
 import { soundManager } from "../../../utility/soundManager";
 import { triggerHaptic } from "tactus";
+
+const scrollToTopInstantly = () => {
+  if (typeof window === "undefined") return;
+
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+
+  if (document.documentElement) {
+    document.documentElement.scrollTop = 0;
+  }
+
+  if (document.body) {
+    document.body.scrollTop = 0;
+  }
+};
 
 // CountdownTimer now supports days along with hours:minutes:seconds and shows a progress bar.
 const CountdownTimer = ({ targetTime, initialTime, label, userLanguage }) => {
@@ -179,12 +183,13 @@ const SelfPacedOnboarding = ({
         dailyGoals,
         newNextGoalExpiration,
         dailyProgress,
-        goalCount
+        goalCount,
       ),
       incrementUserOnboardingStep(userId),
     ]).catch(console.error);
 
     setCurrentStep(2);
+    scrollToTopInstantly();
     navigate("/q/2");
   };
 
@@ -211,12 +216,27 @@ const SelfPacedOnboarding = ({
     return `${dayLabel} (${signal})`;
   };
 
-  const getMarkColor = (val) => {
-    if (val === 1440) return "purple.500";
-    if (val === 2880) return "green.500";
-    if (val === 4320) return "blue.500";
-    return "gray.500";
-  };
+  const intervalButtonBorder = useColorModeValue(
+    "rgba(148, 163, 184, 0.46)",
+    "rgba(148, 163, 184, 0.36)",
+  );
+  const intervalButtonBg = useColorModeValue(
+    "rgba(255, 255, 255, 0.92)",
+    "rgba(15, 23, 42, 0.9)",
+  );
+  const selectedIntervalButtonBg = useColorModeValue(
+    "rgba(241, 245, 249, 0.98)",
+    "rgba(30, 41, 59, 0.98)",
+  );
+  const selectedIntervalButtonBorder = useColorModeValue(
+    "rgba(71, 85, 105, 0.76)",
+    "rgba(226, 232, 240, 0.68)",
+  );
+  const intervalButtonTextColor = useColorModeValue("#0f172a", "#f8fafc");
+  const calendarPreviewShadow = useColorModeValue(
+    "0 8px 18px rgba(15, 23, 42, 0.08)",
+    "0 10px 24px rgba(2, 6, 23, 0.16)",
+  );
 
   //   const handleToggleNotifications = async () => {
   //     const userDocRef = doc(database, "users", userId);
@@ -330,11 +350,26 @@ const SelfPacedOnboarding = ({
         &nbsp; {translation[userLanguage]["modal.selfPace.monthPlan"]}
       </Button>
 
-      <Text fontSize="xs" width="70%" mb={2} color="gray.600">
+      <Text
+        fontSize="xs"
+        width={{ base: "100%", md: "70%" }}
+        mb={2}
+        color="appTextMuted"
+        textAlign="center"
+        lineHeight="1.7"
+      >
         {translation[userLanguage]["modal.selfPace.instruction"]}
       </Text>
 
-      <Stack direction="row" spacing={3} flexWrap="wrap">
+      <Box
+        width="100%"
+        display="flex"
+        flexDirection={{ base: "column", md: "row" }}
+        flexWrap="wrap"
+        justifyContent="center"
+        alignItems="center"
+        gap={3}
+      >
         {[1440, 2880, 4320].map((option) => {
           const isSelected = interval === option;
           return (
@@ -344,32 +379,52 @@ const SelfPacedOnboarding = ({
               variant="outline"
               data-sound-ignore-select="true"
               aria-pressed={isSelected}
-              borderColor={isSelected ? "teal.400" : "gray.200"}
-              bg={isSelected ? "teal.50" : "transparent"}
+              width={{ base: "100%", md: "auto" }}
+              maxW={{ base: "360px", md: "none" }}
+              minW={{ md: "170px" }}
+              minH={{ base: "72px", md: "48px" }}
+              px={{ base: 4, md: 5 }}
+              py={{ base: 4, md: 3 }}
+              justifyContent="center"
+              borderColor={
+                isSelected ? selectedIntervalButtonBorder : intervalButtonBorder
+              }
+              bg={isSelected ? selectedIntervalButtonBg : intervalButtonBg}
               boxShadow={
-                isSelected
-                  ? "0 0 0 2px rgba(56, 178, 172, 0.2)"
-                  : "none"
+                isSelected ? "0 0 0 2px rgba(148, 163, 184, 0.18)" : "none"
               }
               onMouseDown={() => {
                 triggerHaptic();
                 handleIntervalChange(String(option));
               }}
               _hover={{
-                borderColor: "teal.300",
+                borderColor: selectedIntervalButtonBorder,
+                bg: isSelected ? selectedIntervalButtonBg : "appSurfaceMuted",
               }}
             >
-              <Text color={getMarkColor(option)} fontWeight="semibold">
+              <Text
+                color={intervalButtonTextColor}
+                fontWeight="semibold"
+                textAlign="center"
+                lineHeight="1.35"
+              >
                 {getMarkLabel(option)}
               </Text>
             </Button>
           );
         })}
-      </Stack>
+      </Box>
 
       <br />
       <br />
-      <Text fontSize="xs" width="70%" mb={2} color="gray.600">
+      <Text
+        fontSize="xs"
+        width={{ base: "100%", md: "70%" }}
+        mb={2}
+        color="appTextMuted"
+        textAlign="center"
+        lineHeight="1.7"
+      >
         {translation[userLanguage]["modal.dailyGoal.instruction"]}
       </Text>
 
@@ -394,15 +449,25 @@ const SelfPacedOnboarding = ({
 
       <br />
       {dailyGoals > 0 && (
-        <Text mt={1} fontSize="sm" color="gray.600" mb={2}>
+        <Text mt={1} fontSize="sm" color="appTextMuted" mb={2}>
           {translation[userLanguage]["modal.dailyGoal.estimate"]
             .replace("{days}", estimatedDays)
             .replace("{plural}", estimatedDays > 1 ? "s" : "")}
         </Text>
       )}
 
-      <Box mt={2} borderRadius="md" overflow="hidden" width="100%">
+      <Box
+        mt={2}
+        borderRadius="2xl"
+        overflow="hidden"
+        width="100%"
+        bg="appSurfaceElevated"
+        borderWidth="1px"
+        borderColor="appBorder"
+        boxShadow={calendarPreviewShadow}
+      >
         <Calendar
+          className="self-paced-calendar"
           locale={userLanguage}
           value={estimatedDate}
           tileDisabled={({ date }) =>

@@ -62,7 +62,7 @@ const SocialFeedModal = ({
 
     const unsubscribe = subscribeToTeamInvites(userNpub, (invites) => {
       const pendingCount = invites.filter(
-        (invite) => invite.status === "pending"
+        (invite) => invite.status === "pending",
       ).length;
       setPendingInviteCount(pendingCount);
     });
@@ -79,7 +79,12 @@ const SocialFeedModal = ({
       placement="right"
     >
       <DrawerOverlay />
-      <DrawerContent display="flex" flexDirection="column">
+      <DrawerContent
+        display="flex"
+        flexDirection="column"
+        bg="appSurfaceElevated"
+        color="appText"
+      >
         <DrawerHeader style={{ display: "flex", alignItems: "center" }}>
           {t["socialFeed.title"] || "Social Progress"}
         </DrawerHeader>
@@ -142,14 +147,25 @@ const SocialFeedModal = ({
         <DrawerFooter
           position="sticky"
           bottom="0"
-          bg="chakra-body-bg"
+          bg="appSurfaceElevated"
           borderTopWidth="1px"
-          borderColor="blackAlpha.200"
-          boxShadow="sm"
+          borderColor="appBorder"
+          boxShadow="none"
           py={4}
           justifyContent="flex-end"
         >
-          <Button size="lg" onClick={onClose} data-sound-close="true">
+          <Button
+            size="lg"
+            onClick={onClose}
+            data-sound-close="true"
+            bg="appSurfaceStrong"
+            color="appText"
+            borderWidth="1px"
+            borderColor="appBorderStrong"
+            boxShadow="sm"
+            _hover={{ bg: "appSurfaceMuted" }}
+            _active={{ bg: "appSurfaceInset" }}
+          >
             {translation?.[userLanguage]?.["button.close"] || "Close"}
           </Button>
         </DrawerFooter>

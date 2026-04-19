@@ -14,6 +14,7 @@ export const RobotDialogue = ({ text, background = null }) => {
     <div
       style={{
         backgroundColor: background ? randomColor : null,
+        color: background ? "#111827" : "inherit",
         padding: background ? "10px" : null,
         borderRadius: 8,
         marginBottom: 12,

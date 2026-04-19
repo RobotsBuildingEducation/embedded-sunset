@@ -227,10 +227,12 @@ const RandomCharacter = ({
   speed = 1.33,
   borderRadius = null,
   notSoRandomCharacter = null,
+  noSoRancomCharacter = null,
   isTimed = false,
 }) => {
   const [image, setImage] = useState("");
   const [showSplash, setShowSplash] = useState(isTimed);
+  const selectedCharacter = notSoRandomCharacter || noSoRancomCharacter;
 
   useEffect(() => {
     if (showSplash && isTimed) {
@@ -241,12 +243,12 @@ const RandomCharacter = ({
 
       // Filter out used characters
       const availableCharacters = characterImages.filter(
-        (_, index) => !usedIndices.includes(index)
+        (_, index) => !usedIndices.includes(index),
       );
 
       // Select a random character from the available ones
       const randomIndex = Math.floor(
-        Math.random() * availableCharacters.length
+        Math.random() * availableCharacters.length,
       );
       const randomImage = availableCharacters[randomIndex];
 
@@ -272,12 +274,12 @@ const RandomCharacter = ({
 
       // Filter out used characters
       const availableCharacters = characterImages.filter(
-        (_, index) => !usedIndices.includes(index)
+        (_, index) => !usedIndices.includes(index),
       );
 
       // Select a random character from the available ones
       const randomIndex = Math.floor(
-        Math.random() * availableCharacters.length
+        Math.random() * availableCharacters.length,
       );
       const randomImage = availableCharacters[randomIndex];
 
@@ -310,9 +312,7 @@ const RandomCharacter = ({
       <div>
         <img
           src={
-            notSoRandomCharacter
-              ? characterImagesMap[notSoRandomCharacter]
-              : image
+            selectedCharacter ? characterImagesMap[selectedCharacter] : image
           }
           alt=""
           width={width}

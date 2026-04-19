@@ -1,5 +1,16 @@
-import { Box, Heading, ListItem, Text, UnorderedList } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  ListItem,
+  Text,
+  UnorderedList,
+  useColorMode,
+} from "@chakra-ui/react";
 import SyntaxHighlighter from "react-syntax-highlighter";
+import {
+  getThemedCodeBlockStyles,
+  getThemedSyntaxHighlightTheme,
+} from "./theme";
 
 export const newTheme = {
   p: (props) => <Text mb={2} lineHeight="1.6" {...props} />,
@@ -10,21 +21,15 @@ export const newTheme = {
   h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   code: ({ inline, className, children, ...props }) => {
+    const { colorMode } = useColorMode();
     const match = /language-(\w+)/.exec(className || "");
 
     return !inline && match ? (
       <SyntaxHighlighter
-        // backgroundColor="white"
-        // style={"light"}
         language={match[1]}
         PreTag="div"
-        customStyle={{
-          backgroundColor: "#F4F2F0", // Match this with the desired color
-          color: "black", // Ensure the text matches the background
-          padding: "1rem",
-          borderRadius: "8px",
-          fontSize: 12,
-        }}
+        style={getThemedSyntaxHighlightTheme(colorMode)}
+        customStyle={getThemedCodeBlockStyles(colorMode)}
         {...props}
       >
         {String(children).replace(/\n$/, "")}
@@ -32,7 +37,8 @@ export const newTheme = {
     ) : (
       <Box
         as="code"
-        backgroundColor="gray.100"
+        backgroundColor="appCodeInlineBg"
+        color="appCodeColor"
         p={1}
         borderRadius="md"
         fontSize="sm"

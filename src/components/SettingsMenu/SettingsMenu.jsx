@@ -31,6 +31,8 @@ import {
   PopoverArrow,
   PopoverCloseButton,
   Portal,
+  useColorModeValue,
+  useToken,
 } from "@chakra-ui/react";
 
 import { useNavigate } from "react-router-dom";
@@ -53,6 +55,7 @@ import { AlgorithmHelper } from "../AlgorithmHelper/AlgorithmHelper";
 import { CareerAgent } from "../CareerAgent/CareerAgent";
 
 import { useNostrWalletStore } from "../../hooks/useNostrWalletStore";
+import { useThemeStore } from "../../useThemeStore";
 import StudyGuideModal from "../StudyGuideModal/StudyGuideModal";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { ChangeLanguageModal } from "../ChangeLanguageModal/ChangeLanguageModal";
@@ -85,6 +88,72 @@ const SettingsMenu = ({
   const btnRef = menuButtonRef || useRef(); // Reference to the settings icon button
   const firstButtonRef = useRef(); // Reference to the first button in the drawer
   const toast = useToast();
+  const themeColor = useThemeStore((state) => state.themeColor);
+  const [accent300, accent500, accent600, accent700] = useToken("colors", [
+    `${themeColor}.300`,
+    `${themeColor}.500`,
+    `${themeColor}.600`,
+    `${themeColor}.700`,
+  ]);
+  const primaryMenuButtonBg = useColorModeValue(
+    accent300 || "#F9A8D4",
+    accent700 || "#9D174D",
+  );
+  const primaryMenuButtonHoverBg = useColorModeValue(
+    accent500 || "#EC4899",
+    accent600 || "#BE185D",
+  );
+  const primaryMenuButtonActiveBg = useColorModeValue(
+    accent500 || "#DB2777",
+    accent500 || "#DB2777",
+  );
+  const primaryMenuButtonBorder = useColorModeValue(
+    accent500 || "#DB2777",
+    accent500 || "#DB2777",
+  );
+  const primaryMenuButtonColor = useColorModeValue("#1F2937", "#F8FAFC");
+  const primaryMenuButtonShadow = useColorModeValue(
+    "0 10px 22px rgba(15, 23, 42, 0.08)",
+    "0 14px 30px rgba(2, 6, 23, 0.36)",
+  );
+  const secondaryMenuButtonShadow = useColorModeValue(
+    "0 8px 18px rgba(15, 23, 42, 0.08)",
+    "0 12px 24px rgba(2, 6, 23, 0.28)",
+  );
+  const primaryMenuButtonProps = {
+    p: 6,
+    w: "100%",
+    bg: primaryMenuButtonBg,
+    color: primaryMenuButtonColor,
+    borderWidth: "1px",
+    borderColor: primaryMenuButtonBorder,
+    borderRadius: "xl",
+    fontWeight: "700",
+    boxShadow: primaryMenuButtonShadow,
+    _hover: { bg: primaryMenuButtonHoverBg, transform: "translateY(-1px)" },
+    _active: { bg: primaryMenuButtonActiveBg, transform: "translateY(0)" },
+  };
+  const secondaryMenuButtonProps = {
+    p: 6,
+    w: "100%",
+    bg: "appSurface",
+    color: "appText",
+    borderWidth: "1px",
+    borderColor: "appBorderStrong",
+    borderRadius: "xl",
+    boxShadow: secondaryMenuButtonShadow,
+    _hover: { bg: "appSurfaceMuted", transform: "translateY(-1px)" },
+    _active: { bg: "appSurfaceInset", transform: "translateY(0)" },
+  };
+  const ghostMenuButtonProps = {
+    p: 6,
+    w: "100%",
+    variant: "ghost",
+    color: "appText",
+    borderRadius: "xl",
+    _hover: { bg: "appSurfaceMuted" },
+    _active: { bg: "appSurfaceInset" },
+  };
 
   const { resetState, walletService } = useNostrWalletStore((state) => ({
     resetState: state.resetState, // renamed from cashTap
@@ -175,7 +244,7 @@ const SettingsMenu = ({
       const userDocRef = doc(
         database,
         "users",
-        localStorage.getItem("local_npub")
+        localStorage.getItem("local_npub"),
       );
       updateDoc(userDocRef, {
         language: userLanguage,
@@ -233,9 +302,9 @@ const SettingsMenu = ({
         position: "top",
         render: () => (
           <Box
-            color="black"
+            color="appToastColor"
             p={3}
-            bg="#FEEBC8" // Custom background color here!
+            bg="appToastBg"
             borderRadius="md"
             boxShadow="lg"
           >
@@ -260,9 +329,9 @@ const SettingsMenu = ({
         position: "top",
         render: () => (
           <Box
-            color="black"
+            color="appToastColor"
             p={3}
-            bg="#FEEBC8" // Custom background color here!
+            bg="appToastBg"
             borderRadius="md"
             boxShadow="lg"
           >
@@ -308,7 +377,12 @@ const SettingsMenu = ({
       position="fixed"
       top={4}
       right={4}
-      style={{ backgroundColor: "white", zIndex: 1000 }}
+      bg="appSurface"
+      color="appText"
+      borderWidth="1px"
+      borderColor="appBorder"
+      _hover={{ bg: "appSurfaceMuted" }}
+      zIndex={1000}
       aria-label="Settings"
     />
   );
@@ -382,18 +456,18 @@ const SettingsMenu = ({
         blockScrollOnMount={false}
       >
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent bg="appSurfaceElevated" color="appText">
           <DrawerCloseButton />
           <DrawerHeader>
             {translation?.[userLanguage]?.["settings.title"]}
           </DrawerHeader>
-          <DrawerBody>
+          <DrawerBody pb={6}>
             <VStack spacing={4}>
-              <HStack>
+              <HStack width="100%" align="stretch">
                 <Button
-                  style={{
-                    display: "flex",
-                  }}
+                  {...secondaryMenuButtonProps}
+                  display="flex"
+                  flex="1"
                   tabIndex={0}
                   onMouseDown={() => {
                     handleCopyKeys(localStorage.getItem("local_npub") || "");
@@ -415,9 +489,9 @@ const SettingsMenu = ({
                 </Button>
 
                 <Button
-                  style={{
-                    display: "flex",
-                  }}
+                  {...secondaryMenuButtonProps}
+                  display="flex"
+                  flex="1"
                   tabIndex={0}
                   onMouseDown={() => {
                     handleCopyKeys();
@@ -442,7 +516,12 @@ const SettingsMenu = ({
               </HStack>
 
               <FormControl display="flex" alignItems="center" width="100%">
-                <FormLabel htmlFor="allow-posts-menu-switch" mb="0" flex="1">
+                <FormLabel
+                  htmlFor="allow-posts-menu-switch"
+                  mb="0"
+                  flex="1"
+                  color="appText"
+                >
                   {translation[userLanguage]["tag.allowPosting"]}
                 </FormLabel>
                 <Switch
@@ -454,7 +533,12 @@ const SettingsMenu = ({
               </FormControl>
 
               <FormControl display="flex" alignItems="center" width="100%">
-                <FormLabel htmlFor="sound-effects-menu-switch" mb="0" flex="1">
+                <FormLabel
+                  htmlFor="sound-effects-menu-switch"
+                  mb="0"
+                  flex="1"
+                  color="appText"
+                >
                   Sound effects
                 </FormLabel>
                 <Switch
@@ -500,23 +584,21 @@ const SettingsMenu = ({
               {localStorage.getItem("passcode") !==
               import.meta.env.VITE_PATREON_PASSCODE ? (
                 <Button
-                  p={6}
-                  w="100%"
+                  {...secondaryMenuButtonProps}
                   color="#2e2200"
                   fontWeight="700"
                   bgGradient="linear(to-r, #f6e7b6 0%,rgb(248, 233, 137) 50%,rgb(248, 234, 108) 100%)"
                   border="1px solid #c4a035"
-                  borderRadius="md"
-                  transition="opacity .15s ease"
-                  _hover={{ opacity: 0.98 }}
-                  _active={{ opacity: 0.95 }}
+                  boxShadow="0 12px 24px rgba(161, 128, 36, 0.22)"
+                  _hover={{ opacity: 0.98, transform: "translateY(-1px)" }}
+                  _active={{ opacity: 0.95, transform: "translateY(0)" }}
                   onMouseDown={() =>
                     window.open("https://patreon.com/notesandotherstuff/about")
                   }
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
                       window.open(
-                        "https://patreon.com/notesandotherstuff/about"
+                        "https://patreon.com/notesandotherstuff/about",
                       );
                     }
                   }}
@@ -526,9 +608,7 @@ const SettingsMenu = ({
               ) : null}
 
               <Button
-                background="pink.300"
-                color="white"
-                width="100%"
+                {...primaryMenuButtonProps}
                 onClick={onLangOpen}
                 ref={firstButtonRef}
               >
@@ -536,12 +616,8 @@ const SettingsMenu = ({
               </Button>
 
               <Button
+                {...primaryMenuButtonProps}
                 onMouseDown={onStudyGuideModalOpen}
-                p={6}
-                colorScheme="pink"
-                background="pink.300"
-                boxShadow="1px 1px 2px 0px rgba(0, 0, 0,0.75)"
-                style={{ width: "100%" }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
                     onStudyGuideModalOpen();
@@ -551,11 +627,7 @@ const SettingsMenu = ({
                 {translation[userLanguage]["settings.button.studyGuide"]}
               </Button>
               <Button
-                p={6}
-                colorScheme="pink"
-                background="pink.300"
-                boxShadow="1px 1px 2px 0px rgba(0, 0, 0,0.75)"
-                style={{ width: "100%" }}
+                {...primaryMenuButtonProps}
                 onMouseDown={onTranscriptOpen}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
@@ -567,11 +639,7 @@ const SettingsMenu = ({
               </Button>
 
               <Button
-                p={6}
-                colorScheme="pink"
-                background="pink.300"
-                boxShadow="1px 1px 2px 0px rgba(0, 0, 0,0.75)"
-                style={{ width: "100%" }}
+                {...primaryMenuButtonProps}
                 onMouseDown={onInstallModalOpen}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
@@ -582,37 +650,31 @@ const SettingsMenu = ({
                 {translation[userLanguage]["installApp"]}
               </Button>
               <Button
-                p={6}
-                style={{ width: "100%" }}
+                {...secondaryMenuButtonProps}
                 onMouseDown={onSocialWalletOpen}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
                     onSocialWalletOpen();
                   }
                 }}
-                variant={"outline"}
-                boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
               >
                 {translation[userLanguage]["settings.button.socialWallet"]}
               </Button>
               <Button
-                p={6}
-                style={{ width: "100%" }}
+                {...secondaryMenuButtonProps}
                 // as="a"
 
                 onClick={() => {
                   window.open(
-                    "https://chatgpt.com/g/g-LPoMAiBoa-robots-building-education"
+                    "https://chatgpt.com/g/g-LPoMAiBoa-robots-building-education",
                   );
                 }}
-                variant={"outline"}
-                boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
               >
                 {translation[userLanguage]["settings.button.tutorGPT"]}
               </Button>
 
               <Button
-                style={{ width: "100%" }}
+                {...ghostMenuButtonProps}
                 onMouseDown={() => {
                   onClose();
                   navigate("/about");
@@ -623,13 +685,11 @@ const SettingsMenu = ({
                     navigate("/about");
                   }
                 }}
-                p={6}
-                variant={"transparent"}
               >
                 {translation[userLanguage]["button.about"]}
               </Button>
               <Button
-                style={{ width: "100%" }}
+                {...ghostMenuButtonProps}
                 onMouseDown={() => {
                   // walletService.stop();
                   resetState();
@@ -662,8 +722,6 @@ const SettingsMenu = ({
                     window.location.reload();
                   }
                 }}
-                p={6}
-                variant={"transparent"}
               >
                 {translation[userLanguage]["settings.button.signOut"]}
               </Button>

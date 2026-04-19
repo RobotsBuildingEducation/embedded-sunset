@@ -27,7 +27,7 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
   const transcriptset = useMemo(
     () =>
       userLanguage === "compsci-en" ? computerScienceTranscript : transcript,
-    [userLanguage]
+    [userLanguage],
   );
 
   // safe localStorage reads
@@ -69,21 +69,21 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
 
   const langKey = useMemo(
     () => (userLanguage?.includes("es") ? "es" : "en"),
-    [userLanguage]
+    [userLanguage],
   );
 
   const cardImage = badges[0]?.image || null;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg" isCentered>
-      <ModalOverlay bg="rgba(255,255,255,0.8)" backdropFilter="blur(8px)" />
+      <ModalOverlay bg="appOverlay" backdropFilter="blur(8px)" />
       <ModalContent
         as={motion.div}
         initial={{ y: 80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 80, opacity: 0 }}
         transition={{ duration: 0.4 }}
-        bg="white"
+        bg="appSurfaceElevated"
         borderRadius="xl"
         boxShadow="xl"
         p={0}
@@ -91,7 +91,7 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
           position: "relative",
           border: "8px solid transparent",
           background:
-            "linear-gradient(white, white) padding-box, linear-gradient(135deg,#FFD700,#FF69B4,#DA70D6,#FFA500) border-box",
+            "linear-gradient(var(--chakra-colors-appSurfaceElevated), var(--chakra-colors-appSurfaceElevated)) padding-box, linear-gradient(135deg,#FFD700,#FF69B4,#DA70D6,#FFA500) border-box",
           "&::before": {
             content: '""',
             position: "absolute",
@@ -105,9 +105,9 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
           },
         }}
       >
-        <ModalBody p={6} color="gray.800">
+        <ModalBody p={6} color="appText">
           <HStack justifyContent="center" mb={4}>
-            <Text fontSize="xl" fontWeight="bold">
+            <Text fontSize="xl" fontWeight="bold" color="appText">
               {translation?.[userLanguage]?.[
                 "modal.title.decentralizedTranscript"
               ] ||
@@ -118,7 +118,7 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
             </Text>
           </HStack>
 
-          <Text mb={4}>
+          <Text mb={4} color="appText">
             {translation?.[userLanguage]?.[
               "modal.decentralizedTranscript.awareness"
             ] ||
@@ -129,7 +129,7 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
           </Text>
 
           {/* Earned badges grid (same states as Award modal) */}
-          <b>
+          <Text as="b" color="appText">
             {translation?.[userLanguage]?.[
               "modal.decentralizedTranscript.awardsEarned"
             ] ||
@@ -137,7 +137,7 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
                 "modal.decentralizedTranscript.awardsEarned"
               ] ||
               "Awards earned"}
-          </b>
+          </Text>
 
           {areBadgesLoading ? (
             <div style={{ width: "fit-content", margin: "8px auto 0" }}>
@@ -147,11 +147,11 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
                 "Loading"}
             </div>
           ) : badges.length < 1 ? (
-            <div style={{ marginTop: 8 }}>
+            <Box mt={2} color="appTextMuted">
               {translation?.[userLanguage]?.["noTranscriptFound"] ||
                 translation?.[langKey]?.["noTranscriptFound"] ||
                 "No transcript found"}
-            </div>
+            </Box>
           ) : (
             <Box
               display="flex"
@@ -226,7 +226,9 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
                         alignItems: "center",
                       }}
                     >
-                      <Text fontSize="sm">{title}</Text>
+                      <Text fontSize="sm" color="appText">
+                        {title}
+                      </Text>
                     </div>
                   </div>
                 );
@@ -235,13 +237,19 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
           )}
         </ModalBody>
 
-        <ModalFooter justifyContent="center">
+        <ModalFooter justifyContent="center" bg="appSurfaceElevated">
           <Button
             onMouseDown={onClose}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") onClose();
             }}
             data-sound-close="true"
+            bg="appSurfaceStrong"
+            color="appText"
+            borderWidth="1px"
+            borderColor="appBorderStrong"
+            _hover={{ bg: "appSurfaceMuted" }}
+            _active={{ bg: "appSurfaceInset" }}
           >
             {translation?.[userLanguage]?.["button.close"] ||
               translation?.[langKey]?.["button.close"] ||

@@ -1,6 +1,6 @@
 import "regenerator-runtime/runtime";
 import "@babel/polyfill";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -61,6 +61,20 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import WaveBar from "./components/WaveBar";
 import { soundManager } from "./utility/soundManager";
 
+const scrollToTopInstantly = () => {
+  if (typeof window === "undefined") return;
+
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+
+  if (document.documentElement) {
+    document.documentElement.scrollTop = 0;
+  }
+
+  if (document.body) {
+    document.body.scrollTop = 0;
+  }
+};
+
 export const Onboarding = ({
   userLanguage,
   setUserLanguage,
@@ -101,12 +115,13 @@ export const Onboarding = ({
     setOnboardingToDone(localStorage.getItem("local_npub"), 5);
 
     setCurrentStep(5);
+    scrollToTopInstantly();
     navigate("/q/5");
   };
 
   // Scroll to top on step change
-  useEffect(() => {
-    window.scrollTo(0, 0);
+  useLayoutEffect(() => {
+    scrollToTopInstantly();
   }, [step]);
 
   useEffect(() => {
@@ -317,6 +332,7 @@ export const Onboarding = ({
               playOnboardingChord();
               incrementUserOnboardingStep(localStorage.getItem("local_npub"));
               setCurrentStep(0);
+              scrollToTopInstantly();
               navigate("/q/0");
             }}
           />
@@ -362,8 +378,8 @@ export const Onboarding = ({
                     start="#02fabc"
                     end="#12ff69"
                     delay={0}
-                    bg="rgba(255,255,255,0.65)"
-                    border="#ededed"
+                    bg="appSurfaceGlass"
+                    border="var(--chakra-colors-appBorder)"
                   />
                 </Box>
               </Box>
@@ -373,7 +389,7 @@ export const Onboarding = ({
                   borderBottomRightRadius="0px"
                   p={4}
                   textAlign="center"
-                  backgroundColor="white"
+                  backgroundColor="appSurface"
                   boxShadow="0.5px 0.5px 1px 0px black"
                 >
                   <Text
@@ -788,6 +804,7 @@ export const Onboarding = ({
                         localStorage.getItem("local_npub"),
                       );
                       setCurrentStep(1);
+                      scrollToTopInstantly();
                       navigate("/q/1");
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
@@ -848,8 +865,8 @@ export const Onboarding = ({
                     start="#02fabc"
                     end="#12ff69"
                     delay={0}
-                    bg="rgba(255,255,255,0.65)"
-                    border="#ededed"
+                    bg="appSurfaceGlass"
+                    border="var(--chakra-colors-appBorder)"
                   />
                 </Box>
               </Box>
@@ -859,7 +876,7 @@ export const Onboarding = ({
                   borderBottomRightRadius="0px"
                   p={4}
                   textAlign="center"
-                  backgroundColor="white"
+                  backgroundColor="appSurface"
                   boxShadow="0.5px 0.5px 1px 0px black"
                 >
                   <Text
@@ -932,8 +949,8 @@ export const Onboarding = ({
                     start="#02fabc"
                     end="#12ff69"
                     delay={0}
-                    bg="rgba(255,255,255,0.65)"
-                    border="#ededed"
+                    bg="appSurfaceGlass"
+                    border="var(--chakra-colors-appBorder)"
                   />
                 </Box>
               </Box>
@@ -942,7 +959,7 @@ export const Onboarding = ({
                 <Box
                   borderRadius="24px"
                   p={4}
-                  bg="white"
+                  bg="appSurface"
                   boxShadow="0.5px 0.5px 1px black"
                 >
                   <Text
@@ -1085,6 +1102,7 @@ export const Onboarding = ({
                         localStorage.getItem("local_npub"),
                       );
                       setCurrentStep(3);
+                      scrollToTopInstantly();
                       navigate("/q/3");
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
@@ -1137,8 +1155,8 @@ export const Onboarding = ({
                     start="#02fabc"
                     end="#12ff69"
                     delay={0}
-                    bg="rgba(255,255,255,0.65)"
-                    border="#ededed"
+                    bg="appSurfaceGlass"
+                    border="var(--chakra-colors-appBorder)"
                   />
                 </Box>
               </Box>
@@ -1148,7 +1166,7 @@ export const Onboarding = ({
                   borderBottomRightRadius="0px"
                   p={4}
                   textAlign="center"
-                  backgroundColor="white"
+                  backgroundColor="appSurface"
                   boxShadow="0.5px 0.5px 1px 0px black"
                 >
                   <Text
@@ -1170,6 +1188,7 @@ export const Onboarding = ({
                         localStorage.getItem("local_npub"),
                       );
                       setCurrentStep(4);
+                      scrollToTopInstantly();
                       navigate("/q/4");
                     }}
                     boxShadow="0.5px 0.5px 1px 0px black"
@@ -1227,8 +1246,8 @@ export const Onboarding = ({
                     start="#02fabc"
                     end="#12ff69"
                     delay={0}
-                    bg="rgba(255,255,255,0.65)"
-                    border="#ededed"
+                    bg="appSurfaceGlass"
+                    border="var(--chakra-colors-appBorder)"
                   />
                 </Box>
               </Box>
@@ -1241,7 +1260,7 @@ export const Onboarding = ({
                   style={{ display: "flex", flexDirection: "column" }}
                   borderRadius="24px"
                   borderBottomRightRadius="0px"
-                  backgroundColor="white"
+                  backgroundColor="appSurface"
                   boxShadow="0.5px 0.5px 1px 0px black"
                 >
                   <Text

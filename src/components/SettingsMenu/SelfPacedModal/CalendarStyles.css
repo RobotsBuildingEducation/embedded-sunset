@@ -1,65 +1,123 @@
-.react-calendar {
+.self-paced-calendar.react-calendar {
+  --calendar-surface: var(--chakra-colors-appSurfaceElevated);
+  --calendar-surface-muted: var(--chakra-colors-appSurfaceMuted);
+  --calendar-surface-inset: var(--chakra-colors-appSurfaceInset);
+  --calendar-border: var(--chakra-colors-appBorder);
+  --calendar-border-strong: var(--chakra-colors-appBorderStrong);
+  --calendar-text: var(--chakra-colors-appText);
+  --calendar-text-muted: var(--chakra-colors-appTextMuted);
+  --calendar-text-subtle: var(--chakra-colors-appTextSubtle);
+  --calendar-accent: #82ebac;
+  --calendar-accent-text: #0f3d28;
   border: none;
-  border-radius: 12px;
-  background-color: white;
+  border-radius: 24px;
+  background: var(--calendar-surface);
   font-family: inherit;
   width: 100%;
-  box-shadow: 0px 0.25px 0.25px 0.5px black !important;
-  border: none !important;
+  padding: 18px 18px 12px;
+  color: var(--calendar-text);
   box-shadow: none !important;
-
-  /* max-width: 350px; */
 }
 
-.react-calendar__tile {
-  padding: 12px 0;
-  border-radius: 0px;
-
-  transition: 0.12s all linear;
-  background-color: white !important;
-  color: black;
+.self-paced-calendar .react-calendar__navigation {
+  margin-bottom: 14px;
 }
 
-.react-calendar__tile--active {
-  background-color: #82ebac !important;
-  color: darkgreen;
-  font-weight: bolder;
-  text-decoration: underline;
-
-  border-radius: 8px;
+.self-paced-calendar .react-calendar__navigation button {
+  min-width: 44px;
+  background: transparent;
+  color: var(--calendar-text);
+  border-radius: 14px;
+  font-weight: 700;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease,
+    box-shadow 140ms ease;
 }
 
-.react-calendar__tile--now {
-  /* background-color: #e2e8f0;  */
-  /* light gray for today */
+.self-paced-calendar .react-calendar__navigation button:enabled:hover,
+.self-paced-calendar .react-calendar__navigation button:enabled:focus {
+  background: var(--calendar-surface-muted);
 }
 
-.react-calendar__tile--disabled {
-  color: #a0aec0;
-  background-color: white;
+.self-paced-calendar .react-calendar__navigation__label {
+  pointer-events: none;
+  cursor: default;
+  font-size: 1.1rem;
 }
 
-.react-calendar__navigation {
+.self-paced-calendar .react-calendar__navigation__label:hover {
+  background-color: transparent;
+}
+
+.self-paced-calendar .react-calendar__month-view__weekdays {
   margin-bottom: 8px;
 }
 
-.react-calendar__navigation button {
-  font-weight: bold;
-  color: #2d3748;
+.self-paced-calendar .react-calendar__month-view__weekdays__weekday {
+  color: var(--calendar-text-subtle);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
-.react-calendar__navigation__label {
-  pointer-events: none;
-  cursor: default;
+.self-paced-calendar .react-calendar__month-view__weekdays__weekday abbr {
+  text-decoration: none;
 }
 
-.react-calendar__navigation__label:hover {
-  background-color: transparent;
+.self-paced-calendar .react-calendar__month-view__days__day--neighboringMonth {
+  color: var(--calendar-text-subtle);
+  opacity: 0.52;
 }
 
-.react-calendar__tile:hover {
-  background-color: transparent;
-  cursor: default;
+.self-paced-calendar .react-calendar__tile {
+  padding: 14px 0;
+  border-radius: 16px;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease,
+    box-shadow 140ms ease,
+    opacity 140ms ease;
+  background: transparent !important;
+  color: var(--calendar-text-muted);
+}
+
+.self-paced-calendar .react-calendar__tile:enabled:hover,
+.self-paced-calendar .react-calendar__tile:enabled:focus {
+  background: var(--calendar-surface-muted) !important;
+  color: var(--calendar-text);
+  box-shadow: inset 0 0 0 1px var(--calendar-border);
+}
+
+.self-paced-calendar .react-calendar__tile--active {
+  background: var(--calendar-accent) !important;
+  color: var(--calendar-accent-text) !important;
+  font-weight: 700;
+  text-decoration: underline;
+  box-shadow: 0 14px 28px rgba(34, 197, 94, 0.22);
+}
+
+.self-paced-calendar .react-calendar__tile--active:enabled:hover,
+.self-paced-calendar .react-calendar__tile--active:enabled:focus {
+  background: var(--calendar-accent) !important;
+  color: var(--calendar-accent-text) !important;
+}
+
+.self-paced-calendar .react-calendar__tile--now {
+  background: var(--calendar-surface-inset) !important;
+  color: var(--calendar-text);
+  box-shadow: inset 0 0 0 1px var(--calendar-border-strong);
+}
+
+.self-paced-calendar .react-calendar__tile--disabled {
+  color: var(--calendar-text-subtle);
+  background: transparent !important;
+  opacity: 0.7;
+}
+
+html[data-theme-mode="dark"] .self-paced-calendar.react-calendar {
+  --calendar-accent-text: #052814;
 }
 
 .gradient-icon {

@@ -286,12 +286,12 @@ export default function KnowledgeLedgerOnboarding({
           start="#02fabc"
           end="#12ff69"
           delay={0}
-          bg="rgba(255,255,255,0.65)"
-          border="#ededed"
+          bg="appSurfaceGlass"
+          border="var(--chakra-colors-appBorder)"
         />
       </Box>
       <Box
-        bg="white"
+        bg="appSurface"
         p={6}
         borderRadius="24px"
         boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"

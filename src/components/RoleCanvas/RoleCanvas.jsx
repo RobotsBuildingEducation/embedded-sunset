@@ -40,6 +40,8 @@ export function RoleCanvas({
 
   transitionEase = 0.2,
   backgroundColorX = "245,244,242",
+  backgroundColorDark = "0,0,37",
+  transparentFade = false,
 }) {
   const canvasRef = useRef(null);
   const roleRef = useRef(role);
@@ -48,13 +50,14 @@ export function RoleCanvas({
   const themeColor = useThemeStore((state) => state.themeColor);
 
   // Use provided color or fall back to theme color
-  const particleColor = color || themeColorHex[themeColor] || themeColorHex.orange;
+  const particleColor =
+    color || themeColorHex[themeColor] || themeColorHex.orange;
 
   useEffect(() => {
     roleRef.current = role;
   }, [role]);
 
-  const baseRgb = useColorModeValue(backgroundColorX, "0,0,37");
+  const baseRgb = useColorModeValue(backgroundColorX, backgroundColorDark);
   const fadeColor = `rgba(${baseRgb},${trailOpacity})`;
   const bgColor = useColorModeValue("rgba(255,255,255,1)", "rgba(0,0,0,1)");
 
@@ -196,9 +199,18 @@ export function RoleCanvas({
         progressRef.current = target;
       const prog = progressRef.current;
 
-      // draw fade for trails
-      ctx.fillStyle = fadeColor;
-      ctx.fillRect(0, 0, width, height);
+      // Fade previous particles. In transparent mode we fade alpha out instead of
+      // repainting a solid background, so the page background shows through.
+      if (transparentFade) {
+        ctx.save();
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.fillStyle = `rgba(0,0,0,${trailOpacity})`;
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
+      } else {
+        ctx.fillStyle = fadeColor;
+        ctx.fillRect(0, 0, width, height);
+      }
 
       // singular random-moving particle when chores
       if (roleRef.current === "chores") {
@@ -388,6 +400,7 @@ export function RoleCanvas({
     waterSpeed,
     waterAmplitude,
     transitionEase,
+    transparentFade,
   ]);
 
   return (

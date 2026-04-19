@@ -1,5 +1,6 @@
 // CodeEditor.jsx
 import React from "react";
+import { useColorMode } from "@chakra-ui/react";
 import Editor from "react-simple-code-editor";
 
 // 1️⃣ pull in core + only the langs you need
@@ -20,6 +21,8 @@ import "highlight.js/styles/github.css";
 import "./editor-scroll-fix.css";
 
 export const CodeEditor = ({ value, onChange, height = 400, userLanguage }) => {
+  const { colorMode } = useColorMode();
+  const isMidnight = colorMode === "dark";
   const pick = {
     en: "javascript",
     es: "javascript",
@@ -31,7 +34,7 @@ export const CodeEditor = ({ value, onChange, height = 400, userLanguage }) => {
 
   return (
     <div
-      className="code-editor-shell"
+      className={`code-editor-shell ${isMidnight ? "code-editor-shell--midnight" : ""}`}
       style={{
         maxHeight: height,
         overflowX: "auto",
@@ -51,8 +54,14 @@ export const CodeEditor = ({ value, onChange, height = 400, userLanguage }) => {
           fontFamily: "Menlo",
           fontSize: 16,
           minHeight: height,
-          backgroundColor: "white",
-          boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+          backgroundColor: isMidnight ? "#0B1426" : "white",
+          color: isMidnight ? "#ECF2FF" : "#201B16",
+          boxShadow: isMidnight
+            ? "0 20px 45px rgba(2, 6, 23, 0.45)"
+            : "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+          border: isMidnight
+            ? "1px solid rgba(148,163,184,0.18)"
+            : "1px solid rgba(104,85,64,0.12)",
           borderRadius: 8,
         }}
       />

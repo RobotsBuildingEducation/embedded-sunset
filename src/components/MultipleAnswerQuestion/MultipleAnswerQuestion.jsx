@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button, VStack, HStack, Box, Text } from "@chakra-ui/react";
+import {
+  Button,
+  VStack,
+  HStack,
+  Box,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { translation } from "../../utility/translation";
 import { IoChatbubblesOutline } from "react-icons/io5";
 import { triggerHaptic } from "tactus";
@@ -16,6 +23,18 @@ const MultipleAnswerQuestion = ({
   const [isListFocused, setIsListFocused] = useState(true); // Track if the list is focused
   const optionRefs = useRef([]); // Track references to each option button
   const containerRef = useRef(null); // Reference to the list container
+  const actionShadow = useColorModeValue(
+    "0 12px 24px rgba(15, 23, 42, 0.12)",
+    "0 16px 34px rgba(2, 6, 23, 0.42)",
+  );
+  const optionShadow = useColorModeValue(
+    "0 14px 30px rgba(15, 23, 42, 0.08)",
+    "0 18px 38px rgba(2, 6, 23, 0.42)",
+  );
+  const focusRing = useColorModeValue(
+    "0 0 0 3px rgba(236, 72, 153, 0.22)",
+    "0 0 0 3px rgba(244, 114, 182, 0.3)",
+  );
 
   // Handle keyboard navigation and selection
   const handleKeyDown = (e) => {
@@ -26,7 +45,7 @@ const MultipleAnswerQuestion = ({
           setIsListFocused(true);
         }
         setFocusedIndex((prevIndex) =>
-          prevIndex > 0 ? prevIndex - 1 : question.options.length - 1
+          prevIndex > 0 ? prevIndex - 1 : question.options.length - 1,
         );
         break;
       case "ArrowDown":
@@ -35,7 +54,7 @@ const MultipleAnswerQuestion = ({
           setIsListFocused(true);
         }
         setFocusedIndex((prevIndex) =>
-          prevIndex < question.options.length - 1 ? prevIndex + 1 : 0
+          prevIndex < question.options.length - 1 ? prevIndex + 1 : 0,
         );
         break;
       case "Tab":
@@ -86,7 +105,7 @@ const MultipleAnswerQuestion = ({
         setFocusedIndex(
           (prevIndex) =>
             (e.key === "ArrowUp" ? prevIndex - 1 : prevIndex + 1) %
-            question.options.length
+            question.options.length,
         );
       }
     };
@@ -97,7 +116,7 @@ const MultipleAnswerQuestion = ({
   }, [isListFocused, focusedIndex, question.options.length]);
 
   return (
-    <VStack spacing={4} onBlur={handleBlur}>
+    <VStack spacing={4} onBlur={handleBlur} width="100%" maxWidth="600px">
       {/* Learn Button */}
       <Button
         onMouseDown={() => {
@@ -112,7 +131,10 @@ const MultipleAnswerQuestion = ({
           }
         }}
         background="pink.400"
-        boxShadow="0.5px 0.5px 0px 0px rgba(0, 0, 0,0.75)"
+        color="white"
+        boxShadow={actionShadow}
+        _hover={{ bg: "pink.500" }}
+        _active={{ bg: "pink.500" }}
       >
         <IoChatbubblesOutline />
         &nbsp;
@@ -133,26 +155,51 @@ const MultipleAnswerQuestion = ({
         {question.options.map((option, index) => (
           <Button
             ref={(el) => (optionRefs.current[index] = el)} // Assign reference to each option
-            p={8}
-            variant={"outline"}
+            p={6}
+            height="auto"
+            minH="unset"
+            variant="unstyled"
             key={index}
             onMouseDown={() => {
               setFocusedIndex(index); // Update focus index on mouse click
               setIsListFocused(true); // Keep list focus state
               handleOptionClick(option);
             }}
-            colorScheme={selectedOptions.includes(option) ? "pink" : "gray"}
             justifyContent="start"
             whiteSpace="normal"
             wordWrap="break-word"
             textAlign="left"
             tabIndex={0} // Make the option focusable
             onFocus={() => setFocusedIndex(index)} // Sync focus with state when focused via Tab
-            style={{
-              outline:
-                focusedIndex === index && isListFocused
-                  ? "2px solid #3182ce"
-                  : "none", // Highlight focused option
+            bg={
+              selectedOptions.includes(option)
+                ? "appSurfaceElevated"
+                : "appSurface"
+            }
+            color="appText"
+            borderWidth="1px"
+            borderColor={
+              selectedOptions.includes(option) ? "pink.300" : "appBorder"
+            }
+            borderRadius="2xl"
+            boxShadow={
+              focusedIndex === index && isListFocused
+                ? `${optionShadow}, ${focusRing}`
+                : optionShadow
+            }
+            transition="background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease"
+            _hover={{
+              bg: selectedOptions.includes(option)
+                ? "appSurfaceElevated"
+                : "appSurfaceMuted",
+              borderColor: selectedOptions.includes(option)
+                ? "pink.300"
+                : "appBorderStrong",
+            }}
+            _active={{
+              bg: selectedOptions.includes(option)
+                ? "appSurfaceMuted"
+                : "appSurfaceInset",
             }}
           >
             <HStack spacing={4} width="100%" alignItems="center">
@@ -163,13 +210,15 @@ const MultipleAnswerQuestion = ({
                 borderRadius="15%"
                 borderWidth="2px"
                 borderColor={
-                  selectedOptions.includes(option) ? "pink.300" : "gray.300"
+                  selectedOptions.includes(option)
+                    ? "pink.300"
+                    : "appBorderStrong"
                 }
                 backgroundColor={
                   selectedOptions.includes(option) ? "pink.300" : "transparent"
                 }
               />
-              <Text flex="1" noOfLines={[2, 3, 4]}>
+              <Text flex="1" noOfLines={[2, 3, 4]} color="appText">
                 {option}
               </Text>
             </HStack>

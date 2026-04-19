@@ -13,6 +13,7 @@ import {
   UnorderedList,
   ListItem,
   Heading,
+  useColorMode,
 } from "@chakra-ui/react";
 import { useChatCompletion } from "../../hooks/useChatCompletion";
 import { VoiceInput } from "../../App";
@@ -35,6 +36,10 @@ import { useSimpleGeminiChat } from "../../hooks/useGeminiChat";
 import PreConversation from "./PreConversation";
 
 import SyntaxHighlighter from "react-syntax-highlighter";
+import {
+  getThemedCodeBlockStyles,
+  getThemedSyntaxHighlightTheme,
+} from "../../theme";
 
 const newTheme = {
   p: (props) => <Text fontSize="sm" mb={2} lineHeight="1.6" {...props} />,
@@ -45,21 +50,14 @@ const newTheme = {
   h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
   code: ({ inline, className, children, ...props }) => {
+    const { colorMode } = useColorMode();
     const match = /language-(\w+)/.exec(className || "");
-    console.log("match...", match);
     return !inline && match ? (
       <SyntaxHighlighter
-        // backgroundColor="white"
-        // style={"light"}
         language={match[1]}
         PreTag="div"
-        customStyle={{
-          backgroundColor: "white", // Match this with the desired color
-          color: "black", // Ensure the text matches the background
-          padding: "1rem",
-          borderRadius: "8px",
-          fontSize: 12,
-        }}
+        style={getThemedSyntaxHighlightTheme(colorMode)}
+        customStyle={getThemedCodeBlockStyles(colorMode)}
         {...props}
       >
         {String(children).replace(/\n$/, "")}
@@ -67,7 +65,8 @@ const newTheme = {
     ) : (
       <Box
         as="code"
-        backgroundColor="gray.100"
+        backgroundColor="appCodeInlineBg"
+        color="appCodeColor"
         p={1}
         borderRadius="md"
         fontSize="sm"
@@ -104,7 +103,7 @@ const ConversationReview = ({
         const userId = localStorage.getItem("local_npub");
         if (!userId) return;
         const snap = await getDoc(
-          doc(database, "users", userId, "buildHistory", step.group)
+          doc(database, "users", userId, "buildHistory", step.group),
         );
         if (snap.exists()) {
           const data = snap.data();
@@ -146,7 +145,7 @@ const ConversationReview = ({
     const prompt = `The user is reviewing the following steps: ${JSON.stringify(
       {
         combinedStepsSummary,
-      }
+      },
     )}. The user provided the following message: "${response}". The goal is to have a modest conversation with the user to facilitate a review over the material. Make it enriching with examples and create a useful flow where the ideas build off of each other to encourage challenge and learning, but do not reference your understanding of the material or your instructions whatsoever, it should feel natural and friendly where the student leads, therefore provide your response with an example. If you include code snippets or examples, format it properly. If user's message is irrelevant - for example if a user says 'hello', just reply back with friendliness without any code, otherwise provide worthwhile code snippet examples. Additionally the response should be formatted with a maximum print of 80 characters. Your responses should be one cohesive thought, especially if users request a summary. Do not reference this framework under any circumstances. 
       
       
@@ -253,10 +252,10 @@ const ConversationReview = ({
           height={600}
           maxWidth="600px"
           overflowY="auto"
-          bg="linear-gradient(white, #f0f0f0, #e0e0e0)"
+          bg="linear-gradient(var(--chakra-colors-appSurface), var(--chakra-colors-appSurfaceMuted), var(--chakra-colors-appSurfaceStrong))"
           style={{
             backgroundImage:
-              "radial-gradient(circle at center, white, #f0f0f0, #e0e0e0)",
+              "radial-gradient(circle at center, var(--chakra-colors-appSurface), var(--chakra-colors-appSurfaceMuted), var(--chakra-colors-appSurfaceStrong))",
           }}
           p={2}
         >
@@ -264,10 +263,10 @@ const ConversationReview = ({
             <React.Fragment key={index}>
               <Flex justify="flex-end" mb={8}>
                 <Box
-                  bg="white"
+                  bg="appSurface"
                   p={6}
                   borderRadius="48px"
-                  color="black"
+                  color="appText"
                   maxWidth="90%"
                   textAlign={"left"}
                   fontSize="small"
@@ -282,8 +281,8 @@ const ConversationReview = ({
               {item.response.content?.length > 0 ? (
                 <Flex justify="flex-start" mb={2}>
                   <Box
-                    bg="gray.300"
-                    color="black"
+                    bg="appSurfaceMuted"
+                    color="appText"
                     p={6}
                     borderRadius="48px"
                     maxWidth="95%"

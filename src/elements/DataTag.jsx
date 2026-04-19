@@ -1,4 +1,4 @@
-import { Tag } from "@chakra-ui/react";
+import { Tag, useColorModeValue } from "@chakra-ui/react";
 import { translation } from "../utility/translation";
 
 export const DataTags = ({
@@ -9,6 +9,21 @@ export const DataTags = ({
   grade = null,
   userLanguage,
 }) => {
+  const numericGrade = Number.parseInt(String(grade).replace(/\D/g, ""), 10);
+  const isPerfectGrade = numericGrade === 100;
+  const gradeBg = useColorModeValue(
+    isPerfectGrade ? "green.600" : "pink.500",
+    isPerfectGrade ? "#6EE7B7" : "#F9A8D4",
+  );
+  const gradeColor = useColorModeValue(
+    "white",
+    isPerfectGrade ? "#052E16" : "#500724",
+  );
+  const gradeBorderColor = useColorModeValue(
+    isPerfectGrade ? "green.700" : "pink.600",
+    isPerfectGrade ? "rgba(16, 185, 129, 0.42)" : "rgba(236, 72, 153, 0.42)",
+  );
+
   return (
     <>
       {isRox ? (
@@ -42,16 +57,14 @@ export const DataTags = ({
         <Tag
           size="sm"
           variant="solid"
-          bg={
-            grade === translation[userLanguage]["tags.grade"] + "100"
-              ? "green.100"
-              : "pink.100"
-          }
-          color={
-            grade === translation[userLanguage]["tags.grade"] + "100"
-              ? "green"
-              : "#F484A6"
-          }
+          bg={gradeBg}
+          color={gradeColor}
+          borderWidth="1px"
+          borderColor={gradeBorderColor}
+          fontWeight="bold"
+          px={3}
+          py={1}
+          borderRadius="full"
         >
           {grade}
         </Tag>
