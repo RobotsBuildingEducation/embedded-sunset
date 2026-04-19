@@ -4270,6 +4270,7 @@ const Step = ({
                     onClick={handleNextQuestionButtonPress}
                     mb={4}
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                    style={{ touchAction: "manipulation" }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
                         e.preventDefault();
@@ -4636,6 +4637,7 @@ const Step = ({
                         background="appSurface"
                         variant={"outline"}
                         data-sound-ignore-select="true"
+                        style={{ touchAction: "manipulation" }}
                         onPointerDown={(event) =>
                           handleNextQuestionButtonPress(event, () => {
                             triggerHaptic();
