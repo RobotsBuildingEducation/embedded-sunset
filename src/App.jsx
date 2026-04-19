@@ -1,5 +1,6 @@
 import "regenerator-runtime/runtime";
 import "@babel/polyfill";
+import "@coinbase/onchainkit/styles.css";
 import React, {
   useCallback,
   useEffect,
@@ -9,6 +10,7 @@ import React, {
   useState,
 } from "react";
 import {
+  ChakraProvider,
   Box,
   Button,
   Text,
@@ -83,8 +85,11 @@ import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
 import ThemeMenu from "./components/ThemeMenu";
 import WaveBar from "./components/WaveBar";
 import ChapterReview from "./components/ChapterReview";
-import AnimatedBackground from "./components/AnimatedBackground/AnimatedBackground";
 import DailyGoalCelebrationModal from "./components/DailyGoalCelebrationModal/DailyGoalCelebrationModal";
+import { MiniKitContextProvider } from "./providers/MiniKitProvider.jsx";
+import AnimatedBackground from "./components/AnimatedBackground/AnimatedBackground";
+import { ThemeInitializer } from "./ThemeInitializer.jsx";
+import { appTheme } from "./theme.js";
 
 import {
   createUser,
@@ -3836,9 +3841,10 @@ const Step = ({
       spacing={4}
       width="100%"
       px={4}
-      pt={showChapterReview ? { base: 5, md: 8 } : 10}
-      pb={{ base: 40, md: 44 }}
+      pt={showChapterReview ? { base: 0, md: 0 } : 10}
+      pb={showChapterReview ? { base: 14, md: 24 } : { base: 40, md: 44 }}
       minH="100dvh"
+      justifyContent={showChapterReview ? "center" : "flex-start"}
       boxSizing="border-box"
       bg="transparent"
     >
@@ -7476,7 +7482,6 @@ function App({ isShutDown }) {
   if (loading) {
     return (
       <Box minH="100dvh" position="relative" overflow="hidden">
-        <AnimatedBackground />
         <Box
           style={{
             display: "flex",
@@ -7490,7 +7495,7 @@ function App({ isShutDown }) {
           position="relative"
           zIndex={1}
         >
-          <CloudCanvas />
+          <CloudCanvas isLoader hasInitialFade={false} />
         </Box>
       </Box>
     );
@@ -7517,7 +7522,6 @@ function App({ isShutDown }) {
 
   return (
     <Box ref={topRef} minH="100dvh" position="relative" bg="transparent">
-      <AnimatedBackground />
       <CloudTransition
         userLanguage={userLanguage}
         clonedStep={clonedStep}
@@ -7835,9 +7839,15 @@ export const AppWrapper = () => {
     );
   }
   return (
-    <Router>
-      <MiniKitInitializer />
-      <App isShutDown={isShutDown} />
-    </Router>
+    <ChakraProvider theme={appTheme}>
+      <ThemeInitializer />
+      <AnimatedBackground />
+      <MiniKitContextProvider>
+        <Router>
+          <MiniKitInitializer />
+          <App isShutDown={isShutDown} />
+        </Router>
+      </MiniKitContextProvider>
+    </ChakraProvider>
   );
 };

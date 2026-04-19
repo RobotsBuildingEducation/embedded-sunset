@@ -79,8 +79,8 @@ const applyTheme = (color) => {
 
 const hydrateThemeColor = (color) => {
   const themeColor = normalizeThemeColor(color);
-  localStorage.setItem("themeColor", themeColor);
   applyTheme(themeColor);
+  localStorage.setItem("themeColor", themeColor);
   return themeColor;
 };
 
@@ -108,16 +108,17 @@ export const applyUserThemePreferences = (userData, setColorMode) => {
   }
 };
 
-export const useThemeStore = create((set) => ({
+export const useThemeStore = create((set, get) => ({
   themeColor: getLocalThemeColor(),
   hydrateThemeColor: (color) => {
     const themeColor = hydrateThemeColor(color);
     set({ themeColor });
   },
-  setThemeColor: async (color) => {
+  setThemeColor: (color) => {
     const themeColor = hydrateThemeColor(color);
+    if (themeColor === get().themeColor) return;
     set({ themeColor });
-    await persistUserTheme({ themeColor });
+    persistUserTheme({ themeColor });
   },
 }));
 

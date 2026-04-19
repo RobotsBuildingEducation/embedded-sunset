@@ -27,17 +27,24 @@ export const StreamLoader = ({
   instructions,
   hasStreamedText = true,
 }) => {
-  const [displayedText, setDisplayedText] = useState(""); // Holds the streamed out JSON structure and binary sets
+  const userLanguage =
+    typeof window !== "undefined"
+      ? localStorage.getItem("userLanguage") || "en"
+      : "en";
+  const thinkingLabel =
+    translation[userLanguage]?.thinking || translation.en?.thinking || "thinking";
+  const completeJsonStructure = `{""${thinkingLabel}": ""}`;
+
+  const [displayedText, setDisplayedText] = useState(
+    hasStreamedText ? completeJsonStructure.slice(0, 1) : "",
+  ); // Holds the streamed out JSON structure and binary sets
   const [thinkingValue, setThinkingValue] = useState([]); // Holds the array of binary sets as the value of "thinking"
   const [isJsonStructureDisplayed, setIsJsonStructureDisplayed] =
     useState(false); // Tracks if the JSON structure has been fully displayed
 
-  // The complete JSON structure to display, with the closing bracket already included
-  const completeJsonStructure = `{""${translation[localStorage.getItem("userLanguage")]["thinking"]}": ""}`;
-
   useEffect(() => {
     let intervalId;
-    let jsonIndex = 0; // Index to track the current position in the JSON structure
+    let jsonIndex = displayedText.length; // Index to track the current position in the JSON structure
 
     if (hasStreamedText) {
       // Function to stream the JSON structure one character at a time
@@ -63,7 +70,7 @@ export const StreamLoader = ({
             const updatedSets = [...transformedSets, newBinarySet]; // Add the new binary set
 
             // Update the displayed text with the new value for "thinking"
-            const updatedJson = `{"${translation[localStorage.getItem("userLanguage")]["thinking"]}": "${updatedSets.join(" ")}"}`;
+            const updatedJson = `{"${thinkingLabel}": "${updatedSets.join(" ")}"}`;
             setDisplayedText(updatedJson);
             return updatedSets;
           });

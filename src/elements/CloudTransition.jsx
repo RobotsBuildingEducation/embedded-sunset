@@ -830,6 +830,7 @@ const CloudTransition = ({
         : 130;
     const cloudBaseRadius = isCompactViewport ? 64 : 90;
     const cloudRadiusVariance = isCompactViewport ? 92 : 150;
+    let lastFrameTime = 0;
 
     // Bigger, multi-lobe clouds for visibility
     const clouds = Array.from({ length: cloudCount }, () => ({
@@ -865,7 +866,13 @@ const CloudTransition = ({
       ctx.fill();
     };
 
-    const draw = () => {
+    const draw = (timestamp = 0) => {
+      if (isCompactViewport && timestamp - lastFrameTime < 33) {
+        animationId = requestAnimationFrame(draw);
+        return;
+      }
+      lastFrameTime = timestamp;
+
       // Sky gradient
       const sky = ctx.createLinearGradient(0, 0, 0, height);
       sky.addColorStop(0, transitionTheme.skyTop);
@@ -970,7 +977,7 @@ const CloudTransition = ({
       animationId = requestAnimationFrame(draw);
     };
 
-    draw();
+    animationId = requestAnimationFrame(draw);
 
     const onResize = () => {
       setSize();

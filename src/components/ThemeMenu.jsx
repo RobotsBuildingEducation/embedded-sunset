@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useRef } from "react";
 import {
   Menu,
   MenuButton,
@@ -34,6 +34,7 @@ const ThemeMenu = ({ userLanguage, isIcon = true, buttonProps = {} }) => {
   const themeColor = useThemeStore((s) => s.themeColor);
   const setThemeColor = useThemeStore((s) => s.setThemeColor);
   const { colorMode, setColorMode } = useColorMode();
+  const lastTouchColorRef = useRef(null);
   const languageKey = userLanguage?.includes("es") ? "es" : "en";
   const copy = {
     en: {
@@ -45,6 +46,12 @@ const ThemeMenu = ({ userLanguage, isIcon = true, buttonProps = {} }) => {
       accents: "Color de acento",
     },
   }[languageKey];
+  const applyThemeColor = useCallback(
+    (color) => {
+      setThemeColor(color);
+    },
+    [setThemeColor],
+  );
 
   return (
     <Menu closeOnSelect={false}>
@@ -118,9 +125,19 @@ const ThemeMenu = ({ userLanguage, isIcon = true, buttonProps = {} }) => {
         {colors.map((c) => (
           <MenuItem
             key={c}
-            onClick={() => {
-              setThemeColor(c);
+            onPointerDown={(event) => {
+              if (event.pointerType === "mouse") return;
+              lastTouchColorRef.current = c;
+              applyThemeColor(c);
             }}
+            onClick={() => {
+              if (lastTouchColorRef.current === c) {
+                lastTouchColorRef.current = null;
+                return;
+              }
+              applyThemeColor(c);
+            }}
+            style={{ touchAction: "manipulation" }}
           >
             <HStack justify="space-between" width="100%">
               <HStack>

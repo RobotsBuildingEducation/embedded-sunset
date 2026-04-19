@@ -277,8 +277,8 @@ const ChapterReview = ({
   const startButtonMarginTop = isExpanded
     ? { base: 0, md: 2 }
     : isShowingExpandButton
-      ? { base: -4, md: -4 }
-      : { base: -6, md: -8 };
+      ? { base: -2, md: -4 }
+      : { base: -4, md: -8 };
 
   const closeChapterDrawer = useCallback(() => {
     setSelectedChapter(null);
@@ -314,33 +314,36 @@ const ChapterReview = ({
       width="100%"
       display="flex"
       justifyContent="center"
-      pt={{ base: 4, md: 10 }}
-      pb={{ base: 6, md: 12 }}
-      px={{ base: 3, md: 6 }}
+      pt={{ base: 0, md: 4 }}
+      pb={{ base: 0, md: 4 }}
+      px={{ base: 1, md: 6 }}
     >
       <VStack
-        spacing={{ base: 6, md: 10 }}
+        spacing={{ base: 3, md: 8 }}
         width="100%"
         maxW={{ base: "680px", lg: "820px" }}
         align="center"
       >
-        <Box textAlign="center" px={{ base: 3, md: 6 }}>
+        <Box textAlign="center" px={{ base: 2, md: 6 }}>
           <Text
             fontSize={{ base: "xs", md: "sm" }}
             fontWeight="semibold"
             textTransform="uppercase"
             letterSpacing="widest"
             color="purple.300"
-            mb={{ base: 1, md: 2 }}
+            lineHeight="1.1"
+            mb={0}
           >
             {text?.title}
           </Text>
           <Text
-            fontSize={{ base: "sm", md: "md" }}
-            lineHeight={{ base: "1.45", md: "1.6" }}
+            fontSize="xs"
+            lineHeight="1.2"
             color="appTextMuted"
-            maxW={{ base: "440px", md: "620px" }}
+            maxW={{ base: "340px", md: "460px" }}
             mx="auto"
+            mt={1}
+            sx={{ fontSize: "var(--chakra-fontSizes-xs) !important" }}
           >
             {text?.subtitle}
           </Text>
@@ -349,9 +352,9 @@ const ChapterReview = ({
         {/* ---------- SKILL TREE (restored) ---------- */}
         <VStack
           align="stretch"
-          spacing={{ base: 6, md: 8 }}
+          spacing={{ base: 3, md: 8 }}
           w="100%"
-          px={{ base: 2, md: 3 }}
+          px={{ base: 0, md: 3 }}
         >
           {visibleNodes.map((node, index) => {
             const typeStyle = getStyleForKind(node.questionKind);
@@ -364,8 +367,13 @@ const ChapterReview = ({
             const isClickable = node?.questions?.length > 0;
 
             return (
-              <Box key={node.id} display="flex" flexDirection="column" gap={4}>
-                <Flex justify={justifyContent} w="100%">
+              <Box
+                key={node.id}
+                display="flex"
+                flexDirection="column"
+                gap={{ base: 2, md: 4 }}
+              >
+                <Flex justify={{ base: "center", md: justifyContent }} w="100%">
                   <Box
                     as={motion.div}
                     role={isClickable ? "button" : undefined}
@@ -375,8 +383,8 @@ const ChapterReview = ({
                     initial={{ opacity: 0, y: 24, scale: 0.94 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     transition={{ duration: 0.45, delay: index * 0.06 }}
-                    px={{ base: 4, md: 5 }}
-                    py={{ base: 4, md: 5 }}
+                    px={{ base: 3, md: 5 }}
+                    py={{ base: 3, md: 5 }}
                     borderRadius="full"
                     bg={chapterCardBg}
                     borderWidth="1px"
@@ -388,17 +396,21 @@ const ChapterReview = ({
                     }
                     display="flex"
                     alignItems="center"
-                    gap={{ base: 4, md: 5 }}
+                    gap={{ base: 3, md: 5 }}
                     position="relative"
                     overflow="hidden"
                     cursor={isClickable ? "pointer" : "default"}
-                    style={{
-                      transform: `translateX(${pattern.translateX}) rotate(${pattern.rotate})`,
+                    transform={{
+                      base: "none",
+                      md: `translateX(${pattern.translateX}) rotate(${pattern.rotate})`,
                     }}
                     _hover={
                       isClickable
                         ? {
-                            transform: `translateX(${pattern.translateX}) rotate(${pattern.rotate}) scale(1.02)`,
+                            transform: {
+                              base: "scale(1.01)",
+                              md: `translateX(${pattern.translateX}) rotate(${pattern.rotate}) scale(1.02)`,
+                            },
                           }
                         : undefined
                     }
@@ -414,14 +426,14 @@ const ChapterReview = ({
                     />
                     <Flex
                       align="center"
-                      gap={{ base: 4, md: 5 }}
+                      gap={{ base: 3, md: 5 }}
                       position="relative"
                       zIndex={1}
                       w="100%"
                     >
                       <Box
-                        w={{ base: "56px", md: "64px" }}
-                        h={{ base: "56px", md: "64px" }}
+                        w={{ base: "44px", md: "64px" }}
+                        h={{ base: "44px", md: "64px" }}
                         borderRadius="full"
                         display="flex"
                         alignItems="center"
@@ -431,15 +443,17 @@ const ChapterReview = ({
                       >
                         <Icon
                           as={IconComponent}
-                          boxSize={{ base: 6, md: 7 }}
+                          boxSize={{ base: 5, md: 7 }}
                           color={accent}
                         />
                       </Box>
                       <Text
-                        fontSize={{ base: "lg", md: "xl" }}
+                        fontSize={{ base: "md", md: "xl" }}
+                        lineHeight={{ base: "1.2", md: "1.3" }}
                         fontWeight={node.isActive ? "extrabold" : "semibold"}
                         color="appText"
-                        letterSpacing="tight"
+                        letterSpacing={0}
+                        textAlign={{ base: "center", md: "left" }}
                       >
                         {node.chapterLabel || node.title}
                       </Text>
@@ -450,12 +464,12 @@ const ChapterReview = ({
                 {/* connector between cards */}
                 {index < visibleNodes.length - 1 ? (
                   <Box
-                    h={{ base: 16, md: 20 }}
+                    h={{ base: 10, md: 20 }}
                     w="100%"
                     display="flex"
                     alignItems="center"
                     justifyContent="center"
-                    px={{ base: 6, md: 8 }}
+                    px={{ base: 10, md: 8 }}
                   >
                     <Box
                       as="svg"
@@ -503,10 +517,11 @@ const ChapterReview = ({
             >
               <Button
                 variant="ghost"
-                size="lg"
+                size={{ base: "sm", md: "lg" }}
                 borderRadius="full"
-                px={{ base: 6, md: 8 }}
-                py={{ base: 4, md: 5 }}
+                px={{ base: 4, md: 8 }}
+                py={{ base: 2, md: 5 }}
+                fontSize={{ base: "sm", md: "lg" }}
                 colorScheme="purple"
                 onClick={() => setIsExpanded(true)}
               >
@@ -519,10 +534,10 @@ const ChapterReview = ({
         {showStartButton && text?.cta ? (
           <Button
             colorScheme="purple"
-            size="lg"
+            size={{ base: "md", md: "lg" }}
             borderRadius="full"
-            px={{ base: 8, md: 12 }}
-            py={{ base: 6, md: 7 }}
+            px={{ base: 6, md: 12 }}
+            py={{ base: 4, md: 7 }}
             onMouseDown={onStart}
             mt={startButtonMarginTop}
             onKeyDown={(e) => {

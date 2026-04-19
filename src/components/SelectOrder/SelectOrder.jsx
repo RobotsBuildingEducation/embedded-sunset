@@ -189,6 +189,8 @@ const SelectOrderQuestion = ({
                       }
                       textAlign="left"
                       cursor={draggedIndex === index ? "grabbing" : "grab"}
+                      touchAction="none"
+                      userSelect="none"
                       transition="background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease"
                       _hover={{
                         bg:
@@ -202,6 +204,8 @@ const SelectOrderQuestion = ({
                       }}
                       style={{
                         ...provided.draggableProps.style,
+                        WebkitTapHighlightColor: "transparent",
+                        WebkitTouchCallout: "none",
                       }}
                     >
                       {index + 1 + ". " + item}
