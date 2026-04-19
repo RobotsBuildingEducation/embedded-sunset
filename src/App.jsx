@@ -70,6 +70,7 @@ import {
   useParams,
   useLocation,
 } from "react-router-dom";
+import { flushSync } from "react-dom";
 
 import { useChatCompletion } from "./hooks/useChatCompletion";
 import {
@@ -209,6 +210,8 @@ import {
   FaRegHeart,
   FaHeartBroken,
   FaFire,
+  FaMoon,
+  FaSun,
 } from "react-icons/fa";
 import { FiTrendingUp } from "react-icons/fi";
 import MiniKitInitializer from "./MiniKitInitializer";
@@ -4813,6 +4816,7 @@ const Step = ({
                         }}
                       />,
                     )}
+                    {/* Social feed is intentionally hidden from the bottom action bar.
                     {renderActionTourPopover(
                       "social",
                       socialButtonRef,
@@ -4845,7 +4849,7 @@ const Step = ({
                             : undefined
                         }
                       />,
-                    )}
+                    )} */}
                     {renderActionTourPopover(
                       "helper",
                       helperButtonRef,
@@ -5206,6 +5210,13 @@ const Home = ({
   const socket = "socket";
   const [role, setRole] = useState("chores");
   const topRef = useRef();
+  const themeColor = useThemeStore((s) => s.themeColor);
+  const { colorMode, setColorMode } = useColorMode();
+  const landingThemeToggleColor = useColorModeValue("#1f2937", "#f8fafc");
+  const landingThemeToggleMutedColor = useColorModeValue(
+    "rgba(31, 41, 55, 0.42)",
+    "rgba(248, 250, 252, 0.42)",
+  );
 
   const [questionsAnswered, setQuestionsAnswered] =
     useState(BASE_QUESTION_COUNT);
@@ -5740,6 +5751,53 @@ const Home = ({
         paddingTop: 16,
       }}
     >
+      <HStack
+        position="fixed"
+        top={{ base: 4, md: 5 }}
+        right={{ base: 4, md: 5 }}
+        zIndex="popover"
+        spacing={2}
+        px={2}
+        py={1.5}
+        borderRadius="full"
+        color={landingThemeToggleColor}
+        data-sound-ignore-select="true"
+      >
+        <Box
+          as={FaSun}
+          fontSize="13px"
+          color={
+            colorMode === "light"
+              ? landingThemeToggleColor
+              : landingThemeToggleMutedColor
+          }
+        />
+        <Switch
+          aria-label={
+            colorMode === "dark"
+              ? "Switch to light mode"
+              : "Switch to dark mode"
+          }
+          isChecked={colorMode === "dark"}
+          size="sm"
+          colorScheme={themeColor}
+          onChange={(event) => {
+            soundManager.resume();
+            soundManager.play("modeSwitch");
+            setColorMode(event.target.checked ? "dark" : "light");
+          }}
+        />
+        <Box
+          as={FaMoon}
+          fontSize="12px"
+          color={
+            colorMode === "dark"
+              ? landingThemeToggleColor
+              : landingThemeToggleMutedColor
+          }
+        />
+      </HStack>
+
       {view === "buttons" && (
         <>
           <VStack spacing={4} height="85vh">
@@ -6997,12 +7055,13 @@ function App({ isShutDown }) {
         description: translation[userLanguage]["actionTour.theme.description"],
         placement: "top",
       },
-      {
-        id: "social",
-        title: translation[userLanguage]["actionTour.social.title"],
-        description: translation[userLanguage]["actionTour.social.description"],
-        placement: "top",
-      },
+      // Social feed is intentionally hidden from the bottom action bar.
+      // {
+      //   id: "social",
+      //   title: translation[userLanguage]["actionTour.social.title"],
+      //   description: translation[userLanguage]["actionTour.social.description"],
+      //   placement: "top",
+      // },
       {
         id: "helper",
         title: translation[userLanguage]["actionTour.helper.title"],
@@ -7043,10 +7102,16 @@ function App({ isShutDown }) {
       clearTimeout(resetStatsTimeoutRef.current);
       resetStatsTimeoutRef.current = null;
     }
-    setPendingPath(path);
-    setPendingStep(nextStep);
-    scrollToTopInstantly();
-    setShowClouds(true);
+
+    flushSync(() => {
+      setPendingPath(path);
+      setPendingStep(nextStep);
+      setShowClouds(true);
+    });
+
+    if (typeof window !== "undefined") {
+      window.requestAnimationFrame(scrollToTopInstantly);
+    }
   };
 
   const handleTransitionContinue = () => {

@@ -12,6 +12,8 @@ import {
   ChakraProvider,
   HStack,
   Progress,
+  useColorMode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import Editor from "@monaco-editor/react";
 import { LiveProvider, LivePreview, LiveError } from "react-live";
@@ -105,7 +107,7 @@ export default function KnowledgeLedgerOnboarding({
   const { showAlert } = useAlertStore();
   const { openPasscodeModal } = usePasscodeModalStore();
   const { hasCopied, onCopy } = useClipboard(
-    userIdea + " (using mock data if necessary)"
+    userIdea + " (using mock data if necessary)",
   );
 
   // -- Editor state arrays, one slot per message --
@@ -114,6 +116,16 @@ export default function KnowledgeLedgerOnboarding({
   const [errors, setErrors] = useState([]);
   const [consoleLogs, setConsoleLogs] = useState([]);
   const iframeRefs = useRef([]);
+  const { colorMode } = useColorMode();
+  const editorShellBg = useColorModeValue("#FFFFFF", "#0B1426");
+  const editorShellBorder = useColorModeValue(
+    "rgba(104, 85, 64, 0.14)",
+    "rgba(148, 163, 184, 0.2)",
+  );
+  const editorShellShadow = useColorModeValue(
+    "0 14px 28px rgba(15, 23, 42, 0.08)",
+    "0 20px 45px rgba(2, 6, 23, 0.45)",
+  );
 
   // load saved idea
   useEffect(() => {
@@ -362,14 +374,18 @@ export default function KnowledgeLedgerOnboarding({
               )}{" "} */}
               <div
                 style={{
-                  border: "1px solid #444",
+                  background: editorShellBg,
+                  border: `1px solid ${editorShellBorder}`,
+                  borderRadius: 12,
+                  boxShadow: editorShellShadow,
+                  overflow: "hidden",
                   padding: 12,
-                  borderRadius: 6,
                 }}
               >
                 <Editor
                   height="300px"
                   language={"javascript"}
+                  theme={colorMode === "dark" ? "vs-dark" : "light"}
                   value={editorCodes[idx]}
                   onChange={(v) => {
                     const all = [...editorCodes];

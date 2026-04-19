@@ -416,6 +416,7 @@ export const Onboarding = ({
                     <Image
                       loading="eager"
                       width="400px"
+                      borderRadius="12px"
                       src={
                         userLanguage === "es"
                           ? "https://res.cloudinary.com/dtkeyccga/image/upload/v1741230168/Add_a_subheading_2_d2uv03.png"
