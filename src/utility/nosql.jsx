@@ -13,6 +13,12 @@ import {
   increment,
 } from "firebase/firestore";
 import { database } from "../database/firebaseResources";
+import {
+  getLocalThemeColor,
+  getLocalThemeMode,
+  themeColors,
+  themeModes,
+} from "../useThemeStore";
 
 export const generatePromotionCode = () => {
   if (typeof globalThis !== "undefined" && globalThis.crypto?.randomUUID) {
@@ -31,7 +37,7 @@ export const updateUserData = async (
   dailyGoals = 5,
   nextGoalExpiration,
   dailyProgress = 0,
-  goalCount = 0
+  goalCount = 0,
 ) => {
   const nextGoalDate =
     nextGoalExpiration instanceof Date
@@ -79,8 +85,9 @@ export const createUser = async (npub, userName, language) => {
   const now = new Date();
   const promotionStart = now.toISOString();
   const promotionDeadline = new Date(
-    now.getTime() + 30 * 24 * 60 * 60 * 1000
+    now.getTime() + 30 * 24 * 60 * 60 * 1000,
   ).toISOString();
+  const localThemeMode = getLocalThemeMode();
 
   const baseProfile = {
     isAdaptiveLearning: true,
@@ -91,6 +98,9 @@ export const createUser = async (npub, userName, language) => {
     previousStep: 0,
     language,
     allowPosts: true,
+    themeColor: getLocalThemeColor(),
+    colorMode: localThemeMode,
+    themeMode: localThemeMode,
     identity: "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt",
   };
 
@@ -148,6 +158,24 @@ export const createUser = async (npub, userName, language) => {
 
   if (typeof data.allowPosts === "undefined") {
     updates.allowPosts = false;
+  }
+
+  if (!themeColors.includes(data.themeColor)) {
+    updates.themeColor = getLocalThemeColor();
+  }
+
+  const savedThemeMode = data.colorMode || data.themeMode;
+  if (!themeModes.includes(savedThemeMode)) {
+    updates.colorMode = localThemeMode;
+    updates.themeMode = localThemeMode;
+  } else {
+    if (!data.colorMode) {
+      updates.colorMode = savedThemeMode;
+    }
+
+    if (!data.themeMode) {
+      updates.themeMode = savedThemeMode;
+    }
   }
 
   if (!data.identity) {
@@ -324,7 +352,7 @@ export const fetchUsersWithToken = async () => {
   // Create a query for users where the "fcmToken" field is not null
   const usersQuery = query(
     collection(database, "users"),
-    where("fcmToken", "!=", null)
+    where("fcmToken", "!=", null),
   );
 
   // Execute the query
@@ -389,7 +417,7 @@ export const inviteUserToTeam = async (
   teamId,
   teamName,
   inviteeNpub,
-  creatorName
+  creatorName,
 ) => {
   if (!creatorNpub || !teamId || !inviteeNpub) {
     throw new Error("Creator npub, team ID, and invitee npub are required");
@@ -430,7 +458,7 @@ export const inviteUserToTeam = async (
     "users",
     inviteeNpub,
     "teamInvites",
-    inviteId
+    inviteId,
   );
 
   await setDoc(inviteRef, {
@@ -478,7 +506,7 @@ export const acceptTeamInvite = async (userNpub, inviteId) => {
   if (teamDoc.exists()) {
     const teamData = teamDoc.data();
     const updatedMembers = teamData.members.map((m) =>
-      m.npub === userNpub ? { ...m, status: "accepted" } : m
+      m.npub === userNpub ? { ...m, status: "accepted" } : m,
     );
 
     await updateDoc(teamRef, {
@@ -559,7 +587,7 @@ export const getUserTeams = async (userNpub) => {
     if (invite.status === "accepted" && invite.creatorNpub) {
       memberTeamsPromises.push(
         getDoc(
-          doc(database, "users", invite.creatorNpub, "teams", invite.teamId)
+          doc(database, "users", invite.creatorNpub, "teams", invite.teamId),
         )
           .then((teamDoc) => {
             if (teamDoc.exists()) {
@@ -574,13 +602,13 @@ export const getUserTeams = async (userNpub) => {
           .catch((error) => {
             console.error("Error fetching member team:", error);
             return null;
-          })
+          }),
       );
     }
   });
 
   const memberTeams = (await Promise.all(memberTeamsPromises)).filter(
-    (team) => team !== null
+    (team) => team !== null,
   );
 
   // Combine and deduplicate teams
@@ -685,7 +713,7 @@ export const deleteTeam = async (creatorNpub, teamId) => {
       database,
       "users",
       member.npub,
-      "teamInvites"
+      "teamInvites",
     );
     const q = query(invitesRef, where("teamId", "==", teamId));
     const invitesSnapshot = await getDocs(q);

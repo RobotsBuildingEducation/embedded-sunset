@@ -15,7 +15,7 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 import { FaMoon, FaPaintBrush, FaSun } from "react-icons/fa";
-import { useThemeStore } from "../useThemeStore";
+import { persistThemeMode, useThemeStore } from "../useThemeStore";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { translation } from "../utility/translation";
 
@@ -91,9 +91,11 @@ const ThemeMenu = ({ userLanguage, isIcon = true, buttonProps = {} }) => {
             </Box>
             <Switch
               isChecked={colorMode === "dark"}
-              onChange={(event) =>
-                setColorMode(event.target.checked ? "dark" : "light")
-              }
+              onChange={(event) => {
+                const nextColorMode = event.target.checked ? "dark" : "light";
+                setColorMode(nextColorMode);
+                persistThemeMode(nextColorMode);
+              }}
               colorScheme={themeColor}
               aria-label={copy.appearance}
               size="md"

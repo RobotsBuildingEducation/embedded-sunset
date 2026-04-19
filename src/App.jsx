@@ -173,7 +173,11 @@ import { DataTags } from "./elements/DataTag";
 import { transcript } from "./utility/transcript";
 import AwardModal from "./components/AwardModal/AwardModal";
 import CodeCompletionQuestion from "./components/CodeCompletionQuestion/CodeCompletionQuestion";
-import { useThemeStore } from "./useThemeStore";
+import {
+  applyUserThemePreferences,
+  persistThemeMode,
+  useThemeStore,
+} from "./useThemeStore";
 
 import isEmpty from "lodash/isEmpty";
 import {
@@ -5438,8 +5442,13 @@ const Home = ({
     const currentTime = new Date();
     const endTime = new Date(currentTime.getTime() + defaultInterval * 60000);
 
-    // Create user in Firestore with language preference
-    await createUser(newKeys.npub, userName, userLanguage);
+    // Create user in Firestore with language and theme preferences.
+    const createdUserData = await createUser(
+      newKeys.npub,
+      userName,
+      userLanguage,
+    );
+    applyUserThemePreferences(createdUserData, setColorMode);
     await updateUserData(
       newKeys.npub,
       defaultInterval, // Set the default interval for the streak
@@ -5487,7 +5496,8 @@ const Home = ({
       const userName = localStorage.getItem("displayName");
 
       try {
-        await createUser(npub, userName, userLanguage);
+        const userData = await createUser(npub, userName, userLanguage);
+        applyUserThemePreferences(userData, setColorMode);
       } catch (error) {
         console.error("Error ensuring user record exists", error);
         setIsSigningIn(false);
@@ -5569,7 +5579,8 @@ const Home = ({
       const userName = localStorage.getItem("displayName");
 
       try {
-        await createUser(npub, userName, userLanguage);
+        const userData = await createUser(npub, userName, userLanguage);
+        applyUserThemePreferences(userData, setColorMode);
       } catch (error) {
         console.error("Error ensuring user record exists", error);
         setIsSigningIn(false);
@@ -5782,9 +5793,11 @@ const Home = ({
           size="sm"
           colorScheme={themeColor}
           onChange={(event) => {
+            const nextColorMode = event.target.checked ? "dark" : "light";
             soundManager.resume();
             soundManager.play("modeSwitch");
-            setColorMode(event.target.checked ? "dark" : "light");
+            setColorMode(nextColorMode);
+            persistThemeMode(nextColorMode);
           }}
         />
         <Box
@@ -6926,6 +6939,7 @@ function App({ isShutDown }) {
   const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(0); // State to store current step
   const [userLanguage, setUserLanguage] = useState("en"); // State to store user language preference
+  const { setColorMode } = useColorMode();
   const navigate = useNavigate();
   const location = useLocation();
   const topRef = useRef();
@@ -7236,6 +7250,7 @@ function App({ isShutDown }) {
             // Wrap Firestore getDoc in try...catch to handle potential errors
             if (userSnapshot.exists()) {
               const userData = userSnapshot.data();
+              applyUserThemePreferences(userData, setColorMode);
 
               setHasSubmittedPasscode(userData?.hasSubmittedPasscode);
 
@@ -7332,6 +7347,7 @@ function App({ isShutDown }) {
               const userSnapshot = await getDoc(userDoc);
               if (userSnapshot.exists()) {
                 const userData = userSnapshot.data();
+                applyUserThemePreferences(userData, setColorMode);
 
                 setUserLanguage(
                   userData.userLanguage ||
@@ -7370,7 +7386,7 @@ function App({ isShutDown }) {
     };
 
     initializeApp();
-  }, [navigate]);
+  }, [navigate, setColorMode]);
 
   if (loading) {
     return (
