@@ -3366,6 +3366,11 @@ const Step = ({
       });
     };
 
+    // Yield to the browser so the immediate transition shell can paint
+    // before React starts re-rendering the (large) App tree. Without this
+    // yield, the main thread stays busy and mobile devices see a 1-2s
+    // delay where nothing visible changes between the tap and the cloud
+    // transition mount.
     if (typeof window !== "undefined" && currentStep !== 0) {
       window.requestAnimationFrame(() => {
         window.setTimeout(runNext, 0);
@@ -3374,13 +3379,7 @@ const Step = ({
       runNext();
     }
 
-    if (beforeNext && typeof window !== "undefined") {
-      window.requestAnimationFrame(() => {
-        window.setTimeout(beforeNext, 0);
-      });
-    } else {
-      beforeNext?.();
-    }
+    beforeNext?.();
   };
 
   // Navigate back to the previous step
@@ -4283,6 +4282,7 @@ const Step = ({
                     onClick={handleNextQuestionButtonPress}
                     mb={4}
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                    style={{ touchAction: "manipulation" }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
                         e.preventDefault();
@@ -4649,6 +4649,7 @@ const Step = ({
                         background="appSurface"
                         variant={"outline"}
                         data-sound-ignore-select="true"
+                        style={{ touchAction: "manipulation" }}
                         onPointerDown={(event) =>
                           handleNextQuestionButtonPress(event, () => {
                             triggerHaptic();
