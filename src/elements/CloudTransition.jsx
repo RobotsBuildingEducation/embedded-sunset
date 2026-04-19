@@ -1,5 +1,12 @@
 // CloudTransition.jsx
-import React, { useEffect, useRef, useState, useMemo, useId } from "react";
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useMemo,
+  useId,
+} from "react";
 import { Box, Button, Flex, Icon, Text, useColorMode } from "@chakra-ui/react";
 import {
   CheckCircleIcon,
@@ -385,7 +392,7 @@ const CloudTransition = ({
   const isDarkMode = colorMode === "dark";
   const canvasRef = useRef(null);
   const [canContinue, setCanContinue] = useState(false);
-  const [renderRichContent, setRenderRichContent] = useState(false);
+  const [renderRichContent, setRenderRichContent] = useState(isActive);
   const [displaySalary, setDisplaySalary] = useState(salary);
   const prevSalary = useRef(salary);
 
@@ -416,34 +423,8 @@ const CloudTransition = ({
     return () => window.cancelAnimationFrame(frameId);
   }, [isActive]);
 
-  useEffect(() => {
-    if (!isActive) {
-      setRenderRichContent(false);
-      return undefined;
-    }
-
-    if (typeof window === "undefined") {
-      setRenderRichContent(true);
-      return undefined;
-    }
-
-    let firstFrameId;
-    let secondFrameId;
-    let timeoutId;
-
-    firstFrameId = window.requestAnimationFrame(() => {
-      secondFrameId = window.requestAnimationFrame(() => {
-        timeoutId = window.setTimeout(() => {
-          setRenderRichContent(true);
-        }, 0);
-      });
-    });
-
-    return () => {
-      window.cancelAnimationFrame(firstFrameId);
-      window.cancelAnimationFrame(secondFrameId);
-      window.clearTimeout(timeoutId);
-    };
+  useLayoutEffect(() => {
+    setRenderRichContent(isActive);
   }, [isActive]);
 
   useEffect(() => {

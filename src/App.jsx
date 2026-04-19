@@ -3366,21 +3366,8 @@ const Step = ({
       });
     };
 
-    if (typeof window !== "undefined" && currentStep !== 0) {
-      window.requestAnimationFrame(() => {
-        window.setTimeout(runNext, 0);
-      });
-    } else {
-      runNext();
-    }
-
-    if (beforeNext && typeof window !== "undefined") {
-      window.requestAnimationFrame(() => {
-        window.setTimeout(beforeNext, 0);
-      });
-    } else {
-      beforeNext?.();
-    }
+    runNext();
+    beforeNext?.();
   };
 
   // Navigate back to the previous step
