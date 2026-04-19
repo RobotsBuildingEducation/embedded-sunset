@@ -185,7 +185,7 @@ const extractTextFromNode = (node) => {
   }
   return "";
 };
-
+//great
 const sanitizeText = (value) =>
   extractTextFromNode(value)
     .replace(/\s+/g, " ")
