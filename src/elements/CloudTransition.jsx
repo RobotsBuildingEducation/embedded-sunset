@@ -1,12 +1,5 @@
 // CloudTransition.jsx
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  useMemo,
-  useId,
-} from "react";
+import React, { useEffect, useRef, useState, useMemo, useId } from "react";
 import { Box, Button, Flex, Icon, Text, useColorMode } from "@chakra-ui/react";
 import {
   CheckCircleIcon,
@@ -423,7 +416,7 @@ const CloudTransition = ({
     return () => window.cancelAnimationFrame(frameId);
   }, [isActive]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     setRenderRichContent(isActive);
   }, [isActive]);
 

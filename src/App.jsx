@@ -3366,7 +3366,19 @@ const Step = ({
       });
     };
 
-    runNext();
+    // Yield to the browser so the immediate transition shell can paint
+    // before React starts re-rendering the (large) App tree. Without this
+    // yield, the main thread stays busy and mobile devices see a 1-2s
+    // delay where nothing visible changes between the tap and the cloud
+    // transition mount.
+    if (typeof window !== "undefined" && currentStep !== 0) {
+      window.requestAnimationFrame(() => {
+        window.setTimeout(runNext, 0);
+      });
+    } else {
+      runNext();
+    }
+
     beforeNext?.();
   };
 
