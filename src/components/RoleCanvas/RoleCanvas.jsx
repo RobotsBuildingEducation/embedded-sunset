@@ -19,7 +19,7 @@ const themeColorHex = {
  * or a counselor/heart animation,
  * morphing smoothly when `role` changes.
  */
-export function RoleCanvas({
+export const RoleCanvas = React.memo(function RoleCanvas({
   role = "sphere",
   width = 100,
   height = 100,
@@ -415,4 +415,4 @@ export function RoleCanvas({
       }}
     />
   );
-}
+});

@@ -11,7 +11,6 @@
     "breaking-change": " npm run start -- --port=4445"
   },
   "dependencies": {
-    "@babel/polyfill": "^7.12.1",
     "@cashu/cashu-ts": "2.1",
     "@chakra-ui/checkbox": "^2.3.2",
     "@chakra-ui/icons": "^2.2.4",

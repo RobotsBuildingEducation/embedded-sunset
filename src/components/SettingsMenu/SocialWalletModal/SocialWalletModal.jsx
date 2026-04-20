@@ -40,14 +40,10 @@ const ActionButton = ({ href, text, userLanguage }) => (
 const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
   const toast = useToast();
 
-  const { createNewWallet, isCreatingWallet, isWalletReady, walletBalance } = useNostrWalletStore(
-    (state) => ({
-      createNewWallet: state.createNewWallet,
-      isCreatingWallet: state.isCreatingWallet,
-      isWalletReady: state.isWalletReady,
-      walletBalance: state.walletBalance,
-    })
-  );
+  const createNewWallet = useNostrWalletStore((s) => s.createNewWallet);
+  const isCreatingWallet = useNostrWalletStore((s) => s.isCreatingWallet);
+  const isWalletReady = useNostrWalletStore((s) => s.isWalletReady);
+  const walletBalance = useNostrWalletStore((s) => s.walletBalance);
 
   const handleCreateWallet = async () => {
     const hasNsec = localStorage.getItem("local_nsec");

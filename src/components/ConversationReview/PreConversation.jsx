@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { lazy, Suspense, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -31,7 +31,7 @@ import {
   useThinkingGeminiChat,
 } from "../../hooks/useGeminiChat";
 import { translation } from "../../utility/translation";
-import LiveReactEditorModal from "../LiveCodeEditor/LiveCodeEditor";
+const LiveReactEditorModal = lazy(() => import("../LiveCodeEditor/LiveCodeEditor"));
 import { CloudCanvas, SunsetCanvas } from "../../elements/SunsetCanvas";
 import { soundManager } from "../../utility/soundManager";
 
@@ -103,11 +103,13 @@ const CodeBlock = ({ inline, className, children, ...props }) => {
   const { hideRunButton, autoRun } = React.useContext(LiveEditorContext);
   const match = /language-(\w+)/.exec(className || "");
   return !inline && match ? (
-    <LiveReactEditorModal
-      code={String(children).replace(/\n$/, "")}
-      hideRunButton={hideRunButton}
-      autoRun={autoRun}
-    />
+    <Suspense fallback={<CloudCanvas isLoader={true} regulateWidth={false} />}>
+      <LiveReactEditorModal
+        code={String(children).replace(/\n$/, "")}
+        hideRunButton={hideRunButton}
+        autoRun={autoRun}
+      />
+    </Suspense>
   ) : (
     <Box
       as="code"

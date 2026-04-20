@@ -91,33 +91,20 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
    * - cashuWallet: if null, no wallet yet
    */
 
-  const {
-    cashuWallet,
-    walletBalance,
-    createNewWallet,
-    initiateDeposit,
-    invoice,
-    init,
-    initWallet,
-    isCreatingWallet,
-    isRefreshingAfterDeposit,
-    isNip07Mode,
-    setManualPrivateKey,
-    nostrPrivKey,
-  } = useNostrWalletStore((state) => ({
-    cashuWallet: state.cashuWallet,
-    walletBalance: state.walletBalance,
-    createNewWallet: state.createNewWallet,
-    initiateDeposit: state.initiateDeposit,
-    invoice: state.invoice,
-    init: state.init,
-    initWallet: state.initWallet,
-    isCreatingWallet: state.isCreatingWallet,
-    isRefreshingAfterDeposit: state.isRefreshingAfterDeposit,
-    isNip07Mode: state.isNip07Mode,
-    setManualPrivateKey: state.setManualPrivateKey,
-    nostrPrivKey: state.nostrPrivKey,
-  }));
+  const cashuWallet = useNostrWalletStore((s) => s.cashuWallet);
+  const walletBalance = useNostrWalletStore((s) => s.walletBalance);
+  const createNewWallet = useNostrWalletStore((s) => s.createNewWallet);
+  const initiateDeposit = useNostrWalletStore((s) => s.initiateDeposit);
+  const invoice = useNostrWalletStore((s) => s.invoice);
+  const init = useNostrWalletStore((s) => s.init);
+  const initWallet = useNostrWalletStore((s) => s.initWallet);
+  const isCreatingWallet = useNostrWalletStore((s) => s.isCreatingWallet);
+  const isRefreshingAfterDeposit = useNostrWalletStore(
+    (s) => s.isRefreshingAfterDeposit,
+  );
+  const isNip07Mode = useNostrWalletStore((s) => s.isNip07Mode);
+  const setManualPrivateKey = useNostrWalletStore((s) => s.setManualPrivateKey);
+  const nostrPrivKey = useNostrWalletStore((s) => s.nostrPrivKey);
 
   console.log("total balance", walletBalance);
   // walletBalance is now tracked as a number in the store

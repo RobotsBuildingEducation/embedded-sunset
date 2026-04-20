@@ -155,10 +155,8 @@ const SettingsMenu = ({
     _active: { bg: "appSurfaceInset" },
   };
 
-  const { resetState, walletService } = useNostrWalletStore((state) => ({
-    resetState: state.resetState, // renamed from cashTap
-    walletService: state.walletService,
-  }));
+  const resetState = useNostrWalletStore((s) => s.resetState);
+  const walletService = useNostrWalletStore((s) => s.walletService);
 
   const {
     isOpen: isAlgorithmHelperOpen,
@@ -828,4 +826,4 @@ const SettingsMenu = ({
   );
 };
 
-export default SettingsMenu;
+export default React.memo(SettingsMenu);

@@ -1,5 +1,5 @@
 // src/components/KnowledgeLedgerModal.jsx
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -27,7 +27,7 @@ import {
 import { database } from "../../database/firebaseResources";
 import { useThinkingGeminiChat } from "../../hooks/useGeminiChat";
 import { translation } from "../../utility/translation";
-import LiveReactEditorModal from "../LiveCodeEditor/LiveCodeEditor";
+const LiveReactEditorModal = lazy(() => import("../LiveCodeEditor/LiveCodeEditor"));
 import { CloudCanvas } from "../../elements/SunsetCanvas";
 import { soundManager } from "../../utility/soundManager";
 
@@ -348,48 +348,50 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
         </VStack>
       ) : (
         // Final: Split layout (desktop) / stacked (mobile)
-        <Flex
-          direction={{ base: "column", md: "row" }}
-          gap={4}
-          align="stretch"
-          w="100%"
-        >
-          {/* LEFT: editor */}
-          <Box
-            flexBasis={{ base: "100%", md: "50%" }}
-            maxW={{ base: "100%", md: "50%" }}
+        <Suspense fallback={<CloudCanvas isLoader={true} regulateWidth={false} />}>
+          <Flex
+            direction={{ base: "column", md: "row" }}
+            gap={4}
+            align="stretch"
+            w="100%"
           >
-            <LiveReactEditorModal
-              mode="editor"
-              controlledCode={draft}
-              onCodeChange={setDraft}
-              editorHeight={{ base: "280px", md: "calc(100vh - 320px)" }}
-            />
-          </Box>
+            {/* LEFT: editor */}
+            <Box
+              flexBasis={{ base: "100%", md: "50%" }}
+              maxW={{ base: "100%", md: "50%" }}
+            >
+              <LiveReactEditorModal
+                mode="editor"
+                controlledCode={draft}
+                onCodeChange={setDraft}
+                editorHeight={{ base: "280px", md: "calc(100vh - 320px)" }}
+              />
+            </Box>
 
-          {/* RIGHT: full-height renderer */}
-          <Box
-            flex="1"
-            position={{ base: "static", md: "sticky" }}
-            top={{ md: "64px" }}
-            alignSelf="stretch"
-          >
-            <LiveReactEditorModal
-              mode="preview"
-              controlledCode={draft}
-              autoRun
-              // ⬇️ key so preview hard-resets when final code lands
-              instanceKey={previewKey}
-              previewHeight={{ base: "360px", md: "calc(100vh - 160px)" }}
-            />
-          </Box>
-        </Flex>
+            {/* RIGHT: full-height renderer */}
+            <Box
+              flex="1"
+              position={{ base: "static", md: "sticky" }}
+              top={{ md: "64px" }}
+              alignSelf="stretch"
+            >
+              <LiveReactEditorModal
+                mode="preview"
+                controlledCode={draft}
+                autoRun
+                // ⬇️ key so preview hard-resets when final code lands
+                instanceKey={previewKey}
+                previewHeight={{ base: "360px", md: "calc(100vh - 160px)" }}
+              />
+            </Box>
+          </Flex>
+        </Suspense>
       )}
     </VStack>
   );
 }
 
-export default function KnowledgeLedgerModal({
+function KnowledgeLedgerModal({
   isOpen,
   onClose,
   steps,
@@ -474,3 +476,5 @@ export default function KnowledgeLedgerModal({
     </Drawer>
   );
 }
+
+export default React.memo(KnowledgeLedgerModal);

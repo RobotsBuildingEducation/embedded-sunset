@@ -26,7 +26,7 @@ import {
 import { IdentityCard } from "../../elements/IdentityCard";
 import { database } from "../../database/firebaseResources";
 
-export const Dashboard = () => {
+export const Dashboard = React.memo(() => {
   let env_passcode = import.meta.env.VITE_SUDO_DASHBOARD;
   const loginCheck = localStorage.getItem("dashboard_code") === env_passcode;
 
@@ -158,4 +158,4 @@ export const Dashboard = () => {
       </Stack>
     </Container>
   );
-};
+});

@@ -14,12 +14,16 @@ import { usePasscodeModalStore } from "../../usePasscodeModalStore";
 import { translation } from "../../utility/translation";
 
 export const PasscodeModal = ({ userLanguage }) => {
-  const {
-    isPasscodeModalOpen,
-    closePasscodeModal,
-    enteredPasscode,
-    setEnteredPasscode,
-  } = usePasscodeModalStore();
+  const isPasscodeModalOpen = usePasscodeModalStore(
+    (s) => s.isPasscodeModalOpen,
+  );
+  const closePasscodeModal = usePasscodeModalStore(
+    (s) => s.closePasscodeModal,
+  );
+  const enteredPasscode = usePasscodeModalStore((s) => s.enteredPasscode);
+  const setEnteredPasscode = usePasscodeModalStore(
+    (s) => s.setEnteredPasscode,
+  );
   const toast = useToast();
 
   const handleConfirm = () => {

@@ -39,4 +39,4 @@ const StudyGuideModal = ({ isOpen, onClose, content, userLanguage }) => {
   );
 };
 
-export default StudyGuideModal;
+export default React.memo(StudyGuideModal);

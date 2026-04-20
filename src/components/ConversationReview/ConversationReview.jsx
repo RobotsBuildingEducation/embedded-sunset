@@ -382,4 +382,4 @@ const ConversationReview = ({
   );
 };
 
-export default ConversationReview;
+export default React.memo(ConversationReview);
