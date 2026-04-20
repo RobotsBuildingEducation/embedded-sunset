@@ -1,5 +1,5 @@
 // ChapterReview.jsx
-import {
+import React, {
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -786,4 +786,4 @@ const ChapterReview = ({
   );
 };
 
-export default ChapterReview;
+export default React.memo(ChapterReview);

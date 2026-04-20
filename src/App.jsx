@@ -1,7 +1,8 @@
 import "regenerator-runtime/runtime";
-import "@babel/polyfill";
 import "@coinbase/onchainkit/styles.css";
 import React, {
+  Suspense,
+  lazy,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -58,7 +59,6 @@ import {
   useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
-import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
 import SpeechRecognition, {
   useSpeechRecognition,
@@ -80,7 +80,9 @@ import {
   BigSunset,
   CloudCanvas,
 } from "./elements/SunsetCanvas";
-import EducationalModal from "./components/LearnModal/EducationalModal";
+const EducationalModal = lazy(() =>
+  import("./components/LearnModal/EducationalModal"),
+);
 import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
 import ThemeMenu from "./components/ThemeMenu";
 import WaveBar from "./components/WaveBar";
@@ -131,7 +133,11 @@ import { pickProgrammingLanguage, translation } from "./utility/translation";
 import { subscribeToTeamInvites } from "./utility/nosql";
 import { soundManager } from "./utility/soundManager";
 
-import { Dashboard } from "./components/Dashboard/Dashboard";
+const Dashboard = lazy(() =>
+  import("./components/Dashboard/Dashboard").then((m) => ({
+    default: m.Dashboard,
+  })),
+);
 import { isUnsupportedBrowser } from "./utility/browser";
 import {
   ChevronDownIcon,
@@ -165,8 +171,12 @@ import MultipleChoiceQuestion from "./components/MultipleChoice/MultipleChoice";
 import SelectOrderQuestion from "./components/SelectOrder/SelectOrder";
 
 import Confetti from "react-confetti";
-import { About } from "./About";
-import ConversationReview from "./components/ConversationReview/ConversationReview";
+const About = lazy(() =>
+  import("./About").then((m) => ({ default: m.About })),
+);
+const ConversationReview = lazy(() =>
+  import("./components/ConversationReview/ConversationReview"),
+);
 import RandomCharacter, {
   FadeInComponent,
   PanRightComponent,
@@ -175,7 +185,9 @@ import RandomCharacter, {
 import MultipleAnswerQuestion from "./components/MultipleAnswerQuestion/MultipleAnswerQuestion";
 import { DataTags } from "./elements/DataTag";
 import { transcript } from "./utility/transcript";
-import AwardModal from "./components/AwardModal/AwardModal";
+const AwardModal = lazy(() =>
+  import("./components/AwardModal/AwardModal"),
+);
 import CodeCompletionQuestion from "./components/CodeCompletionQuestion/CodeCompletionQuestion";
 import {
   applyUserThemePreferences,
@@ -197,7 +209,9 @@ import { PasscodeModal } from "./components/PasscodeModal/PasscodeModal";
 import { usePasscodeModalStore } from "./usePasscodeModalStore";
 
 import { OrbCanvas } from "./elements/OrbCanvas";
-import LectureModal from "./components/LectureModal/LectureModal";
+const LectureModal = lazy(() =>
+  import("./components/LectureModal/LectureModal"),
+);
 
 // import { TestNostrWallet } from "./components/WalletSetup/TestNostrWallet";
 import { useNostrWalletStore } from "./hooks/useNostrWalletStore";
@@ -209,7 +223,9 @@ import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { useSimpleGeminiChat } from "./hooks/useGeminiChat";
 
 import { logEvent } from "firebase/analytics";
-import BitcoinOnboarding from "./components/BitcoinOnboarding/BitcoinOnboarding";
+const BitcoinOnboarding = lazy(() =>
+  import("./components/BitcoinOnboarding/BitcoinOnboarding"),
+);
 import SyntaxHighlighter from "react-syntax-highlighter";
 import {
   FaBitcoin,
@@ -224,26 +240,56 @@ import {
 import { FiTrendingUp } from "react-icons/fi";
 import MiniKitInitializer from "./MiniKitInitializer";
 
-import BitcoinModeModal from "./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal";
-import SelfPacedModal from "./components/SettingsMenu/SelfPacedModal/SelfPacedModal";
-import SocialFeedModal from "./components/SocialFeedModal/SocialFeedModal";
-import { Onboarding } from "./Onboarding";
+const BitcoinModeModal = lazy(() =>
+  import("./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal"),
+);
+const SelfPacedModal = lazy(() =>
+  import("./components/SettingsMenu/SelfPacedModal/SelfPacedModal"),
+);
+const SocialFeedModal = lazy(() =>
+  import("./components/SocialFeedModal/SocialFeedModal"),
+);
+const Onboarding = lazy(() =>
+  import("./Onboarding").then((m) => ({ default: m.Onboarding })),
+);
 import { newTheme } from "./App.theme";
-import { InstallAppModal } from "./components/InstallModal/InstallModal";
+const InstallAppModal = lazy(() =>
+  import("./components/InstallModal/InstallModal").then((m) => ({
+    default: m.InstallAppModal,
+  })),
+);
 
 import { motion, animate, useAnimation } from "framer-motion";
 import { keyframes } from "@emotion/react";
 import { Delaunay } from "d3-delaunay";
-import StudyGuideModal from "./components/StudyGuideModal/StudyGuideModal";
-import { CodeEditor } from "./components/CodeEditor/CodeEditor";
-import ProgressModal from "./components/ProgressModal/ProgressModal";
-import { RoleCanvas } from "./components/RoleCanvas/RoleCanvas";
-import { AlgorithmHelper } from "./components/AlgorithmHelper/AlgorithmHelper";
+const StudyGuideModal = lazy(() =>
+  import("./components/StudyGuideModal/StudyGuideModal"),
+);
+const CodeEditor = lazy(() =>
+  import("./components/CodeEditor/CodeEditor").then((m) => ({
+    default: m.CodeEditor,
+  })),
+);
+const ProgressModal = lazy(() =>
+  import("./components/ProgressModal/ProgressModal"),
+);
+const RoleCanvas = lazy(() =>
+  import("./components/RoleCanvas/RoleCanvas").then((m) => ({
+    default: m.RoleCanvas,
+  })),
+);
+const AlgorithmHelper = lazy(() =>
+  import("./components/AlgorithmHelper/AlgorithmHelper").then((m) => ({
+    default: m.AlgorithmHelper,
+  })),
+);
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
 import CloudTransition from "./elements/CloudTransition";
-import KnowledgeLedgerModal from "./components/KnowledgeLedgerModal/KnowledgeLedgerModal";
+const KnowledgeLedgerModal = lazy(() =>
+  import("./components/KnowledgeLedgerModal/KnowledgeLedgerModal"),
+);
 import { TbWorld } from "react-icons/tb";
-import SoundExperiment from "./experiments/SoundExperiment";
+const SoundExperiment = lazy(() => import("./experiments/SoundExperiment"));
 
 const StableReactBash = class extends ReactBash {
   scrollPromptIntoTerminalView() {
@@ -694,7 +740,9 @@ export const VoiceInput = ({
   const [educationalContent, setEducationalContent] = useState([]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { alert, hideAlert, showAlert } = useAlertStore();
+  const alert = useAlertStore((s) => s.alert);
+  const hideAlert = useAlertStore((s) => s.hideAlert);
+  const showAlert = useAlertStore((s) => s.showAlert);
 
   const pauseTimeoutRef = useRef(null);
   const toast = useToast();
@@ -1036,6 +1084,7 @@ export const VoiceInput = ({
   };
 
   return (
+    <Suspense fallback={null}>
     <VStack spacing={4} alignItems="center" width="100%" maxWidth={"600px"}>
       {useVoice || isTerminal ? (
         <HStack spacing={4} justifyContent={"center"} maxWidth={"400px"}>
@@ -1291,13 +1340,15 @@ export const VoiceInput = ({
         />
       )}
 
-      <EducationalModal
-        isOpen={isOpen}
-        onClose={onClose}
-        educationalMessages={educationalMessages}
-        educationalContent={educationalContent}
-        userLanguage={userLanguage}
-      />
+      {isOpen ? (
+        <EducationalModal
+          isOpen={isOpen}
+          onClose={onClose}
+          educationalMessages={educationalMessages}
+          educationalContent={educationalContent}
+          userLanguage={userLanguage}
+        />
+      ) : null}
 
       {isInstallModalOpen ? (
         <InstallAppModal
@@ -1308,6 +1359,7 @@ export const VoiceInput = ({
         />
       ) : null}
     </VStack>
+    </Suspense>
   );
 };
 
@@ -1836,14 +1888,11 @@ const Step = ({
   const [endTime, setEndTime] = useState(null);
   const [interval, setInterval] = useState(0);
   // const { cashTap, loadWallet } = useCashuStore();
-  const { sendOneSatToNpub, initWallet, init, walletBalance, cashuWallet } =
-    useNostrWalletStore((state) => ({
-      sendOneSatToNpub: state.sendOneSatToNpub,
-      initWallet: state.initWallet,
-      init: state.init,
-      walletBalance: state.walletBalance,
-      cashuWallet: state.cashuWallet,
-    }));
+  const sendOneSatToNpub = useNostrWalletStore((s) => s.sendOneSatToNpub);
+  const initWallet = useNostrWalletStore((s) => s.initWallet);
+  const init = useNostrWalletStore((s) => s.init);
+  const walletBalance = useNostrWalletStore((s) => s.walletBalance);
+  const cashuWallet = useNostrWalletStore((s) => s.cashuWallet);
   const [grade, setGrade] = useState("");
   const [isTimerExpired, setIsTimerExpired] = useState(true);
 
@@ -2185,7 +2234,9 @@ const Step = ({
 
   const navigate = useNavigate();
   const toast = useToast();
-  const { alert, hideAlert, showAlert } = useAlertStore();
+  const alert = useAlertStore((s) => s.alert);
+  const hideAlert = useAlertStore((s) => s.hideAlert);
+  const showAlert = useAlertStore((s) => s.showAlert);
 
   // const stepContent = steps[userLanguage][currentStep];
 
@@ -2195,7 +2246,7 @@ const Step = ({
 
   const [finalConversation, setFinalConversation] = useState([]);
 
-  const { openPasscodeModal } = usePasscodeModalStore();
+  const openPasscodeModal = usePasscodeModalStore((s) => s.openPasscodeModal);
   const [suggestionMessage, setSuggestionMessage] = useState("");
   const lastSuggestionRef = useRef("");
   const [suggestionLoading, setSuggestionLoading] = useState(false);
@@ -3853,6 +3904,7 @@ const Step = ({
   };
 
   return (
+    <Suspense fallback={null}>
     <VStack
       spacing={4}
       width="100%"
@@ -4783,13 +4835,15 @@ const Step = ({
             </Box>
           ) : null}
 
-          <EducationalModal
-            isOpen={isOpen}
-            onClose={onClose}
-            educationalMessages={educationalMessages}
-            educationalContent={educationalContent}
-            userLanguage={userLanguage}
-          />
+          {isOpen ? (
+            <EducationalModal
+              isOpen={isOpen}
+              onClose={onClose}
+              educationalMessages={educationalMessages}
+              educationalContent={educationalContent}
+              userLanguage={userLanguage}
+            />
+          ) : null}
 
           {isSelfPacedOpen ? (
             <SelfPacedModal
@@ -5009,13 +5063,15 @@ const Step = ({
             </Flex>
           </Box>
 
-          <LectureModal
-            userLanguage={userLanguage}
-            currentStep={currentStep}
-            isOpen={isLectureModalOpen}
-            onClose={handleLectureModalClose}
-            handleNextClick={handleNextClick}
-          />
+          {isLectureModalOpen ? (
+            <LectureModal
+              userLanguage={userLanguage}
+              currentStep={currentStep}
+              isOpen={isLectureModalOpen}
+              onClose={handleLectureModalClose}
+              handleNextClick={handleNextClick}
+            />
+          ) : null}
 
           {isKnowledgeLedgerOpen && userLanguage !== "compsci-en" ? (
             <KnowledgeLedgerModal
@@ -5081,6 +5137,7 @@ const Step = ({
         </>
       )}
     </VStack>
+    </Suspense>
   );
 };
 
@@ -5846,6 +5903,7 @@ const Home = ({
   }
 
   return (
+    <Suspense fallback={null}>
     <Box
       ref={topRef}
       textAlign="center"
@@ -6863,6 +6921,7 @@ const Home = ({
         </VStack>
       )}
     </Box>
+    </Suspense>
   );
 };
 
@@ -6871,7 +6930,9 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
   const [input, setInput] = useState("");
   const [isValid, setIsValid] = useState(null);
   const navigate = useNavigate();
-  const { alert, hideAlert, showAlert } = useAlertStore();
+  const alert = useAlertStore((s) => s.alert);
+  const hideAlert = useAlertStore((s) => s.hideAlert);
+  const showAlert = useAlertStore((s) => s.showAlert);
 
   const bannedUserList = [
     "npub1cfyf77uc459arthry2y6ndj8dr2t7fjn6rl5feakghv884f8s73qe9dayg",
@@ -7040,7 +7101,9 @@ function App({ isShutDown }) {
   const navigate = useNavigate();
   const location = useLocation();
   const topRef = useRef();
-  const { alert, hideAlert, showAlert } = useAlertStore();
+  const alert = useAlertStore((s) => s.alert);
+  const hideAlert = useAlertStore((s) => s.hideAlert);
+  const showAlert = useAlertStore((s) => s.showAlert);
   const [hasSubmittedPasscode, setHasSubmittedPasscode] = useState(false);
 
   const [allowPosts, setAllowPosts] = useState(true);
@@ -7625,6 +7688,18 @@ function App({ isShutDown }) {
           />
         )}
 
+        <Suspense
+          fallback={
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              minH="50vh"
+            >
+              <CloudCanvas isLoader hasInitialFade={false} />
+            </Box>
+          }
+        >
         <Routes>
           <Route path="/experiment" element={<SoundExperiment />} />
           <Route
@@ -7722,6 +7797,7 @@ function App({ isShutDown }) {
             }
           />
         </Routes>
+        </Suspense>
       </Box>
     </Box>
   );

@@ -104,8 +104,8 @@ export default function KnowledgeLedgerOnboarding({
   const [userInput, setUserInput] = useState("");
   const [userIdea, setUserIdea] = useState("");
   const { submitPrompt, messages, resetMessages } = useThinkingGeminiChat();
-  const { showAlert } = useAlertStore();
-  const { openPasscodeModal } = usePasscodeModalStore();
+  const showAlert = useAlertStore((s) => s.showAlert);
+  const openPasscodeModal = usePasscodeModalStore((s) => s.openPasscodeModal);
   const { hasCopied, onCopy } = useClipboard(
     userIdea + " (using mock data if necessary)",
   );

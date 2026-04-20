@@ -692,4 +692,4 @@ const LectureModal = ({
   );
 };
 
-export default LectureModal;
+export default React.memo(LectureModal);

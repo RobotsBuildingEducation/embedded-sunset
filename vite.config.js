@@ -13,7 +13,8 @@ export default defineConfig({
     "process.env": process.env,
   },
   plugins: [
-    visualizer({ open: true }),
+    process.env.ANALYZE === "true" &&
+      visualizer({ open: true, filename: "stats.html", gzipSize: true }),
     react(),
     VitePWA({
       workbox: {

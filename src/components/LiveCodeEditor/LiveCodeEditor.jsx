@@ -775,4 +775,4 @@ const LiveReactEditorModal = ({
   );
 };
 
-export default LiveReactEditorModal;
+export default React.memo(LiveReactEditorModal);

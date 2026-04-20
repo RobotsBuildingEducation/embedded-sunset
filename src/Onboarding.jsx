@@ -1,6 +1,5 @@
 import "regenerator-runtime/runtime";
-import "@babel/polyfill";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { lazy, Suspense, useEffect, useLayoutEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -51,7 +50,9 @@ import { getToken } from "firebase/messaging";
 import { LuPuzzle } from "react-icons/lu";
 import { FaBitcoin, FaCode } from "react-icons/fa";
 
-import KnowledgeLedgerOnboarding from "./components/KnowledgeLedgerOnboarding/KnowledgeLedgerOnboarding";
+const KnowledgeLedgerOnboarding = lazy(() =>
+  import("./components/KnowledgeLedgerOnboarding/KnowledgeLedgerOnboarding"),
+);
 import { Image } from "@chakra-ui/image";
 import AwardModalOnboarding from "./components/AwardModalOnboarding/AwardModalOnboarding";
 import { onboardingTranscript } from "./utility/transcript";
@@ -326,16 +327,18 @@ export const Onboarding = ({
           }}
           spacing={4}
         >
-          <KnowledgeLedgerOnboarding
-            userLanguage={userLanguage}
-            moveToNext={() => {
-              playOnboardingChord();
-              incrementUserOnboardingStep(localStorage.getItem("local_npub"));
-              setCurrentStep(0);
-              scrollToTopInstantly();
-              navigate("/q/0");
-            }}
-          />
+          <Suspense fallback={null}>
+            <KnowledgeLedgerOnboarding
+              userLanguage={userLanguage}
+              moveToNext={() => {
+                playOnboardingChord();
+                incrementUserOnboardingStep(localStorage.getItem("local_npub"));
+                setCurrentStep(0);
+                scrollToTopInstantly();
+                navigate("/q/0");
+              }}
+            />
+          </Suspense>
         </Box>
       ) : (
         <Box
