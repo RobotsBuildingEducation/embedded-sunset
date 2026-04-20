@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { createNoise2D } from "simplex-noise";
 
 import { FadeInComponent } from "./RandomCharacter";
@@ -389,11 +389,14 @@ export const CloudCanvas = ({
   printStatement = "",
 }) => {
   const canvasRef = useRef(null);
+  const texturePatternRef = useRef(null);
+  const animationFrameRef = useRef(null);
+  const noiseRef = useRef(null);
   const themeColor = useThemeStore((state) => state.themeColor);
-  let requestId;
 
-  // Noise generator for cloud gradient (used in fbm)
-  const noise = new Noise(Math.random());
+  if (!noiseRef.current) {
+    noiseRef.current = new Noise(Math.random());
+  }
 
   // Cloud gradient parameters - use theme-based palette
   const cloudPalette = cloudPalettes[themeColor] || cloudPalettes.orange;
@@ -412,10 +415,71 @@ export const CloudCanvas = ({
   // Optionally, you can apply an easing function to t for a smoother feel:
   // const ease = t => t * t * (3 - 2 * t);
 
+  const buildCloudTexturePattern = (ctx) => {
+    const offCanvas = document.createElement("canvas");
+    offCanvas.width = ctx.canvas.width;
+    offCanvas.height = ctx.canvas.height;
+    const offCtx = offCanvas.getContext("2d");
+    if (!offCtx) return null;
+
+    const size = offCanvas.width;
+    const imageData = offCtx.createImageData(size, size);
+    const data = imageData.data;
+    const centerX = size / 2;
+    const centerY = size / 2;
+    const timeCloud = Date.now() * cloudOscSpeed;
+
+    for (let y = 0; y < size; y++) {
+      for (let x = 0; x < size; x++) {
+        const dx = x - centerX;
+        const dy = y - centerY;
+        const rNorm = Math.sqrt(dx * dx + dy * dy) / centerX;
+        const nx = dx / centerX;
+        const ny = dy / centerX;
+        let weights = [];
+        let weightSum = 0;
+        for (let i = 0; i < cloudPaletteRGB.length; i++) {
+          const offset = groupOffsets[i];
+          const phase = groupPhases[i];
+          const noiseVal = fbm(
+            noiseRef.current,
+            nx * scale + timeCloud + offset,
+            ny * scale + timeCloud + offset,
+            4,
+            0.5
+          );
+          const radial = (1 - rNorm) * Math.sin(timeCloud + phase);
+          const score = noiseVal + radial;
+          const w = Math.exp(beta * score);
+          weights.push(w);
+          weightSum += w;
+        }
+        for (let i = 0; i < weights.length; i++) {
+          weights[i] /= weightSum;
+        }
+        let rColor = 0,
+          gColor = 0,
+          bColor = 0;
+        for (let i = 0; i < cloudPaletteRGB.length; i++) {
+          rColor += weights[i] * cloudPaletteRGB[i][0];
+          gColor += weights[i] * cloudPaletteRGB[i][1];
+          bColor += weights[i] * cloudPaletteRGB[i][2];
+        }
+        const idx = (y * size + x) * 4;
+        data[idx] = rColor;
+        data[idx + 1] = gColor;
+        data[idx + 2] = bColor;
+        data[idx + 3] = 255;
+      }
+    }
+    offCtx.putImageData(imageData, 0, 0);
+
+    return ctx.createPattern(offCanvas, "no-repeat");
+  };
+
   const draw = (ctx) => {
     const now = Date.now();
     const timeShape = now * shapeOscSpeed;
-    const timeCloud = now * cloudOscSpeed;
 
     // --- Shape Construction with Smooth Transition Between Point Counts ---
     ctx.beginPath();
@@ -436,8 +500,6 @@ export const CloudCanvas = ({
       fraction
     );
 
-    // Use the continuous effectivePoints value to compute angle step.
-    const angleStep = (Math.PI * 2) / effectivePoints;
     const minRadius = 45;
     const maxRadius = 70;
     const smoothingFactor = 0.65;
@@ -473,70 +535,26 @@ export const CloudCanvas = ({
     }
     ctx.closePath();
 
-    // --- Cloud Gradient remains unchanged ---
-    const offCanvas = document.createElement("canvas");
-    offCanvas.width = ctx.canvas.width;
-    offCanvas.height = ctx.canvas.height;
-    const offCtx = offCanvas.getContext("2d");
-    const size = offCanvas.width;
-    const imageData = offCtx.createImageData(size, size);
-    const data = imageData.data;
-    const centerX = size / 2;
-    const centerY = size / 2;
-
-    for (let y = 0; y < size; y++) {
-      for (let x = 0; x < size; x++) {
-        const dx = x - centerX;
-        const dy = y - centerY;
-        const rNorm = Math.sqrt(dx * dx + dy * dy) / centerX;
-        const nx = dx / centerX;
-        const ny = dy / centerX;
-        let weights = [];
-        let weightSum = 0;
-        for (let i = 0; i < cloudPaletteRGB.length; i++) {
-          const offset = groupOffsets[i];
-          const phase = groupPhases[i];
-          const noiseVal = fbm(
-            noise,
-            nx * scale + timeCloud + offset,
-            ny * scale + timeCloud + offset,
-            4,
-            0.5
-          );
-          const radial = (1 - rNorm) * Math.sin(timeCloud + phase);
-          const score = noiseVal + radial;
-          const w = Math.exp(beta * score);
-          weights.push(w);
-          weightSum += w;
-        }
-        for (let i = 0; i < weights.length; i++) {
-          weights[i] /= weightSum;
-        }
-        let rColor = 0,
-          gColor = 0,
-          bColor = 0;
-        for (let i = 0; i < cloudPaletteRGB.length; i++) {
-          rColor += weights[i] * cloudPaletteRGB[i][0];
-          gColor += weights[i] * cloudPaletteRGB[i][1];
-          bColor += weights[i] * cloudPaletteRGB[i][2];
-        }
-        const idx = (y * size + x) * 4;
-        data[idx] = rColor;
-        data[idx + 1] = gColor;
-        data[idx + 2] = bColor;
-        data[idx + 3] = 255;
-      }
+    const pattern =
+      texturePatternRef.current || buildCloudTexturePattern(ctx);
+    if (pattern) {
+      texturePatternRef.current = pattern;
     }
-    offCtx.putImageData(imageData, 0, 0);
-
-    const pattern = ctx.createPattern(offCanvas, "no-repeat");
-    ctx.fillStyle = pattern;
-    ctx.fill();
 
     ctx.shadowColor = themeShadowColor;
     ctx.shadowBlur = 3;
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = 0;
+    let fill = pattern;
+    if (!fill) {
+      fill = ctx.createLinearGradient(0, 0, ctx.canvas.width, ctx.canvas.height);
+      fill.addColorStop(0, cloudPalette[0]);
+      fill.addColorStop(1, cloudPalette[cloudPalette.length - 1]);
+    }
+
+    ctx.fillStyle = fill;
+    ctx.fill();
+
     // Optionally, draw the outline:
     // ctx.lineWidth = outlineWidth;
     // ctx.strokeStyle = outlineColor;
@@ -544,7 +562,7 @@ export const CloudCanvas = ({
   };
 
   const animate = (ctx) => {
-    requestId = requestAnimationFrame(() => animate(ctx));
+    animationFrameRef.current = requestAnimationFrame(() => animate(ctx));
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     draw(ctx);
   };
@@ -553,10 +571,12 @@ export const CloudCanvas = ({
     if (hasAnimation) {
       const canvas = canvasRef.current;
       const context = canvas.getContext("2d");
+      if (!context) return undefined;
       canvas.width = 100;
       canvas.height = 100;
+      texturePatternRef.current = buildCloudTexturePattern(context);
       animate(context);
-      return () => cancelAnimationFrame(requestId);
+      return () => cancelAnimationFrame(animationFrameRef.current);
     }
   }, [hasAnimation, alternativeSpeed, outlineColor, outlineWidth, themeColor]);
 

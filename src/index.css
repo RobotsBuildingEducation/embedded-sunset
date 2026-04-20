@@ -2,6 +2,12 @@
   color-scheme: light;
 }
 
+@keyframes appBootSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 html[data-theme-mode="dark"] {
   color-scheme: dark;
 }
