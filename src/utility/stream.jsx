@@ -200,10 +200,12 @@ export const useChatCompletion = (apiParams) => {
         // Fetch the full completion response
         const openaiResponse = await openAiCompletionHandler(requestOpts);
 
-        // Handle the final response (assumes the final result is in openaiResponse)
+        // Handle the final response from responses API
+        const outputMessage = openaiResponse.output.find(item => item.type === "message");
+        const textContent = outputMessage?.content?.find(c => c.type === "output_text")?.text || "";
         handleNewData(
-          openaiResponse.choices[0].message.content,
-          openaiResponse.choices[0].message.role,
+          textContent,
+          outputMessage?.role || "assistant",
           true
         );
 
