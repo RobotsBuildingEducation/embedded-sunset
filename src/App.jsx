@@ -80,8 +80,8 @@ import {
   BigSunset,
   CloudCanvas,
 } from "./elements/SunsetCanvas";
-const EducationalModal = lazy(() =>
-  import("./components/LearnModal/EducationalModal"),
+const EducationalModal = lazy(
+  () => import("./components/LearnModal/EducationalModal"),
 );
 import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
 import ThemeMenu from "./components/ThemeMenu";
@@ -171,11 +171,9 @@ import MultipleChoiceQuestion from "./components/MultipleChoice/MultipleChoice";
 import SelectOrderQuestion from "./components/SelectOrder/SelectOrder";
 
 import Confetti from "react-confetti";
-const About = lazy(() =>
-  import("./About").then((m) => ({ default: m.About })),
-);
-const ConversationReview = lazy(() =>
-  import("./components/ConversationReview/ConversationReview"),
+const About = lazy(() => import("./About").then((m) => ({ default: m.About })));
+const ConversationReview = lazy(
+  () => import("./components/ConversationReview/ConversationReview"),
 );
 import RandomCharacter, {
   FadeInComponent,
@@ -185,9 +183,7 @@ import RandomCharacter, {
 import MultipleAnswerQuestion from "./components/MultipleAnswerQuestion/MultipleAnswerQuestion";
 import { DataTags } from "./elements/DataTag";
 import { transcript } from "./utility/transcript";
-const AwardModal = lazy(() =>
-  import("./components/AwardModal/AwardModal"),
-);
+const AwardModal = lazy(() => import("./components/AwardModal/AwardModal"));
 import CodeCompletionQuestion from "./components/CodeCompletionQuestion/CodeCompletionQuestion";
 import {
   applyUserThemePreferences,
@@ -209,8 +205,8 @@ import { PasscodeModal } from "./components/PasscodeModal/PasscodeModal";
 import { usePasscodeModalStore } from "./usePasscodeModalStore";
 
 import { OrbCanvas } from "./elements/OrbCanvas";
-const LectureModal = lazy(() =>
-  import("./components/LectureModal/LectureModal"),
+const LectureModal = lazy(
+  () => import("./components/LectureModal/LectureModal"),
 );
 
 // import { TestNostrWallet } from "./components/WalletSetup/TestNostrWallet";
@@ -223,8 +219,8 @@ import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { useSimpleGeminiChat } from "./hooks/useGeminiChat";
 
 import { logEvent } from "firebase/analytics";
-const BitcoinOnboarding = lazy(() =>
-  import("./components/BitcoinOnboarding/BitcoinOnboarding"),
+const BitcoinOnboarding = lazy(
+  () => import("./components/BitcoinOnboarding/BitcoinOnboarding"),
 );
 import SyntaxHighlighter from "react-syntax-highlighter";
 import {
@@ -240,14 +236,14 @@ import {
 import { FiTrendingUp } from "react-icons/fi";
 import MiniKitInitializer from "./MiniKitInitializer";
 
-const BitcoinModeModal = lazy(() =>
-  import("./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal"),
+const BitcoinModeModal = lazy(
+  () => import("./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal"),
 );
-const SelfPacedModal = lazy(() =>
-  import("./components/SettingsMenu/SelfPacedModal/SelfPacedModal"),
+const SelfPacedModal = lazy(
+  () => import("./components/SettingsMenu/SelfPacedModal/SelfPacedModal"),
 );
-const SocialFeedModal = lazy(() =>
-  import("./components/SocialFeedModal/SocialFeedModal"),
+const SocialFeedModal = lazy(
+  () => import("./components/SocialFeedModal/SocialFeedModal"),
 );
 const Onboarding = lazy(() =>
   import("./Onboarding").then((m) => ({ default: m.Onboarding })),
@@ -262,16 +258,16 @@ const InstallAppModal = lazy(() =>
 import { motion, animate, useAnimation } from "framer-motion";
 import { keyframes } from "@emotion/react";
 import { Delaunay } from "d3-delaunay";
-const StudyGuideModal = lazy(() =>
-  import("./components/StudyGuideModal/StudyGuideModal"),
+const StudyGuideModal = lazy(
+  () => import("./components/StudyGuideModal/StudyGuideModal"),
 );
 const CodeEditor = lazy(() =>
   import("./components/CodeEditor/CodeEditor").then((m) => ({
     default: m.CodeEditor,
   })),
 );
-const ProgressModal = lazy(() =>
-  import("./components/ProgressModal/ProgressModal"),
+const ProgressModal = lazy(
+  () => import("./components/ProgressModal/ProgressModal"),
 );
 const RoleCanvas = lazy(() =>
   import("./components/RoleCanvas/RoleCanvas").then((m) => ({
@@ -285,8 +281,8 @@ const AlgorithmHelper = lazy(() =>
 );
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
 import CloudTransition from "./elements/CloudTransition";
-const KnowledgeLedgerModal = lazy(() =>
-  import("./components/KnowledgeLedgerModal/KnowledgeLedgerModal"),
+const KnowledgeLedgerModal = lazy(
+  () => import("./components/KnowledgeLedgerModal/KnowledgeLedgerModal"),
 );
 import { TbWorld } from "react-icons/tb";
 const SoundExperiment = lazy(() => import("./experiments/SoundExperiment"));
@@ -1085,10 +1081,10 @@ export const VoiceInput = ({
 
   return (
     <Suspense fallback={null}>
-    <VStack spacing={4} alignItems="center" width="100%" maxWidth={"600px"}>
-      {useVoice || isTerminal ? (
-        <HStack spacing={4} justifyContent={"center"} maxWidth={"400px"}>
-          {/* <Button
+      <VStack spacing={4} alignItems="center" width="100%" maxWidth={"600px"}>
+        {useVoice || isTerminal ? (
+          <HStack spacing={4} justifyContent={"center"} maxWidth={"400px"}>
+            {/* <Button
             onMouseDown={handleVoiceStart}
             colorScheme="pink"
             variant={"outline"}
@@ -1096,53 +1092,53 @@ export const VoiceInput = ({
           >
             {translation[userLanguage]["app.button.voiceToText"]}
           </Button> */}
-          <Button
-            onMouseDown={handleAiStart}
-            variant={"outline"}
-            bg="appSurface"
-            color="appText"
-            border="1px solid var(--chakra-colors-appBorder)"
-            boxShadow={actionShadow}
-            _hover={{
-              bg: "appSurfaceMuted",
-              borderColor: "var(--chakra-colors-appBorderStrong)",
-            }}
-            _active={{ bg: "appSurfaceInset" }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                handleAiStart(); // Select the option on Enter or Space key
-              }
-            }}
-            // isDisabled={isUnsupportedBrowser()}
-          >
-            {" "}
-            {translation[userLanguage]["app.button.voiceToAI"]}
-          </Button>
-          <Button
-            colorScheme="pink"
-            onMouseDown={() => {
-              triggerHaptic();
-              handleModalCheck(handleLearnClick);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
+            <Button
+              onMouseDown={handleAiStart}
+              variant={"outline"}
+              bg="appSurface"
+              color="appText"
+              border="1px solid var(--chakra-colors-appBorder)"
+              boxShadow={actionShadow}
+              _hover={{
+                bg: "appSurfaceMuted",
+                borderColor: "var(--chakra-colors-appBorderStrong)",
+              }}
+              _active={{ bg: "appSurfaceInset" }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleAiStart(); // Select the option on Enter or Space key
+                }
+              }}
+              // isDisabled={isUnsupportedBrowser()}
+            >
+              {" "}
+              {translation[userLanguage]["app.button.voiceToAI"]}
+            </Button>
+            <Button
+              colorScheme="pink"
+              onMouseDown={() => {
                 triggerHaptic();
                 handleModalCheck(handleLearnClick);
-              }
-            }}
-            background="pink.400"
-            color="white"
-            boxShadow={actionShadow}
-            _hover={{ bg: "pink.500" }}
-            _active={{ bg: "pink.500" }}
-          >
-            <IoChatbubblesOutline />
-            &nbsp;
-            {translation[userLanguage]["app.button.learn"]}
-          </Button>
-        </HStack>
-      ) : null}
-      {/* {isWarningNotDismissed && isUnsupportedBrowser() ? (
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  triggerHaptic();
+                  handleModalCheck(handleLearnClick);
+                }
+              }}
+              background="pink.400"
+              color="white"
+              boxShadow={actionShadow}
+              _hover={{ bg: "pink.500" }}
+              _active={{ bg: "pink.500" }}
+            >
+              <IoChatbubblesOutline />
+              &nbsp;
+              {translation[userLanguage]["app.button.learn"]}
+            </Button>
+          </HStack>
+        ) : null}
+        {/* {isWarningNotDismissed && isUnsupportedBrowser() ? (
         <>
           <br />
           <VStack
@@ -1199,166 +1195,166 @@ export const VoiceInput = ({
           </VStack>
         </>
       ) : null} */}
-      {isListening && (
-        <HStack spacing={2} alignItems="center">
-          <CloudCanvas />
-          <FadeInComponent speed="0.25s">
-            <Text
-              fontSize={"smaller"}
-              backgroundColor="appSurface"
-              color="appText"
-              fontWeight={"bold"}
-              borderRadius="8px"
-              padding="10px"
-            >
-              {" "}
-              {translation[userLanguage]["app.listening"]}
-            </Text>
-          </FadeInComponent>
-        </HStack>
-      )}
-      {aiListening && (
-        <HStack spacing={2} alignItems="center">
-          <CloudCanvas />
-          <FadeInComponent speed="0.25s">
-            <Text
-              fontSize={"smaller"}
-              backgroundColor="appSurface"
-              color="appText"
-              fontWeight={"bold"}
-              borderRadius="8px"
-              padding="10px"
-            >
-              {" "}
-              {translation[userLanguage]["app.listening"]}
-            </Text>
-          </FadeInComponent>
-        </HStack>
-      )}
-      {isCodeEditor ? (
-        <>
-          {" "}
-          <Box
-            width="100%"
-            height="400px"
-            // bg="white"
-            style={{
-              borderRadius: "8px",
-              // border: "1px solid black",
-              textAlign: "left",
-            }}
-            // boxShadow="0.5px 0.5px 1px 0px rgba(0, 0, 0,0.75)"
-          >
-            {generateResponse ? (
-              <div
-                style={{
-                  width: "100%",
-                }}
+        {isListening && (
+          <HStack spacing={2} alignItems="center">
+            <CloudCanvas />
+            <FadeInComponent speed="0.25s">
+              <Text
+                fontSize={"smaller"}
+                backgroundColor="appSurface"
+                color="appText"
+                fontWeight={"bold"}
+                borderRadius="8px"
+                padding="10px"
               >
-                <CloudCanvas isLoader={true} regulateWidth={false} />
-              </div>
-            ) : (
-              // <MonacoEditor
-              //   height="100%"
-              //   width="100%"
-              //   language="javascript"
-              //   theme="light"
-              //   value={value}
-              //   onChange={(value) => onChange(value, resetMessages)}
-              //   options={{
-              //     fontFamily: "initial",
-              //     fontSize: "16px",
-              //     // wordWrap: "on",
-              //     automaticLayout: true,
-              //     tabIndex: 0, // Make the editor focusable
-              //   }}
-              //   onMount={(editorInstance) => {
-              //     // Unbind the Tab key to prevent it from inserting a tab character
-              //     editorInstance.addCommand(monaco.KeyCode.Tab, () => {
-              //       // Move focus to the next focusable element
-              //       moveFocus(true);
-              //     });
-              //     // Unbind the Shift+Tab key for reverse navigation
-              //     editorInstance.addCommand(
-              //       monaco.KeyMod.Shift | monaco.KeyCode.Tab,
-              //       () => {
-              //         // Move focus to the previous focusable element
-              //         moveFocus(false);
-              //       }
-              //     );
-              //   }}
-              // />
-              <CodeEditor
-                value={value}
-                onChange={(v) => onChange(v, resetMessages)}
-                height={400}
-                userLanguage={userLanguage}
-              />
-            )}
-          </Box>
-          <br />
-        </>
-      ) : isSingleLineText ? (
-        <Input
-          type="text"
-          value={
-            generateResponse ? translation[userLanguage]["thinking"] : value
-          }
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={translation[userLanguage]["app.input.placeholder"]}
-          maxWidth="400px"
-          width="100%"
-          boxShadow={inputShadow}
-          backgroundColor="appSurface"
+                {" "}
+                {translation[userLanguage]["app.listening"]}
+              </Text>
+            </FadeInComponent>
+          </HStack>
+        )}
+        {aiListening && (
+          <HStack spacing={2} alignItems="center">
+            <CloudCanvas />
+            <FadeInComponent speed="0.25s">
+              <Text
+                fontSize={"smaller"}
+                backgroundColor="appSurface"
+                color="appText"
+                fontWeight={"bold"}
+                borderRadius="8px"
+                padding="10px"
+              >
+                {" "}
+                {translation[userLanguage]["app.listening"]}
+              </Text>
+            </FadeInComponent>
+          </HStack>
+        )}
+        {isCodeEditor ? (
+          <>
+            {" "}
+            <Box
+              width="100%"
+              height="400px"
+              // bg="white"
+              style={{
+                borderRadius: "8px",
+                // border: "1px solid black",
+                textAlign: "left",
+              }}
+              // boxShadow="0.5px 0.5px 1px 0px rgba(0, 0, 0,0.75)"
+            >
+              {generateResponse ? (
+                <div
+                  style={{
+                    width: "100%",
+                  }}
+                >
+                  <CloudCanvas isLoader={true} regulateWidth={false} />
+                </div>
+              ) : (
+                // <MonacoEditor
+                //   height="100%"
+                //   width="100%"
+                //   language="javascript"
+                //   theme="light"
+                //   value={value}
+                //   onChange={(value) => onChange(value, resetMessages)}
+                //   options={{
+                //     fontFamily: "initial",
+                //     fontSize: "16px",
+                //     // wordWrap: "on",
+                //     automaticLayout: true,
+                //     tabIndex: 0, // Make the editor focusable
+                //   }}
+                //   onMount={(editorInstance) => {
+                //     // Unbind the Tab key to prevent it from inserting a tab character
+                //     editorInstance.addCommand(monaco.KeyCode.Tab, () => {
+                //       // Move focus to the next focusable element
+                //       moveFocus(true);
+                //     });
+                //     // Unbind the Shift+Tab key for reverse navigation
+                //     editorInstance.addCommand(
+                //       monaco.KeyMod.Shift | monaco.KeyCode.Tab,
+                //       () => {
+                //         // Move focus to the previous focusable element
+                //         moveFocus(false);
+                //       }
+                //     );
+                //   }}
+                // />
+                <CodeEditor
+                  value={value}
+                  onChange={(v) => onChange(v, resetMessages)}
+                  height={400}
+                  userLanguage={userLanguage}
+                />
+              )}
+            </Box>
+            <br />
+          </>
+        ) : isSingleLineText ? (
+          <Input
+            type="text"
+            value={
+              generateResponse ? translation[userLanguage]["thinking"] : value
+            }
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={translation[userLanguage]["app.input.placeholder"]}
+            maxWidth="400px"
+            width="100%"
+            boxShadow={inputShadow}
+            backgroundColor="appSurface"
 
-          // border="1px solid black"
-        />
-      ) : (
-        <Textarea
-          ref={textareaRef}
-          boxShadow={inputShadow}
-          type="textarea"
-          maxWidth={"100%"}
-          minHeight={isTerminal ? "100px" : "100px"}
-          backgroundColor="appSurface"
-          value={
-            generateResponse
-              ? translation[userLanguage]["thinking"]
-              : aiListening
-                ? aiTranscript
-                : value
-          }
-          onChange={(e) => {
-            onChange(e.target.value);
-          }}
-          placeholder={
-            isTerminal
-              ? translation[userLanguage]["app.terminal.placeholder"]
-              : translation[userLanguage]["app.input.placeholder"]
-          }
-          width="100%"
-        />
-      )}
+            // border="1px solid black"
+          />
+        ) : (
+          <Textarea
+            ref={textareaRef}
+            boxShadow={inputShadow}
+            type="textarea"
+            maxWidth={"100%"}
+            minHeight={isTerminal ? "100px" : "100px"}
+            backgroundColor="appSurface"
+            value={
+              generateResponse
+                ? translation[userLanguage]["thinking"]
+                : aiListening
+                  ? aiTranscript
+                  : value
+            }
+            onChange={(e) => {
+              onChange(e.target.value);
+            }}
+            placeholder={
+              isTerminal
+                ? translation[userLanguage]["app.terminal.placeholder"]
+                : translation[userLanguage]["app.input.placeholder"]
+            }
+            width="100%"
+          />
+        )}
 
-      {isOpen ? (
-        <EducationalModal
-          isOpen={isOpen}
-          onClose={onClose}
-          educationalMessages={educationalMessages}
-          educationalContent={educationalContent}
-          userLanguage={userLanguage}
-        />
-      ) : null}
+        {isOpen ? (
+          <EducationalModal
+            isOpen={isOpen}
+            onClose={onClose}
+            educationalMessages={educationalMessages}
+            educationalContent={educationalContent}
+            userLanguage={userLanguage}
+          />
+        ) : null}
 
-      {isInstallModalOpen ? (
-        <InstallAppModal
-          userLanguage={userLanguage}
-          isOpen={isInstallModalOpen}
-          onClose={onInstallModalClose}
-          vocalRequest={true}
-        />
-      ) : null}
-    </VStack>
+        {isInstallModalOpen ? (
+          <InstallAppModal
+            userLanguage={userLanguage}
+            isOpen={isInstallModalOpen}
+            onClose={onInstallModalClose}
+            vocalRequest={true}
+          />
+        ) : null}
+      </VStack>
     </Suspense>
   );
 };
@@ -3905,163 +3901,179 @@ const Step = ({
 
   return (
     <Suspense fallback={null}>
-    <VStack
-      spacing={4}
-      width="100%"
-      px={4}
-      pt={showChapterReview ? { base: 0, md: 0 } : 10}
-      pb={showChapterReview ? { base: 14, md: 24 } : { base: 40, md: 44 }}
-      minH="100dvh"
-      justifyContent={showChapterReview ? "center" : "flex-start"}
-      boxSizing="border-box"
-      bg="transparent"
-    >
-      <DailyGoalCelebrationModal
-        isOpen={isDailyGoalCelebrationOpen}
-        onClose={onDailyGoalCelebrationClose}
-        userLanguage={userLanguage}
-        dailyGoals={dailyGoalCelebration.dailyGoals}
-        completedGoalCount={dailyGoalCelebration.completedGoalCount}
-      />
-
-      {showChapterReview && chapterReviewNodes.length > 0 ? (
-        <ChapterReview
-          nodes={chapterReviewNodes}
-          text={chapterReviewText}
-          onStart={dismissChapterReview}
+      <VStack
+        spacing={4}
+        width="100%"
+        px={4}
+        pt={showChapterReview ? { base: 0, md: 0 } : 10}
+        pb={showChapterReview ? { base: 14, md: 24 } : { base: 40, md: 44 }}
+        minH="100dvh"
+        justifyContent={showChapterReview ? "center" : "flex-start"}
+        boxSizing="border-box"
+        bg="transparent"
+      >
+        <DailyGoalCelebrationModal
+          isOpen={isDailyGoalCelebrationOpen}
+          onClose={onDailyGoalCelebrationClose}
+          userLanguage={userLanguage}
+          dailyGoals={dailyGoalCelebration.dailyGoals}
+          completedGoalCount={dailyGoalCelebration.completedGoalCount}
         />
-      ) : newQuestionMessages.length > 0 && isEmpty(generatedQuestion) ? (
-        <Box
-          width="100%"
-          minH="calc(100dvh - 160px)"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          px={{ base: 2, md: 6 }}
-        >
+
+        {showChapterReview && chapterReviewNodes.length > 0 ? (
+          <ChapterReview
+            nodes={chapterReviewNodes}
+            text={chapterReviewText}
+            onStart={dismissChapterReview}
+          />
+        ) : newQuestionMessages.length > 0 && isEmpty(generatedQuestion) ? (
           <Box
             width="100%"
-            maxW="460px"
-            height={{ base: "560px", md: "600px" }}
-            maxH="72dvh"
-            color="appText"
-            bg="appBg"
-            border="1px solid var(--chakra-colors-appBorderStrong)"
-            borderRadius="32px"
-            boxShadow="0 24px 60px rgba(2, 6, 23, 0.34)"
-            overflow="hidden"
+            minH="calc(100dvh - 160px)"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            px={{ base: 2, md: 6 }}
           >
-            <OrbCanvas
-              hasStreamedText={false}
-              instructions={
-                <Markdown components={ChakraUIRenderer(newTheme)}>
-                  {`${translation[userLanguage]["analyzer"]}\n\n${
-                    newQuestionMessages[newQuestionMessages.length - 1]
-                      ?.content || ""
-                  }`.trimStart()}
-                </Markdown>
-              }
-            />
-          </Box>
-        </Box>
-      ) : (
-        <>
-          <VStack
-            textAlign={"left"}
-            style={{
-              width: "100%",
-              maxWidth: 400,
-              alignItems: "flex-start",
-              paddingBottom: "14px",
-            }}
-          >
-            <VStack width="100%" spacing={2} alignItems="flex-start">
-              <HStack
-                spacing={2}
-                flexWrap="wrap"
-                rowGap={1.5}
-                alignItems="center"
-                width="100%"
-              >
-                <HStack
-                  spacing={1.5}
-                  px={2}
-                  py={1}
-                  borderRadius="full"
-                  background="appInfoSubtle"
-                  border="1px solid rgba(102, 133, 255, 0.5)"
-                >
-                  <Icon as={RiBookOpenLine} color="blue.400" boxSize={3.5} />
-                  <Text fontSize="sm" fontWeight="medium" color="appTextMuted">
-                    {step.group}
-                  </Text>
-                </HStack>
-                <HStack
-                  spacing={1.5}
-                  px={2}
-                  py={1}
-                  borderRadius="full"
-                  background="appWarningSubtle"
-                  border="1px solid rgba(246, 173, 85, 0.4)"
-                >
-                  <Icon as={FiTrendingUp} color="orange.500" boxSize={3.5} />
-                  <Text fontSize="sm" fontWeight="medium" color="appTextMuted">
-                    {animatedProgress.toFixed(0)}%
-                  </Text>
-                </HStack>
-
-                <HStack
-                  spacing={1.5}
-                  px={2}
-                  py={1}
-                  borderRadius="full"
-                  background="appErrorSubtle"
-                  border="1px solid rgba(252, 129, 129, 0.45)"
-                >
-                  <Icon as={FaFire} color="red.400" boxSize={3.5} />
-                  <Text fontSize="sm" fontWeight="medium" color="appTextMuted">
-                    {streak}
-                  </Text>
-                </HStack>
-                <HStack
-                  spacing={1.5}
-                  px={2}
-                  py={1}
-                  borderRadius="full"
-                  background="appAccentSoft"
-                  border="1px solid rgba(183, 148, 244, 0.5)"
-                >
-                  <Icon as={RiFlag2Line} color="purple.400" boxSize={3.5} />
-                  <Text fontSize="sm" fontWeight="medium" color="appTextMuted">
-                    {String(goalCount) || "0"}
-                  </Text>
-                </HStack>
-              </HStack>
-              <MotionProgress
-                height="24px"
-                initial={{ scale: 1 }}
-                animate={progressControls}
-                opacity={0.8}
-                value={animatedProgress}
-                size="sm"
-                colorScheme={getColorScheme(step.group)}
-                width="100%"
-                hasStripe
-                isAnimated
-                borderRadius="4px"
-                border="1px solid rgba(236, 236, 236, 0.8)"
-                background={getBackgroundScheme(step.group)}
-                mb={userLanguage !== "compsci-en" ? 1 : 2}
-                sx={{
-                  "& > div": {
-                    background:
-                      "linear-gradient(270deg, #f6ad55, #fbd38d, #f6ad55)",
-                    backgroundSize: "200% 200%",
-                    animation: `${progressGradient} 7s ease-in-out infinite`,
-                  },
-                }}
+            <Box
+              width="100%"
+              maxW="460px"
+              height={{ base: "560px", md: "600px" }}
+              maxH="72dvh"
+              color="appText"
+              bg="appBg"
+              border="1px solid var(--chakra-colors-appBorderStrong)"
+              borderRadius="32px"
+              boxShadow="0 24px 60px rgba(2, 6, 23, 0.34)"
+              overflow="hidden"
+            >
+              <OrbCanvas
+                hasStreamedText={false}
+                instructions={
+                  <Markdown components={ChakraUIRenderer(newTheme)}>
+                    {`${translation[userLanguage]["analyzer"]}\n\n${
+                      newQuestionMessages[newQuestionMessages.length - 1]
+                        ?.content || ""
+                    }`.trimStart()}
+                  </Markdown>
+                }
               />
-              {/* {userLanguage !== "compsci-en" ? (
+            </Box>
+          </Box>
+        ) : (
+          <>
+            <VStack
+              textAlign={"left"}
+              style={{
+                width: "100%",
+                maxWidth: 400,
+                alignItems: "flex-start",
+                paddingBottom: "14px",
+              }}
+            >
+              <VStack width="100%" spacing={2} alignItems="flex-start">
+                <HStack
+                  spacing={2}
+                  flexWrap="wrap"
+                  rowGap={1.5}
+                  alignItems="center"
+                  width="100%"
+                >
+                  <HStack
+                    spacing={1.5}
+                    px={2}
+                    py={1}
+                    borderRadius="full"
+                    background="appInfoSubtle"
+                    border="1px solid rgba(102, 133, 255, 0.5)"
+                  >
+                    <Icon as={RiBookOpenLine} color="blue.400" boxSize={3.5} />
+                    <Text
+                      fontSize="sm"
+                      fontWeight="medium"
+                      color="appTextMuted"
+                    >
+                      {step.group}
+                    </Text>
+                  </HStack>
+                  <HStack
+                    spacing={1.5}
+                    px={2}
+                    py={1}
+                    borderRadius="full"
+                    background="appWarningSubtle"
+                    border="1px solid rgba(246, 173, 85, 0.4)"
+                  >
+                    <Icon as={FiTrendingUp} color="orange.500" boxSize={3.5} />
+                    <Text
+                      fontSize="sm"
+                      fontWeight="medium"
+                      color="appTextMuted"
+                    >
+                      {animatedProgress.toFixed(0)}%
+                    </Text>
+                  </HStack>
+
+                  <HStack
+                    spacing={1.5}
+                    px={2}
+                    py={1}
+                    borderRadius="full"
+                    background="appErrorSubtle"
+                    border="1px solid rgba(252, 129, 129, 0.45)"
+                  >
+                    <Icon as={FaFire} color="red.400" boxSize={3.5} />
+                    <Text
+                      fontSize="sm"
+                      fontWeight="medium"
+                      color="appTextMuted"
+                    >
+                      {streak}
+                    </Text>
+                  </HStack>
+                  <HStack
+                    spacing={1.5}
+                    px={2}
+                    py={1}
+                    borderRadius="full"
+                    background="appAccentSoft"
+                    border="1px solid rgba(183, 148, 244, 0.5)"
+                  >
+                    <Icon as={RiFlag2Line} color="purple.400" boxSize={3.5} />
+                    <Text
+                      fontSize="sm"
+                      fontWeight="medium"
+                      color="appTextMuted"
+                    >
+                      {String(goalCount) || "0"}
+                    </Text>
+                  </HStack>
+                </HStack>
+                <MotionProgress
+                  height="24px"
+                  initial={{ scale: 1 }}
+                  animate={progressControls}
+                  opacity={0.8}
+                  value={animatedProgress}
+                  size="sm"
+                  colorScheme={getColorScheme(step.group)}
+                  width="100%"
+                  hasStripe
+                  isAnimated
+                  borderRadius="4px"
+                  border="1px solid rgba(236, 236, 236, 0.8)"
+                  background={getBackgroundScheme(step.group)}
+                  mb={userLanguage !== "compsci-en" ? 1 : 2}
+                  sx={{
+                    "& > div": {
+                      background:
+                        "linear-gradient(270deg, #f6ad55, #fbd38d, #f6ad55)",
+                      backgroundSize: "200% 200%",
+                      animation: `${progressGradient} 7s ease-in-out infinite`,
+                    },
+                  }}
+                />
+                {/* {userLanguage !== "compsci-en" ? (
                 <Text
                   color="yellow.600"
                   fontWeight={"bold"}
@@ -4074,8 +4086,8 @@ const Step = ({
                   /{translation[userLanguage]["year"]}
                 </Text>
               ) : null} */}
-            </VStack>
-            {/* {calculateBalance() > 0 ? (
+              </VStack>
+              {/* {calculateBalance() > 0 ? (
               <HStack
                 style={{ marginTop: "-12px", width: "100%" }}
                 display="flex"
@@ -4099,44 +4111,47 @@ const Step = ({
                 </Progress>
               </HStack>
             ) : null} */}
-          </VStack>
+            </VStack>
 
-          <div
-            style={{
-              zoom: 0.8,
-              textAlign: "left",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-            <Text fontSize="xl" textAlign={step.isStudyGuide ? "center" : null}>
-              <b>
-                <HStack>
-                  {currentStep === 0 ? null : (
-                    <IconButton
-                      width="18px"
-                      height="24px"
-                      background="pink.100"
-                      opacity="0.75"
-                      color="pink.600"
-                      icon={<RiAiGenerate padding="4px" fontSize="14px" />}
-                      mr={2}
-                      mt="-0.5"
-                      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                      onMouseDown={() => {
-                        triggerHaptic();
-                        handleModalCheck(handleGenerateNewQuestion);
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
+            <div
+              style={{
+                zoom: 0.8,
+                textAlign: "left",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <Text
+                fontSize="xl"
+                textAlign={step.isStudyGuide ? "center" : null}
+              >
+                <b>
+                  <HStack>
+                    {currentStep === 0 ? null : (
+                      <IconButton
+                        width="18px"
+                        height="24px"
+                        background="pink.100"
+                        opacity="0.75"
+                        color="pink.600"
+                        icon={<RiAiGenerate padding="4px" fontSize="14px" />}
+                        mr={2}
+                        mt="-0.5"
+                        boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                        onMouseDown={() => {
                           triggerHaptic();
                           handleModalCheck(handleGenerateNewQuestion);
-                        }
-                      }}
-                    />
-                  )}
-                  {/* <IconButton
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            triggerHaptic();
+                            handleModalCheck(handleGenerateNewQuestion);
+                          }
+                        }}
+                      />
+                    )}
+                    {/* <IconButton
                     width="12px"
                     height="18px"
                     boxShadow="0px 0px 0.25px 0.5px #ececec"
@@ -4155,396 +4170,401 @@ const Step = ({
                       }
                     }}
                   />{" "} */}
-                  {/* {currentStep > 0 ? currentStep + "." : null} {step.title} */}
-                  <HStack spacing={2} alignItems="center">
-                    {/* dropdown for jumping between questions */}
+                    {/* {currentStep > 0 ? currentStep + "." : null} {step.title} */}
+                    <HStack spacing={2} alignItems="center">
+                      {/* dropdown for jumping between questions */}
 
-                    {currentStep > 0 && (
-                      <Menu>
-                        <MenuButton
-                          as={Button}
-                          variant="link"
-                          size="lg"
-                          rightIcon={<ChevronDownIcon marginLeft="-18px" />}
-                          colorScheme="pink"
-                          opacity="0.75"
-                          _hover={{ textDecoration: "none", opacity: 1 }}
-                          mr={1}
-                        >
-                          {isAILearningMode ? (
-                            <HStack spacing={1}>
-                              <Icon as={RiAiGenerate} boxSize={4} />
-                              <Text>AI</Text>
-                            </HStack>
-                          ) : (
-                            currentStep
-                          )}
-                        </MenuButton>
-                        <MenuList
-                          maxH="450px"
-                          overflowY="auto"
-                          minW="auto"
-                          maxWidth="90vw"
-                          whiteSpace="normal"
-                          marginLeft="48px"
-                          p={2}
-                        >
-                          {isAILearningMode && (
-                            <>
-                              <MenuItem
-                                onClick={() => {
-                                  triggerHaptic();
-                                  handleExitAILearningMode();
-                                }}
-                                fontWeight="bold"
-                                color="pink.600"
-                                icon={<RiBookOpenLine />}
-                              >
-                                {translation[userLanguage]?.[
-                                  "button.returnToCourse"
-                                ] || "Return to Course"}
-                              </MenuItem>
-                              <MenuItem
-                                onClick={() => {
-                                  triggerHaptic();
-                                  handleGenerateNewQuestion();
-                                }}
-                                icon={<RiAiGenerate />}
-                              >
-                                {translation[userLanguage]?.[
-                                  "button.generateNewQuestion"
-                                ] || "Generate New Question"}
-                              </MenuItem>
-                              <Divider my={2} />
-                            </>
-                          )}
-                          <Input
-                            placeholder={translation[userLanguage]["search..."]}
-                            size="sm"
-                            mb={2}
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                          />
-                          {steps[userLanguage]
-                            .map((s, idx) => ({ s, idx }))
-                            .filter(({ s, idx }) => {
-                              const term = searchTerm.toLowerCase();
-                              return (
-                                String(idx).includes(term) ||
-                                s.title.toLowerCase().includes(term)
-                              );
-                            })
-                            .map(({ s, idx }) => {
-                              const disabled = idx >= 10 && !hasPasscode;
-                              const label = `${idx > 0 ? idx + ". " : ""}${s.title}`;
-                              return disabled ? (
-                                <Tooltip
-                                  key={idx}
-                                  label={
-                                    translation[userLanguage][
-                                      "completeTutorialFirst"
-                                    ]
-                                  }
-                                  placement="bottom"
-                                  hasArrow
-                                >
-                                  <Box w="100%">
-                                    <MenuItem isDisabled whiteSpace="normal">
-                                      {label}
-                                    </MenuItem>
-                                  </Box>
-                                </Tooltip>
-                              ) : (
-                                <MenuItem
-                                  key={idx}
-                                  onClick={() => {
-                                    setSearchTerm("");
-                                    if (isAILearningMode) {
-                                      handleExitAILearningMode();
-                                    }
-                                    navigate(`/q/${idx}`);
-                                  }}
-                                  whiteSpace="normal"
-                                >
-                                  {label}
-                                </MenuItem>
-                              );
-                            })}
-                        </MenuList>
-                      </Menu>
-                    )}
-
-                    {/* the question title */}
-                    <Text fontSize="xl" fontWeight="bold">
-                      {isAILearningMode && !isEmpty(generatedQuestion) ? (
-                        <HStack spacing={2}>
-                          <Text
-                            as="span"
-                            fontSize="xs"
-                            bg="pink.100"
-                            color="pink.700"
-                            px={2}
-                            py={0.5}
-                            borderRadius="full"
+                      {currentStep > 0 && (
+                        <Menu>
+                          <MenuButton
+                            as={Button}
+                            variant="link"
+                            size="lg"
+                            rightIcon={<ChevronDownIcon marginLeft="-18px" />}
+                            colorScheme="pink"
+                            opacity="0.75"
+                            _hover={{ textDecoration: "none", opacity: 1 }}
+                            mr={1}
                           >
-                            {translation[userLanguage]?.["label.aiGenerated"] ||
-                              "AI Generated"}
-                          </Text>
-                          <Text as="span">{step.title}</Text>
-                        </HStack>
-                      ) : (
-                        step.title
+                            {isAILearningMode ? (
+                              <HStack spacing={1}>
+                                <Icon as={RiAiGenerate} boxSize={4} />
+                                <Text>AI</Text>
+                              </HStack>
+                            ) : (
+                              currentStep
+                            )}
+                          </MenuButton>
+                          <MenuList
+                            maxH="450px"
+                            overflowY="auto"
+                            minW="auto"
+                            maxWidth="90vw"
+                            whiteSpace="normal"
+                            marginLeft="48px"
+                            p={2}
+                          >
+                            {isAILearningMode && (
+                              <>
+                                <MenuItem
+                                  onClick={() => {
+                                    triggerHaptic();
+                                    handleExitAILearningMode();
+                                  }}
+                                  fontWeight="bold"
+                                  color="pink.600"
+                                  icon={<RiBookOpenLine />}
+                                >
+                                  {translation[userLanguage]?.[
+                                    "button.returnToCourse"
+                                  ] || "Return to Course"}
+                                </MenuItem>
+                                <MenuItem
+                                  onClick={() => {
+                                    triggerHaptic();
+                                    handleGenerateNewQuestion();
+                                  }}
+                                  icon={<RiAiGenerate />}
+                                >
+                                  {translation[userLanguage]?.[
+                                    "button.generateNewQuestion"
+                                  ] || "Generate New Question"}
+                                </MenuItem>
+                                <Divider my={2} />
+                              </>
+                            )}
+                            <Input
+                              placeholder={
+                                translation[userLanguage]["search..."]
+                              }
+                              size="sm"
+                              mb={2}
+                              value={searchTerm}
+                              onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                            {steps[userLanguage]
+                              .map((s, idx) => ({ s, idx }))
+                              .filter(({ s, idx }) => {
+                                const term = searchTerm.toLowerCase();
+                                return (
+                                  String(idx).includes(term) ||
+                                  s.title.toLowerCase().includes(term)
+                                );
+                              })
+                              .map(({ s, idx }) => {
+                                const disabled = idx >= 10 && !hasPasscode;
+                                const label = `${idx > 0 ? idx + ". " : ""}${s.title}`;
+                                return disabled ? (
+                                  <Tooltip
+                                    key={idx}
+                                    label={
+                                      translation[userLanguage][
+                                        "completeTutorialFirst"
+                                      ]
+                                    }
+                                    placement="bottom"
+                                    hasArrow
+                                  >
+                                    <Box w="100%">
+                                      <MenuItem isDisabled whiteSpace="normal">
+                                        {label}
+                                      </MenuItem>
+                                    </Box>
+                                  </Tooltip>
+                                ) : (
+                                  <MenuItem
+                                    key={idx}
+                                    onClick={() => {
+                                      setSearchTerm("");
+                                      if (isAILearningMode) {
+                                        handleExitAILearningMode();
+                                      }
+                                      navigate(`/q/${idx}`);
+                                    }}
+                                    whiteSpace="normal"
+                                  >
+                                    {label}
+                                  </MenuItem>
+                                );
+                              })}
+                          </MenuList>
+                        </Menu>
                       )}
-                    </Text>
+
+                      {/* the question title */}
+                      <Text fontSize="xl" fontWeight="bold">
+                        {isAILearningMode && !isEmpty(generatedQuestion) ? (
+                          <HStack spacing={2}>
+                            <Text
+                              as="span"
+                              fontSize="xs"
+                              bg="pink.100"
+                              color="pink.700"
+                              px={2}
+                              py={0.5}
+                              borderRadius="full"
+                            >
+                              {translation[userLanguage]?.[
+                                "label.aiGenerated"
+                              ] || "AI Generated"}
+                            </Text>
+                            <Text as="span">{step.title}</Text>
+                          </HStack>
+                        ) : (
+                          step.title
+                        )}
+                      </Text>
+                    </HStack>
                   </HStack>
-                </HStack>
-              </b>
-            </Text>
-
-            {step.question && (
-              <Text
-                width="100%"
-                maxWidth={step.isStudyGuide ? 600 : "600px"}
-                fontSize="sm"
-                color="appTextMuted"
-                mb={3}
-                textAlign={step.isStudyGuide ? "left" : "left"}
-              >
-                <span style={{ textDecoration: "none" }}>
-                  {step.description}
-                </span>
+                </b>
               </Text>
-            )}
 
-            {step.question && (
-              <Text
-                width="100%"
-                maxWidth={step.isStudyGuide ? 600 : 600}
-                fontSize="medium"
-                color="appText"
-                textAlign={"left"}
-              >
-                {step.question.questionText}
-              </Text>
-            )}
-          </div>
-
-          <>
-            {step.isStudyGuide && (
-              <VStack>
-                <Text>
-                  {translation[userLanguage]["startTutorialAndOnboarding"]}
+              {step.question && (
+                <Text
+                  width="100%"
+                  maxWidth={step.isStudyGuide ? 600 : "600px"}
+                  fontSize="sm"
+                  color="appTextMuted"
+                  mb={3}
+                  textAlign={step.isStudyGuide ? "left" : "left"}
+                >
+                  <span style={{ textDecoration: "none" }}>
+                    {step.description}
+                  </span>
                 </Text>
+              )}
 
-                <HStack>
-                  <Button
-                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                    onMouseDown={onStudyGuideModalOpen}
-                    mb={4}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        onStudyGuideModalOpen();
-                      }
-                    }}
-                    variant={"outline"}
-                  >
-                    {translation[userLanguage]["settings.button.studyGuide"]}
-                  </Button>
-                  &nbsp;&nbsp; &nbsp;&nbsp;
-                  <Button
-                    onPointerDown={handleNextQuestionButtonPress}
-                    onClick={handleNextQuestionButtonPress}
-                    mb={4}
-                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                    style={{ touchAction: "manipulation" }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        handleNextQuestionButtonPress(e);
-                      }
-                    }}
-                    disabled={isPostingWithNostr || isActionTourActive}
-                  >
-                    {translation[userLanguage]["app.button.nextQuestion"]}{" "}
-                  </Button>
-                </HStack>
-                <StudyGuideModal
-                  isOpen={isStudyGuideModalOpen}
-                  onClose={onStudyGuideModalClose}
-                  content={step.question.metaData}
-                  userLanguage={userLanguage}
-                />
-              </VStack>
-            )}
+              {step.question && (
+                <Text
+                  width="100%"
+                  maxWidth={step.isStudyGuide ? 600 : 600}
+                  fontSize="medium"
+                  color="appText"
+                  textAlign={"left"}
+                >
+                  {step.question.questionText}
+                </Text>
+              )}
+            </div>
 
-            {step.isSingleLineText && (
-              <VoiceInput
-                handleModalCheck={handleModalCheck}
-                value={inputValue}
-                onChange={setInputValue}
-                isCodeEditor={false}
-                isTextInput={false}
-                isSingleLineText={true}
-                resetVoiceState={resetVoiceState}
-                useVoice={true}
-                stopListening={stopListening}
-                setFeedback={setFeedback}
-                resetFeedbackMessages={resetMessages}
-                step={step}
-                userLanguage={userLanguage}
-              />
-            )}
-            {step.isText && (
-              <VoiceInput
-                handleModalCheck={handleModalCheck}
-                value={inputValue}
-                onChange={setInputValue}
-                isCodeEditor={false}
-                isTextInput={true}
-                resetVoiceState={resetVoiceState}
-                useVoice={true}
-                stopListening={stopListening}
-                setFeedback={setFeedback}
-                resetFeedbackMessages={resetMessages}
-                step={step}
-                userLanguage={userLanguage}
-              />
-            )}
-            {step.isCodeCompletion && (
-              <CodeCompletionQuestion
-                step={step}
-                question={step.question}
-                selectedOption={selectedOption}
-                setSelectedOption={setSelectedOption}
-                onLearnClick={handleLearnClick}
-                userLanguage={userLanguage}
-                handleModalCheck={handleModalCheck}
-              />
-            )}
-            {step.isCode && !step.isTerminal && (
-              <VoiceInput
-                handleModalCheck={handleModalCheck}
-                value={inputValue}
-                onChange={setInputValue}
-                isCodeEditor={true}
-                resetVoiceState={resetVoiceState}
-                useVoice={true}
-                stopListening={stopListening}
-                setFeedback={setFeedback}
-                resetFeedbackMessages={resetMessages}
-                step={step}
-                userLanguage={userLanguage}
-                currentStep={currentStep}
-              />
-            )}
-            {step.isCode && step.isTerminal && (
-              <Box
-                width="100%"
-                justifyContent="center"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <TerminalComponent
-                  inputValue={inputValue}
-                  setInputValue={setInputValue}
-                  isSending={isSending}
-                  isTerminal={true}
-                  stopListening={stopListening}
+            <>
+              {step.isStudyGuide && (
+                <VStack>
+                  <Text>
+                    {translation[userLanguage]["startTutorialAndOnboarding"]}
+                  </Text>
+
+                  <HStack>
+                    <Button
+                      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                      onMouseDown={onStudyGuideModalOpen}
+                      mb={4}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          onStudyGuideModalOpen();
+                        }
+                      }}
+                      variant={"outline"}
+                    >
+                      {translation[userLanguage]["settings.button.studyGuide"]}
+                    </Button>
+                    &nbsp;&nbsp; &nbsp;&nbsp;
+                    <Button
+                      onPointerDown={handleNextQuestionButtonPress}
+                      onClick={handleNextQuestionButtonPress}
+                      mb={4}
+                      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                      style={{ touchAction: "manipulation" }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          handleNextQuestionButtonPress(e);
+                        }
+                      }}
+                      disabled={isPostingWithNostr || isActionTourActive}
+                    >
+                      {
+                        translation[userLanguage]["app.button.nextQuestion"]
+                      }{" "}
+                    </Button>
+                  </HStack>
+                  <StudyGuideModal
+                    isOpen={isStudyGuideModalOpen}
+                    onClose={onStudyGuideModalClose}
+                    content={step.question.metaData}
+                    userLanguage={userLanguage}
+                  />
+                </VStack>
+              )}
+
+              {step.isSingleLineText && (
+                <VoiceInput
+                  handleModalCheck={handleModalCheck}
+                  value={inputValue}
+                  onChange={setInputValue}
+                  isCodeEditor={false}
+                  isTextInput={false}
+                  isSingleLineText={true}
                   resetVoiceState={resetVoiceState}
+                  useVoice={true}
+                  stopListening={stopListening}
                   setFeedback={setFeedback}
                   resetFeedbackMessages={resetMessages}
                   step={step}
                   userLanguage={userLanguage}
+                />
+              )}
+              {step.isText && (
+                <VoiceInput
+                  handleModalCheck={handleModalCheck}
+                  value={inputValue}
+                  onChange={setInputValue}
+                  isCodeEditor={false}
+                  isTextInput={true}
+                  resetVoiceState={resetVoiceState}
+                  useVoice={true}
+                  stopListening={stopListening}
+                  setFeedback={setFeedback}
+                  resetFeedbackMessages={resetMessages}
+                  step={step}
+                  userLanguage={userLanguage}
+                />
+              )}
+              {step.isCodeCompletion && (
+                <CodeCompletionQuestion
+                  step={step}
+                  question={step.question}
+                  selectedOption={selectedOption}
+                  setSelectedOption={setSelectedOption}
+                  onLearnClick={handleLearnClick}
+                  userLanguage={userLanguage}
                   handleModalCheck={handleModalCheck}
                 />
-              </Box>
-            )}
-            {step.isMultipleChoice && (
-              <MultipleChoiceQuestion
-                question={step.question}
-                selectedOption={selectedOption}
-                setSelectedOption={setSelectedOption}
-                userLanguage={userLanguage}
-                onLearnClick={handleLearnClick}
-                handleModalCheck={handleModalCheck}
-              />
-            )}
-            {step.isMultipleAnswerChoice && (
-              <MultipleAnswerQuestion
-                question={step.question}
-                selectedOptions={selectedOptions}
-                setSelectedOptions={setSelectedOptions}
-                onLearnClick={handleLearnClick}
-                userLanguage={userLanguage}
-                handleModalCheck={handleModalCheck}
-              />
-            )}
-            {step.isSelectOrder && (
-              <SelectOrderQuestion
-                items={items}
-                setItems={setItems}
-                onLearnClick={handleLearnClick}
-                userLanguage={userLanguage}
-                step={step}
-                handleModalCheck={handleModalCheck}
-              />
-            )}
-            {step.isPromptWriting && (
-              <PromptWritingQuestion
-                question={step.question}
-                userLanguage={userLanguage}
-                handleModalCheck={handleModalCheck}
-                onLearnClick={handleLearnClick}
-                onSubmitPrompt={handleAnswerClick}
-              />
-            )}
-            {step.isConversationReview && (
-              <ConversationReview
-                question={step.question}
-                userLanguage={userLanguage}
-                steps={steps}
-                step={step}
-                onSubmit={handleAnswerClick} // Or any other relevant logic
-                setFinalConversation={setFinalConversation}
-                finalConversation={finalConversation}
-                handleModalCheck={handleModalCheck}
-              />
-            )}
-            {/* {isPostingWithNostr ? (
+              )}
+              {step.isCode && !step.isTerminal && (
+                <VoiceInput
+                  handleModalCheck={handleModalCheck}
+                  value={inputValue}
+                  onChange={setInputValue}
+                  isCodeEditor={true}
+                  resetVoiceState={resetVoiceState}
+                  useVoice={true}
+                  stopListening={stopListening}
+                  setFeedback={setFeedback}
+                  resetFeedbackMessages={resetMessages}
+                  step={step}
+                  userLanguage={userLanguage}
+                  currentStep={currentStep}
+                />
+              )}
+              {step.isCode && step.isTerminal && (
+                <Box
+                  width="100%"
+                  justifyContent="center"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                >
+                  <TerminalComponent
+                    inputValue={inputValue}
+                    setInputValue={setInputValue}
+                    isSending={isSending}
+                    isTerminal={true}
+                    stopListening={stopListening}
+                    resetVoiceState={resetVoiceState}
+                    setFeedback={setFeedback}
+                    resetFeedbackMessages={resetMessages}
+                    step={step}
+                    userLanguage={userLanguage}
+                    handleModalCheck={handleModalCheck}
+                  />
+                </Box>
+              )}
+              {step.isMultipleChoice && (
+                <MultipleChoiceQuestion
+                  question={step.question}
+                  selectedOption={selectedOption}
+                  setSelectedOption={setSelectedOption}
+                  userLanguage={userLanguage}
+                  onLearnClick={handleLearnClick}
+                  handleModalCheck={handleModalCheck}
+                />
+              )}
+              {step.isMultipleAnswerChoice && (
+                <MultipleAnswerQuestion
+                  question={step.question}
+                  selectedOptions={selectedOptions}
+                  setSelectedOptions={setSelectedOptions}
+                  onLearnClick={handleLearnClick}
+                  userLanguage={userLanguage}
+                  handleModalCheck={handleModalCheck}
+                />
+              )}
+              {step.isSelectOrder && (
+                <SelectOrderQuestion
+                  items={items}
+                  setItems={setItems}
+                  onLearnClick={handleLearnClick}
+                  userLanguage={userLanguage}
+                  step={step}
+                  handleModalCheck={handleModalCheck}
+                />
+              )}
+              {step.isPromptWriting && (
+                <PromptWritingQuestion
+                  question={step.question}
+                  userLanguage={userLanguage}
+                  handleModalCheck={handleModalCheck}
+                  onLearnClick={handleLearnClick}
+                  onSubmitPrompt={handleAnswerClick}
+                />
+              )}
+              {step.isConversationReview && (
+                <ConversationReview
+                  question={step.question}
+                  userLanguage={userLanguage}
+                  steps={steps}
+                  step={step}
+                  onSubmit={handleAnswerClick} // Or any other relevant logic
+                  setFinalConversation={setFinalConversation}
+                  finalConversation={finalConversation}
+                  handleModalCheck={handleModalCheck}
+                />
+              )}
+              {/* {isPostingWithNostr ? (
               <CloudCanvas />
             ) : ( */}
-            <>
-              {incorrectAttempts >= 5 && !isTimerExpired ? (
-                <>
-                  <div style={{ maxWidth: 600 }}>
-                    <Text
-                      fontSize="smaller"
-                      background="appSurface"
-                      borderRadius={12}
-                      padding={4}
-                    >
-                      <FaHeartBroken
-                        style={{
-                          display: "inline",
-                          marginRight: 4,
-                          color: "red",
-                        }}
-                      />
-                      {translation[userLanguage]["lockout.message"]} <br />
-                      <br />
-                      <CountdownTimer
-                        onTimerExpire={handleTimerExpire}
-                        userLanguage={userLanguage}
-                      />
-                    </Text>
-                  </div>
-                  <RandomCharacter />
-                </>
-              ) : null}
-              {/* {messages.length > 0 && !feedback && (
+              <>
+                {incorrectAttempts >= 5 && !isTimerExpired ? (
+                  <>
+                    <div style={{ maxWidth: 600 }}>
+                      <Text
+                        fontSize="smaller"
+                        background="appSurface"
+                        borderRadius={12}
+                        padding={4}
+                      >
+                        <FaHeartBroken
+                          style={{
+                            display: "inline",
+                            marginRight: 4,
+                            color: "red",
+                          }}
+                        />
+                        {translation[userLanguage]["lockout.message"]} <br />
+                        <br />
+                        <CountdownTimer
+                          onTimerExpire={handleTimerExpire}
+                          userLanguage={userLanguage}
+                        />
+                      </Text>
+                    </div>
+                    <RandomCharacter />
+                  </>
+                ) : null}
+                {/* {messages.length > 0 && !feedback && (
                   <Box
                     mt={0}
                     p={4}
@@ -4557,153 +4577,146 @@ const Step = ({
                     </Text>
                   </Box>
                 )} */}
-              {feedback && (
-                <RiseUpAnimation>
-                  <Box
-                    mt={0}
-                    p={4}
-                    borderRadius="3xl"
-                    width="100%"
-                    maxWidth="600px"
-                    background={isCorrect ? successFeedbackBg : errorFeedbackBg}
-                    transition="0.2s all ease-in-out"
-                    borderWidth="1px"
-                    borderColor={
-                      isCorrect ? successFeedbackBorder : errorFeedbackBorder
-                    }
-                    boxShadow={
-                      isCorrect ? successFeedbackShadow : errorFeedbackShadow
-                    }
-                    borderBottomRightRadius={"0px"}
-                  >
-                    {!isCorrect &&
-                      incorrectAttempts > 0 &&
-                      incorrectAttempts < 5 && (
-                        <HStack
-                          mb={2}
-                          spacing={1}
-                          justify="center"
-                          width="100%"
-                        >
-                          {Array.from({ length: 5 }, (_, i) =>
-                            i < 5 - incorrectAttempts ? (
-                              <FaHeart key={i} color={feedbackHeartColor} />
-                            ) : (
-                              <FaRegHeart key={i} color={feedbackHeartColor} />
-                            ),
-                          )}
-                        </HStack>
-                      )}
-                    <Text
-                      textAlign={"left"}
-                      color={
-                        isCorrect ? successFeedbackText : errorFeedbackText
+                {feedback && (
+                  <RiseUpAnimation>
+                    <Box
+                      mt={0}
+                      p={4}
+                      borderRadius="3xl"
+                      width="100%"
+                      maxWidth="600px"
+                      background={
+                        isCorrect ? successFeedbackBg : errorFeedbackBg
                       }
-                      fontWeight="medium"
-                      lineHeight="1.55"
+                      transition="0.2s all ease-in-out"
+                      borderWidth="1px"
+                      borderColor={
+                        isCorrect ? successFeedbackBorder : errorFeedbackBorder
+                      }
+                      boxShadow={
+                        isCorrect ? successFeedbackShadow : errorFeedbackShadow
+                      }
+                      borderBottomRightRadius={"0px"}
                     >
-                      {feedback}{" "}
-                      {grade ? (
-                        <DataTags
-                          userLanguage={userLanguage}
-                          grade={
-                            translation[userLanguage]["tags.grade"] + grade
-                          }
-                        />
-                      ) : null}
-                    </Text>
-                  </Box>
-                </RiseUpAnimation>
-              )}{" "}
-              {feedback && (
-                <div
-                  style={{
-                    width: "100%",
-                    maxWidth: "600px",
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    padding: 0,
-                    marginTop: "-36px",
-                  }}
-                >
-                  <RiseUpAnimation speed="0.1s">
-                    <RandomCharacter />
+                      {!isCorrect &&
+                        incorrectAttempts > 0 &&
+                        incorrectAttempts < 5 && (
+                          <HStack
+                            mb={2}
+                            spacing={1}
+                            justify="center"
+                            width="100%"
+                          >
+                            {Array.from({ length: 5 }, (_, i) =>
+                              i < 5 - incorrectAttempts ? (
+                                <FaHeart key={i} color={feedbackHeartColor} />
+                              ) : (
+                                <FaRegHeart
+                                  key={i}
+                                  color={feedbackHeartColor}
+                                />
+                              ),
+                            )}
+                          </HStack>
+                        )}
+                      <Text
+                        textAlign={"left"}
+                        color={
+                          isCorrect ? successFeedbackText : errorFeedbackText
+                        }
+                        fontWeight="medium"
+                        lineHeight="1.55"
+                      >
+                        {feedback}{" "}
+                        {grade ? (
+                          <DataTags
+                            userLanguage={userLanguage}
+                            grade={
+                              translation[userLanguage]["tags.grade"] + grade
+                            }
+                          />
+                        ) : null}
+                      </Text>
+                    </Box>
                   </RiseUpAnimation>
-                </div>
-              )}
-              <HStack
-                spacing={4}
-                width="100%"
-                justifyContent={"center"}
-                paddingBottom={step.isTerminal ? 24 : null}
-              >
-                {step.question &&
-                currentStep > 0 &&
-                !isCorrect &&
-                !isSending &&
-                !(incorrectAttempts >= 5) &&
-                isTimerExpired ? (
-                  <Button
-                    fontSize="sm"
-                    data-sound-ignore-select="true"
-                    onMouseDown={() => {
-                      triggerHaptic();
-                      soundManager.resume();
-                      soundManager.play("submit");
-                      handleAnswerClick();
-                    }}
-                    isLoading={isSending}
-                    mb={4}
-                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        triggerHaptic();
-                        soundManager.resume();
-                        soundManager.play("submit");
-                        handleAnswerClick();
-                      }
-                    }}
-                  >
-                    {step.isConversationReview
-                      ? translation[userLanguage]["app.button.complete"]
-                      : translation[userLanguage]["app.button.answer"]}
-                  </Button>
-                ) : null}
-
-                {isSending ? (
+                )}{" "}
+                {feedback && (
                   <div
                     style={{
                       width: "100%",
                       maxWidth: "600px",
-                      textAlign: "left",
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      padding: 0,
+                      marginTop: "-36px",
                     }}
                   >
-                    <CloudCanvas
-                      speed={"0.25"}
-                      isLoader={true}
-                      regulateWidth={false}
-                    />
+                    <RiseUpAnimation speed="0.1s">
+                      <RandomCharacter />
+                    </RiseUpAnimation>
                   </div>
-                ) : null}
-                {isCorrect && (
-                  <>
-                    {isAILearningMode ? (
-                      <Button
-                        background="appSurface"
-                        variant={"outline"}
-                        onClick={() => {
+                )}
+                <HStack
+                  spacing={4}
+                  width="100%"
+                  justifyContent={"center"}
+                  paddingBottom={step.isTerminal ? 24 : null}
+                >
+                  {step.question &&
+                  currentStep > 0 &&
+                  !isCorrect &&
+                  !isSending &&
+                  !(incorrectAttempts >= 5) &&
+                  isTimerExpired ? (
+                    <Button
+                      fontSize="sm"
+                      data-sound-ignore-select="true"
+                      onMouseDown={() => {
+                        triggerHaptic();
+                        soundManager.resume();
+                        soundManager.play("submit");
+                        handleAnswerClick();
+                      }}
+                      isLoading={isSending}
+                      mb={4}
+                      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
                           triggerHaptic();
-                          setIsCorrect(null);
-                          setFeedback("");
-                          setInputValue("");
-                          setSelectedOption("");
-                          setSelectedOptions([]);
-                          handleGenerateNewQuestion();
-                        }}
-                        mb={4}
-                        boxShadow={"0.5px 0.5px 1px 0px black"}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
+                          soundManager.resume();
+                          soundManager.play("submit");
+                          handleAnswerClick();
+                        }
+                      }}
+                    >
+                      {step.isConversationReview
+                        ? translation[userLanguage]["app.button.complete"]
+                        : translation[userLanguage]["app.button.answer"]}
+                    </Button>
+                  ) : null}
+
+                  {isSending ? (
+                    <div
+                      style={{
+                        width: "100%",
+                        maxWidth: "600px",
+                        textAlign: "left",
+                      }}
+                    >
+                      <CloudCanvas
+                        speed={"0.25"}
+                        isLoader={true}
+                        regulateWidth={false}
+                      />
+                    </div>
+                  ) : null}
+                  {isCorrect && (
+                    <>
+                      {isAILearningMode ? (
+                        <Button
+                          background="appSurface"
+                          variant={"outline"}
+                          onClick={() => {
                             triggerHaptic();
                             setIsCorrect(null);
                             setFeedback("");
@@ -4711,267 +4724,280 @@ const Step = ({
                             setSelectedOption("");
                             setSelectedOptions([]);
                             handleGenerateNewQuestion();
+                          }}
+                          mb={4}
+                          boxShadow={"0.5px 0.5px 1px 0px black"}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              triggerHaptic();
+                              setIsCorrect(null);
+                              setFeedback("");
+                              setInputValue("");
+                              setSelectedOption("");
+                              setSelectedOptions([]);
+                              handleGenerateNewQuestion();
+                            }
+                          }}
+                          leftIcon={<RiAiGenerate />}
+                        >
+                          {translation[userLanguage]?.[
+                            "button.nextAIQuestion"
+                          ] || "Next AI Question"}
+                        </Button>
+                      ) : (
+                        <Button
+                          background="appSurface"
+                          variant={"outline"}
+                          data-sound-ignore-select="true"
+                          style={{ touchAction: "manipulation" }}
+                          onPointerDown={(event) =>
+                            handleNextQuestionButtonPress(event, () => {
+                              triggerHaptic();
+                              soundManager.resume();
+                              soundManager.play("next");
+                            })
                           }
-                        }}
-                        leftIcon={<RiAiGenerate />}
-                      >
-                        {translation[userLanguage]?.["button.nextAIQuestion"] ||
-                          "Next AI Question"}
-                      </Button>
-                    ) : (
-                      <Button
-                        background="appSurface"
-                        variant={"outline"}
-                        data-sound-ignore-select="true"
-                        style={{ touchAction: "manipulation" }}
-                        onPointerDown={(event) =>
-                          handleNextQuestionButtonPress(event, () => {
-                            triggerHaptic();
-                            soundManager.resume();
-                            soundManager.play("next");
-                          })
-                        }
-                        onClick={(event) => {
-                          handleNextQuestionButtonPress(event, () => {
-                            triggerHaptic();
-                            soundManager.resume();
-                            soundManager.play("next");
-                          });
-                        }}
-                        mb={4}
-                        boxShadow={"0.5px 0.5px 1px 0px black"}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
-                            handleNextQuestionButtonPress(e, () => {
+                          onClick={(event) => {
+                            handleNextQuestionButtonPress(event, () => {
                               triggerHaptic();
                               soundManager.resume();
                               soundManager.play("next");
                             });
-                          }
-                        }}
-                        disabled={isPostingWithNostr}
-                      >
-                        {
-                          translation[userLanguage]["app.button.nextQuestion"]
-                        }{" "}
-                      </Button>
-                    )}
-                  </>
-                )}
-              </HStack>
+                          }}
+                          mb={4}
+                          boxShadow={"0.5px 0.5px 1px 0px black"}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              handleNextQuestionButtonPress(e, () => {
+                                triggerHaptic();
+                                soundManager.resume();
+                                soundManager.play("next");
+                              });
+                            }
+                          }}
+                          disabled={isPostingWithNostr}
+                        >
+                          {
+                            translation[userLanguage]["app.button.nextQuestion"]
+                          }{" "}
+                        </Button>
+                      )}
+                    </>
+                  )}
+                </HStack>
+              </>
+              {/* )} */}
             </>
-            {/* )} */}
-          </>
-          {!step.isTerminal && (
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              width="100%"
-              mb={24}
-            >
-              <Switch
-                isChecked={isAdaptiveLearning}
-                onChange={handleToggleChange}
-                colorScheme="yellow"
-              />
-              &nbsp;
-              <Text fontSize="md">
-                {!isAdaptiveLearning
-                  ? translation[userLanguage]["adaptive_learning_off"]
-                  : translation[userLanguage]["adaptive_learning_on"]}
-              </Text>
-            </Box>
-          )}
-
-          {suggestionMessages.length > 0 &&
-          isEmpty(suggestionMessage) &&
-          !step?.isTerminal ? (
-            <Box p={4} textAlign="center" mt="-86px">
-              {/* <CloudCanvas isLoader={true} /> */}
-              <Box marginTop={"-52px"}>
-                <RoleCanvas
-                  role={"sphere"}
-                  width={400}
-                  height={400}
-                  trailOpacity={0.08}
-                  transparentFade
-                  backgroundColorX="247,245,239"
-                  backgroundColorDark="9,17,35"
-                />
-              </Box>
-
-              <Text mt={2}>
-                {translation[userLanguage]["loading.suggestion"]}
-              </Text>
-            </Box>
-          ) : !isAdaptiveLearning ||
-            step.isTerminal ? null : suggestionMessage.length > 0 ? (
-            <Box maxWidth="600px" width="100%" pb={12} mt="-86px">
+            {!step.isTerminal && (
               <Box
-                as={motion.div}
-                mt={4}
-                // mb={{ base: 24, md: 28 }}
-                p={4}
-                borderRadius="24px"
-                borderBottomLeftRadius={"0px"}
-                background="appSurface"
-                border="1px solid var(--chakra-colors-appBorderStrong)"
-                textAlign={"left"}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
                 width="100%"
-                initial={{ scale: 0.8 }}
-                animate={{ scale: [0.75, 1] }}
-                transition={{ duration: 0.3 }}
+                mb={24}
               >
-                <Markdown
-                  components={ChakraUIRenderer(newTheme)}
-                  children={suggestionMessage}
+                <Switch
+                  isChecked={isAdaptiveLearning}
+                  onChange={handleToggleChange}
+                  colorScheme="yellow"
                 />
+                &nbsp;
+                <Text fontSize="md">
+                  {!isAdaptiveLearning
+                    ? translation[userLanguage]["adaptive_learning_off"]
+                    : translation[userLanguage]["adaptive_learning_on"]}
+                </Text>
               </Box>
-              <Box mt="-4" paddingBottom={6}>
-                <RandomCharacter />
+            )}
+
+            {suggestionMessages.length > 0 &&
+            isEmpty(suggestionMessage) &&
+            !step?.isTerminal ? (
+              <Box p={4} textAlign="center" mt="-86px">
+                {/* <CloudCanvas isLoader={true} /> */}
+                <Box marginTop={"-52px"}>
+                  <RoleCanvas
+                    role={"sphere"}
+                    width={400}
+                    height={400}
+                    trailOpacity={0.08}
+                    transparentFade
+                    backgroundColorX="247,245,239"
+                    backgroundColorDark="9,17,35"
+                  />
+                </Box>
+
+                <Text mt={2}>
+                  {translation[userLanguage]["loading.suggestion"]}
+                </Text>
               </Box>
-            </Box>
-          ) : null}
-
-          {isOpen ? (
-            <EducationalModal
-              isOpen={isOpen}
-              onClose={onClose}
-              educationalMessages={educationalMessages}
-              educationalContent={educationalContent}
-              userLanguage={userLanguage}
-            />
-          ) : null}
-
-          {isSelfPacedOpen ? (
-            <SelfPacedModal
-              isOpen={isSelfPacedOpen}
-              onClose={onSelfPacedClose}
-              interval={interval}
-              setInterval={setInterval}
-              userId={localStorage.getItem("local_npub")}
-              userLanguage={userLanguage}
-              onSettingsSaved={handleSelfPacedSettingsSaved}
-            />
-          ) : null}
-
-          {isSocialFeedOpen ? (
-            <SocialFeedModal
-              userLanguage={userLanguage}
-              currentStep={currentStep}
-              isOpen={isSocialFeedOpen}
-              onClose={onSocialFeedClose}
-              allowPosts={allowPosts}
-              setAllowPosts={setAllowPosts}
-            />
-          ) : null}
-
-          {isBitcoinModeOpen ? (
-            <BitcoinModeModal
-              isOpen={isBitcoinModeOpen}
-              onClose={onBitcoinModeClose}
-              userLanguage={userLanguage}
-              from="app"
-            />
-          ) : null}
-
-          <Box
-            position="fixed"
-            bottom="0"
-            left="0"
-            width="100%"
-            // zIndex="popover"
-          >
-            <Flex justify="center" width="100%">
-              <Box
-                width={{ base: "100%", md: "440px" }}
-                px={{ base: 0, md: 4 }}
-              >
+            ) : !isAdaptiveLearning ||
+              step.isTerminal ? null : suggestionMessage.length > 0 ? (
+              <Box maxWidth="600px" width="100%" pb={12} mt="-86px">
                 <Box
-                  bg={actionBarShellBg}
-                  borderTopLeftRadius={{ base: "20px", md: "24px" }}
-                  borderTopRightRadius={{ base: "20px", md: "24px" }}
-                  borderBottomLeftRadius="0px"
-                  borderBottomRightRadius="0px"
-                  px={{ base: 3, md: 4 }}
-                  py={{ base: 2, md: 2.5 }}
-                  border={`1px solid ${actionBarShellBorder}`}
-                  borderBottom="0"
-                  boxShadow={`0 -2px 0px ${actionBarShellGlow}, ${actionBarShadow}`}
-                  backdropFilter="blur(10px)"
-                  paddingBottom={6}
-                  paddingTop={4}
+                  as={motion.div}
+                  mt={4}
+                  // mb={{ base: 24, md: 28 }}
+                  p={4}
+                  borderRadius="24px"
+                  borderBottomLeftRadius={"0px"}
+                  background="appSurface"
+                  border="1px solid var(--chakra-colors-appBorderStrong)"
+                  textAlign={"left"}
+                  width="100%"
+                  initial={{ scale: 0.8 }}
+                  animate={{ scale: [0.75, 1] }}
+                  transition={{ duration: 0.3 }}
                 >
-                  <HStack spacing={0} justify="space-around" width="100%">
-                    {renderActionTourPopover(
-                      "bitcoin",
-                      bitcoinButtonRef,
-                      <IconButton
-                        {...actionBarButtonProps}
-                        data-sound-ignore-select="true"
-                        aria-label="Open Bitcoin mode"
-                        icon={<FaBitcoin fontSize="20px" />}
-                        onMouseDown={() => {
-                          triggerHaptic();
-                          playActionBarSound("bitcoin");
-                          onBitcoinModeOpen();
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
+                  <Markdown
+                    components={ChakraUIRenderer(newTheme)}
+                    children={suggestionMessage}
+                  />
+                </Box>
+                <Box mt="-4" paddingBottom={6}>
+                  <RandomCharacter />
+                </Box>
+              </Box>
+            ) : null}
+
+            {isOpen ? (
+              <EducationalModal
+                isOpen={isOpen}
+                onClose={onClose}
+                educationalMessages={educationalMessages}
+                educationalContent={educationalContent}
+                userLanguage={userLanguage}
+              />
+            ) : null}
+
+            {isSelfPacedOpen ? (
+              <SelfPacedModal
+                isOpen={isSelfPacedOpen}
+                onClose={onSelfPacedClose}
+                interval={interval}
+                setInterval={setInterval}
+                userId={localStorage.getItem("local_npub")}
+                userLanguage={userLanguage}
+                onSettingsSaved={handleSelfPacedSettingsSaved}
+              />
+            ) : null}
+
+            {isSocialFeedOpen ? (
+              <SocialFeedModal
+                userLanguage={userLanguage}
+                currentStep={currentStep}
+                isOpen={isSocialFeedOpen}
+                onClose={onSocialFeedClose}
+                allowPosts={allowPosts}
+                setAllowPosts={setAllowPosts}
+              />
+            ) : null}
+
+            {isBitcoinModeOpen ? (
+              <BitcoinModeModal
+                isOpen={isBitcoinModeOpen}
+                onClose={onBitcoinModeClose}
+                userLanguage={userLanguage}
+                from="app"
+              />
+            ) : null}
+
+            <Box
+              position="fixed"
+              bottom="0"
+              left="0"
+              width="100%"
+              // zIndex="popover"
+            >
+              <Flex justify="center" width="100%">
+                <Box
+                  width={{ base: "100%", md: "440px" }}
+                  px={{ base: 0, md: 4 }}
+                >
+                  <Box
+                    bg={actionBarShellBg}
+                    borderTopLeftRadius={{ base: "20px", md: "24px" }}
+                    borderTopRightRadius={{ base: "20px", md: "24px" }}
+                    borderBottomLeftRadius="0px"
+                    borderBottomRightRadius="0px"
+                    px={{ base: 3, md: 4 }}
+                    py={{ base: 2, md: 2.5 }}
+                    border={`1px solid ${actionBarShellBorder}`}
+                    borderBottom="0"
+                    boxShadow={`0 -2px 0px ${actionBarShellGlow}, ${actionBarShadow}`}
+                    backdropFilter="blur(10px)"
+                    paddingBottom={6}
+                    paddingTop={4}
+                  >
+                    <HStack spacing={0} justify="space-around" width="100%">
+                      {renderActionTourPopover(
+                        "bitcoin",
+                        bitcoinButtonRef,
+                        <IconButton
+                          {...actionBarButtonProps}
+                          data-sound-ignore-select="true"
+                          aria-label="Open Bitcoin mode"
+                          icon={<FaBitcoin fontSize="20px" />}
+                          onMouseDown={() => {
                             triggerHaptic();
                             playActionBarSound("bitcoin");
                             onBitcoinModeOpen();
-                          }
-                        }}
-                      />,
-                    )}
-                    {renderActionTourPopover(
-                      "selfPaced",
-                      selfPacedButtonRef,
-                      <IconButton
-                        {...actionBarButtonProps}
-                        data-sound-ignore-select="true"
-                        aria-label="Open self-paced mode"
-                        icon={<PiClockCountdownFill fontSize="22px" />}
-                        onMouseDown={() => {
-                          triggerHaptic();
-                          playActionBarSound("selfPaced");
-                          onSelfPacedOpen();
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              triggerHaptic();
+                              playActionBarSound("bitcoin");
+                              onBitcoinModeOpen();
+                            }
+                          }}
+                        />,
+                      )}
+                      {renderActionTourPopover(
+                        "selfPaced",
+                        selfPacedButtonRef,
+                        <IconButton
+                          {...actionBarButtonProps}
+                          data-sound-ignore-select="true"
+                          aria-label="Open self-paced mode"
+                          icon={<PiClockCountdownFill fontSize="22px" />}
+                          onMouseDown={() => {
                             triggerHaptic();
                             playActionBarSound("selfPaced");
                             onSelfPacedOpen();
-                          }
-                        }}
-                      />,
-                    )}
-                    {renderActionTourPopover(
-                      "theme",
-                      themeButtonRef,
-                      <ThemeMenu
-                        userLanguage={userLanguage}
-                        buttonProps={{
-                          ...actionBarButtonProps,
-                          color: actionBarButtonProps.color,
-                          "data-sound-ignore-select": "true",
-                          onMouseDown: () => {
-                            triggerHaptic();
-                            playActionBarSound("theme");
-                          },
-                          onKeyDown: (e) => {
+                          }}
+                          onKeyDown={(e) => {
                             if (e.key === "Enter" || e.key === " ") {
                               triggerHaptic();
-                              playActionBarSound("theme");
+                              playActionBarSound("selfPaced");
+                              onSelfPacedOpen();
                             }
-                          },
-                        }}
-                      />,
-                    )}
-                    {/* Social feed is intentionally hidden from the bottom action bar.
+                          }}
+                        />,
+                      )}
+                      {renderActionTourPopover(
+                        "theme",
+                        themeButtonRef,
+                        <ThemeMenu
+                          userLanguage={userLanguage}
+                          buttonProps={{
+                            ...actionBarButtonProps,
+                            color: actionBarButtonProps.color,
+                            "data-sound-ignore-select": "true",
+                            onMouseDown: () => {
+                              triggerHaptic();
+                              playActionBarSound("theme");
+                            },
+                            onKeyDown: (e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                triggerHaptic();
+                                playActionBarSound("theme");
+                              }
+                            },
+                          }}
+                        />,
+                      )}
+                      {/* Social feed is intentionally hidden from the bottom action bar.
                     {renderActionTourPopover(
                       "social",
                       socialButtonRef,
@@ -5005,103 +5031,103 @@ const Step = ({
                         }
                       />,
                     )} */}
-                    {renderActionTourPopover(
-                      "helper",
-                      helperButtonRef,
-                      <IconButton
-                        {...actionBarButtonProps}
-                        data-sound-ignore-select="true"
-                        aria-label={
-                          translation[userLanguage]?.[
-                            "settings.button.algorithmHelper"
-                          ] || "Open build your app"
-                        }
-                        icon={<RiCodeAiFill fontSize="22px" />}
-                        onMouseDown={() => {
-                          triggerHaptic();
-                          playActionBarSound("helper");
-                          onKnowledgeLedgerOpen();
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
+                      {renderActionTourPopover(
+                        "helper",
+                        helperButtonRef,
+                        <IconButton
+                          {...actionBarButtonProps}
+                          data-sound-ignore-select="true"
+                          aria-label={
+                            translation[userLanguage]?.[
+                              "settings.button.algorithmHelper"
+                            ] || "Open build your app"
+                          }
+                          icon={<RiCodeAiFill fontSize="22px" />}
+                          onMouseDown={() => {
                             triggerHaptic();
                             playActionBarSound("helper");
                             onKnowledgeLedgerOpen();
-                          }
-                        }}
-                      />,
-                    )}
-                    {renderActionTourPopover(
-                      "patreon",
-                      patreonButtonRef,
-                      <IconButton
-                        {...actionBarButtonProps}
-                        data-sound-ignore-select="true"
-                        aria-label="Support on Patreon"
-                        icon={<PiPatreonLogoFill fontSize="20px" />}
-                        // boxShadow={patreonButtonShadow}
-                        borderColor={hexToRgba(actionPalette[200], 0.85)}
-                        onMouseDown={() => {
-                          triggerHaptic();
-                          playActionBarSound("patreon");
-                          window.location.href =
-                            "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              triggerHaptic();
+                              playActionBarSound("helper");
+                              onKnowledgeLedgerOpen();
+                            }
+                          }}
+                        />,
+                      )}
+                      {renderActionTourPopover(
+                        "patreon",
+                        patreonButtonRef,
+                        <IconButton
+                          {...actionBarButtonProps}
+                          data-sound-ignore-select="true"
+                          aria-label="Support on Patreon"
+                          icon={<PiPatreonLogoFill fontSize="20px" />}
+                          // boxShadow={patreonButtonShadow}
+                          borderColor={hexToRgba(actionPalette[200], 0.85)}
+                          onMouseDown={() => {
                             triggerHaptic();
                             playActionBarSound("patreon");
                             window.location.href =
                               "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
-                          }
-                        }}
-                      />,
-                    )}
-                  </HStack>
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              triggerHaptic();
+                              playActionBarSound("patreon");
+                              window.location.href =
+                                "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
+                            }
+                          }}
+                        />,
+                      )}
+                    </HStack>
+                  </Box>
                 </Box>
-              </Box>
-            </Flex>
-          </Box>
+              </Flex>
+            </Box>
 
-          {isLectureModalOpen ? (
-            <LectureModal
-              userLanguage={userLanguage}
-              currentStep={currentStep}
-              isOpen={isLectureModalOpen}
-              onClose={handleLectureModalClose}
-              handleNextClick={handleNextClick}
-            />
-          ) : null}
+            {isLectureModalOpen ? (
+              <LectureModal
+                userLanguage={userLanguage}
+                currentStep={currentStep}
+                isOpen={isLectureModalOpen}
+                onClose={handleLectureModalClose}
+                handleNextClick={handleNextClick}
+              />
+            ) : null}
 
-          {isKnowledgeLedgerOpen && userLanguage !== "compsci-en" ? (
-            <KnowledgeLedgerModal
-              userLanguage={userLanguage}
-              isOpen={isKnowledgeLedgerOpen}
-              onClose={onKnowledgeLedgerClose}
-              steps={steps}
-              step={step}
-            />
-          ) : (
-            <AlgorithmHelper
-              userLanguage={userLanguage}
-              isOpen={isKnowledgeLedgerOpen}
-              onClose={onKnowledgeLedgerClose}
-              steps={steps}
-              currentStep={currentStep}
-            />
-          )}
+            {isKnowledgeLedgerOpen && userLanguage !== "compsci-en" ? (
+              <KnowledgeLedgerModal
+                userLanguage={userLanguage}
+                isOpen={isKnowledgeLedgerOpen}
+                onClose={onKnowledgeLedgerClose}
+                steps={steps}
+                step={step}
+              />
+            ) : (
+              <AlgorithmHelper
+                userLanguage={userLanguage}
+                isOpen={isKnowledgeLedgerOpen}
+                onClose={onKnowledgeLedgerClose}
+                steps={steps}
+                currentStep={currentStep}
+              />
+            )}
 
-          {isProgressModalOpen ? (
-            <ProgressModal
-              isOpen={isProgressModalOpen}
-              onClose={onProgressModalClose}
-              steps={steps}
-              currentStep={currentStep}
-              userLanguage={userLanguage}
-            />
-          ) : null}
-          {/* newmodal */}
-          {/* <ExternalLinkModal
+            {isProgressModalOpen ? (
+              <ProgressModal
+                isOpen={isProgressModalOpen}
+                onClose={onProgressModalClose}
+                steps={steps}
+                currentStep={currentStep}
+                userLanguage={userLanguage}
+              />
+            ) : null}
+            {/* newmodal */}
+            {/* <ExternalLinkModal
             isOpen={isExternalLinkModalOpen}
             onClose={handleModalClose}
             dontShowAgain={dontShowAgain}
@@ -5111,21 +5137,21 @@ const Step = ({
             userLanguage={userLanguage}
           /> */}
 
-          <>
-            {isAwardModalOpen ? (
-              <AwardModal
-                isOpen={isAwardModalOpen}
-                onClose={handleAwardModalClose}
-                // educationalMessages={educationalMessages}
-                // educationalContent={educationalContent}
-                userLanguage={userLanguage}
-                step={step}
-                isCorrect={isCorrect}
-              />
-            ) : null}
+            <>
+              {isAwardModalOpen ? (
+                <AwardModal
+                  isOpen={isAwardModalOpen}
+                  onClose={handleAwardModalClose}
+                  // educationalMessages={educationalMessages}
+                  // educationalContent={educationalContent}
+                  userLanguage={userLanguage}
+                  step={step}
+                  isCorrect={isCorrect}
+                />
+              ) : null}
 
-            <PasscodeModal userLanguage={userLanguage} />
-            {/* 
+              <PasscodeModal userLanguage={userLanguage} />
+              {/* 
             {isInstallModalOpen ? (
               <InstallAppModal
                 userLanguage={userLanguage}
@@ -5133,10 +5159,10 @@ const Step = ({
                 onClose={onInstallModalClose}
               />
             ) : null} */}
+            </>
           </>
-        </>
-      )}
-    </VStack>
+        )}
+      </VStack>
     </Suspense>
   );
 };
@@ -5904,305 +5930,222 @@ const Home = ({
 
   return (
     <Suspense fallback={null}>
-    <Box
-      ref={topRef}
-      textAlign="center"
-      p={0}
-      style={{
-        height: "100%",
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        // justifyContent: "center",
-        paddingTop: 16,
-      }}
-    >
-      <HStack
-        position="fixed"
-        top={{ base: 4, md: 5 }}
-        right={{ base: 4, md: 5 }}
-        zIndex="popover"
-        spacing={2}
-        px={2}
-        py={1.5}
-        borderRadius="full"
-        color={landingThemeToggleColor}
-        data-sound-ignore-select="true"
+      <Box
+        ref={topRef}
+        textAlign="center"
+        p={0}
+        style={{
+          height: "100%",
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          // justifyContent: "center",
+          paddingTop: 16,
+        }}
       >
-        <Box
-          as={FaSun}
-          fontSize="13px"
-          color={
-            colorMode === "light"
-              ? landingThemeToggleColor
-              : landingThemeToggleMutedColor
-          }
-        />
-        <Switch
-          aria-label={
-            colorMode === "dark"
-              ? "Switch to light mode"
-              : "Switch to dark mode"
-          }
-          isChecked={colorMode === "dark"}
-          size="sm"
-          colorScheme={themeColor}
-          onChange={(event) => {
-            const nextColorMode = event.target.checked ? "dark" : "light";
-            soundManager.resume();
-            soundManager.play("modeSwitch");
-            setColorMode(nextColorMode);
-            persistThemeMode(nextColorMode);
-          }}
-        />
-        <Box
-          as={FaMoon}
-          fontSize="12px"
-          color={
-            colorMode === "dark"
-              ? landingThemeToggleColor
-              : landingThemeToggleMutedColor
-          }
-        />
-      </HStack>
+        <HStack
+          position="fixed"
+          top={{ base: 4, md: 5 }}
+          right={{ base: 4, md: 5 }}
+          zIndex="popover"
+          spacing={2}
+          px={2}
+          py={1.5}
+          borderRadius="full"
+          color={landingThemeToggleColor}
+          data-sound-ignore-select="true"
+        >
+          <Box
+            as={FaSun}
+            fontSize="13px"
+            color={
+              colorMode === "light"
+                ? landingThemeToggleColor
+                : landingThemeToggleMutedColor
+            }
+          />
+          <Switch
+            aria-label={
+              colorMode === "dark"
+                ? "Switch to light mode"
+                : "Switch to dark mode"
+            }
+            isChecked={colorMode === "dark"}
+            size="sm"
+            colorScheme={themeColor}
+            onChange={(event) => {
+              const nextColorMode = event.target.checked ? "dark" : "light";
+              soundManager.resume();
+              soundManager.play("modeSwitch");
+              setColorMode(nextColorMode);
+              persistThemeMode(nextColorMode);
+            }}
+          />
+          <Box
+            as={FaMoon}
+            fontSize="12px"
+            color={
+              colorMode === "dark"
+                ? landingThemeToggleColor
+                : landingThemeToggleMutedColor
+            }
+          />
+        </HStack>
 
-      {view === "buttons" && (
-        <>
-          <VStack spacing={4} height="85vh">
-            <VStack spacing={4} width="95%" maxWidth="600px" mb={4}>
-              <HStack spacing={2} alignItems="center" pt={8}>
-                <CloudCanvas />
-                {isCreatingAccount && (
-                  <Text
-                    fontSize="smaller"
-                    backgroundColor="appSurface"
-                    color="appText"
-                    fontWeight="bold"
-                    borderRadius="8px"
-                    padding="10px"
-                    width="250px"
-                    height="110px"
-                    display="flex"
-                    alignItems="center"
-                    textAlign="left"
-                    justifyContent="center"
-                  >
-                    {translation[userLanguage][loadingMessage]}
-                  </Text>
-                )}
-              </HStack>
+        {view === "buttons" && (
+          <>
+            <VStack spacing={4} height="85vh">
+              <VStack spacing={4} width="95%" maxWidth="600px" mb={4}>
+                <HStack spacing={2} alignItems="center" pt={8}>
+                  <CloudCanvas />
+                  {isCreatingAccount && (
+                    <Text
+                      fontSize="smaller"
+                      backgroundColor="appSurface"
+                      color="appText"
+                      fontWeight="bold"
+                      borderRadius="8px"
+                      padding="10px"
+                      width="250px"
+                      height="110px"
+                      display="flex"
+                      alignItems="center"
+                      textAlign="left"
+                      justifyContent="center"
+                    >
+                      {translation[userLanguage][loadingMessage]}
+                    </Text>
+                  )}
+                </HStack>
 
-              <Text fontSize="3xl">{renderContentBasedOnURL()}</Text>
-              <Text fontSize="sm" mt="-5" width="80%">
-                {translation[userLanguage]["landing.introduction"]}
+                <Text fontSize="3xl">{renderContentBasedOnURL()}</Text>
+                <Text fontSize="sm" mt="-5" width="80%">
+                  {translation[userLanguage]["landing.introduction"]}
+                </Text>
+              </VStack>
+
+              <Text fontSize="md" maxWidth="600px" pt={0} mb={0}>
+                <b>{translation[userLanguage]["createAccount.instructions"]}</b>
               </Text>
-            </VStack>
 
-            <Text fontSize="md" maxWidth="600px" pt={0} mb={0}>
-              <b>{translation[userLanguage]["createAccount.instructions"]}</b>
-            </Text>
-
-            <Input
-              mt="-3"
-              pt={0}
-              style={{
-                maxWidth: 300,
-                boxShadow: "0.5px 0.5px 1px rgba(0,0,0,0.75)",
-              }}
-              placeholder={
-                translation[userLanguage]["createAccount.input.placeholder"]
-              }
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              backgroundColor="appSurface"
-            />
-
-            <VStack>
-              <Button
-                onKeyDown={(e) =>
-                  (e.key === "Enter" || e.key === " ") && televise()
+              <Input
+                mt="-3"
+                pt={0}
+                style={{
+                  maxWidth: 300,
+                  boxShadow: "0.5px 0.5px 1px rgba(0,0,0,0.75)",
+                }}
+                placeholder={
+                  translation[userLanguage]["createAccount.input.placeholder"]
                 }
-                onMouseDown={televise}
-                colorScheme="purple"
-                variant="outline"
-                isDisabled={userName.length < 2}
-                style={{ width: "150px" }}
-              >
-                {translation[userLanguage]["landing.button.telemetry"]}
-              </Button>
-              <Text fontSize="xs">{translation[userLanguage]["or"]}</Text>
-              <Button
-                colorScheme="pink"
-                backgroundColor="appAccentSoft"
-                variant="outline"
-                border="1px solid var(--chakra-colors-appBorder)"
-                style={{ width: "150px" }}
-                onMouseDown={() => setView("signIn")}
-                onKeyDown={(e) =>
-                  (e.key === "Enter" || e.key === " ") && setView("signIn")
-                }
-              >
-                {translation[userLanguage]["landing.button.signIn"]}
-              </Button>
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                backgroundColor="appSurface"
+              />
 
-              <FormControl
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                m={2}
-              >
-                <FormLabel htmlFor="language-toggle" mb="0">
-                  {
-                    translation[userLanguage][
-                      userLanguage === "en"
-                        ? "languageToggle.english"
-                        : "languageToggle.spanish"
-                    ]
+              <VStack>
+                <Button
+                  onKeyDown={(e) =>
+                    (e.key === "Enter" || e.key === " ") && televise()
                   }
-                </FormLabel>
-                <Switch
+                  onMouseDown={televise}
+                  colorScheme="purple"
+                  variant="outline"
+                  isDisabled={userName.length < 2}
+                  style={{ width: "150px" }}
+                >
+                  {translation[userLanguage]["landing.button.telemetry"]}
+                </Button>
+                <Text fontSize="xs">{translation[userLanguage]["or"]}</Text>
+                <Button
                   colorScheme="pink"
-                  id="language-toggle"
-                  isChecked={userLanguage === "es"}
-                  onChange={handleToggle}
-                  onKeyDown={(e) => e.key === "Enter" && handleToggle()}
-                />
-              </FormControl>
+                  backgroundColor="appAccentSoft"
+                  variant="outline"
+                  border="1px solid var(--chakra-colors-appBorder)"
+                  style={{ width: "150px" }}
+                  onMouseDown={() => setView("signIn")}
+                  onKeyDown={(e) =>
+                    (e.key === "Enter" || e.key === " ") && setView("signIn")
+                  }
+                >
+                  {translation[userLanguage]["landing.button.signIn"]}
+                </Button>
+
+                <FormControl
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  m={2}
+                >
+                  <FormLabel htmlFor="language-toggle" mb="0">
+                    {
+                      translation[userLanguage][
+                        userLanguage === "en"
+                          ? "languageToggle.english"
+                          : "languageToggle.spanish"
+                      ]
+                    }
+                  </FormLabel>
+                  <Switch
+                    colorScheme="pink"
+                    id="language-toggle"
+                    isChecked={userLanguage === "es"}
+                    onChange={handleToggle}
+                    onKeyDown={(e) => e.key === "Enter" && handleToggle()}
+                  />
+                </FormControl>
+              </VStack>
             </VStack>
-          </VStack>
 
-          {/* "https://res.cloudinary.com/dtkeyccga/image/upload/v1755215290/Untitled_800_x_600_px_1_dmtcwn.gif" */}
+            {/* "https://res.cloudinary.com/dtkeyccga/image/upload/v1755215290/Untitled_800_x_600_px_1_dmtcwn.gif" */}
 
-          <Box as="section" scrollSnapAlign="start" bg="#474d7e">
-            {/* Mobile: banner + content */}
-            <Box
-              display={{ base: "block", md: "none" }}
-              minH="80dvh"
-              // px={4}
-              // py={6}
-              sx={
-                {
-                  // paddingTop: "max(env(safe-area-inset-top), 16px)",
-                  // paddingBottom: "max(env(safe-area-inset-bottom), 24px)",
-                }
-              }
-            >
-              {/* Banner shows full image without cropping */}
+            <Box as="section" scrollSnapAlign="start" bg="#474d7e">
+              {/* Mobile: banner + content */}
               <Box
-                w="100%"
-                // bg="blackAlpha.500"
-                // borderRadius="xl"
-                overflow="hidden"
-                // mb={6}
-                // border="1px solid red"
+                display={{ base: "block", md: "none" }}
+                minH="80dvh"
+                // px={4}
+                // py={6}
+                sx={
+                  {
+                    // paddingTop: "max(env(safe-area-inset-top), 16px)",
+                    // paddingBottom: "max(env(safe-area-inset-bottom), 24px)",
+                  }
+                }
               >
-                <Image
-                  src={bgUrl}
-                  alt="Hero banner"
+                {/* Banner shows full image without cropping */}
+                <Box
                   w="100%"
-                  maxH="40vh"
-                  // objectFit="contain" // no crop on mobile
-                />
-              </Box>
-
-              <VStack
-                // spacing={2}
-                align="center"
-                bg="blackAlpha.400"
-                borderRadius="xl"
-                backdropFilter="blur(4px)"
-                height="50vh"
-                display="flex"
-                flexDirection={"column"}
-                justifyContent="center"
-              >
-                <Text
-                  color="white"
-                  textAlign="center"
-                  fontSize="lg"
-                  fontWeight="semibold"
+                  // bg="blackAlpha.500"
+                  // borderRadius="xl"
+                  overflow="hidden"
+                  // mb={6}
+                  // border="1px solid red"
                 >
-                  {translation[userLanguage]["landing.questionsAnswered"]}
-                </Text>
-                <Text
-                  color="white"
-                  textAlign="center"
-                  fontSize="6xl"
-                  fontWeight="black"
-                  lineHeight="1"
-                >
-                  {questionsAnswered}
-                </Text>
+                  <Image
+                    src={bgUrl}
+                    alt="Hero banner"
+                    w="100%"
+                    maxH="40vh"
+                    // objectFit="contain" // no crop on mobile
+                  />
+                </Box>
 
-                <VStack>
+                <VStack
+                  // spacing={2}
+                  align="center"
+                  bg="blackAlpha.400"
+                  borderRadius="xl"
+                  backdropFilter="blur(4px)"
+                  height="50vh"
+                  display="flex"
+                  flexDirection={"column"}
+                  justifyContent="center"
+                >
                   <Text
                     color="white"
                     textAlign="center"
                     fontSize="lg"
-                    fontWeight="semibold"
-                  >
-                    {/* {translation[userLanguage]["landing.questionsAnswered"]} */}
-                    {translation[userLanguage]["landing.scholarshipsCreated"]}
-                  </Text>
-                  <Text
-                    color="white"
-                    textAlign="center"
-                    fontSize="7xl"
-                    fontWeight="black"
-                    lineHeight="1"
-                  >
-                    $12,000
-                  </Text>
-                </VStack>
-
-                <Box
-                  w="80%"
-                  maxW="400px"
-                  mt={6}
-                  color="white"
-                  fontWeight="bold"
-                  fontSize="md"
-                >
-                  {translation[userLanguage]["communityGoal"]}
-                  {questionsAnswered}/7500{" "}
-                  {translation[userLanguage]["questions"]}
-                  <WaveBar
-                    value={questionProgress}
-                    start="#fce09d"
-                    end="#fab002"
-                  />
-                </Box>
-              </VStack>
-            </Box>
-
-            {/* Desktop/tablet: full hero with background cover */}
-            <Box
-              display={{ base: "none", md: "flex" }}
-              pos="relative"
-              minH="100vh"
-              px={8}
-              py={16}
-              alignItems="center"
-              justifyContent="center"
-              bgImage={`linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('${bgUrl}')`}
-              bgRepeat="no-repeat"
-              bgSize="cover"
-              bgPos="center"
-            >
-              <Box
-                maxW="container.md"
-                w="100%"
-                bg="rgba(0,0,0,0.25)"
-                backdropFilter="blur(4px)"
-                borderRadius="xl"
-                px={8}
-                py={10}
-              >
-                <VStack spacing={3} align="center">
-                  <Text
-                    color="white"
-                    textAlign="center"
-                    fontSize="2xl"
                     fontWeight="semibold"
                   >
                     {translation[userLanguage]["landing.questionsAnswered"]}
@@ -6210,39 +6153,41 @@ const Home = ({
                   <Text
                     color="white"
                     textAlign="center"
-                    fontSize="7xl"
+                    fontSize="6xl"
                     fontWeight="black"
                     lineHeight="1"
                   >
                     {questionsAnswered}
                   </Text>
-                </VStack>
 
-                <VStack spacing={3} align="center" mt={12}>
-                  <Text
-                    color="white"
-                    textAlign="center"
-                    fontSize="2xl"
-                    fontWeight="semibold"
-                  >
-                    {translation[userLanguage]["landing.scholarshipsCreated"]}
-                  </Text>
-                  <Text
-                    color="white"
-                    textAlign="center"
-                    fontSize="7xl"
-                    fontWeight="black"
-                    lineHeight="1"
-                  >
-                    $12,000
-                  </Text>
+                  <VStack>
+                    <Text
+                      color="white"
+                      textAlign="center"
+                      fontSize="lg"
+                      fontWeight="semibold"
+                    >
+                      {/* {translation[userLanguage]["landing.questionsAnswered"]} */}
+                      {translation[userLanguage]["landing.scholarshipsCreated"]}
+                    </Text>
+                    <Text
+                      color="white"
+                      textAlign="center"
+                      fontSize="7xl"
+                      fontWeight="black"
+                      lineHeight="1"
+                    >
+                      $12,000
+                    </Text>
+                  </VStack>
 
                   <Box
                     w="80%"
                     maxW="400px"
-                    mt={12}
+                    mt={6}
                     color="white"
                     fontWeight="bold"
+                    fontSize="md"
                   >
                     {translation[userLanguage]["communityGoal"]}
                     {questionsAnswered}/7500{" "}
@@ -6255,285 +6200,378 @@ const Home = ({
                   </Box>
                 </VStack>
               </Box>
-            </Box>
-          </Box>
-          {landingChapterReviewNodes.length > 0 && (
-            <Box
-              as="section"
-              scrollSnapAlign="start"
-              position="relative"
-              overflow="hidden"
-              px={{ base: 2, md: 6 }}
-              py={{ base: 12, md: 20 }}
-              display="flex"
-              justifyContent="center"
-              style={{
-                backgroundImage:
-                  "radial-gradient(circle at 50% 6%, rgba(96,165,250,0.14), transparent 34%), linear-gradient(180deg, var(--chakra-colors-appBgMuted) 0%, var(--chakra-colors-appSurfaceMuted) 54%, var(--chakra-colors-appBgMuted) 100%)",
-              }}
-            >
-              <ChapterReview
-                nodes={landingChapterReviewNodes}
-                text={landingChapterReviewText}
-                onStart={handleChapterReviewStart}
-                defaultExpanded
-                showExpandControl={false}
-                showStartButton={false}
-              />
-            </Box>
-          )}
-          {/* First slide: Why Learn */}
-          <Box
-            height="100%"
-            scrollSnapAlign="start"
-            p={8}
-            bg="appBgMuted"
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            pb={24}
-          >
-            <RoleCanvas role={role} width={400} height={400} />
-            <VStack spacing={6} alignItems="flex-start">
-              <Text fontSize="2xl" textAlign="center" width="100%" mt={4}>
-                {translation[userLanguage]["landing.whyLearn.title"]}
-              </Text>
-              <Text fontSize="md" fontWeight="bold">
-                {translation[userLanguage]["landing.whyLearn.section1.title"]}
-              </Text>
-              <Text fontSize="md" maxWidth="650px" textAlign="left">
-                {translation[userLanguage]["landing.whyLearn.section1.content"]}
-              </Text>
-              <Image
-                width="100%"
-                maxWidth="600px"
-                borderRadius="12px"
-                boxShadow="0px 0.5px 0.5px black"
-                src={
-                  userLanguage !== "es"
-                    ? "https://res.cloudinary.com/dtkeyccga/image/upload/v1738251300/rzhhloly1rbsvx7f1qz3.png"
-                    : "https://res.cloudinary.com/dtkeyccga/image/upload/v1755251476/260db5ec-13ba-4893-a098-5f8dd2aa506b_sodjix.png"
-                }
-              />
-              <Text fontSize="md" fontWeight="bold">
-                {translation[userLanguage]["landing.whyLearn.section2.title"]}
-              </Text>{" "}
-              <Text fontSize="md" maxWidth="675px" textAlign="left">
-                {translation[userLanguage]["landing.whyLearn.section2.content"]}
-              </Text>
-              <Image
-                maxWidth="600px"
-                width="100%"
-                borderRadius="12px"
-                boxShadow="0px 0.5px 0.5px black"
-                src={
-                  userLanguage !== "es"
-                    ? "https://res.cloudinary.com/dtkeyccga/image/upload/v1755239709/Screenshot_2025-08-15_at_12.32.37_AM_yea3uh.png"
-                    : "https://res.cloudinary.com/dtkeyccga/image/upload/v1755252228/ChatGPT_Image_Aug_15_2025_04_03_39_AM_khx1xe.png"
-                }
-              />
-              <Text fontSize="md" fontWeight="bold">
-                {translation[userLanguage]["landing.whyLearn.section3.title"]}
-              </Text>
-              <Text fontSize="md" maxWidth="675px" textAlign="left">
-                {translation[userLanguage]["landing.whyLearn.section3.content"]}
-              </Text>
-              <Image
-                maxWidth="600px"
-                width="100%"
-                borderRadius="12px"
-                boxShadow="0px 0.5px 0.5px black"
-                src="https://res.cloudinary.com/dtkeyccga/image/upload/v1755245865/4049a20a-4f49-4d8e-9579-23cfb7623011_w1cixo.png"
-              />
-            </VStack>
-          </Box>
 
-          {/* Second slide: The Mission */}
-          <Box
-            height="100%"
-            scrollSnapAlign="start"
-            p={8}
-            bg="appSurfaceMuted"
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            pb={24}
-          >
-            <VStack spacing={6} alignItems="flex-start">
-              <Box width="100%">
-                <SunsetCanvas />
+              {/* Desktop/tablet: full hero with background cover */}
+              <Box
+                display={{ base: "none", md: "flex" }}
+                pos="relative"
+                minH="100vh"
+                px={8}
+                py={16}
+                alignItems="center"
+                justifyContent="center"
+                bgImage={`linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('${bgUrl}')`}
+                bgRepeat="no-repeat"
+                bgSize="cover"
+                bgPos="center"
+              >
+                <Box
+                  maxW="container.md"
+                  w="100%"
+                  bg="rgba(0,0,0,0.25)"
+                  backdropFilter="blur(4px)"
+                  borderRadius="xl"
+                  px={8}
+                  py={10}
+                >
+                  <VStack spacing={3} align="center">
+                    <Text
+                      color="white"
+                      textAlign="center"
+                      fontSize="2xl"
+                      fontWeight="semibold"
+                    >
+                      {translation[userLanguage]["landing.questionsAnswered"]}
+                    </Text>
+                    <Text
+                      color="white"
+                      textAlign="center"
+                      fontSize="7xl"
+                      fontWeight="black"
+                      lineHeight="1"
+                    >
+                      {questionsAnswered}
+                    </Text>
+                  </VStack>
+
+                  <VStack spacing={3} align="center" mt={12}>
+                    <Text
+                      color="white"
+                      textAlign="center"
+                      fontSize="2xl"
+                      fontWeight="semibold"
+                    >
+                      {translation[userLanguage]["landing.scholarshipsCreated"]}
+                    </Text>
+                    <Text
+                      color="white"
+                      textAlign="center"
+                      fontSize="7xl"
+                      fontWeight="black"
+                      lineHeight="1"
+                    >
+                      $12,000
+                    </Text>
+
+                    <Box
+                      w="80%"
+                      maxW="400px"
+                      mt={12}
+                      color="white"
+                      fontWeight="bold"
+                    >
+                      {translation[userLanguage]["communityGoal"]}
+                      {questionsAnswered}/7500{" "}
+                      {translation[userLanguage]["questions"]}
+                      <WaveBar
+                        value={questionProgress}
+                        start="#fce09d"
+                        end="#fab002"
+                      />
+                    </Box>
+                  </VStack>
+                </Box>
               </Box>
-              <Text fontSize="2xl" textAlign="center" width="100%" mt={4}>
-                {translation[userLanguage]["landing.mission.title"]}
-              </Text>
+            </Box>
+            {landingChapterReviewNodes.length > 0 && (
+              <Box
+                as="section"
+                scrollSnapAlign="start"
+                position="relative"
+                overflow="hidden"
+                px={{ base: 2, md: 6 }}
+                py={{ base: 12, md: 20 }}
+                display="flex"
+                justifyContent="center"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(circle at 50% 6%, rgba(96,165,250,0.14), transparent 34%), linear-gradient(180deg, var(--chakra-colors-appBgMuted) 0%, var(--chakra-colors-appSurfaceMuted) 54%, var(--chakra-colors-appBgMuted) 100%)",
+                }}
+              >
+                <ChapterReview
+                  nodes={landingChapterReviewNodes}
+                  text={landingChapterReviewText}
+                  onStart={handleChapterReviewStart}
+                  defaultExpanded
+                  showExpandControl={false}
+                  showStartButton={false}
+                />
+              </Box>
+            )}
+            {/* First slide: Why Learn */}
+            <Box
+              height="100%"
+              scrollSnapAlign="start"
+              p={8}
+              bg="appBgMuted"
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              pb={24}
+            >
+              <RoleCanvas role={role} width={400} height={400} />
+              <VStack spacing={6} alignItems="flex-start">
+                <Text fontSize="2xl" textAlign="center" width="100%" mt={4}>
+                  {translation[userLanguage]["landing.whyLearn.title"]}
+                </Text>
+                <Text fontSize="md" fontWeight="bold">
+                  {translation[userLanguage]["landing.whyLearn.section1.title"]}
+                </Text>
+                <Text fontSize="md" maxWidth="650px" textAlign="left">
+                  {
+                    translation[userLanguage][
+                      "landing.whyLearn.section1.content"
+                    ]
+                  }
+                </Text>
+                <Image
+                  width="100%"
+                  maxWidth="600px"
+                  borderRadius="12px"
+                  boxShadow="0px 0.5px 0.5px black"
+                  src={
+                    userLanguage !== "es"
+                      ? "https://res.cloudinary.com/dtkeyccga/image/upload/v1738251300/rzhhloly1rbsvx7f1qz3.png"
+                      : "https://res.cloudinary.com/dtkeyccga/image/upload/v1755251476/260db5ec-13ba-4893-a098-5f8dd2aa506b_sodjix.png"
+                  }
+                />
+                <Text fontSize="md" fontWeight="bold">
+                  {translation[userLanguage]["landing.whyLearn.section2.title"]}
+                </Text>{" "}
+                <Text fontSize="md" maxWidth="675px" textAlign="left">
+                  {
+                    translation[userLanguage][
+                      "landing.whyLearn.section2.content"
+                    ]
+                  }
+                </Text>
+                <Image
+                  maxWidth="600px"
+                  width="100%"
+                  borderRadius="12px"
+                  boxShadow="0px 0.5px 0.5px black"
+                  src={
+                    userLanguage !== "es"
+                      ? "https://res.cloudinary.com/dtkeyccga/image/upload/v1755239709/Screenshot_2025-08-15_at_12.32.37_AM_yea3uh.png"
+                      : "https://res.cloudinary.com/dtkeyccga/image/upload/v1755252228/ChatGPT_Image_Aug_15_2025_04_03_39_AM_khx1xe.png"
+                  }
+                />
+                <Text fontSize="md" fontWeight="bold">
+                  {translation[userLanguage]["landing.whyLearn.section3.title"]}
+                </Text>
+                <Text fontSize="md" maxWidth="675px" textAlign="left">
+                  {
+                    translation[userLanguage][
+                      "landing.whyLearn.section3.content"
+                    ]
+                  }
+                </Text>
+                <Image
+                  maxWidth="600px"
+                  width="100%"
+                  borderRadius="12px"
+                  boxShadow="0px 0.5px 0.5px black"
+                  src="https://res.cloudinary.com/dtkeyccga/image/upload/v1755245865/4049a20a-4f49-4d8e-9579-23cfb7623011_w1cixo.png"
+                />
+              </VStack>
+            </Box>
 
-              <Text fontSize="md" maxWidth="675px" textAlign="left">
-                {translation[userLanguage]["landing.mission.paragraph1"]}
-              </Text>
-              <Text fontSize="md" maxWidth="675px" textAlign="left">
-                {translation[userLanguage]["landing.mission.paragraph2"]}
-              </Text>
-              <Text fontSize="md" maxWidth="675px" textAlign="left">
-                {translation[userLanguage]["landing.mission.paragraph3"]}
-              </Text>
-            </VStack>
-          </Box>
+            {/* Second slide: The Mission */}
+            <Box
+              height="100%"
+              scrollSnapAlign="start"
+              p={8}
+              bg="appSurfaceMuted"
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              pb={24}
+            >
+              <VStack spacing={6} alignItems="flex-start">
+                <Box width="100%">
+                  <SunsetCanvas />
+                </Box>
+                <Text fontSize="2xl" textAlign="center" width="100%" mt={4}>
+                  {translation[userLanguage]["landing.mission.title"]}
+                </Text>
 
-          {/* FAQs */}
-          <Box
-            height="100%"
-            scrollSnapAlign="start"
-            p={8}
-            bg="appSurface"
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            pb={24}
-          >
-            <VStack spacing={6} alignItems="flex-start" width="100%">
-              <Text fontSize="2xl" textAlign="center" width="100%" mt={4}>
-                FAQs
-              </Text>
+                <Text fontSize="md" maxWidth="675px" textAlign="left">
+                  {translation[userLanguage]["landing.mission.paragraph1"]}
+                </Text>
+                <Text fontSize="md" maxWidth="675px" textAlign="left">
+                  {translation[userLanguage]["landing.mission.paragraph2"]}
+                </Text>
+                <Text fontSize="md" maxWidth="675px" textAlign="left">
+                  {translation[userLanguage]["landing.mission.paragraph3"]}
+                </Text>
+              </VStack>
+            </Box>
 
-              <Accordion allowMultiple width="100%">
-                <AccordionItem>
-                  <AccordionButton padding={6}>
-                    <Box flex="1" textAlign="left">
-                      {translation[userLanguage]["faq_1_question"]}
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                  <AccordionPanel pb={4}>
-                    <Text textAlign="left" fontSize="sm">
-                      {translation[userLanguage]["faq_1_item_1"]}
-                      <br />
-                      <br />
-                      {translation[userLanguage]["faq_1_item_2"]}
-                      <br />
-                      <br />
-                      {translation[userLanguage]["faq_1_item_3"]}
-                    </Text>
-                  </AccordionPanel>
-                </AccordionItem>
+            {/* FAQs */}
+            <Box
+              height="100%"
+              scrollSnapAlign="start"
+              p={8}
+              bg="appSurface"
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              pb={24}
+            >
+              <VStack spacing={6} alignItems="flex-start" width="100%">
+                <Text fontSize="2xl" textAlign="center" width="100%" mt={4}>
+                  FAQs
+                </Text>
 
-                <AccordionItem>
-                  <AccordionButton padding={6}>
-                    <Box flex="1" textAlign="left">
-                      {translation[userLanguage]["faq_2_question"]}
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                  <AccordionPanel pb={4}>
-                    <Text textAlign="left" fontSize="sm">
-                      {translation[userLanguage]["faq_2_item_1"]}
-                      <br />
-                      <br />
-                      {translation[userLanguage]["faq_2_item_2"]}
-                      <br />
-                      <br />
-                      {translation[userLanguage]["faq_2_item_3"]}
-                    </Text>
-                  </AccordionPanel>
-                </AccordionItem>
+                <Accordion allowMultiple width="100%">
+                  <AccordionItem>
+                    <AccordionButton padding={6}>
+                      <Box flex="1" textAlign="left">
+                        {translation[userLanguage]["faq_1_question"]}
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel pb={4}>
+                      <Text textAlign="left" fontSize="sm">
+                        {translation[userLanguage]["faq_1_item_1"]}
+                        <br />
+                        <br />
+                        {translation[userLanguage]["faq_1_item_2"]}
+                        <br />
+                        <br />
+                        {translation[userLanguage]["faq_1_item_3"]}
+                      </Text>
+                    </AccordionPanel>
+                  </AccordionItem>
 
-                <AccordionItem>
-                  <AccordionButton padding={6}>
-                    <Box flex="1" textAlign="left">
-                      {translation[userLanguage]["faq_3_question"]}
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                  <AccordionPanel pb={4}>
-                    <Text textAlign="left" fontSize="sm">
-                      {translation[userLanguage]["faq_3_item_1"]}
-                      <br />
-                      <br />
-                      {translation[userLanguage]["faq_3_item_2"]}
-                      <br />
-                      <br />
-                      {translation[userLanguage]["faq_3_item_3"]}
-                      <br />
-                      <br />
-                      {translation[userLanguage]["faq_3_item_4"]}
-                    </Text>
-                  </AccordionPanel>
-                </AccordionItem>
+                  <AccordionItem>
+                    <AccordionButton padding={6}>
+                      <Box flex="1" textAlign="left">
+                        {translation[userLanguage]["faq_2_question"]}
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel pb={4}>
+                      <Text textAlign="left" fontSize="sm">
+                        {translation[userLanguage]["faq_2_item_1"]}
+                        <br />
+                        <br />
+                        {translation[userLanguage]["faq_2_item_2"]}
+                        <br />
+                        <br />
+                        {translation[userLanguage]["faq_2_item_3"]}
+                      </Text>
+                    </AccordionPanel>
+                  </AccordionItem>
 
-                <AccordionItem>
-                  <AccordionButton padding={6}>
-                    <Box flex="1" textAlign="left">
-                      {translation[userLanguage]["faq_4_question"]}
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                  <AccordionPanel pb={4}>
-                    <Text textAlign="left" fontSize="sm">
-                      {translation[userLanguage]["faq_4_item_1"]}
-                      <br />
-                      <br />
-                      {translation[userLanguage]["faq_4_item_2"]}
-                      <br />
-                      <br />
-                      {translation[userLanguage]["faq_4_item_3"]}
-                    </Text>
-                  </AccordionPanel>
-                </AccordionItem>
+                  <AccordionItem>
+                    <AccordionButton padding={6}>
+                      <Box flex="1" textAlign="left">
+                        {translation[userLanguage]["faq_3_question"]}
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel pb={4}>
+                      <Text textAlign="left" fontSize="sm">
+                        {translation[userLanguage]["faq_3_item_1"]}
+                        <br />
+                        <br />
+                        {translation[userLanguage]["faq_3_item_2"]}
+                        <br />
+                        <br />
+                        {translation[userLanguage]["faq_3_item_3"]}
+                        <br />
+                        <br />
+                        {translation[userLanguage]["faq_3_item_4"]}
+                      </Text>
+                    </AccordionPanel>
+                  </AccordionItem>
 
-                <AccordionItem>
-                  <AccordionButton padding={6}>
-                    <Box flex="1" textAlign="left">
-                      {translation[userLanguage]["faq_5_question"]}
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                  <AccordionPanel pb={4}>
-                    <Text textAlign="left" fontSize="sm">
-                      {translation[userLanguage]["faq_5_item_1"]}
-                      <br />
-                      <br />
-                      {translation[userLanguage]["faq_5_item_2"]}
-                      <br />
-                      <br />
-                      {translation[userLanguage]["faq_5_item_3"]}
-                    </Text>
-                  </AccordionPanel>
-                </AccordionItem>
+                  <AccordionItem>
+                    <AccordionButton padding={6}>
+                      <Box flex="1" textAlign="left">
+                        {translation[userLanguage]["faq_4_question"]}
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel pb={4}>
+                      <Text textAlign="left" fontSize="sm">
+                        {translation[userLanguage]["faq_4_item_1"]}
+                        <br />
+                        <br />
+                        {translation[userLanguage]["faq_4_item_2"]}
+                        <br />
+                        <br />
+                        {translation[userLanguage]["faq_4_item_3"]}
+                      </Text>
+                    </AccordionPanel>
+                  </AccordionItem>
 
-                <AccordionItem>
-                  <AccordionButton padding={6}>
-                    <Box flex="1" textAlign="left">
-                      {translation[userLanguage]["faq_6_question"]}
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                  <AccordionPanel pb={4}>
-                    <Text textAlign="left" fontSize="sm">
-                      {translation[userLanguage]["faq_6_item_1"]}
-                      <br />
-                      <br />
-                      {translation[userLanguage]["faq_6_item_2"]}
-                    </Text>
-                  </AccordionPanel>
-                </AccordionItem>
+                  <AccordionItem>
+                    <AccordionButton padding={6}>
+                      <Box flex="1" textAlign="left">
+                        {translation[userLanguage]["faq_5_question"]}
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel pb={4}>
+                      <Text textAlign="left" fontSize="sm">
+                        {translation[userLanguage]["faq_5_item_1"]}
+                        <br />
+                        <br />
+                        {translation[userLanguage]["faq_5_item_2"]}
+                        <br />
+                        <br />
+                        {translation[userLanguage]["faq_5_item_3"]}
+                      </Text>
+                    </AccordionPanel>
+                  </AccordionItem>
 
-                <AccordionItem>
-                  <AccordionButton padding={6}>
-                    <Box flex="1" textAlign="left">
-                      {translation[userLanguage]["faq_7_question"]}
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                  <AccordionPanel pb={4}>
-                    <Text textAlign="left" fontSize="sm">
-                      {translation[userLanguage]["faq_7_item_1"]}
-                      <br />
-                      <br />
-                      {translation[userLanguage]["faq_7_item_2"]}
-                    </Text>
-                  </AccordionPanel>
-                </AccordionItem>
+                  <AccordionItem>
+                    <AccordionButton padding={6}>
+                      <Box flex="1" textAlign="left">
+                        {translation[userLanguage]["faq_6_question"]}
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel pb={4}>
+                      <Text textAlign="left" fontSize="sm">
+                        {translation[userLanguage]["faq_6_item_1"]}
+                        <br />
+                        <br />
+                        {translation[userLanguage]["faq_6_item_2"]}
+                      </Text>
+                    </AccordionPanel>
+                  </AccordionItem>
 
-                {/* <AccordionItem>
+                  <AccordionItem>
+                    <AccordionButton padding={6}>
+                      <Box flex="1" textAlign="left">
+                        {translation[userLanguage]["faq_7_question"]}
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel pb={4}>
+                      <Text textAlign="left" fontSize="sm">
+                        {translation[userLanguage]["faq_7_item_1"]}
+                        <br />
+                        <br />
+                        {translation[userLanguage]["faq_7_item_2"]}
+                      </Text>
+                    </AccordionPanel>
+                  </AccordionItem>
+
+                  {/* <AccordionItem>
                   <AccordionButton padding={6}>
                     <Box flex="1" textAlign="left">
                       {translation[userLanguage]["faq_8_question"]}
@@ -6549,165 +6587,167 @@ const Home = ({
                     </Text>
                   </AccordionPanel>
                 </AccordionItem> */}
-              </Accordion>
-            </VStack>
-          </Box>
-
-          {/* Start Learning */}
-          <VStack display="flex" justifyContent="center" alignItems="center">
-            <RandomCharacter notSoRandomCharacter="9" />
-            <Text mt={0}>
-              {translation[userLanguage]["landing.startLearning"]}
-            </Text>
-            <Box width="100%" mt={4}>
-              <Input
-                mt="-3"
-                pt={0}
-                style={{
-                  maxWidth: 300,
-                  boxShadow: "0.5px 0.5px 1px rgba(0,0,0,0.75)",
-                }}
-                placeholder={
-                  translation[userLanguage]["createAccount.input.placeholder"]
-                }
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                backgroundColor="appSurface"
-              />
+                </Accordion>
+              </VStack>
             </Box>
-            <HStack w="100%" mt={4} mb={12} justifyContent="center">
+
+            {/* Start Learning */}
+            <VStack display="flex" justifyContent="center" alignItems="center">
+              <RandomCharacter notSoRandomCharacter="9" />
+              <Text mt={0}>
+                {translation[userLanguage]["landing.startLearning"]}
+              </Text>
+              <Box width="100%" mt={4}>
+                <Input
+                  mt="-3"
+                  pt={0}
+                  style={{
+                    maxWidth: 300,
+                    boxShadow: "0.5px 0.5px 1px rgba(0,0,0,0.75)",
+                  }}
+                  placeholder={
+                    translation[userLanguage]["createAccount.input.placeholder"]
+                  }
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  backgroundColor="appSurface"
+                />
+              </Box>
+              <HStack w="100%" mt={4} mb={12} justifyContent="center">
+                <Button
+                  onKeyDown={(e) =>
+                    (e.key === "Enter" || e.key === " ") && televise()
+                  }
+                  onMouseDown={televise}
+                  colorScheme="purple"
+                  variant="outline"
+                  isDisabled={userName.length < 2}
+                  style={{ width: "150px" }}
+                >
+                  {translation[userLanguage]["landing.button.telemetry"]}
+                </Button>
+                <Button
+                  colorScheme="pink"
+                  backgroundColor="appAccentSoft"
+                  variant="outline"
+                  border="1px solid var(--chakra-colors-appBorder)"
+                  style={{ width: "150px" }}
+                  onMouseDown={() => setView("signIn")}
+                  onKeyDown={(e) =>
+                    (e.key === "Enter" || e.key === " ") && setView("signIn")
+                  }
+                >
+                  {translation[userLanguage]["landing.button.signIn"]}
+                </Button>
+              </HStack>
+            </VStack>
+          </>
+        )}
+
+        {view === "signIn" && (
+          <VStack
+            spacing={4}
+            height="95vh"
+            display="flex"
+            flexDirection={"column"}
+            justifyContent={"center"}
+          >
+            <div>{isSigningIn ? <CloudCanvas /> : null}</div>
+
+            <Text fontSize="sm">
+              {translation[userLanguage]["signIn.instructions"]}
+            </Text>
+            <Input
+              backgroundColor="appSurface"
+              placeholder={
+                translation[userLanguage]["signIn.input.placeholder"]
+              }
+              value={secretKey}
+              onChange={(e) => setSecretKey(e.target.value)}
+              style={{
+                maxWidth: 300,
+                boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+              }}
+            />
+            <HStack>
               <Button
-                onKeyDown={(e) =>
-                  (e.key === "Enter" || e.key === " ") && televise()
-                }
-                onMouseDown={televise}
-                colorScheme="purple"
                 variant="outline"
-                isDisabled={userName.length < 2}
-                style={{ width: "150px" }}
+                onMouseDown={() => setView("buttons")}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    setView("buttons");
+                  }
+                }}
               >
-                {translation[userLanguage]["landing.button.telemetry"]}
+                {translation[userLanguage]["button.back"]}
               </Button>
               <Button
+                onMouseDown={handleSignIn}
                 colorScheme="pink"
                 backgroundColor="appAccentSoft"
-                variant="outline"
                 border="1px solid var(--chakra-colors-appBorder)"
-                style={{ width: "150px" }}
-                onMouseDown={() => setView("signIn")}
-                onKeyDown={(e) =>
-                  (e.key === "Enter" || e.key === " ") && setView("signIn")
-                }
+                variant={"outline"}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleSignIn();
+                  }
+                }}
               >
                 {translation[userLanguage]["landing.button.signIn"]}
               </Button>
             </HStack>
-          </VStack>
-        </>
-      )}
 
-      {view === "signIn" && (
-        <VStack
-          spacing={4}
-          height="95vh"
-          display="flex"
-          flexDirection={"column"}
-          justifyContent={"center"}
-        >
-          <div>{isSigningIn ? <CloudCanvas /> : null}</div>
+            <HStack width="100%" maxWidth="300px" alignItems="center" my={2}>
+              <Divider borderColor="gray.400" />
+              <Text fontSize="xs" color="gray.500" px={2} whiteSpace="nowrap">
+                {translation[userLanguage]["signIn.or"] || "or"}
+              </Text>
+              <Divider borderColor="gray.400" />
+            </HStack>
 
-          <Text fontSize="sm">
-            {translation[userLanguage]["signIn.instructions"]}
-          </Text>
-          <Input
-            backgroundColor="appSurface"
-            placeholder={translation[userLanguage]["signIn.input.placeholder"]}
-            value={secretKey}
-            onChange={(e) => setSecretKey(e.target.value)}
-            style={{
-              maxWidth: 300,
-              boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
-            }}
-          />
-          <HStack>
             <Button
-              variant="outline"
-              onMouseDown={() => setView("buttons")}
+              onMouseDown={handleNip07SignIn}
+              colorScheme="purple"
+              variant="solid"
+              width="100%"
+              maxWidth="300px"
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
-                  setView("buttons");
+                  handleNip07SignIn();
                 }
               }}
             >
-              {translation[userLanguage]["button.back"]}
+              {translation[userLanguage]["signIn.nip07"] ||
+                "Sign in with Extension"}
             </Button>
-            <Button
-              onMouseDown={handleSignIn}
-              colorScheme="pink"
-              backgroundColor="appAccentSoft"
-              border="1px solid var(--chakra-colors-appBorder)"
-              variant={"outline"}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  handleSignIn();
-                }
-              }}
-            >
-              {translation[userLanguage]["landing.button.signIn"]}
-            </Button>
-          </HStack>
 
-          <HStack width="100%" maxWidth="300px" alignItems="center" my={2}>
-            <Divider borderColor="gray.400" />
-            <Text fontSize="xs" color="gray.500" px={2} whiteSpace="nowrap">
-              {translation[userLanguage]["signIn.or"] || "or"}
+            <Text color="red" fontSize="sm">
+              {errorMessage ? errorMessage?.error?.message : null}
             </Text>
-            <Divider borderColor="gray.400" />
-          </HStack>
-
-          <Button
-            onMouseDown={handleNip07SignIn}
-            colorScheme="purple"
-            variant="solid"
-            width="100%"
-            maxWidth="300px"
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                handleNip07SignIn();
-              }
-            }}
+          </VStack>
+        )}
+        {view === "created" && keys && (
+          <VStack
+            spacing={4}
+            height="95vh"
+            display="flex"
+            flexDirection={"column"}
+            justifyContent={"center"}
           >
-            {translation[userLanguage]["signIn.nip07"] ||
-              "Sign in with Extension"}
-          </Button>
-
-          <Text color="red" fontSize="sm">
-            {errorMessage ? errorMessage?.error?.message : null}
-          </Text>
-        </VStack>
-      )}
-      {view === "created" && keys && (
-        <VStack
-          spacing={4}
-          height="95vh"
-          display="flex"
-          flexDirection={"column"}
-          justifyContent={"center"}
-        >
-          {/* <Confetti
+            {/* <Confetti
             // gravity={0.75}
             numberOfPieces={100}
             recycle={false}
             colors={["#f2dcfa", "#f9d4fa", "#fca4b3", "#fcb7a4", "#fcd4a4"]} // Array of colors matching the logo
           /> */}
 
-          <RiseUpAnimation>
-            {/* add text for onboardnig: ['qaonboardingProgress'] */}
-            <Box>
-              <Text fontSize={"xs"}>
-                {translation[userLanguage]["onboardingProgress"]}
-              </Text>
-              {/* <Progress
+            <RiseUpAnimation>
+              {/* add text for onboardnig: ['qaonboardingProgress'] */}
+              <Box>
+                <Text fontSize={"xs"}>
+                  {translation[userLanguage]["onboardingProgress"]}
+                </Text>
+                {/* <Progress
                 opacity="0.8"
                 border="1px solid #ececec"
                 // boxShadow="0px 0px 0.5px 2px #ececec"
@@ -6720,44 +6760,44 @@ const Home = ({
                 borderRadius="4px"
                 background={"#ececec"}
               /> */}
-              <Box width="250px">
-                <WaveBar
-                  value={(0 / 6) * 100}
-                  start="#bf66ff"
-                  end="#7300ff"
-                  delay={0}
-                  bg="appSurfaceGlass"
-                  border="var(--chakra-colors-appBorder)"
-                />
+                <Box width="250px">
+                  <WaveBar
+                    value={(0 / 6) * 100}
+                    start="#bf66ff"
+                    end="#7300ff"
+                    delay={0}
+                    bg="appSurfaceGlass"
+                    border="var(--chakra-colors-appBorder)"
+                  />
+                </Box>
               </Box>
-            </Box>
-          </RiseUpAnimation>
+            </RiseUpAnimation>
 
-          <PanRightComponent>
-            <Text
-              p={4}
-              maxWidth="600px"
-              width="100%"
-              textAlign={"left"}
-              // background="orange.100"
-              backgroundColor="appSurface"
-              style={{
-                // backgroundColor: "#dcecfc",
-                display: "flex",
-                flexDirection: "column",
-              }}
-              borderRadius="24px"
-              borderBottomRightRadius={"0px"}
-              boxShadow={"0.5px 0.5px 1px 0px black"}
-            >
-              <Text>
-                {translation[userLanguage]["createAccount.successMessage"]}
-              </Text>{" "}
-              <Text fontSize="sm" maxWidth={"300px"}>
-                {translation[userLanguage]["createAccount.awareness"]}
-                {translation[userLanguage]["createAccount.roxLink"]}.
-              </Text>
-              {/* <Accordion allowToggle>
+            <PanRightComponent>
+              <Text
+                p={4}
+                maxWidth="600px"
+                width="100%"
+                textAlign={"left"}
+                // background="orange.100"
+                backgroundColor="appSurface"
+                style={{
+                  // backgroundColor: "#dcecfc",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+                borderRadius="24px"
+                borderBottomRightRadius={"0px"}
+                boxShadow={"0.5px 0.5px 1px 0px black"}
+              >
+                <Text>
+                  {translation[userLanguage]["createAccount.successMessage"]}
+                </Text>{" "}
+                <Text fontSize="sm" maxWidth={"300px"}>
+                  {translation[userLanguage]["createAccount.awareness"]}
+                  {translation[userLanguage]["createAccount.roxLink"]}.
+                </Text>
+                {/* <Accordion allowToggle>
                 <AccordionItem>
                   <AccordionButton p={4}>
                     <Box flex="1" textAlign="left">
@@ -6772,126 +6812,57 @@ const Home = ({
                   </AccordionPanel>
                 </AccordionItem>
               </Accordion> */}
-            </Text>
-          </PanRightComponent>
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "300px",
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: "-36px",
-              marginRight: "-16px",
-            }}
-          >
-            {" "}
-            <RiseUpAnimation>
-              <RandomCharacter />
-            </RiseUpAnimation>
-          </div>
-
-          <Button
-            onMouseDown={handleCopyKeys}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                handleCopyKeys();
-              }
-            }}
-          >
-            🔑 {translation[userLanguage]["button.copyKey"]}
-          </Button>
-
-          <HStack>
-            <Checkbox
-              colorScheme="pink"
-              direction="row"
-              isChecked={isCheckboxChecked}
-              onChange={handleCheckboxChange}
-              // onMouseDown={handleCheckboxChange}
-              style={{ textAlign: "left" }}
-              width="95%"
-              maxWidth="350px"
-            >
-              <Text fontSize="sm" fontWeight={"bolder"}>
-                {translation[userLanguage]["createAccount.checkbox.disclaimer"]}
               </Text>
-            </Checkbox>
-          </HStack>
-          <HStack>
-            {/* <Button
-              variant="outline"
-              onMouseDown={() => setView("buttons")}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  setView("buttons");
-                }
-              }}
-            >
-              {" "}
-              {translation[userLanguage]["button.back"]}
-            </Button> */}
-            <Button
-              onMouseDown={handleLaunchApp}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  handleLaunchApp();
-                }
-              }}
-              isDisabled={!isCheckboxChecked}
-              colorScheme="pink"
-              backgroundColor="appAccentSoft"
-              variant={"outline"}
-            >
-              {translation[userLanguage]["lastStep.button"]}
-            </Button>
-          </HStack>
-        </VStack>
-      )}
-      {view === "wallet" && keys && (
-        <VStack spacing={4}>
-          <PanRightComponent>
-            <Text
-              p={4}
-              maxWidth="400px"
-              width="100%"
-              textAlign={"left"}
-              border="1px solid var(--chakra-colors-appBorderStrong)"
-              backgroundColor="appSurface"
+            </PanRightComponent>
+            <div
               style={{
-                // backgroundColor: "#dcecfc",
+                width: "100%",
+                maxWidth: "300px",
                 display: "flex",
-                flexDirection: "column",
+                justifyContent: "flex-end",
+                marginTop: "-36px",
+                marginRight: "-16px",
               }}
-              borderRadius="24px"
-              borderBottomRightRadius={"0px"}
             >
-              <Text>
-                {translation[userLanguage]["createAccount.lastStepMessage"]}
-              </Text>{" "}
-              <BitcoinOnboarding
-                userLanguage={userLanguage}
-                from="onboarding"
-              />
-            </Text>
-          </PanRightComponent>
-          <div
-            style={{
-              width: "100%",
-              maxWidth: "400px",
-              display: "flex",
-              justifyContent: "flex-end",
-              marginTop: "-36px",
-              marginRight: "-16px",
-            }}
-          >
-            {" "}
-            <RiseUpAnimation>
-              <RandomCharacter />
-            </RiseUpAnimation>
-          </div>
+              {" "}
+              <RiseUpAnimation>
+                <RandomCharacter />
+              </RiseUpAnimation>
+            </div>
 
-          <HStack>
-            {/* <Button
+            <Button
+              onMouseDown={handleCopyKeys}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  handleCopyKeys();
+                }
+              }}
+            >
+              🔑 {translation[userLanguage]["button.copyKey"]}
+            </Button>
+
+            <HStack>
+              <Checkbox
+                colorScheme="pink"
+                direction="row"
+                isChecked={isCheckboxChecked}
+                onChange={handleCheckboxChange}
+                // onMouseDown={handleCheckboxChange}
+                style={{ textAlign: "left" }}
+                width="95%"
+                maxWidth="350px"
+              >
+                <Text fontSize="sm" fontWeight={"bolder"}>
+                  {
+                    translation[userLanguage][
+                      "createAccount.checkbox.disclaimer"
+                    ]
+                  }
+                </Text>
+              </Checkbox>
+            </HStack>
+            <HStack>
+              {/* <Button
               variant="outline"
               onMouseDown={() => setView("buttons")}
               onKeyDown={(e) => {
@@ -6903,24 +6874,97 @@ const Home = ({
               {" "}
               {translation[userLanguage]["button.back"]}
             </Button> */}
-            <Button
-              onMouseDown={handleActuallyLaunchApp}
+              <Button
+                onMouseDown={handleLaunchApp}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleLaunchApp();
+                  }
+                }}
+                isDisabled={!isCheckboxChecked}
+                colorScheme="pink"
+                backgroundColor="appAccentSoft"
+                variant={"outline"}
+              >
+                {translation[userLanguage]["lastStep.button"]}
+              </Button>
+            </HStack>
+          </VStack>
+        )}
+        {view === "wallet" && keys && (
+          <VStack spacing={4}>
+            <PanRightComponent>
+              <Text
+                p={4}
+                maxWidth="400px"
+                width="100%"
+                textAlign={"left"}
+                border="1px solid var(--chakra-colors-appBorderStrong)"
+                backgroundColor="appSurface"
+                style={{
+                  // backgroundColor: "#dcecfc",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+                borderRadius="24px"
+                borderBottomRightRadius={"0px"}
+              >
+                <Text>
+                  {translation[userLanguage]["createAccount.lastStepMessage"]}
+                </Text>{" "}
+                <BitcoinOnboarding
+                  userLanguage={userLanguage}
+                  from="onboarding"
+                />
+              </Text>
+            </PanRightComponent>
+            <div
+              style={{
+                width: "100%",
+                maxWidth: "400px",
+                display: "flex",
+                justifyContent: "flex-end",
+                marginTop: "-36px",
+                marginRight: "-16px",
+              }}
+            >
+              {" "}
+              <RiseUpAnimation>
+                <RandomCharacter />
+              </RiseUpAnimation>
+            </div>
+
+            <HStack>
+              {/* <Button
+              variant="outline"
+              onMouseDown={() => setView("buttons")}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
-                  handleActuallyLaunchApp();
+                  setView("buttons");
                 }
               }}
-              isDisabled={!isCheckboxChecked}
-              colorScheme="pink"
-              backgroundColor="appAccentSoft"
-              variant={"outline"}
             >
-              {translation[userLanguage]["createAccount.button.launchApp"]}
-            </Button>
-          </HStack>
-        </VStack>
-      )}
-    </Box>
+              {" "}
+              {translation[userLanguage]["button.back"]}
+            </Button> */}
+              <Button
+                onMouseDown={handleActuallyLaunchApp}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleActuallyLaunchApp();
+                  }
+                }}
+                isDisabled={!isCheckboxChecked}
+                colorScheme="pink"
+                backgroundColor="appAccentSoft"
+                variant={"outline"}
+              >
+                {translation[userLanguage]["createAccount.button.launchApp"]}
+              </Button>
+            </HStack>
+          </VStack>
+        )}
+      </Box>
     </Suspense>
   );
 };
@@ -7700,103 +7744,106 @@ function App({ isShutDown }) {
             </Box>
           }
         >
-        <Routes>
-          <Route path="/experiment" element={<SoundExperiment />} />
-          <Route
-            path="/"
-            element={
-              <Home
-                isSignedIn={isSignedIn}
-                setIsSignedIn={setIsSignedIn}
-                userLanguage={userLanguage}
-                setUserLanguage={setUserLanguage}
-                generateNostrKeys={generateNostrKeys}
-                auth={auth}
-                authWithExtension={authWithExtension}
-                view={view}
-                setView={setView}
-                setCurrentStep={setCurrentStep}
-              />
-            }
-          />
-          <Route
-            path="/onboarding/:step"
-            element={
-              <Onboarding
-                isSignedIn={isSignedIn}
-                setIsSignedIn={setIsSignedIn}
-                userLanguage={userLanguage}
-                setUserLanguage={setUserLanguage}
-                generateNostrKeys={generateNostrKeys}
-                auth={auth}
-                view={view}
-                setView={setView}
-                setCurrentStep={setCurrentStep}
-              />
-            }
-          />
-          <Route
-            path="/subscription"
-            element={
-              <PasscodePage
-                userLanguage={userLanguage}
-                isOldAccount={
-                  currentStep > 9 &&
-                  localStorage.getItem("passcode") !==
-                    import.meta.env.VITE_PATREON_PASSCODE
-                }
-              />
-            }
-          />
-          {location.pathname !== "/about" &&
-            steps?.[userLanguage]?.map((_, index) => (
-              <Route
-                key={index}
-                path={`/q/${index}`}
-                element={
-                  <PrivateRoute>
-                    <Step
-                      allowPosts={allowPosts}
-                      setAllowPosts={setAllowPosts}
-                      currentStep={index}
-                      userLanguage={userLanguage}
-                      setUserLanguage={setUserLanguage}
-                      postNostrContent={postNostrContent}
-                      assignExistingBadgeToNpub={assignExistingBadgeToNpub}
-                      emailStep={clonedStep}
-                      hasSubmittedPasscode={hasSubmittedPasscode}
-                      setCurrentStep={setCurrentStep}
-                      navigateWithTransition={navigateWithTransition}
-                      setTransitionStats={setTransitionStats}
-                      incorrectAttempts={incorrectAttempts}
-                      setIncorrectAttempts={setIncorrectAttempts}
-                      lectureNextPath={lectureNextPath}
-                      setLectureNextPath={setLectureNextPath}
-                      lectureNextStep={lectureNextPath}
-                      setLectureNextStep={setLectureNextStep}
-                      actionTourStep={actionTourStep}
-                      isActionTourActive={isActionTourActive}
-                      actionBarTourSteps={actionBarTourSteps}
-                      onActionTourAdvance={handleActionTourAdvance}
-                      onActionTourComplete={handleActionTourComplete}
-                      startActionTour={startActionTour}
-                    />
-                  </PrivateRoute>
-                }
-              />
-            ))}
-          <Route
-            path="/award"
-            element={<AwardScreen userLanguage={userLanguage} />}
-          />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route
-            path="/about"
-            element={
-              <About userLanguage={userLanguage} handleToggle={handleToggle} />
-            }
-          />
-        </Routes>
+          <Routes>
+            <Route path="/experiment" element={<SoundExperiment />} />
+            <Route
+              path="/"
+              element={
+                <Home
+                  isSignedIn={isSignedIn}
+                  setIsSignedIn={setIsSignedIn}
+                  userLanguage={userLanguage}
+                  setUserLanguage={setUserLanguage}
+                  generateNostrKeys={generateNostrKeys}
+                  auth={auth}
+                  authWithExtension={authWithExtension}
+                  view={view}
+                  setView={setView}
+                  setCurrentStep={setCurrentStep}
+                />
+              }
+            />
+            <Route
+              path="/onboarding/:step"
+              element={
+                <Onboarding
+                  isSignedIn={isSignedIn}
+                  setIsSignedIn={setIsSignedIn}
+                  userLanguage={userLanguage}
+                  setUserLanguage={setUserLanguage}
+                  generateNostrKeys={generateNostrKeys}
+                  auth={auth}
+                  view={view}
+                  setView={setView}
+                  setCurrentStep={setCurrentStep}
+                />
+              }
+            />
+            <Route
+              path="/subscription"
+              element={
+                <PasscodePage
+                  userLanguage={userLanguage}
+                  isOldAccount={
+                    currentStep > 9 &&
+                    localStorage.getItem("passcode") !==
+                      import.meta.env.VITE_PATREON_PASSCODE
+                  }
+                />
+              }
+            />
+            {location.pathname !== "/about" &&
+              steps?.[userLanguage]?.map((_, index) => (
+                <Route
+                  key={index}
+                  path={`/q/${index}`}
+                  element={
+                    <PrivateRoute>
+                      <Step
+                        allowPosts={allowPosts}
+                        setAllowPosts={setAllowPosts}
+                        currentStep={index}
+                        userLanguage={userLanguage}
+                        setUserLanguage={setUserLanguage}
+                        postNostrContent={postNostrContent}
+                        assignExistingBadgeToNpub={assignExistingBadgeToNpub}
+                        emailStep={clonedStep}
+                        hasSubmittedPasscode={hasSubmittedPasscode}
+                        setCurrentStep={setCurrentStep}
+                        navigateWithTransition={navigateWithTransition}
+                        setTransitionStats={setTransitionStats}
+                        incorrectAttempts={incorrectAttempts}
+                        setIncorrectAttempts={setIncorrectAttempts}
+                        lectureNextPath={lectureNextPath}
+                        setLectureNextPath={setLectureNextPath}
+                        lectureNextStep={lectureNextPath}
+                        setLectureNextStep={setLectureNextStep}
+                        actionTourStep={actionTourStep}
+                        isActionTourActive={isActionTourActive}
+                        actionBarTourSteps={actionBarTourSteps}
+                        onActionTourAdvance={handleActionTourAdvance}
+                        onActionTourComplete={handleActionTourComplete}
+                        startActionTour={startActionTour}
+                      />
+                    </PrivateRoute>
+                  }
+                />
+              ))}
+            <Route
+              path="/award"
+              element={<AwardScreen userLanguage={userLanguage} />}
+            />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route
+              path="/about"
+              element={
+                <About
+                  userLanguage={userLanguage}
+                  handleToggle={handleToggle}
+                />
+              }
+            />
+          </Routes>
         </Suspense>
       </Box>
     </Box>
