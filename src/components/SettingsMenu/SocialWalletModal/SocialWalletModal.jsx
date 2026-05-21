@@ -107,7 +107,7 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
             userLanguage={userLanguage}
           />
           <ActionButton
-            href="https://nosabos.app"
+            href="https://piyali.app"
             text={translation[userLanguage]["settings.button.yourTutor"]}
             userLanguage={userLanguage}
           />
