@@ -9,7 +9,6 @@ import {
 } from "@chakra-ui/react";
 import { translation } from "../../utility/translation";
 import { IoChatbubblesOutline } from "react-icons/io5";
-import { triggerHaptic } from "tactus";
 
 const MultipleChoiceQuestion = ({
   question,
@@ -36,6 +35,10 @@ const MultipleChoiceQuestion = ({
   );
 
   const handleKeyDown = (e) => {
+    if (e.target === learnButtonRef.current) {
+      return;
+    }
+
     switch (e.key) {
       case "ArrowUp":
         e.preventDefault();
@@ -84,18 +87,11 @@ const MultipleChoiceQuestion = ({
     <VStack spacing={4} onKeyDown={handleKeyDown} width="100%" maxWidth="600px">
       <Button
         ref={learnButtonRef}
-        onPointerDown={() => {
-          triggerHaptic();
+        onClick={() => {
           handleModalCheck(onLearnClick);
         }}
         colorScheme="pink"
         tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            triggerHaptic();
-            handleModalCheck(onLearnClick);
-          }
-        }}
         background="pink.300"
         color="white"
         boxShadow={actionShadow}

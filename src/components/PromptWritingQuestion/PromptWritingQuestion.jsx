@@ -12,7 +12,6 @@ import { useSimpleGeminiChat } from "../../hooks/useGeminiChat";
 import { useChatCompletion } from "../../hooks/useChatCompletion";
 import { translation } from "../../utility/translation";
 import { IoChatbubblesOutline } from "react-icons/io5";
-import { triggerHaptic } from "tactus";
 
 export default function PromptWritingQuestion({
   question,
@@ -74,15 +73,8 @@ export default function PromptWritingQuestion({
   return (
     <VStack spacing={4} width="100%" maxWidth="600px" align="stretch">
       <Button
-        onPointerDown={() => {
-          triggerHaptic();
+        onClick={() => {
           handleModalCheck(onLearnClick);
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            triggerHaptic();
-            handleModalCheck(onLearnClick);
-          }
         }}
         alignSelf="center"
         background="pink.400"

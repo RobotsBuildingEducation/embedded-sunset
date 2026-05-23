@@ -1163,15 +1163,8 @@ export const VoiceInput = ({
           </Button>
           <Button
             colorScheme="pink"
-            onPointerDown={() => {
-              triggerHaptic();
+            onClick={() => {
               handleModalCheck(handleLearnClick);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                triggerHaptic();
-                handleModalCheck(handleLearnClick);
-              }
             }}
             background="pink.400"
             color="white"
@@ -4987,15 +4980,8 @@ const Step = ({
                         data-sound-ignore-select="true"
                         aria-label="Open Bitcoin mode"
                         icon={<FaBitcoin fontSize="20px" />}
-                        onPointerDown={() => {
+                        onClick={() => {
                           openActionBarModal(onBitcoinModeOpen, "bitcoin");
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            triggerHaptic();
-                            playActionBarSound("bitcoin");
-                            onBitcoinModeOpen();
-                          }
                         }}
                       />,
                     )}
@@ -5007,15 +4993,8 @@ const Step = ({
                         data-sound-ignore-select="true"
                         aria-label="Open self-paced mode"
                         icon={<PiClockCountdownFill fontSize="22px" />}
-                        onPointerDown={() => {
+                        onClick={() => {
                           openActionBarModal(onSelfPacedOpen, "selfPaced");
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            triggerHaptic();
-                            playActionBarSound("selfPaced");
-                            onSelfPacedOpen();
-                          }
                         }}
                       />,
                     )}
@@ -5028,15 +5007,9 @@ const Step = ({
                           ...actionBarButtonProps,
                           color: actionBarButtonProps.color,
                           "data-sound-ignore-select": "true",
-                          onPointerDown: () => {
+                          onClick: () => {
                             triggerHaptic();
                             playActionBarSound("theme");
-                          },
-                          onKeyDown: (e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              triggerHaptic();
-                              playActionBarSound("theme");
-                            }
                           },
                         }}
                       />,
@@ -5054,7 +5027,7 @@ const Step = ({
                           ]
                         }
                         icon={<PiUsersBold fontSize="20px" />}
-                        onPointerDown={() => {
+                        onPointerDownCapture={() => {
                           openActionBarModal(onSocialFeedOpen, "social");
                         }}
                         onKeyDown={(e) => {
@@ -5085,15 +5058,8 @@ const Step = ({
                           ] || "Open build your app"
                         }
                         icon={<RiCodeAiFill fontSize="22px" />}
-                        onPointerDown={() => {
+                        onClick={() => {
                           openActionBarModal(onKnowledgeLedgerOpen, "helper");
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            triggerHaptic();
-                            playActionBarSound("helper");
-                            onKnowledgeLedgerOpen();
-                          }
                         }}
                       />,
                     )}
@@ -5107,19 +5073,11 @@ const Step = ({
                         icon={<PiPatreonLogoFill fontSize="20px" />}
                         // boxShadow={patreonButtonShadow}
                         borderColor={hexToRgba(actionPalette[200], 0.85)}
-                        onPointerDown={() => {
+                        onClick={() => {
                           triggerHaptic();
                           playActionBarSound("patreon");
                           window.location.href =
                             "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            triggerHaptic();
-                            playActionBarSound("patreon");
-                            window.location.href =
-                              "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
-                          }
                         }}
                       />,
                     )}
