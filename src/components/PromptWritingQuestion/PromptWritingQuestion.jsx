@@ -73,6 +73,10 @@ export default function PromptWritingQuestion({
   return (
     <VStack spacing={4} width="100%" maxWidth="600px" align="stretch">
       <Button
+        onTouchStart={(e) => {
+          e.preventDefault();
+          handleModalCheck(onLearnClick);
+        }}
         onClick={() => {
           handleModalCheck(onLearnClick);
         }}

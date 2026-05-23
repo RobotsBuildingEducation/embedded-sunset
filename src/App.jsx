@@ -87,9 +87,7 @@ const lazyWithPreload = (factory) => {
   return Component;
 };
 
-const EducationalModal = lazyWithPreload(
-  () => import("./components/LearnModal/EducationalModal"),
-);
+import EducationalModal from "./components/LearnModal/EducationalModal";
 import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
 import ThemeMenu from "./components/ThemeMenu";
 import WaveBar from "./components/WaveBar";
@@ -247,12 +245,8 @@ import {
 import { FiTrendingUp } from "react-icons/fi";
 import MiniKitInitializer from "./MiniKitInitializer";
 
-const BitcoinModeModal = lazyWithPreload(
-  () => import("./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal"),
-);
-const SelfPacedModal = lazyWithPreload(
-  () => import("./components/SettingsMenu/SelfPacedModal/SelfPacedModal"),
-);
+import BitcoinModeModal from "./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal";
+import SelfPacedModal from "./components/SettingsMenu/SelfPacedModal/SelfPacedModal";
 const SocialFeedModal = lazyWithPreload(
   () => import("./components/SocialFeedModal/SocialFeedModal"),
 );
@@ -285,16 +279,10 @@ const RoleCanvas = lazy(() =>
     default: m.RoleCanvas,
   })),
 );
-const AlgorithmHelper = lazyWithPreload(() =>
-  import("./components/AlgorithmHelper/AlgorithmHelper").then((m) => ({
-    default: m.AlgorithmHelper,
-  })),
-);
+import { AlgorithmHelper } from "./components/AlgorithmHelper/AlgorithmHelper";
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
 import CloudTransition from "./elements/CloudTransition";
-const KnowledgeLedgerModal = lazyWithPreload(
-  () => import("./components/KnowledgeLedgerModal/KnowledgeLedgerModal"),
-);
+import KnowledgeLedgerModal from "./components/KnowledgeLedgerModal/KnowledgeLedgerModal";
 import { TbWorld } from "react-icons/tb";
 const SoundExperiment = lazy(() => import("./experiments/SoundExperiment"));
 
@@ -309,7 +297,7 @@ const preloadInteractiveModalChunks = () => {
     AlgorithmHelper,
     InstallAppModal,
   ].forEach((Component) => {
-    Component.preload().catch(() => {});
+    Component.preload?.().catch(() => {});
   });
 };
 
@@ -1163,6 +1151,10 @@ export const VoiceInput = ({
           </Button>
           <Button
             colorScheme="pink"
+            onTouchStart={(e) => {
+              e.preventDefault();
+              handleModalCheck(handleLearnClick);
+            }}
             onClick={() => {
               handleModalCheck(handleLearnClick);
             }}
@@ -4980,6 +4972,10 @@ const Step = ({
                         data-sound-ignore-select="true"
                         aria-label="Open Bitcoin mode"
                         icon={<FaBitcoin fontSize="20px" />}
+                        onTouchStart={(e) => {
+                          e.preventDefault();
+                          openActionBarModal(onBitcoinModeOpen, "bitcoin");
+                        }}
                         onClick={() => {
                           openActionBarModal(onBitcoinModeOpen, "bitcoin");
                         }}
@@ -4993,6 +4989,10 @@ const Step = ({
                         data-sound-ignore-select="true"
                         aria-label="Open self-paced mode"
                         icon={<PiClockCountdownFill fontSize="22px" />}
+                        onTouchStart={(e) => {
+                          e.preventDefault();
+                          openActionBarModal(onSelfPacedOpen, "selfPaced");
+                        }}
                         onClick={() => {
                           openActionBarModal(onSelfPacedOpen, "selfPaced");
                         }}
@@ -5058,6 +5058,10 @@ const Step = ({
                           ] || "Open build your app"
                         }
                         icon={<RiCodeAiFill fontSize="22px" />}
+                        onTouchStart={(e) => {
+                          e.preventDefault();
+                          openActionBarModal(onKnowledgeLedgerOpen, "helper");
+                        }}
                         onClick={() => {
                           openActionBarModal(onKnowledgeLedgerOpen, "helper");
                         }}

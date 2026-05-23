@@ -87,6 +87,10 @@ const MultipleChoiceQuestion = ({
     <VStack spacing={4} onKeyDown={handleKeyDown} width="100%" maxWidth="600px">
       <Button
         ref={learnButtonRef}
+        onTouchStart={(e) => {
+          e.preventDefault();
+          handleModalCheck(onLearnClick);
+        }}
         onClick={() => {
           handleModalCheck(onLearnClick);
         }}

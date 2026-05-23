@@ -118,6 +118,10 @@ const MultipleAnswerQuestion = ({
     <VStack spacing={4} onBlur={handleBlur} width="100%" maxWidth="600px">
       {/* Learn Button */}
       <Button
+        onTouchStart={(e) => {
+          e.preventDefault();
+          handleModalCheck(onLearnClick);
+        }}
         onClick={() => {
           handleModalCheck(onLearnClick);
         }}

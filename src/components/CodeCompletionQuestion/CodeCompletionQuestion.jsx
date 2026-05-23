@@ -131,6 +131,10 @@ const CodeCompletionQuestion = ({
       {/* Learn Button */}
       <Button
         ref={learnButtonRef}
+        onTouchStart={(e) => {
+          e.preventDefault();
+          handleModalCheck(onLearnClick);
+        }}
         onClick={() => {
           handleModalCheck(onLearnClick);
         }}

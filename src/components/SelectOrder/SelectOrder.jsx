@@ -122,6 +122,10 @@ const SelectOrderQuestion = ({
       style={{ outline: "none" }} // Remove default focus outline
     >
       <Button
+        onTouchStart={(e) => {
+          e.preventDefault();
+          handleModalCheck(onLearnClick);
+        }}
         onClick={() => {
           handleModalCheck(onLearnClick);
         }}
