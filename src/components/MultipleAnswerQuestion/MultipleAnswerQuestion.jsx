@@ -119,7 +119,7 @@ const MultipleAnswerQuestion = ({
     <VStack spacing={4} onBlur={handleBlur} width="100%" maxWidth="600px">
       {/* Learn Button */}
       <Button
-        onMouseDown={() => {
+        onPointerDown={() => {
           triggerHaptic();
           handleModalCheck(onLearnClick);
         }}
@@ -133,6 +133,7 @@ const MultipleAnswerQuestion = ({
         background="pink.400"
         color="white"
         boxShadow={actionShadow}
+        touchAction="manipulation"
         _hover={{ bg: "pink.500" }}
         _active={{ bg: "pink.500" }}
       >

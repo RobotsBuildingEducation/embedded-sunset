@@ -132,7 +132,7 @@ const CodeCompletionQuestion = ({
       {/* Learn Button */}
       <Button
         ref={learnButtonRef}
-        onMouseDown={() => {
+        onPointerDown={() => {
           triggerHaptic();
           handleModalCheck(onLearnClick);
         }}
@@ -147,6 +147,7 @@ const CodeCompletionQuestion = ({
         background="pink.400"
         color="white"
         boxShadow={actionShadow}
+        touchAction="manipulation"
         _hover={{ bg: "pink.500" }}
         _active={{ bg: "pink.500" }}
       >

@@ -123,7 +123,7 @@ const SelectOrderQuestion = ({
       style={{ outline: "none" }} // Remove default focus outline
     >
       <Button
-        onMouseDown={() => {
+        onPointerDown={() => {
           triggerHaptic();
           handleModalCheck(onLearnClick);
         }}
@@ -138,6 +138,7 @@ const SelectOrderQuestion = ({
         color="white"
         boxShadow={actionShadow}
         alignSelf="center"
+        touchAction="manipulation"
         _hover={{ bg: "pink.500" }}
         _active={{ bg: "pink.500" }}
       >

@@ -84,7 +84,7 @@ const MultipleChoiceQuestion = ({
     <VStack spacing={4} onKeyDown={handleKeyDown} width="100%" maxWidth="600px">
       <Button
         ref={learnButtonRef}
-        onMouseDown={() => {
+        onPointerDown={() => {
           triggerHaptic();
           handleModalCheck(onLearnClick);
         }}
@@ -99,6 +99,7 @@ const MultipleChoiceQuestion = ({
         background="pink.300"
         color="white"
         boxShadow={actionShadow}
+        touchAction="manipulation"
         _hover={{ bg: "pink.400" }}
         _active={{ bg: "pink.400" }}
       >

@@ -318,6 +318,17 @@ const adaptiveSuggestionVariants = {
   visible: { scale: 1, transition: { duration: 0.3 } },
 };
 
+const runAfterNextPaint = (callback) => {
+  if (typeof window === "undefined") {
+    callback();
+    return;
+  }
+
+  window.requestAnimationFrame(() => {
+    window.setTimeout(callback, 0);
+  });
+};
+
 const StableReactBash = class extends ReactBash {
   scrollPromptIntoTerminalView() {
     const inputElement = this.refs?.input;
@@ -1006,8 +1017,6 @@ export const VoiceInput = ({
 
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
-    soundManager.resume();
-    soundManager.play("pattern");
     // Retrieve the current count from localStorage
     // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
 
@@ -1022,26 +1031,34 @@ export const VoiceInput = ({
     // localStorage.setItem("lrnctrl", lrnctrl);
     onOpen();
 
-    if (educationalMessages.length > 0) {
-    } else if (!step?.isConversationReview) {
-      submitEducationalPrompt(
-        `Generate educational material about ${JSON.stringify(
-          step,
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning.  Additionally the ${pickProgrammingLanguage(userLanguage)} or relevant code should consider line breaks, whitespace and have a maximum print width of 80 characters and never start with a backticking markdown with triple backticks specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
-          userLanguage.includes("en") ? "english" : "spanish"
-        }`,
-      );
-    } else {
-      const relevantSteps = getObjectsByGroup(step?.group, steps[userLanguage]);
+    runAfterNextPaint(() => {
+      soundManager.resume();
+      soundManager.play("pattern");
 
-      submitEducationalPrompt(
-        `Generate educational material about ${JSON.stringify(
-          relevantSteps,
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally the ${pickProgrammingLanguage(userLanguage)} or relevant code should consider line breaks and formatting and have a maximum print width of 80 characters and never start with a backticking markdown with triple backticks specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets.  Never specify the answer. Lastly the user is speaking in ${
-          userLanguage.includes("en") ? "english" : "spanish"
-        }`,
-      );
-    }
+      if (educationalMessages.length > 0) {
+      } else if (!step?.isConversationReview) {
+        submitEducationalPrompt(
+          `Generate educational material about ${JSON.stringify(
+            step,
+          )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning.  Additionally the ${pickProgrammingLanguage(userLanguage)} or relevant code should consider line breaks, whitespace and have a maximum print width of 80 characters and never start with a backticking markdown with triple backticks specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
+            userLanguage.includes("en") ? "english" : "spanish"
+          }`,
+        );
+      } else {
+        const relevantSteps = getObjectsByGroup(
+          step?.group,
+          steps[userLanguage],
+        );
+
+        submitEducationalPrompt(
+          `Generate educational material about ${JSON.stringify(
+            relevantSteps,
+          )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally the ${pickProgrammingLanguage(userLanguage)} or relevant code should consider line breaks and formatting and have a maximum print width of 80 characters and never start with a backticking markdown with triple backticks specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets.  Never specify the answer. Lastly the user is speaking in ${
+            userLanguage.includes("en") ? "english" : "spanish"
+          }`,
+        );
+      }
+    });
   };
   // Dynamically adjust the height of the textarea as the content changes
   useEffect(() => {
@@ -1146,7 +1163,7 @@ export const VoiceInput = ({
           </Button>
           <Button
             colorScheme="pink"
-            onMouseDown={() => {
+            onPointerDown={() => {
               triggerHaptic();
               handleModalCheck(handleLearnClick);
             }}
@@ -1159,6 +1176,7 @@ export const VoiceInput = ({
             background="pink.400"
             color="white"
             boxShadow={actionShadow}
+            touchAction="manipulation"
             _hover={{ bg: "pink.500" }}
             _active={{ bg: "pink.500" }}
           >
@@ -3515,8 +3533,6 @@ const Step = ({
 
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
-    soundManager.resume();
-    soundManager.play("pattern");
     // Retrieve the current count from localStorage
     // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
 
@@ -3534,26 +3550,31 @@ const Step = ({
     // fetchGoogleAI();
     // if (educationalContent.length > 0) {
     // }
-    if (educationalMessages.length > 0) {
-    } else {
-      submitEducationalPrompt(
-        // [
-        //   {
-        //     content:
-        `Generate educational ${pickProgrammingLanguage(userLanguage)} material about ${JSON.stringify(
-          step,
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally any ${pickProgrammingLanguage(userLanguage)} or relevant code should have a maximum print width of 80 characters and never start with a backticking markdown with triple backticks specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
-          userLanguage.includes("en") ? "english" : "spanish"
-        }`,
-        //     ,
-        //     role: "user",
-        //   },
-        // ],
-        // false,
-        // false,
-        // true
-      );
-    }
+    runAfterNextPaint(() => {
+      soundManager.resume();
+      soundManager.play("pattern");
+
+      if (educationalMessages.length > 0) {
+      } else {
+        submitEducationalPrompt(
+          // [
+          //   {
+          //     content:
+          `Generate educational ${pickProgrammingLanguage(userLanguage)} material about ${JSON.stringify(
+            step,
+          )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally any ${pickProgrammingLanguage(userLanguage)} or relevant code should have a maximum print width of 80 characters and never start with a backticking markdown with triple backticks specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
+            userLanguage.includes("en") ? "english" : "spanish"
+          }`,
+          //     ,
+          //     role: "user",
+          //   },
+          // ],
+          // false,
+          // false,
+          // true
+        );
+      }
+    });
   };
 
   // useEffect(() => {
@@ -3849,6 +3870,7 @@ const Step = ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    touchAction: "manipulation",
     transition: "all 0.2s ease-in-out",
     boxShadow: actionBarButtonShadow,
     _hover: {
@@ -3881,6 +3903,14 @@ const Step = ({
     };
     const soundName = soundMap[id] || "next";
     soundManager.play(soundName);
+  };
+
+  const openActionBarModal = (openModal, soundId) => {
+    openModal();
+    runAfterNextPaint(() => {
+      triggerHaptic();
+      playActionBarSound(soundId);
+    });
   };
 
   const renderActionTourPopover = (id, ref, element) => {
@@ -4957,10 +4987,8 @@ const Step = ({
                         data-sound-ignore-select="true"
                         aria-label="Open Bitcoin mode"
                         icon={<FaBitcoin fontSize="20px" />}
-                        onMouseDown={() => {
-                          triggerHaptic();
-                          playActionBarSound("bitcoin");
-                          onBitcoinModeOpen();
+                        onPointerDown={() => {
+                          openActionBarModal(onBitcoinModeOpen, "bitcoin");
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
@@ -4979,10 +5007,8 @@ const Step = ({
                         data-sound-ignore-select="true"
                         aria-label="Open self-paced mode"
                         icon={<PiClockCountdownFill fontSize="22px" />}
-                        onMouseDown={() => {
-                          triggerHaptic();
-                          playActionBarSound("selfPaced");
-                          onSelfPacedOpen();
+                        onPointerDown={() => {
+                          openActionBarModal(onSelfPacedOpen, "selfPaced");
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
@@ -5002,7 +5028,7 @@ const Step = ({
                           ...actionBarButtonProps,
                           color: actionBarButtonProps.color,
                           "data-sound-ignore-select": "true",
-                          onMouseDown: () => {
+                          onPointerDown: () => {
                             triggerHaptic();
                             playActionBarSound("theme");
                           },
@@ -5028,10 +5054,8 @@ const Step = ({
                           ]
                         }
                         icon={<PiUsersBold fontSize="20px" />}
-                        onMouseDown={() => {
-                          triggerHaptic();
-                          playActionBarSound("social");
-                          onSocialFeedOpen();
+                        onPointerDown={() => {
+                          openActionBarModal(onSocialFeedOpen, "social");
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
@@ -5061,10 +5085,8 @@ const Step = ({
                           ] || "Open build your app"
                         }
                         icon={<RiCodeAiFill fontSize="22px" />}
-                        onMouseDown={() => {
-                          triggerHaptic();
-                          playActionBarSound("helper");
-                          onKnowledgeLedgerOpen();
+                        onPointerDown={() => {
+                          openActionBarModal(onKnowledgeLedgerOpen, "helper");
                         }}
                         onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
@@ -5085,7 +5107,7 @@ const Step = ({
                         icon={<PiPatreonLogoFill fontSize="20px" />}
                         // boxShadow={patreonButtonShadow}
                         borderColor={hexToRgba(actionPalette[200], 0.85)}
-                        onMouseDown={() => {
+                        onPointerDown={() => {
                           triggerHaptic();
                           playActionBarSound("patreon");
                           window.location.href =

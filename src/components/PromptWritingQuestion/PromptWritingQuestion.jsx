@@ -74,7 +74,7 @@ export default function PromptWritingQuestion({
   return (
     <VStack spacing={4} width="100%" maxWidth="600px" align="stretch">
       <Button
-        onMouseDown={() => {
+        onPointerDown={() => {
           triggerHaptic();
           handleModalCheck(onLearnClick);
         }}
@@ -88,6 +88,7 @@ export default function PromptWritingQuestion({
         background="pink.400"
         color="white"
         boxShadow={actionShadow}
+        touchAction="manipulation"
         _hover={{ bg: "pink.500" }}
         _active={{ bg: "pink.500" }}
       >
