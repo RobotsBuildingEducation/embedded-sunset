@@ -87,8 +87,8 @@ const lazyWithPreload = (factory) => {
   return Component;
 };
 
-const EducationalModal = lazyWithPreload(() =>
-  import("./components/LearnModal/EducationalModal"),
+const EducationalModal = lazyWithPreload(
+  () => import("./components/LearnModal/EducationalModal"),
 );
 import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
 import ThemeMenu from "./components/ThemeMenu";
@@ -247,14 +247,14 @@ import {
 import { FiTrendingUp } from "react-icons/fi";
 import MiniKitInitializer from "./MiniKitInitializer";
 
-const BitcoinModeModal = lazyWithPreload(() =>
-  import("./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal"),
+const BitcoinModeModal = lazyWithPreload(
+  () => import("./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal"),
 );
-const SelfPacedModal = lazyWithPreload(() =>
-  import("./components/SettingsMenu/SelfPacedModal/SelfPacedModal"),
+const SelfPacedModal = lazyWithPreload(
+  () => import("./components/SettingsMenu/SelfPacedModal/SelfPacedModal"),
 );
-const SocialFeedModal = lazyWithPreload(() =>
-  import("./components/SocialFeedModal/SocialFeedModal"),
+const SocialFeedModal = lazyWithPreload(
+  () => import("./components/SocialFeedModal/SocialFeedModal"),
 );
 const Onboarding = lazy(() =>
   import("./Onboarding").then((m) => ({ default: m.Onboarding })),
@@ -269,8 +269,8 @@ const InstallAppModal = lazyWithPreload(() =>
 import { motion, animate, useAnimation } from "framer-motion";
 import { keyframes } from "@emotion/react";
 import { Delaunay } from "d3-delaunay";
-const StudyGuideModal = lazyWithPreload(() =>
-  import("./components/StudyGuideModal/StudyGuideModal"),
+const StudyGuideModal = lazyWithPreload(
+  () => import("./components/StudyGuideModal/StudyGuideModal"),
 );
 const CodeEditor = lazy(() =>
   import("./components/CodeEditor/CodeEditor").then((m) => ({
@@ -292,8 +292,8 @@ const AlgorithmHelper = lazyWithPreload(() =>
 );
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
 import CloudTransition from "./elements/CloudTransition";
-const KnowledgeLedgerModal = lazyWithPreload(() =>
-  import("./components/KnowledgeLedgerModal/KnowledgeLedgerModal"),
+const KnowledgeLedgerModal = lazyWithPreload(
+  () => import("./components/KnowledgeLedgerModal/KnowledgeLedgerModal"),
 );
 import { TbWorld } from "react-icons/tb";
 const SoundExperiment = lazy(() => import("./experiments/SoundExperiment"));
@@ -1112,9 +1112,9 @@ export const VoiceInput = ({
 
   return (
     <VStack spacing={4} alignItems="center" width="100%" maxWidth={"600px"}>
-        {useVoice || isTerminal ? (
-          <HStack spacing={4} justifyContent={"center"} maxWidth={"400px"}>
-            {/* <Button
+      {useVoice || isTerminal ? (
+        <HStack spacing={4} justifyContent={"center"} maxWidth={"400px"}>
+          {/* <Button
             onMouseDown={handleVoiceStart}
             colorScheme="pink"
             variant={"outline"}
@@ -1122,53 +1122,53 @@ export const VoiceInput = ({
           >
             {translation[userLanguage]["app.button.voiceToText"]}
           </Button> */}
-            <Button
-              onMouseDown={handleAiStart}
-              variant={"outline"}
-              bg="appSurface"
-              color="appText"
-              border="1px solid var(--chakra-colors-appBorder)"
-              boxShadow={actionShadow}
-              _hover={{
-                bg: "appSurfaceMuted",
-                borderColor: "var(--chakra-colors-appBorderStrong)",
-              }}
-              _active={{ bg: "appSurfaceInset" }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  handleAiStart(); // Select the option on Enter or Space key
-                }
-              }}
-              // isDisabled={isUnsupportedBrowser()}
-            >
-              {" "}
-              {translation[userLanguage]["app.button.voiceToAI"]}
-            </Button>
-            <Button
-              colorScheme="pink"
-              onMouseDown={() => {
+          <Button
+            onMouseDown={handleAiStart}
+            variant={"outline"}
+            bg="appSurface"
+            color="appText"
+            border="1px solid var(--chakra-colors-appBorder)"
+            boxShadow={actionShadow}
+            _hover={{
+              bg: "appSurfaceMuted",
+              borderColor: "var(--chakra-colors-appBorderStrong)",
+            }}
+            _active={{ bg: "appSurfaceInset" }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                handleAiStart(); // Select the option on Enter or Space key
+              }
+            }}
+            // isDisabled={isUnsupportedBrowser()}
+          >
+            {" "}
+            {translation[userLanguage]["app.button.voiceToAI"]}
+          </Button>
+          <Button
+            colorScheme="pink"
+            onMouseDown={() => {
+              triggerHaptic();
+              handleModalCheck(handleLearnClick);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
                 triggerHaptic();
                 handleModalCheck(handleLearnClick);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  triggerHaptic();
-                  handleModalCheck(handleLearnClick);
-                }
-              }}
-              background="pink.400"
-              color="white"
-              boxShadow={actionShadow}
-              _hover={{ bg: "pink.500" }}
-              _active={{ bg: "pink.500" }}
-            >
-              <IoChatbubblesOutline />
-              &nbsp;
-              {translation[userLanguage]["app.button.learn"]}
-            </Button>
-          </HStack>
-        ) : null}
-        {/* {isWarningNotDismissed && isUnsupportedBrowser() ? (
+              }
+            }}
+            background="pink.400"
+            color="white"
+            boxShadow={actionShadow}
+            _hover={{ bg: "pink.500" }}
+            _active={{ bg: "pink.500" }}
+          >
+            <IoChatbubblesOutline />
+            &nbsp;
+            {translation[userLanguage]["app.button.learn"]}
+          </Button>
+        </HStack>
+      ) : null}
+      {/* {isWarningNotDismissed && isUnsupportedBrowser() ? (
         <>
           <br />
           <VStack
@@ -1225,173 +1225,171 @@ export const VoiceInput = ({
           </VStack>
         </>
       ) : null} */}
-        {isListening && (
-          <HStack spacing={2} alignItems="center">
-            <CloudCanvas />
-            <FadeInComponent speed="0.25s">
-              <Text
-                fontSize={"smaller"}
-                backgroundColor="appSurface"
-                color="appText"
-                fontWeight={"bold"}
-                borderRadius="8px"
-                padding="10px"
-              >
-                {" "}
-                {translation[userLanguage]["app.listening"]}
-              </Text>
-            </FadeInComponent>
-          </HStack>
-        )}
-        {aiListening && (
-          <HStack spacing={2} alignItems="center">
-            <CloudCanvas />
-            <FadeInComponent speed="0.25s">
-              <Text
-                fontSize={"smaller"}
-                backgroundColor="appSurface"
-                color="appText"
-                fontWeight={"bold"}
-                borderRadius="8px"
-                padding="10px"
-              >
-                {" "}
-                {translation[userLanguage]["app.listening"]}
-              </Text>
-            </FadeInComponent>
-          </HStack>
-        )}
-        {isCodeEditor ? (
-          <>
-            {" "}
-            <Box
-              width="100%"
-              height="400px"
-              // bg="white"
-              style={{
-                borderRadius: "8px",
-                // border: "1px solid black",
-                textAlign: "left",
-              }}
-              // boxShadow="0.5px 0.5px 1px 0px rgba(0, 0, 0,0.75)"
+      {isListening && (
+        <HStack spacing={2} alignItems="center">
+          <CloudCanvas />
+          <FadeInComponent speed="0.25s">
+            <Text
+              fontSize={"smaller"}
+              backgroundColor="appSurface"
+              color="appText"
+              fontWeight={"bold"}
+              borderRadius="8px"
+              padding="10px"
             >
-              {generateResponse ? (
-                <div
-                  style={{
-                    width: "100%",
-                  }}
-                >
-                  <CloudCanvas isLoader={true} regulateWidth={false} />
-                </div>
-              ) : (
-                // <MonacoEditor
-                //   height="100%"
-                //   width="100%"
-                //   language="javascript"
-                //   theme="light"
-                //   value={value}
-                //   onChange={(value) => onChange(value, resetMessages)}
-                //   options={{
-                //     fontFamily: "initial",
-                //     fontSize: "16px",
-                //     // wordWrap: "on",
-                //     automaticLayout: true,
-                //     tabIndex: 0, // Make the editor focusable
-                //   }}
-                //   onMount={(editorInstance) => {
-                //     // Unbind the Tab key to prevent it from inserting a tab character
-                //     editorInstance.addCommand(monaco.KeyCode.Tab, () => {
-                //       // Move focus to the next focusable element
-                //       moveFocus(true);
-                //     });
-                //     // Unbind the Shift+Tab key for reverse navigation
-                //     editorInstance.addCommand(
-                //       monaco.KeyMod.Shift | monaco.KeyCode.Tab,
-                //       () => {
-                //         // Move focus to the previous focusable element
-                //         moveFocus(false);
-                //       }
-                //     );
-                //   }}
-                // />
-                <Suspense
-                  fallback={
-                    <CloudCanvas isLoader={true} regulateWidth={false} />
-                  }
-                >
-                  <CodeEditor
-                    value={value}
-                    onChange={(v) => onChange(v, resetMessages)}
-                    height={400}
-                    userLanguage={userLanguage}
-                  />
-                </Suspense>
-              )}
-            </Box>
-            <br />
-          </>
-        ) : isSingleLineText ? (
-          <Input
-            type="text"
-            value={
-              generateResponse ? translation[userLanguage]["thinking"] : value
-            }
-            onChange={(e) => onChange(e.target.value)}
-            placeholder={translation[userLanguage]["app.input.placeholder"]}
-            maxWidth="400px"
+              {" "}
+              {translation[userLanguage]["app.listening"]}
+            </Text>
+          </FadeInComponent>
+        </HStack>
+      )}
+      {aiListening && (
+        <HStack spacing={2} alignItems="center">
+          <CloudCanvas />
+          <FadeInComponent speed="0.25s">
+            <Text
+              fontSize={"smaller"}
+              backgroundColor="appSurface"
+              color="appText"
+              fontWeight={"bold"}
+              borderRadius="8px"
+              padding="10px"
+            >
+              {" "}
+              {translation[userLanguage]["app.listening"]}
+            </Text>
+          </FadeInComponent>
+        </HStack>
+      )}
+      {isCodeEditor ? (
+        <>
+          {" "}
+          <Box
             width="100%"
-            boxShadow={inputShadow}
-            backgroundColor="appSurface"
-
-            // border="1px solid black"
-          />
-        ) : (
-          <Textarea
-            ref={textareaRef}
-            boxShadow={inputShadow}
-            type="textarea"
-            maxWidth={"100%"}
-            minHeight={isTerminal ? "100px" : "100px"}
-            backgroundColor="appSurface"
-            value={
-              generateResponse
-                ? translation[userLanguage]["thinking"]
-                : aiListening
-                  ? aiTranscript
-                  : value
-            }
-            onChange={(e) => {
-              onChange(e.target.value);
+            height="400px"
+            // bg="white"
+            style={{
+              borderRadius: "8px",
+              // border: "1px solid black",
+              textAlign: "left",
             }}
-            placeholder={
-              isTerminal
-                ? translation[userLanguage]["app.terminal.placeholder"]
-                : translation[userLanguage]["app.input.placeholder"]
-            }
-            width="100%"
+            // boxShadow="0.5px 0.5px 1px 0px rgba(0, 0, 0,0.75)"
+          >
+            {generateResponse ? (
+              <div
+                style={{
+                  width: "100%",
+                }}
+              >
+                <CloudCanvas isLoader={true} regulateWidth={false} />
+              </div>
+            ) : (
+              // <MonacoEditor
+              //   height="100%"
+              //   width="100%"
+              //   language="javascript"
+              //   theme="light"
+              //   value={value}
+              //   onChange={(value) => onChange(value, resetMessages)}
+              //   options={{
+              //     fontFamily: "initial",
+              //     fontSize: "16px",
+              //     // wordWrap: "on",
+              //     automaticLayout: true,
+              //     tabIndex: 0, // Make the editor focusable
+              //   }}
+              //   onMount={(editorInstance) => {
+              //     // Unbind the Tab key to prevent it from inserting a tab character
+              //     editorInstance.addCommand(monaco.KeyCode.Tab, () => {
+              //       // Move focus to the next focusable element
+              //       moveFocus(true);
+              //     });
+              //     // Unbind the Shift+Tab key for reverse navigation
+              //     editorInstance.addCommand(
+              //       monaco.KeyMod.Shift | monaco.KeyCode.Tab,
+              //       () => {
+              //         // Move focus to the previous focusable element
+              //         moveFocus(false);
+              //       }
+              //     );
+              //   }}
+              // />
+              <Suspense
+                fallback={<CloudCanvas isLoader={true} regulateWidth={false} />}
+              >
+                <CodeEditor
+                  value={value}
+                  onChange={(v) => onChange(v, resetMessages)}
+                  height={400}
+                  userLanguage={userLanguage}
+                />
+              </Suspense>
+            )}
+          </Box>
+          <br />
+        </>
+      ) : isSingleLineText ? (
+        <Input
+          type="text"
+          value={
+            generateResponse ? translation[userLanguage]["thinking"] : value
+          }
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={translation[userLanguage]["app.input.placeholder"]}
+          maxWidth="400px"
+          width="100%"
+          boxShadow={inputShadow}
+          backgroundColor="appSurface"
+
+          // border="1px solid black"
+        />
+      ) : (
+        <Textarea
+          ref={textareaRef}
+          boxShadow={inputShadow}
+          type="textarea"
+          maxWidth={"100%"}
+          minHeight={isTerminal ? "100px" : "100px"}
+          backgroundColor="appSurface"
+          value={
+            generateResponse
+              ? translation[userLanguage]["thinking"]
+              : aiListening
+                ? aiTranscript
+                : value
+          }
+          onChange={(e) => {
+            onChange(e.target.value);
+          }}
+          placeholder={
+            isTerminal
+              ? translation[userLanguage]["app.terminal.placeholder"]
+              : translation[userLanguage]["app.input.placeholder"]
+          }
+          width="100%"
+        />
+      )}
+
+      <Suspense fallback={null}>
+        {isOpen ? (
+          <EducationalModal
+            isOpen={isOpen}
+            onClose={onClose}
+            educationalMessages={educationalMessages}
+            educationalContent={educationalContent}
+            userLanguage={userLanguage}
           />
-        )}
+        ) : null}
 
-        <Suspense fallback={null}>
-          {isOpen ? (
-            <EducationalModal
-              isOpen={isOpen}
-              onClose={onClose}
-              educationalMessages={educationalMessages}
-              educationalContent={educationalContent}
-              userLanguage={userLanguage}
-            />
-          ) : null}
-
-          {isInstallModalOpen ? (
-            <InstallAppModal
-              userLanguage={userLanguage}
-              isOpen={isInstallModalOpen}
-              onClose={onInstallModalClose}
-              vocalRequest={true}
-            />
-          ) : null}
-        </Suspense>
+        {isInstallModalOpen ? (
+          <InstallAppModal
+            userLanguage={userLanguage}
+            isOpen={isInstallModalOpen}
+            onClose={onInstallModalClose}
+            vocalRequest={true}
+          />
+        ) : null}
+      </Suspense>
     </VStack>
   );
 };
@@ -3938,178 +3936,162 @@ const Step = ({
 
   return (
     <VStack
-        spacing={4}
-        width="100%"
-        px={4}
-        pt={showChapterReview ? { base: 0, md: 0 } : 10}
-        pb={showChapterReview ? { base: 14, md: 24 } : { base: 40, md: 44 }}
-        minH="100dvh"
-        justifyContent={showChapterReview ? "center" : "flex-start"}
-        boxSizing="border-box"
-        bg="transparent"
-      >
-        <DailyGoalCelebrationModal
-          isOpen={isDailyGoalCelebrationOpen}
-          onClose={onDailyGoalCelebrationClose}
-          userLanguage={userLanguage}
-          dailyGoals={dailyGoalCelebration.dailyGoals}
-          completedGoalCount={dailyGoalCelebration.completedGoalCount}
-        />
+      spacing={4}
+      width="100%"
+      px={4}
+      pt={showChapterReview ? { base: 0, md: 0 } : 10}
+      pb={showChapterReview ? { base: 14, md: 24 } : { base: 40, md: 44 }}
+      minH="100dvh"
+      justifyContent={showChapterReview ? "center" : "flex-start"}
+      boxSizing="border-box"
+      bg="transparent"
+    >
+      <DailyGoalCelebrationModal
+        isOpen={isDailyGoalCelebrationOpen}
+        onClose={onDailyGoalCelebrationClose}
+        userLanguage={userLanguage}
+        dailyGoals={dailyGoalCelebration.dailyGoals}
+        completedGoalCount={dailyGoalCelebration.completedGoalCount}
+      />
 
-        {showChapterReview && chapterReviewNodes.length > 0 ? (
-          <ChapterReview
-            nodes={chapterReviewNodes}
-            text={chapterReviewText}
-            onStart={dismissChapterReview}
-          />
-        ) : newQuestionMessages.length > 0 && isEmpty(generatedQuestion) ? (
+      {showChapterReview && chapterReviewNodes.length > 0 ? (
+        <ChapterReview
+          nodes={chapterReviewNodes}
+          text={chapterReviewText}
+          onStart={dismissChapterReview}
+        />
+      ) : newQuestionMessages.length > 0 && isEmpty(generatedQuestion) ? (
+        <Box
+          width="100%"
+          minH="calc(100dvh - 160px)"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          px={{ base: 2, md: 6 }}
+        >
           <Box
             width="100%"
-            minH="calc(100dvh - 160px)"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            px={{ base: 2, md: 6 }}
+            maxW="460px"
+            height={{ base: "560px", md: "600px" }}
+            maxH="72dvh"
+            color="appText"
+            bg="appBg"
+            border="1px solid var(--chakra-colors-appBorderStrong)"
+            borderRadius="32px"
+            boxShadow="0 24px 60px rgba(2, 6, 23, 0.34)"
+            overflow="hidden"
           >
-            <Box
-              width="100%"
-              maxW="460px"
-              height={{ base: "560px", md: "600px" }}
-              maxH="72dvh"
-              color="appText"
-              bg="appBg"
-              border="1px solid var(--chakra-colors-appBorderStrong)"
-              borderRadius="32px"
-              boxShadow="0 24px 60px rgba(2, 6, 23, 0.34)"
-              overflow="hidden"
-            >
-              <OrbCanvas
-                hasStreamedText={false}
-                instructions={
-                  <Markdown components={ChakraUIRenderer(newTheme)}>
-                    {`${translation[userLanguage]["analyzer"]}\n\n${
-                      newQuestionMessages[newQuestionMessages.length - 1]
-                        ?.content || ""
-                    }`.trimStart()}
-                  </Markdown>
-                }
-              />
-            </Box>
+            <OrbCanvas
+              hasStreamedText={false}
+              instructions={
+                <Markdown components={ChakraUIRenderer(newTheme)}>
+                  {`${translation[userLanguage]["analyzer"]}\n\n${
+                    newQuestionMessages[newQuestionMessages.length - 1]
+                      ?.content || ""
+                  }`.trimStart()}
+                </Markdown>
+              }
+            />
           </Box>
-        ) : (
-          <>
-            <VStack
-              textAlign={"left"}
-              style={{
-                width: "100%",
-                maxWidth: 400,
-                alignItems: "flex-start",
-                paddingBottom: "14px",
-              }}
-            >
-              <VStack width="100%" spacing={2} alignItems="flex-start">
+        </Box>
+      ) : (
+        <>
+          <VStack
+            textAlign={"left"}
+            style={{
+              width: "100%",
+              maxWidth: 400,
+              alignItems: "flex-start",
+              paddingBottom: "14px",
+            }}
+          >
+            <VStack width="100%" spacing={2} alignItems="flex-start">
+              <HStack
+                spacing={2}
+                flexWrap="wrap"
+                rowGap={1.5}
+                alignItems="center"
+                width="100%"
+              >
                 <HStack
-                  spacing={2}
-                  flexWrap="wrap"
-                  rowGap={1.5}
-                  alignItems="center"
-                  width="100%"
+                  spacing={1.5}
+                  px={2}
+                  py={1}
+                  borderRadius="full"
+                  background="appInfoSubtle"
+                  border="1px solid rgba(102, 133, 255, 0.5)"
                 >
-                  <HStack
-                    spacing={1.5}
-                    px={2}
-                    py={1}
-                    borderRadius="full"
-                    background="appInfoSubtle"
-                    border="1px solid rgba(102, 133, 255, 0.5)"
-                  >
-                    <Icon as={RiBookOpenLine} color="blue.400" boxSize={3.5} />
-                    <Text
-                      fontSize="sm"
-                      fontWeight="medium"
-                      color="appTextMuted"
-                    >
-                      {step.group}
-                    </Text>
-                  </HStack>
-                  <HStack
-                    spacing={1.5}
-                    px={2}
-                    py={1}
-                    borderRadius="full"
-                    background="appWarningSubtle"
-                    border="1px solid rgba(246, 173, 85, 0.4)"
-                  >
-                    <Icon as={FiTrendingUp} color="orange.500" boxSize={3.5} />
-                    <Text
-                      fontSize="sm"
-                      fontWeight="medium"
-                      color="appTextMuted"
-                    >
-                      {animatedProgress.toFixed(0)}%
-                    </Text>
-                  </HStack>
-
-                  <HStack
-                    spacing={1.5}
-                    px={2}
-                    py={1}
-                    borderRadius="full"
-                    background="appErrorSubtle"
-                    border="1px solid rgba(252, 129, 129, 0.45)"
-                  >
-                    <Icon as={FaFire} color="red.400" boxSize={3.5} />
-                    <Text
-                      fontSize="sm"
-                      fontWeight="medium"
-                      color="appTextMuted"
-                    >
-                      {streak}
-                    </Text>
-                  </HStack>
-                  <HStack
-                    spacing={1.5}
-                    px={2}
-                    py={1}
-                    borderRadius="full"
-                    background="appAccentSoft"
-                    border="1px solid rgba(183, 148, 244, 0.5)"
-                  >
-                    <Icon as={RiFlag2Line} color="purple.400" boxSize={3.5} />
-                    <Text
-                      fontSize="sm"
-                      fontWeight="medium"
-                      color="appTextMuted"
-                    >
-                      {String(goalCount) || "0"}
-                    </Text>
-                  </HStack>
+                  <Icon as={RiBookOpenLine} color="blue.400" boxSize={3.5} />
+                  <Text fontSize="sm" fontWeight="medium" color="appTextMuted">
+                    {step.group}
+                  </Text>
                 </HStack>
-                <MotionProgress
-                  height="24px"
-                  initial={{ scale: 1 }}
-                  animate={progressControls}
-                  opacity={0.8}
-                  value={animatedProgress}
-                  size="sm"
-                  colorScheme={getColorScheme(step.group)}
-                  width="100%"
-                  hasStripe
-                  isAnimated
-                  borderRadius="4px"
-                  border="1px solid rgba(236, 236, 236, 0.8)"
-                  background={getBackgroundScheme(step.group)}
-                  mb={userLanguage !== "compsci-en" ? 1 : 2}
-                  sx={{
-                    "& > div": {
-                      background:
-                        "linear-gradient(270deg, #f6ad55, #fbd38d, #f6ad55)",
-                      backgroundSize: "200% 200%",
-                      animation: `${progressGradient} 7s ease-in-out infinite`,
-                    },
-                  }}
-                />
-                {/* {userLanguage !== "compsci-en" ? (
+                <HStack
+                  spacing={1.5}
+                  px={2}
+                  py={1}
+                  borderRadius="full"
+                  background="appWarningSubtle"
+                  border="1px solid rgba(246, 173, 85, 0.4)"
+                >
+                  <Icon as={FiTrendingUp} color="orange.500" boxSize={3.5} />
+                  <Text fontSize="sm" fontWeight="medium" color="appTextMuted">
+                    {animatedProgress.toFixed(0)}%
+                  </Text>
+                </HStack>
+
+                <HStack
+                  spacing={1.5}
+                  px={2}
+                  py={1}
+                  borderRadius="full"
+                  background="appErrorSubtle"
+                  border="1px solid rgba(252, 129, 129, 0.45)"
+                >
+                  <Icon as={FaFire} color="red.400" boxSize={3.5} />
+                  <Text fontSize="sm" fontWeight="medium" color="appTextMuted">
+                    {streak}
+                  </Text>
+                </HStack>
+                <HStack
+                  spacing={1.5}
+                  px={2}
+                  py={1}
+                  borderRadius="full"
+                  background="appAccentSoft"
+                  border="1px solid rgba(183, 148, 244, 0.5)"
+                >
+                  <Icon as={RiFlag2Line} color="purple.400" boxSize={3.5} />
+                  <Text fontSize="sm" fontWeight="medium" color="appTextMuted">
+                    {String(goalCount) || "0"}
+                  </Text>
+                </HStack>
+              </HStack>
+              <MotionProgress
+                height="24px"
+                initial={{ scale: 1 }}
+                animate={progressControls}
+                opacity={0.8}
+                value={animatedProgress}
+                size="sm"
+                colorScheme={getColorScheme(step.group)}
+                width="100%"
+                hasStripe
+                isAnimated
+                borderRadius="4px"
+                border="1px solid rgba(236, 236, 236, 0.8)"
+                background={getBackgroundScheme(step.group)}
+                mb={userLanguage !== "compsci-en" ? 1 : 2}
+                sx={{
+                  "& > div": {
+                    background:
+                      "linear-gradient(270deg, #f6ad55, #fbd38d, #f6ad55)",
+                    backgroundSize: "200% 200%",
+                    animation: `${progressGradient} 7s ease-in-out infinite`,
+                  },
+                }}
+              />
+              {/* {userLanguage !== "compsci-en" ? (
                 <Text
                   color="yellow.600"
                   fontWeight={"bold"}
@@ -4122,8 +4104,8 @@ const Step = ({
                   /{translation[userLanguage]["year"]}
                 </Text>
               ) : null} */}
-              </VStack>
-              {/* {calculateBalance() > 0 ? (
+            </VStack>
+            {/* {calculateBalance() > 0 ? (
               <HStack
                 style={{ marginTop: "-12px", width: "100%" }}
                 display="flex"
@@ -4147,47 +4129,44 @@ const Step = ({
                 </Progress>
               </HStack>
             ) : null} */}
-            </VStack>
+          </VStack>
 
-            <div
-              style={{
-                zoom: 0.8,
-                textAlign: "left",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <Text
-                fontSize="xl"
-                textAlign={step.isStudyGuide ? "center" : null}
-              >
-                <b>
-                  <HStack>
-                    {currentStep === 0 ? null : (
-                      <IconButton
-                        width="18px"
-                        height="24px"
-                        background="pink.100"
-                        opacity="0.75"
-                        color="pink.600"
-                        icon={<RiAiGenerate padding="4px" fontSize="14px" />}
-                        mr={2}
-                        mt="-0.5"
-                        boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                        onMouseDown={() => {
+          <div
+            style={{
+              zoom: 0.8,
+              textAlign: "left",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Text fontSize="xl" textAlign={step.isStudyGuide ? "center" : null}>
+              <b>
+                <HStack>
+                  {currentStep === 0 ? null : (
+                    <IconButton
+                      width="18px"
+                      height="24px"
+                      background="pink.100"
+                      opacity="0.75"
+                      color="pink.600"
+                      icon={<RiAiGenerate padding="4px" fontSize="14px" />}
+                      mr={2}
+                      mt="-0.5"
+                      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                      onMouseDown={() => {
+                        triggerHaptic();
+                        handleModalCheck(handleGenerateNewQuestion);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
                           triggerHaptic();
                           handleModalCheck(handleGenerateNewQuestion);
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            triggerHaptic();
-                            handleModalCheck(handleGenerateNewQuestion);
-                          }
-                        }}
-                      />
-                    )}
-                    {/* <IconButton
+                        }
+                      }}
+                    />
+                  )}
+                  {/* <IconButton
                     width="12px"
                     height="18px"
                     boxShadow="0px 0px 0.25px 0.5px #ececec"
@@ -4206,409 +4185,402 @@ const Step = ({
                       }
                     }}
                   />{" "} */}
-                    {/* {currentStep > 0 ? currentStep + "." : null} {step.title} */}
-                    <HStack spacing={2} alignItems="center">
-                      {/* dropdown for jumping between questions */}
+                  {/* {currentStep > 0 ? currentStep + "." : null} {step.title} */}
+                  <HStack spacing={2} alignItems="center">
+                    {/* dropdown for jumping between questions */}
 
-                      {currentStep > 0 && (
-                        <Menu>
-                          <MenuButton
-                            as={Button}
-                            variant="link"
-                            size="lg"
-                            rightIcon={<ChevronDownIcon marginLeft="-18px" />}
-                            colorScheme="pink"
-                            opacity="0.75"
-                            _hover={{ textDecoration: "none", opacity: 1 }}
-                            mr={1}
-                          >
-                            {isAILearningMode ? (
-                              <HStack spacing={1}>
-                                <Icon as={RiAiGenerate} boxSize={4} />
-                                <Text>AI</Text>
-                              </HStack>
-                            ) : (
-                              currentStep
-                            )}
-                          </MenuButton>
-                          <MenuList
-                            maxH="450px"
-                            overflowY="auto"
-                            minW="auto"
-                            maxWidth="90vw"
-                            whiteSpace="normal"
-                            marginLeft="48px"
-                            p={2}
-                          >
-                            {isAILearningMode && (
-                              <>
-                                <MenuItem
-                                  onClick={() => {
-                                    triggerHaptic();
-                                    handleExitAILearningMode();
-                                  }}
-                                  fontWeight="bold"
-                                  color="pink.600"
-                                  icon={<RiBookOpenLine />}
+                    {currentStep > 0 && (
+                      <Menu>
+                        <MenuButton
+                          as={Button}
+                          variant="link"
+                          size="lg"
+                          rightIcon={<ChevronDownIcon marginLeft="-18px" />}
+                          colorScheme="pink"
+                          opacity="0.75"
+                          _hover={{ textDecoration: "none", opacity: 1 }}
+                          mr={1}
+                        >
+                          {isAILearningMode ? (
+                            <HStack spacing={1}>
+                              <Icon as={RiAiGenerate} boxSize={4} />
+                              <Text>AI</Text>
+                            </HStack>
+                          ) : (
+                            currentStep
+                          )}
+                        </MenuButton>
+                        <MenuList
+                          maxH="450px"
+                          overflowY="auto"
+                          minW="auto"
+                          maxWidth="90vw"
+                          whiteSpace="normal"
+                          marginLeft="48px"
+                          p={2}
+                        >
+                          {isAILearningMode && (
+                            <>
+                              <MenuItem
+                                onClick={() => {
+                                  triggerHaptic();
+                                  handleExitAILearningMode();
+                                }}
+                                fontWeight="bold"
+                                color="pink.600"
+                                icon={<RiBookOpenLine />}
+                              >
+                                {translation[userLanguage]?.[
+                                  "button.returnToCourse"
+                                ] || "Return to Course"}
+                              </MenuItem>
+                              <MenuItem
+                                onClick={() => {
+                                  triggerHaptic();
+                                  handleGenerateNewQuestion();
+                                }}
+                                icon={<RiAiGenerate />}
+                              >
+                                {translation[userLanguage]?.[
+                                  "button.generateNewQuestion"
+                                ] || "Generate New Question"}
+                              </MenuItem>
+                              <Divider my={2} />
+                            </>
+                          )}
+                          <Input
+                            placeholder={translation[userLanguage]["search..."]}
+                            size="sm"
+                            mb={2}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                          />
+                          {steps[userLanguage]
+                            .map((s, idx) => ({ s, idx }))
+                            .filter(({ s, idx }) => {
+                              const term = searchTerm.toLowerCase();
+                              return (
+                                String(idx).includes(term) ||
+                                s.title.toLowerCase().includes(term)
+                              );
+                            })
+                            .map(({ s, idx }) => {
+                              const disabled = idx >= 10 && !hasPasscode;
+                              const label = `${idx > 0 ? idx + ". " : ""}${s.title}`;
+                              return disabled ? (
+                                <Tooltip
+                                  key={idx}
+                                  label={
+                                    translation[userLanguage][
+                                      "completeTutorialFirst"
+                                    ]
+                                  }
+                                  placement="bottom"
+                                  hasArrow
                                 >
-                                  {translation[userLanguage]?.[
-                                    "button.returnToCourse"
-                                  ] || "Return to Course"}
-                                </MenuItem>
+                                  <Box w="100%">
+                                    <MenuItem isDisabled whiteSpace="normal">
+                                      {label}
+                                    </MenuItem>
+                                  </Box>
+                                </Tooltip>
+                              ) : (
                                 <MenuItem
+                                  key={idx}
                                   onClick={() => {
-                                    triggerHaptic();
-                                    handleGenerateNewQuestion();
-                                  }}
-                                  icon={<RiAiGenerate />}
-                                >
-                                  {translation[userLanguage]?.[
-                                    "button.generateNewQuestion"
-                                  ] || "Generate New Question"}
-                                </MenuItem>
-                                <Divider my={2} />
-                              </>
-                            )}
-                            <Input
-                              placeholder={
-                                translation[userLanguage]["search..."]
-                              }
-                              size="sm"
-                              mb={2}
-                              value={searchTerm}
-                              onChange={(e) => setSearchTerm(e.target.value)}
-                            />
-                            {steps[userLanguage]
-                              .map((s, idx) => ({ s, idx }))
-                              .filter(({ s, idx }) => {
-                                const term = searchTerm.toLowerCase();
-                                return (
-                                  String(idx).includes(term) ||
-                                  s.title.toLowerCase().includes(term)
-                                );
-                              })
-                              .map(({ s, idx }) => {
-                                const disabled = idx >= 10 && !hasPasscode;
-                                const label = `${idx > 0 ? idx + ". " : ""}${s.title}`;
-                                return disabled ? (
-                                  <Tooltip
-                                    key={idx}
-                                    label={
-                                      translation[userLanguage][
-                                        "completeTutorialFirst"
-                                      ]
+                                    setSearchTerm("");
+                                    if (isAILearningMode) {
+                                      handleExitAILearningMode();
                                     }
-                                    placement="bottom"
-                                    hasArrow
-                                  >
-                                    <Box w="100%">
-                                      <MenuItem isDisabled whiteSpace="normal">
-                                        {label}
-                                      </MenuItem>
-                                    </Box>
-                                  </Tooltip>
-                                ) : (
-                                  <MenuItem
-                                    key={idx}
-                                    onClick={() => {
-                                      setSearchTerm("");
-                                      if (isAILearningMode) {
-                                        handleExitAILearningMode();
-                                      }
-                                      navigate(`/q/${idx}`);
-                                    }}
-                                    whiteSpace="normal"
-                                  >
-                                    {label}
-                                  </MenuItem>
-                                );
-                              })}
-                          </MenuList>
-                        </Menu>
+                                    navigate(`/q/${idx}`);
+                                  }}
+                                  whiteSpace="normal"
+                                >
+                                  {label}
+                                </MenuItem>
+                              );
+                            })}
+                        </MenuList>
+                      </Menu>
+                    )}
+
+                    {/* the question title */}
+                    <Text fontSize="xl" fontWeight="bold">
+                      {isAILearningMode && !isEmpty(generatedQuestion) ? (
+                        <HStack spacing={2}>
+                          <Text
+                            as="span"
+                            fontSize="xs"
+                            bg="pink.100"
+                            color="pink.700"
+                            px={2}
+                            py={0.5}
+                            borderRadius="full"
+                          >
+                            {translation[userLanguage]?.["label.aiGenerated"] ||
+                              "AI Generated"}
+                          </Text>
+                          <Text as="span">{step.title}</Text>
+                        </HStack>
+                      ) : (
+                        step.title
                       )}
-
-                      {/* the question title */}
-                      <Text fontSize="xl" fontWeight="bold">
-                        {isAILearningMode && !isEmpty(generatedQuestion) ? (
-                          <HStack spacing={2}>
-                            <Text
-                              as="span"
-                              fontSize="xs"
-                              bg="pink.100"
-                              color="pink.700"
-                              px={2}
-                              py={0.5}
-                              borderRadius="full"
-                            >
-                              {translation[userLanguage]?.[
-                                "label.aiGenerated"
-                              ] || "AI Generated"}
-                            </Text>
-                            <Text as="span">{step.title}</Text>
-                          </HStack>
-                        ) : (
-                          step.title
-                        )}
-                      </Text>
-                    </HStack>
+                    </Text>
                   </HStack>
-                </b>
+                </HStack>
+              </b>
+            </Text>
+
+            {step.question && (
+              <Text
+                width="100%"
+                maxWidth={step.isStudyGuide ? 600 : "600px"}
+                fontSize="sm"
+                color="appTextMuted"
+                mb={3}
+                textAlign={step.isStudyGuide ? "left" : "left"}
+              >
+                <span style={{ textDecoration: "none" }}>
+                  {step.description}
+                </span>
               </Text>
+            )}
 
-              {step.question && (
-                <Text
-                  width="100%"
-                  maxWidth={step.isStudyGuide ? 600 : "600px"}
-                  fontSize="sm"
-                  color="appTextMuted"
-                  mb={3}
-                  textAlign={step.isStudyGuide ? "left" : "left"}
-                >
-                  <span style={{ textDecoration: "none" }}>
-                    {step.description}
-                  </span>
+            {step.question && (
+              <Text
+                width="100%"
+                maxWidth={step.isStudyGuide ? 600 : 600}
+                fontSize="medium"
+                color="appText"
+                textAlign={"left"}
+              >
+                {step.question.questionText}
+              </Text>
+            )}
+          </div>
+
+          <>
+            {step.isStudyGuide && (
+              <VStack>
+                <Text>
+                  {translation[userLanguage]["startTutorialAndOnboarding"]}
                 </Text>
-              )}
 
-              {step.question && (
-                <Text
-                  width="100%"
-                  maxWidth={step.isStudyGuide ? 600 : 600}
-                  fontSize="medium"
-                  color="appText"
-                  textAlign={"left"}
-                >
-                  {step.question.questionText}
-                </Text>
-              )}
-            </div>
-
-            <>
-              {step.isStudyGuide && (
-                <VStack>
-                  <Text>
-                    {translation[userLanguage]["startTutorialAndOnboarding"]}
-                  </Text>
-
-                  <HStack>
-                    <Button
-                      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                      onMouseDown={onStudyGuideModalOpen}
-                      mb={4}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          onStudyGuideModalOpen();
-                        }
-                      }}
-                      variant={"outline"}
-                    >
-                      {translation[userLanguage]["settings.button.studyGuide"]}
-                    </Button>
-                    &nbsp;&nbsp; &nbsp;&nbsp;
-                    <Button
-                      onPointerDown={handleNextQuestionButtonPress}
-                      onClick={handleNextQuestionButtonPress}
-                      mb={4}
-                      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                      style={{ touchAction: "manipulation" }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          handleNextQuestionButtonPress(e);
-                        }
-                      }}
-                      disabled={isPostingWithNostr || isActionTourActive}
-                    >
-                      {
-                        translation[userLanguage]["app.button.nextQuestion"]
-                      }{" "}
-                    </Button>
-                  </HStack>
-                  <Suspense fallback={null}>
-                    <StudyGuideModal
-                      isOpen={isStudyGuideModalOpen}
-                      onClose={onStudyGuideModalClose}
-                      content={step.question.metaData}
-                      userLanguage={userLanguage}
-                    />
-                  </Suspense>
-                </VStack>
-              )}
-
-              {step.isSingleLineText && (
-                <VoiceInput
-                  handleModalCheck={handleModalCheck}
-                  value={inputValue}
-                  onChange={setInputValue}
-                  isCodeEditor={false}
-                  isTextInput={false}
-                  isSingleLineText={true}
-                  resetVoiceState={resetVoiceState}
-                  useVoice={true}
-                  stopListening={stopListening}
-                  setFeedback={setFeedback}
-                  resetFeedbackMessages={resetMessages}
-                  step={step}
-                  userLanguage={userLanguage}
-                />
-              )}
-              {step.isText && (
-                <VoiceInput
-                  handleModalCheck={handleModalCheck}
-                  value={inputValue}
-                  onChange={setInputValue}
-                  isCodeEditor={false}
-                  isTextInput={true}
-                  resetVoiceState={resetVoiceState}
-                  useVoice={true}
-                  stopListening={stopListening}
-                  setFeedback={setFeedback}
-                  resetFeedbackMessages={resetMessages}
-                  step={step}
-                  userLanguage={userLanguage}
-                />
-              )}
-              {step.isCodeCompletion && (
-                <CodeCompletionQuestion
-                  step={step}
-                  question={step.question}
-                  selectedOption={selectedOption}
-                  setSelectedOption={setSelectedOption}
-                  onLearnClick={handleLearnClick}
-                  userLanguage={userLanguage}
-                  handleModalCheck={handleModalCheck}
-                />
-              )}
-              {step.isCode && !step.isTerminal && (
-                <VoiceInput
-                  handleModalCheck={handleModalCheck}
-                  value={inputValue}
-                  onChange={setInputValue}
-                  isCodeEditor={true}
-                  resetVoiceState={resetVoiceState}
-                  useVoice={true}
-                  stopListening={stopListening}
-                  setFeedback={setFeedback}
-                  resetFeedbackMessages={resetMessages}
-                  step={step}
-                  userLanguage={userLanguage}
-                  currentStep={currentStep}
-                />
-              )}
-              {step.isCode && step.isTerminal && (
-                <Box
-                  width="100%"
-                  justifyContent="center"
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  <TerminalComponent
-                    inputValue={inputValue}
-                    setInputValue={setInputValue}
-                    isSending={isSending}
-                    isTerminal={true}
-                    stopListening={stopListening}
-                    resetVoiceState={resetVoiceState}
-                    setFeedback={setFeedback}
-                    resetFeedbackMessages={resetMessages}
-                    step={step}
+                <HStack>
+                  <Button
+                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                    onMouseDown={onStudyGuideModalOpen}
+                    mb={4}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        onStudyGuideModalOpen();
+                      }
+                    }}
+                    variant={"outline"}
+                  >
+                    {translation[userLanguage]["settings.button.studyGuide"]}
+                  </Button>
+                  &nbsp;&nbsp; &nbsp;&nbsp;
+                  <Button
+                    onPointerDown={handleNextQuestionButtonPress}
+                    onClick={handleNextQuestionButtonPress}
+                    mb={4}
+                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                    style={{ touchAction: "manipulation" }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        handleNextQuestionButtonPress(e);
+                      }
+                    }}
+                    disabled={isPostingWithNostr || isActionTourActive}
+                  >
+                    {translation[userLanguage]["app.button.nextQuestion"]}{" "}
+                  </Button>
+                </HStack>
+                <Suspense fallback={null}>
+                  <StudyGuideModal
+                    isOpen={isStudyGuideModalOpen}
+                    onClose={onStudyGuideModalClose}
+                    content={step.question.metaData}
                     userLanguage={userLanguage}
-                    handleModalCheck={handleModalCheck}
-                  />
-                </Box>
-              )}
-              {step.isMultipleChoice && (
-                <MultipleChoiceQuestion
-                  question={step.question}
-                  selectedOption={selectedOption}
-                  setSelectedOption={setSelectedOption}
-                  userLanguage={userLanguage}
-                  onLearnClick={handleLearnClick}
-                  handleModalCheck={handleModalCheck}
-                />
-              )}
-              {step.isMultipleAnswerChoice && (
-                <MultipleAnswerQuestion
-                  question={step.question}
-                  selectedOptions={selectedOptions}
-                  setSelectedOptions={setSelectedOptions}
-                  onLearnClick={handleLearnClick}
-                  userLanguage={userLanguage}
-                  handleModalCheck={handleModalCheck}
-                />
-              )}
-              {step.isSelectOrder && (
-                <SelectOrderQuestion
-                  items={items}
-                  setItems={setItems}
-                  onLearnClick={handleLearnClick}
-                  userLanguage={userLanguage}
-                  step={step}
-                  handleModalCheck={handleModalCheck}
-                />
-              )}
-              {step.isPromptWriting && (
-                <PromptWritingQuestion
-                  question={step.question}
-                  userLanguage={userLanguage}
-                  handleModalCheck={handleModalCheck}
-                  onLearnClick={handleLearnClick}
-                  onSubmitPrompt={handleAnswerClick}
-                />
-              )}
-              {step.isConversationReview && (
-                <Suspense
-                  fallback={
-                    <CloudCanvas isLoader={true} regulateWidth={false} />
-                  }
-                >
-                  <ConversationReview
-                    question={step.question}
-                    userLanguage={userLanguage}
-                    steps={steps}
-                    step={step}
-                    onSubmit={handleAnswerClick} // Or any other relevant logic
-                    setFinalConversation={setFinalConversation}
-                    finalConversation={finalConversation}
-                    handleModalCheck={handleModalCheck}
                   />
                 </Suspense>
-              )}
-              {/* {isPostingWithNostr ? (
+              </VStack>
+            )}
+
+            {step.isSingleLineText && (
+              <VoiceInput
+                handleModalCheck={handleModalCheck}
+                value={inputValue}
+                onChange={setInputValue}
+                isCodeEditor={false}
+                isTextInput={false}
+                isSingleLineText={true}
+                resetVoiceState={resetVoiceState}
+                useVoice={true}
+                stopListening={stopListening}
+                setFeedback={setFeedback}
+                resetFeedbackMessages={resetMessages}
+                step={step}
+                userLanguage={userLanguage}
+              />
+            )}
+            {step.isText && (
+              <VoiceInput
+                handleModalCheck={handleModalCheck}
+                value={inputValue}
+                onChange={setInputValue}
+                isCodeEditor={false}
+                isTextInput={true}
+                resetVoiceState={resetVoiceState}
+                useVoice={true}
+                stopListening={stopListening}
+                setFeedback={setFeedback}
+                resetFeedbackMessages={resetMessages}
+                step={step}
+                userLanguage={userLanguage}
+              />
+            )}
+            {step.isCodeCompletion && (
+              <CodeCompletionQuestion
+                step={step}
+                question={step.question}
+                selectedOption={selectedOption}
+                setSelectedOption={setSelectedOption}
+                onLearnClick={handleLearnClick}
+                userLanguage={userLanguage}
+                handleModalCheck={handleModalCheck}
+              />
+            )}
+            {step.isCode && !step.isTerminal && (
+              <VoiceInput
+                handleModalCheck={handleModalCheck}
+                value={inputValue}
+                onChange={setInputValue}
+                isCodeEditor={true}
+                resetVoiceState={resetVoiceState}
+                useVoice={true}
+                stopListening={stopListening}
+                setFeedback={setFeedback}
+                resetFeedbackMessages={resetMessages}
+                step={step}
+                userLanguage={userLanguage}
+                currentStep={currentStep}
+              />
+            )}
+            {step.isCode && step.isTerminal && (
+              <Box
+                width="100%"
+                justifyContent="center"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <TerminalComponent
+                  inputValue={inputValue}
+                  setInputValue={setInputValue}
+                  isSending={isSending}
+                  isTerminal={true}
+                  stopListening={stopListening}
+                  resetVoiceState={resetVoiceState}
+                  setFeedback={setFeedback}
+                  resetFeedbackMessages={resetMessages}
+                  step={step}
+                  userLanguage={userLanguage}
+                  handleModalCheck={handleModalCheck}
+                />
+              </Box>
+            )}
+            {step.isMultipleChoice && (
+              <MultipleChoiceQuestion
+                question={step.question}
+                selectedOption={selectedOption}
+                setSelectedOption={setSelectedOption}
+                userLanguage={userLanguage}
+                onLearnClick={handleLearnClick}
+                handleModalCheck={handleModalCheck}
+              />
+            )}
+            {step.isMultipleAnswerChoice && (
+              <MultipleAnswerQuestion
+                question={step.question}
+                selectedOptions={selectedOptions}
+                setSelectedOptions={setSelectedOptions}
+                onLearnClick={handleLearnClick}
+                userLanguage={userLanguage}
+                handleModalCheck={handleModalCheck}
+              />
+            )}
+            {step.isSelectOrder && (
+              <SelectOrderQuestion
+                items={items}
+                setItems={setItems}
+                onLearnClick={handleLearnClick}
+                userLanguage={userLanguage}
+                step={step}
+                handleModalCheck={handleModalCheck}
+              />
+            )}
+            {step.isPromptWriting && (
+              <PromptWritingQuestion
+                question={step.question}
+                userLanguage={userLanguage}
+                handleModalCheck={handleModalCheck}
+                onLearnClick={handleLearnClick}
+                onSubmitPrompt={handleAnswerClick}
+              />
+            )}
+            {step.isConversationReview && (
+              <Suspense
+                fallback={<CloudCanvas isLoader={true} regulateWidth={false} />}
+              >
+                <ConversationReview
+                  question={step.question}
+                  userLanguage={userLanguage}
+                  steps={steps}
+                  step={step}
+                  onSubmit={handleAnswerClick} // Or any other relevant logic
+                  setFinalConversation={setFinalConversation}
+                  finalConversation={finalConversation}
+                  handleModalCheck={handleModalCheck}
+                />
+              </Suspense>
+            )}
+            {/* {isPostingWithNostr ? (
               <CloudCanvas />
             ) : ( */}
-              <>
-                {incorrectAttempts >= 5 && !isTimerExpired ? (
-                  <>
-                    <div style={{ maxWidth: 600 }}>
-                      <Text
-                        fontSize="smaller"
-                        background="appSurface"
-                        borderRadius={12}
-                        padding={4}
-                      >
-                        <FaHeartBroken
-                          style={{
-                            display: "inline",
-                            marginRight: 4,
-                            color: "red",
-                          }}
-                        />
-                        {translation[userLanguage]["lockout.message"]} <br />
-                        <br />
-                        <CountdownTimer
-                          onTimerExpire={handleTimerExpire}
-                          userLanguage={userLanguage}
-                        />
-                      </Text>
-                    </div>
-                    <RandomCharacter />
-                  </>
-                ) : null}
-                {/* {messages.length > 0 && !feedback && (
+            <>
+              {incorrectAttempts >= 5 && !isTimerExpired ? (
+                <>
+                  <div style={{ maxWidth: 600 }}>
+                    <Text
+                      fontSize="smaller"
+                      background="appSurface"
+                      borderRadius={12}
+                      padding={4}
+                    >
+                      <FaHeartBroken
+                        style={{
+                          display: "inline",
+                          marginRight: 4,
+                          color: "red",
+                        }}
+                      />
+                      {translation[userLanguage]["lockout.message"]} <br />
+                      <br />
+                      <CountdownTimer
+                        onTimerExpire={handleTimerExpire}
+                        userLanguage={userLanguage}
+                      />
+                    </Text>
+                  </div>
+                  <RandomCharacter />
+                </>
+              ) : null}
+              {/* {messages.length > 0 && !feedback && (
                   <Box
                     mt={0}
                     p={4}
@@ -4621,146 +4593,153 @@ const Step = ({
                     </Text>
                   </Box>
                 )} */}
-                {feedback && (
-                  <RiseUpAnimation>
-                    <Box
-                      mt={0}
-                      p={4}
-                      borderRadius="3xl"
-                      width="100%"
-                      maxWidth="600px"
-                      background={
-                        isCorrect ? successFeedbackBg : errorFeedbackBg
-                      }
-                      transition="0.2s all ease-in-out"
-                      borderWidth="1px"
-                      borderColor={
-                        isCorrect ? successFeedbackBorder : errorFeedbackBorder
-                      }
-                      boxShadow={
-                        isCorrect ? successFeedbackShadow : errorFeedbackShadow
-                      }
-                      borderBottomRightRadius={"0px"}
-                    >
-                      {!isCorrect &&
-                        incorrectAttempts > 0 &&
-                        incorrectAttempts < 5 && (
-                          <HStack
-                            mb={2}
-                            spacing={1}
-                            justify="center"
-                            width="100%"
-                          >
-                            {Array.from({ length: 5 }, (_, i) =>
-                              i < 5 - incorrectAttempts ? (
-                                <FaHeart key={i} color={feedbackHeartColor} />
-                              ) : (
-                                <FaRegHeart
-                                  key={i}
-                                  color={feedbackHeartColor}
-                                />
-                              ),
-                            )}
-                          </HStack>
-                        )}
-                      <Text
-                        textAlign={"left"}
-                        color={
-                          isCorrect ? successFeedbackText : errorFeedbackText
-                        }
-                        fontWeight="medium"
-                        lineHeight="1.55"
-                      >
-                        {feedback}{" "}
-                        {grade ? (
-                          <DataTags
-                            userLanguage={userLanguage}
-                            grade={
-                              translation[userLanguage]["tags.grade"] + grade
-                            }
-                          />
-                        ) : null}
-                      </Text>
-                    </Box>
-                  </RiseUpAnimation>
-                )}{" "}
-                {feedback && (
-                  <div
-                    style={{
-                      width: "100%",
-                      maxWidth: "600px",
-                      display: "flex",
-                      justifyContent: "flex-end",
-                      padding: 0,
-                      marginTop: "-36px",
-                    }}
+              {feedback && (
+                <RiseUpAnimation>
+                  <Box
+                    mt={0}
+                    p={4}
+                    borderRadius="3xl"
+                    width="100%"
+                    maxWidth="600px"
+                    background={isCorrect ? successFeedbackBg : errorFeedbackBg}
+                    transition="0.2s all ease-in-out"
+                    borderWidth="1px"
+                    borderColor={
+                      isCorrect ? successFeedbackBorder : errorFeedbackBorder
+                    }
+                    boxShadow={
+                      isCorrect ? successFeedbackShadow : errorFeedbackShadow
+                    }
+                    borderBottomRightRadius={"0px"}
                   >
-                    <RiseUpAnimation speed="0.1s">
-                      <RandomCharacter />
-                    </RiseUpAnimation>
-                  </div>
-                )}
-                <HStack
-                  spacing={4}
-                  width="100%"
-                  justifyContent={"center"}
-                  paddingBottom={step.isTerminal ? 24 : null}
+                    {!isCorrect &&
+                      incorrectAttempts > 0 &&
+                      incorrectAttempts < 5 && (
+                        <HStack
+                          mb={2}
+                          spacing={1}
+                          justify="center"
+                          width="100%"
+                        >
+                          {Array.from({ length: 5 }, (_, i) =>
+                            i < 5 - incorrectAttempts ? (
+                              <FaHeart key={i} color={feedbackHeartColor} />
+                            ) : (
+                              <FaRegHeart key={i} color={feedbackHeartColor} />
+                            ),
+                          )}
+                        </HStack>
+                      )}
+                    <Text
+                      textAlign={"left"}
+                      color={
+                        isCorrect ? successFeedbackText : errorFeedbackText
+                      }
+                      fontWeight="medium"
+                      lineHeight="1.55"
+                    >
+                      {feedback}{" "}
+                      {grade ? (
+                        <DataTags
+                          userLanguage={userLanguage}
+                          grade={
+                            translation[userLanguage]["tags.grade"] + grade
+                          }
+                        />
+                      ) : null}
+                    </Text>
+                  </Box>
+                </RiseUpAnimation>
+              )}{" "}
+              {feedback && (
+                <div
+                  style={{
+                    width: "100%",
+                    maxWidth: "600px",
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    padding: 0,
+                    marginTop: "-36px",
+                  }}
                 >
-                  {step.question &&
-                  currentStep > 0 &&
-                  !isCorrect &&
-                  !isSending &&
-                  !(incorrectAttempts >= 5) &&
-                  isTimerExpired ? (
-                    <Button
-                      fontSize="sm"
-                      data-sound-ignore-select="true"
-                      onMouseDown={() => {
+                  <RiseUpAnimation speed="0.1s">
+                    <RandomCharacter />
+                  </RiseUpAnimation>
+                </div>
+              )}
+              <HStack
+                spacing={4}
+                width="100%"
+                justifyContent={"center"}
+                paddingBottom={step.isTerminal ? 24 : null}
+              >
+                {step.question &&
+                currentStep > 0 &&
+                !isCorrect &&
+                !isSending &&
+                !(incorrectAttempts >= 5) &&
+                isTimerExpired ? (
+                  <Button
+                    fontSize="sm"
+                    data-sound-ignore-select="true"
+                    onMouseDown={() => {
+                      triggerHaptic();
+                      soundManager.resume();
+                      soundManager.play("submit");
+                      handleAnswerClick();
+                    }}
+                    isLoading={isSending}
+                    mb={4}
+                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
                         triggerHaptic();
                         soundManager.resume();
                         soundManager.play("submit");
                         handleAnswerClick();
-                      }}
-                      isLoading={isSending}
-                      mb={4}
-                      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          triggerHaptic();
-                          soundManager.resume();
-                          soundManager.play("submit");
-                          handleAnswerClick();
-                        }
-                      }}
-                    >
-                      {step.isConversationReview
-                        ? translation[userLanguage]["app.button.complete"]
-                        : translation[userLanguage]["app.button.answer"]}
-                    </Button>
-                  ) : null}
+                      }
+                    }}
+                  >
+                    {step.isConversationReview
+                      ? translation[userLanguage]["app.button.complete"]
+                      : translation[userLanguage]["app.button.answer"]}
+                  </Button>
+                ) : null}
 
-                  {isSending ? (
-                    <div
-                      style={{
-                        width: "100%",
-                        maxWidth: "600px",
-                        textAlign: "left",
-                      }}
-                    >
-                      <CloudCanvas
-                        speed={"0.25"}
-                        isLoader={true}
-                        regulateWidth={false}
-                      />
-                    </div>
-                  ) : null}
-                  {isCorrect && (
-                    <>
-                      {isAILearningMode ? (
-                        <Button
-                          background="appSurface"
-                          variant={"outline"}
-                          onClick={() => {
+                {isSending ? (
+                  <div
+                    style={{
+                      width: "100%",
+                      maxWidth: "600px",
+                      textAlign: "left",
+                    }}
+                  >
+                    <CloudCanvas
+                      speed={"0.25"}
+                      isLoader={true}
+                      regulateWidth={false}
+                    />
+                  </div>
+                ) : null}
+                {isCorrect && (
+                  <>
+                    {isAILearningMode ? (
+                      <Button
+                        background="appSurface"
+                        variant={"outline"}
+                        onClick={() => {
+                          triggerHaptic();
+                          setIsCorrect(null);
+                          setFeedback("");
+                          setInputValue("");
+                          setSelectedOption("");
+                          setSelectedOptions([]);
+                          handleGenerateNewQuestion();
+                        }}
+                        mb={4}
+                        boxShadow={"0.5px 0.5px 1px 0px black"}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
                             triggerHaptic();
                             setIsCorrect(null);
                             setFeedback("");
@@ -4768,288 +4747,275 @@ const Step = ({
                             setSelectedOption("");
                             setSelectedOptions([]);
                             handleGenerateNewQuestion();
-                          }}
-                          mb={4}
-                          boxShadow={"0.5px 0.5px 1px 0px black"}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              triggerHaptic();
-                              setIsCorrect(null);
-                              setFeedback("");
-                              setInputValue("");
-                              setSelectedOption("");
-                              setSelectedOptions([]);
-                              handleGenerateNewQuestion();
-                            }
-                          }}
-                          leftIcon={<RiAiGenerate />}
-                        >
-                          {translation[userLanguage]?.[
-                            "button.nextAIQuestion"
-                          ] || "Next AI Question"}
-                        </Button>
-                      ) : (
-                        <Button
-                          background="appSurface"
-                          variant={"outline"}
-                          data-sound-ignore-select="true"
-                          style={{ touchAction: "manipulation" }}
-                          onPointerDown={(event) =>
-                            handleNextQuestionButtonPress(event, () => {
-                              triggerHaptic();
-                              soundManager.resume();
-                              soundManager.play("next");
-                            })
                           }
-                          onClick={(event) => {
-                            handleNextQuestionButtonPress(event, () => {
+                        }}
+                        leftIcon={<RiAiGenerate />}
+                      >
+                        {translation[userLanguage]?.["button.nextAIQuestion"] ||
+                          "Next AI Question"}
+                      </Button>
+                    ) : (
+                      <Button
+                        background="appSurface"
+                        variant={"outline"}
+                        data-sound-ignore-select="true"
+                        style={{ touchAction: "manipulation" }}
+                        onPointerDown={(event) =>
+                          handleNextQuestionButtonPress(event, () => {
+                            triggerHaptic();
+                            soundManager.resume();
+                            soundManager.play("next");
+                          })
+                        }
+                        onClick={(event) => {
+                          handleNextQuestionButtonPress(event, () => {
+                            triggerHaptic();
+                            soundManager.resume();
+                            soundManager.play("next");
+                          });
+                        }}
+                        mb={4}
+                        boxShadow={"0.5px 0.5px 1px 0px black"}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            handleNextQuestionButtonPress(e, () => {
                               triggerHaptic();
                               soundManager.resume();
                               soundManager.play("next");
                             });
-                          }}
-                          mb={4}
-                          boxShadow={"0.5px 0.5px 1px 0px black"}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              handleNextQuestionButtonPress(e, () => {
-                                triggerHaptic();
-                                soundManager.resume();
-                                soundManager.play("next");
-                              });
-                            }
-                          }}
-                          disabled={isPostingWithNostr}
-                        >
-                          {
-                            translation[userLanguage]["app.button.nextQuestion"]
-                          }{" "}
-                        </Button>
-                      )}
-                    </>
-                  )}
-                </HStack>
-              </>
-              {/* )} */}
+                          }
+                        }}
+                        disabled={isPostingWithNostr}
+                      >
+                        {
+                          translation[userLanguage]["app.button.nextQuestion"]
+                        }{" "}
+                      </Button>
+                    )}
+                  </>
+                )}
+              </HStack>
             </>
-            {!step.isTerminal && (
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                width="100%"
-                mb={24}
-              >
-                <Switch
-                  isChecked={isAdaptiveLearning}
-                  onChange={handleToggleChange}
-                  colorScheme="yellow"
-                />
-                &nbsp;
-                <Text fontSize="md">
-                  {!isAdaptiveLearning
-                    ? translation[userLanguage]["adaptive_learning_off"]
-                    : translation[userLanguage]["adaptive_learning_on"]}
-                </Text>
-              </Box>
-            )}
+            {/* )} */}
+          </>
+          {!step.isTerminal && (
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              width="100%"
+              mb={24}
+            >
+              <Switch
+                isChecked={isAdaptiveLearning}
+                onChange={handleToggleChange}
+                colorScheme="yellow"
+              />
+              &nbsp;
+              <Text fontSize="md">
+                {!isAdaptiveLearning
+                  ? translation[userLanguage]["adaptive_learning_off"]
+                  : translation[userLanguage]["adaptive_learning_on"]}
+              </Text>
+            </Box>
+          )}
 
-            {suggestionMessages.length > 0 &&
-            isEmpty(suggestionMessage) &&
-            !step?.isTerminal ? (
-              <Box p={4} textAlign="center" mt="-86px">
-                {/* <CloudCanvas isLoader={true} /> */}
-                <Box marginTop={"-52px"}>
-                  <Suspense
-                    fallback={
-                      <CloudCanvas isLoader={true} regulateWidth={false} />
-                    }
-                  >
-                    <RoleCanvas
-                      role={"sphere"}
-                      width={400}
-                      height={400}
-                      trailOpacity={0.08}
-                      transparentFade
-                      backgroundColorX="247,245,239"
-                      backgroundColorDark="9,17,35"
-                    />
-                  </Suspense>
-                </Box>
-
-                <Text mt={2}>
-                  {translation[userLanguage]["loading.suggestion"]}
-                </Text>
-              </Box>
-            ) : !isAdaptiveLearning ||
-              step.isTerminal ? null : suggestionMessage.length > 0 ? (
-              <Box maxWidth="600px" width="100%" pb={12} mt="-86px">
-                <Box
-                  as={motion.div}
-                  mt={4}
-                  // mb={{ base: 24, md: 28 }}
-                  p={4}
-                  borderRadius="24px"
-                  borderBottomLeftRadius={"0px"}
-                  background="appSurface"
-                  border="1px solid var(--chakra-colors-appBorderStrong)"
-                  textAlign={"left"}
-                  width="100%"
-                  initial="hidden"
-                  animate="visible"
-                  variants={adaptiveSuggestionVariants}
+          {suggestionMessages.length > 0 &&
+          isEmpty(suggestionMessage) &&
+          !step?.isTerminal ? (
+            <Box p={4} textAlign="center" mt="-86px">
+              {/* <CloudCanvas isLoader={true} /> */}
+              <Box marginTop={"-52px"}>
+                <Suspense
+                  fallback={
+                    <CloudCanvas isLoader={true} regulateWidth={false} />
+                  }
                 >
-                  <Markdown
-                    components={ChakraUIRenderer(newTheme)}
-                    children={suggestionMessage}
+                  <RoleCanvas
+                    role={"sphere"}
+                    width={400}
+                    height={400}
+                    trailOpacity={0.08}
+                    transparentFade
+                    backgroundColorX="247,245,239"
+                    backgroundColorDark="9,17,35"
                   />
-                </Box>
-                <Box mt="-4" paddingBottom={6}>
-                  <RandomCharacter />
-                </Box>
+                </Suspense>
               </Box>
+
+              <Text mt={2}>
+                {translation[userLanguage]["loading.suggestion"]}
+              </Text>
+            </Box>
+          ) : !isAdaptiveLearning ||
+            step.isTerminal ? null : suggestionMessage.length > 0 ? (
+            <Box maxWidth="600px" width="100%" pb={12} mt="-86px">
+              <Box
+                as={motion.div}
+                mt={4}
+                // mb={{ base: 24, md: 28 }}
+                p={4}
+                borderRadius="24px"
+                borderBottomLeftRadius={"0px"}
+                background="appSurface"
+                border="1px solid var(--chakra-colors-appBorderStrong)"
+                textAlign={"left"}
+                width="100%"
+                initial="hidden"
+                animate="visible"
+                variants={adaptiveSuggestionVariants}
+              >
+                <Markdown
+                  components={ChakraUIRenderer(newTheme)}
+                  children={suggestionMessage}
+                />
+              </Box>
+              <Box mt="-4" paddingBottom={6}>
+                <RandomCharacter />
+              </Box>
+            </Box>
+          ) : null}
+
+          <Suspense fallback={null}>
+            {isOpen ? (
+              <EducationalModal
+                isOpen={isOpen}
+                onClose={onClose}
+                educationalMessages={educationalMessages}
+                educationalContent={educationalContent}
+                userLanguage={userLanguage}
+              />
             ) : null}
 
-            <Suspense fallback={null}>
-              {isOpen ? (
-                <EducationalModal
-                  isOpen={isOpen}
-                  onClose={onClose}
-                  educationalMessages={educationalMessages}
-                  educationalContent={educationalContent}
-                  userLanguage={userLanguage}
-                />
-              ) : null}
+            {isSelfPacedOpen ? (
+              <SelfPacedModal
+                isOpen={isSelfPacedOpen}
+                onClose={onSelfPacedClose}
+                interval={interval}
+                setInterval={setInterval}
+                userId={localStorage.getItem("local_npub")}
+                userLanguage={userLanguage}
+                onSettingsSaved={handleSelfPacedSettingsSaved}
+              />
+            ) : null}
 
-              {isSelfPacedOpen ? (
-                <SelfPacedModal
-                  isOpen={isSelfPacedOpen}
-                  onClose={onSelfPacedClose}
-                  interval={interval}
-                  setInterval={setInterval}
-                  userId={localStorage.getItem("local_npub")}
-                  userLanguage={userLanguage}
-                  onSettingsSaved={handleSelfPacedSettingsSaved}
-                />
-              ) : null}
+            {isSocialFeedOpen ? (
+              <SocialFeedModal
+                userLanguage={userLanguage}
+                currentStep={currentStep}
+                isOpen={isSocialFeedOpen}
+                onClose={onSocialFeedClose}
+                allowPosts={allowPosts}
+                setAllowPosts={setAllowPosts}
+              />
+            ) : null}
 
-              {isSocialFeedOpen ? (
-                <SocialFeedModal
-                  userLanguage={userLanguage}
-                  currentStep={currentStep}
-                  isOpen={isSocialFeedOpen}
-                  onClose={onSocialFeedClose}
-                  allowPosts={allowPosts}
-                  setAllowPosts={setAllowPosts}
-                />
-              ) : null}
+            {isBitcoinModeOpen ? (
+              <BitcoinModeModal
+                isOpen={isBitcoinModeOpen}
+                onClose={onBitcoinModeClose}
+                userLanguage={userLanguage}
+                from="app"
+              />
+            ) : null}
+          </Suspense>
 
-              {isBitcoinModeOpen ? (
-                <BitcoinModeModal
-                  isOpen={isBitcoinModeOpen}
-                  onClose={onBitcoinModeClose}
-                  userLanguage={userLanguage}
-                  from="app"
-                />
-              ) : null}
-            </Suspense>
-
-            <Box
-              position="fixed"
-              bottom="0"
-              left="0"
-              width="100%"
-              // zIndex="popover"
-            >
-              <Flex justify="center" width="100%">
+          <Box
+            position="fixed"
+            bottom="0"
+            left="0"
+            width="100%"
+            // zIndex="popover"
+          >
+            <Flex justify="center" width="100%">
+              <Box
+                width={{ base: "100%", md: "440px" }}
+                px={{ base: 0, md: 4 }}
+              >
                 <Box
-                  width={{ base: "100%", md: "440px" }}
-                  px={{ base: 0, md: 4 }}
+                  bg={actionBarShellBg}
+                  borderTopLeftRadius={{ base: "20px", md: "24px" }}
+                  borderTopRightRadius={{ base: "20px", md: "24px" }}
+                  borderBottomLeftRadius="0px"
+                  borderBottomRightRadius="0px"
+                  px={{ base: 3, md: 4 }}
+                  py={{ base: 2, md: 2.5 }}
+                  border={`1px solid ${actionBarShellBorder}`}
+                  borderBottom="0"
+                  boxShadow={`0 -2px 0px ${actionBarShellGlow}, ${actionBarShadow}`}
+                  backdropFilter="blur(10px)"
+                  paddingBottom={6}
+                  paddingTop={4}
                 >
-                  <Box
-                    bg={actionBarShellBg}
-                    borderTopLeftRadius={{ base: "20px", md: "24px" }}
-                    borderTopRightRadius={{ base: "20px", md: "24px" }}
-                    borderBottomLeftRadius="0px"
-                    borderBottomRightRadius="0px"
-                    px={{ base: 3, md: 4 }}
-                    py={{ base: 2, md: 2.5 }}
-                    border={`1px solid ${actionBarShellBorder}`}
-                    borderBottom="0"
-                    boxShadow={`0 -2px 0px ${actionBarShellGlow}, ${actionBarShadow}`}
-                    backdropFilter="blur(10px)"
-                    paddingBottom={6}
-                    paddingTop={4}
-                  >
-                    <HStack spacing={0} justify="space-around" width="100%">
-                      {renderActionTourPopover(
-                        "bitcoin",
-                        bitcoinButtonRef,
-                        <IconButton
-                          {...actionBarButtonProps}
-                          data-sound-ignore-select="true"
-                          aria-label="Open Bitcoin mode"
-                          icon={<FaBitcoin fontSize="20px" />}
-                          onMouseDown={() => {
+                  <HStack spacing={0} justify="space-around" width="100%">
+                    {renderActionTourPopover(
+                      "bitcoin",
+                      bitcoinButtonRef,
+                      <IconButton
+                        {...actionBarButtonProps}
+                        data-sound-ignore-select="true"
+                        aria-label="Open Bitcoin mode"
+                        icon={<FaBitcoin fontSize="20px" />}
+                        onMouseDown={() => {
+                          triggerHaptic();
+                          playActionBarSound("bitcoin");
+                          onBitcoinModeOpen();
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
                             triggerHaptic();
                             playActionBarSound("bitcoin");
                             onBitcoinModeOpen();
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              triggerHaptic();
-                              playActionBarSound("bitcoin");
-                              onBitcoinModeOpen();
-                            }
-                          }}
-                        />,
-                      )}
-                      {renderActionTourPopover(
-                        "selfPaced",
-                        selfPacedButtonRef,
-                        <IconButton
-                          {...actionBarButtonProps}
-                          data-sound-ignore-select="true"
-                          aria-label="Open self-paced mode"
-                          icon={<PiClockCountdownFill fontSize="22px" />}
-                          onMouseDown={() => {
+                          }
+                        }}
+                      />,
+                    )}
+                    {renderActionTourPopover(
+                      "selfPaced",
+                      selfPacedButtonRef,
+                      <IconButton
+                        {...actionBarButtonProps}
+                        data-sound-ignore-select="true"
+                        aria-label="Open self-paced mode"
+                        icon={<PiClockCountdownFill fontSize="22px" />}
+                        onMouseDown={() => {
+                          triggerHaptic();
+                          playActionBarSound("selfPaced");
+                          onSelfPacedOpen();
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
                             triggerHaptic();
                             playActionBarSound("selfPaced");
                             onSelfPacedOpen();
-                          }}
-                          onKeyDown={(e) => {
+                          }
+                        }}
+                      />,
+                    )}
+                    {renderActionTourPopover(
+                      "theme",
+                      themeButtonRef,
+                      <ThemeMenu
+                        userLanguage={userLanguage}
+                        buttonProps={{
+                          ...actionBarButtonProps,
+                          color: actionBarButtonProps.color,
+                          "data-sound-ignore-select": "true",
+                          onMouseDown: () => {
+                            triggerHaptic();
+                            playActionBarSound("theme");
+                          },
+                          onKeyDown: (e) => {
                             if (e.key === "Enter" || e.key === " ") {
                               triggerHaptic();
-                              playActionBarSound("selfPaced");
-                              onSelfPacedOpen();
-                            }
-                          }}
-                        />,
-                      )}
-                      {renderActionTourPopover(
-                        "theme",
-                        themeButtonRef,
-                        <ThemeMenu
-                          userLanguage={userLanguage}
-                          buttonProps={{
-                            ...actionBarButtonProps,
-                            color: actionBarButtonProps.color,
-                            "data-sound-ignore-select": "true",
-                            onMouseDown: () => {
-                              triggerHaptic();
                               playActionBarSound("theme");
-                            },
-                            onKeyDown: (e) => {
-                              if (e.key === "Enter" || e.key === " ") {
-                                triggerHaptic();
-                                playActionBarSound("theme");
-                              }
-                            },
-                          }}
-                        />,
-                      )}
-                      {/* Social feed is intentionally hidden from the bottom action bar.
+                            }
+                          },
+                        }}
+                      />,
+                    )}
+                    {/* Social feed is intentionally hidden from the bottom action bar.
                     {renderActionTourPopover(
                       "social",
                       socialButtonRef,
@@ -5083,107 +5049,107 @@ const Step = ({
                         }
                       />,
                     )} */}
-                      {renderActionTourPopover(
-                        "helper",
-                        helperButtonRef,
-                        <IconButton
-                          {...actionBarButtonProps}
-                          data-sound-ignore-select="true"
-                          aria-label={
-                            translation[userLanguage]?.[
-                              "settings.button.algorithmHelper"
-                            ] || "Open build your app"
-                          }
-                          icon={<RiCodeAiFill fontSize="22px" />}
-                          onMouseDown={() => {
+                    {renderActionTourPopover(
+                      "helper",
+                      helperButtonRef,
+                      <IconButton
+                        {...actionBarButtonProps}
+                        data-sound-ignore-select="true"
+                        aria-label={
+                          translation[userLanguage]?.[
+                            "settings.button.algorithmHelper"
+                          ] || "Open build your app"
+                        }
+                        icon={<RiCodeAiFill fontSize="22px" />}
+                        onMouseDown={() => {
+                          triggerHaptic();
+                          playActionBarSound("helper");
+                          onKnowledgeLedgerOpen();
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
                             triggerHaptic();
                             playActionBarSound("helper");
                             onKnowledgeLedgerOpen();
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              triggerHaptic();
-                              playActionBarSound("helper");
-                              onKnowledgeLedgerOpen();
-                            }
-                          }}
-                        />,
-                      )}
-                      {renderActionTourPopover(
-                        "patreon",
-                        patreonButtonRef,
-                        <IconButton
-                          {...actionBarButtonProps}
-                          data-sound-ignore-select="true"
-                          aria-label="Support on Patreon"
-                          icon={<PiPatreonLogoFill fontSize="20px" />}
-                          // boxShadow={patreonButtonShadow}
-                          borderColor={hexToRgba(actionPalette[200], 0.85)}
-                          onMouseDown={() => {
+                          }
+                        }}
+                      />,
+                    )}
+                    {renderActionTourPopover(
+                      "patreon",
+                      patreonButtonRef,
+                      <IconButton
+                        {...actionBarButtonProps}
+                        data-sound-ignore-select="true"
+                        aria-label="Support on Patreon"
+                        icon={<PiPatreonLogoFill fontSize="20px" />}
+                        // boxShadow={patreonButtonShadow}
+                        borderColor={hexToRgba(actionPalette[200], 0.85)}
+                        onMouseDown={() => {
+                          triggerHaptic();
+                          playActionBarSound("patreon");
+                          window.location.href =
+                            "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
                             triggerHaptic();
                             playActionBarSound("patreon");
                             window.location.href =
                               "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              triggerHaptic();
-                              playActionBarSound("patreon");
-                              window.location.href =
-                                "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
-                            }
-                          }}
-                        />,
-                      )}
-                    </HStack>
-                  </Box>
+                          }
+                        }}
+                      />,
+                    )}
+                  </HStack>
                 </Box>
-              </Flex>
-            </Box>
+              </Box>
+            </Flex>
+          </Box>
 
-            <Suspense fallback={null}>
-              {isLectureModalOpen ? (
-                <LectureModal
+          <Suspense fallback={null}>
+            {isLectureModalOpen ? (
+              <LectureModal
+                userLanguage={userLanguage}
+                currentStep={currentStep}
+                isOpen={isLectureModalOpen}
+                onClose={handleLectureModalClose}
+                handleNextClick={handleNextClick}
+              />
+            ) : null}
+
+            {isKnowledgeLedgerOpen ? (
+              userLanguage !== "compsci-en" ? (
+                <KnowledgeLedgerModal
                   userLanguage={userLanguage}
-                  currentStep={currentStep}
-                  isOpen={isLectureModalOpen}
-                  onClose={handleLectureModalClose}
-                  handleNextClick={handleNextClick}
+                  isOpen={isKnowledgeLedgerOpen}
+                  onClose={onKnowledgeLedgerClose}
+                  steps={steps}
+                  step={step}
                 />
-              ) : null}
-
-              {isKnowledgeLedgerOpen ? (
-                userLanguage !== "compsci-en" ? (
-                  <KnowledgeLedgerModal
-                    userLanguage={userLanguage}
-                    isOpen={isKnowledgeLedgerOpen}
-                    onClose={onKnowledgeLedgerClose}
-                    steps={steps}
-                    step={step}
-                  />
-                ) : (
-                  <AlgorithmHelper
-                    userLanguage={userLanguage}
-                    isOpen={isKnowledgeLedgerOpen}
-                    onClose={onKnowledgeLedgerClose}
-                    steps={steps}
-                    currentStep={currentStep}
-                  />
-                )
-              ) : null}
-
-              {isProgressModalOpen ? (
-                <ProgressModal
-                  isOpen={isProgressModalOpen}
-                  onClose={onProgressModalClose}
+              ) : (
+                <AlgorithmHelper
+                  userLanguage={userLanguage}
+                  isOpen={isKnowledgeLedgerOpen}
+                  onClose={onKnowledgeLedgerClose}
                   steps={steps}
                   currentStep={currentStep}
-                  userLanguage={userLanguage}
                 />
-              ) : null}
-            </Suspense>
-            {/* newmodal */}
-            {/* <ExternalLinkModal
+              )
+            ) : null}
+
+            {isProgressModalOpen ? (
+              <ProgressModal
+                isOpen={isProgressModalOpen}
+                onClose={onProgressModalClose}
+                steps={steps}
+                currentStep={currentStep}
+                userLanguage={userLanguage}
+              />
+            ) : null}
+          </Suspense>
+          {/* newmodal */}
+          {/* <ExternalLinkModal
             isOpen={isExternalLinkModalOpen}
             onClose={handleModalClose}
             dontShowAgain={dontShowAgain}
@@ -5193,23 +5159,23 @@ const Step = ({
             userLanguage={userLanguage}
           /> */}
 
-            <>
-              <Suspense fallback={null}>
-                {isAwardModalOpen ? (
-                  <AwardModal
-                    isOpen={isAwardModalOpen}
-                    onClose={handleAwardModalClose}
-                    // educationalMessages={educationalMessages}
-                    // educationalContent={educationalContent}
-                    userLanguage={userLanguage}
-                    step={step}
-                    isCorrect={isCorrect}
-                  />
-                ) : null}
-              </Suspense>
+          <>
+            <Suspense fallback={null}>
+              {isAwardModalOpen ? (
+                <AwardModal
+                  isOpen={isAwardModalOpen}
+                  onClose={handleAwardModalClose}
+                  // educationalMessages={educationalMessages}
+                  // educationalContent={educationalContent}
+                  userLanguage={userLanguage}
+                  step={step}
+                  isCorrect={isCorrect}
+                />
+              ) : null}
+            </Suspense>
 
-              <PasscodeModal userLanguage={userLanguage} />
-              {/* 
+            <PasscodeModal userLanguage={userLanguage} />
+            {/* 
             {isInstallModalOpen ? (
               <InstallAppModal
                 userLanguage={userLanguage}
@@ -5217,9 +5183,9 @@ const Step = ({
                 onClose={onInstallModalClose}
               />
             ) : null} */}
-            </>
           </>
-        )}
+        </>
+      )}
     </VStack>
   );
 };

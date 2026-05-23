@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -137,6 +137,8 @@ const SelfPacedModal = ({
   userLanguage,
   onSettingsSaved = () => {},
 }) => {
+  const initialFocusRef = useRef(null);
+  const modalBodyRef = useRef(null);
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
@@ -150,6 +152,23 @@ const SelfPacedModal = ({
   const [dailyProgress, setDailyProgress] = useState(0);
   // nextGoalExpiration: when the current 24-hour period expires.
   const [nextGoalExpiration, setNextGoalExpiration] = useState(null);
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    const resetScroll = () => {
+      initialFocusRef.current?.focus({ preventScroll: true });
+      modalBodyRef.current?.scrollTo({ top: 0, behavior: "auto" });
+    };
+
+    const frameId = window.requestAnimationFrame(resetScroll);
+    const timeoutId = window.setTimeout(resetScroll, 50);
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      window.clearTimeout(timeoutId);
+    };
+  }, [isOpen]);
 
   // On mount, fetch the stored user data and update our state.
   useEffect(() => {
@@ -413,7 +432,13 @@ const SelfPacedModal = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      isCentered
+      size="lg"
+      initialFocusRef={initialFocusRef}
+    >
       <ModalOverlay bg="appOverlay" backdropFilter="blur(8px)" />
       <ModalContent
         bg="appSurfaceElevated"
@@ -424,7 +449,14 @@ const SelfPacedModal = ({
         overflow="hidden"
         maxH="92dvh"
       >
-        <ModalHeader px={6} pt={6} pb={3}>
+        <ModalHeader
+          ref={initialFocusRef}
+          tabIndex={-1}
+          outline="none"
+          px={6}
+          pt={6}
+          pb={3}
+        >
           <Text fontSize="2xl" fontWeight="bold">
             {translation[userLanguage]["modal.title.selfPace"]}
           </Text>
@@ -440,7 +472,7 @@ const SelfPacedModal = ({
           </Text>
         </ModalHeader>
         <ModalCloseButton />
-        <ModalBody px={6} py={2} overflowY="auto">
+        <ModalBody ref={modalBodyRef} px={6} py={2} overflowY="auto">
           <Box display="flex" flexDirection="column" gap={4}>
             <Box
               bg={sectionBg}

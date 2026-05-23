@@ -400,12 +400,33 @@ function KnowledgeLedgerModal({
   onContinue,
   title = "Build Your App",
 }) {
+  const initialFocusRef = useRef(null);
+  const drawerBodyRef = useRef(null);
+
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    const resetScroll = () => {
+      initialFocusRef.current?.focus({ preventScroll: true });
+      drawerBodyRef.current?.scrollTo({ top: 0, behavior: "auto" });
+    };
+
+    const frameId = window.requestAnimationFrame(resetScroll);
+    const timeoutId = window.setTimeout(resetScroll, 50);
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      window.clearTimeout(timeoutId);
+    };
+  }, [isOpen]);
+
   return (
     <Drawer
       isOpen={isOpen}
       onClose={onClose}
       placement="bottom"
       size="full"
+      initialFocusRef={initialFocusRef}
       trapFocus
       closeOnOverlayClick={false}
       blockScrollOnMount
@@ -414,17 +435,33 @@ function KnowledgeLedgerModal({
       <DrawerContent
         display="flex"
         flexDirection="column"
-        maxH="100vh"
+        h="100dvh"
+        maxH="100dvh"
         bg="appSurfaceElevated"
         color="appText"
       >
-        <DrawerCloseButton />
-        <DrawerHeader>{title}</DrawerHeader>
+        <DrawerCloseButton top="calc(env(safe-area-inset-top) + 12px)" />
+        <DrawerHeader
+          ref={initialFocusRef}
+          tabIndex={-1}
+          outline="none"
+          flexShrink={0}
+          pt="calc(env(safe-area-inset-top) + 16px)"
+          pb={4}
+          borderBottomWidth="1px"
+          borderColor="appBorder"
+          fontSize={{ base: "xl", md: "2xl" }}
+          lineHeight="1.2"
+        >
+          {title}
+        </DrawerHeader>
         <DrawerBody
+          ref={drawerBodyRef}
           display="flex"
           flexDir="column"
           p={{ base: 3, md: 6 }}
           flex="1"
+          minH={0}
           overflowY="auto"
           sx={{
             /* Firefox */
@@ -449,13 +486,13 @@ function KnowledgeLedgerModal({
           />
         </DrawerBody>
         <DrawerFooter
-          position="sticky"
-          bottom="0"
+          flexShrink={0}
           bg="appSurfaceElevated"
           borderTopWidth="1px"
           borderColor="appBorder"
           boxShadow="none"
           justifyContent="flex-end"
+          pb={{ base: "calc(env(safe-area-inset-bottom) + 20px)", md: 4 }}
         >
           <Button
             size="lg"
