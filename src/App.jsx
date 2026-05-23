@@ -80,8 +80,15 @@ import {
   BigSunset,
   CloudCanvas,
 } from "./elements/SunsetCanvas";
-const EducationalModal = lazy(
-  () => import("./components/LearnModal/EducationalModal"),
+
+const lazyWithPreload = (factory) => {
+  const Component = lazy(factory);
+  Component.preload = factory;
+  return Component;
+};
+
+const EducationalModal = lazyWithPreload(() =>
+  import("./components/LearnModal/EducationalModal"),
 );
 import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
 import ThemeMenu from "./components/ThemeMenu";
@@ -240,20 +247,20 @@ import {
 import { FiTrendingUp } from "react-icons/fi";
 import MiniKitInitializer from "./MiniKitInitializer";
 
-const BitcoinModeModal = lazy(
-  () => import("./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal"),
+const BitcoinModeModal = lazyWithPreload(() =>
+  import("./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal"),
 );
-const SelfPacedModal = lazy(
-  () => import("./components/SettingsMenu/SelfPacedModal/SelfPacedModal"),
+const SelfPacedModal = lazyWithPreload(() =>
+  import("./components/SettingsMenu/SelfPacedModal/SelfPacedModal"),
 );
-const SocialFeedModal = lazy(
-  () => import("./components/SocialFeedModal/SocialFeedModal"),
+const SocialFeedModal = lazyWithPreload(() =>
+  import("./components/SocialFeedModal/SocialFeedModal"),
 );
 const Onboarding = lazy(() =>
   import("./Onboarding").then((m) => ({ default: m.Onboarding })),
 );
 import { newTheme } from "./App.theme";
-const InstallAppModal = lazy(() =>
+const InstallAppModal = lazyWithPreload(() =>
   import("./components/InstallModal/InstallModal").then((m) => ({
     default: m.InstallAppModal,
   })),
@@ -262,8 +269,8 @@ const InstallAppModal = lazy(() =>
 import { motion, animate, useAnimation } from "framer-motion";
 import { keyframes } from "@emotion/react";
 import { Delaunay } from "d3-delaunay";
-const StudyGuideModal = lazy(
-  () => import("./components/StudyGuideModal/StudyGuideModal"),
+const StudyGuideModal = lazyWithPreload(() =>
+  import("./components/StudyGuideModal/StudyGuideModal"),
 );
 const CodeEditor = lazy(() =>
   import("./components/CodeEditor/CodeEditor").then((m) => ({
@@ -278,18 +285,38 @@ const RoleCanvas = lazy(() =>
     default: m.RoleCanvas,
   })),
 );
-const AlgorithmHelper = lazy(() =>
+const AlgorithmHelper = lazyWithPreload(() =>
   import("./components/AlgorithmHelper/AlgorithmHelper").then((m) => ({
     default: m.AlgorithmHelper,
   })),
 );
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
 import CloudTransition from "./elements/CloudTransition";
-const KnowledgeLedgerModal = lazy(
-  () => import("./components/KnowledgeLedgerModal/KnowledgeLedgerModal"),
+const KnowledgeLedgerModal = lazyWithPreload(() =>
+  import("./components/KnowledgeLedgerModal/KnowledgeLedgerModal"),
 );
 import { TbWorld } from "react-icons/tb";
 const SoundExperiment = lazy(() => import("./experiments/SoundExperiment"));
+
+const preloadInteractiveModalChunks = () => {
+  [
+    EducationalModal,
+    BitcoinModeModal,
+    SelfPacedModal,
+    SocialFeedModal,
+    StudyGuideModal,
+    KnowledgeLedgerModal,
+    AlgorithmHelper,
+    InstallAppModal,
+  ].forEach((Component) => {
+    Component.preload().catch(() => {});
+  });
+};
+
+const adaptiveSuggestionVariants = {
+  hidden: { scale: 0.8 },
+  visible: { scale: 1, transition: { duration: 0.3 } },
+};
 
 const StableReactBash = class extends ReactBash {
   scrollPromptIntoTerminalView() {
@@ -1084,8 +1111,7 @@ export const VoiceInput = ({
   };
 
   return (
-    <Suspense fallback={null}>
-      <VStack spacing={4} alignItems="center" width="100%" maxWidth={"600px"}>
+    <VStack spacing={4} alignItems="center" width="100%" maxWidth={"600px"}>
         {useVoice || isTerminal ? (
           <HStack spacing={4} justifyContent={"center"} maxWidth={"400px"}>
             {/* <Button
@@ -1288,12 +1314,18 @@ export const VoiceInput = ({
                 //     );
                 //   }}
                 // />
-                <CodeEditor
-                  value={value}
-                  onChange={(v) => onChange(v, resetMessages)}
-                  height={400}
-                  userLanguage={userLanguage}
-                />
+                <Suspense
+                  fallback={
+                    <CloudCanvas isLoader={true} regulateWidth={false} />
+                  }
+                >
+                  <CodeEditor
+                    value={value}
+                    onChange={(v) => onChange(v, resetMessages)}
+                    height={400}
+                    userLanguage={userLanguage}
+                  />
+                </Suspense>
               )}
             </Box>
             <br />
@@ -1340,26 +1372,27 @@ export const VoiceInput = ({
           />
         )}
 
-        {isOpen ? (
-          <EducationalModal
-            isOpen={isOpen}
-            onClose={onClose}
-            educationalMessages={educationalMessages}
-            educationalContent={educationalContent}
-            userLanguage={userLanguage}
-          />
-        ) : null}
+        <Suspense fallback={null}>
+          {isOpen ? (
+            <EducationalModal
+              isOpen={isOpen}
+              onClose={onClose}
+              educationalMessages={educationalMessages}
+              educationalContent={educationalContent}
+              userLanguage={userLanguage}
+            />
+          ) : null}
 
-        {isInstallModalOpen ? (
-          <InstallAppModal
-            userLanguage={userLanguage}
-            isOpen={isInstallModalOpen}
-            onClose={onInstallModalClose}
-            vocalRequest={true}
-          />
-        ) : null}
-      </VStack>
-    </Suspense>
+          {isInstallModalOpen ? (
+            <InstallAppModal
+              userLanguage={userLanguage}
+              isOpen={isInstallModalOpen}
+              onClose={onInstallModalClose}
+              vocalRequest={true}
+            />
+          ) : null}
+        </Suspense>
+    </VStack>
   );
 };
 
@@ -3904,8 +3937,7 @@ const Step = ({
   };
 
   return (
-    <Suspense fallback={null}>
-      <VStack
+    <VStack
         spacing={4}
         width="100%"
         px={4}
@@ -4392,12 +4424,14 @@ const Step = ({
                       }{" "}
                     </Button>
                   </HStack>
-                  <StudyGuideModal
-                    isOpen={isStudyGuideModalOpen}
-                    onClose={onStudyGuideModalClose}
-                    content={step.question.metaData}
-                    userLanguage={userLanguage}
-                  />
+                  <Suspense fallback={null}>
+                    <StudyGuideModal
+                      isOpen={isStudyGuideModalOpen}
+                      onClose={onStudyGuideModalClose}
+                      content={step.question.metaData}
+                      userLanguage={userLanguage}
+                    />
+                  </Suspense>
                 </VStack>
               )}
 
@@ -4526,16 +4560,22 @@ const Step = ({
                 />
               )}
               {step.isConversationReview && (
-                <ConversationReview
-                  question={step.question}
-                  userLanguage={userLanguage}
-                  steps={steps}
-                  step={step}
-                  onSubmit={handleAnswerClick} // Or any other relevant logic
-                  setFinalConversation={setFinalConversation}
-                  finalConversation={finalConversation}
-                  handleModalCheck={handleModalCheck}
-                />
+                <Suspense
+                  fallback={
+                    <CloudCanvas isLoader={true} regulateWidth={false} />
+                  }
+                >
+                  <ConversationReview
+                    question={step.question}
+                    userLanguage={userLanguage}
+                    steps={steps}
+                    step={step}
+                    onSubmit={handleAnswerClick} // Or any other relevant logic
+                    setFinalConversation={setFinalConversation}
+                    finalConversation={finalConversation}
+                    handleModalCheck={handleModalCheck}
+                  />
+                </Suspense>
               )}
               {/* {isPostingWithNostr ? (
               <CloudCanvas />
@@ -4821,15 +4861,21 @@ const Step = ({
               <Box p={4} textAlign="center" mt="-86px">
                 {/* <CloudCanvas isLoader={true} /> */}
                 <Box marginTop={"-52px"}>
-                  <RoleCanvas
-                    role={"sphere"}
-                    width={400}
-                    height={400}
-                    trailOpacity={0.08}
-                    transparentFade
-                    backgroundColorX="247,245,239"
-                    backgroundColorDark="9,17,35"
-                  />
+                  <Suspense
+                    fallback={
+                      <CloudCanvas isLoader={true} regulateWidth={false} />
+                    }
+                  >
+                    <RoleCanvas
+                      role={"sphere"}
+                      width={400}
+                      height={400}
+                      trailOpacity={0.08}
+                      transparentFade
+                      backgroundColorX="247,245,239"
+                      backgroundColorDark="9,17,35"
+                    />
+                  </Suspense>
                 </Box>
 
                 <Text mt={2}>
@@ -4850,9 +4896,9 @@ const Step = ({
                   border="1px solid var(--chakra-colors-appBorderStrong)"
                   textAlign={"left"}
                   width="100%"
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: [0.75, 1] }}
-                  transition={{ duration: 0.3 }}
+                  initial="hidden"
+                  animate="visible"
+                  variants={adaptiveSuggestionVariants}
                 >
                   <Markdown
                     components={ChakraUIRenderer(newTheme)}
@@ -4865,47 +4911,49 @@ const Step = ({
               </Box>
             ) : null}
 
-            {isOpen ? (
-              <EducationalModal
-                isOpen={isOpen}
-                onClose={onClose}
-                educationalMessages={educationalMessages}
-                educationalContent={educationalContent}
-                userLanguage={userLanguage}
-              />
-            ) : null}
+            <Suspense fallback={null}>
+              {isOpen ? (
+                <EducationalModal
+                  isOpen={isOpen}
+                  onClose={onClose}
+                  educationalMessages={educationalMessages}
+                  educationalContent={educationalContent}
+                  userLanguage={userLanguage}
+                />
+              ) : null}
 
-            {isSelfPacedOpen ? (
-              <SelfPacedModal
-                isOpen={isSelfPacedOpen}
-                onClose={onSelfPacedClose}
-                interval={interval}
-                setInterval={setInterval}
-                userId={localStorage.getItem("local_npub")}
-                userLanguage={userLanguage}
-                onSettingsSaved={handleSelfPacedSettingsSaved}
-              />
-            ) : null}
+              {isSelfPacedOpen ? (
+                <SelfPacedModal
+                  isOpen={isSelfPacedOpen}
+                  onClose={onSelfPacedClose}
+                  interval={interval}
+                  setInterval={setInterval}
+                  userId={localStorage.getItem("local_npub")}
+                  userLanguage={userLanguage}
+                  onSettingsSaved={handleSelfPacedSettingsSaved}
+                />
+              ) : null}
 
-            {isSocialFeedOpen ? (
-              <SocialFeedModal
-                userLanguage={userLanguage}
-                currentStep={currentStep}
-                isOpen={isSocialFeedOpen}
-                onClose={onSocialFeedClose}
-                allowPosts={allowPosts}
-                setAllowPosts={setAllowPosts}
-              />
-            ) : null}
+              {isSocialFeedOpen ? (
+                <SocialFeedModal
+                  userLanguage={userLanguage}
+                  currentStep={currentStep}
+                  isOpen={isSocialFeedOpen}
+                  onClose={onSocialFeedClose}
+                  allowPosts={allowPosts}
+                  setAllowPosts={setAllowPosts}
+                />
+              ) : null}
 
-            {isBitcoinModeOpen ? (
-              <BitcoinModeModal
-                isOpen={isBitcoinModeOpen}
-                onClose={onBitcoinModeClose}
-                userLanguage={userLanguage}
-                from="app"
-              />
-            ) : null}
+              {isBitcoinModeOpen ? (
+                <BitcoinModeModal
+                  isOpen={isBitcoinModeOpen}
+                  onClose={onBitcoinModeClose}
+                  userLanguage={userLanguage}
+                  from="app"
+                />
+              ) : null}
+            </Suspense>
 
             <Box
               position="fixed"
@@ -5093,43 +5141,47 @@ const Step = ({
               </Flex>
             </Box>
 
-            {isLectureModalOpen ? (
-              <LectureModal
-                userLanguage={userLanguage}
-                currentStep={currentStep}
-                isOpen={isLectureModalOpen}
-                onClose={handleLectureModalClose}
-                handleNextClick={handleNextClick}
-              />
-            ) : null}
+            <Suspense fallback={null}>
+              {isLectureModalOpen ? (
+                <LectureModal
+                  userLanguage={userLanguage}
+                  currentStep={currentStep}
+                  isOpen={isLectureModalOpen}
+                  onClose={handleLectureModalClose}
+                  handleNextClick={handleNextClick}
+                />
+              ) : null}
 
-            {isKnowledgeLedgerOpen && userLanguage !== "compsci-en" ? (
-              <KnowledgeLedgerModal
-                userLanguage={userLanguage}
-                isOpen={isKnowledgeLedgerOpen}
-                onClose={onKnowledgeLedgerClose}
-                steps={steps}
-                step={step}
-              />
-            ) : (
-              <AlgorithmHelper
-                userLanguage={userLanguage}
-                isOpen={isKnowledgeLedgerOpen}
-                onClose={onKnowledgeLedgerClose}
-                steps={steps}
-                currentStep={currentStep}
-              />
-            )}
+              {isKnowledgeLedgerOpen ? (
+                userLanguage !== "compsci-en" ? (
+                  <KnowledgeLedgerModal
+                    userLanguage={userLanguage}
+                    isOpen={isKnowledgeLedgerOpen}
+                    onClose={onKnowledgeLedgerClose}
+                    steps={steps}
+                    step={step}
+                  />
+                ) : (
+                  <AlgorithmHelper
+                    userLanguage={userLanguage}
+                    isOpen={isKnowledgeLedgerOpen}
+                    onClose={onKnowledgeLedgerClose}
+                    steps={steps}
+                    currentStep={currentStep}
+                  />
+                )
+              ) : null}
 
-            {isProgressModalOpen ? (
-              <ProgressModal
-                isOpen={isProgressModalOpen}
-                onClose={onProgressModalClose}
-                steps={steps}
-                currentStep={currentStep}
-                userLanguage={userLanguage}
-              />
-            ) : null}
+              {isProgressModalOpen ? (
+                <ProgressModal
+                  isOpen={isProgressModalOpen}
+                  onClose={onProgressModalClose}
+                  steps={steps}
+                  currentStep={currentStep}
+                  userLanguage={userLanguage}
+                />
+              ) : null}
+            </Suspense>
             {/* newmodal */}
             {/* <ExternalLinkModal
             isOpen={isExternalLinkModalOpen}
@@ -5142,17 +5194,19 @@ const Step = ({
           /> */}
 
             <>
-              {isAwardModalOpen ? (
-                <AwardModal
-                  isOpen={isAwardModalOpen}
-                  onClose={handleAwardModalClose}
-                  // educationalMessages={educationalMessages}
-                  // educationalContent={educationalContent}
-                  userLanguage={userLanguage}
-                  step={step}
-                  isCorrect={isCorrect}
-                />
-              ) : null}
+              <Suspense fallback={null}>
+                {isAwardModalOpen ? (
+                  <AwardModal
+                    isOpen={isAwardModalOpen}
+                    onClose={handleAwardModalClose}
+                    // educationalMessages={educationalMessages}
+                    // educationalContent={educationalContent}
+                    userLanguage={userLanguage}
+                    step={step}
+                    isCorrect={isCorrect}
+                  />
+                ) : null}
+              </Suspense>
 
               <PasscodeModal userLanguage={userLanguage} />
               {/* 
@@ -5166,8 +5220,7 @@ const Step = ({
             </>
           </>
         )}
-      </VStack>
-    </Suspense>
+    </VStack>
   );
 };
 
@@ -5529,8 +5582,23 @@ const Home = ({
   );
 
   useEffect(() => {
-    const unsubscribe = subscribeToQuestionsAnswered(setQuestionsAnswered);
-    return () => unsubscribe();
+    let unsubscribe = () => {};
+    let isActive = true;
+
+    ensureAppCheckReady()
+      .then(() => {
+        if (isActive) {
+          unsubscribe = subscribeToQuestionsAnswered(setQuestionsAnswered);
+        }
+      })
+      .catch((error) => {
+        console.error("App Check blocked question count subscription", error);
+      });
+
+    return () => {
+      isActive = false;
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -5626,6 +5694,8 @@ const Home = ({
     const currentTime = new Date();
     const endTime = new Date(currentTime.getTime() + defaultInterval * 60000);
 
+    await ensureAppCheckReady();
+
     // Create user in Firestore with language and theme preferences.
     const createdUserData = await createUser(
       newKeys.npub,
@@ -5680,6 +5750,7 @@ const Home = ({
       const userName = localStorage.getItem("displayName");
 
       try {
+        await ensureAppCheckReady();
         const userData = await createUser(npub, userName, userLanguage);
         applyUserThemePreferences(userData, setColorMode);
       } catch (error) {
@@ -5763,6 +5834,7 @@ const Home = ({
       const userName = localStorage.getItem("displayName");
 
       try {
+        await ensureAppCheckReady();
         const userData = await createUser(npub, userName, userLanguage);
         applyUserThemePreferences(userData, setColorMode);
       } catch (error) {
@@ -7437,7 +7509,12 @@ function App({ isShutDown }) {
       // deleteSpecificDocuments();
       // let count = await getTotalUsers();
       // window.alert("wtf");
-      fetchUsersWithToken();
+      ensureAppCheckReady()
+        .then(() => fetchUsersWithToken())
+        .catch((error) => {
+          console.error("App Check blocked startup Firestore reads", error);
+        });
+
       if (npub && window.location.pathname !== "/dashboard") {
         try {
           await ensureAppCheckReady();
@@ -7865,6 +7942,10 @@ export const AppWrapper = () => {
   // const isBroken = true;
   const [isShutDown, setIsShutDown] = useState(false);
   const [isBroken, setIsBroken] = useState(false);
+
+  useEffect(() => {
+    preloadInteractiveModalChunks();
+  }, []);
 
   // useEffect(() => {
   //   if (localStorage.getItem("security") === import.meta.env.VITE_SECURITY) {

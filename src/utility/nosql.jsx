@@ -12,7 +12,7 @@ import {
   onSnapshot,
   increment,
 } from "firebase/firestore";
-import { database, ensureAppCheckReady } from "../database/firebaseResources";
+import { database } from "../database/firebaseResources";
 import {
   getLocalThemeColor,
   getLocalThemeMode,
@@ -39,8 +39,6 @@ export const updateUserData = async (
   dailyProgress = 0,
   goalCount = 0,
 ) => {
-  await ensureAppCheckReady();
-
   const nextGoalDate =
     nextGoalExpiration instanceof Date
       ? nextGoalExpiration
@@ -61,8 +59,6 @@ export const updateUserData = async (
 
 // Retrieve user data to use within the component
 export const getUserData = async (userId) => {
-  await ensureAppCheckReady();
-
   const userDocRef = doc(database, "users", userId);
   const userDoc = await getDoc(userDocRef);
 
@@ -83,8 +79,6 @@ export const createUser = async (npub, userName, language) => {
   if (!npub) {
     throw new Error("createUser requires an npub");
   }
-
-  await ensureAppCheckReady();
 
   const userDoc = doc(database, "users", npub);
   const existingSnapshot = await getDoc(userDoc);
@@ -292,8 +286,6 @@ export const incrementToFinalAward = async (npub) => {
 };
 
 export const getUserStep = async (npub) => {
-  await ensureAppCheckReady();
-
   const userDoc = doc(database, "users", npub);
   const userSnapshot = await getDoc(userDoc);
 
@@ -305,8 +297,6 @@ export const getUserStep = async (npub) => {
 };
 
 export const getOnboardingStep = async (npub) => {
-  await ensureAppCheckReady();
-
   const userDoc = doc(database, "users", npub);
   const userSnapshot = await getDoc(userDoc);
 

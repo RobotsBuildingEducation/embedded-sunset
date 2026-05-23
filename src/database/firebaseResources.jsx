@@ -39,14 +39,25 @@ export const appCheck = initializeAppCheck(app, {
   isTokenAutoRefreshEnabled: true,
 });
 
-export const ensureAppCheckReady = async () => {
-  const tokenResult = await getAppCheckToken(appCheck);
+let appCheckReadyPromise = null;
 
-  if (!tokenResult?.token) {
-    throw new Error("Firebase App Check did not return a token.");
+export const ensureAppCheckReady = async () => {
+  if (!appCheckReadyPromise) {
+    appCheckReadyPromise = getAppCheckToken(appCheck)
+      .then((tokenResult) => {
+        if (!tokenResult?.token) {
+          throw new Error("Firebase App Check did not return a token.");
+        }
+
+        return tokenResult.token;
+      })
+      .catch((error) => {
+        appCheckReadyPromise = null;
+        throw error;
+      });
   }
 
-  return tokenResult.token;
+  return appCheckReadyPromise;
 };
 
 const database = getFirestore(app);

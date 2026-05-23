@@ -396,12 +396,12 @@ const EducationalModal = ({
 
         {educationalMessages.length < 1 ? (
           <ModalContent
-            bg="transparent"
+            bg="appSurfaceElevated"
             color="appText"
-            borderWidth="0"
-            borderColor="transparent"
-            borderRadius="0"
-            boxShadow="none"
+            borderWidth="1px"
+            borderColor="appBorder"
+            borderRadius="lg"
+            boxShadow="2xl"
             p={0}
             width="100%"
             minH="100dvh"
@@ -409,14 +409,38 @@ const EducationalModal = ({
             flexDirection="column"
             overflow="hidden"
           >
+            <ModalHeader
+              fontSize="xl"
+              fontWeight="bold"
+              marginTop={0}
+              paddingTop={0}
+              pb={0}
+              borderBottomWidth="1px"
+              borderBottomColor="appBorder"
+            >
+              <ModalCloseButton size="lg" />
+
+              <HStack mb={0}>
+                <div style={{ width: "fit-content" }}>
+                  <RandomCharacter />
+                </div>
+                &nbsp;
+                <div>{translation[userLanguage]["modal.learn.title"]}</div>
+              </HStack>
+            </ModalHeader>
             <ModalBody
               p={0}
               style={{ width: "100%" }}
               display="flex"
               flex="1"
-              minH="100dvh"
+              minH="calc(100dvh - 72px)"
             >
-              <Box color="appText" width="100%" flex="1" minH="100dvh">
+              <Box
+                color="appText"
+                width="100%"
+                flex="1"
+                minH="calc(100dvh - 72px)"
+              >
                 <OrbCanvas
                   hasStreamedText={false}
                   instructions={
