@@ -2,7 +2,11 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
-import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
+import {
+  getToken as getAppCheckToken,
+  initializeAppCheck,
+  ReCaptchaV3Provider,
+} from "firebase/app-check";
 import { getVertexAI, getGenerativeModel } from "@firebase/vertexai";
 import { getMessaging, isSupported } from "firebase/messaging";
 
@@ -34,6 +38,17 @@ export const appCheck = initializeAppCheck(app, {
   provider: new ReCaptchaV3Provider("6LdzBVwqAAAAABT9kfIUQjeLb0nWjqZ3WzbhZIjh"),
   isTokenAutoRefreshEnabled: true,
 });
+
+export const ensureAppCheckReady = async () => {
+  const tokenResult = await getAppCheckToken(appCheck);
+
+  if (!tokenResult?.token) {
+    throw new Error("Firebase App Check did not return a token.");
+  }
+
+  return tokenResult.token;
+};
+
 const database = getFirestore(app);
 const analytics = getAnalytics(app);
 let messaging = null;

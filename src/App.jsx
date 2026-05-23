@@ -127,7 +127,11 @@ import {
   increment,
   updateDoc,
 } from "firebase/firestore";
-import { analytics, database } from "./database/firebaseResources";
+import {
+  analytics,
+  database,
+  ensureAppCheckReady,
+} from "./database/firebaseResources";
 
 import { pickProgrammingLanguage, translation } from "./utility/translation";
 import { subscribeToTeamInvites } from "./utility/nosql";
@@ -7436,6 +7440,8 @@ function App({ isShutDown }) {
       fetchUsersWithToken();
       if (npub && window.location.pathname !== "/dashboard") {
         try {
+          await ensureAppCheckReady();
+
           const windowurl = window.location.href;
 
           // Regex to match and capture the number after "/q/"
