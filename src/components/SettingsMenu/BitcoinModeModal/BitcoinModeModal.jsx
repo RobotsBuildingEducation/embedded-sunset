@@ -24,6 +24,10 @@ import { database } from "../../../database/firebaseResources";
 import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { SiCashapp } from "react-icons/si";
 import BitcoinOnboarding from "../../BitcoinOnboarding/BitcoinOnboarding";
+import {
+  nativeModalMotionProps,
+  nativeOverlayMotionProps,
+} from "../../../utility/modalMotion";
 
 const BitcoinModeModal = ({
   isOpen,
@@ -32,9 +36,16 @@ const BitcoinModeModal = ({
   from = "onboarding",
 }) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
-      <ModalOverlay />
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      isCentered
+      motionPreset="none"
+      returnFocusOnClose={false}
+    >
+      <ModalOverlay motionProps={nativeOverlayMotionProps} />
       <ModalContent
+        motionProps={nativeModalMotionProps}
         display="flex"
         flexDirection="column"
         maxH="90vh"

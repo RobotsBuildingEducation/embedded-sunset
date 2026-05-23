@@ -9,6 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { translation } from "../../utility/translation";
 import { IoChatbubblesOutline } from "react-icons/io5";
+import { getInstantSurfacePressProps } from "../../utility/instantSurface";
 
 const MultipleChoiceQuestion = ({
   question,
@@ -21,6 +22,7 @@ const MultipleChoiceQuestion = ({
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const optionRefs = useRef([]);
   const learnButtonRef = useRef(null);
+  const learnPressRef = useRef({ key: "", at: 0 });
   const actionShadow = useColorModeValue(
     "0 12px 24px rgba(15, 23, 42, 0.12)",
     "0 16px 34px rgba(2, 6, 23, 0.42)",
@@ -87,19 +89,14 @@ const MultipleChoiceQuestion = ({
     <VStack spacing={4} onKeyDown={handleKeyDown} width="100%" maxWidth="600px">
       <Button
         ref={learnButtonRef}
-        onTouchStart={(e) => {
-          e.preventDefault();
-          handleModalCheck(onLearnClick);
-        }}
-        onClick={() => {
-          handleModalCheck(onLearnClick);
-        }}
+        {...getInstantSurfacePressProps(learnPressRef, "learn", () =>
+          handleModalCheck(onLearnClick),
+        )}
         colorScheme="pink"
         tabIndex={0}
         background="pink.300"
         color="white"
         boxShadow={actionShadow}
-        touchAction="manipulation"
         _hover={{ bg: "pink.400" }}
         _active={{ bg: "pink.400" }}
       >

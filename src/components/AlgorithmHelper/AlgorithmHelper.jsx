@@ -35,6 +35,10 @@ import {
 } from "../../database/firebaseResources";
 
 import { ArrowDownIcon, ArrowForwardIcon } from "@chakra-ui/icons";
+import {
+  nativeModalMotionProps,
+  nativeOverlayMotionProps,
+} from "../../utility/modalMotion";
 
 const newTheme = {
   h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
@@ -213,9 +217,17 @@ export const AlgorithmHelper = ({ isOpen, onClose, userLanguage }) => {
       onClose={onClose}
       size="4xl"
       scrollBehavior={"inside"}
+      motionPreset="none"
+      returnFocusOnClose={false}
     >
-      <ModalOverlay />
-      <ModalContent borderRadius="lg" boxShadow="2xl" p={0} width="100%">
+      <ModalOverlay motionProps={nativeOverlayMotionProps} />
+      <ModalContent
+        motionProps={nativeModalMotionProps}
+        borderRadius="lg"
+        boxShadow="2xl"
+        p={0}
+        width="100%"
+      >
         <ModalHeader fontSize="3xl" fontWeight="bold" marginTop={0} padding={3}>
           <HStack>
             <div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   model,
   simplemodel,
@@ -102,11 +102,16 @@ export const useGeminiChat = () => {
 export const useSimpleGeminiChat = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const messageIdRef = useRef(0);
+  const resetVersionRef = useRef(0);
 
   /**
    * submitPrompt: Streams text from a given prompt (string).
    */
-  const submitPrompt = async (prompt) => {
+  const submitPrompt = useCallback(async (prompt) => {
+    const messageId = ++messageIdRef.current;
+    const resetVersion = resetVersionRef.current;
+    const isCurrentStream = () => resetVersionRef.current === resetVersion;
     setLoading(true);
 
     try {
@@ -115,6 +120,7 @@ export const useSimpleGeminiChat = () => {
 
       // 2) Create a new message object to store partial text
       const newMessage = {
+        id: messageId,
         content: "",
         meta: {
           loading: true, // Whether the streaming is ongoing
@@ -123,57 +129,90 @@ export const useSimpleGeminiChat = () => {
       };
 
       // 3) Append this new message to the messages array
+      if (!isCurrentStream()) return;
       setMessages((prev) => [...prev, newMessage]);
 
       // 4) Accumulate partial text in a local variable, updating state after each chunk
       let fullResponse = "";
 
       for await (const chunk of result.stream) {
+        if (!isCurrentStream()) return;
+
         const chunkText = chunk.text();
         fullResponse += chunkText;
 
         // 5) Update the last message with partial text
         setMessages((prev) => {
-          const updatedMessages = [...prev];
-          const currentMessage = updatedMessages[updatedMessages.length - 1];
+          if (!isCurrentStream()) return prev;
 
-          currentMessage.content = fullResponse;
-          currentMessage.meta.chunks.push({
-            content: chunkText,
-            final: false, // We’ll mark it final after the loop ends
-          });
-
-          return updatedMessages;
+          return prev.map((message) =>
+            message.id === messageId
+              ? {
+                  ...message,
+                  content: fullResponse,
+                  meta: {
+                    ...message.meta,
+                    chunks: [
+                      ...message.meta.chunks,
+                      {
+                        content: chunkText,
+                        final: false, // We’ll mark it final after the loop ends
+                      },
+                    ],
+                  },
+                }
+              : message,
+          );
         });
       }
 
       // 6) Mark the last chunk as final
+      if (!isCurrentStream()) return;
       setMessages((prev) => {
-        const updatedMessages = [...prev];
-        const currentMessage = updatedMessages[updatedMessages.length - 1];
-        currentMessage.meta.loading = false;
+        if (!isCurrentStream()) return prev;
 
-        const lastChunkIndex = currentMessage.meta.chunks.length - 1;
-        if (lastChunkIndex >= 0) {
-          currentMessage.meta.chunks[lastChunkIndex].final = true;
-        }
+        return prev.map((message) => {
+          if (message.id !== messageId) {
+            return message;
+          }
 
-        return updatedMessages;
+          const chunks = [...message.meta.chunks];
+          const lastChunkIndex = chunks.length - 1;
+          if (lastChunkIndex >= 0) {
+            chunks[lastChunkIndex] = {
+              ...chunks[lastChunkIndex],
+              final: true,
+            };
+          }
+
+          return {
+            ...message,
+            meta: {
+              ...message.meta,
+              loading: false,
+              chunks,
+            },
+          };
+        });
       });
     } catch (error) {
       console.error("Error streaming from Gemini:", error);
       throw error;
     } finally {
-      setLoading(false);
+      if (isCurrentStream()) {
+        setLoading(false);
+      }
     }
-  };
+  }, []);
 
   /**
    * resetMessages: Clears out all existing messages and resets streaming state.
    */
-  const resetMessages = () => {
+  const resetMessages = useCallback(() => {
+    resetVersionRef.current += 1;
     setMessages([]);
-  };
+    setLoading(false);
+  }, []);
 
   return {
     messages,

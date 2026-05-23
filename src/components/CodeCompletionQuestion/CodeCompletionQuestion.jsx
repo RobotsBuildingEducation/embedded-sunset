@@ -9,6 +9,7 @@ import { translation } from "../../utility/translation";
 import Editor from "react-simple-code-editor";
 import { IoChatbubblesOutline } from "react-icons/io5";
 import { soundManager } from "../../utility/soundManager";
+import { getInstantSurfacePressProps } from "../../utility/instantSurface";
 
 const CodeCompletionQuestion = ({
   step,
@@ -23,6 +24,7 @@ const CodeCompletionQuestion = ({
   const [isComponentFocused, setIsComponentFocused] = useState(false); // Track if the component is focused or not
   const optionRefs = useRef([]); // Track references to each code block option
   const learnButtonRef = useRef(null); // Reference to the Learn button
+  const learnPressRef = useRef({ key: "", at: 0 });
   const actionShadow = useColorModeValue(
     "0 12px 24px rgba(15, 23, 42, 0.12)",
     "0 16px 34px rgba(2, 6, 23, 0.42)",
@@ -131,19 +133,14 @@ const CodeCompletionQuestion = ({
       {/* Learn Button */}
       <Button
         ref={learnButtonRef}
-        onTouchStart={(e) => {
-          e.preventDefault();
-          handleModalCheck(onLearnClick);
-        }}
-        onClick={() => {
-          handleModalCheck(onLearnClick);
-        }}
+        {...getInstantSurfacePressProps(learnPressRef, "learn", () =>
+          handleModalCheck(onLearnClick),
+        )}
         colorScheme="pink"
         // Removed tabIndex={0} as Button is focusable by default
         background="pink.400"
         color="white"
         boxShadow={actionShadow}
-        touchAction="manipulation"
         _hover={{ bg: "pink.500" }}
         _active={{ bg: "pink.500" }}
       >

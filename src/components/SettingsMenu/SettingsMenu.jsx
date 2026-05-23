@@ -60,6 +60,14 @@ import StudyGuideModal from "../StudyGuideModal/StudyGuideModal";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { ChangeLanguageModal } from "../ChangeLanguageModal/ChangeLanguageModal";
 import { soundManager } from "../../utility/soundManager";
+import {
+  getInstantSurfacePressProps,
+  runImmediateSurfaceUpdate,
+} from "../../utility/instantSurface";
+import {
+  nativeOverlayMotionProps,
+  nativeRightDrawerMotionProps,
+} from "../../utility/modalMotion";
 
 const SettingsMenu = ({
   testIsMatch,
@@ -86,6 +94,7 @@ const SettingsMenu = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
   const btnRef = menuButtonRef || useRef(); // Reference to the settings icon button
+  const menuPressRef = useRef({ key: "", at: 0 });
   const firstButtonRef = useRef(); // Reference to the first button in the drawer
   const toast = useToast();
   const themeColor = useThemeStore((state) => state.themeColor);
@@ -364,12 +373,9 @@ const SettingsMenu = ({
     <IconButton
       ref={btnRef}
       icon={<IoAppsOutline />}
-      onMouseDown={onOpen}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          onOpen();
-        }
-      }}
+      {...getInstantSurfacePressProps(menuPressRef, "settings", () =>
+        runImmediateSurfaceUpdate(onOpen),
+      )}
       // variant="outline"
       boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
       position="fixed"
@@ -453,8 +459,12 @@ const SettingsMenu = ({
         autoFocus={false} // Prevent Drawer from auto-focusing
         blockScrollOnMount={false}
       >
-        <DrawerOverlay />
-        <DrawerContent bg="appSurfaceElevated" color="appText">
+        <DrawerOverlay motionProps={nativeOverlayMotionProps} />
+        <DrawerContent
+          motionProps={nativeRightDrawerMotionProps}
+          bg="appSurfaceElevated"
+          color="appText"
+        >
           <DrawerCloseButton />
           <DrawerHeader>
             {translation?.[userLanguage]?.["settings.title"]}

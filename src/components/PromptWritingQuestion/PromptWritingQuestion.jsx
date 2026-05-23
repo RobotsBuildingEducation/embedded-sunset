@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   VStack,
   Textarea,
@@ -12,6 +12,7 @@ import { useSimpleGeminiChat } from "../../hooks/useGeminiChat";
 import { useChatCompletion } from "../../hooks/useChatCompletion";
 import { translation } from "../../utility/translation";
 import { IoChatbubblesOutline } from "react-icons/io5";
+import { getInstantSurfacePressProps } from "../../utility/instantSurface";
 
 export default function PromptWritingQuestion({
   question,
@@ -22,6 +23,7 @@ export default function PromptWritingQuestion({
 }) {
   const [promptText, setPromptText] = useState("");
   const [aiMessages, setAiMessages] = useState("");
+  const learnPressRef = useRef({ key: "", at: 0 });
   const { messages: streamMsgs, submitPrompt: runPrompt } =
     useSimpleGeminiChat();
   const { submitPrompt: gradePrompt } = useChatCompletion({
@@ -73,18 +75,13 @@ export default function PromptWritingQuestion({
   return (
     <VStack spacing={4} width="100%" maxWidth="600px" align="stretch">
       <Button
-        onTouchStart={(e) => {
-          e.preventDefault();
-          handleModalCheck(onLearnClick);
-        }}
-        onClick={() => {
-          handleModalCheck(onLearnClick);
-        }}
+        {...getInstantSurfacePressProps(learnPressRef, "learn", () =>
+          handleModalCheck(onLearnClick),
+        )}
         alignSelf="center"
         background="pink.400"
         color="white"
         boxShadow={actionShadow}
-        touchAction="manipulation"
         _hover={{ bg: "pink.500" }}
         _active={{ bg: "pink.500" }}
       >

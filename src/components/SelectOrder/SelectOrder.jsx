@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { VStack, Button, Text, Box, useColorModeValue } from "@chakra-ui/react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { translation } from "../../utility/translation";
 import { IoChatbubblesOutline } from "react-icons/io5";
+import { getInstantSurfacePressProps } from "../../utility/instantSurface";
 
 const SelectOrderQuestion = ({
   step,
@@ -16,6 +17,7 @@ const SelectOrderQuestion = ({
   const [focusedIndex, setFocusedIndex] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [draggedIndex, setDraggedIndex] = useState(null);
+  const learnPressRef = useRef({ key: "", at: 0 });
   const cardShadow = useColorModeValue(
     "0 14px 30px rgba(15, 23, 42, 0.08)",
     "0px 4px 0px rgba(0, 0, 0, 0.58)",
@@ -122,19 +124,14 @@ const SelectOrderQuestion = ({
       style={{ outline: "none" }} // Remove default focus outline
     >
       <Button
-        onTouchStart={(e) => {
-          e.preventDefault();
-          handleModalCheck(onLearnClick);
-        }}
-        onClick={() => {
-          handleModalCheck(onLearnClick);
-        }}
+        {...getInstantSurfacePressProps(learnPressRef, "learn", () =>
+          handleModalCheck(onLearnClick),
+        )}
         colorScheme="pink"
         background="pink.400"
         color="white"
         boxShadow={actionShadow}
         alignSelf="center"
-        touchAction="manipulation"
         _hover={{ bg: "pink.500" }}
         _active={{ bg: "pink.500" }}
       >

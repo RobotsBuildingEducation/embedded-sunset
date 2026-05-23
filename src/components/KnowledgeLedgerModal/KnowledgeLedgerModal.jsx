@@ -30,6 +30,10 @@ import { translation } from "../../utility/translation";
 const LiveReactEditorModal = lazy(() => import("../LiveCodeEditor/LiveCodeEditor"));
 import { CloudCanvas } from "../../elements/SunsetCanvas";
 import { soundManager } from "../../utility/soundManager";
+import {
+  nativeDrawerMotionProps,
+  nativeOverlayMotionProps,
+} from "../../utility/modalMotion";
 
 // --- tiny parser to safely stream fenced code
 function parseFenced(text = "") {
@@ -431,8 +435,9 @@ function KnowledgeLedgerModal({
       closeOnOverlayClick={false}
       blockScrollOnMount
     >
-      <DrawerOverlay />
+      <DrawerOverlay motionProps={nativeOverlayMotionProps} />
       <DrawerContent
+        motionProps={nativeDrawerMotionProps}
         display="flex"
         flexDirection="column"
         h="100dvh"

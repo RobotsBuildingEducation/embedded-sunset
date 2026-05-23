@@ -8,7 +8,6 @@ import {
   Button,
   VStack,
   Text,
-  Spinner,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -29,7 +28,6 @@ import {
   IconButton,
   useColorMode,
 } from "@chakra-ui/react";
-import { BigSunset, SunsetCanvas } from "../../elements/SunsetCanvas";
 
 import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
@@ -39,9 +37,7 @@ import { translation } from "../../utility/translation";
 import RandomCharacter from "../../elements/RandomCharacter";
 import { CopyButtonIcon } from "../../elements/CopyButtonIcon";
 import { animateBorderLoading } from "../../utility/animations";
-import { OrbCanvas } from "../../elements/OrbCanvas";
 import Markdown from "react-markdown";
-import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { IoMicCircleOutline } from "react-icons/io5";
 import { PiMicrophoneFill, PiMicrophoneLight } from "react-icons/pi";
@@ -56,6 +52,10 @@ import {
   getThemedCodeBlockStyles,
   getThemedSyntaxHighlightTheme,
 } from "../../theme";
+import {
+  nativeModalMotionProps,
+  nativeOverlayMotionProps,
+} from "../../utility/modalMotion";
 
 const lightHighlightColors = [
   "green.100",
@@ -74,14 +74,75 @@ const darkHighlightColors = [
 export const newTheme = () => {
   let highlightIndex = 0;
   return {
-    p: (props) => <Text mb={2} lineHeight="1.6" {...props} />,
-    ul: (props) => <UnorderedList pl={6} spacing={2} {...props} />,
-    ol: (props) => <UnorderedList as="ol" pl={6} spacing={2} {...props} />,
-    li: (props) => <ListItem mb={1} {...props} />,
-    h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-    h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-    h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-    strong: (props) => {
+    p: ({ node, ...props }) => (
+      <Text
+        mb={4}
+        color="appText"
+        fontSize={{ base: "sm", md: "md" }}
+        lineHeight="1.7"
+        {...props}
+      />
+    ),
+    ul: ({ node, ...props }) => (
+      <UnorderedList pl={5} spacing={2} mb={4} {...props} />
+    ),
+    ol: ({ node, ...props }) => (
+      <UnorderedList as="ol" pl={5} spacing={2} mb={4} {...props} />
+    ),
+    li: ({ node, ...props }) => <ListItem mb={1} {...props} />,
+    h1: ({ node, ...props }) => (
+      <Heading
+        as="h2"
+        mt={6}
+        mb={2}
+        fontSize={{ base: "lg", md: "xl" }}
+        lineHeight="1.25"
+        letterSpacing="0"
+        fontWeight="700"
+        color="appText"
+        {...props}
+      />
+    ),
+    h2: ({ node, ...props }) => (
+      <Heading
+        as="h3"
+        mt={5}
+        mb={2}
+        fontSize={{ base: "md", md: "lg" }}
+        lineHeight="1.3"
+        letterSpacing="0"
+        fontWeight="700"
+        color="appText"
+        {...props}
+      />
+    ),
+    h3: ({ node, ...props }) => (
+      <Heading
+        as="h4"
+        mt={5}
+        mb={2}
+        fontSize={{ base: "md", md: "lg" }}
+        lineHeight="1.35"
+        letterSpacing="0"
+        fontWeight="700"
+        color="appText"
+        {...props}
+      />
+    ),
+    h4: ({ node, ...props }) => (
+      <Heading
+        as="h5"
+        mt={4}
+        mb={2}
+        fontSize="md"
+        lineHeight="1.4"
+        letterSpacing="0"
+        fontWeight="700"
+        color="appText"
+        {...props}
+      />
+    ),
+    strong: ({ node, ...props }) => {
       const { colorMode } = useColorMode();
       const highlightColors =
         colorMode === "dark" ? darkHighlightColors : lightHighlightColors;
@@ -100,7 +161,7 @@ export const newTheme = () => {
         />
       );
     },
-    code: ({ inline, className, children, ...props }) => {
+    code: ({ node, inline, className, children, ...props }) => {
       const { colorMode } = useColorMode();
       const match = /language-(\w+)/.exec(className || "");
 
@@ -119,9 +180,10 @@ export const newTheme = () => {
           as="code"
           backgroundColor="appCodeInlineBg"
           color="appCodeColor"
-          p={1}
+          px={1.5}
+          py={0.5}
           borderRadius="md"
-          fontSize="sm"
+          fontSize="0.92em"
           {...props}
         >
           {children}
@@ -130,6 +192,98 @@ export const newTheme = () => {
     },
   };
 };
+
+const LearnLoadingAnimation = ({ userLanguage }) => (
+  <VStack
+    spacing={5}
+    textAlign="center"
+    maxW="420px"
+    sx={{
+      "@keyframes learnLoaderPulse": {
+        "0%, 100%": {
+          opacity: 0.48,
+          transform: "scale(0.92)",
+        },
+        "50%": {
+          opacity: 1,
+          transform: "scale(1.06)",
+        },
+      },
+      "@keyframes learnLoaderFloat": {
+        "0%, 100%": {
+          transform: "translateY(0)",
+          boxShadow: "0 14px 36px rgba(236, 72, 153, 0.22)",
+        },
+        "50%": {
+          transform: "translateY(-5px)",
+          boxShadow: "0 20px 44px rgba(249, 115, 22, 0.28)",
+        },
+      },
+      "@keyframes learnLoaderDot": {
+        "0%, 100%": {
+          opacity: 0.45,
+          transform: "translateY(3px)",
+        },
+        "50%": {
+          opacity: 1,
+          transform: "translateY(-3px)",
+        },
+      },
+    }}
+  >
+    <Box position="relative" w="92px" h="92px" aria-hidden="true">
+      <Box
+        position="absolute"
+        inset="0"
+        borderRadius="full"
+        border="2px solid"
+        borderColor="pink.200"
+        opacity={0.72}
+        animation="learnLoaderPulse 1.45s ease-in-out infinite"
+      />
+      <Box
+        position="absolute"
+        inset="10px"
+        borderRadius="full"
+        border="1px solid"
+        borderColor="orange.200"
+        opacity={0.5}
+        animation="learnLoaderPulse 1.45s ease-in-out 160ms infinite"
+      />
+      <Box
+        position="absolute"
+        inset="18px"
+        borderRadius="full"
+        bgGradient="linear(to-br, pink.300, orange.300)"
+        animation="learnLoaderFloat 1.8s ease-in-out infinite"
+      />
+      <HStack
+        position="absolute"
+        inset="0"
+        align="center"
+        justify="center"
+        spacing={1.5}
+      >
+        {[0, 1, 2].map((idx) => (
+          <Box
+            key={idx}
+            w="8px"
+            h="8px"
+            borderRadius="full"
+            bg="white"
+            boxShadow="0 0 12px rgba(255,255,255,0.72)"
+            animation={`learnLoaderDot 900ms ease-in-out ${
+              idx * 120
+            }ms infinite`}
+          />
+        ))}
+      </HStack>
+    </Box>
+    <Text fontSize={{ base: "md", md: "lg" }} fontWeight="700">
+      {translation[userLanguage]["modal.learn.instructions"]}
+    </Text>
+  </VStack>
+);
 
 const EducationalModal = ({
   isOpen,
@@ -390,12 +544,14 @@ const EducationalModal = ({
         onClose={onClose}
         size="full"
         scrollBehavior={"inside"}
+        motionPreset="none"
+        returnFocusOnClose={false}
       >
-        <ModalOverlay />
-        {/* Add OrbCanvas as a background */}
+        <ModalOverlay motionProps={nativeOverlayMotionProps} />
 
         {educationalMessages.length < 1 ? (
           <ModalContent
+            motionProps={nativeModalMotionProps}
             bg="appSurfaceElevated"
             color="appText"
             borderWidth="1px"
@@ -440,23 +596,18 @@ const EducationalModal = ({
                 width="100%"
                 flex="1"
                 minH="calc(100dvh - 72px)"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                px={6}
               >
-                <OrbCanvas
-                  hasStreamedText={false}
-                  instructions={
-                    <Markdown components={ChakraUIRenderer(newTheme())}>
-                      {`${translation[userLanguage]["modal.learn.instructions"]}\n\n${
-                        educationalMessages[educationalMessages.length - 1]
-                          ?.content || ""
-                      }`.trimStart()}
-                    </Markdown>
-                  }
-                />
+                <LearnLoadingAnimation userLanguage={userLanguage} />
               </Box>
             </ModalBody>
           </ModalContent>
         ) : (
           <ModalContent
+            motionProps={nativeModalMotionProps}
             bg="appSurfaceElevated"
             color="appText"
             borderWidth="1px"
@@ -532,7 +683,7 @@ const EducationalModal = ({
                       width="100%"
                     >
                       <Markdown
-                        components={ChakraUIRenderer(newTheme())}
+                        components={newTheme()}
                         children={content.content.trimStart()}
                       />
                     </Box>
@@ -558,7 +709,7 @@ const EducationalModal = ({
                           borderColor="appBorder"
                           boxShadow="sm"
                         >
-                          <Markdown components={ChakraUIRenderer(newTheme())}>
+                          <Markdown components={newTheme()}>
                             {msg.content.trimStart()}
                           </Markdown>
                         </Box>
@@ -574,7 +725,7 @@ const EducationalModal = ({
                         boxShadow="sm"
                         width="100%"
                       >
-                        <Markdown components={ChakraUIRenderer(newTheme())}>
+                        <Markdown components={newTheme()}>
                           {(msg?.response?.content || "").trimStart()}
                         </Markdown>
                       </Box>

@@ -87,12 +87,12 @@ const lazyWithPreload = (factory) => {
   return Component;
 };
 
-import EducationalModal from "./components/LearnModal/EducationalModal";
 import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
 import ThemeMenu from "./components/ThemeMenu";
 import WaveBar from "./components/WaveBar";
 import ChapterReview from "./components/ChapterReview";
 import DailyGoalCelebrationModal from "./components/DailyGoalCelebrationModal/DailyGoalCelebrationModal";
+import SurfaceModalHost from "./components/SurfaceModalHost";
 import { MiniKitContextProvider } from "./providers/MiniKitProvider.jsx";
 import AnimatedBackground from "./components/AnimatedBackground/AnimatedBackground";
 import { ThemeInitializer } from "./ThemeInitializer.jsx";
@@ -245,8 +245,6 @@ import {
 import { FiTrendingUp } from "react-icons/fi";
 import MiniKitInitializer from "./MiniKitInitializer";
 
-import BitcoinModeModal from "./components/SettingsMenu/BitcoinModeModal/BitcoinModeModal";
-import SelfPacedModal from "./components/SettingsMenu/SelfPacedModal/SelfPacedModal";
 const SocialFeedModal = lazyWithPreload(
   () => import("./components/SocialFeedModal/SocialFeedModal"),
 );
@@ -279,22 +277,20 @@ const RoleCanvas = lazy(() =>
     default: m.RoleCanvas,
   })),
 );
-import { AlgorithmHelper } from "./components/AlgorithmHelper/AlgorithmHelper";
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
 import CloudTransition from "./elements/CloudTransition";
-import KnowledgeLedgerModal from "./components/KnowledgeLedgerModal/KnowledgeLedgerModal";
 import { TbWorld } from "react-icons/tb";
 const SoundExperiment = lazy(() => import("./experiments/SoundExperiment"));
+import { useSurfaceModalStore } from "./useSurfaceModalStore";
+import {
+  getInstantSurfacePressProps,
+  runImmediateSurfaceUpdate,
+} from "./utility/instantSurface";
 
 const preloadInteractiveModalChunks = () => {
   [
-    EducationalModal,
-    BitcoinModeModal,
-    SelfPacedModal,
     SocialFeedModal,
     StudyGuideModal,
-    KnowledgeLedgerModal,
-    AlgorithmHelper,
     InstallAppModal,
   ].forEach((Component) => {
     Component.preload?.().catch(() => {});
@@ -771,6 +767,7 @@ export const VoiceInput = ({
   const showAlert = useAlertStore((s) => s.showAlert);
 
   const pauseTimeoutRef = useRef(null);
+  const learnPressRef = useRef({ key: "", at: 0 });
   const toast = useToast();
   const actionShadow = useColorModeValue(
     "0 12px 24px rgba(15, 23, 42, 0.12)",
@@ -1017,35 +1014,11 @@ export const VoiceInput = ({
     // Increment the counter and store it back in localStorage
     // lrnctrl += 1;
     // localStorage.setItem("lrnctrl", lrnctrl);
-    onOpen();
-
-    runAfterNextPaint(() => {
-      soundManager.resume();
-      soundManager.play("pattern");
-
-      if (educationalMessages.length > 0) {
-      } else if (!step?.isConversationReview) {
-        submitEducationalPrompt(
-          `Generate educational material about ${JSON.stringify(
-            step,
-          )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning.  Additionally the ${pickProgrammingLanguage(userLanguage)} or relevant code should consider line breaks, whitespace and have a maximum print width of 80 characters and never start with a backticking markdown with triple backticks specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
-            userLanguage.includes("en") ? "english" : "spanish"
-          }`,
-        );
-      } else {
-        const relevantSteps = getObjectsByGroup(
-          step?.group,
-          steps[userLanguage],
-        );
-
-        submitEducationalPrompt(
-          `Generate educational material about ${JSON.stringify(
-            relevantSteps,
-          )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally the ${pickProgrammingLanguage(userLanguage)} or relevant code should consider line breaks and formatting and have a maximum print width of 80 characters and never start with a backticking markdown with triple backticks specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets.  Never specify the answer. Lastly the user is speaking in ${
-            userLanguage.includes("en") ? "english" : "spanish"
-          }`,
-        );
-      }
+    runImmediateSurfaceUpdate(() => {
+      useSurfaceModalStore.getState().openLearnModal({
+        step,
+        userLanguage,
+      });
     });
   };
   // Dynamically adjust the height of the textarea as the content changes
@@ -1151,17 +1124,12 @@ export const VoiceInput = ({
           </Button>
           <Button
             colorScheme="pink"
-            onTouchStart={(e) => {
-              e.preventDefault();
-              handleModalCheck(handleLearnClick);
-            }}
-            onClick={() => {
-              handleModalCheck(handleLearnClick);
-            }}
+            {...getInstantSurfacePressProps(learnPressRef, "learn", () =>
+              handleModalCheck(handleLearnClick),
+            )}
             background="pink.400"
             color="white"
             boxShadow={actionShadow}
-            touchAction="manipulation"
             _hover={{ bg: "pink.500" }}
             _active={{ bg: "pink.500" }}
           >
@@ -1374,16 +1342,6 @@ export const VoiceInput = ({
       )}
 
       <Suspense fallback={null}>
-        {isOpen ? (
-          <EducationalModal
-            isOpen={isOpen}
-            onClose={onClose}
-            educationalMessages={educationalMessages}
-            educationalContent={educationalContent}
-            userLanguage={userLanguage}
-          />
-        ) : null}
-
         {isInstallModalOpen ? (
           <InstallAppModal
             userLanguage={userLanguage}
@@ -3515,6 +3473,7 @@ const Step = ({
   const [educationalContent, setEducationalContent] = useState([]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const actionBarPressRef = useRef({ key: "", at: 0 });
 
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
@@ -3530,35 +3489,11 @@ const Step = ({
     // // Increment the counter and store it back in localStorage
     // lrnctrl += 1;
     // localStorage.setItem("lrnctrl", lrnctrl);
-    onOpen();
-
-    // fetchGoogleAI();
-    // if (educationalContent.length > 0) {
-    // }
-    runAfterNextPaint(() => {
-      soundManager.resume();
-      soundManager.play("pattern");
-
-      if (educationalMessages.length > 0) {
-      } else {
-        submitEducationalPrompt(
-          // [
-          //   {
-          //     content:
-          `Generate educational ${pickProgrammingLanguage(userLanguage)} material about ${JSON.stringify(
-            step,
-          )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally any ${pickProgrammingLanguage(userLanguage)} or relevant code should have a maximum print width of 80 characters and never start with a backticking markdown with triple backticks specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
-            userLanguage.includes("en") ? "english" : "spanish"
-          }`,
-          //     ,
-          //     role: "user",
-          //   },
-          // ],
-          // false,
-          // false,
-          // true
-        );
-      }
+    runImmediateSurfaceUpdate(() => {
+      useSurfaceModalStore.getState().openLearnModal({
+        step,
+        userLanguage,
+      });
     });
   };
 
@@ -3890,8 +3825,10 @@ const Step = ({
     soundManager.play(soundName);
   };
 
-  const openActionBarModal = (openModal, soundId) => {
-    openModal();
+  const openActionBarModal = (type, payload, soundId) => {
+    runImmediateSurfaceUpdate(() => {
+      useSurfaceModalStore.getState().openActionModal(type, payload);
+    });
     runAfterNextPaint(() => {
       triggerHaptic();
       playActionBarSound(soundId);
@@ -4893,28 +4830,6 @@ const Step = ({
           ) : null}
 
           <Suspense fallback={null}>
-            {isOpen ? (
-              <EducationalModal
-                isOpen={isOpen}
-                onClose={onClose}
-                educationalMessages={educationalMessages}
-                educationalContent={educationalContent}
-                userLanguage={userLanguage}
-              />
-            ) : null}
-
-            {isSelfPacedOpen ? (
-              <SelfPacedModal
-                isOpen={isSelfPacedOpen}
-                onClose={onSelfPacedClose}
-                interval={interval}
-                setInterval={setInterval}
-                userId={localStorage.getItem("local_npub")}
-                userLanguage={userLanguage}
-                onSettingsSaved={handleSelfPacedSettingsSaved}
-              />
-            ) : null}
-
             {isSocialFeedOpen ? (
               <SocialFeedModal
                 userLanguage={userLanguage}
@@ -4926,14 +4841,6 @@ const Step = ({
               />
             ) : null}
 
-            {isBitcoinModeOpen ? (
-              <BitcoinModeModal
-                isOpen={isBitcoinModeOpen}
-                onClose={onBitcoinModeClose}
-                userLanguage={userLanguage}
-                from="app"
-              />
-            ) : null}
           </Suspense>
 
           <Box
@@ -4972,13 +4879,16 @@ const Step = ({
                         data-sound-ignore-select="true"
                         aria-label="Open Bitcoin mode"
                         icon={<FaBitcoin fontSize="20px" />}
-                        onTouchStart={(e) => {
-                          e.preventDefault();
-                          openActionBarModal(onBitcoinModeOpen, "bitcoin");
-                        }}
-                        onClick={() => {
-                          openActionBarModal(onBitcoinModeOpen, "bitcoin");
-                        }}
+                        {...getInstantSurfacePressProps(
+                          actionBarPressRef,
+                          "bitcoin",
+                          () =>
+                            openActionBarModal(
+                              "bitcoin",
+                              { userLanguage },
+                              "bitcoin",
+                            ),
+                        )}
                       />,
                     )}
                     {renderActionTourPopover(
@@ -4989,13 +4899,21 @@ const Step = ({
                         data-sound-ignore-select="true"
                         aria-label="Open self-paced mode"
                         icon={<PiClockCountdownFill fontSize="22px" />}
-                        onTouchStart={(e) => {
-                          e.preventDefault();
-                          openActionBarModal(onSelfPacedOpen, "selfPaced");
-                        }}
-                        onClick={() => {
-                          openActionBarModal(onSelfPacedOpen, "selfPaced");
-                        }}
+                        {...getInstantSurfacePressProps(
+                          actionBarPressRef,
+                          "selfPaced",
+                          () =>
+                            openActionBarModal(
+                              "selfPaced",
+                              {
+                                interval,
+                                userId: localStorage.getItem("local_npub"),
+                                userLanguage,
+                                onSettingsSaved: handleSelfPacedSettingsSaved,
+                              },
+                              "selfPaced",
+                            ),
+                        )}
                       />,
                     )}
                     {renderActionTourPopover(
@@ -5058,13 +4976,21 @@ const Step = ({
                           ] || "Open build your app"
                         }
                         icon={<RiCodeAiFill fontSize="22px" />}
-                        onTouchStart={(e) => {
-                          e.preventDefault();
-                          openActionBarModal(onKnowledgeLedgerOpen, "helper");
-                        }}
-                        onClick={() => {
-                          openActionBarModal(onKnowledgeLedgerOpen, "helper");
-                        }}
+                        {...getInstantSurfacePressProps(
+                          actionBarPressRef,
+                          "helper",
+                          () =>
+                            openActionBarModal(
+                              "helper",
+                              {
+                                currentStep,
+                                step,
+                                steps,
+                                userLanguage,
+                              },
+                              "helper",
+                            ),
+                        )}
                       />,
                     )}
                     {renderActionTourPopover(
@@ -5100,26 +5026,6 @@ const Step = ({
                 onClose={handleLectureModalClose}
                 handleNextClick={handleNextClick}
               />
-            ) : null}
-
-            {isKnowledgeLedgerOpen ? (
-              userLanguage !== "compsci-en" ? (
-                <KnowledgeLedgerModal
-                  userLanguage={userLanguage}
-                  isOpen={isKnowledgeLedgerOpen}
-                  onClose={onKnowledgeLedgerClose}
-                  steps={steps}
-                  step={step}
-                />
-              ) : (
-                <AlgorithmHelper
-                  userLanguage={userLanguage}
-                  isOpen={isKnowledgeLedgerOpen}
-                  onClose={onKnowledgeLedgerClose}
-                  steps={steps}
-                  currentStep={currentStep}
-                />
-              )
             ) : null}
 
             {isProgressModalOpen ? (
@@ -7897,6 +7803,25 @@ export const AppWrapper = () => {
     preloadInteractiveModalChunks();
   }, []);
 
+  useEffect(() => {
+    if (typeof document === "undefined") return undefined;
+
+    const warmAudio = () => {
+      soundManager.resume();
+    };
+    const options = { once: true, capture: true };
+
+    document.addEventListener("pointerdown", warmAudio, options);
+    document.addEventListener("touchstart", warmAudio, options);
+    document.addEventListener("click", warmAudio, options);
+
+    return () => {
+      document.removeEventListener("pointerdown", warmAudio, options);
+      document.removeEventListener("touchstart", warmAudio, options);
+      document.removeEventListener("click", warmAudio, options);
+    };
+  }, []);
+
   // useEffect(() => {
   //   if (localStorage.getItem("security") === import.meta.env.VITE_SECURITY) {
   //     setIsBroken(false);
@@ -8023,6 +7948,7 @@ export const AppWrapper = () => {
         <Router>
           <MiniKitInitializer />
           <App isShutDown={isShutDown} />
+          <SurfaceModalHost />
         </Router>
       </MiniKitContextProvider>
     </ChakraProvider>

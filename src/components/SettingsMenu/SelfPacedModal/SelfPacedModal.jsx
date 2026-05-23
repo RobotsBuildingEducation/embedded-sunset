@@ -29,6 +29,10 @@ import { deleteToken, getToken } from "firebase/messaging";
 import { doc, updateDoc } from "firebase/firestore";
 import { getToken as getAppCheckToken } from "firebase/app-check";
 import { soundManager } from "../../../utility/soundManager";
+import {
+  nativeModalMotionProps,
+  nativeOverlayMotionProps,
+} from "../../../utility/modalMotion";
 
 // CountdownTimer keeps a stable footprint even before saved dates load.
 const CountdownTimer = ({
@@ -438,9 +442,16 @@ const SelfPacedModal = ({
       isCentered
       size="lg"
       initialFocusRef={initialFocusRef}
+      motionPreset="none"
+      returnFocusOnClose={false}
     >
-      <ModalOverlay bg="appOverlay" backdropFilter="blur(8px)" />
+      <ModalOverlay
+        motionProps={nativeOverlayMotionProps}
+        bg="appOverlay"
+        backdropFilter="blur(8px)"
+      />
       <ModalContent
+        motionProps={nativeModalMotionProps}
         bg="appSurfaceElevated"
         color="appText"
         borderRadius="32px"
