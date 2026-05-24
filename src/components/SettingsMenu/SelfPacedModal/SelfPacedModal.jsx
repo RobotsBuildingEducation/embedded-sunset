@@ -34,6 +34,48 @@ import {
   nativeOverlayMotionProps,
 } from "../../../utility/modalMotion";
 
+const getSelfPacedStorageKey = (userId) =>
+  `selfPacedSettings:${userId || "local"}`;
+
+const readSelfPacedFallback = (userId) => {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const raw =
+      window.localStorage.getItem(getSelfPacedStorageKey(userId)) ||
+      window.localStorage.getItem(getSelfPacedStorageKey("local"));
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+};
+
+const writeSelfPacedFallback = (userId, settings) => {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.setItem(
+      getSelfPacedStorageKey(userId),
+      JSON.stringify(settings),
+    );
+  } catch {}
+};
+
+const applySelfPacedSettings = (settings, setters) => {
+  const data = settings || {};
+  setters.setStreak(data.streak || 0);
+  setters.setStartTime(data.startTime ? new Date(data.startTime) : null);
+  setters.setEndTime(data.endTime ? new Date(data.endTime) : null);
+  setters.setInterval(data.timer ?? data.interval ?? 0);
+  setters.setDailyGoals(data.dailyGoals ?? 5);
+  setters.setGoalCount(data.goalCount ?? 0);
+  setters.setDailyProgress(data.dailyProgress ?? 0);
+  setters.setNextGoalExpiration(
+    data.nextGoalExpiration ? new Date(data.nextGoalExpiration) : null,
+  );
+  setters.setNotificationsEnabled(!!data.fcmToken);
+};
+
 // CountdownTimer keeps a stable footprint even before saved dates load.
 const CountdownTimer = ({
   targetTime,
@@ -179,29 +221,28 @@ const SelfPacedModal = ({
     let isMounted = true;
 
     const fetchUserData = async () => {
-      const userData = await getUserData(userId);
+      const userData = userId ? await getUserData(userId) : null;
+      const fallbackData = readSelfPacedFallback(userId);
+      const resolvedData = userData || fallbackData || {};
 
       if (!isMounted) {
         return;
       }
 
-      setStreak(userData.streak || 0);
-      setStartTime(userData.startTime ? new Date(userData.startTime) : null);
-      setEndTime(userData.endTime ? new Date(userData.endTime) : null);
-      setInterval(userData.timer);
-      setDailyGoals(userData.dailyGoals ?? 5);
-      setGoalCount(userData.goalCount ?? 0);
-      // Initialize dailyProgress from stored data (or default to 0).
-      setDailyProgress(userData.dailyProgress ?? 0);
-
-      if (userData.nextGoalExpiration) {
-        setNextGoalExpiration(new Date(userData.nextGoalExpiration));
-      }
-
-      setNotificationsEnabled(!!userData.fcmToken);
+      applySelfPacedSettings(resolvedData, {
+        setStreak,
+        setStartTime,
+        setEndTime,
+        setInterval,
+        setDailyGoals,
+        setGoalCount,
+        setDailyProgress,
+        setNextGoalExpiration,
+        setNotificationsEnabled,
+      });
     };
 
-    if (userId && isOpen) {
+    if (isOpen) {
       setIsDataLoading(true);
       fetchUserData().finally(() => {
         if (isMounted) {
@@ -237,20 +278,39 @@ const SelfPacedModal = ({
     setStartTime(currentTime);
     setEndTime(newEndTime);
     setNextGoalExpiration(newNextGoalExpiration);
+    const nextSettings = {
+      timer: interval,
+      interval,
+      streak,
+      startTime: currentTime.toISOString(),
+      endTime: newEndTime.toISOString(),
+      dailyGoals,
+      nextGoalExpiration: newNextGoalExpiration.toISOString(),
+      dailyProgress,
+      goalCount,
+    };
+
+    writeSelfPacedFallback(userId, nextSettings);
 
     // Update user data with timer, streak, dailyGoals, and nextGoalExpiration.
     // Note: updateUserData should also be updated to handle dailyProgress if needed.
-    await updateUserData(
-      userId,
-      interval,
-      streak,
-      currentTime,
-      newEndTime,
-      dailyGoals,
-      newNextGoalExpiration,
-      dailyProgress, // include dailyProgress in the update
-      goalCount,
-    );
+    if (userId) {
+      try {
+        await updateUserData(
+          userId,
+          interval,
+          streak,
+          currentTime,
+          newEndTime,
+          dailyGoals,
+          newNextGoalExpiration,
+          dailyProgress, // include dailyProgress in the update
+          goalCount,
+        );
+      } catch (error) {
+        console.error("Failed to save self-paced settings:", error);
+      }
+    }
     onSettingsSaved({
       interval,
       streak,
@@ -597,7 +657,7 @@ const SelfPacedModal = ({
                           ? "0 0 0 2px rgba(148, 163, 184, 0.18)"
                           : "none"
                       }
-                      onMouseDown={() => handleIntervalChange(String(option))}
+                      onClick={() => handleIntervalChange(String(option))}
                       _hover={{
                         borderColor: selectedIntervalButtonBorder,
                         bg: isSelected
@@ -725,12 +785,12 @@ const SelfPacedModal = ({
         <ModalFooter px={6} py={5} justifyContent="flex-end" gap={3}>
           <Button
             variant="secondary"
-            onMouseDown={onClose}
+            onClick={onClose}
             data-sound-close="true"
           >
             {translation[userLanguage]["button.close"]}
           </Button>
-          <Button onMouseDown={handleSave}>
+          <Button onClick={handleSave}>
             {translation[userLanguage]["button.save"]}
           </Button>
         </ModalFooter>

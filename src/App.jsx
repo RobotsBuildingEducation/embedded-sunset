@@ -2470,13 +2470,18 @@ const Step = ({
 
     const fetchUserData = async () => {
       const userId = localStorage.getItem("local_npub");
-      const userData = await getUserData(userId);
+      const userData = (await getUserData(userId)) || {};
 
       setIsAdaptiveLearning(userData?.isAdaptiveLearning);
       setStreak(userData.streak || 0);
-      setStartTime(new Date(userData.startTime));
-      setEndTime(new Date(userData.endTime));
-      setInterval(userData.timer || 0);
+      const savedStartTime = userData.startTime
+        ? new Date(userData.startTime)
+        : null;
+      const savedEndTime = userData.endTime ? new Date(userData.endTime) : null;
+      const savedTimer = Number(userData.timer || 0);
+      setStartTime(savedStartTime);
+      setEndTime(savedEndTime);
+      setInterval(savedTimer);
 
       setSkipExternalWarning(userData?.skipExternalWarning);
 
@@ -2506,18 +2511,34 @@ const Step = ({
 
       // }
 
-      if (currentTime > new Date(userData?.nextGoalExpiration)) {
+      const hasPersistedTimer =
+        userId &&
+        savedTimer > 0 &&
+        savedStartTime instanceof Date &&
+        !Number.isNaN(savedStartTime.getTime()) &&
+        savedEndTime instanceof Date &&
+        !Number.isNaN(savedEndTime.getTime());
+      const savedGoalExpiration = userData?.nextGoalExpiration
+        ? new Date(userData.nextGoalExpiration)
+        : null;
+
+      if (
+        hasPersistedTimer &&
+        savedGoalExpiration instanceof Date &&
+        !Number.isNaN(savedGoalExpiration.getTime()) &&
+        currentTime > savedGoalExpiration
+      ) {
         setStreak(0);
         setDailyProgress(0);
         const newEndTime = new Date(
-          currentTime.getTime() + (userData.timer || 0) * 60000,
+          currentTime.getTime() + savedTimer * 60000,
         );
         setStartTime(currentTime);
         setEndTime(newEndTime);
 
         await updateUserData(
           userId,
-          userData.timer,
+          savedTimer,
           0,
           currentTime,
           newEndTime,
@@ -2526,13 +2547,13 @@ const Step = ({
           0, // Reset dailyProgress to 0 when cycle is over
           savedGoalCount,
         );
-      } else {
+      } else if (hasPersistedTimer) {
         await updateUserData(
           userId,
-          userData.timer,
+          savedTimer,
           userData.streak, // keep current streak
-          new Date(userData.startTime),
-          new Date(userData.endTime),
+          savedStartTime,
+          savedEndTime,
           savedDailyGoals,
           newExpiration,
           savedDailyProgress, // use existing progress

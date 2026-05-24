@@ -35,6 +35,33 @@ import {
   nativeOverlayMotionProps,
 } from "../../utility/modalMotion";
 
+const getBuildStorageKey = (userId, groupId) =>
+  `buildYourApp:${userId || "local"}:${groupId}`;
+
+const readBuildFallback = (userId, groupId) => {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const raw =
+      window.localStorage.getItem(getBuildStorageKey(userId, groupId)) ||
+      window.localStorage.getItem(getBuildStorageKey("local", groupId));
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+};
+
+const writeBuildFallback = (userId, groupId, payload) => {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.setItem(
+      getBuildStorageKey(userId, groupId),
+      JSON.stringify(payload),
+    );
+  } catch {}
+};
+
 // --- tiny parser to safely stream fenced code
 function parseFenced(text = "") {
   const start = text.indexOf("```");
@@ -75,6 +102,9 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
 
   // NEW: force-remount preview so react-live/iframe always refresh
   const [previewKey, setPreviewKey] = useState(0);
+  const [hasLoadedDraft, setHasLoadedDraft] = useState(false);
+  const lastSavedSnapshotRef = useRef("");
+  const autosaveTimerRef = useRef(null);
 
   const { submitPrompt, messages, resetMessages } = useThinkingGeminiChat();
   const groupId = useMemo(
@@ -87,50 +117,74 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
 
   // Initial load
   useEffect(() => {
+    let isMounted = true;
+
     const fetchData = async () => {
       try {
         const userId = localStorage.getItem("local_npub");
-        if (!userId) return;
+        let loadedIdea = "";
+        let loadedCode = "";
 
-        const userDocRef = doc(database, "users", userId);
-        const snap = await getDoc(userDocRef);
-        if (snap.exists()) {
-          const data = snap.data() || {};
-          const initIdea = data.userBuild || "";
-          setIdea(initIdea);
-          setSavedIdea(initIdea);
+        if (userId) {
+          const userDocRef = doc(database, "users", userId);
+          const snap = await getDoc(userDocRef);
+          if (snap.exists()) {
+            const data = snap.data() || {};
+            loadedIdea = data.userBuild || "";
 
-          const buildCode = data.buildCode || {};
-          if (buildCode[groupId]) {
-            const stored = buildCode[groupId];
-            setCode(stored);
-            const parsed = parseFenced(stored);
-            if (parsed?.hasFence) {
-              setDraft(parsed.inner || "");
-              setLang((parsed.lang || "").trim());
+            const buildCode = data.buildCode || {};
+            if (buildCode[groupId]) {
+              loadedCode = buildCode[groupId];
+            }
+          }
+
+          const codeSnap = await getDoc(
+            doc(database, "users", userId, "buildHistory", groupId),
+          );
+          if (codeSnap.exists()) {
+            const d = codeSnap.data() || {};
+            if (d.code) {
+              loadedCode = d.code;
             }
           }
         }
 
-        const codeSnap = await getDoc(
-          doc(database, "users", userId, "buildHistory", groupId),
-        );
-        if (codeSnap.exists()) {
-          const d = codeSnap.data() || {};
-          if (d.code) {
-            setCode(d.code);
-            const p2 = parseFenced(d.code);
-            if (p2?.hasFence) {
-              setDraft(p2.inner || "");
-              setLang((p2.lang || "").trim());
-            }
+        const fallback = readBuildFallback(userId, groupId);
+        if (!loadedIdea && fallback?.idea) loadedIdea = fallback.idea;
+        if (!loadedCode && fallback?.code) loadedCode = fallback.code;
+
+        if (!isMounted) return;
+
+        setIdea(loadedIdea);
+        setSavedIdea(loadedIdea);
+        if (loadedCode) {
+          setCode(loadedCode);
+          const parsed = parseFenced(loadedCode);
+          if (parsed?.hasFence) {
+            setDraft(parsed.inner || "");
+            setLang((parsed.lang || "").trim());
           }
         }
+        lastSavedSnapshotRef.current = JSON.stringify({
+          idea: loadedIdea,
+          code: loadedCode,
+        });
       } catch (err) {
         console.error("Error fetching build data", err);
+      } finally {
+        if (isMounted) {
+          setHasLoadedDraft(true);
+        }
       }
     };
     fetchData();
+
+    return () => {
+      isMounted = false;
+      if (autosaveTimerRef.current) {
+        window.clearTimeout(autosaveTimerRef.current);
+      }
+    };
   }, [groupId]);
 
   // Stream handler
@@ -239,6 +293,12 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
     soundManager.play("submitAction");
     try {
       const userId = localStorage.getItem("local_npub");
+      writeBuildFallback(userId, groupId, {
+        idea,
+        code: draft.trim() ? wrapFenced(draft, lang || "jsx") : code,
+        stage: "idea",
+        updatedAt: Date.now(),
+      });
       if (userId) {
         try {
           await updateDoc(doc(database, "users", userId), { userBuild: idea });
@@ -249,8 +309,8 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
             { merge: true },
           );
         }
-        setSavedIdea(idea);
       }
+      setSavedIdea(idea);
     } catch (err) {
       console.error("Error saving build idea", err);
     }
@@ -260,6 +320,12 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
   const saveBuild = async (content, stage = "build") => {
     try {
       const userId = localStorage.getItem("local_npub");
+      writeBuildFallback(userId, groupId, {
+        idea,
+        code: content,
+        stage,
+        updatedAt: Date.now(),
+      });
       if (!userId) return;
 
       const userDocRef = doc(database, "users", userId);
@@ -289,6 +355,32 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
       console.error("Error saving build", err);
     }
   };
+
+  useEffect(() => {
+    if (!hasLoadedDraft) return undefined;
+
+    const content = draft.trim() ? wrapFenced(draft, lang || "jsx") : code;
+    const snapshot = JSON.stringify({ idea, code: content });
+    if (snapshot === lastSavedSnapshotRef.current) return undefined;
+
+    if (autosaveTimerRef.current) {
+      window.clearTimeout(autosaveTimerRef.current);
+    }
+
+    autosaveTimerRef.current = window.setTimeout(() => {
+      lastSavedSnapshotRef.current = snapshot;
+      saveBuild(content, "autosave").catch((error) =>
+        console.error("Build autosave failed:", error),
+      );
+    }, 700);
+
+    return () => {
+      if (autosaveTimerRef.current) {
+        window.clearTimeout(autosaveTimerRef.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idea, draft, lang, code, hasLoadedDraft]);
 
   const handleSaveAndContinue = async () => {
     window.scrollTo(0, 0);

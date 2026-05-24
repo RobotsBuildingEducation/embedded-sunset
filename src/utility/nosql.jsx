@@ -39,26 +39,36 @@ export const updateUserData = async (
   dailyProgress = 0,
   goalCount = 0,
 ) => {
+  if (!userId) {
+    throw new Error("updateUserData requires a userId");
+  }
+
   const nextGoalDate =
     nextGoalExpiration instanceof Date
       ? nextGoalExpiration
       : new Date(nextGoalExpiration);
   const userDocRef = doc(database, "users", userId);
 
-  await updateDoc(userDocRef, {
-    timer,
-    streak,
-    startTime: startTime.toISOString(), // Store dates as ISO strings
-    endTime: endTime.toISOString(),
-    dailyGoals,
-    nextGoalExpiration: nextGoalDate.toISOString(),
-    dailyProgress: dailyProgress,
-    goalCount: goalCount,
-  });
+  await setDoc(
+    userDocRef,
+    {
+      timer,
+      streak,
+      startTime: startTime.toISOString(), // Store dates as ISO strings
+      endTime: endTime.toISOString(),
+      dailyGoals,
+      nextGoalExpiration: nextGoalDate.toISOString(),
+      dailyProgress: dailyProgress,
+      goalCount: goalCount,
+    },
+    { merge: true },
+  );
 };
 
 // Retrieve user data to use within the component
 export const getUserData = async (userId) => {
+  if (!userId) return null;
+
   const userDocRef = doc(database, "users", userId);
   const userDoc = await getDoc(userDocRef);
 

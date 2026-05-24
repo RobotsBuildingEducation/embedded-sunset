@@ -38,6 +38,7 @@ import RandomCharacter from "../../elements/RandomCharacter";
 import { CopyButtonIcon } from "../../elements/CopyButtonIcon";
 import { animateBorderLoading } from "../../utility/animations";
 import Markdown from "react-markdown";
+import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { IoMicCircleOutline } from "react-icons/io5";
 import { PiMicrophoneFill, PiMicrophoneLight } from "react-icons/pi";
@@ -165,9 +166,9 @@ export const newTheme = () => {
       const { colorMode } = useColorMode();
       const match = /language-(\w+)/.exec(className || "");
 
-      return !inline && match ? (
+      return !inline ? (
         <SyntaxHighlighter
-          language={match[1]}
+          language={match?.[1] || "javascript"}
           PreTag="div"
           style={getThemedSyntaxHighlightTheme(colorMode)}
           customStyle={getThemedCodeBlockStyles(colorMode)}
@@ -191,6 +192,60 @@ export const newTheme = () => {
       );
     },
   };
+};
+
+const looksLikeLooseCode = (line = "") => {
+  const value = line.trim();
+  if (!value) return false;
+  if (/^[-*]\s/.test(value)) return false;
+  if (/^\d+\.\s/.test(value)) return false;
+  return (
+    /^(const|let|var|function|class|if|else|for|while|return|import|export|try|catch|async|await)\b/.test(
+      value,
+    ) ||
+    /^console\./.test(value) ||
+    /[;{}]|=>|<\/?[A-Z_a-z][^>]*>/.test(value)
+  );
+};
+
+const normalizeLearnMarkdown = (content = "") => {
+  const lines = String(content || "").trimStart().split("\n");
+  const output = [];
+  let inFence = false;
+  let inLooseCode = false;
+
+  lines.forEach((line) => {
+    if (line.trim().startsWith("```")) {
+      if (inLooseCode) {
+        output.push("```");
+        inLooseCode = false;
+      }
+      inFence = !inFence;
+      output.push(line);
+      return;
+    }
+
+    if (!inFence && looksLikeLooseCode(line)) {
+      if (!inLooseCode) {
+        output.push("```javascript");
+        inLooseCode = true;
+      }
+      output.push(line);
+      return;
+    }
+
+    if (inLooseCode) {
+      output.push("```");
+      inLooseCode = false;
+    }
+    output.push(line);
+  });
+
+  if (inLooseCode) {
+    output.push("```");
+  }
+
+  return output.join("\n");
 };
 
 const LearnLoadingAnimation = ({ userLanguage }) => (
@@ -683,8 +738,8 @@ const EducationalModal = ({
                       width="100%"
                     >
                       <Markdown
-                        components={newTheme()}
-                        children={content.content.trimStart()}
+                        components={ChakraUIRenderer(newTheme())}
+                        children={normalizeLearnMarkdown(content.content)}
                       />
                     </Box>
                   ))}
@@ -709,8 +764,8 @@ const EducationalModal = ({
                           borderColor="appBorder"
                           boxShadow="sm"
                         >
-                          <Markdown components={newTheme()}>
-                            {msg.content.trimStart()}
+                          <Markdown components={ChakraUIRenderer(newTheme())}>
+                            {normalizeLearnMarkdown(msg.content)}
                           </Markdown>
                         </Box>
                       </Box>
@@ -725,8 +780,8 @@ const EducationalModal = ({
                         boxShadow="sm"
                         width="100%"
                       >
-                        <Markdown components={newTheme()}>
-                          {(msg?.response?.content || "").trimStart()}
+                        <Markdown components={ChakraUIRenderer(newTheme())}>
+                          {normalizeLearnMarkdown(msg?.response?.content || "")}
                         </Markdown>
                       </Box>
                     </>

@@ -20,7 +20,6 @@ import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import {
   doc,
   getDoc,
-  updateDoc,
   collection,
   getDocs,
   setDoc,
@@ -34,6 +33,33 @@ import { translation } from "../../utility/translation";
 const LiveReactEditorModal = lazy(() => import("../LiveCodeEditor/LiveCodeEditor"));
 import { CloudCanvas, SunsetCanvas } from "../../elements/SunsetCanvas";
 import { soundManager } from "../../utility/soundManager";
+
+const getBuildStorageKey = (userId, groupId) =>
+  `buildYourApp:${userId || "local"}:${groupId}`;
+
+const readBuildFallback = (userId, groupId) => {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const raw =
+      window.localStorage.getItem(getBuildStorageKey(userId, groupId)) ||
+      window.localStorage.getItem(getBuildStorageKey("local", groupId));
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+};
+
+const writeBuildFallback = (userId, groupId, payload) => {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.setItem(
+      getBuildStorageKey(userId, groupId),
+      JSON.stringify(payload),
+    );
+  } catch {}
+};
 
 export const transcriptDisplay = {
   tutorial: {
@@ -181,24 +207,35 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
     const fetchData = async () => {
       try {
         const userId = localStorage.getItem("local_npub");
-        if (!userId) return;
-        const userDocRef = doc(database, "users", userId);
-        const snap = await getDoc(userDocRef);
-        if (snap.exists()) {
-          const data = snap.data();
-          setIdea(data.userBuild || "");
-          setSavedIdea(data.userBuild || "");
-          const buildCode = data.buildCode || {};
-          if (buildCode[step.group]) setCode(buildCode[step.group]);
+        let loadedIdea = "";
+        let loadedCode = "";
+
+        if (userId) {
+          const userDocRef = doc(database, "users", userId);
+          const snap = await getDoc(userDocRef);
+          if (snap.exists()) {
+            const data = snap.data();
+            loadedIdea = data.userBuild || "";
+            const buildCode = data.buildCode || {};
+            if (buildCode[step.group]) loadedCode = buildCode[step.group];
+          }
+
+          const codeSnap = await getDoc(
+            doc(database, "users", userId, "buildHistory", step.group)
+          );
+          if (codeSnap.exists()) {
+            const data = codeSnap.data();
+            if (data.code) loadedCode = data.code;
+          }
         }
 
-        const codeSnap = await getDoc(
-          doc(database, "users", userId, "buildHistory", step.group)
-        );
-        if (codeSnap.exists()) {
-          const data = codeSnap.data();
-          if (data.code) setCode(data.code);
-        }
+        const fallback = readBuildFallback(userId, step.group);
+        if (!loadedIdea && fallback?.idea) loadedIdea = fallback.idea;
+        if (!loadedCode && fallback?.code) loadedCode = fallback.code;
+
+        setIdea(loadedIdea);
+        setSavedIdea(loadedIdea);
+        if (loadedCode) setCode(loadedCode);
       } catch (err) {
         console.error("Error fetching build data", err);
       }
@@ -274,10 +311,20 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
     soundManager.play("submitAction");
     try {
       const userId = localStorage.getItem("local_npub");
+      writeBuildFallback(userId, step.group, {
+        idea,
+        code,
+        stage: "idea",
+        updatedAt: Date.now(),
+      });
       if (userId) {
-        await updateDoc(doc(database, "users", userId), { userBuild: idea });
-        setSavedIdea(idea);
+        await setDoc(
+          doc(database, "users", userId),
+          { userBuild: idea },
+          { merge: true },
+        );
       }
+      setSavedIdea(idea);
     } catch (err) {
       console.error("Error saving build idea", err);
     }
@@ -287,15 +334,25 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
   const saveBuild = async (content, stage = "build") => {
     try {
       const userId = localStorage.getItem("local_npub");
+      writeBuildFallback(userId, step.group, {
+        idea,
+        code: content,
+        stage,
+        updatedAt: Date.now(),
+      });
       if (!userId) return;
       const userDocRef = doc(database, "users", userId);
       const snap = await getDoc(userDocRef);
       const data = snap.exists() ? snap.data() : {};
       const buildCode = data.buildCode || {};
-      await updateDoc(userDocRef, {
-        userBuild: idea,
-        buildCode: { ...buildCode, [step.group]: content },
-      });
+      await setDoc(
+        userDocRef,
+        {
+          userBuild: idea,
+          buildCode: { ...buildCode, [step.group]: content },
+        },
+        { merge: true },
+      );
       await setDoc(
         doc(database, "users", userId, "buildHistory", step.group),
         {
