@@ -34,6 +34,7 @@ import {
   nativeDrawerMotionProps,
   nativeOverlayMotionProps,
 } from "../../utility/modalMotion";
+import { useLiteOverlayEffects } from "../../utility/perfProfile";
 
 const getBuildStorageKey = (userId, groupId) =>
   `buildYourApp:${userId || "local"}:${groupId}`;
@@ -496,6 +497,7 @@ function KnowledgeLedgerModal({
   onContinue,
   title = "Build Your App",
 }) {
+  const liteOverlayEffects = useLiteOverlayEffects();
   const initialFocusRef = useRef(null);
   const drawerBodyRef = useRef(null);
 
@@ -527,7 +529,11 @@ function KnowledgeLedgerModal({
       closeOnOverlayClick={false}
       blockScrollOnMount
     >
-      <DrawerOverlay motionProps={nativeOverlayMotionProps} />
+      <DrawerOverlay
+        motionProps={nativeOverlayMotionProps}
+        bg={liteOverlayEffects ? "blackAlpha.500" : "appOverlay"}
+        backdropFilter={liteOverlayEffects ? "none" : "blur(8px)"}
+      />
       <DrawerContent
         motionProps={nativeDrawerMotionProps}
         display="flex"
