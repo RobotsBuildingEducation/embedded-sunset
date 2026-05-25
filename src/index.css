@@ -45,6 +45,18 @@ body {
     scrollbar-color 220ms ease;
 }
 
+@media (hover: none), (pointer: coarse) {
+  [data-instant-surface-trigger="true"] {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  [data-instant-surface-trigger="true"]:hover,
+  [data-instant-surface-trigger="true"]:active {
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
 p,
 button,
 header,

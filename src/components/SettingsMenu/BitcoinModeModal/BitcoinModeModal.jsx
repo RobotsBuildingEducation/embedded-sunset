@@ -58,7 +58,6 @@ const BitcoinModeModal = ({
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody flex="1" overflowY="auto">
-          {/* {renderContent()} */}
           <BitcoinOnboarding userLanguage={userLanguage} from={from} />
         </ModalBody>
         <ModalFooter

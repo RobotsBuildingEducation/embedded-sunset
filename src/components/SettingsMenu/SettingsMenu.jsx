@@ -19,18 +19,6 @@ import {
   Input,
   HStack,
   Select,
-  MenuItem,
-  MenuList,
-  MenuButton,
-  Menu,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverArrow,
-  PopoverCloseButton,
-  Portal,
   useColorModeValue,
   useToken,
 } from "@chakra-ui/react";
@@ -57,13 +45,9 @@ import { CareerAgent } from "../CareerAgent/CareerAgent";
 import { useNostrWalletStore } from "../../hooks/useNostrWalletStore";
 import { useThemeStore } from "../../useThemeStore";
 import StudyGuideModal from "../StudyGuideModal/StudyGuideModal";
-import { ChevronDownIcon } from "@chakra-ui/icons";
 import { ChangeLanguageModal } from "../ChangeLanguageModal/ChangeLanguageModal";
 import { soundManager } from "../../utility/soundManager";
-import {
-  getInstantSurfacePressProps,
-  runImmediateSurfaceUpdate,
-} from "../../utility/instantSurface";
+import { getInstantSurfacePressProps } from "../../utility/instantSurface";
 import {
   nativeOverlayMotionProps,
   nativeRightDrawerMotionProps,
@@ -80,12 +64,6 @@ const SettingsMenu = ({
   view,
   setView,
   step,
-  actionTourStep,
-  isActionTourActive,
-  onActionTourAdvance,
-  onActionTourComplete,
-  menuButtonRef,
-  menuTourStep,
   allowPosts,
   setAllowPosts,
   soundEnabled,
@@ -93,7 +71,7 @@ const SettingsMenu = ({
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
-  const btnRef = menuButtonRef || useRef(); // Reference to the settings icon button
+  const btnRef = useRef(); // Reference to the settings icon button
   const menuPressRef = useRef({ key: "", at: 0 });
   const firstButtonRef = useRef(); // Reference to the first button in the drawer
   const toast = useToast();
@@ -354,29 +332,15 @@ const SettingsMenu = ({
     }
   };
 
-  const isMenuTourStep =
-    isActionTourActive && actionTourStep === 0 && menuTourStep;
-
-  const handleMenuTourNext = () => {
-    if (onActionTourAdvance) {
-      onActionTourAdvance();
-    }
-  };
-
-  const handleMenuTourSkip = () => {
-    if (onActionTourComplete) {
-      onActionTourComplete();
-    }
-  };
-
   const menuButton = (
     <IconButton
       ref={btnRef}
       icon={<IoAppsOutline />}
-      {...getInstantSurfacePressProps(menuPressRef, "settings", () =>
-        runImmediateSurfaceUpdate(onOpen),
+      {...getInstantSurfacePressProps(
+        menuPressRef,
+        "settings",
+        onOpen,
       )}
-      // variant="outline"
       boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
       position="fixed"
       top={4}
@@ -393,48 +357,7 @@ const SettingsMenu = ({
 
   return (
     <>
-      {isSignedIn && localStorage.getItem("local_npub") ? (
-        isMenuTourStep ? (
-          <Popover
-            isOpen={isMenuTourStep}
-            closeOnBlur={false}
-            placement={menuTourStep?.placement || "bottom-end"}
-            strategy="fixed"
-          >
-            <PopoverTrigger>{menuButton}</PopoverTrigger>
-            <Portal>
-              <PopoverContent maxW="280px">
-                <PopoverArrow />
-
-                <PopoverHeader fontWeight="bold">
-                  {menuTourStep?.title}
-                </PopoverHeader>
-                <PopoverBody>
-                  <Text fontSize="sm">{menuTourStep?.description}</Text>
-                  <HStack justifyContent="flex-end" mt={3} spacing={2}>
-                    <Button
-                      size="sm"
-                      colorScheme="pink"
-                      onMouseDown={handleMenuTourNext}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          handleMenuTourNext();
-                        }
-                      }}
-                    >
-                      {translation[userLanguage]["actionTour.next"]}
-                    </Button>
-                  </HStack>
-                </PopoverBody>
-              </PopoverContent>
-            </Portal>
-          </Popover>
-        ) : (
-          <Box ref={btnRef} display="inline-flex">
-            {menuButton}
-          </Box>
-        )
-      ) : null}
+      {isSignedIn && localStorage.getItem("local_npub") ? menuButton : null}
       {/* {isSignedIn && testIsMatch ? (
         <IconButton
           ref={btnRef}

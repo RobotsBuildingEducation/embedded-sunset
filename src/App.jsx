@@ -44,14 +44,6 @@ import {
   MenuList,
   MenuItem,
   Tooltip,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverArrow,
-  PopoverCloseButton,
-  Portal,
   Center,
   Image,
   useToken,
@@ -92,7 +84,6 @@ import ThemeMenu from "./components/ThemeMenu";
 import WaveBar from "./components/WaveBar";
 import ChapterReview from "./components/ChapterReview";
 import DailyGoalCelebrationModal from "./components/DailyGoalCelebrationModal/DailyGoalCelebrationModal";
-import SurfaceModalHost from "./components/SurfaceModalHost";
 import { MiniKitContextProvider } from "./providers/MiniKitProvider.jsx";
 import AnimatedBackground from "./components/AnimatedBackground/AnimatedBackground";
 import { ThemeInitializer } from "./ThemeInitializer.jsx";
@@ -139,7 +130,6 @@ import {
 } from "./database/firebaseResources";
 
 import { pickProgrammingLanguage, translation } from "./utility/translation";
-import { subscribeToTeamInvites } from "./utility/nosql";
 import { soundManager } from "./utility/soundManager";
 
 const Dashboard = lazy(() =>
@@ -159,7 +149,6 @@ import {
   PiClockCountdownDuotone,
   PiClockCountdownFill,
   PiPatreonLogoFill,
-  PiUsersBold,
   PiUsersThreeFill,
 } from "react-icons/pi";
 
@@ -193,6 +182,7 @@ import MultipleAnswerQuestion from "./components/MultipleAnswerQuestion/Multiple
 import { DataTags } from "./elements/DataTag";
 import { transcript } from "./utility/transcript";
 const AwardModal = lazy(() => import("./components/AwardModal/AwardModal"));
+import SurfaceModalHost from "./components/SurfaceModalHost";
 import CodeCompletionQuestion from "./components/CodeCompletionQuestion/CodeCompletionQuestion";
 import {
   applyUserThemePreferences,
@@ -245,9 +235,6 @@ import {
 import { FiTrendingUp } from "react-icons/fi";
 import MiniKitInitializer from "./MiniKitInitializer";
 
-const SocialFeedModal = lazyWithPreload(
-  () => import("./components/SocialFeedModal/SocialFeedModal"),
-);
 const Onboarding = lazy(() =>
   import("./Onboarding").then((m) => ({ default: m.Onboarding })),
 );
@@ -261,9 +248,6 @@ const InstallAppModal = lazyWithPreload(() =>
 import { motion, animate, useAnimation } from "framer-motion";
 import { keyframes } from "@emotion/react";
 import { Delaunay } from "d3-delaunay";
-const StudyGuideModal = lazyWithPreload(
-  () => import("./components/StudyGuideModal/StudyGuideModal"),
-);
 const CodeEditor = lazy(() =>
   import("./components/CodeEditor/CodeEditor").then((m) => ({
     default: m.CodeEditor,
@@ -288,11 +272,7 @@ import {
 } from "./utility/instantSurface";
 
 const preloadInteractiveModalChunks = () => {
-  [
-    SocialFeedModal,
-    StudyGuideModal,
-    InstallAppModal,
-  ].forEach((Component) => {
+  [InstallAppModal].forEach((Component) => {
     Component.preload?.().catch(() => {});
   });
 };
@@ -1001,19 +981,7 @@ export const VoiceInput = ({
   }, [messages, onChange]);
 
   // New function for handling the "Learn" button click
-  const handleLearnClick = async () => {
-    // Retrieve the current count from localStorage
-    // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
-
-    // // Check if the user has already generated 3 questions
-    // if (lrnctrl >= 3) {
-    //   // Silently skip the function
-    //   return;
-    // }
-
-    // Increment the counter and store it back in localStorage
-    // lrnctrl += 1;
-    // localStorage.setItem("lrnctrl", lrnctrl);
+  const handleLearnClick = () => {
     runImmediateSurfaceUpdate(() => {
       useSurfaceModalStore.getState().openLearnModal({
         step,
@@ -1351,6 +1319,7 @@ export const VoiceInput = ({
           />
         ) : null}
       </Suspense>
+
     </VStack>
   );
 };
@@ -1851,12 +1820,6 @@ const Step = ({
   setLectureNextPath,
   lectureNextStep,
   setLectureNextStep,
-  actionTourStep,
-  isActionTourActive,
-  actionBarTourSteps,
-  onActionTourAdvance,
-  onActionTourComplete,
-  startActionTour,
 }) => {
   let loot = buildSuperLoot();
 
@@ -1888,21 +1851,7 @@ const Step = ({
   const [grade, setGrade] = useState("");
   const [isTimerExpired, setIsTimerExpired] = useState(true);
 
-  const bitcoinButtonRef = useRef(null);
-  const selfPacedButtonRef = useRef(null);
-  const themeButtonRef = useRef(null);
-  const socialButtonRef = useRef(null);
-  const helperButtonRef = useRef(null);
-  const patreonButtonRef = useRef(null);
   const nextQuestionPressLockRef = useRef(false);
-
-  const currentTourStep = useMemo(
-    () =>
-      typeof actionTourStep === "number"
-        ? actionBarTourSteps[actionTourStep]
-        : null,
-    [actionBarTourSteps, actionTourStep],
-  );
 
   const [step, setStep] = useState(steps[userLanguage][currentStep]);
   const [isAILearningMode, setIsAILearningMode] = useState(false);
@@ -2153,28 +2102,6 @@ const Step = ({
     firstChapterReviewNode && lastChapterReviewStep !== currentStep,
   );
 
-  useEffect(() => {
-    const hasCompletedTour =
-      localStorage.getItem("actionTourCompleted") === "true";
-
-    if (
-      currentStep === 0 &&
-      !hasCompletedTour &&
-      !isActionTourActive &&
-      actionTourStep === null
-    ) {
-      startActionTour();
-    } else if (currentStep !== 0 && isActionTourActive) {
-      onActionTourComplete(false);
-    }
-  }, [
-    actionTourStep,
-    currentStep,
-    isActionTourActive,
-    onActionTourComplete,
-    startActionTour,
-  ]);
-
   const chapterReviewText = useMemo(
     () => ({
       title:
@@ -2196,25 +2123,6 @@ const Step = ({
     }),
     [fallbackTranslation, translationMap],
   );
-
-  const handleActionTourNext = useCallback(() => {
-    const nextStep = (actionTourStep ?? -1) + 1;
-
-    if (nextStep >= actionBarTourSteps.length) {
-      onActionTourComplete();
-    } else {
-      onActionTourAdvance();
-    }
-  }, [
-    actionBarTourSteps.length,
-    actionTourStep,
-    onActionTourAdvance,
-    onActionTourComplete,
-  ]);
-
-  const handleActionTourSkip = useCallback(() => {
-    onActionTourComplete();
-  }, [onActionTourComplete]);
 
   const dismissChapterReview = () => {
     setLastChapterReviewStep(currentStep);
@@ -2307,12 +2215,6 @@ const Step = ({
   } = useDisclosure();
 
   const {
-    isOpen: isStudyGuideModalOpen,
-    onOpen: onStudyGuideModalOpen,
-    onClose: onStudyGuideModalClose,
-  } = useDisclosure();
-
-  const {
     isOpen: isLectureModalOpen,
     onOpen: onLectureModalOpen,
     onClose: onLectureModalClose,
@@ -2342,31 +2244,10 @@ const Step = ({
   }, []);
 
   const {
-    isOpen: isSocialFeedOpen,
-    onOpen: onSocialFeedOpen,
-    onClose: onSocialFeedClose,
-  } = useDisclosure();
-
-  const [hasPendingTeamInvites, setHasPendingTeamInvites] = useState(false);
-
-  const {
     isOpen: isKnowledgeLedgerOpen,
     onOpen: onKnowledgeLedgerOpen,
     onClose: onKnowledgeLedgerClose,
   } = useDisclosure();
-
-  // Subscribe to team invites to show visual indicator
-  useEffect(() => {
-    const userNpub = localStorage.getItem("local_npub");
-    if (!userNpub) return;
-
-    const unsubscribe = subscribeToTeamInvites(userNpub, (invites) => {
-      const hasPending = invites.some((invite) => invite.status === "pending");
-      setHasPendingTeamInvites(hasPending);
-    });
-
-    return () => unsubscribe();
-  }, []);
 
   const handleAwardModalClose = () => {
     onAwardModalClose();
@@ -3496,20 +3377,7 @@ const Step = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const actionBarPressRef = useRef({ key: "", at: 0 });
 
-  // New function for handling the "Learn" button click
-  const handleLearnClick = async () => {
-    // Retrieve the current count from localStorage
-    // let lrnctrl = parseInt(localStorage.getItem("lrnctrl") || "0", 10);
-
-    // // Check if the user has already generated 3 questions
-    // // if (lrnctrl >= 6) {
-    // //   // Silently skip the function
-    // //   return;
-    // // }
-
-    // // Increment the counter and store it back in localStorage
-    // lrnctrl += 1;
-    // localStorage.setItem("lrnctrl", lrnctrl);
+  const handleLearnClick = () => {
     runImmediateSurfaceUpdate(() => {
       useSurfaceModalStore.getState().openLearnModal({
         step,
@@ -3801,6 +3669,7 @@ const Step = ({
       import.meta.env.VITE_PATREON_PASSCODE || hasSubmittedPasscode;
 
   const actionBarButtonProps = {
+    "data-instant-surface-trigger": "true",
     width: "48px",
     height: "48px",
     borderRadius: "14px",
@@ -3812,7 +3681,12 @@ const Step = ({
     alignItems: "center",
     justifyContent: "center",
     touchAction: "manipulation",
-    transition: "all 0.2s ease-in-out",
+    // Snap transform instantly so the press feels tactile; transition only
+    // the slower color/shadow changes. `transition: all` was animating the
+    // _active translateY over 200ms, which on iOS reads as a mushy delay
+    // before anything happens. iOS Safari also takes a perf hit from `all`
+    // because it tracks every changing property for compositing.
+    transition: "background 0.15s ease-out, box-shadow 0.15s ease-out",
     boxShadow: actionBarButtonShadow,
     _hover: {
       bgGradient: actionBarButtonHoverBg,
@@ -3840,13 +3714,14 @@ const Step = ({
       theme: "colorSwitch",
       social: "next",
       helper: "submit",
+      studyGuide: "next",
       patreon: "submitAction",
     };
     const soundName = soundMap[id] || "next";
     soundManager.play(soundName);
   };
 
-  const openActionBarModal = (type, payload, soundId) => {
+  const openSurfaceModal = (type, payload, soundId = type) => {
     runImmediateSurfaceUpdate(() => {
       useSurfaceModalStore.getState().openActionModal(type, payload);
     });
@@ -3854,57 +3729,6 @@ const Step = ({
       triggerHaptic();
       playActionBarSound(soundId);
     });
-  };
-
-  const renderActionTourPopover = (id, ref, element) => {
-    const step = actionBarTourSteps.find((item) => item.id === id);
-    const isOpen =
-      isActionTourActive && currentTourStep && currentTourStep.id === id;
-    const isLastStep =
-      typeof actionTourStep === "number" &&
-      actionTourStep >= actionBarTourSteps.length - 1;
-
-    if (!step) return element;
-
-    return (
-      <Popover
-        isOpen={isOpen}
-        closeOnBlur={false}
-        placement={step.placement || "top"}
-      >
-        <PopoverTrigger>
-          <Box ref={ref} display="inline-flex">
-            {element}
-          </Box>
-        </PopoverTrigger>
-        <Portal>
-          <PopoverContent maxW="280px">
-            <PopoverArrow />
-
-            <PopoverHeader fontWeight="bold">{step.title}</PopoverHeader>
-            <PopoverBody>
-              <Text fontSize="sm">{step.description}</Text>
-              <HStack justifyContent="flex-end" mt={3} spacing={2}>
-                <Button
-                  size="sm"
-                  colorScheme="pink"
-                  onMouseDown={handleActionTourNext}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      handleActionTourNext();
-                    }
-                  }}
-                >
-                  {isLastStep
-                    ? translation[userLanguage]["actionTour.done"]
-                    : translation[userLanguage]["actionTour.next"]}
-                </Button>
-              </HStack>
-            </PopoverBody>
-          </PopoverContent>
-        </Portal>
-      </Popover>
-    );
   };
 
   return (
@@ -4342,11 +4166,30 @@ const Step = ({
                 <HStack>
                   <Button
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                    onMouseDown={onStudyGuideModalOpen}
+                    {...getInstantSurfacePressProps(
+                      actionBarPressRef,
+                      "studyGuide",
+                      () =>
+                        openSurfaceModal(
+                          "studyGuide",
+                          {
+                            content: step.question.metaData,
+                            userLanguage,
+                          },
+                          "studyGuide",
+                        ),
+                    )}
                     mb={4}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
-                        onStudyGuideModalOpen();
+                        openSurfaceModal(
+                          "studyGuide",
+                          {
+                            content: step.question.metaData,
+                            userLanguage,
+                          },
+                          "studyGuide",
+                        );
                       }
                     }}
                     variant={"outline"}
@@ -4366,19 +4209,11 @@ const Step = ({
                         handleNextQuestionButtonPress(e);
                       }
                     }}
-                    disabled={isPostingWithNostr || isActionTourActive}
+                    disabled={isPostingWithNostr}
                   >
                     {translation[userLanguage]["app.button.nextQuestion"]}{" "}
                   </Button>
                 </HStack>
-                <Suspense fallback={null}>
-                  <StudyGuideModal
-                    isOpen={isStudyGuideModalOpen}
-                    onClose={onStudyGuideModalClose}
-                    content={step.question.metaData}
-                    userLanguage={userLanguage}
-                  />
-                </Suspense>
               </VStack>
             )}
 
@@ -4850,20 +4685,6 @@ const Step = ({
             </Box>
           ) : null}
 
-          <Suspense fallback={null}>
-            {isSocialFeedOpen ? (
-              <SocialFeedModal
-                userLanguage={userLanguage}
-                currentStep={currentStep}
-                isOpen={isSocialFeedOpen}
-                onClose={onSocialFeedClose}
-                allowPosts={allowPosts}
-                setAllowPosts={setAllowPosts}
-              />
-            ) : null}
-
-          </Suspense>
-
           <Box
             position="fixed"
             bottom="0"
@@ -4887,151 +4708,105 @@ const Step = ({
                   border={`1px solid ${actionBarShellBorder}`}
                   borderBottom="0"
                   boxShadow={`0 -2px 0px ${actionBarShellGlow}, ${actionBarShadow}`}
-                  backdropFilter="blur(10px)"
+                  // backdrop-filter removed - shell bg is ~0.96 opaque so the
+                  // blur is visually negligible, but on iOS Safari it forces
+                  // a layer rasterization every time the composition behind
+                  // the action bar changes (i.e. every modal open). That
+                  // rasterization is cheap on a "clean" composition (first
+                  // press of session) and progressively slower as the layer
+                  // cache accumulates state from prior modal mounts.
                   paddingBottom={6}
                   paddingTop={4}
                 >
                   <HStack spacing={0} justify="space-around" width="100%">
-                    {renderActionTourPopover(
-                      "bitcoin",
-                      bitcoinButtonRef,
-                      <IconButton
-                        {...actionBarButtonProps}
-                        data-sound-ignore-select="true"
-                        aria-label="Open Bitcoin mode"
-                        icon={<FaBitcoin fontSize="20px" />}
-                        {...getInstantSurfacePressProps(
-                          actionBarPressRef,
-                          "bitcoin",
-                          () =>
-                            openActionBarModal(
-                              "bitcoin",
-                              { userLanguage },
-                              "bitcoin",
-                            ),
-                        )}
-                      />,
-                    )}
-                    {renderActionTourPopover(
-                      "selfPaced",
-                      selfPacedButtonRef,
-                      <IconButton
-                        {...actionBarButtonProps}
-                        data-sound-ignore-select="true"
-                        aria-label="Open self-paced mode"
-                        icon={<PiClockCountdownFill fontSize="22px" />}
-                        {...getInstantSurfacePressProps(
-                          actionBarPressRef,
-                          "selfPaced",
-                          () =>
-                            openActionBarModal(
-                              "selfPaced",
-                              {
-                                interval,
-                                userId: localStorage.getItem("local_npub"),
-                                userLanguage,
-                                onSettingsSaved: handleSelfPacedSettingsSaved,
-                              },
-                              "selfPaced",
-                            ),
-                        )}
-                      />,
-                    )}
-                    {renderActionTourPopover(
-                      "theme",
-                      themeButtonRef,
-                      <ThemeMenu
-                        userLanguage={userLanguage}
-                        buttonProps={{
-                          ...actionBarButtonProps,
-                          color: actionBarButtonProps.color,
-                          "data-sound-ignore-select": "true",
-                          onClick: () => {
-                            triggerHaptic();
-                            playActionBarSound("theme");
-                          },
-                        }}
-                      />,
-                    )}
-                    {/* Social feed is intentionally hidden from the bottom action bar.
-                    {renderActionTourPopover(
-                      "social",
-                      socialButtonRef,
-                      <IconButton
-                        {...actionBarButtonProps}
-                        data-sound-ignore-select="true"
-                        aria-label={
-                          translation[userLanguage][
-                            "settings.button.socialProgress"
-                          ]
-                        }
-                        icon={<PiUsersBold fontSize="20px" />}
-                        onPointerDownCapture={() => {
-                          openActionBarModal(onSocialFeedOpen, "social");
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            triggerHaptic();
-                            playActionBarSound("social");
-                            onSocialFeedOpen();
-                          }
-                        }}
-                        border={hasPendingTeamInvites ? "2px solid" : undefined}
-                        borderColor={hasPendingTeamInvites ? "gold" : undefined}
-                        boxShadow={
-                          hasPendingTeamInvites
-                            ? "0 0 8px rgba(255, 215, 0, 0.6)"
-                            : undefined
-                        }
-                      />,
-                    )} */}
-                    {renderActionTourPopover(
-                      "helper",
-                      helperButtonRef,
-                      <IconButton
-                        {...actionBarButtonProps}
-                        data-sound-ignore-select="true"
-                        aria-label={
-                          translation[userLanguage]?.[
-                            "settings.button.algorithmHelper"
-                          ] || "Open build your app"
-                        }
-                        icon={<RiCodeAiFill fontSize="22px" />}
-                        {...getInstantSurfacePressProps(
-                          actionBarPressRef,
-                          "helper",
-                          () =>
-                            openActionBarModal(
-                              "helper",
-                              {
-                                currentStep,
-                                step,
-                                steps,
-                                userLanguage,
-                              },
-                              "helper",
-                            ),
-                        )}
-                      />,
-                    )}
-                    {renderActionTourPopover(
-                      "patreon",
-                      patreonButtonRef,
-                      <IconButton
-                        {...actionBarButtonProps}
-                        data-sound-ignore-select="true"
-                        aria-label="Support on Patreon"
-                        icon={<PiPatreonLogoFill fontSize="20px" />}
-                        // boxShadow={patreonButtonShadow}
-                        borderColor={hexToRgba(actionPalette[200], 0.85)}
-                        onClick={() => {
+                    <IconButton
+                      {...actionBarButtonProps}
+                      data-sound-ignore-select="true"
+                      aria-label="Open Bitcoin mode"
+                      icon={<FaBitcoin fontSize="20px" />}
+                      {...getInstantSurfacePressProps(
+                        actionBarPressRef,
+                        "bitcoin",
+                        () =>
+                          openSurfaceModal(
+                            "bitcoin",
+                            { userLanguage },
+                            "bitcoin",
+                          ),
+                      )}
+                    />
+                    <IconButton
+                      {...actionBarButtonProps}
+                      data-sound-ignore-select="true"
+                      aria-label="Open self-paced mode"
+                      icon={<PiClockCountdownFill fontSize="22px" />}
+                      {...getInstantSurfacePressProps(
+                        actionBarPressRef,
+                        "selfPaced",
+                        () =>
+                          openSurfaceModal(
+                            "selfPaced",
+                            {
+                              interval,
+                              userId: localStorage.getItem("local_npub"),
+                              userLanguage,
+                              onSettingsSaved: handleSelfPacedSettingsSaved,
+                            },
+                            "selfPaced",
+                          ),
+                      )}
+                    />
+                    <ThemeMenu
+                      userLanguage={userLanguage}
+                      buttonProps={{
+                        ...actionBarButtonProps,
+                        color: actionBarButtonProps.color,
+                        "data-sound-ignore-select": "true",
+                        onClick: () => {
                           triggerHaptic();
-                          playActionBarSound("patreon");
-                          window.location.href =
-                            "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
-                        }}
-                      />,
-                    )}
+                          playActionBarSound("theme");
+                        },
+                      }}
+                    />
+                    <IconButton
+                      {...actionBarButtonProps}
+                      data-sound-ignore-select="true"
+                      aria-label={
+                        translation[userLanguage]?.[
+                          "settings.button.algorithmHelper"
+                        ] || "Open build your app"
+                      }
+                      icon={<RiCodeAiFill fontSize="22px" />}
+                      {...getInstantSurfacePressProps(
+                        actionBarPressRef,
+                        "helper",
+                        () =>
+                          openSurfaceModal(
+                            "helper",
+                            {
+                              currentStep,
+                              step,
+                              steps,
+                              userLanguage,
+                            },
+                            "helper",
+                          ),
+                      )}
+                    />
+                    <IconButton
+                      {...actionBarButtonProps}
+                      data-sound-ignore-select="true"
+                      aria-label="Support on Patreon"
+                      icon={<PiPatreonLogoFill fontSize="20px" />}
+                      // boxShadow={patreonButtonShadow}
+                      borderColor={hexToRgba(actionPalette[200], 0.85)}
+                      onClick={() => {
+                        triggerHaptic();
+                        playActionBarSound("patreon");
+                        window.location.href =
+                          "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
+                      }}
+                    />
                   </HStack>
                 </Box>
               </Box>
@@ -5086,7 +4861,7 @@ const Step = ({
             </Suspense>
 
             <PasscodeModal userLanguage={userLanguage} />
-            {/* 
+            {/*
             {isInstallModalOpen ? (
               <InstallAppModal
                 userLanguage={userLanguage}
@@ -5097,6 +4872,7 @@ const Step = ({
           </>
         </>
       )}
+
     </VStack>
   );
 };
@@ -7120,14 +6896,13 @@ function App({ isShutDown }) {
   }, [location.pathname]);
 
   useEffect(() => {
-    // Resume audio on any user interaction - iOS Safari can suspend audio context
-    // when switching apps, so we need to try resuming on every interaction
+    // Resume audio on any user interaction - iOS Safari can suspend audio
+    // context when switching apps.
     const resumeAudio = () => {
       soundManager.resume();
     };
 
     const handlePointerDown = (event) => {
-      // Always try to resume audio first
       resumeAudio();
 
       if (!(event.target instanceof Element)) return;
@@ -7149,7 +6924,6 @@ function App({ isShutDown }) {
       soundManager.play("select");
     };
 
-    // Use both pointer and touch events for maximum compatibility
     document.addEventListener("pointerdown", handlePointerDown);
     document.addEventListener("touchstart", resumeAudio, { passive: true });
     document.addEventListener("keydown", resumeAudio);
@@ -7177,10 +6951,6 @@ function App({ isShutDown }) {
     parseInt(localStorage.getItem("incorrectAttempts"), 10) || 0,
   );
 
-  const [actionTourStep, setActionTourStep] = useState(null);
-  const [isActionTourActive, setIsActionTourActive] = useState(false);
-  const settingsButtonRef = useRef(null);
-
   const defaultTransitionStats = {
     salary: 0,
     salaryProgress: 0,
@@ -7197,76 +6967,6 @@ function App({ isShutDown }) {
     defaultTransitionStats,
   );
   const resetStatsTimeoutRef = useRef(null);
-
-  const actionBarTourSteps = useMemo(
-    () => [
-      {
-        id: "menu",
-        title: translation[userLanguage]["actionTour.menu.title"],
-        description: translation[userLanguage]["actionTour.menu.description"],
-        placement: "bottom-end",
-      },
-      {
-        id: "bitcoin",
-        title: translation[userLanguage]["actionTour.bitcoin.title"],
-        description:
-          translation[userLanguage]["actionTour.bitcoin.description"],
-        placement: "top",
-      },
-      {
-        id: "selfPaced",
-        title: translation[userLanguage]["actionTour.selfPaced.title"],
-        description:
-          translation[userLanguage]["actionTour.selfPaced.description"],
-        placement: "top",
-      },
-      {
-        id: "theme",
-        title: translation[userLanguage]["actionTour.theme.title"],
-        description: translation[userLanguage]["actionTour.theme.description"],
-        placement: "top",
-      },
-      // Social feed is intentionally hidden from the bottom action bar.
-      // {
-      //   id: "social",
-      //   title: translation[userLanguage]["actionTour.social.title"],
-      //   description: translation[userLanguage]["actionTour.social.description"],
-      //   placement: "top",
-      // },
-      {
-        id: "helper",
-        title: translation[userLanguage]["actionTour.helper.title"],
-        description: translation[userLanguage]["actionTour.helper.description"],
-        placement: "top",
-      },
-      {
-        id: "patreon",
-        title: translation[userLanguage]["actionTour.patreon.title"],
-        description:
-          translation[userLanguage]["actionTour.patreon.description"],
-        placement: "top",
-      },
-    ],
-    [userLanguage],
-  );
-
-  const startActionTour = useCallback(() => {
-    setActionTourStep(0);
-    setIsActionTourActive(true);
-  }, []);
-
-  const handleActionTourAdvance = useCallback(() => {
-    setActionTourStep((prev) => (prev === null ? 0 : prev + 1));
-  }, []);
-
-  const handleActionTourComplete = useCallback((persist = true) => {
-    setIsActionTourActive(false);
-    setActionTourStep(null);
-
-    if (persist) {
-      localStorage.setItem("actionTourCompleted", "true");
-    }
-  }, []);
 
   const navigateWithTransition = (
     path,
@@ -7679,12 +7379,6 @@ function App({ isShutDown }) {
             view={view}
             setView={setView}
             step={steps?.[userLanguage]?.[currentStep]}
-            actionTourStep={actionTourStep}
-            isActionTourActive={isActionTourActive}
-            onActionTourAdvance={handleActionTourAdvance}
-            onActionTourComplete={handleActionTourComplete}
-            menuButtonRef={settingsButtonRef}
-            menuTourStep={actionBarTourSteps?.[0]}
             allowPosts={allowPosts}
             setAllowPosts={setAllowPosts}
             soundEnabled={soundEnabled}
@@ -7778,12 +7472,6 @@ function App({ isShutDown }) {
                         setLectureNextPath={setLectureNextPath}
                         lectureNextStep={lectureNextPath}
                         setLectureNextStep={setLectureNextStep}
-                        actionTourStep={actionTourStep}
-                        isActionTourActive={isActionTourActive}
-                        actionBarTourSteps={actionBarTourSteps}
-                        onActionTourAdvance={handleActionTourAdvance}
-                        onActionTourComplete={handleActionTourComplete}
-                        startActionTour={startActionTour}
                       />
                     </PrivateRoute>
                   }
@@ -7964,9 +7652,9 @@ export const AppWrapper = () => {
   return (
     <ChakraProvider theme={appTheme}>
       <ThemeInitializer />
-      <AnimatedBackground />
       <MiniKitContextProvider>
         <Router>
+          <AnimatedBackground />
           <MiniKitInitializer />
           <App isShutDown={isShutDown} />
           <SurfaceModalHost />

@@ -3,2250 +3,2250 @@ export const getObjectsByGroup = (groupNumber, arrayOfObjects) => {
 };
 
 export const steps = {
-  "compsci-en": [
-    {
-      group: "introduction",
-      title: "Introduction To Computer Science",
-      isStudyGuide: true,
-      description:
-        "Expose yourself to fundamentals to improve the quality of your learning before making progress.",
-      question: {
-        questionText: (
-          <div>
-            <p style={{ marginBottom: 12 }}>
-              {" "}
-              One of the best predictors for student success is exposure to
-              course material before studying it. You're encouraged to read
-              about the fundamentals of software in the study guide before
-              starting. You can reference this study guide in the menu
-              throughout your progress too.
-            </p>
-
-            <p style={{ marginBottom: 12 }}>
-              Remember to fail faster and fail forward! The real education
-              happens when you push through a challenge. We'll start off nice
-              and easy at first, but then we'll start to level up the difficulty
-              as you collect more progress. Make sure to use the tools at your
-              disposal! You're going to need it.
-            </p>
-          </div>
-        ),
-        metaData: `
-We’ll evolve a single dataset through each core chapter to illustrate connections:
-
-1. Data Structures I — Arrays & Strings
-\`\`\`python
-# Step 1: Start with a list of numbers
-data = [3, 1, 4, 1, 5]
-print(data[2])           # O(1) access → 4
-\`\`\`
-Lists store items contiguously, allowing constant-time reads but dynamic sizing.
-
-2. Data Structures II — Linked Lists
-\`\`\`python
-# Step 2: Convert list into a singly linked list
-class Node:
-    def __init__(self, value):
-        self.value = value
-        self.next = None
-
-def to_linked_list(arr):
-    head = None
-    for item in reversed(arr):
-        node = Node(item)
-        node.next = head
-        head = node
-    return head
-
-list_head = to_linked_list(data)
-print(list_head.value)   # 3 at head, traversal is O(n)
-\`\`\`
-Linked lists allow dynamic insertion but require linear traversal for access.
-
-3. Data Structures III — Trees (Array & Hash Map)
-\`\`\`python
-# 3a. Binary heap stored in an array (complete binary tree)
-heap = [None, 3, 1, 4, 1, 5]  # 1-based index: parent i, children 2i & 2i+1
-root, left, right = heap[1], heap[2], heap[3]
-print(root, left, right)      # 3 1 4
-
-# 3b. General tree with an adjacency hash map
-tree = {
-    "A": ["B", "C"],
-    "B": ["D", "E"],
-    "C": ["F"],
-    "D": [], "E": [], "F": []
-}
-
-# 3c. Depth-First Search (DFS) — preorder
-def dfs(node):
-    stack = [node]
-    while stack:
-        cur = stack.pop()
-        print(cur, end=" ")
-        # push children in reverse to visit left-to-right
-        for child in reversed(tree[cur]):
-            stack.append(child)
-
-dfs("A")   # A B D E C F  — O(n)
-
-# 3d. Breadth-First Search (BFS)
-from collections import deque
-def bfs(node):
-    q = deque([node])
-    while q:
-        cur = q.popleft()
-        print(cur, end=" ")
-        q.extend(tree[cur])
-
-bfs("A")   # A B C D E F  — O(n)
-\`\`\`
-*Array* representation offers O(1) parent/child math for complete trees (heaps);  
-a *hash-map* adjacency list provides flexible, sparse storage with O(1) add-child.  
-DFS explores depth before breadth using a stack; BFS explores level by level using a queue.
-
-4. Algorithms I — Sorting
-\`\`\`python
-# Step 4: Sort the list in-place via bubble sort
-def bubble_sort(a):
-    n = len(a)
-    for i in range(n):
-        for j in range(0, n - i - 1):
-            if a[j] > a[j + 1]:
-                a[j], a[j + 1] = a[j + 1], a[j]
-
-bubble_sort(data)
-print(data)  # [1, 1, 3, 4, 5] • O(n²)
-\`\`\`
-Elementary sorts teach algorithmic structure; bubble sort is O(n²).
-
-5. Algorithms II — Search
-\`\`\`python
-# Step 5: Perform binary search on sorted list
-def binary_search(a, target):
-    low, high = 0, len(a) - 1
-    while low <= high:
-        mid = (low + high) // 2
-        if a[mid] == target:
-            return mid
-        elif a[mid] < target:
-            low = mid + 1
-        else:
-            high = mid - 1
-    return -1
-
-pos = binary_search(data, 4)
-print(pos)  # index of value 4, O(log n)
-\`\`\`
-Divide-and-conquer search runs in logarithmic time.
-
-6. Operating Systems — File I/O
-\`\`\`python
-# Step 6: Read a file with OS support
-with open('data.txt', 'r', encoding='utf-8') as f:
-    contents = f.read()
-print(contents)
-\`\`\`
-Behind the scenes: the OS schedules I/O, buffers data, and performs context switches.
-
-***Advice***
-
-***Trace manually:*** Walk through indices, pointers **and DFS/BFS orderings** on paper.  
-***Annotate:*** Mark time complexities alongside loops (# O(n²), # O(log n)).  
-***Experiment:*** Tweak each example in your REPL or editor to see real outputs.
-
-This single evolving example now links arrays, linked lists, **tree representations with DFS & BFS**, algorithms, and OS interactions—showing how each layer builds on the last.
-`,
-      },
-    },
-
-    {
-      group: "tutorial",
-      title: "OOP Basics: Class and Instance",
-      description: "Identify classes vs. instances in Python.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "In Python OOP, which of the following best describes a class?",
-        options: [
-          "A blueprint that defines attributes and behaviors",
-          "A specific object created during execution",
-          "A standalone function outside of any object",
-          "A module imported into a script",
-        ],
-        answer: "A blueprint that defines attributes and behaviors",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Defining __init__ and Methods",
-      description: "Order Python class definition steps.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps to define a Python class with an __init__ and a method:",
-        options: [
-          "Use class keyword with class name",
-          "Define __init__ method with parameters (self, ...)",
-          "Define additional methods indented at class level",
-          "Instantiate the class by calling ClassName()",
-        ],
-        answer: [
-          "Use class keyword with class name",
-          "Define __init__ method with parameters (self, ...)",
-          "Define additional methods indented at class level",
-          "Instantiate the class by calling ClassName()",
-        ],
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Creating an Instance",
-      description: "Select correct steps to instantiate a Python object.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Select all the correct steps to create an object from a Python class:",
-        options: [
-          "Call the class with parentheses and required arguments",
-          "Assign the result to a variable",
-          "Import the class from its module",
-          "Pass arguments to __init__",
-        ],
-        answer: [
-          "Call the class with parentheses and required arguments",
-          "Assign the result to a variable",
-          "Pass arguments to __init__",
-        ],
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Code Completion: Define a Python Class",
-      description: "Choose the correct class definition snippet.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which snippet correctly defines a Python class Person with name and age?",
-        options: [
-          "class Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age",
-          "def Person(name, age):\n    return { 'name': name, 'age': age }",
-          "class Person(name, age):\n    self.name = name\n    self.age = age",
-          "class Person:\n    name = None\n    age = None",
-        ],
-        answer:
-          "class Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Implement a Method",
-      description: "Add a method to your Python class.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Extend the Person class by adding a greet(self) method that returns 'Hello, my name is ' + self.name.",
-        answer: null,
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Accessing Attributes",
-      description: "Recall Python attribute access syntax.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What syntax retrieves the age attribute from a person instance?",
-        placeholder: "Type your answer here...",
-        answer: "person.age",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Shell Practice: Initialize Python Project",
-      description:
-        "Use Bash to set up a new project directory and Python file.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "In Bash, create a directory named `project`, change into it, and then create an empty Python file called `app.py`.",
-        answer: "mkdir project && cd project && touch app.py",
-      },
-    },
-
-    {
-      group: "tutorial",
-      title: "OOP Benefit",
-      description: "Explain an advantage of Python OOP.",
-      isText: true,
-      question: {
-        questionText:
-          "In your own words, explain one advantage of using classes and objects in Python.",
-        answer: null,
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [1, 8],
-      },
-    },
-
-    // 1
-    {
-      group: "1",
-      title: "Abstract Data Types vs. Concrete Implementations",
-      description:
-        "Distinguish abstract data types (ADTs) from their concrete implementations.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText: "Which of the following are abstract data types?",
-        options: ["List", "Stack", "Queue", "Array", "Binary Tree"],
-        answer: ["Stack", "Queue", "Binary Tree"],
-      },
-    },
-    // 2
-    {
-      group: "1",
-      title: "Complexity Classes Ordering",
-      description:
-        "Order common complexity classes from fastest to slowest growth.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange these complexity classes from fastest (lowest growth) to slowest (highest growth):",
-        options: ["O(1)", "O(log n)", "O(n)", "O(n log n)", "O(n²)"],
-        answer: ["O(1)", "O(log n)", "O(n)", "O(n log n)", "O(n²)"],
-      },
-    },
-    // 3
-    {
-      group: "1",
-      title: "Array Access Complexity",
-      description: "Identify the time complexity of array indexing.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "What is the Big-O time complexity to access an element by index in a contiguous array?",
-        options: ["O(1)", "O(log n)", "O(n)", "O(n²)"],
-        answer: ["O(1)"],
-      },
-    },
-    // 4
-    {
-      group: "1",
-      title: "Contiguous vs. Non-contiguous Storage",
-      description: "Distinguish data structures by their memory layout.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which data structure stores its elements contiguously in memory?",
-        options: ["Array", "Linked List", "Binary Tree", "Hash Table"],
-        answer: "Array",
-      },
-    },
-    // 5
-    {
-      group: "1",
-      title: "Python List Indexing",
-      description: "Practice simple list indexing in Python.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Create a Python list called `nums` with values `[3, 1, 4, 1, 5]` and print the third element (index 2).",
-      },
-    },
-    // 6
-    {
-      group: "1",
-      title: "List Indexing Code Completion",
-      description: "Fill in the missing code to index a Python list.",
-      isCodeCompletion: true,
-      question: {
-        questionText: "Complete the following code:",
-        options: [
-          "nums = [3, 1, 4, 1, 5]\nprint(nums[2])",
-          "nums = [3, 1, 4, 1, 5]\nprint(nums[3])",
-          "nums = [3, 1, 4, 1, 5]\nprint(nums[len(nums)])",
-        ],
-        answer: "nums = [3, 1, 4, 1, 5]\nprint(nums[2])",
-      },
-    },
-    // 7
-    {
-      group: "1",
-      title: "Why Complexity Matters",
-      description: "Reflect on the importance of algorithmic complexity.",
-      isText: true,
-      question: {
-        questionText:
-          "In your own words, explain why understanding time complexity (Big-O) is important when choosing a data structure.",
-      },
-    },
-    // 8
-    {
-      group: "1",
-      title: "Amortized Analysis of append()",
-      description: "Identify amortized time complexity of Python list append.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "What is the amortized time complexity of `list.append()` in Python?",
-        options: ["O(1)", "O(log n)", "O(n)", "O(n²)"],
-        answer: "O(1)",
-      },
-    },
-    // 9
-    {
-      group: "1",
-      title: "Dynamic Array Resizing Steps",
-      description:
-        "Order the internal steps that a dynamic array takes when it grows.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps Python’s list takes when it needs more capacity:",
-        options: [
-          "Allocate new larger block",
-          "Copy old elements to new block",
-          "Free the old block",
-          "Update internal pointer",
-        ],
-        answer: [
-          "Allocate new larger block",
-          "Copy old elements to new block",
-          "Free the old block",
-          "Update internal pointer",
-        ],
-      },
-    },
-    // 10
-    {
-      group: "1",
-      title: "Traversing a List",
-      description: "Write code to traverse and print each element of a list.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Given `items = [10, 20, 30, 40]`, write a Python for-loop that prints each item.",
-      },
-    },
-    // 11
-    {
-      group: "1",
-      title: "List Length Operator",
-      description: "Identify the operator that returns the length of a list.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "Which Python built-in function returns the number of elements in a list?",
-        placeholder: "Type your answer here...",
-        answer: "len",
-      },
-    },
-    // 12
-    {
-      group: "1",
-      title: "Immutable vs. Mutable Sequences",
-      description: "Distinguish lists from tuples in Python.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "Which of the following statements is true?",
-        options: [
-          "Lists are immutable, tuples are mutable",
-          "Lists are mutable, tuples are immutable",
-          "Both are immutable",
-          "Both are mutable",
-        ],
-        answer: "Lists are mutable, tuples are immutable",
-      },
-    },
-    // 13
-    {
-      group: "1",
-      title: "String as Character Array",
-      description: "Convert a string into a list of its characters.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write Python code to turn the string `\"hello\"` into `['h','e','l','l','o']`.",
-      },
-    },
-    // 14
-    {
-      group: "1",
-      title: "Implementing a Simple Stack",
-      description: "Use a Python list to model a stack (LIFO).",
-      isCodeCompletion: true,
-      question: {
-        questionText: "Complete the methods to push and pop from a stack:",
-        options: [
-          // Correct: uses append and pop(), returns the popped value
-          `class Stack:
-    def __init__(self):
-        self.data = []
-
-    def push(self, x):
-        self.data.append(x)
-
-    def pop(self):
-        return self.data.pop()`,
-
-          // Wrong: forgets to return the popped value
-          `class Stack:
-    def __init__(self):
-        self.data = []
-
-    def push(self, x):
-        self.data.append(x)
-
-    def pop(self):
-        self.data.pop()`,
-
-          // Wrong: uses FIFO pop(0) instead of LIFO
-          `class Stack:
-    def __init__(self):
-        self.data = []
-
-    def push(self, x):
-        self.data.append(x)
-
-    def pop(self):
-        return self.data.pop(0)`,
-
-          // Wrong: inserts at the front, reversing the order
-          `class Stack:
-    def __init__(self):
-        self.data = []
-
-    def push(self, x):
-        self.data.insert(0, x)
-
-    def pop(self):
-        return self.data.pop()`,
-        ],
-        answer: `class Stack:
-    def __init__(self):
-        self.data = []
-
-    def push(self, x):
-        self.data.append(x)
-
-    def pop(self):
-        return self.data.pop()`,
-      },
-    },
-    // 15
-    {
-      group: "1",
-      title: "Use Cases for Different Structures",
-      description: "Reflect on where you’d use arrays vs. stacks.",
-      isText: true,
-      question: {
-        questionText:
-          "Give one real-world scenario where a stack (LIFO) is preferred over a plain list.",
-      },
-    },
-    // 16
-    {
-      group: "1",
-      title: "Pointer-Style Traversal (Conceptual)",
-      description: "Understand how a linked list differs in traversal.",
-      isText: true,
-      question: {
-        questionText:
-          "In contrast to arrays, how does a linked list traverse from one element to the next?",
-      },
-    },
-    // 17
-    {
-      group: "1",
-      title: "Implementing a Queue with deque",
-      description: "Use `collections.deque` to model a queue (FIFO).",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write Python code to import `deque`, enqueue 1,2,3, then dequeue one element.",
-      },
-    },
-    // 18
-    {
-      group: "1",
-      title: "Comparing Access Patterns",
-      description: "Discuss random vs. sequential access trade-offs.",
-      isText: true,
-      question: {
-        questionText:
-          "Why are arrays good for random access but linked lists are not?",
-      },
-    },
-    // 19
-    {
-      group: "1",
-      title: "List Initialization",
-      description: "Allocate a fixed-size list with default values.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText: "Write code to create a list of five zeros in Python.",
-      },
-    },
-    // 20
-    {
-      group: "1",
-      title: "Importance of Foundations",
-      description: "Summarize key takeaways from Chapter 1.",
-      isText: true,
-      question: {
-        questionText:
-          "In two sentences, explain why understanding data-structure foundations (ADTs, complexity, memory layout) is crucial before diving into implementations.",
-      },
-    },
-    // 21
-    {
-      group: "1",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [10, 29],
-      },
-    },
-    // 1
-    {
-      group: "2",
-      title: "Memory Layout: Array vs. Linked List",
-      description:
-        "Compare how arrays and linked lists store elements in memory.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "Which statement correctly describes memory layout?",
-        options: [
-          "Arrays use node pointers scattered in memory",
-          "Linked lists store elements contiguously",
-          "Arrays store elements contiguously, linked lists use pointers",
-          "Both use contiguous memory blocks",
-        ],
-        answer: [
-          "Arrays store elements contiguously, linked lists use pointers",
-        ],
-      },
-    },
-    // 2
-    {
-      group: "2",
-      title: "Access Time: Array Indexing vs. List Traversal",
-      description: "Identify the time complexity of accessing vs. traversing.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "What are the time complexities for accessing the 𝑖ᵗʰ element?",
-        options: [
-          "Array: O(1), Linked List: O(n)",
-          "Array: O(n), Linked List: O(1)",
-          "Array: O(log n), Linked List: O(log n)",
-          "Array: O(n), Linked List: O(n)",
-        ],
-        answer: ["Array: O(1), Linked List: O(n)"],
-      },
-    },
-    // 3
-    {
-      group: "2",
-      title: "Amortized Analysis of list.append()",
-      description:
-        "Recall the amortized time complexity of appending to a Python list.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "What is the amortized time complexity of `my_list.append(x)`?",
-        options: ["O(1)", "O(n)", "O(log n)", "O(n²)"],
-        answer: ["O(1)"],
-      },
-    },
-    // 4
-    {
-      group: "2",
-      title: "Dynamic Array Resizing Steps",
-      description:
-        "Order the steps Python’s list takes when resizing its capacity.",
-      isSelectOrder: true,
-      question: {
-        questionText: "Arrange these internal steps when capacity is exceeded:",
-        options: [
-          "Copy old elements to new block",
-          "Allocate new larger block",
-          "Update internal pointer",
-          "Free old block",
-        ],
-        answer: [
-          "Allocate new larger block",
-          "Copy old elements to new block",
-          "Free old block",
-          "Update internal pointer",
-        ],
-      },
-    },
-    // 5
-    {
-      group: "2",
-      title: "List Append in Code",
-      description: "Practice appending items and checking length.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write Python code to create `nums = [1,2,3]`, append `4`, then print its length.",
-      },
-    },
-    // 6
-    {
-      group: "2",
-      title: "Linked List Insertion Complexity",
-      description: "Identify insertion complexities at head and tail.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "What is the time complexity to insert:",
-        options: [
-          "At head: O(1), At tail (no pointer): O(n)",
-          "At head: O(n), At tail: O(1)",
-          "At head: O(1), At tail: O(1)",
-          "At head: O(n), At tail: O(n)",
-        ],
-        answer: ["At head: O(1), At tail (no pointer): O(n)"],
-      },
-    },
-    // 7
-    {
-      group: "2",
-      title: "Building a Simple Linked List",
-      description: "Link three nodes and print the second value.",
-      isCodeCompletion: true,
-      question: {
-        questionText: "Complete code so `head.next.v` prints `2`:",
-        options: [
-          //# 1) Correct definition, linking, and print
-          `class Node:
-    def __init__(self, v):
-        self.v = v
-        self.next = None
-
-head = Node(1)
-second = Node(2)
-third = Node(3)
-# link
-head.next = second
-second.next = third
-
-print(head.next.v)  # 2`,
-
-          //# 2) `head` is never assigned (NameError)
-          `class Node:
-    def __init__(self, v):
-        self.v = v
-        self.next = None
-
-n1 = Node(1)
-second = Node(2)
-third = Node(3)
-# link
-n1.next = second
-second.next = third
-
-print(head.next.v)  # 2`,
-
-          // # 3) Linked to the wrong node (prints 3 instead of 2)
-          `class Node:
-    def __init__(self, v):
-        self.v = v
-        self.next = None
-
-head = Node(1)
-second = Node(2)
-third = Node(3)
-# incorrect link
-head.next = third
-third.next = second
-
-print(head.next.v)  # 2`,
-
-          //# 4) Using wrong attribute name (AttributeError)
-          `class Node:
-    def __init__(self, v):
-        self.v = v
-        self.next = None
-
-head = Node(1)
-second = Node(2)
-third = Node(3)
-# link
-head.next = second
-second.next = third
-
-print(head.next.value)  # 2`,
-        ],
-        answer: `class Node:
-    def __init__(self, v):
-        self.v = v
-        self.next = None
-
-head = Node(1)
-second = Node(2)
-third = Node(3)
-# link
-head.next = second
-second.next = third
-
-print(head.next.v)  # 2`,
-      },
-    },
-    // 8
-    {
-      group: "2",
-      title: "Traversing a Linked List",
-      description: "Write code to retrieve the 3rd element from a list.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Given `head` of a linked list, write a loop to print the 3rd node’s value.",
-      },
-    },
-    // 9
-    {
-      group: "2",
-      title: "Stack ADT Characteristics",
-      description: "Identify the behavior of a stack.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "Which property defines a stack (LIFO)?",
-        options: [
-          "First In, First Out",
-          "Last In, First Out",
-          "Random Removal",
-          "Priority Removal",
-        ],
-        answer: ["Last In, First Out"],
-      },
-    },
-    // 10
-    {
-      group: "2",
-      title: "Stack Implementation with list",
-      description: "Complete push/pop methods using a Python list.",
-      isCodeCompletion: true,
-      question: {
-        questionText: "Fill in methods so `push` and `pop` work correctly:",
-        options: [
-          `class Stack:
-    def __init__(self):
-        self.data = []
-    def push(self, x):
-        self.data.append(x)
-    def pop(self):
-        return self.data.pop()`,
-
-          `class Stack:
-    def __init__(self):
-        self.data = []
-    def push(self, x):
-        self.data.append(x)
-    def pop(self):
-        return self.data.pop(0)`,
-
-          `class Stack:
-    def __init__(self):
-        self.data = []
-    def push(self, x):
-        self.data.insert(0, x)
-    def pop(self):
-        return self.data.pop()`,
-
-          `class Stack:
-    def __init__(self):
-        self.data = []
-    def push(self, x):
-        self.data.append(x)
-    def pop(self):
-        self.data.pop()`,
-        ],
-        answer: `class Stack:
-    def __init__(self):
-        self.data = []
-    def push(self, x):
-        self.data.append(x)
-    def pop(self):
-        return self.data.pop()`,
-      },
-    },
-    // 11
-    {
-      group: "2",
-      title: "Queue ADT Characteristics",
-      description: "Identify the behavior of a queue.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "Which property defines a queue (FIFO)?",
-        options: [
-          "Last In, First Out",
-          "First In, First Out",
-          "Priority Insertion",
-          "Random Access",
-        ],
-        answer: ["First In, First Out"],
-      },
-    },
-    // 12
-    {
-      group: "2",
-      title: "Queue Implementation with deque",
-      description: "Use `collections.deque` for enqueue/dequeue.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write code to:\n1. `from collections import deque`\n2. `q = deque()`\n3. `q.append(5)`\n4. `print(q.popleft())`",
-      },
-    },
-    // 13
-    {
-      group: "2",
-      title: "Comparing Append vs. Insert",
-      description: "Contrast amortized append with linked-list insert.",
-      isText: true,
-      question: {
-        questionText:
-          "In two sentences, compare `list.append()` amortized O(1) vs. linked-list insertion at head.",
-      },
-    },
-    // 14
-    {
-      group: "2",
-      title: "Real-World Use of Stacks & Queues",
-      description: "Reflect on practical applications.",
-      isText: true,
-      question: {
-        questionText:
-          "Give one real-world scenario each for using a stack and a queue.",
-      },
-    },
-    // 15
-    {
-      group: "2",
-      title: "Array vs. Linked List Trade-Offs",
-      description: "Choose when to use each structure.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "Which scenario favors a linked list over an array?",
-        options: [
-          "Frequent random access",
-          "Fixed-size buffer",
-          "Frequent insertions/deletions at arbitrary positions",
-          "Contiguous memory requirement",
-        ],
-        answer: ["Frequent insertions/deletions at arbitrary positions"],
-      },
-    },
-    // 16
-    {
-      group: "2",
-      title: "Implementing Stack via Linked List",
-      description: "Use Node pointers to model a stack.",
-      isCodeCompletion: true,
-      question: {
-        questionText: "Complete push and pop using a linked-list head pointer:",
-        options: [
-          `class Node:
-    def __init__(self, v):
-        self.v = v
-        self.next = None
-
-class Stack:
-    def __init__(self):
-        self.top = None
-
-    def push(self, x):
-        node = Node(x)
-        node.next = self.top
-        self.top = node
-
-    def pop(self):
-        val = self.top.v
-        self.top = self.top.next
-        return val`,
-
-          `class Node:
-    def __init__(self, v):
-        self.v = v
-        self.next = None
-
-class Stack:
-    def __init__(self):
-        self.top = None
-
-    def push(self, x):
-        node = Node(x)
-        node.next = self.top
-        self.top = node
-
-    def pop(self):
-        val = self.top.v
-        return val`,
-
-          `class Node:
-    def __init__(self, v):
-        self.v = v
-        self.next = None
-
-class Stack:
-    def __init__(self):
-        self.top = None
-
-    def push(self, x):
-        node = Node(x)
-        node.next = self.top
-        self.top = node
-
-    def pop(self):
-        self.top = self.top.next
-        return self.top.v`,
-
-          `class Node:
-    def __init__(self, v):
-        self.v = v
-        self.next = None
-
-class Stack:
-    def __init__(self):
-        self.top = None
-
-    def push(self, x):
-        node = Node(x)
-        self.top.next = node
-        self.top = node
-
-    def pop(self):
-        val = self.top.v
-        self.top = self.top.next
-        return val`,
-        ],
-        answer: `class Node:
-    def __init__(self, v):
-        self.v = v
-        self.next = None
-
-class Stack:
-    def __init__(self):
-        self.top = None
-
-    def push(self, x):
-        node = Node(x)
-        node.next = self.top
-        self.top = node
-
-    def pop(self):
-        val = self.top.v
-        self.top = self.top.next
-        return val`,
-      },
-    },
-    // 17
-    {
-      group: "2",
-      title: "Implementing Queue via Linked List",
-      description: "Use head/tail pointers to model a queue.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write Python code to implement `enqueue(x)` at tail and `dequeue()` at head using Node and head/tail pointers.",
-      },
-    },
-    // 18
-    {
-      group: "2",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [31, 47],
-      },
-    },
-    // 1
-    {
-      group: "3",
-      title: "Hierarchical vs. Associative Structures",
-      description:
-        "Identify which of these are hierarchical versus associative data structures.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are hierarchical data structures?",
-        options: ["Binary Tree", "Heap", "Hash Table", "Queue"],
-        answer: ["Binary Tree", "Heap"],
-      },
-    },
-    // 2
-    {
-      group: "3",
-      title: "Associative Structures",
-      description: "Identify which of these are associative data structures.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "Which of the following are associative data structures?",
-        options: ["List", "Hash Table", "Stack", "Graph"],
-        answer: ["Hash Table"],
-      },
-    },
-    // 3
-    {
-      group: "3",
-      title: "In-Order Traversal Sequence",
-      description: "Order the steps of in-order traversal for a binary tree.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange these actions in the correct order for in-order traversal:",
-        options: ["Visit left subtree", "Visit node", "Visit right subtree"],
-        answer: ["Visit left subtree", "Visit node", "Visit right subtree"],
-      },
-    },
-    // 4
-    {
-      group: "3",
-      title: "Pre-Order Traversal Implementation",
-      description:
-        "Fill in the blanks to implement pre-order traversal recursively.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Complete the `preorder` function so it prints values in root-left-right order:",
-        options: [
-          `def preorder(node):
-    if node is None:
-        return
-    print(node.value)
-    preorder(node.left)
-    preorder(node.right)`,
-
-          `def preorder(node):
-    if node is None:
-        return
-    preorder(node.left)
-    print(node.value)
-    preorder(node.right)`,
-
-          `def preorder(node):
-    if node is None:
-        return
-    preorder(node.right)
-    print(node.value)
-    preorder(node.left)`,
-        ],
-        answer: `def preorder(node):
-    if node is None:
-        return
-    print(node.value)
-    preorder(node.left)
-    preorder(node.right)`,
-      },
-    },
-    // 5
-    {
-      group: "3",
-      title: "Post-Order Traversal",
-      description: "Identify the sequence for post-order traversal.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "In post-order traversal, nodes are visited in which order?",
-        options: [
-          "Root, Left, Right",
-          "Left, Right, Root",
-          "Left, Root, Right",
-          "Right, Left, Root",
-        ],
-        answer: "Left, Right, Root",
-      },
-    },
-    // 6
-    {
-      group: "3",
-      title: "Level-Order (Breadth-First) Traversal",
-      description: "Write code to perform level-order traversal using a queue.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Given `root` of a binary tree, write a Python function `level_order(root)` that prints each level’s values using `collections.deque`.",
-      },
-    },
-    // 7
-    {
-      group: "3",
-      title: "Heap Property: Min vs. Max",
-      description: "Distinguish min-heap and max-heap properties.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "Which property defines a min-heap?",
-        options: [
-          "Every parent ≥ its children",
-          "Every parent ≤ its children",
-          "Complete binary tree shape only",
-          "Balanced tree only",
-        ],
-        answer: "Every parent ≤ its children",
-      },
-    },
-    // 8
-    {
-      group: "3",
-      title: "Using heapq: Push & Pop",
-      description: "Practice using Python’s `heapq` to push and pop values.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write code to import `heapq`, create a list `h = []`, push 5 and 2, then pop and print the smallest value.",
-      },
-    },
-    // 9
-    {
-      group: "3",
-      title: "Priority Queue Tuples",
-      description: "Implement a priority queue with custom priorities.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Complete code to push `(priority, task)` pairs so lowest priority is served first:",
-        options: [
-          `import heapq
-
-pq = []
-heapq.heappush(pq, (2, 'clean'))
-heapq.heappush(pq, (1, 'cook'))
-print(heapq.heappop(pq))  # (1, 'cook')`,
-
-          `import heapq
-
-pq = []
-heapq.push(pq, (2, 'clean'))
-heapq.push(pq, (1, 'cook'))
-print(heapq.pop(pq))`,
-
-          `import heapq
-
-pq = []
-heapq.heappush(pq, 'clean')
-heapq.heappush(pq, 'cook')
-print(heapq.heappop(pq))`,
-        ],
-        answer: `import heapq
-
-pq = []
-heapq.heappush(pq, (2, 'clean'))
-heapq.heappush(pq, (1, 'cook'))
-print(heapq.heappop(pq))  # (1, 'cook')`,
-      },
-    },
-    // 10
-    {
-      group: "3",
-      title: "Hash Table Collision Strategies",
-      description: "Identify common collision-resolution methods.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are valid hash table collision-resolution strategies?",
-        options: [
-          "Separate chaining",
-          "Open addressing",
-          "Binary search",
-          "Depth-first search",
-        ],
-        answer: ["Separate chaining", "Open addressing"],
-      },
-    },
-    // 11
-    {
-      group: "3",
-      title: "Python dict Operations",
-      description: "Practice basic insert and lookup in a dict.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write code to create `d = {}`, set `d['a']=1`, then print `d['a']`.",
-      },
-    },
-    // 12
-    {
-      group: "3",
-      title: "Load Factor Definition",
-      description: "Explain the load factor in a hash table.",
-      isSingleLineText: true,
-      question: {
-        questionText: "What is the load factor of a hash table?",
-        placeholder: "Type your answer here...",
-        answer: "Number of entries divided by number of buckets",
-      },
-    },
-    // 13
-    {
-      group: "3",
-      title: "Simple Hash Function",
-      description: "Fill in a basic hash function using modulo arithmetic.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Complete `hash_func` so it returns `sum(ord(c) for c in key) % size`:",
-        options: [
-          `def hash_func(key, size):
-    return sum(ord(c) for c in key) % size`,
-
-          `def hash_func(key, size):
-    return len(key) % size`,
-
-          `def hash_func(key, size):
-    return key % size`,
-        ],
-        answer: `def hash_func(key, size):
-    return sum(ord(c) for c in key) % size`,
-      },
-    },
-    // 14
-    {
-      group: "3",
-      title: "Open Addressing Loop",
-      description: "Complete code for linear probing collision resolution.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Fill in the `while` condition to probe next slot until an empty bucket:",
-        options: [
-          `def insert(table, key, size):
-    idx = hash_func(key, size)
-    while table[idx] is not None:
-        idx = (idx + 1) % size
-    table[idx] = key`,
-
-          `def insert(table, key, size):
-    idx = hash_func(key)
-    if table[idx] is None:
-        table[idx] = key`,
-
-          `def insert(table, key, size):
-    idx = hash_func(key, size)
-    for i in range(size):
-        table[idx] = key`,
-        ],
-        answer: `def insert(table, key, size):
-    idx = hash_func(key, size)
-    while table[idx] is not None:
-        idx = (idx + 1) % size
-    table[idx] = key`,
-      },
-    },
-    // 15
-    {
-      group: "3",
-      title: "Real-World Hash Use Case",
-      description: "Reflect on practical applications of hash tables.",
-      isText: true,
-      question: {
-        questionText:
-          "Provide one real-world use case where a hash table improves performance.",
-      },
-    },
-    // 16
-    {
-      group: "3",
-      title: "Tree vs. Hash Table Lookup",
-      description: "Compare lookup complexities in two structures.",
-      isText: true,
-      question: {
-        questionText:
-          "In two sentences, compare average-case lookup time for a hash table versus a balanced binary search tree.",
-      },
-    },
-    // 17
-    {
-      group: "3",
-      title: "Priority Queue Use Case",
-      description: "Identify when to use a heap-based priority queue.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "Which scenario best uses a priority queue (min-heap)?",
-        options: [
-          "Scheduling tasks by priority",
-          "Random element removal",
-          "First-come, first-served queue",
-          "Depth-first traversal",
-        ],
-        answer: ["Scheduling tasks by priority"],
-      },
-    },
-    // 18
-    {
-      group: "3",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [49, 67],
-      },
-    },
-    // 1
-    {
-      group: "4",
-      title: "What Is an Algorithm?",
-      description: "Define core concepts of algorithms and complexity.",
-      isText: true,
-      question: {
-        questionText:
-          "In your own words, what is an algorithm and why is time complexity important when evaluating one?",
-      },
-    },
-    // 2
-    {
-      group: "4",
-      title: "Comparison Sorts Complexity Ordering",
-      description:
-        "Order common comparison sorts by average-case time complexity.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange these sorting algorithms from lowest (fastest) to highest (slowest) average-case complexity:",
-        options: [
-          "Bubble Sort (O(n²))",
-          "Insertion Sort (O(n²))",
-          "Merge Sort (O(n log n))",
-          "Quick Sort (O(n log n))",
-        ],
-        answer: [
-          "Merge Sort (O(n log n))",
-          "Quick Sort (O(n log n))",
-          "Bubble Sort (O(n²))",
-          "Insertion Sort (O(n²))",
-        ],
-      },
-    },
-    // 3
-    {
-      group: "4",
-      title: "Bubble Sort Implementation",
-      description: "Write a basic bubble sort in Python.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write a Python function `bubble_sort(arr)` that sorts `arr` in-place using bubble sort.",
-      },
-    },
-    // 4
-    {
-      group: "4",
-      title: "Insertion Sort Implementation",
-      description: "Write a basic insertion sort in Python.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write a Python function `insertion_sort(arr)` that sorts `arr` in-place using insertion sort.",
-      },
-    },
-    // 5
-    {
-      group: "4",
-      title: "Merge Sort Code Completion",
-      description: "Fill in missing steps of merge sort.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Complete the Python `merge_sort` function so it correctly splits and merges:",
-        options: [
-          `def merge_sort(arr):
-    if len(arr) <= 1:
-        return arr
-    mid = len(arr) // 2
-    left = merge_sort(arr[:mid])
-    right = merge_sort(arr[mid:])
-    result = []
-    i = j = 0
-    while i < len(left) and j < len(right):
-        if left[i] < right[j]:
-            result.append(left[i])
-            i += 1
-        else:
-            result.append(right[j])
-            j += 1
-    result.extend(left[i:])
-    result.extend(right[j:])
-    return result`,
-
-          `def merge_sort(arr):
-    if len(arr) <= 1:
-        return arr
-    mid = len(arr) // 2
-    left = merge_sort(arr[:mid])
-    right = merge_sort(arr[mid:])
-    i = j = 0
-    while i < len(left) and j < len(right):
-        if left[i] < right[j]:
-            result.append(left[i])
-            i += 1
-        else:
-            result.append(right[j])
-            j += 1
-    result.extend(left[i:])
-    result.extend(right[j:])
-    return result`,
-
-          `def merge_sort(arr):
-    if len(arr) <= 1:
-        return arr
-    mid = len(arr) // 2
-    left = merge_sort(arr[:mid])
-    right = merge_sort(arr[mid:])
-    result = []
-    i = j = 0
-    while i < len(left) and j < len(right):
-        if left[i] < right[j]:
-            result.append(left[i])
-            i += 1
-        else:
-            result.append(right[j])
-            j += 1
-    result.extend(left[i:])
-    return result`,
-
-          `def merge_sort(arr):
-    if len(arr) <= 1:
-        return arr
-    mid = len(arr) // 2
-    left = merge_sort(arr[:mid])
-    right = merge_sort(arr[mid:])
-    result = []
-    i = j = 0
-    while i < len(left) and j < len(right):
-        if left[i] < right[j]:
-            result.append(left[i])
-            i += 1
-        else:
-            result.append(right[j])
-            j += 1
-    result.extend(right[j:])
-    return result`,
-        ],
-        answer: `def merge_sort(arr):
-    if len(arr) <= 1:
-        return arr
-    mid = len(arr) // 2
-    left = merge_sort(arr[:mid])
-    right = merge_sort(arr[mid:])
-    result = []
-    i = j = 0
-    while i < len(left) and j < len(right):
-        if left[i] < right[j]:
-            result.append(left[i])
-            i += 1
-        else:
-            result.append(right[j])
-            j += 1
-    result.extend(left[i:])
-    result.extend(right[j:])
-    return result`,
-      },
-    },
-    // 6
-    {
-      group: "4",
-      title: "Quick Sort Partition",
-      description: "Implement the Lomuto partition scheme.",
-      isCodeCompletion: true,
-      question: {
-        questionText: "Fill in the `partition` function for quick sort:",
-        options: [
-          `def partition(arr, low, high):
-    pivot = arr[high]
-    i = low - 1
-    for j in range(low, high):
-        if arr[j] <= pivot:
-            i += 1
-            arr[i], arr[j] = arr[j], arr[i]
-    arr[i+1], arr[high] = arr[high], arr[i+1]
-    return i+1`,
-
-          `def partition(arr, low, high):
-    pivot = arr[high]
-    i = low - 1
-    for j in range(low, high):
-        if arr[j] <= pivot:
-            i += 1
-            arr[i], arr[j] = arr[j], arr[i]
-    return i+1`,
-
-          `def partition(arr, low, high):
-    pivot = arr[low]
-    i = low - 1
-    for j in range(low, high):
-        if arr[j] <= pivot:
-            i += 1
-            arr[i], arr[j] = arr[j], arr[i]
-    arr[i+1], arr[high] = arr[high], arr[i+1]
-    return i+1`,
-
-          `def partition(arr, low, high):
-    pivot = arr[high]
-    i = low - 1
-    for j in range(low, high):
-        if arr[j] < pivot:
-            i += 1
-            arr[i], arr[j] = arr[j], arr[i]
-    arr[i+1], arr[high] = arr[high], arr[i+1]
-    return i+1`,
-
-          `def partition(arr, low, high):
-    pivot = arr[high]
-    i = low
-    for j in range(low, high):
-        if arr[j] <= pivot:
-            arr[i], arr[j] = arr[j], arr[i]
-            i += 1
-    arr[i], arr[high] = arr[high], arr[i]
-    return i`,
-        ],
-        answer: `def partition(arr, low, high):
-    pivot = arr[high]
-    i = low - 1
-    for j in range(low, high):
-        if arr[j] <= pivot:
-            i += 1
-            arr[i], arr[j] = arr[j], arr[i]
-    arr[i+1], arr[high] = arr[high], arr[i+1]
-    return i+1`,
-      },
-    },
-    // 7
-    {
-      group: "4",
-      title: "Sorting Stability",
-      description: "Understand stable vs. unstable sorts.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText: "Which of these sorting algorithms are stable?",
-        options: ["Bubble Sort", "Quick Sort", "Merge Sort", "Insertion Sort"],
-        answer: ["Bubble Sort", "Merge Sort", "Insertion Sort"],
-      },
-    },
-    // 8
-    {
-      group: "4",
-      title: "Binary Search Precondition",
-      description: "Identify the primary requirement for binary search.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which precondition must hold true before performing a binary search on an array?",
-        options: [
-          "Array must be sorted",
-          "Array must contain unique elements",
-          "Array must be linked-list",
-          "Array must be in contiguous memory",
-        ],
-        answer: "Array must be sorted",
-      },
-    },
-    // 9
-    {
-      group: "4",
-      title: "Binary Search Steps",
-      description: "Order the core steps of the binary search algorithm.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange these steps in the order a binary search would perform them:",
-        options: [
-          "Compare target to middle element",
-          "Adjust low/high bounds",
-          "Return index if match",
-          "Compute middle index",
-        ],
-        answer: [
-          "Compute middle index",
-          "Compare target to middle element",
-          "Return index if match",
-          "Adjust low/high bounds",
-        ],
-      },
-    },
-    // 10
-    {
-      group: "4",
-      title: "Implementing Binary Search",
-      description: "Write an iterative binary search in Python.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write a Python function `binary_search(arr, target)` that returns the index of `target` or -1 if not found.",
-      },
-    },
-    // 11
-    {
-      group: "4",
-      title: "Divide-and-Conquer Pattern",
-      description: "Explain the divide-and-conquer strategy in algorithms.",
-      isText: true,
-      question: {
-        questionText:
-          "In two sentences, explain how the divide-and-conquer approach is used in merge sort and quick sort.",
-      },
-    },
-    // 12
-    {
-      group: "4",
-      title: "BFS vs. DFS",
-      description: "Distinguish breadth-first from depth-first traversal.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "Which traversal explores neighbors level by level?",
-        options: [
-          "Depth-First Search (DFS)",
-          "Breadth-First Search (BFS)",
-          "Binary Search",
-          "Merge Sort",
-        ],
-        answer: "Breadth-First Search (BFS)",
-      },
-    },
-    // 13
-    {
-      group: "4",
-      title: "DFS Recursive Implementation",
-      description: "Write a recursive depth-first search on a graph.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Given `graph` as adjacency dict, write `def dfs(node, visited): …` that prints each node once.",
-      },
-    },
-    // 14
-    {
-      group: "4",
-      title: "BFS Iterative Implementation",
-      description: "Use a queue for breadth-first search.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write a Python `bfs(start)` that uses `collections.deque` to traverse `graph` level by level.",
-      },
-    },
-    // 15
-    {
-      group: "4",
-      title: "Graph Representation",
-      description: "Choose a graph representation format.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "Which Python data structure best represents a sparse graph?",
-        placeholder: "Type your answer here...",
-        answer: "Adjacency list",
-      },
-    },
-    // 16
-    {
-      group: "4",
-      title: "Traversal Complexity",
-      description: "Identify time complexity of BFS/DFS.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "What is the time complexity of BFS or DFS on a graph with V vertices and E edges?",
-        options: ["O(V + E)", "O(V²)", "O(E log V)", "O(V + E log V)"],
-        answer: "O(V + E)",
-      },
-    },
-    // 17
-    {
-      group: "4",
-      title: "Priority Queue for Dijkstra",
-      description: "Use `heapq` in Dijkstra’s algorithm.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write Python code to import `heapq`, push `(0, start)`, pop the smallest distance.",
-      },
-    },
-    // 18
-    {
-      group: "4",
-      title: "Dijkstra Steps Ordering",
-      description: "Arrange the high-level steps of Dijkstra’s algorithm.",
-      isSelectOrder: true,
-      question: {
-        questionText: "Arrange these Dijkstra steps in order:",
-        options: [
-          "Initialize distances",
-          "Extract min-distance node",
-          "Relax its edges",
-          "Repeat until all nodes visited",
-        ],
-        answer: [
-          "Initialize distances",
-          "Extract min-distance node",
-          "Relax its edges",
-          "Repeat until all nodes visited",
-        ],
-      },
-    },
-    // 19
-    {
-      group: "4",
-      title: "Implementing Dijkstra Relaxation",
-      description: "Fill in the relaxation step inside Dijkstra’s loop.",
-      isCodeCompletion: true,
-      question: {
-        questionText: "Complete the Python code to relax edges:",
-        options: [
-          `dist_u = dist[current]
-for neighbor, weight in graph[current]:
-    if dist_u + weight < dist[neighbor]:
-        dist[neighbor] = dist_u + weight
-        heapq.heappush(pq, (dist[neighbor], neighbor))`,
-
-          `dist_u = dist[current]
-for neighbor, weight in graph[current]:
-    if dist_u + weight < dist[neighbor]:
-        dist[neighbor] = dist_u + weight
-        # forgot to push to the queue`,
-
-          `dist_u = dist[current]
-for neighbor, weight in graph[current]:
-    if dist_u + weight <= dist[neighbor]:
-        dist[neighbor] = dist_u + weight
-        heapq.heappush(pq, (dist[neighbor], neighbor))`,
-
-          `dist_u = dist[neighbor]
-for neighbor, weight in graph[current]:
-    if dist_u + weight < dist[neighbor]:
-        dist[neighbor] = dist_u + weight
-        heapq.heappush(pq, (dist[neighbor], neighbor))`,
-
-          `dist_u = dist[current]
-for neighbor, weight in graph[current]:
-    if dist_u + weight < dist[neighbor]:
-        dist[neighbor] = dist_u + weight
-        heapq.heappush(pq, (neighbor, dist[neighbor]))`,
-        ],
-        answer: `dist_u = dist[current]
-for neighbor, weight in graph[current]:
-    if dist_u + weight < dist[neighbor]:
-        dist[neighbor] = dist_u + weight
-        heapq.heappush(pq, (dist[neighbor], neighbor))`,
-      },
-    },
-    // 20
-    {
-      group: "4",
-      title: "Real-World Graph Use Case",
-      description: "Reflect on graph algorithm applications.",
-      isText: true,
-      question: {
-        questionText:
-          "Describe one real-world problem that can be solved using BFS, DFS, or Dijkstra’s algorithm.",
-      },
-    },
-    // 21
-    {
-      group: "4",
-      title: "Graph Construction in Code",
-      description: "Build a graph adjacency list from edge list.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Given `edges = [(0,1),(1,2),(2,0)]`, write code to build `graph` as `{0:[1],1:[2],2:[0]}`.",
-      },
-    },
-    // 22
-    {
-      group: "4",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [69, 89],
-      },
-    },
-    // 1
-    {
-      group: "5",
-      title: "Processes vs. Threads",
-      description: "Distinguish processes from threads in an operating system.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which statement correctly differentiates a process from a thread?",
-        options: [
-          "A process shares memory with other processes; a thread has its own memory",
-          "A process has its own memory space; threads within a process share memory",
-          "Threads run independently of the OS; processes require kernel scheduling",
-          "Processes are lighter weight than threads",
-        ],
-        answer: [
-          "A process has its own memory space; threads within a process share memory",
-        ],
-      },
-    },
-    // 2
-    {
-      group: "5",
-      title: "Scheduling Policies Ordering",
-      description:
-        "Order common CPU scheduling policies by their typical response time fairness.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange these scheduling policies from most fair (each process gets time) to least fair:",
-        options: [
-          "Round Robin",
-          "First-Come, First-Served (FCFS)",
-          "Shortest Job Next",
-          "Priority Scheduling",
-        ],
-        answer: [
-          "Round Robin",
-          "Shortest Job Next",
-          "FCFS",
-          "Priority Scheduling",
-        ],
-      },
-    },
-    // 3
-    {
-      group: "5",
-      title: "Context Switching Steps",
-      description:
-        "Order the high-level steps the OS takes during a context switch.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange these actions in the order performed during a context switch:",
-        options: [
-          "Save current CPU registers to PCB",
-          "Load next process’s registers from PCB",
-          "Update scheduler data structures",
-          "Jump to the next process’s instruction pointer",
-        ],
-        answer: [
-          "Save current CPU registers to PCB",
-          "Update scheduler data structures",
-          "Load next process’s registers from PCB",
-          "Jump to the next process’s instruction pointer",
-        ],
-      },
-    },
-    // 4
-    {
-      group: "5",
-      title: "Memory Management Overview",
-      description: "Explain why an OS needs to manage memory.",
-      isText: true,
-      question: {
-        questionText:
-          "In your own words, why does an operating system use memory management (e.g., paging, segmentation)?",
-      },
-    },
-    // 5
-    {
-      group: "5",
-      title: "Paging Definition",
-      description: "Identify the core concept of paging.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "What does paging in memory management refer to?",
-        options: [
-          "Dividing physical memory into fixed-size frames",
-          "Grouping processes into pages for scheduling",
-          "Loading entire processes into contiguous memory",
-          "Swapping registers between processes",
-        ],
-        answer: ["Dividing physical memory into fixed-size frames"],
-      },
-    },
-    // 6
-    {
-      group: "5",
-      title: "Segmentation Definition",
-      description: "Identify the core concept of segmentation.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "What is memory segmentation?",
-        options: [
-          "Combining multiple pages into one segment",
-          "Dividing memory into variable-sized logical segments",
-          "Allocating fixed-size frames to segments",
-          "Swapping entire segments between disk and RAM",
-        ],
-        answer: ["Dividing memory into variable-sized logical segments"],
-      },
-    },
-    // 7
-    {
-      group: "5",
-      title: "Virtual Memory Benefits",
-      description: "Reflect on why virtual memory is useful.",
-      isText: true,
-      question: {
-        questionText:
-          "List two benefits that virtual memory provides to applications and the OS.",
-      },
-    },
-    // 8
-    {
-      group: "5",
-      title: "Page Replacement Algorithms",
-      description:
-        "Order common page-replacement strategies by their eviction policy.",
-      isSelectOrder: true,
-      question: {
-        questionText: "Arrange these algorithms by which page they evict:",
-        options: [
-          "FIFO (First-In, First-Out)",
-          "LRU (Least Recently Used)",
-          "Optimal (theoretical best)",
-          "Clock (second-chance)",
-        ],
-        answer: [
-          "FIFO (First-In, First-Out)",
-          "Clock (second-chance)",
-          "LRU (Least Recently Used)",
-          "Optimal (theoretical best)",
-        ],
-      },
-    },
-    // 9
-    {
-      group: "5",
-      title: "File Descriptor Basics",
-      description:
-        "Identify the role of file descriptors in UNIX-like systems.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What integer values are typically used for standard input, output, and error file descriptors?",
-        placeholder: "Type your answer here...",
-        answer: "0, 1, and 2",
-      },
-    },
-    // 10
-    {
-      group: "5",
-      title: "File Buffering Layers",
-      description: "Select which layers buffer file I/O operations.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following buffer data during file operations?",
-        options: [
-          "Application-level buffers (e.g., stdio)",
-          "OS page cache",
-          "Disk controller cache",
-          "CPU register cache",
-        ],
-        answer: [
-          "Application-level buffers (e.g., stdio)",
-          "OS page cache",
-          "Disk controller cache",
-        ],
-      },
-    },
-    // 11
-    {
-      group: "5",
-      title: "Device Types",
-      description: "Distinguish block devices from character devices.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are block devices versus character devices?",
-        options: [
-          "Hard disk (block)",
-          "Serial port (char)",
-          "Keyboard (char)",
-          "USB mass storage (block)",
-        ],
-        answer: [
-          "Hard disk (block)",
-          "USB mass storage (block)",
-          "Serial port (char)",
-          "Keyboard (char)",
-        ],
-      },
-    },
-    // 12
-    {
-      group: "5",
-      title: "System Call Sequence",
-      description: "Order the steps when making a file read system call.",
-      isSelectOrder: true,
-      question: {
-        questionText: "Arrange these steps for `read()` system call:",
-        options: [
-          "User process invokes read() in libc",
-          "Mode switch to kernel",
-          "Kernel locates file and copies data",
-          "Mode switch back to user",
-        ],
-        answer: [
-          "User process invokes read() in libc",
-          "Mode switch to kernel",
-          "Kernel locates file and copies data",
-          "Mode switch back to user",
-        ],
-      },
-    },
-    // 13
-    {
-      group: "5",
-      title: "Reading a File in Python",
-      description: "Practice file I/O with Python’s built-in functions.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write Python code to open `data.txt`, read its contents into a string, and close the file.",
-      },
-    },
-    // 14
-    {
-      group: "5",
-      title: "File Permissions Overview",
-      description: "Explain how UNIX file permissions work.",
-      isText: true,
-      question: {
-        questionText:
-          "Describe the three permission types (r, w, x) and who (owner, group, others) they apply to.",
-      },
-    },
-    // 15
-    {
-      group: "5",
-      title: "Caching Strategies",
-      description: "Select common caching strategies used by OS and hardware.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText: "Which of these are caching strategies?",
-        options: [
-          "Write-back",
-          "Write-through",
-          "Write-around",
-          "Write-behind",
-        ],
-        answer: ["Write-back", "Write-through", "Write-around"],
-      },
-    },
-    // 16
-    {
-      group: "5",
-      title: "Mounting Filesystems",
-      description: "Understand how filesystems are mounted in UNIX.",
-      isText: true,
-      question: {
-        questionText:
-          "In one sentence, explain what the `mount` command does in UNIX-like systems.",
-      },
-    },
-    // 17
-    {
-      group: "5",
-      title: "Syscall vs Library Call",
-      description:
-        "Differentiate system calls from library (user-space) calls.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What is the main difference between a system call and a standard library call?",
-        placeholder: "Type your answer here...",
-        answer:
-          "System calls transition to kernel mode; library calls stay in user mode",
-      },
-    },
-    // 18
-    {
-      group: "5",
-      title: "Memory Protection Mechanisms",
-      description: "Identify mechanisms the OS uses to protect process memory.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which features help protect one process’s memory from another?",
-        options: [
-          "Virtual memory paging",
-          "Segmentation",
-          "Address Space Layout Randomization (ASLR)",
-          "Process context switches",
-        ],
-        answer: [
-          "Virtual memory paging",
-          "Segmentation",
-          "Address Space Layout Randomization (ASLR)",
-        ],
-      },
-    },
-    // 19
-    {
-      group: "5",
-      title: "Journaling File Systems",
-      description: "Explain why journaling helps file-system reliability.",
-      isText: true,
-      question: {
-        questionText:
-          "In two sentences, describe how journaling in a file system prevents data corruption after a crash.",
-      },
-    },
-    // 20
-    {
-      group: "5",
-      title: "OS Logging Facilities",
-      description: "Understand how the OS logs events and errors.",
-      isText: true,
-      question: {
-        questionText:
-          "Name a common operating system logging facility and what it’s used for.",
-      },
-    },
-    // 21
-    {
-      group: "5",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [91, 110],
-      },
-    },
-  ],
+  //   "compsci-en": [
+  //     {
+  //       group: "introduction",
+  //       title: "Introduction To Computer Science",
+  //       isStudyGuide: true,
+  //       description:
+  //         "Expose yourself to fundamentals to improve the quality of your learning before making progress.",
+  //       question: {
+  //         questionText: (
+  //           <div>
+  //             <p style={{ marginBottom: 12 }}>
+  //               {" "}
+  //               One of the best predictors for student success is exposure to
+  //               course material before studying it. You're encouraged to read
+  //               about the fundamentals of software in the study guide before
+  //               starting. You can reference this study guide in the menu
+  //               throughout your progress too.
+  //             </p>
+
+  //             <p style={{ marginBottom: 12 }}>
+  //               Remember to fail faster and fail forward! The real education
+  //               happens when you push through a challenge. We'll start off nice
+  //               and easy at first, but then we'll start to level up the difficulty
+  //               as you collect more progress. Make sure to use the tools at your
+  //               disposal! You're going to need it.
+  //             </p>
+  //           </div>
+  //         ),
+  //         metaData: `
+  // We’ll evolve a single dataset through each core chapter to illustrate connections:
+
+  // 1. Data Structures I — Arrays & Strings
+  // \`\`\`python
+  // # Step 1: Start with a list of numbers
+  // data = [3, 1, 4, 1, 5]
+  // print(data[2])           # O(1) access → 4
+  // \`\`\`
+  // Lists store items contiguously, allowing constant-time reads but dynamic sizing.
+
+  // 2. Data Structures II — Linked Lists
+  // \`\`\`python
+  // # Step 2: Convert list into a singly linked list
+  // class Node:
+  //     def __init__(self, value):
+  //         self.value = value
+  //         self.next = None
+
+  // def to_linked_list(arr):
+  //     head = None
+  //     for item in reversed(arr):
+  //         node = Node(item)
+  //         node.next = head
+  //         head = node
+  //     return head
+
+  // list_head = to_linked_list(data)
+  // print(list_head.value)   # 3 at head, traversal is O(n)
+  // \`\`\`
+  // Linked lists allow dynamic insertion but require linear traversal for access.
+
+  // 3. Data Structures III — Trees (Array & Hash Map)
+  // \`\`\`python
+  // # 3a. Binary heap stored in an array (complete binary tree)
+  // heap = [None, 3, 1, 4, 1, 5]  # 1-based index: parent i, children 2i & 2i+1
+  // root, left, right = heap[1], heap[2], heap[3]
+  // print(root, left, right)      # 3 1 4
+
+  // # 3b. General tree with an adjacency hash map
+  // tree = {
+  //     "A": ["B", "C"],
+  //     "B": ["D", "E"],
+  //     "C": ["F"],
+  //     "D": [], "E": [], "F": []
+  // }
+
+  // # 3c. Depth-First Search (DFS) — preorder
+  // def dfs(node):
+  //     stack = [node]
+  //     while stack:
+  //         cur = stack.pop()
+  //         print(cur, end=" ")
+  //         # push children in reverse to visit left-to-right
+  //         for child in reversed(tree[cur]):
+  //             stack.append(child)
+
+  // dfs("A")   # A B D E C F  — O(n)
+
+  // # 3d. Breadth-First Search (BFS)
+  // from collections import deque
+  // def bfs(node):
+  //     q = deque([node])
+  //     while q:
+  //         cur = q.popleft()
+  //         print(cur, end=" ")
+  //         q.extend(tree[cur])
+
+  // bfs("A")   # A B C D E F  — O(n)
+  // \`\`\`
+  // *Array* representation offers O(1) parent/child math for complete trees (heaps);
+  // a *hash-map* adjacency list provides flexible, sparse storage with O(1) add-child.
+  // DFS explores depth before breadth using a stack; BFS explores level by level using a queue.
+
+  // 4. Algorithms I — Sorting
+  // \`\`\`python
+  // # Step 4: Sort the list in-place via bubble sort
+  // def bubble_sort(a):
+  //     n = len(a)
+  //     for i in range(n):
+  //         for j in range(0, n - i - 1):
+  //             if a[j] > a[j + 1]:
+  //                 a[j], a[j + 1] = a[j + 1], a[j]
+
+  // bubble_sort(data)
+  // print(data)  # [1, 1, 3, 4, 5] • O(n²)
+  // \`\`\`
+  // Elementary sorts teach algorithmic structure; bubble sort is O(n²).
+
+  // 5. Algorithms II — Search
+  // \`\`\`python
+  // # Step 5: Perform binary search on sorted list
+  // def binary_search(a, target):
+  //     low, high = 0, len(a) - 1
+  //     while low <= high:
+  //         mid = (low + high) // 2
+  //         if a[mid] == target:
+  //             return mid
+  //         elif a[mid] < target:
+  //             low = mid + 1
+  //         else:
+  //             high = mid - 1
+  //     return -1
+
+  // pos = binary_search(data, 4)
+  // print(pos)  # index of value 4, O(log n)
+  // \`\`\`
+  // Divide-and-conquer search runs in logarithmic time.
+
+  // 6. Operating Systems — File I/O
+  // \`\`\`python
+  // # Step 6: Read a file with OS support
+  // with open('data.txt', 'r', encoding='utf-8') as f:
+  //     contents = f.read()
+  // print(contents)
+  // \`\`\`
+  // Behind the scenes: the OS schedules I/O, buffers data, and performs context switches.
+
+  // ***Advice***
+
+  // ***Trace manually:*** Walk through indices, pointers **and DFS/BFS orderings** on paper.
+  // ***Annotate:*** Mark time complexities alongside loops (# O(n²), # O(log n)).
+  // ***Experiment:*** Tweak each example in your REPL or editor to see real outputs.
+
+  // This single evolving example now links arrays, linked lists, **tree representations with DFS & BFS**, algorithms, and OS interactions—showing how each layer builds on the last.
+  // `,
+  //       },
+  //     },
+
+  //     {
+  //       group: "tutorial",
+  //       title: "OOP Basics: Class and Instance",
+  //       description: "Identify classes vs. instances in Python.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText:
+  //           "In Python OOP, which of the following best describes a class?",
+  //         options: [
+  //           "A blueprint that defines attributes and behaviors",
+  //           "A specific object created during execution",
+  //           "A standalone function outside of any object",
+  //           "A module imported into a script",
+  //         ],
+  //         answer: "A blueprint that defines attributes and behaviors",
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Defining __init__ and Methods",
+  //       description: "Order Python class definition steps.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the steps to define a Python class with an __init__ and a method:",
+  //         options: [
+  //           "Use class keyword with class name",
+  //           "Define __init__ method with parameters (self, ...)",
+  //           "Define additional methods indented at class level",
+  //           "Instantiate the class by calling ClassName()",
+  //         ],
+  //         answer: [
+  //           "Use class keyword with class name",
+  //           "Define __init__ method with parameters (self, ...)",
+  //           "Define additional methods indented at class level",
+  //           "Instantiate the class by calling ClassName()",
+  //         ],
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Creating an Instance",
+  //       description: "Select correct steps to instantiate a Python object.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Select all the correct steps to create an object from a Python class:",
+  //         options: [
+  //           "Call the class with parentheses and required arguments",
+  //           "Assign the result to a variable",
+  //           "Import the class from its module",
+  //           "Pass arguments to __init__",
+  //         ],
+  //         answer: [
+  //           "Call the class with parentheses and required arguments",
+  //           "Assign the result to a variable",
+  //           "Pass arguments to __init__",
+  //         ],
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Code Completion: Define a Python Class",
+  //       description: "Choose the correct class definition snippet.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Which snippet correctly defines a Python class Person with name and age?",
+  //         options: [
+  //           "class Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age",
+  //           "def Person(name, age):\n    return { 'name': name, 'age': age }",
+  //           "class Person(name, age):\n    self.name = name\n    self.age = age",
+  //           "class Person:\n    name = None\n    age = None",
+  //         ],
+  //         answer:
+  //           "class Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age",
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Implement a Method",
+  //       description: "Add a method to your Python class.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Extend the Person class by adding a greet(self) method that returns 'Hello, my name is ' + self.name.",
+  //         answer: null,
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Accessing Attributes",
+  //       description: "Recall Python attribute access syntax.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What syntax retrieves the age attribute from a person instance?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "person.age",
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Shell Practice: Initialize Python Project",
+  //       description:
+  //         "Use Bash to set up a new project directory and Python file.",
+  //       isCode: true,
+  //       isTerminal: true,
+  //       question: {
+  //         questionText:
+  //           "In Bash, create a directory named `project`, change into it, and then create an empty Python file called `app.py`.",
+  //         answer: "mkdir project && cd project && touch app.py",
+  //       },
+  //     },
+
+  //     {
+  //       group: "tutorial",
+  //       title: "OOP Benefit",
+  //       description: "Explain an advantage of Python OOP.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "In your own words, explain one advantage of using classes and objects in Python.",
+  //         answer: null,
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [1, 8],
+  //       },
+  //     },
+
+  //     // 1
+  //     {
+  //       group: "1",
+  //       title: "Abstract Data Types vs. Concrete Implementations",
+  //       description:
+  //         "Distinguish abstract data types (ADTs) from their concrete implementations.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText: "Which of the following are abstract data types?",
+  //         options: ["List", "Stack", "Queue", "Array", "Binary Tree"],
+  //         answer: ["Stack", "Queue", "Binary Tree"],
+  //       },
+  //     },
+  //     // 2
+  //     {
+  //       group: "1",
+  //       title: "Complexity Classes Ordering",
+  //       description:
+  //         "Order common complexity classes from fastest to slowest growth.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange these complexity classes from fastest (lowest growth) to slowest (highest growth):",
+  //         options: ["O(1)", "O(log n)", "O(n)", "O(n log n)", "O(n²)"],
+  //         answer: ["O(1)", "O(log n)", "O(n)", "O(n log n)", "O(n²)"],
+  //       },
+  //     },
+  //     // 3
+  //     {
+  //       group: "1",
+  //       title: "Array Access Complexity",
+  //       description: "Identify the time complexity of array indexing.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "What is the Big-O time complexity to access an element by index in a contiguous array?",
+  //         options: ["O(1)", "O(log n)", "O(n)", "O(n²)"],
+  //         answer: ["O(1)"],
+  //       },
+  //     },
+  //     // 4
+  //     {
+  //       group: "1",
+  //       title: "Contiguous vs. Non-contiguous Storage",
+  //       description: "Distinguish data structures by their memory layout.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which data structure stores its elements contiguously in memory?",
+  //         options: ["Array", "Linked List", "Binary Tree", "Hash Table"],
+  //         answer: "Array",
+  //       },
+  //     },
+  //     // 5
+  //     {
+  //       group: "1",
+  //       title: "Python List Indexing",
+  //       description: "Practice simple list indexing in Python.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Create a Python list called `nums` with values `[3, 1, 4, 1, 5]` and print the third element (index 2).",
+  //       },
+  //     },
+  //     // 6
+  //     {
+  //       group: "1",
+  //       title: "List Indexing Code Completion",
+  //       description: "Fill in the missing code to index a Python list.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText: "Complete the following code:",
+  //         options: [
+  //           "nums = [3, 1, 4, 1, 5]\nprint(nums[2])",
+  //           "nums = [3, 1, 4, 1, 5]\nprint(nums[3])",
+  //           "nums = [3, 1, 4, 1, 5]\nprint(nums[len(nums)])",
+  //         ],
+  //         answer: "nums = [3, 1, 4, 1, 5]\nprint(nums[2])",
+  //       },
+  //     },
+  //     // 7
+  //     {
+  //       group: "1",
+  //       title: "Why Complexity Matters",
+  //       description: "Reflect on the importance of algorithmic complexity.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "In your own words, explain why understanding time complexity (Big-O) is important when choosing a data structure.",
+  //       },
+  //     },
+  //     // 8
+  //     {
+  //       group: "1",
+  //       title: "Amortized Analysis of append()",
+  //       description: "Identify amortized time complexity of Python list append.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText:
+  //           "What is the amortized time complexity of `list.append()` in Python?",
+  //         options: ["O(1)", "O(log n)", "O(n)", "O(n²)"],
+  //         answer: "O(1)",
+  //       },
+  //     },
+  //     // 9
+  //     {
+  //       group: "1",
+  //       title: "Dynamic Array Resizing Steps",
+  //       description:
+  //         "Order the internal steps that a dynamic array takes when it grows.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the steps Python’s list takes when it needs more capacity:",
+  //         options: [
+  //           "Allocate new larger block",
+  //           "Copy old elements to new block",
+  //           "Free the old block",
+  //           "Update internal pointer",
+  //         ],
+  //         answer: [
+  //           "Allocate new larger block",
+  //           "Copy old elements to new block",
+  //           "Free the old block",
+  //           "Update internal pointer",
+  //         ],
+  //       },
+  //     },
+  //     // 10
+  //     {
+  //       group: "1",
+  //       title: "Traversing a List",
+  //       description: "Write code to traverse and print each element of a list.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Given `items = [10, 20, 30, 40]`, write a Python for-loop that prints each item.",
+  //       },
+  //     },
+  //     // 11
+  //     {
+  //       group: "1",
+  //       title: "List Length Operator",
+  //       description: "Identify the operator that returns the length of a list.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "Which Python built-in function returns the number of elements in a list?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "len",
+  //       },
+  //     },
+  //     // 12
+  //     {
+  //       group: "1",
+  //       title: "Immutable vs. Mutable Sequences",
+  //       description: "Distinguish lists from tuples in Python.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "Which of the following statements is true?",
+  //         options: [
+  //           "Lists are immutable, tuples are mutable",
+  //           "Lists are mutable, tuples are immutable",
+  //           "Both are immutable",
+  //           "Both are mutable",
+  //         ],
+  //         answer: "Lists are mutable, tuples are immutable",
+  //       },
+  //     },
+  //     // 13
+  //     {
+  //       group: "1",
+  //       title: "String as Character Array",
+  //       description: "Convert a string into a list of its characters.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write Python code to turn the string `\"hello\"` into `['h','e','l','l','o']`.",
+  //       },
+  //     },
+  //     // 14
+  //     {
+  //       group: "1",
+  //       title: "Implementing a Simple Stack",
+  //       description: "Use a Python list to model a stack (LIFO).",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText: "Complete the methods to push and pop from a stack:",
+  //         options: [
+  //           // Correct: uses append and pop(), returns the popped value
+  //           `class Stack:
+  //     def __init__(self):
+  //         self.data = []
+
+  //     def push(self, x):
+  //         self.data.append(x)
+
+  //     def pop(self):
+  //         return self.data.pop()`,
+
+  //           // Wrong: forgets to return the popped value
+  //           `class Stack:
+  //     def __init__(self):
+  //         self.data = []
+
+  //     def push(self, x):
+  //         self.data.append(x)
+
+  //     def pop(self):
+  //         self.data.pop()`,
+
+  //           // Wrong: uses FIFO pop(0) instead of LIFO
+  //           `class Stack:
+  //     def __init__(self):
+  //         self.data = []
+
+  //     def push(self, x):
+  //         self.data.append(x)
+
+  //     def pop(self):
+  //         return self.data.pop(0)`,
+
+  //           // Wrong: inserts at the front, reversing the order
+  //           `class Stack:
+  //     def __init__(self):
+  //         self.data = []
+
+  //     def push(self, x):
+  //         self.data.insert(0, x)
+
+  //     def pop(self):
+  //         return self.data.pop()`,
+  //         ],
+  //         answer: `class Stack:
+  //     def __init__(self):
+  //         self.data = []
+
+  //     def push(self, x):
+  //         self.data.append(x)
+
+  //     def pop(self):
+  //         return self.data.pop()`,
+  //       },
+  //     },
+  //     // 15
+  //     {
+  //       group: "1",
+  //       title: "Use Cases for Different Structures",
+  //       description: "Reflect on where you’d use arrays vs. stacks.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Give one real-world scenario where a stack (LIFO) is preferred over a plain list.",
+  //       },
+  //     },
+  //     // 16
+  //     {
+  //       group: "1",
+  //       title: "Pointer-Style Traversal (Conceptual)",
+  //       description: "Understand how a linked list differs in traversal.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "In contrast to arrays, how does a linked list traverse from one element to the next?",
+  //       },
+  //     },
+  //     // 17
+  //     {
+  //       group: "1",
+  //       title: "Implementing a Queue with deque",
+  //       description: "Use `collections.deque` to model a queue (FIFO).",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write Python code to import `deque`, enqueue 1,2,3, then dequeue one element.",
+  //       },
+  //     },
+  //     // 18
+  //     {
+  //       group: "1",
+  //       title: "Comparing Access Patterns",
+  //       description: "Discuss random vs. sequential access trade-offs.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Why are arrays good for random access but linked lists are not?",
+  //       },
+  //     },
+  //     // 19
+  //     {
+  //       group: "1",
+  //       title: "List Initialization",
+  //       description: "Allocate a fixed-size list with default values.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText: "Write code to create a list of five zeros in Python.",
+  //       },
+  //     },
+  //     // 20
+  //     {
+  //       group: "1",
+  //       title: "Importance of Foundations",
+  //       description: "Summarize key takeaways from Chapter 1.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "In two sentences, explain why understanding data-structure foundations (ADTs, complexity, memory layout) is crucial before diving into implementations.",
+  //       },
+  //     },
+  //     // 21
+  //     {
+  //       group: "1",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [10, 29],
+  //       },
+  //     },
+  //     // 1
+  //     {
+  //       group: "2",
+  //       title: "Memory Layout: Array vs. Linked List",
+  //       description:
+  //         "Compare how arrays and linked lists store elements in memory.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "Which statement correctly describes memory layout?",
+  //         options: [
+  //           "Arrays use node pointers scattered in memory",
+  //           "Linked lists store elements contiguously",
+  //           "Arrays store elements contiguously, linked lists use pointers",
+  //           "Both use contiguous memory blocks",
+  //         ],
+  //         answer: [
+  //           "Arrays store elements contiguously, linked lists use pointers",
+  //         ],
+  //       },
+  //     },
+  //     // 2
+  //     {
+  //       group: "2",
+  //       title: "Access Time: Array Indexing vs. List Traversal",
+  //       description: "Identify the time complexity of accessing vs. traversing.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText:
+  //           "What are the time complexities for accessing the 𝑖ᵗʰ element?",
+  //         options: [
+  //           "Array: O(1), Linked List: O(n)",
+  //           "Array: O(n), Linked List: O(1)",
+  //           "Array: O(log n), Linked List: O(log n)",
+  //           "Array: O(n), Linked List: O(n)",
+  //         ],
+  //         answer: ["Array: O(1), Linked List: O(n)"],
+  //       },
+  //     },
+  //     // 3
+  //     {
+  //       group: "2",
+  //       title: "Amortized Analysis of list.append()",
+  //       description:
+  //         "Recall the amortized time complexity of appending to a Python list.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText:
+  //           "What is the amortized time complexity of `my_list.append(x)`?",
+  //         options: ["O(1)", "O(n)", "O(log n)", "O(n²)"],
+  //         answer: ["O(1)"],
+  //       },
+  //     },
+  //     // 4
+  //     {
+  //       group: "2",
+  //       title: "Dynamic Array Resizing Steps",
+  //       description:
+  //         "Order the steps Python’s list takes when resizing its capacity.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText: "Arrange these internal steps when capacity is exceeded:",
+  //         options: [
+  //           "Copy old elements to new block",
+  //           "Allocate new larger block",
+  //           "Update internal pointer",
+  //           "Free old block",
+  //         ],
+  //         answer: [
+  //           "Allocate new larger block",
+  //           "Copy old elements to new block",
+  //           "Free old block",
+  //           "Update internal pointer",
+  //         ],
+  //       },
+  //     },
+  //     // 5
+  //     {
+  //       group: "2",
+  //       title: "List Append in Code",
+  //       description: "Practice appending items and checking length.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write Python code to create `nums = [1,2,3]`, append `4`, then print its length.",
+  //       },
+  //     },
+  //     // 6
+  //     {
+  //       group: "2",
+  //       title: "Linked List Insertion Complexity",
+  //       description: "Identify insertion complexities at head and tail.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "What is the time complexity to insert:",
+  //         options: [
+  //           "At head: O(1), At tail (no pointer): O(n)",
+  //           "At head: O(n), At tail: O(1)",
+  //           "At head: O(1), At tail: O(1)",
+  //           "At head: O(n), At tail: O(n)",
+  //         ],
+  //         answer: ["At head: O(1), At tail (no pointer): O(n)"],
+  //       },
+  //     },
+  //     // 7
+  //     {
+  //       group: "2",
+  //       title: "Building a Simple Linked List",
+  //       description: "Link three nodes and print the second value.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText: "Complete code so `head.next.v` prints `2`:",
+  //         options: [
+  //           //# 1) Correct definition, linking, and print
+  //           `class Node:
+  //     def __init__(self, v):
+  //         self.v = v
+  //         self.next = None
+
+  // head = Node(1)
+  // second = Node(2)
+  // third = Node(3)
+  // # link
+  // head.next = second
+  // second.next = third
+
+  // print(head.next.v)  # 2`,
+
+  //           //# 2) `head` is never assigned (NameError)
+  //           `class Node:
+  //     def __init__(self, v):
+  //         self.v = v
+  //         self.next = None
+
+  // n1 = Node(1)
+  // second = Node(2)
+  // third = Node(3)
+  // # link
+  // n1.next = second
+  // second.next = third
+
+  // print(head.next.v)  # 2`,
+
+  //           // # 3) Linked to the wrong node (prints 3 instead of 2)
+  //           `class Node:
+  //     def __init__(self, v):
+  //         self.v = v
+  //         self.next = None
+
+  // head = Node(1)
+  // second = Node(2)
+  // third = Node(3)
+  // # incorrect link
+  // head.next = third
+  // third.next = second
+
+  // print(head.next.v)  # 2`,
+
+  //           //# 4) Using wrong attribute name (AttributeError)
+  //           `class Node:
+  //     def __init__(self, v):
+  //         self.v = v
+  //         self.next = None
+
+  // head = Node(1)
+  // second = Node(2)
+  // third = Node(3)
+  // # link
+  // head.next = second
+  // second.next = third
+
+  // print(head.next.value)  # 2`,
+  //         ],
+  //         answer: `class Node:
+  //     def __init__(self, v):
+  //         self.v = v
+  //         self.next = None
+
+  // head = Node(1)
+  // second = Node(2)
+  // third = Node(3)
+  // # link
+  // head.next = second
+  // second.next = third
+
+  // print(head.next.v)  # 2`,
+  //       },
+  //     },
+  //     // 8
+  //     {
+  //       group: "2",
+  //       title: "Traversing a Linked List",
+  //       description: "Write code to retrieve the 3rd element from a list.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Given `head` of a linked list, write a loop to print the 3rd node’s value.",
+  //       },
+  //     },
+  //     // 9
+  //     {
+  //       group: "2",
+  //       title: "Stack ADT Characteristics",
+  //       description: "Identify the behavior of a stack.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "Which property defines a stack (LIFO)?",
+  //         options: [
+  //           "First In, First Out",
+  //           "Last In, First Out",
+  //           "Random Removal",
+  //           "Priority Removal",
+  //         ],
+  //         answer: ["Last In, First Out"],
+  //       },
+  //     },
+  //     // 10
+  //     {
+  //       group: "2",
+  //       title: "Stack Implementation with list",
+  //       description: "Complete push/pop methods using a Python list.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText: "Fill in methods so `push` and `pop` work correctly:",
+  //         options: [
+  //           `class Stack:
+  //     def __init__(self):
+  //         self.data = []
+  //     def push(self, x):
+  //         self.data.append(x)
+  //     def pop(self):
+  //         return self.data.pop()`,
+
+  //           `class Stack:
+  //     def __init__(self):
+  //         self.data = []
+  //     def push(self, x):
+  //         self.data.append(x)
+  //     def pop(self):
+  //         return self.data.pop(0)`,
+
+  //           `class Stack:
+  //     def __init__(self):
+  //         self.data = []
+  //     def push(self, x):
+  //         self.data.insert(0, x)
+  //     def pop(self):
+  //         return self.data.pop()`,
+
+  //           `class Stack:
+  //     def __init__(self):
+  //         self.data = []
+  //     def push(self, x):
+  //         self.data.append(x)
+  //     def pop(self):
+  //         self.data.pop()`,
+  //         ],
+  //         answer: `class Stack:
+  //     def __init__(self):
+  //         self.data = []
+  //     def push(self, x):
+  //         self.data.append(x)
+  //     def pop(self):
+  //         return self.data.pop()`,
+  //       },
+  //     },
+  //     // 11
+  //     {
+  //       group: "2",
+  //       title: "Queue ADT Characteristics",
+  //       description: "Identify the behavior of a queue.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "Which property defines a queue (FIFO)?",
+  //         options: [
+  //           "Last In, First Out",
+  //           "First In, First Out",
+  //           "Priority Insertion",
+  //           "Random Access",
+  //         ],
+  //         answer: ["First In, First Out"],
+  //       },
+  //     },
+  //     // 12
+  //     {
+  //       group: "2",
+  //       title: "Queue Implementation with deque",
+  //       description: "Use `collections.deque` for enqueue/dequeue.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write code to:\n1. `from collections import deque`\n2. `q = deque()`\n3. `q.append(5)`\n4. `print(q.popleft())`",
+  //       },
+  //     },
+  //     // 13
+  //     {
+  //       group: "2",
+  //       title: "Comparing Append vs. Insert",
+  //       description: "Contrast amortized append with linked-list insert.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "In two sentences, compare `list.append()` amortized O(1) vs. linked-list insertion at head.",
+  //       },
+  //     },
+  //     // 14
+  //     {
+  //       group: "2",
+  //       title: "Real-World Use of Stacks & Queues",
+  //       description: "Reflect on practical applications.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Give one real-world scenario each for using a stack and a queue.",
+  //       },
+  //     },
+  //     // 15
+  //     {
+  //       group: "2",
+  //       title: "Array vs. Linked List Trade-Offs",
+  //       description: "Choose when to use each structure.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "Which scenario favors a linked list over an array?",
+  //         options: [
+  //           "Frequent random access",
+  //           "Fixed-size buffer",
+  //           "Frequent insertions/deletions at arbitrary positions",
+  //           "Contiguous memory requirement",
+  //         ],
+  //         answer: ["Frequent insertions/deletions at arbitrary positions"],
+  //       },
+  //     },
+  //     // 16
+  //     {
+  //       group: "2",
+  //       title: "Implementing Stack via Linked List",
+  //       description: "Use Node pointers to model a stack.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText: "Complete push and pop using a linked-list head pointer:",
+  //         options: [
+  //           `class Node:
+  //     def __init__(self, v):
+  //         self.v = v
+  //         self.next = None
+
+  // class Stack:
+  //     def __init__(self):
+  //         self.top = None
+
+  //     def push(self, x):
+  //         node = Node(x)
+  //         node.next = self.top
+  //         self.top = node
+
+  //     def pop(self):
+  //         val = self.top.v
+  //         self.top = self.top.next
+  //         return val`,
+
+  //           `class Node:
+  //     def __init__(self, v):
+  //         self.v = v
+  //         self.next = None
+
+  // class Stack:
+  //     def __init__(self):
+  //         self.top = None
+
+  //     def push(self, x):
+  //         node = Node(x)
+  //         node.next = self.top
+  //         self.top = node
+
+  //     def pop(self):
+  //         val = self.top.v
+  //         return val`,
+
+  //           `class Node:
+  //     def __init__(self, v):
+  //         self.v = v
+  //         self.next = None
+
+  // class Stack:
+  //     def __init__(self):
+  //         self.top = None
+
+  //     def push(self, x):
+  //         node = Node(x)
+  //         node.next = self.top
+  //         self.top = node
+
+  //     def pop(self):
+  //         self.top = self.top.next
+  //         return self.top.v`,
+
+  //           `class Node:
+  //     def __init__(self, v):
+  //         self.v = v
+  //         self.next = None
+
+  // class Stack:
+  //     def __init__(self):
+  //         self.top = None
+
+  //     def push(self, x):
+  //         node = Node(x)
+  //         self.top.next = node
+  //         self.top = node
+
+  //     def pop(self):
+  //         val = self.top.v
+  //         self.top = self.top.next
+  //         return val`,
+  //         ],
+  //         answer: `class Node:
+  //     def __init__(self, v):
+  //         self.v = v
+  //         self.next = None
+
+  // class Stack:
+  //     def __init__(self):
+  //         self.top = None
+
+  //     def push(self, x):
+  //         node = Node(x)
+  //         node.next = self.top
+  //         self.top = node
+
+  //     def pop(self):
+  //         val = self.top.v
+  //         self.top = self.top.next
+  //         return val`,
+  //       },
+  //     },
+  //     // 17
+  //     {
+  //       group: "2",
+  //       title: "Implementing Queue via Linked List",
+  //       description: "Use head/tail pointers to model a queue.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write Python code to implement `enqueue(x)` at tail and `dequeue()` at head using Node and head/tail pointers.",
+  //       },
+  //     },
+  //     // 18
+  //     {
+  //       group: "2",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [31, 47],
+  //       },
+  //     },
+  //     // 1
+  //     {
+  //       group: "3",
+  //       title: "Hierarchical vs. Associative Structures",
+  //       description:
+  //         "Identify which of these are hierarchical versus associative data structures.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following are hierarchical data structures?",
+  //         options: ["Binary Tree", "Heap", "Hash Table", "Queue"],
+  //         answer: ["Binary Tree", "Heap"],
+  //       },
+  //     },
+  //     // 2
+  //     {
+  //       group: "3",
+  //       title: "Associative Structures",
+  //       description: "Identify which of these are associative data structures.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "Which of the following are associative data structures?",
+  //         options: ["List", "Hash Table", "Stack", "Graph"],
+  //         answer: ["Hash Table"],
+  //       },
+  //     },
+  //     // 3
+  //     {
+  //       group: "3",
+  //       title: "In-Order Traversal Sequence",
+  //       description: "Order the steps of in-order traversal for a binary tree.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange these actions in the correct order for in-order traversal:",
+  //         options: ["Visit left subtree", "Visit node", "Visit right subtree"],
+  //         answer: ["Visit left subtree", "Visit node", "Visit right subtree"],
+  //       },
+  //     },
+  //     // 4
+  //     {
+  //       group: "3",
+  //       title: "Pre-Order Traversal Implementation",
+  //       description:
+  //         "Fill in the blanks to implement pre-order traversal recursively.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Complete the `preorder` function so it prints values in root-left-right order:",
+  //         options: [
+  //           `def preorder(node):
+  //     if node is None:
+  //         return
+  //     print(node.value)
+  //     preorder(node.left)
+  //     preorder(node.right)`,
+
+  //           `def preorder(node):
+  //     if node is None:
+  //         return
+  //     preorder(node.left)
+  //     print(node.value)
+  //     preorder(node.right)`,
+
+  //           `def preorder(node):
+  //     if node is None:
+  //         return
+  //     preorder(node.right)
+  //     print(node.value)
+  //     preorder(node.left)`,
+  //         ],
+  //         answer: `def preorder(node):
+  //     if node is None:
+  //         return
+  //     print(node.value)
+  //     preorder(node.left)
+  //     preorder(node.right)`,
+  //       },
+  //     },
+  //     // 5
+  //     {
+  //       group: "3",
+  //       title: "Post-Order Traversal",
+  //       description: "Identify the sequence for post-order traversal.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText:
+  //           "In post-order traversal, nodes are visited in which order?",
+  //         options: [
+  //           "Root, Left, Right",
+  //           "Left, Right, Root",
+  //           "Left, Root, Right",
+  //           "Right, Left, Root",
+  //         ],
+  //         answer: "Left, Right, Root",
+  //       },
+  //     },
+  //     // 6
+  //     {
+  //       group: "3",
+  //       title: "Level-Order (Breadth-First) Traversal",
+  //       description: "Write code to perform level-order traversal using a queue.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Given `root` of a binary tree, write a Python function `level_order(root)` that prints each level’s values using `collections.deque`.",
+  //       },
+  //     },
+  //     // 7
+  //     {
+  //       group: "3",
+  //       title: "Heap Property: Min vs. Max",
+  //       description: "Distinguish min-heap and max-heap properties.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "Which property defines a min-heap?",
+  //         options: [
+  //           "Every parent ≥ its children",
+  //           "Every parent ≤ its children",
+  //           "Complete binary tree shape only",
+  //           "Balanced tree only",
+  //         ],
+  //         answer: "Every parent ≤ its children",
+  //       },
+  //     },
+  //     // 8
+  //     {
+  //       group: "3",
+  //       title: "Using heapq: Push & Pop",
+  //       description: "Practice using Python’s `heapq` to push and pop values.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write code to import `heapq`, create a list `h = []`, push 5 and 2, then pop and print the smallest value.",
+  //       },
+  //     },
+  //     // 9
+  //     {
+  //       group: "3",
+  //       title: "Priority Queue Tuples",
+  //       description: "Implement a priority queue with custom priorities.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Complete code to push `(priority, task)` pairs so lowest priority is served first:",
+  //         options: [
+  //           `import heapq
+
+  // pq = []
+  // heapq.heappush(pq, (2, 'clean'))
+  // heapq.heappush(pq, (1, 'cook'))
+  // print(heapq.heappop(pq))  # (1, 'cook')`,
+
+  //           `import heapq
+
+  // pq = []
+  // heapq.push(pq, (2, 'clean'))
+  // heapq.push(pq, (1, 'cook'))
+  // print(heapq.pop(pq))`,
+
+  //           `import heapq
+
+  // pq = []
+  // heapq.heappush(pq, 'clean')
+  // heapq.heappush(pq, 'cook')
+  // print(heapq.heappop(pq))`,
+  //         ],
+  //         answer: `import heapq
+
+  // pq = []
+  // heapq.heappush(pq, (2, 'clean'))
+  // heapq.heappush(pq, (1, 'cook'))
+  // print(heapq.heappop(pq))  # (1, 'cook')`,
+  //       },
+  //     },
+  //     // 10
+  //     {
+  //       group: "3",
+  //       title: "Hash Table Collision Strategies",
+  //       description: "Identify common collision-resolution methods.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following are valid hash table collision-resolution strategies?",
+  //         options: [
+  //           "Separate chaining",
+  //           "Open addressing",
+  //           "Binary search",
+  //           "Depth-first search",
+  //         ],
+  //         answer: ["Separate chaining", "Open addressing"],
+  //       },
+  //     },
+  //     // 11
+  //     {
+  //       group: "3",
+  //       title: "Python dict Operations",
+  //       description: "Practice basic insert and lookup in a dict.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write code to create `d = {}`, set `d['a']=1`, then print `d['a']`.",
+  //       },
+  //     },
+  //     // 12
+  //     {
+  //       group: "3",
+  //       title: "Load Factor Definition",
+  //       description: "Explain the load factor in a hash table.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText: "What is the load factor of a hash table?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "Number of entries divided by number of buckets",
+  //       },
+  //     },
+  //     // 13
+  //     {
+  //       group: "3",
+  //       title: "Simple Hash Function",
+  //       description: "Fill in a basic hash function using modulo arithmetic.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Complete `hash_func` so it returns `sum(ord(c) for c in key) % size`:",
+  //         options: [
+  //           `def hash_func(key, size):
+  //     return sum(ord(c) for c in key) % size`,
+
+  //           `def hash_func(key, size):
+  //     return len(key) % size`,
+
+  //           `def hash_func(key, size):
+  //     return key % size`,
+  //         ],
+  //         answer: `def hash_func(key, size):
+  //     return sum(ord(c) for c in key) % size`,
+  //       },
+  //     },
+  //     // 14
+  //     {
+  //       group: "3",
+  //       title: "Open Addressing Loop",
+  //       description: "Complete code for linear probing collision resolution.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Fill in the `while` condition to probe next slot until an empty bucket:",
+  //         options: [
+  //           `def insert(table, key, size):
+  //     idx = hash_func(key, size)
+  //     while table[idx] is not None:
+  //         idx = (idx + 1) % size
+  //     table[idx] = key`,
+
+  //           `def insert(table, key, size):
+  //     idx = hash_func(key)
+  //     if table[idx] is None:
+  //         table[idx] = key`,
+
+  //           `def insert(table, key, size):
+  //     idx = hash_func(key, size)
+  //     for i in range(size):
+  //         table[idx] = key`,
+  //         ],
+  //         answer: `def insert(table, key, size):
+  //     idx = hash_func(key, size)
+  //     while table[idx] is not None:
+  //         idx = (idx + 1) % size
+  //     table[idx] = key`,
+  //       },
+  //     },
+  //     // 15
+  //     {
+  //       group: "3",
+  //       title: "Real-World Hash Use Case",
+  //       description: "Reflect on practical applications of hash tables.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Provide one real-world use case where a hash table improves performance.",
+  //       },
+  //     },
+  //     // 16
+  //     {
+  //       group: "3",
+  //       title: "Tree vs. Hash Table Lookup",
+  //       description: "Compare lookup complexities in two structures.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "In two sentences, compare average-case lookup time for a hash table versus a balanced binary search tree.",
+  //       },
+  //     },
+  //     // 17
+  //     {
+  //       group: "3",
+  //       title: "Priority Queue Use Case",
+  //       description: "Identify when to use a heap-based priority queue.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "Which scenario best uses a priority queue (min-heap)?",
+  //         options: [
+  //           "Scheduling tasks by priority",
+  //           "Random element removal",
+  //           "First-come, first-served queue",
+  //           "Depth-first traversal",
+  //         ],
+  //         answer: ["Scheduling tasks by priority"],
+  //       },
+  //     },
+  //     // 18
+  //     {
+  //       group: "3",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [49, 67],
+  //       },
+  //     },
+  //     // 1
+  //     {
+  //       group: "4",
+  //       title: "What Is an Algorithm?",
+  //       description: "Define core concepts of algorithms and complexity.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "In your own words, what is an algorithm and why is time complexity important when evaluating one?",
+  //       },
+  //     },
+  //     // 2
+  //     {
+  //       group: "4",
+  //       title: "Comparison Sorts Complexity Ordering",
+  //       description:
+  //         "Order common comparison sorts by average-case time complexity.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange these sorting algorithms from lowest (fastest) to highest (slowest) average-case complexity:",
+  //         options: [
+  //           "Bubble Sort (O(n²))",
+  //           "Insertion Sort (O(n²))",
+  //           "Merge Sort (O(n log n))",
+  //           "Quick Sort (O(n log n))",
+  //         ],
+  //         answer: [
+  //           "Merge Sort (O(n log n))",
+  //           "Quick Sort (O(n log n))",
+  //           "Bubble Sort (O(n²))",
+  //           "Insertion Sort (O(n²))",
+  //         ],
+  //       },
+  //     },
+  //     // 3
+  //     {
+  //       group: "4",
+  //       title: "Bubble Sort Implementation",
+  //       description: "Write a basic bubble sort in Python.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write a Python function `bubble_sort(arr)` that sorts `arr` in-place using bubble sort.",
+  //       },
+  //     },
+  //     // 4
+  //     {
+  //       group: "4",
+  //       title: "Insertion Sort Implementation",
+  //       description: "Write a basic insertion sort in Python.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write a Python function `insertion_sort(arr)` that sorts `arr` in-place using insertion sort.",
+  //       },
+  //     },
+  //     // 5
+  //     {
+  //       group: "4",
+  //       title: "Merge Sort Code Completion",
+  //       description: "Fill in missing steps of merge sort.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Complete the Python `merge_sort` function so it correctly splits and merges:",
+  //         options: [
+  //           `def merge_sort(arr):
+  //     if len(arr) <= 1:
+  //         return arr
+  //     mid = len(arr) // 2
+  //     left = merge_sort(arr[:mid])
+  //     right = merge_sort(arr[mid:])
+  //     result = []
+  //     i = j = 0
+  //     while i < len(left) and j < len(right):
+  //         if left[i] < right[j]:
+  //             result.append(left[i])
+  //             i += 1
+  //         else:
+  //             result.append(right[j])
+  //             j += 1
+  //     result.extend(left[i:])
+  //     result.extend(right[j:])
+  //     return result`,
+
+  //           `def merge_sort(arr):
+  //     if len(arr) <= 1:
+  //         return arr
+  //     mid = len(arr) // 2
+  //     left = merge_sort(arr[:mid])
+  //     right = merge_sort(arr[mid:])
+  //     i = j = 0
+  //     while i < len(left) and j < len(right):
+  //         if left[i] < right[j]:
+  //             result.append(left[i])
+  //             i += 1
+  //         else:
+  //             result.append(right[j])
+  //             j += 1
+  //     result.extend(left[i:])
+  //     result.extend(right[j:])
+  //     return result`,
+
+  //           `def merge_sort(arr):
+  //     if len(arr) <= 1:
+  //         return arr
+  //     mid = len(arr) // 2
+  //     left = merge_sort(arr[:mid])
+  //     right = merge_sort(arr[mid:])
+  //     result = []
+  //     i = j = 0
+  //     while i < len(left) and j < len(right):
+  //         if left[i] < right[j]:
+  //             result.append(left[i])
+  //             i += 1
+  //         else:
+  //             result.append(right[j])
+  //             j += 1
+  //     result.extend(left[i:])
+  //     return result`,
+
+  //           `def merge_sort(arr):
+  //     if len(arr) <= 1:
+  //         return arr
+  //     mid = len(arr) // 2
+  //     left = merge_sort(arr[:mid])
+  //     right = merge_sort(arr[mid:])
+  //     result = []
+  //     i = j = 0
+  //     while i < len(left) and j < len(right):
+  //         if left[i] < right[j]:
+  //             result.append(left[i])
+  //             i += 1
+  //         else:
+  //             result.append(right[j])
+  //             j += 1
+  //     result.extend(right[j:])
+  //     return result`,
+  //         ],
+  //         answer: `def merge_sort(arr):
+  //     if len(arr) <= 1:
+  //         return arr
+  //     mid = len(arr) // 2
+  //     left = merge_sort(arr[:mid])
+  //     right = merge_sort(arr[mid:])
+  //     result = []
+  //     i = j = 0
+  //     while i < len(left) and j < len(right):
+  //         if left[i] < right[j]:
+  //             result.append(left[i])
+  //             i += 1
+  //         else:
+  //             result.append(right[j])
+  //             j += 1
+  //     result.extend(left[i:])
+  //     result.extend(right[j:])
+  //     return result`,
+  //       },
+  //     },
+  //     // 6
+  //     {
+  //       group: "4",
+  //       title: "Quick Sort Partition",
+  //       description: "Implement the Lomuto partition scheme.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText: "Fill in the `partition` function for quick sort:",
+  //         options: [
+  //           `def partition(arr, low, high):
+  //     pivot = arr[high]
+  //     i = low - 1
+  //     for j in range(low, high):
+  //         if arr[j] <= pivot:
+  //             i += 1
+  //             arr[i], arr[j] = arr[j], arr[i]
+  //     arr[i+1], arr[high] = arr[high], arr[i+1]
+  //     return i+1`,
+
+  //           `def partition(arr, low, high):
+  //     pivot = arr[high]
+  //     i = low - 1
+  //     for j in range(low, high):
+  //         if arr[j] <= pivot:
+  //             i += 1
+  //             arr[i], arr[j] = arr[j], arr[i]
+  //     return i+1`,
+
+  //           `def partition(arr, low, high):
+  //     pivot = arr[low]
+  //     i = low - 1
+  //     for j in range(low, high):
+  //         if arr[j] <= pivot:
+  //             i += 1
+  //             arr[i], arr[j] = arr[j], arr[i]
+  //     arr[i+1], arr[high] = arr[high], arr[i+1]
+  //     return i+1`,
+
+  //           `def partition(arr, low, high):
+  //     pivot = arr[high]
+  //     i = low - 1
+  //     for j in range(low, high):
+  //         if arr[j] < pivot:
+  //             i += 1
+  //             arr[i], arr[j] = arr[j], arr[i]
+  //     arr[i+1], arr[high] = arr[high], arr[i+1]
+  //     return i+1`,
+
+  //           `def partition(arr, low, high):
+  //     pivot = arr[high]
+  //     i = low
+  //     for j in range(low, high):
+  //         if arr[j] <= pivot:
+  //             arr[i], arr[j] = arr[j], arr[i]
+  //             i += 1
+  //     arr[i], arr[high] = arr[high], arr[i]
+  //     return i`,
+  //         ],
+  //         answer: `def partition(arr, low, high):
+  //     pivot = arr[high]
+  //     i = low - 1
+  //     for j in range(low, high):
+  //         if arr[j] <= pivot:
+  //             i += 1
+  //             arr[i], arr[j] = arr[j], arr[i]
+  //     arr[i+1], arr[high] = arr[high], arr[i+1]
+  //     return i+1`,
+  //       },
+  //     },
+  //     // 7
+  //     {
+  //       group: "4",
+  //       title: "Sorting Stability",
+  //       description: "Understand stable vs. unstable sorts.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText: "Which of these sorting algorithms are stable?",
+  //         options: ["Bubble Sort", "Quick Sort", "Merge Sort", "Insertion Sort"],
+  //         answer: ["Bubble Sort", "Merge Sort", "Insertion Sort"],
+  //       },
+  //     },
+  //     // 8
+  //     {
+  //       group: "4",
+  //       title: "Binary Search Precondition",
+  //       description: "Identify the primary requirement for binary search.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which precondition must hold true before performing a binary search on an array?",
+  //         options: [
+  //           "Array must be sorted",
+  //           "Array must contain unique elements",
+  //           "Array must be linked-list",
+  //           "Array must be in contiguous memory",
+  //         ],
+  //         answer: "Array must be sorted",
+  //       },
+  //     },
+  //     // 9
+  //     {
+  //       group: "4",
+  //       title: "Binary Search Steps",
+  //       description: "Order the core steps of the binary search algorithm.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange these steps in the order a binary search would perform them:",
+  //         options: [
+  //           "Compare target to middle element",
+  //           "Adjust low/high bounds",
+  //           "Return index if match",
+  //           "Compute middle index",
+  //         ],
+  //         answer: [
+  //           "Compute middle index",
+  //           "Compare target to middle element",
+  //           "Return index if match",
+  //           "Adjust low/high bounds",
+  //         ],
+  //       },
+  //     },
+  //     // 10
+  //     {
+  //       group: "4",
+  //       title: "Implementing Binary Search",
+  //       description: "Write an iterative binary search in Python.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write a Python function `binary_search(arr, target)` that returns the index of `target` or -1 if not found.",
+  //       },
+  //     },
+  //     // 11
+  //     {
+  //       group: "4",
+  //       title: "Divide-and-Conquer Pattern",
+  //       description: "Explain the divide-and-conquer strategy in algorithms.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "In two sentences, explain how the divide-and-conquer approach is used in merge sort and quick sort.",
+  //       },
+  //     },
+  //     // 12
+  //     {
+  //       group: "4",
+  //       title: "BFS vs. DFS",
+  //       description: "Distinguish breadth-first from depth-first traversal.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "Which traversal explores neighbors level by level?",
+  //         options: [
+  //           "Depth-First Search (DFS)",
+  //           "Breadth-First Search (BFS)",
+  //           "Binary Search",
+  //           "Merge Sort",
+  //         ],
+  //         answer: "Breadth-First Search (BFS)",
+  //       },
+  //     },
+  //     // 13
+  //     {
+  //       group: "4",
+  //       title: "DFS Recursive Implementation",
+  //       description: "Write a recursive depth-first search on a graph.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Given `graph` as adjacency dict, write `def dfs(node, visited): …` that prints each node once.",
+  //       },
+  //     },
+  //     // 14
+  //     {
+  //       group: "4",
+  //       title: "BFS Iterative Implementation",
+  //       description: "Use a queue for breadth-first search.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write a Python `bfs(start)` that uses `collections.deque` to traverse `graph` level by level.",
+  //       },
+  //     },
+  //     // 15
+  //     {
+  //       group: "4",
+  //       title: "Graph Representation",
+  //       description: "Choose a graph representation format.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "Which Python data structure best represents a sparse graph?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "Adjacency list",
+  //       },
+  //     },
+  //     // 16
+  //     {
+  //       group: "4",
+  //       title: "Traversal Complexity",
+  //       description: "Identify time complexity of BFS/DFS.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText:
+  //           "What is the time complexity of BFS or DFS on a graph with V vertices and E edges?",
+  //         options: ["O(V + E)", "O(V²)", "O(E log V)", "O(V + E log V)"],
+  //         answer: "O(V + E)",
+  //       },
+  //     },
+  //     // 17
+  //     {
+  //       group: "4",
+  //       title: "Priority Queue for Dijkstra",
+  //       description: "Use `heapq` in Dijkstra’s algorithm.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write Python code to import `heapq`, push `(0, start)`, pop the smallest distance.",
+  //       },
+  //     },
+  //     // 18
+  //     {
+  //       group: "4",
+  //       title: "Dijkstra Steps Ordering",
+  //       description: "Arrange the high-level steps of Dijkstra’s algorithm.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText: "Arrange these Dijkstra steps in order:",
+  //         options: [
+  //           "Initialize distances",
+  //           "Extract min-distance node",
+  //           "Relax its edges",
+  //           "Repeat until all nodes visited",
+  //         ],
+  //         answer: [
+  //           "Initialize distances",
+  //           "Extract min-distance node",
+  //           "Relax its edges",
+  //           "Repeat until all nodes visited",
+  //         ],
+  //       },
+  //     },
+  //     // 19
+  //     {
+  //       group: "4",
+  //       title: "Implementing Dijkstra Relaxation",
+  //       description: "Fill in the relaxation step inside Dijkstra’s loop.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText: "Complete the Python code to relax edges:",
+  //         options: [
+  //           `dist_u = dist[current]
+  // for neighbor, weight in graph[current]:
+  //     if dist_u + weight < dist[neighbor]:
+  //         dist[neighbor] = dist_u + weight
+  //         heapq.heappush(pq, (dist[neighbor], neighbor))`,
+
+  //           `dist_u = dist[current]
+  // for neighbor, weight in graph[current]:
+  //     if dist_u + weight < dist[neighbor]:
+  //         dist[neighbor] = dist_u + weight
+  //         # forgot to push to the queue`,
+
+  //           `dist_u = dist[current]
+  // for neighbor, weight in graph[current]:
+  //     if dist_u + weight <= dist[neighbor]:
+  //         dist[neighbor] = dist_u + weight
+  //         heapq.heappush(pq, (dist[neighbor], neighbor))`,
+
+  //           `dist_u = dist[neighbor]
+  // for neighbor, weight in graph[current]:
+  //     if dist_u + weight < dist[neighbor]:
+  //         dist[neighbor] = dist_u + weight
+  //         heapq.heappush(pq, (dist[neighbor], neighbor))`,
+
+  //           `dist_u = dist[current]
+  // for neighbor, weight in graph[current]:
+  //     if dist_u + weight < dist[neighbor]:
+  //         dist[neighbor] = dist_u + weight
+  //         heapq.heappush(pq, (neighbor, dist[neighbor]))`,
+  //         ],
+  //         answer: `dist_u = dist[current]
+  // for neighbor, weight in graph[current]:
+  //     if dist_u + weight < dist[neighbor]:
+  //         dist[neighbor] = dist_u + weight
+  //         heapq.heappush(pq, (dist[neighbor], neighbor))`,
+  //       },
+  //     },
+  //     // 20
+  //     {
+  //       group: "4",
+  //       title: "Real-World Graph Use Case",
+  //       description: "Reflect on graph algorithm applications.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Describe one real-world problem that can be solved using BFS, DFS, or Dijkstra’s algorithm.",
+  //       },
+  //     },
+  //     // 21
+  //     {
+  //       group: "4",
+  //       title: "Graph Construction in Code",
+  //       description: "Build a graph adjacency list from edge list.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Given `edges = [(0,1),(1,2),(2,0)]`, write code to build `graph` as `{0:[1],1:[2],2:[0]}`.",
+  //       },
+  //     },
+  //     // 22
+  //     {
+  //       group: "4",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [69, 89],
+  //       },
+  //     },
+  //     // 1
+  //     {
+  //       group: "5",
+  //       title: "Processes vs. Threads",
+  //       description: "Distinguish processes from threads in an operating system.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which statement correctly differentiates a process from a thread?",
+  //         options: [
+  //           "A process shares memory with other processes; a thread has its own memory",
+  //           "A process has its own memory space; threads within a process share memory",
+  //           "Threads run independently of the OS; processes require kernel scheduling",
+  //           "Processes are lighter weight than threads",
+  //         ],
+  //         answer: [
+  //           "A process has its own memory space; threads within a process share memory",
+  //         ],
+  //       },
+  //     },
+  //     // 2
+  //     {
+  //       group: "5",
+  //       title: "Scheduling Policies Ordering",
+  //       description:
+  //         "Order common CPU scheduling policies by their typical response time fairness.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange these scheduling policies from most fair (each process gets time) to least fair:",
+  //         options: [
+  //           "Round Robin",
+  //           "First-Come, First-Served (FCFS)",
+  //           "Shortest Job Next",
+  //           "Priority Scheduling",
+  //         ],
+  //         answer: [
+  //           "Round Robin",
+  //           "Shortest Job Next",
+  //           "FCFS",
+  //           "Priority Scheduling",
+  //         ],
+  //       },
+  //     },
+  //     // 3
+  //     {
+  //       group: "5",
+  //       title: "Context Switching Steps",
+  //       description:
+  //         "Order the high-level steps the OS takes during a context switch.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange these actions in the order performed during a context switch:",
+  //         options: [
+  //           "Save current CPU registers to PCB",
+  //           "Load next process’s registers from PCB",
+  //           "Update scheduler data structures",
+  //           "Jump to the next process’s instruction pointer",
+  //         ],
+  //         answer: [
+  //           "Save current CPU registers to PCB",
+  //           "Update scheduler data structures",
+  //           "Load next process’s registers from PCB",
+  //           "Jump to the next process’s instruction pointer",
+  //         ],
+  //       },
+  //     },
+  //     // 4
+  //     {
+  //       group: "5",
+  //       title: "Memory Management Overview",
+  //       description: "Explain why an OS needs to manage memory.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "In your own words, why does an operating system use memory management (e.g., paging, segmentation)?",
+  //       },
+  //     },
+  //     // 5
+  //     {
+  //       group: "5",
+  //       title: "Paging Definition",
+  //       description: "Identify the core concept of paging.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "What does paging in memory management refer to?",
+  //         options: [
+  //           "Dividing physical memory into fixed-size frames",
+  //           "Grouping processes into pages for scheduling",
+  //           "Loading entire processes into contiguous memory",
+  //           "Swapping registers between processes",
+  //         ],
+  //         answer: ["Dividing physical memory into fixed-size frames"],
+  //       },
+  //     },
+  //     // 6
+  //     {
+  //       group: "5",
+  //       title: "Segmentation Definition",
+  //       description: "Identify the core concept of segmentation.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "What is memory segmentation?",
+  //         options: [
+  //           "Combining multiple pages into one segment",
+  //           "Dividing memory into variable-sized logical segments",
+  //           "Allocating fixed-size frames to segments",
+  //           "Swapping entire segments between disk and RAM",
+  //         ],
+  //         answer: ["Dividing memory into variable-sized logical segments"],
+  //       },
+  //     },
+  //     // 7
+  //     {
+  //       group: "5",
+  //       title: "Virtual Memory Benefits",
+  //       description: "Reflect on why virtual memory is useful.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "List two benefits that virtual memory provides to applications and the OS.",
+  //       },
+  //     },
+  //     // 8
+  //     {
+  //       group: "5",
+  //       title: "Page Replacement Algorithms",
+  //       description:
+  //         "Order common page-replacement strategies by their eviction policy.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText: "Arrange these algorithms by which page they evict:",
+  //         options: [
+  //           "FIFO (First-In, First-Out)",
+  //           "LRU (Least Recently Used)",
+  //           "Optimal (theoretical best)",
+  //           "Clock (second-chance)",
+  //         ],
+  //         answer: [
+  //           "FIFO (First-In, First-Out)",
+  //           "Clock (second-chance)",
+  //           "LRU (Least Recently Used)",
+  //           "Optimal (theoretical best)",
+  //         ],
+  //       },
+  //     },
+  //     // 9
+  //     {
+  //       group: "5",
+  //       title: "File Descriptor Basics",
+  //       description:
+  //         "Identify the role of file descriptors in UNIX-like systems.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What integer values are typically used for standard input, output, and error file descriptors?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "0, 1, and 2",
+  //       },
+  //     },
+  //     // 10
+  //     {
+  //       group: "5",
+  //       title: "File Buffering Layers",
+  //       description: "Select which layers buffer file I/O operations.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following buffer data during file operations?",
+  //         options: [
+  //           "Application-level buffers (e.g., stdio)",
+  //           "OS page cache",
+  //           "Disk controller cache",
+  //           "CPU register cache",
+  //         ],
+  //         answer: [
+  //           "Application-level buffers (e.g., stdio)",
+  //           "OS page cache",
+  //           "Disk controller cache",
+  //         ],
+  //       },
+  //     },
+  //     // 11
+  //     {
+  //       group: "5",
+  //       title: "Device Types",
+  //       description: "Distinguish block devices from character devices.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following are block devices versus character devices?",
+  //         options: [
+  //           "Hard disk (block)",
+  //           "Serial port (char)",
+  //           "Keyboard (char)",
+  //           "USB mass storage (block)",
+  //         ],
+  //         answer: [
+  //           "Hard disk (block)",
+  //           "USB mass storage (block)",
+  //           "Serial port (char)",
+  //           "Keyboard (char)",
+  //         ],
+  //       },
+  //     },
+  //     // 12
+  //     {
+  //       group: "5",
+  //       title: "System Call Sequence",
+  //       description: "Order the steps when making a file read system call.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText: "Arrange these steps for `read()` system call:",
+  //         options: [
+  //           "User process invokes read() in libc",
+  //           "Mode switch to kernel",
+  //           "Kernel locates file and copies data",
+  //           "Mode switch back to user",
+  //         ],
+  //         answer: [
+  //           "User process invokes read() in libc",
+  //           "Mode switch to kernel",
+  //           "Kernel locates file and copies data",
+  //           "Mode switch back to user",
+  //         ],
+  //       },
+  //     },
+  //     // 13
+  //     {
+  //       group: "5",
+  //       title: "Reading a File in Python",
+  //       description: "Practice file I/O with Python’s built-in functions.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write Python code to open `data.txt`, read its contents into a string, and close the file.",
+  //       },
+  //     },
+  //     // 14
+  //     {
+  //       group: "5",
+  //       title: "File Permissions Overview",
+  //       description: "Explain how UNIX file permissions work.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Describe the three permission types (r, w, x) and who (owner, group, others) they apply to.",
+  //       },
+  //     },
+  //     // 15
+  //     {
+  //       group: "5",
+  //       title: "Caching Strategies",
+  //       description: "Select common caching strategies used by OS and hardware.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText: "Which of these are caching strategies?",
+  //         options: [
+  //           "Write-back",
+  //           "Write-through",
+  //           "Write-around",
+  //           "Write-behind",
+  //         ],
+  //         answer: ["Write-back", "Write-through", "Write-around"],
+  //       },
+  //     },
+  //     // 16
+  //     {
+  //       group: "5",
+  //       title: "Mounting Filesystems",
+  //       description: "Understand how filesystems are mounted in UNIX.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "In one sentence, explain what the `mount` command does in UNIX-like systems.",
+  //       },
+  //     },
+  //     // 17
+  //     {
+  //       group: "5",
+  //       title: "Syscall vs Library Call",
+  //       description:
+  //         "Differentiate system calls from library (user-space) calls.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What is the main difference between a system call and a standard library call?",
+  //         placeholder: "Type your answer here...",
+  //         answer:
+  //           "System calls transition to kernel mode; library calls stay in user mode",
+  //       },
+  //     },
+  //     // 18
+  //     {
+  //       group: "5",
+  //       title: "Memory Protection Mechanisms",
+  //       description: "Identify mechanisms the OS uses to protect process memory.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which features help protect one process’s memory from another?",
+  //         options: [
+  //           "Virtual memory paging",
+  //           "Segmentation",
+  //           "Address Space Layout Randomization (ASLR)",
+  //           "Process context switches",
+  //         ],
+  //         answer: [
+  //           "Virtual memory paging",
+  //           "Segmentation",
+  //           "Address Space Layout Randomization (ASLR)",
+  //         ],
+  //       },
+  //     },
+  //     // 19
+  //     {
+  //       group: "5",
+  //       title: "Journaling File Systems",
+  //       description: "Explain why journaling helps file-system reliability.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "In two sentences, describe how journaling in a file system prevents data corruption after a crash.",
+  //       },
+  //     },
+  //     // 20
+  //     {
+  //       group: "5",
+  //       title: "OS Logging Facilities",
+  //       description: "Understand how the OS logs events and errors.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Name a common operating system logging facility and what it’s used for.",
+  //       },
+  //     },
+  //     // 21
+  //     {
+  //       group: "5",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [91, 110],
+  //       },
+  //     },
+  //   ],
   en: [
     {
       group: "introduction",
@@ -6826,6319 +6826,6319 @@ console.log(arr);
     },
   ],
 
-  "py-en": [
-    {
-      group: "introduction",
-      title: "Introduction To Python Development",
-      isStudyGuide: true,
-      description:
-        "Expose yourself to Python fundamentals to improve the quality of your learning before making progress.",
-
-      question: {
-        questionText: (
-          <div>
-            <p style={{ marginBottom: 12 }}>
-              {" "}
-              One of the best predictors for student success is exposure to
-              course material before studying it.
-            </p>
-
-            <p style={{ marginBottom: 12 }}>
-              Remember to fail faster and fail forward! The real education
-              happens when you push through a challenge.
-            </p>
-          </div>
-        ),
-        metaData: `### Advice
-I know this looks like ChatGPT content…but it's not—it's me!
-
-As a beginner, remember:
-1. Programming is mostly about organizing information rather than complex math. Code uses logic and control flow instead of algebraic equations.
-2. Like natural languages, you can express the same idea in many ways.
-3. When something challenges you, fail faster and break the problem into smaller, understandable steps.
-
-### Exposure
-This guide exposes you to concepts before you answer questions, so you aren’t intimidated later. Don’t worry if you don’t grasp everything—skim it, then dive in.
-
-### Core Concepts in Python
-
-\`\`\`py
-# Lists vs constructors
-my_list = [1, 2, 3, 'a', 'b', 'c', None, False]
-my_list.append('new data')
-
-# Dictionaries (key/value objects)
-data_set = {
-    "introduction": "Welcome",
-    "title": "Chapter 1",
-    "is_live": True
-}
-data_set["page"] = 4
-data_set["book"] = "Coding Basics"
-\`\`\`
-
-\`\`\`py
-# Custom classes
-class House:
-    def __init__(self, paint=None):
-        self.house_paint = paint
-
-    def get_paint(self):
-        return self.house_paint
-
-    def set_paint(self, paint):
-        self.house_paint = paint
-
-    def delete_paint(self):
-        self.house_paint = None
-\`\`\`
-
-### Data Analysis with pandas
-
-\`\`\`py
-import pandas as pd
-
-# Create a DataFrame
-df = pd.DataFrame({
-    "house_paint": ["pink", "blue", "green"],
-    "rooms": [3, 4, 2]
-})
-
-# Inspect your data
-print(df.head())      # first rows
-print(df.describe())  # summary statistics
-
-# Filter and group
-filtered = df[df["rooms"] >= 3]
-grouped = df.groupby("house_paint").rooms.mean()
-\`\`\`
-
-### Conclusion
-Failing fast is in your best interest when learning a new language. This one-pager will be available inside the app. Good luck, and happy coding!
-`,
-      },
-    },
-
-    {
-      group: "tutorial",
-      title: "Understanding Coding",
-      description: "Grasp the basic concept of coding in Python.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "Which of the following best describes coding?",
-        options: [
-          "Writing instructions for computers to perform tasks",
-          "Creating physical components for computers",
-          "Designing user interfaces",
-          "Managing databases",
-        ],
-        answer: "Writing instructions for computers to perform tasks",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Sequence of Program Execution",
-      description: "Learn the correct order of program execution.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps with drag-and-drop to order how a Python program executes.",
-        options: [
-          "Writing Code",
-          "Code Interpretation",
-          "Debugging",
-          "Program Execution",
-        ],
-        answer: [
-          "Writing Code",
-          "Code Interpretation",
-          "Debugging",
-          "Program Execution",
-        ],
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Introduction to Variables",
-      description:
-        "In this step, you will learn about variables and how to use them in your code.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Select all the steps involved in correctly declaring a variable in Python:",
-        options: [
-          "Choose a descriptive variable name",
-          "Start the name with a letter or underscore",
-          "Assign a value using the equals sign (=)",
-          "End the name with a semicolon (;)",
-          "Use uppercase letters for all variable names",
-          "Include type annotations for static typing",
-        ],
-        answer: [
-          "Choose a descriptive variable name",
-          "Start the name with a letter or underscore",
-          "Assign a value using the equals sign (=)",
-        ],
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Understanding List Declarations",
-      description:
-        "Complete the code by selecting the correct way to declare a list of items in Python.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which code block correctly declares a list of items in Python?",
-        options: [
-          `items = ['apple', 'banana', 'cherry']`,
-          `items = {'apple': 1, 'banana': 2, 'cherry': 3}`,
-          `def items():\n    return 'apple, banana, cherry'`,
-          `items = 'apple, banana, cherry'`,
-          `class Items:\n    pass`,
-        ],
-        answer: `items = ['apple', 'banana', 'cherry']`,
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Variable Assignment in Python",
-      description: "Learn how to assign values to variables in Python.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Declare a variable named `age` and assign it the value 25.",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Understanding Data Types",
-      description: "Learn the basics of data types in Python.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "By convention, how should you name a constant in Python?",
-        placeholder: "Type your answer here...",
-        answer: "UPPERCASE_WITH_UNDERSCORES",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Purpose of Variables",
-      description: "Understand why variables are used in programming.",
-      isText: true,
-      question: {
-        questionText:
-          "In your own words, explain the purpose of variables in programming.",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Bash Terminal Practice: Changing Directories",
-      description: "Practice changing directories in a terminal environment.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "Enter the command to change to the `new_folder` directory using a Bash terminal.",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [1, 8],
-      },
-    },
-    // 1
-    {
-      group: "1",
-      title: "Data Types in Programming",
-      description: "Identify different primitive data types used in Python.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are primitive data types in Python?",
-        options: [
-          "str",
-          "int",
-          "float",
-          "bool",
-          "NoneType",
-          "list",
-          "dict",
-          "complex",
-        ],
-        answer: ["str", "int", "float", "bool", "NoneType", "complex"],
-      },
-    },
-    // 2
-    {
-      group: "1",
-      title: "Steps to Create a Function",
-      description: "Understand the sequence of creating and using a function.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps with drag-and-drop to create and use a Python function.",
-        options: [
-          "Define the function",
-          "Call the function",
-          "Execute the function body",
-          "Return a value",
-        ],
-        answer: [
-          "Define the function",
-          "Call the function",
-          "Execute the function body",
-          "Return a value",
-        ],
-      },
-    },
-    // 3
-    {
-      group: "1",
-      title: "Writing a Simple Function",
-      description: "Practice writing functions in Python.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write a function named `greet` that takes a name as a parameter and prints a greeting with that name.",
-      },
-    },
-    // 4
-    {
-      group: "1",
-      title: "Functions in Programming",
-      description: "Discuss the role of functions.",
-      isText: true,
-      question: {
-        questionText:
-          "What is a function, and why is it useful in programming?",
-      },
-    },
-    // 5
-    {
-      group: "1",
-      title: "Conditional Statements",
-      description: "Identify the purpose of conditional statements.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "What is the primary purpose of an `if` statement?",
-        options: [
-          "To repeat a block of code multiple times",
-          "To execute a block of code based on a condition",
-          "To define a variable",
-          "To import external libraries",
-        ],
-        answer: "To execute a block of code based on a condition",
-      },
-    },
-    // 6
-    {
-      group: "1",
-      title: "Order of Conditional Checks",
-      description:
-        "Complete the code that evaluates an `if`/`elif`/`else` statement.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Complete the following code to correctly implement an `if`/`elif`/`else` statement that checks if `x` is greater than 10, equal to 10, or less than 10.",
-        options: [
-          `if x > 10:\n    print("x is greater than 10")\nelif x == 10:\n    print("x is equal to 10")\nelse:\n    print("x is less than 10")`,
-          `if x == 10:\n    print("x is equal to 10")\nelif x > 10:\n    print("x is greater than 10")`,
-          `if x > 10:\n    print("x is greater than 10")\nelse:\n    print("x is not greater than 10")`,
-          `if x >= 10:\n    print("x is greater than or equal to 10")\nelse:\n    print("x is less than 10")`,
-        ],
-        answer: `if x > 10:\n    print("x is greater than 10")\nelif x == 10:\n    print("x is equal to 10")\nelse:\n    print("x is less than 10")`,
-      },
-    },
-    // 7
-    {
-      group: "1",
-      title: "Implementing Conditional Logic",
-      description: "Apply conditional logic in code.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write an `if`/`elif`/`else` statement that checks if a number `num` is positive, negative, or zero, and prints an appropriate message.",
-      },
-    },
-    // 8
-    {
-      group: "1",
-      title: "Understanding Conditional Logic in Programming",
-      description:
-        "Learn how logical operators like AND and OR control conditions in programming.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "Which logical operator is used to check if both conditions in a conditional statement are true in Python?",
-        placeholder: "Type your answer here...",
-        answer: "and",
-      },
-    },
-    // 9
-    {
-      group: "1",
-      title: "Real-world Use of Conditionals",
-      description: "Reflect on how conditionals are used.",
-      isText: true,
-      question: {
-        questionText:
-          "Provide an example of how conditional statements are used in real-world applications.",
-      },
-    },
-    // 10
-    {
-      group: "1",
-      title: "Terminal Practice: Help Command",
-      description: "Write the help command to observe basic commands.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "In a Bash terminal environment, enter the help command to discover basic commands.",
-      },
-    },
-    // 11
-    {
-      group: "1",
-      title: "Loops in Programming",
-      description: "Understand the purpose of loops.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which loop will continue executing as long as its condition remains true in Python?",
-        options: ["for loop", "while loop", "do...while loop", "foreach loop"],
-        answer: "while loop",
-      },
-    },
-    // 12
-    {
-      group: "1",
-      title: "Sequence of Loop Execution",
-      description: "Grasp the order in which loops execute.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps of a Python `for` loop execution with drag-and-drop.",
-        options: [
-          "Initialize iterator",
-          "Check condition",
-          "Execute code block",
-          "Advance iterator",
-        ],
-        answer: [
-          "Initialize iterator",
-          "Check condition",
-          "Execute code block",
-          "Advance iterator",
-        ],
-      },
-    },
-    // 13
-    {
-      group: "1",
-      title: "Creating a Loop",
-      description: "Practice writing loops.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write a `for` loop that prints numbers from 1 to 5 in Python.",
-      },
-    },
-    // 14
-    {
-      group: "1",
-      title: "Applications of Loops",
-      description: "Discuss where loops are useful.",
-      isText: true,
-      question: {
-        questionText:
-          "Describe a scenario in software development where loops are essential.",
-      },
-    },
-    // 15
-    {
-      group: "1",
-      title: "Lists in Python",
-      description: "Identify methods used for manipulating lists in Python.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following methods are valid for manipulating lists in Python?",
-        options: [
-          ".append()",
-          ".pop()",
-          ".remove()",
-          ".extend()",
-          ".sort()",
-          ".reverse()",
-          ".map()", // map is a built-in function, not a list method
-          ".join()", // join is a string method
-        ],
-        answer: [
-          ".append()",
-          ".pop()",
-          ".remove()",
-          ".extend()",
-          ".sort()",
-          ".reverse()",
-        ],
-      },
-    },
-    // 16
-    {
-      group: "1",
-      title: "Order of List Operations",
-      description: "Understand how list operations are performed.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Complete the code to declare a list, add an element to it, remove the last element, and then access an element.",
-        options: [
-          `fruits = ['apple', 'banana']\nfruits.append('pink')\nfruits.pop()\nprint(fruits[0])`,
-          `fruits = 'apple, banana'\nfruits.append('pink')\nfruits.pop()\nprint(fruits[0])`,
-          `fruits = {'apple':1, 'banana':2}\nfruits.append('pink')\nfruits.pop()\nprint(list(fruits)[0])`,
-        ],
-        answer: `fruits = ['apple', 'banana']\nfruits.append('pink')\nfruits.pop()\nprint(fruits[0])`,
-      },
-    },
-    // 17
-    {
-      group: "1",
-      title: "Manipulating Lists",
-      description: "Apply list methods in code.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Create a list `fruits` with 'apple' and 'banana'. Add 'pink' to the end and remove 'apple' from the beginning.",
-      },
-    },
-    // 18
-    {
-      group: "1",
-      title: "Use Cases for Lists",
-      description: "Explore scenarios where lists are used.",
-      isText: true,
-      question: {
-        questionText:
-          "Provide an example of how a list can be used to manage data in a Python application.",
-      },
-    },
-    // 19
-    {
-      group: "1",
-      title: "Terminal Practice: Creating Directories",
-      description: "Creating a directory command in a bash terminal",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "In a Bash terminal environment, create a directory called `app` using the mkdir command.",
-      },
-    },
-    // 20
-    {
-      group: "1",
-      title: "Advanced Coding Output",
-      description:
-        "Predict the output of the following code with lists, conditionals, logical operators, and list comprehensions.",
-      isSingleLineText: true,
-      question: {
-        questionText: (
-          <div>
-            What will be the output of the following code?
-            <br />
-            <pre>
-              {`
-arr = [1, 2, 3, 4]
-x = 10
-y = 5
-
-if x > y and len(arr) > 3:
-    arr.append(x)
-    arr = [n for n in arr if n % 2 == 0]
-
-print(arr)
-`}
-            </pre>
-          </div>
-        ),
-        placeholder: "Type your answer here...",
-        answer: "[2, 4, 10]",
-      },
-    },
-    // 21
-    {
-      group: "1",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [10, 29], // Indices of steps to review
-      },
-    },
-    // 1
-    {
-      group: "2",
-      title: "Introduction to Objects",
-      description:
-        "In this step, you will learn what an object is in programming.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "In programming, which keyword creates a new object instance in Python?",
-        placeholder: "Type your answer here...",
-        answer:
-          "None (Python uses class instantiation without a specific keyword)",
-      },
-    },
-    // 2
-    {
-      group: "2",
-      title: "Understanding the __init__ Method",
-      description:
-        "In this step, you will learn about the purpose of the `__init__` method in a Python class.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which of the following code blocks correctly defines the `__init__` method for class instantiation in Python?",
-        options: [
-          `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\nmy_car = Car("Toyota")`,
-          `class Car:\n    def init(self, brand):\n        self.brand = brand\n\nmy_car = Car("Toyota")`,
-          `class Car:\n    def __init__(brand):\n        self.brand = brand\n\nmy_car = Car("Toyota")`,
-          `class Car:\n    def __init__(self, brand):\n        brand = self.brand\n\nmy_car = Car("Toyota")`,
-        ],
-        answer: `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\nmy_car = Car("Toyota")`,
-      },
-    },
-    // 3
-    {
-      group: "2",
-      title: "Purpose of the __init__ Method",
-      description:
-        "In this step, you will learn about the purpose of the `__init__` method in a class.",
-      isText: true,
-      question: {
-        questionText:
-          "Explain the purpose of the `__init__` method in a Python class.",
-      },
-    },
-    // 4
-    {
-      group: "2",
-      title: "Creating an Instance of a Class",
-      description:
-        "In this step, you will learn how to create an instance of a class in Python.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Select all correct steps required to create an instance of a class in Python:",
-        options: [
-          `Define class using class keyword`,
-          `Call constructor with parentheses`,
-          `Pass required arguments to constructor`,
-          `Store returned instance in a variable`,
-          `Use new keyword`,
-          `Define class with function keyword`,
-          `Call class directly without parentheses`,
-        ],
-        answer: [
-          `Define class using class keyword`,
-          `Call constructor with parentheses`,
-          `Pass required arguments to constructor`,
-          `Store returned instance in a variable`,
-        ],
-      },
-    },
-    // 5
-    {
-      group: "2",
-      title: "Declaring a Method in a Class",
-      description:
-        "In this step, you will learn how to declare a method inside a class.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Declare a method named `update_model` in the `Car` class that updates the `model` attribute.",
-      },
-    },
-    // 6
-    {
-      group: "2",
-      title: "Using self",
-      description:
-        "Complete the code by selecting the correct way to use `self` to refer to the instance property.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which code block correctly uses `self` to refer to the object's property?",
-        options: [
-          `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\n    def show_brand(self):\n        print(brand)`,
-          `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\n    def show_brand(self):\n        print(self.brand)`,
-          `class Car:\n    def __init__(self, brand):\n        brand = self.brand\n\n    def show_brand(self):\n        print(brand)`,
-          `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\n    def show_brand(self):\n        print(self.brand())`,
-        ],
-        answer: `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\n    def show_brand(self):\n        print(self.brand)`,
-      },
-    },
-    // 7
-    {
-      group: "2",
-      title: "Adding Attributes to an Object",
-      description:
-        "In this step, you will learn how to add attributes to a Python class.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText: "Add a new attribute `year` to the `Car` class.",
-      },
-    },
-    // 8
-    {
-      group: "2",
-      title: "Accessing and Modifying Attributes",
-      description:
-        "In this step, you will learn how to get or set attributes of an object.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are valid ways to get or set properties in Python?",
-        options: [
-          `Use dot notation (e.g., obj.property)`,
-          `Use getattr(obj, 'property')`,
-          `Use setter method if defined`,
-          `Use obj['property']`,
-          `Call obj.property() without defining method`,
-        ],
-        answer: [
-          `Use dot notation (e.g., obj.property)`,
-          `Use getattr(obj, 'property')`,
-          `Use setter method if defined`,
-        ],
-      },
-    },
-    // 9
-    {
-      group: "2",
-      title: "Modifying Object Attributes",
-      description:
-        "In this step, you will learn how to modify attributes of an object.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Modify the `model` attribute of an instance of the `Car` class.",
-      },
-    },
-    // 10
-    {
-      group: "2",
-      title: "Understanding Inheritance",
-      description:
-        "In this step, you will learn about inheritance in object-oriented programming.",
-      isText: true,
-      question: {
-        questionText: "What is inheritance in object-oriented programming?",
-      },
-    },
-    // 11
-    {
-      group: "2",
-      title: "Implementing Inheritance",
-      description:
-        "In this step, you will implement inheritance in Python by subclassing.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Extend the `Car` class to create an `ElectricCar` class with an additional attribute `battery_life`.",
-      },
-    },
-    // 12
-    {
-      group: "2",
-      title: "Overriding Methods",
-      description:
-        "In this step, you will learn how to override methods in a subclass.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "What does it mean to override a method in a subclass?",
-        options: [
-          `Replace superclass method with new implementation`,
-          `Delete method from superclass`,
-          `Inherit method without changes`,
-          `Call method from a different class`,
-          `Extend method functionality via super()`,
-        ],
-        answer: [
-          `Replace superclass method with new implementation`,
-          `Extend method functionality via super()`,
-        ],
-      },
-    },
-    // 13
-    {
-      group: "2",
-      title: "Understanding Encapsulation",
-      description:
-        "In this step, you will learn about encapsulation in object-oriented programming.",
-      isText: true,
-      question: {
-        questionText: "What is encapsulation in object-oriented programming?",
-      },
-    },
-    // 14
-    {
-      group: "2",
-      title: "Implementing Encapsulation",
-      description:
-        "In this step, you will implement encapsulation by using getter and setter methods.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Add getter and setter methods for the `battery_life` attribute in the `ElectricCar` class.",
-      },
-    },
-    // 15
-    {
-      group: "2",
-      title: "Encapsulation Concept",
-      description:
-        "In this step, you will define the core concept of encapsulation in one word.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What is the primary concept encapsulation ensures in object-oriented programming?",
-        placeholder: "Type your answer here...",
-        answer: "Abstraction",
-      },
-    },
-    // 16
-    {
-      group: "2",
-      title: "Combining Concepts",
-      description:
-        "In this step, you will combine various concepts learned to create a small project.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Create a small project that defines a `Person` class, uses inheritance to create a `Student` subclass, and demonstrates encapsulation and lists of objects.",
-      },
-    },
-    // 17
-    {
-      group: "2",
-      title: "Printing in the Terminal",
-      description: "In this step, you will print a message using the terminal",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "Type a command to print: 'I'm talking to the inside of a computer!'",
-      },
-    },
-    // 18
-    {
-      group: "2",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [31, 47],
-      },
-    },
-
-    {
-      group: "3",
-      title: "Introduction to React Components",
-      description:
-        "In this step, you will learn about React components, their role in creating reusable UI elements, and how they help manage the user interface efficiently.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which of the following best describes a React component?",
-        options: [
-          "A method for handling events in JavaScript",
-          "A feature exclusive to server-side rendering in React",
-          "A reusable piece of user interface defined as a function or class that returns JSX",
-          "A built-in HTML element in React",
-        ],
-        answer:
-          "A reusable piece of user interface defined as a function or class that returns JSX",
-      },
-    },
-    {
-      group: "3",
-      title: "Key Concepts in React",
-      description:
-        "In this step, you will learn about the fundamental concepts of React, including properties (props), state, events, and styles.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText: "Which of the following are key concepts in React?",
-        options: [
-          "Managing properties to pass data between components",
-          "Manipulating the DOM directly for better performance",
-          "Using state to manage data within a component",
-          "Handling events such as clicks with event handlers",
-          "Applying inline styles or CSS classes to components",
-        ],
-        answer: [
-          "Managing properties to pass data between components",
-          "Using state to manage data within a component",
-          "Handling events such as clicks with event handlers",
-          "Applying inline styles or CSS classes to components",
-        ],
-      },
-    },
-    {
-      group: "3",
-      title: "Effect of State Changes on a Component",
-      description:
-        "In this step, you will explain what happens to a React component when its state changes.",
-      isText: true,
-      question: {
-        questionText:
-          "What happens to a React component when its state changes?",
-      },
-    },
-
-    //next lecture
-    {
-      group: "3",
-      title: "Creating a Simple React Component",
-      description:
-        "In this step, you will define a basic React component that returns some simple JSX.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which of the following code blocks correctly defines a simple React component that returns a heading and a paragraph?",
-        options: [
-          // Option 1: Correct answer
-          `function MyComponent() {
-  return (
-    <div>
-      <h1>Hello, World!</h1>
-      <p>Welcome to the thunderdome</p>
-    </div>
-  );
-}`,
-
-          // Option 2: Incorrect - missing return statement
-          `function MyComponent() {
-  <div>
-    <h1>Hello, World!</h1>
-    <p>Welcome to the thunderdome</p>
-  </div>;
-}`,
-
-          // Option 3: Incorrect - uses class instead of function
-          `class MyComponent {
-  render() {
-    return (
-      <div>
-        <h1>Hello, World!</h1>
-        <p>How are we today?</p>
-      </div>
-    );
-  }
-}`,
-
-          // Option 4: Incorrect - missing JSX inside the return
-          `function MyComponent() {
-  return (
-    <div>Hello World</div>
-    <p>How are we today?</p>
-  );
-}`,
-        ],
-        answer: `function MyComponent() {
-  return (
-    <div>
-      <h1>Hello, World!</h1>
-      <p>Welcome to the thunderdome</p>
-    </div>
-  );
-}`,
-      },
-    },
-    {
-      group: "3",
-      title: "Handling Events in React",
-      description:
-        "In this step, you will define a basic React component that handles a button click event using the `onClick` attribute.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which of the following code blocks correctly defines a React component that handles a button click event?",
-        options: [
-          // Option 2: Incorrect - no event handler function defined
-          `function MyComponent() {
-  return (
-    <div>
-      <button 
-        onClick={
-          alert('Button clicked!')
-        }
-      >
-        Click me
-      </button>
-    </div>
-  );
-}`,
-
-          // Option 3: Incorrect - inline event handler, not recommended
-          `function MyComponent() {
-return (
-  <div>
-    <button 
-      onClick= () => {
-        alert('Button clicked!')
-      }
-    >
-      Click me
-    </button>
-  </div>
-);
-}`,
-          `function MyComponent() {
-  const handleClick = () => {
-    alert('Button clicked!');
-  };
-    
-  return (
-    <div>
-      <button 
-        onClick={handleClick}
-      >
-        Click me
-      </button>
-    </div>
-  );
-}`,
-
-          // Option 4: Incorrect - no onClick attribute
-          `function MyComponent() {
-return (
-  <div>
-    <button>
-      Click me
-    </button>
-  </div>
-);
-    }`,
-        ],
-        answer: `function MyComponent() {
-  const handleClick = () => {
-    alert('Button clicked!');
-  };
-
-  return (
-    <div>
-      <button 
-        onClick={handleClick}
-      >
-        Click me
-      </button>
-    </div>
-  );
-}`,
-      },
-    },
-
-    {
-      group: "3",
-      title: "Managing State with useState Hook",
-      description:
-        "In this step, you will learn how to use the useState hook to manage the state of a component.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText: `Modify the Tweet component to include a like button that toggles the liked state using the useState hook.`,
-      },
-    },
-
-    //next lecture
-    {
-      group: "3",
-      title: "Component Properties",
-      description:
-        "In this step, you will learn about passing properties to components in React.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What is the term used for passing data to a React component?",
-        placeholder: "Type your answer here...",
-        answer: "props",
-      },
-    },
-    {
-      group: "3",
-      title: "Passing and Using Props",
-      description:
-        "In this step, you will learn how to pass and use props in a React component.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Update the Tweet component to accept and display the user's name, handle, and tweet content as props.",
-      },
-    },
-    {
-      group: "3",
-      title: "Working with Props and State Together",
-      description:
-        "In this step, you will learn how to work with both props and state in a React component.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "What is the main difference between props and state in React?",
-        options: [
-          "Props are immutable while state is mutable",
-          "Props are managed by the component itself while state is passed down from parent components",
-          "State is used for styling while props are used for logic",
-          "There is no difference; they are the same",
-        ],
-        answer: "Props are immutable while state is mutable",
-      },
-    },
-
-    //next lecture
-    {
-      group: "3",
-      title: "Terminal Practice: Listing Files",
-      description:
-        "In this step, you will learn how to list files in a bash terminal.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText: `Use the terminal to list all the files using the list command.`,
-      },
-    },
-
-    {
-      group: "3",
-      title: "Styling React Components",
-      description:
-        "In this step, you will learn how to style React components using CSS.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText: `Add styles to the Tweet component to improve its appearance.`,
-      },
-    },
-    {
-      group: "3",
-      title: "Using Flexbox for Layouts",
-      description:
-        "In this step, you will learn how to use Flexbox to create layouts in React.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the following CSS properties in the order needed to center a basic layout with flexbox styling:",
-        options: [
-          "display: flex;",
-          "justify-content: center;",
-          "align-items: center;",
-          "flex-direction: row;",
-        ],
-        answer: [
-          "display: flex;",
-          "flex-direction: row;",
-          "justify-content: center;",
-          "align-items: center;",
-        ],
-      },
-    },
-
-    //next lecture
-    {
-      group: "3",
-      title: "Lifting State Up",
-      description:
-        "In this step, you will learn how to lift state up to a common ancestor component to share state between components.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText: `Create a parent component that manages the state for multiple Tweet components and passes the state and event handlers as props.`,
-      },
-    },
-    {
-      group: "3",
-      title: "Using useEffect for Side Effects",
-      description:
-        "In this step, you will learn how to use the useEffect hook to handle side effects in a React component.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Modify the Tweet component to use the useEffect hook to log a message to the console every time the number of retweets changes.",
-      },
-    },
-
-    {
-      group: "3",
-      title: "Understanding Component Lifecycle",
-      description:
-        "In this step, you will learn about the lifecycle of React components and how to use useEffect hook to manage side effects.",
-      isText: true,
-      question: {
-        questionText:
-          "What is the component lifecycle in React and what is the purpose of the useEffect hook?",
-      },
-    },
-
-    //next
-    {
-      group: "3",
-      title: "Fetching Data with useEffect",
-      description:
-        "In this step, you will learn how to fetch data from an API using the useEffect hook.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps with drag-and-drop to correctly fetch data using useEffect.",
-        options: [
-          "Import React and useState",
-          "Import useEffect from React",
-          "Create a component",
-          "Define the useEffect hook",
-          "Make the API call inside useEffect",
-          "Use async/await or .then() to handle the API response",
-          "Update the component state with the fetched data",
-          "Handle errors in the API call",
-          "Render the data in the component",
-        ],
-        answer: [
-          "Import React and useState",
-          "Import useEffect from React",
-          "Create a component",
-          "Define the useEffect hook",
-          "Make the API call inside useEffect",
-          "Use async/await or .then() to handle the API response",
-          "Update the component state with the fetched data",
-          "Handle errors in the API call",
-          "Render the data in the component",
-        ],
-      },
-    },
-
-    {
-      group: "3",
-      title: "Building a Complete Tweet App",
-      description:
-        "In this step, you will combine everything you have learned to build a complete Tweet app.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText: `Build a complete Tweet app that fetches tweets from an API, displays them using the Tweet component, and allows users to like and retweet.`,
-      },
-    },
-    {
-      group: "3",
-      title: "Terminal Practice: Setting Up A React App",
-      description: "In this step, you will learn how to set up a react project",
-
-      isText: true,
-      question: {
-        questionText:
-          "Enter the command to install the latest version of a react project with vite.",
-      },
-    },
-
-    //next
-    {
-      group: "3",
-      title: "Creating a New React Project with Vite",
-      description:
-        "In this step, you will learn how to create a new React project using Vite by following the correct steps and running command-line commands.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps with drag-and-drop to correctly create a new React project using Vite, including command-line commands.",
-        options: [
-          "Ensure Node.js, NPM and VSCode are installed",
-          "Run `npm create vite@latest` to create a new Vite project",
-          "Select the React template when prompted",
-          "Navigate to the project directory using `cd project-name`",
-          "Run `npm install` to install dependencies",
-          "Start the development server with `npm run dev`",
-        ],
-        answer: [
-          "Ensure Node.js, NPM and VSCode are installed",
-          "Run `npm create vite@latest` to create a new Vite project",
-          "Select the React template when prompted",
-          "Navigate to the project directory using `cd project-name`",
-          "Run `npm install` to install dependencies",
-          "Start the development server with `npm run dev`",
-        ],
-      },
-    },
-    {
-      group: "3",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [49, 67], // Indices of steps to review
-      },
-    },
-    // 1
-    {
-      group: "4",
-      title: "Introduction to Python Backend Engineering",
-      description:
-        "In this step, you will learn what backend software engineering is and why it is important.",
-      isText: true,
-      question: {
-        questionText:
-          "What is backend software engineering and why is it important in building applications?",
-      },
-    },
-    // 2
-    {
-      group: "4",
-      title: "Main Lessons Overview",
-      description:
-        "In this step, you will identify a core responsibility of backend engineering in Python.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which of the following is a core responsibility in backend engineering?",
-        options: [
-          "Managing concurrency and ensuring thread safety in multi-user applications",
-          "Implementing user authentication directly in the user interface",
-          "Handling memory allocation and garbage collection in the Python interpreter",
-          "Designing scalable front-end components for cross-browser compatibility",
-          "Optimizing database queries and ensuring data consistency",
-        ],
-        answer: "Optimizing database queries and ensuring data consistency",
-      },
-    },
-    // 3
-    {
-      group: "4",
-      title: "Key Responsibilities of Backend Engineering",
-      description:
-        "In this step, you will learn about the various responsibilities involved in Python backend engineering.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are core responsibilities of backend engineering?",
-        options: [
-          "Managing and optimizing databases for storing and retrieving data efficiently",
-          "Designing and implementing RESTful APIs to facilitate communication between systems",
-          "Ensuring security through user authentication and authorization mechanisms",
-          "Handling server-side logic, including business operations and calculations",
-          "Maintaining server reliability and performance under high traffic",
-          "Managing data integrity and consistency across distributed systems",
-          "Implementing logging and monitoring to ensure system health and debug issues",
-        ],
-        answer: [
-          "Managing and optimizing databases for storing and retrieving data efficiently",
-          "Designing and implementing RESTful APIs to facilitate communication between systems",
-          "Ensuring security through user authentication and authorization mechanisms",
-          "Handling server-side logic, including business operations and calculations",
-          "Maintaining server reliability and performance under high traffic",
-          "Managing data integrity and consistency across distributed systems",
-          "Implementing logging and monitoring to ensure system health and debug issues",
-        ],
-      },
-    },
-    // 4
-    {
-      group: "4",
-      title: "Interfacing with the Terminal",
-      description:
-        "In this step, you will learn about using the terminal in Python backend engineering.",
-      isText: true,
-      question: {
-        questionText:
-          "Why is learning to use the terminal important for backend development, and what kinds of tasks can you perform using it?",
-      },
-    },
-    // 5
-    {
-      group: "4",
-      title: "Upgrading pip",
-      description: "In this step, you will learn how to upgrade pip globally.",
-      isText: true,
-      question: {
-        questionText:
-          "Write the command to upgrade pip, the Python package manager, globally.",
-      },
-    },
-    // 6
-    {
-      group: "4",
-      title: "Installing a Python Package",
-      description:
-        "In this step, you will use the terminal to install a package with pip.",
-      isText: true,
-      question: {
-        questionText:
-          "Write the command to install Flask, a popular Python web framework.",
-      },
-    },
-    // 7
-    {
-      group: "4",
-      title: "User Creation and Authentication",
-      description:
-        "In this step, you will understand the key concept related to creating users in backend systems.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What is the process called that verifies a user's identity during account creation?",
-        placeholder: "Type your answer here...",
-        answer: "authentication",
-      },
-    },
-    // 8
-    {
-      group: "4",
-      title: "Database Foundations",
-      description:
-        "In this step, you will learn about the foundations of databases in backend engineering.",
-      isText: true,
-      question: {
-        questionText:
-          "What are the main types of databases used in backend engineering?",
-      },
-    },
-    // 9
-    {
-      group: "4",
-      title: "Connecting Systems",
-      description:
-        "Write a code snippet to connect a Python application to a PostgreSQL database using psycopg2.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write a Python code snippet to connect an application to a PostgreSQL database.",
-      },
-    },
-    // 10
-    {
-      group: "4",
-      title: "Starting a Django Project",
-      description:
-        "In this step, you will learn how to start a Django project using the command line.",
-      isSingleLineText: true,
-      question: {
-        questionText: "What is the command to start a new Django project?",
-        answer: "django-admin startproject mysite",
-      },
-    },
-    // 11
-    {
-      group: "4",
-      title: "Advanced Data Storage Practices",
-      description:
-        "In this step, you will learn advanced practices for storing data responsibly in backend systems.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are best practices for ensuring responsible data storage in a backend system?",
-        options: [
-          "Cache data in memory (e.g., Redis) to reduce database access time",
-          "Use a single centralized backup to reduce complexity and cost",
-          "Encrypt sensitive data both at rest and in transit to ensure security",
-          "Implement database replication across multiple servers to improve fault tolerance",
-        ],
-        answer: [
-          "Cache data in memory (e.g., Redis) to reduce database access time",
-          "Encrypt sensitive data both at rest and in transit to ensure security",
-          "Implement database replication across multiple servers to improve fault tolerance",
-        ],
-      },
-    },
-    // 12
-    {
-      group: "4",
-      title: "Initializing SQLAlchemy and Adding a Record",
-      description:
-        "In this step, you will learn how to initialize SQLAlchemy and add a record.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Complete the code to initialize SQLAlchemy with a Flask app and add a new User record.",
-        options: [
-          // 1) Correct initialization & commit
-          `from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@localhost/db'
-db = SQLAlchemy(app)
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, unique=True)
-
-# Add user
-new_user = User(username='alice')
-db.session.add(new_user)
-db.session.commit()`,
-          // 2) Forgot to call commit()
-          `from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@localhost/db'
-db = SQLAlchemy(app)
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, unique=True)
-
-# Add user
-new_user = User(username='alice')
-db.session.add(new_user)  # forgot db.session.commit()`,
-          // 3) Used create_all instead of binding to app
-          `from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@localhost/db'
-db = SQLAlchemy()
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, unique=True)
-
-db.create_all()  # missing db.init_app(app)
-
-# Add user
-new_user = User(username='alice')
-db.session.add(new_user)
-db.session.commit()`,
-          // 4) Incorrect URI key and missing session.add
-          `from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-
-app = Flask(__name__)
-app.config['DATABASE_URI'] = 'postgres://user:pass@localhost/db'  # wrong config key
-db = SQLAlchemy(app)
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, unique=True)
-
-# Add user
-new_user = User(username='alice')
-db.commit()  # wrong call: should be db.session.commit()`,
-        ],
-        answer: `from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@localhost/db'
-db = SQLAlchemy(app)
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, unique=True)
-
-# Add user
-new_user = User(username='alice')
-db.session.add(new_user)
-db.session.commit()`,
-      },
-    },
-    // 13
-    {
-      group: "4",
-      title: "Handling User Data",
-      description:
-        "In this step, you will learn how to retrieve a user object using SQLAlchemy.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write a Python code snippet to get a User object by ID using SQLAlchemy.",
-      },
-    },
-    // 14
-    {
-      group: "4",
-      title: "Retrieving a Record After Authentication",
-      description:
-        "In this step, you will learn how to retrieve a record after verifying credentials.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write code to retrieve a User record from the database after authentication.",
-      },
-    },
-    // 15
-    {
-      group: "4",
-      title: "Understanding the Authentication Flow",
-      description:
-        "In this step, you will learn about the typical flow of authentication in backend systems.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the following steps in the correct order for a typical JWT authentication flow in a Python backend.",
-        options: [
-          "User submits credentials via POST",
-          "Backend verifies credentials against the database",
-          "JWT token is generated and signed",
-          "Client stores token locally",
-          "Backend validates token on protected routes",
-        ],
-        answer: [
-          "User submits credentials via POST",
-          "Backend verifies credentials against the database",
-          "JWT token is generated and signed",
-          "Client stores token locally",
-          "Backend validates token on protected routes",
-        ],
-      },
-    },
-    // 16
-    {
-      group: "4",
-      title: "OAuth Authentication",
-      description:
-        "In this step, you will learn about OAuth-style authentication systems.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What is the widely used protocol for authorization that allows third-party services to access user data without exposing credentials?",
-        placeholder: "Type your answer here...",
-        answer: "OAuth 2.0",
-      },
-    },
-    // 17
-    {
-      group: "4",
-      title: "Using Environment Variables",
-      description:
-        "In this step, you will learn about using environment variables in backend development.",
-      isText: true,
-      question: {
-        questionText: "What role do environment variables play in a codebase?",
-      },
-    },
-    // 18
-    {
-      group: "4",
-      title: "Database Relationships",
-      description:
-        "In this step, you will learn about defining relationships in SQLAlchemy.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write a code snippet to define a one-to-many relationship between User and Post models in SQLAlchemy.",
-      },
-    },
-    // 19
-    {
-      group: "4",
-      title: "Interfacing with an API",
-      description:
-        "In this step, you will learn the common HTTP methods used to interface with an API.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following HTTP methods are commonly used to interface with a REST API, and what do they do?",
-        options: [
-          "GET (Retrieves data)",
-          "POST (Creates a new resource)",
-          "SEND (Sends data for processing)",
-          "PATCH (Partially updates a resource)",
-          "DELETE (Deletes a resource)",
-        ],
-        answer: [
-          "GET (Retrieves data)",
-          "POST (Creates a new resource)",
-          "PATCH (Partially updates a resource)",
-          "DELETE (Deletes a resource)",
-        ],
-      },
-    },
-    // 20
-    {
-      group: "4",
-      title: "Creating a JWT Authentication System",
-      description:
-        "In this step, you will create a simple user authentication system with JWT.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps with drag-and-drop to implement JWT authentication in Python.",
-        options: [
-          "Install PyJWT",
-          "Define User model",
-          "Create register endpoint",
-          "Hash passwords before storing",
-          "Create login endpoint",
-          "Verify user credentials",
-          "Generate JWT token",
-          "Return token to client",
-          "Protect routes with token verification",
-        ],
-        answer: [
-          "Install PyJWT",
-          "Define User model",
-          "Create register endpoint",
-          "Hash passwords before storing",
-          "Create login endpoint",
-          "Verify user credentials",
-          "Generate JWT token",
-          "Return token to client",
-          "Protect routes with token verification",
-        ],
-      },
-    },
-    // 21
-    {
-      group: "4",
-      title: "Deploying a Python Application",
-      description:
-        "In this step, you will learn how to deploy a Python backend application.",
-      isText: true,
-      question: {
-        questionText:
-          "Write the command to start a Gunicorn server for your Flask app.",
-      },
-    },
-    // 22
-    {
-      group: "4",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [69, 89],
-      },
-    },
-    // 1
-    {
-      group: "5",
-      title: "Benefits of Serverless Cloud Platforms",
-      description:
-        "In this step, you will explore the advantages of using Firebase in software development.",
-      isText: true,
-      question: {
-        questionText:
-          "What are the key benefits of using Firebase as a serverless backend, and how does it differ from traditional server-based models?",
-      },
-    },
-    // 2
-    {
-      group: "5",
-      title: "Understanding VSCode",
-      description:
-        "In this step, you will explore what Visual Studio Code (VSCode) is and why it is a popular code editor for Firebase development.",
-      isText: true,
-      question: {
-        questionText:
-          "What is Visual Studio Code (VSCode) and why do many Firebase developers choose it?",
-      },
-    },
-    // 3
-    {
-      group: "5",
-      title: "Installing Node.js and npm",
-      description:
-        "Install Node.js and npm, required for the Firebase CLI and local emulation.",
-      isText: true,
-      question: {
-        questionText:
-          "What is the purpose of Node.js and npm when working with Firebase projects?",
-      },
-    },
-    // 4
-    {
-      group: "5",
-      title: "Installing Project Dependencies",
-      description: "Install all dependencies listed in package.json.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "Enter the command to install dependencies from package.json.",
-        answer: "npm install",
-      },
-    },
-    // 5
-    {
-      group: "5",
-      title: "Install Firebase CLI",
-      description: "Install the Firebase CLI globally using npm.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What command do you use to install the Firebase CLI globally?",
-        answer: "npm install -g firebase-tools",
-      },
-    },
-    // 6
-    {
-      group: "5",
-      title: "Initializing a Firebase Project",
-      description:
-        "In this step, you will initialize a new Firebase project using the CLI.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What command do you use to initialize a Firebase project in your directory?",
-        answer: "firebase init",
-      },
-    },
-    // 7
-    {
-      group: "5",
-      title: "Selecting Firebase Features",
-      description:
-        "Choose which Firebase services to configure during initialization.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "During `firebase init`, which of the following features might you enable?",
-        options: [
-          "Authentication",
-          "Firestore",
-          "Realtime Database",
-          "Cloud Functions",
-          "Hosting",
-          "Storage",
-          "Emulators",
-        ],
-        answer: ["Authentication", "Firestore", "Cloud Functions", "Hosting"],
-      },
-    },
-    // 8
-    {
-      group: "5",
-      title: "Configuring Firebase SDK",
-      description:
-        "In this step, you will set up the Firebase Admin SDK in Python.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write the Python code to initialize the Firebase Admin SDK with a service account.",
-      },
-    },
-    // 9
-    {
-      group: "5",
-      title: "Setting Up Firestore",
-      description: "Learn how to initialize Firestore in your Python code.",
-      isCode: true,
-      question: {
-        questionText:
-          "Add the code to get a Firestore client from the initialized Admin SDK.",
-      },
-    },
-    // 10
-    {
-      group: "5",
-      title: "Understanding Authentication",
-      description:
-        "In this step, you will learn about Firebase Authentication.",
-      isText: true,
-      question: {
-        questionText:
-          "What is Firebase Authentication, and what types of sign-in methods does it support?",
-      },
-    },
-    // 11
-    {
-      group: "5",
-      title: "Creating a User with Firebase Auth",
-      description:
-        "In this step, you will learn how to create a new user account programmatically.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write Python code using the Admin SDK to create a new user with email and password.",
-      },
-    },
-    // 12
-    {
-      group: "5",
-      title: "Verifying ID Tokens",
-      description:
-        "Learn how to verify a client’s Firebase ID token on your backend.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write Python code to verify a Firebase ID token and extract the user UID.",
-      },
-    },
-    // 13
-    {
-      group: "5",
-      title: "CRUD with Firestore",
-      description:
-        "In this step, you will perform basic database operations with Firestore.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Complete the Python code to add, get, update, and delete a document in Firestore.",
-        options: [
-          // 1) Correct sequence of calls
-          `# assume db is a Firestore client
-doc_ref = db.collection('users').document('alice')
-# create
-doc_ref.set({'email': 'alice@example.com', 'age': 30})
-# read
-user = doc_ref.get().to_dict()
-# update
-doc_ref.update({'age': 31})
-# delete
-doc_ref.delete()`,
-
-          // 2) Forgot to delete the document
-          `# assume db is a Firestore client
-doc_ref = db.collection('users').document('alice')
-# create
-doc_ref.set({'email': 'alice@example.com', 'age': 30})
-# read
-user = doc_ref.get().to_dict()
-# update
-doc_ref.update({'age': 31})
-# (missing delete step)`,
-
-          // 3) Used add() on a collection instead of document()
-          `# assume db is a Firestore client
-users_col = db.collection('users')
-# create
-new_ref = users_col.add({'email': 'alice@example.com', 'age': 30})
-# read
-user = new_ref.get().to_dict()
-# update
-new_ref.update({'age': 31})
-# delete
-new_ref.delete()`,
-
-          // 4) Read without converting to dict, and wrong delete call
-          `# assume db is a Firestore client
-doc_ref = db.collection('users').document('alice')
-# create
-doc_ref.set({'email': 'alice@example.com', 'age': 30})
-# read
-user = doc_ref.get()             # forgot .to_dict()
-# update
-doc_ref.update({'age': 31})
-# delete
-db.collection('users').delete()   # invalid: delete on collection`,
-        ],
-        answer: `# assume db is a Firestore client
-doc_ref = db.collection('users').document('alice')
-# create
-doc_ref.set({'email': 'alice@example.com', 'age': 30})
-# read
-user = doc_ref.get().to_dict()
-# update
-doc_ref.update({'age': 31})
-# delete
-doc_ref.delete()`,
-      },
-    },
-    // 14
-    {
-      group: "5",
-      title: "Writing Cloud Functions",
-      description:
-        "In this step, you will write a simple Firebase Cloud Function in Python.",
-      isCode: true,
-      question: {
-        questionText:
-          "Show a basic HTTP-triggered Cloud Function that returns 'Hello Firebase'.",
-      },
-    },
-    // 15
-    {
-      group: "5",
-      title: "Local Emulation",
-      description: "Learn how to test Functions and Firestore locally.",
-      isSingleLineText: true,
-      question: {
-        questionText: "What command starts the local Firebase emulator suite?",
-        answer: "firebase emulators:start",
-      },
-    },
-    // 16
-    {
-      group: "5",
-      title: "Deploying to Firebase",
-      description:
-        "In this step, you will deploy your Functions and Firestore rules to production.",
-      isSingleLineText: true,
-      question: {
-        questionText: "What command do you use to deploy only Cloud Functions?",
-        answer: "firebase deploy --only functions",
-      },
-    },
-    // 17
-    {
-      group: "5",
-      title: "Storage with Firebase",
-      description:
-        "Learn how to upload and serve files using Firebase Storage.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write Python code using the Admin SDK to upload a file to a Storage bucket.",
-      },
-    },
-    // 18
-    {
-      group: "5",
-      title: "Security Rules Basics",
-      description:
-        "In this step, you will learn about Firestore security rules.",
-      isText: true,
-      question: {
-        questionText:
-          "What are Firestore security rules and when are they evaluated?",
-      },
-    },
-    // 19
-    {
-      group: "5",
-      title: "Monitoring and Analytics",
-      description:
-        "Explore Firebase’s built-in monitoring and analytics tools.",
-      isText: true,
-      question: {
-        questionText:
-          "Which Firebase products help you monitor performance and usage of your backend?",
-      },
-    },
-    // 20
-    {
-      group: "5",
-      title: "Popular Firebase Extensions",
-      description: "Learn about official Firebase Extensions you can install.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are Firebase Extensions provided by Google?",
-        options: [
-          "Trigger Email via SendGrid",
-          "Resize Images",
-          "Translate Text",
-          "Host Static Site",
-          "Backup Realtime Database",
-        ],
-        answer: [
-          "Trigger Email via SendGrid",
-          "Resize Images",
-          "Translate Text",
-          "Backup Realtime Database",
-        ],
-      },
-    },
-    // 21
-    {
-      group: "5",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [91, 110],
-      },
-    },
-  ],
-
-  ["swift-en"]: [
-    {
-      group: "introduction",
-      title: "Introduction To iOS Development with Swift",
-      isStudyGuide: true,
-      description:
-        "Expose yourself to Swift fundamentals and SwiftUI basics to improve the quality of your learning before making progress.",
-      question: {
-        questionText: (
-          <div>
-            <p style={{ marginBottom: 12 }}>
-              {" "}
-              One of the best predictors for student success is exposure to
-              course material before studying it.
-            </p>
-
-            <p style={{ marginBottom: 12 }}>
-              Remember to fail faster and fail forward! The real education
-              happens when you push through a challenge.
-            </p>
-          </div>
-        ),
-        metaData: `### Advice
-This looks like ChatGPT content…but it’s not—it's me, your instructor!
-
-As a beginner:
-1. Programming is about structuring data and logic, not advanced math.
-2. Like spoken languages, you can express the same idea in many ways.
-3. When something challenges you, break it into smaller steps and iterate quickly.
-
-### Exposure
-This guide exposes you to concepts before you answer questions, so you won’t be intimidated later. Skim it now, code along later.
-
-### Core Concepts in Swift
-
-\`\`\`swift
-// Arrays
-var myArray: [Any] = [1, 2, 3, "a", "b", "c"]
-myArray.append("new data")
-
-// Dictionaries
-var dataSet: [String: Any] = [
-    "introduction": "Welcome",
-    "title": "Chapter 1",
-    "isLive": true
-]
-dataSet["page"] = 4
-dataSet["book"] = "Coding Basics"
-\`\`\`
-
-\`\`\`swift
-// Defining a class
-class House {
-    private var housePaint: String?
-
-    init(paint: String? = nil) {
-        self.housePaint = paint
-    }
-
-    func getPaint() -> String? {
-        return housePaint
-    }
-
-    func setPaint(_ paint: String) {
-        housePaint = paint
-    }
-
-    func deletePaint() {
-        housePaint = nil
-    }
-}
-
-// Usage
-let firstHome = House(paint: "pink")
-let nextHome = House(paint: "blue")
-print(firstHome.getPaint()!)   // "pink"
-\`\`\`
-
-### SwiftUI Quick Preview
-
-\`\`\`swift
-import SwiftUI
-
-struct CelebrationView: View {
-    let message: String
-
-    var body: some View {
-        VStack {
-            Text("Good job!")
-                .font(.title)
-                .padding(.bottom, 8)
-            Text(message)
-                .multilineTextAlignment(.center)
-                .padding()
-                .border(Color.black, width: 2)
-        }
-    }
-}
-
-// Preview in Xcode
-struct CelebrationView_Previews: PreviewProvider {
-    static var previews: some View {
-        CelebrationView(message: "You created a small app!")
-    }
-}
-\`\`\`
-
-### Conclusion
-Failing fast is in your best interest when learning a new language. This one-pager will be available inside the app. Good luck, and happy coding in Swift!`,
-      },
-    },
-
-    {
-      group: "tutorial",
-      title: "Understanding Coding",
-      description: "Grasp the basic concept of coding in Swift.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "Which of the following best describes coding?",
-        options: [
-          "Writing instructions for computers to perform tasks",
-          "Creating physical components for computers",
-          "Designing user interfaces",
-          "Managing databases",
-        ],
-        answer: "Writing instructions for computers to perform tasks",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Sequence of Program Execution",
-      description: "Learn the correct order of program execution.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps with drag-and-drop to order how a Swift program is built and run.",
-        options: [
-          "Writing Code",
-          "Code Compilation",
-          "Debugging",
-          "Program Execution",
-        ],
-        answer: [
-          "Writing Code",
-          "Code Compilation",
-          "Debugging",
-          "Program Execution",
-        ],
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Introduction to Variables",
-      description:
-        "In this step, you will learn about variables and how to declare them in Swift.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Select all the steps involved in correctly declaring a variable in Swift:",
-        options: [
-          "Use the var or let keyword",
-          "Choose a descriptive variable name",
-          "Assign a value using the equals sign (=)",
-          "End the declaration with a semicolon (;)",
-          "Capitalize the first letter of the variable name",
-          "Annotate the type explicitly (optional)",
-        ],
-        answer: [
-          "Use the var or let keyword",
-          "Choose a descriptive variable name",
-          "Assign a value using the equals sign (=)",
-        ],
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Understanding List Declarations",
-      description:
-        "Complete the code by selecting the correct way to declare an array of items in Swift.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which code block correctly declares a list of items in Swift?",
-        options: [
-          `let items = ["apple", "banana", "cherry"]`,
-          `var items: [String] = ["apple", "banana", "cherry"]`,
-          `let items = ("apple", "banana", "cherry")`,
-          `let items = "apple, banana, cherry"`,
-          `class Items {\n    // properties here\n}`,
-        ],
-        answer: `let items = ["apple", "banana", "cherry"]`,
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Variable Assignment in Swift",
-      description: "Learn how to assign values to variables in Swift.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Declare a variable named `age` and assign it the value 25.",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Understanding Data Types",
-      description: "Learn the basics of data types in Swift.",
-      isSingleLineText: true,
-      question: {
-        questionText: "What keyword is used to declare a constant in Swift?",
-        placeholder: "Type your answer here...",
-        answer: "let",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Purpose of Variables",
-      description: "Understand why variables are used in programming.",
-      isText: true,
-      question: {
-        questionText:
-          "In your own words, explain the purpose of variables in programming.",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Bash Terminal Practice: Changing Directories",
-      description: "Practice changing directories in a terminal environment.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "Enter the command to change to the `new_folder` directory using a Bash terminal.",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [1, 8],
-      },
-    },
-    // 1
-    {
-      group: "1",
-      title: "Data Types in Programming",
-      description: "Identify different primitive data types used in Swift.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are primitive data types in Swift?",
-        options: ["String", "Int", "Float", "Double", "Bool", "Character"],
-        answer: ["String", "Int", "Float", "Double", "Bool", "Character"],
-      },
-    },
-    // 2
-    {
-      group: "1",
-      title: "Steps to Create a Function",
-      description: "Understand the sequence of creating and using a function.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps with drag-and-drop to create and use a Swift function.",
-        options: [
-          "Define the function",
-          "Call the function",
-          "Execute the function body",
-          "Return a value",
-        ],
-        answer: [
-          "Define the function",
-          "Call the function",
-          "Execute the function body",
-          "Return a value",
-        ],
-      },
-    },
-    // 3
-    {
-      group: "1",
-      title: "Writing a Simple Function",
-      description: "Practice writing functions in Swift.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write a function named `greet` that takes a `name: String` parameter and prints a greeting with that name.",
-      },
-    },
-    // 4
-    {
-      group: "1",
-      title: "Functions in Programming",
-      description: "Discuss the role of functions.",
-      isText: true,
-      question: {
-        questionText:
-          "What is a function, and why is it useful in programming?",
-      },
-    },
-    // 5
-    {
-      group: "1",
-      title: "Conditional Statements",
-      description: "Identify the purpose of conditional statements.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "What is the primary purpose of an `if` statement?",
-        options: [
-          "To repeat a block of code multiple times",
-          "To execute a block of code based on a condition",
-          "To define a variable",
-          "To import external libraries",
-        ],
-        answer: "To execute a block of code based on a condition",
-      },
-    },
-    // 6
-    {
-      group: "1",
-      title: "Order of Conditional Checks",
-      description:
-        "Complete the code that evaluates an `if`/`else if`/`else` statement.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Complete the following Swift code to check if `x` is greater than 10, equal to 10, or less than 10.",
-        options: [
-          // 1) Correct order and operators
-          `if x > 10 {
-    print("x is greater than 10")
-} else if x == 10 {
-    print("x is equal to 10")
-} else {
-    print("x is less than 10")
-}`,
-
-          // 2) Swapped the first two checks (wrong logic)
-          `if x == 10 {
-    print("x is equal to 10")
-} else if x > 10 {
-    print("x is greater than 10")
-} else {
-    print("x is less than 10")
-}`,
-
-          // 3) Missing the else-if branch entirely
-          `if x > 10 {
-    print("x is greater than 10")
-} else {
-    print("x is not greater than 10")
-}`,
-
-          // 4) Used >= instead of == for equality check
-          `if x > 10 {
-    print("x is greater than 10")
-} else if x >= 10 {
-    print("x is equal to 10")
-} else {
-    print("x is less than 10")
-}`,
-        ],
-        answer: `if x > 10 {
-    print("x is greater than 10")
-} else if x == 10 {
-    print("x is equal to 10")
-} else {
-    print("x is less than 10")
-}`,
-      },
-    },
-    // 7
-    {
-      group: "1",
-      title: "Implementing Conditional Logic",
-      description: "Apply conditional logic in code.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write an `if`/`else if`/`else` statement that checks if a number `num` is positive, negative, or zero, and prints an appropriate message.",
-      },
-    },
-    // 8
-    {
-      group: "1",
-      title: "Understanding Conditional Logic in Programming",
-      description:
-        "Learn how logical operators like AND and OR control conditions in programming.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "Which logical operator is used to check if both conditions in a conditional statement are true in Swift?",
-        placeholder: "Type your answer here...",
-        answer: "&&",
-      },
-    },
-    // 9
-    {
-      group: "1",
-      title: "Real-world Use of Conditionals",
-      description: "Reflect on how conditionals are used.",
-      isText: true,
-      question: {
-        questionText:
-          "Provide an example of how conditional statements are used in real-world applications.",
-      },
-    },
-    // 10
-    {
-      group: "1",
-      title: "Terminal Practice: Help Command",
-      description: "Write the help command to observe basic commands.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "In a Bash terminal environment, enter the help command to discover basic commands.",
-      },
-    },
-    // 11
-    {
-      group: "1",
-      title: "Loops in Programming",
-      description: "Understand the purpose of loops.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which loop will continue executing as long as its condition remains true in Swift?",
-        options: [
-          "for-in loop",
-          "while loop",
-          "repeat-while loop",
-          "forEach method",
-        ],
-        answer: "while loop",
-      },
-    },
-    // 12
-    {
-      group: "1",
-      title: "Sequence of Loop Execution",
-      description: "Grasp the order in which loops execute.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps of a Swift `for-in` loop execution with drag-and-drop.",
-        options: [
-          "Initialize iterator",
-          "Check condition",
-          "Execute code block",
-          "Advance iterator",
-        ],
-        answer: [
-          "Initialize iterator",
-          "Check condition",
-          "Execute code block",
-          "Advance iterator",
-        ],
-      },
-    },
-    // 13
-    {
-      group: "1",
-      title: "Creating a Loop",
-      description: "Practice writing loops.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write a `for i in 1...5 { print(i) }` loop that prints numbers from 1 to 5 in Swift.",
-      },
-    },
-    // 14
-    {
-      group: "1",
-      title: "Applications of Loops",
-      description: "Discuss where loops are useful.",
-      isText: true,
-      question: {
-        questionText:
-          "Describe a scenario in software development where loops are essential.",
-      },
-    },
-    // 15
-    {
-      group: "1",
-      title: "Arrays in Swift",
-      description: "Identify methods used for manipulating arrays in Swift.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following methods are valid for manipulating arrays in Swift?",
-        options: [
-          ".append()",
-          ".removeLast()",
-          ".remove(at:)",
-          ".insert(_:at:)",
-          ".map()",
-          ".filter()",
-        ],
-        answer: [
-          ".append()",
-          ".removeLast()",
-          ".remove(at:)",
-          ".insert(_:at:)",
-          ".map()",
-          ".filter()",
-        ],
-      },
-    },
-    // 16
-    {
-      group: "1",
-      title: "Order of Array Operations",
-      description: "Understand how array operations are performed.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Complete the code to declare an array, add an element to it, remove the first element, and then access an element.",
-        options: [
-          // 1) Correct sequence
-          `var fruits = ["apple", "banana"]
-fruits.append("pink")
-fruits.removeFirst()
-print(fruits[0])`,
-
-          // 2) Missing the removal step
-          `var fruits = ["apple", "banana"]
-fruits.append("pink")
-print(fruits[0])`,
-
-          // 3) Operations in the wrong order
-          `var fruits = ["apple", "banana"]
-fruits.removeFirst()
-fruits.append("pink")
-print(fruits[0])`,
-
-          // 4) Accessing the wrong index
-          `var fruits = ["apple", "banana"]
-fruits.append("pink")
-fruits.removeFirst()
-print(fruits[1])`,
-        ],
-        answer: `var fruits = ["apple", "banana"]
-fruits.append("pink")
-fruits.removeFirst()
-print(fruits[0])`,
-      },
-    },
-    // 17
-    {
-      group: "1",
-      title: "Manipulating Arrays",
-      description: "Apply array methods in code.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          'Create an array `fruits` with "apple" and "banana". Add "pink" to the end and remove the first element.',
-      },
-    },
-    // 18
-    {
-      group: "1",
-      title: "Use Cases for Arrays",
-      description: "Explore scenarios where arrays are used.",
-      isText: true,
-      question: {
-        questionText:
-          "Provide an example of how an array can be used to manage data in an iOS application.",
-      },
-    },
-    // 19
-    {
-      group: "1",
-      title: "Terminal Practice: Creating Directories",
-      description: "Creating a directory command in a bash terminal",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "In a Bash terminal environment, create a directory called `app` using the `mkdir` command.",
-      },
-    },
-    // 20
-    {
-      group: "1",
-      title: "Advanced Coding Output",
-      description:
-        "Predict the output of the following code with arrays, conditionals, logical operators, and array operations.",
-      isSingleLineText: true,
-      question: {
-        questionText: (
-          <div>
-            What will be the output of the following code?
-            <br />
-            <pre>
-              {`
-var arr = [1, 2, 3, 4]
-let x = 10
-let y = 5
-
-if x > y && arr.count > 3 {
-    arr.append(x)
-    arr = arr.filter { $0 % 2 == 0 }
-}
-
-print(arr)
-`}
-            </pre>
-          </div>
-        ),
-        placeholder: "Type your answer here...",
-        answer: "[2, 4, 10]",
-      },
-    },
-    // 21
-    {
-      group: "1",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [10, 29],
-      },
-    },
-    // 1
-    {
-      group: "2",
-      title: "Introduction to Objects",
-      description:
-        "In this step, you will learn what an object is in programming.",
-      isSingleLineText: true,
-      question: {
-        questionText: "In Swift, how do you create a new instance of a class?",
-        placeholder: "Type your answer here...",
-        answer: "Call the class initializer, e.g. MyClass()",
-      },
-    },
-    // 2
-    {
-      group: "2",
-      title: "Understanding the init Method",
-      description:
-        "In this step, you will learn about the purpose of the `init` method in a class.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which of the following code blocks correctly defines the `init` method and instantiates the class in Swift?",
-        options: [
-          `class Car {
-    var brand: String
-    init(brand: String) {
-        self.brand = brand
-    }
-}
-let myCar = Car(brand: "Toyota")`,
-          `class Car {
-    var brand: String
-    func init(brand: String) {
-        self.brand = brand
-    }
-}
-let myCar = Car(brand: "Toyota")`,
-          `class Car {
-    var brand: String
-    init(_ brand: String) {
-        self.brand = brand
-    }
-}
-let myCar = Car("Toyota")`,
-          `class Car {
-    var brand: String?
-    init() {
-        brand = "Toyota"
-    }
-}
-let myCar = Car()`,
-        ],
-        answer: `class Car {
-    var brand: String
-    init(brand: String) {
-        self.brand = brand
-    }
-}
-let myCar = Car(brand: "Toyota")`,
-      },
-    },
-    // 3
-    {
-      group: "2",
-      title: "Purpose of the init Method",
-      description:
-        "In this step, you will learn about the purpose of the `init` method in a class.",
-      isText: true,
-      question: {
-        questionText:
-          "Explain the purpose of the `init` method in a Swift class.",
-      },
-    },
-    // 4
-    {
-      group: "2",
-      title: "Creating an Instance of a Class",
-      description:
-        "In this step, you will learn how to create an instance of a class in Swift.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Select all the correct steps required to create an instance of a class in Swift:",
-        options: [
-          "Define the class with the `class` keyword",
-          "Call the class initializer with parentheses",
-          "Pass required parameters to the initializer",
-          "Store the returned instance in a variable",
-          "Use the `new` keyword",
-          "Call the class without parentheses",
-        ],
-        answer: [
-          "Define the class with the `class` keyword",
-          "Call the class initializer with parentheses",
-          "Pass required parameters to the initializer",
-          "Store the returned instance in a variable",
-        ],
-      },
-    },
-    // 5
-    {
-      group: "2",
-      title: "Declaring a Method in a Class",
-      description:
-        "In this step, you will learn how to declare a method inside a class.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Declare a method named `updateModel()` in the `Car` class that updates the `model` property.",
-      },
-    },
-    // 6
-    {
-      group: "2",
-      title: "Using self",
-      description:
-        "Complete the code by selecting the correct way to use `self` to refer to the instance property.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which code block correctly uses `self` to refer to the object's property?",
-        options: [
-          `class Car {
-    var brand: String
-    init(brand: String) { self.brand = brand }
-    func showBrand() { print(brand) }
-}
-let myCar = Car(brand: "Toyota")
-myCar.showBrand()`,
-          `class Car {
-    var brand: String
-    init(brand: String) { self.brand = brand }
-    func showBrand() { print(self.brand) }
-}
-let myCar = Car(brand: "Toyota")
-myCar.showBrand()`,
-          `class Car {
-    var brand: String
-    init(brand: String) { brand = self.brand }
-    func showBrand() { print(self.brand) }
-}
-let myCar = Car(brand: "Toyota")
-myCar.showBrand()`,
-          `class Car {
-    var brand: String
-    init(brand: String) { self.brand = brand }
-    func showBrand() { print(self.brand()) }
-}
-let myCar = Car(brand: "Toyota")
-myCar.showBrand()`,
-        ],
-        answer: `class Car {
-    var brand: String
-    init(brand: String) { self.brand = brand }
-    func showBrand() { print(self.brand) }
-}
-let myCar = Car(brand: "Toyota")
-myCar.showBrand()`,
-      },
-    },
-    // 7
-    {
-      group: "2",
-      title: "Adding Properties to an Object",
-      description:
-        "In this step, you will learn how to add properties to a Swift class.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText: "Add a new property `year: Int` to the `Car` class.",
-      },
-    },
-    // 8
-    {
-      group: "2",
-      title: "Accessing and Modifying Object Properties",
-      description:
-        "In this step, you will learn how to get or set properties of an object in Swift.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are valid ways to get or set properties in Swift?",
-        options: [
-          "Use dot notation (e.g., obj.property)",
-          "Use custom getter/setter if defined",
-          "Use Key-Value Coding (KVC)",
-          "Use reflection APIs",
-        ],
-        answer: [
-          "Use dot notation (e.g., obj.property)",
-          "Use custom getter/setter if defined",
-        ],
-      },
-    },
-    // 9
-    {
-      group: "2",
-      title: "Modifying Object Properties",
-      description:
-        "In this step, you will learn how to modify properties of an object.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Modify the `model` property of an instance of the `Car` class.",
-      },
-    },
-    // 10
-    {
-      group: "2",
-      title: "Understanding Inheritance",
-      description:
-        "In this step, you will learn about inheritance in object-oriented programming.",
-      isText: true,
-      question: {
-        questionText: "What is inheritance in object-oriented programming?",
-      },
-    },
-    // 11
-    {
-      group: "2",
-      title: "Implementing Inheritance",
-      description:
-        "In this step, you will implement inheritance in Swift by subclassing.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Extend the `Car` class to create an `ElectricCar` subclass with an additional property `batteryLife: Int`.",
-      },
-    },
-    // 12
-    {
-      group: "2",
-      title: "Overriding Methods",
-      description:
-        "In this step, you will learn how to override methods in a subclass.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "What does it mean to override a method in a subclass?",
-        options: [
-          "Provide a new implementation for a superclass method",
-          "Delete the superclass method",
-          "Call the superclass method without changes",
-          "Extend functionality via super.method()",
-        ],
-        answer: "Provide a new implementation for a superclass method",
-      },
-    },
-    // 13
-    {
-      group: "2",
-      title: "Understanding Encapsulation",
-      description:
-        "In this step, you will learn about encapsulation in object-oriented programming.",
-      isText: true,
-      question: {
-        questionText: "What is encapsulation in object-oriented programming?",
-      },
-    },
-    // 14
-    {
-      group: "2",
-      title: "Implementing Encapsulation",
-      description:
-        "In this step, you will implement encapsulation by using computed properties.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Add a computed property `batteryLife` with get and set in the `ElectricCar` subclass.",
-      },
-    },
-    // 15
-    {
-      group: "2",
-      title: "Encapsulation Concept",
-      description:
-        "In this step, you will define the core concept of encapsulation in one word.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What is the primary concept encapsulation ensures in object-oriented programming?",
-        placeholder: "Type your answer here...",
-        answer: "Abstraction",
-      },
-    },
-    // 16
-    {
-      group: "2",
-      title: "Combining Concepts",
-      description:
-        "In this step, you will combine various concepts learned to create a small project.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Create a small project that defines a `Person` class, uses inheritance to create a `Student` subclass, and demonstrates encapsulation and arrays of objects in Swift.",
-      },
-    },
-    // 17
-    {
-      group: "2",
-      title: "Printing in Code",
-      description: "In this step, you will print a message using Swift code.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write a Swift statement to print: 'I'm talking to the inside of a computer!'",
-      },
-    },
-    // 18
-    {
-      group: "2",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [31, 47],
-      },
-    },
-    // 1
-    {
-      group: "3",
-      title: "Introduction to SwiftUI Views",
-      description:
-        "In this step, you will learn about SwiftUI views, their role in creating reusable UI elements, and how they help manage the user interface efficiently.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "Which of the following best describes a SwiftUI view?",
-        options: [
-          "A method for handling events in Swift",
-          "A feature exclusive to UIKit",
-          "A reusable piece of user interface defined as a struct or class conforming to View",
-          "A built-in HTML element in Swift",
-        ],
-        answer:
-          "A reusable piece of user interface defined as a struct or class conforming to View",
-      },
-    },
-    // 2
-    {
-      group: "3",
-      title: "Key Concepts in SwiftUI",
-      description:
-        "In this step, you will learn about fundamental SwiftUI concepts, including properties, state, modifiers, and layout containers.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText: "Which of the following are key concepts in SwiftUI?",
-        options: [
-          "@State for local mutable state",
-          "Directly manipulating the view hierarchy",
-          "View modifiers for styling and behavior",
-          "HStack, VStack, ZStack for layout",
-        ],
-        answer: [
-          "@State for local mutable state",
-          "View modifiers for styling and behavior",
-          "HStack, VStack, ZStack for layout",
-        ],
-      },
-    },
-    // 3
-    {
-      group: "3",
-      title: "Effect of State Changes on a View",
-      description:
-        "In this step, you will explain what happens to a SwiftUI view when its @State changes.",
-      isText: true,
-      question: {
-        questionText:
-          "What happens to a SwiftUI view when its @State property changes?",
-      },
-    },
-    // 4
-    {
-      group: "3",
-      title: "Creating a Simple SwiftUI View",
-      description:
-        "In this step, you will define a basic SwiftUI view that displays a heading and a text.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which of the following code blocks correctly defines a simple SwiftUI view that shows a title and subtitle?",
-        options: [
-          `struct MyView: View {
-    var body: some View {
-        VStack {
-            Text("Hello, World!")
-            Text("Welcome to the thunderdome")
-        }
-    }
-}`,
-          `class MyView: View {
-    func body() -> some View {
-        VStack {
-            Text("Hello, World!")
-            Text("Welcome to the thunderdome")
-        }
-    }
-}`,
-          `struct MyView {
-    var body: some View {
-        VStack {
-            Text("Hello, World!")
-            Text("Welcome to the thunderdome")
-        }
-    }
-}`,
-          `struct MyView: View {
-    var content: some View {
-        VStack {
-            Text("Hello, World!")
-            Text("Welcome to the thunderdome")
-        }
-    }
-}`,
-        ],
-        answer: `struct MyView: View {
-    var body: some View {
-        VStack {
-            Text("Hello, World!")
-            Text("Welcome to the thunderdome")
-        }
-    }
-}`,
-      },
-    },
-    // 5
-    {
-      group: "3",
-      title: "Handling Tap Gestures",
-      description:
-        "In this step, you will handle a button tap event using SwiftUI's modifiers.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which of the following code blocks correctly defines a SwiftUI view that handles a button tap?",
-        options: [
-          `Button("Click me") {
-    print("Button clicked!")
-}`,
-          `Button(action: {
-    print("Button clicked!")
-}) {
-    Text("Click me")
-}`,
-          `Button("Click me", action: print("Button clicked!"))`,
-          `Button {
-    Text("Click me")
-} onTap: {
-    print("Button clicked!")
-}`,
-        ],
-        answer: `Button("Click me") {
-    print("Button clicked!")
-}`,
-      },
-    },
-    // 6
-    {
-      group: "3",
-      title: "Managing State with @State",
-      description:
-        "In this step, you will learn how to use the @State property wrapper to manage local view state.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Modify the TweetView to include a like button that toggles a `@State var liked: Bool` property.",
-      },
-    },
-    // 7
-    {
-      group: "3",
-      title: "View Properties",
-      description:
-        "In this step, you will learn about passing data into SwiftUI views.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What is the term used for data passed into a SwiftUI view?",
-        placeholder: "Type your answer here...",
-        answer: "View properties (initializer parameters)",
-      },
-    },
-    // 8
-    {
-      group: "3",
-      title: "Passing and Using Properties",
-      description:
-        "In this step, you will learn how to pass and use properties in a SwiftUI view.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Update the TweetView to accept and display the user’s `name`, `handle`, and `content` as view properties.",
-      },
-    },
-    // 9
-    {
-      group: "3",
-      title: "Working with Properties and State Together",
-      description:
-        "In this step, you will learn the difference between properties and @State.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "What is the main difference between view properties and @State?",
-        options: [
-          "Properties are immutable while @State is mutable",
-          "Properties trigger view updates while @State does not",
-          "@State is passed from parent views, properties are local",
-          "There is no difference; they behave the same",
-        ],
-        answer: "Properties are immutable while @State is mutable",
-      },
-    },
-    // 10
-    {
-      group: "3",
-      title: "Terminal Practice: Listing Files",
-      description:
-        "In this step, you will learn how to list files in a bash terminal.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "Use the terminal to list all files using the `ls` command.",
-      },
-    },
-    // 11
-    {
-      group: "3",
-      title: "Styling SwiftUI Views",
-      description:
-        "In this step, you will learn how to style SwiftUI views using modifiers.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Add modifiers to the TweetView to set font, padding, background, and corner radius.",
-      },
-    },
-    // 12
-    {
-      group: "3",
-      title: "Using Stacks for Layout",
-      description:
-        "In this step, you will learn how to use HStack and VStack for layout in SwiftUI.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the following in the order needed to center content using VStack and modifiers:",
-        options: [
-          "VStack { }",
-          ".frame(maxWidth: .infinity, maxHeight: .infinity)",
-          ".background(Color.white)",
-          ".multilineTextAlignment(.center)",
-        ],
-        answer: [
-          "VStack { }",
-          ".frame(maxWidth: .infinity, maxHeight: .infinity)",
-          ".multilineTextAlignment(.center)",
-          ".background(Color.white)",
-        ],
-      },
-    },
-    // 13
-    {
-      group: "3",
-      title: "Lifting State Up",
-      description:
-        "In this step, you will learn how to lift state to a parent view to share data.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Create a parent view that manages an array of Tweet models with @State and passes bindings to child TweetViews.",
-      },
-    },
-    // 14
-    {
-      group: "3",
-      title: "Using onAppear for Side Effects",
-      description:
-        "In this step, you will learn how to use onAppear to handle side effects in a SwiftUI view.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Modify the TweetView to use `.onAppear` or `.onChange` to log a message when the retweet count changes.",
-      },
-    },
-    // 15
-    {
-      group: "3",
-      title: "Understanding View Lifecycle",
-      description:
-        "In this step, you will learn about the SwiftUI view lifecycle and the purpose of onAppear.",
-      isText: true,
-      question: {
-        questionText:
-          "What is the SwiftUI view lifecycle, and what is the purpose of onAppear?",
-      },
-    },
-    // 16
-    {
-      group: "3",
-      title: "Fetching Data with async/await",
-      description:
-        "In this step, you will learn how to fetch data from an API using async/await in SwiftUI.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps to correctly fetch data in a SwiftUI view using async/await:",
-        options: [
-          "Import SwiftUI and Foundation",
-          "Define @State var data",
-          "Use Task { await fetchData() } in .task modifier",
-          "Handle errors with do/catch",
-          "Update state with received data",
-          "Render data in view",
-        ],
-        answer: [
-          "Import SwiftUI and Foundation",
-          "Define @State var data",
-          "Use Task { await fetchData() } in .task modifier",
-          "Handle errors with do/catch",
-          "Update state with received data",
-          "Render data in view",
-        ],
-      },
-    },
-    // 17
-    {
-      group: "3",
-      title: "Building a Complete Tweet App",
-      description:
-        "In this step, you will combine everything you have learned to build a complete Tweet app in SwiftUI.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Build a SwiftUI Tweet app that fetches tweets via async/await, displays them in a List, and allows users to like and retweet.",
-      },
-    },
-    // 18
-    {
-      group: "3",
-      title: "Terminal Practice: Creating a Swift Package",
-      description:
-        "In this step, you will learn how to initialize a Swift package using the terminal.",
-      isText: true,
-      question: {
-        questionText:
-          "Enter the command to create a new Swift package: `swift package init --type executable`.",
-      },
-    },
-    // 19
-    {
-      group: "3",
-      title: "Creating a New SwiftUI Project",
-      description:
-        "In this step, you will learn how to create a new SwiftUI project in Xcode.",
-      isSelectOrder: true,
-      question: {
-        questionText: "Arrange the steps to create a new SwiftUI app in Xcode:",
-        options: [
-          "Open Xcode and select File > New > Project",
-          "Choose App template and click Next",
-          "Select SwiftUI for Interface and Swift for Language",
-          "Enter product name and organization identifier",
-          "Choose a location and create the project",
-        ],
-        answer: [
-          "Open Xcode and select File > New > Project",
-          "Choose App template and click Next",
-          "Select SwiftUI for Interface and Swift for Language",
-          "Enter product name and organization identifier",
-          "Choose a location and create the project",
-        ],
-      },
-    },
-    // 20
-    {
-      group: "3",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [49, 67],
-      },
-    },
-    // 1
-    {
-      group: "4",
-      title: "Introduction to Swift Backend Engineering with Vapor",
-      description:
-        "In this step, you will learn what backend software engineering is and why it is important.",
-      isText: true,
-      question: {
-        questionText:
-          "What is backend software engineering and why is it important in building applications?",
-      },
-    },
-    // 2
-    {
-      group: "4",
-      title: "Main Lessons Overview",
-      description:
-        "In this step, you will identify a core responsibility of backend engineering in Swift.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which of the following is a core responsibility in backend engineering?",
-        options: [
-          "Managing concurrency and ensuring thread safety in multi-user applications",
-          "Implementing user authentication directly in the UI layer",
-          "Handling memory allocation in the Swift runtime",
-          "Designing scalable UI components for cross-platform compatibility",
-          "Optimizing database queries and ensuring data consistency",
-        ],
-        answer: "Optimizing database queries and ensuring data consistency",
-      },
-    },
-    // 3
-    {
-      group: "4",
-      title: "Key Responsibilities of Backend Engineering",
-      description:
-        "In this step, you will learn about the various responsibilities involved in Swift backend engineering with Vapor.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are core responsibilities of backend engineering?",
-        options: [
-          "Managing and optimizing databases for storing and retrieving data efficiently",
-          "Designing and implementing RESTful APIs using Vapor",
-          "Ensuring security through user authentication and authorization mechanisms",
-          "Handling server-side logic, including business operations and calculations",
-          "Maintaining server reliability and performance under high traffic",
-          "Managing data integrity and consistency across distributed systems",
-          "Implementing logging and monitoring to ensure system health and debug issues",
-        ],
-        answer: [
-          "Managing and optimizing databases for storing and retrieving data efficiently",
-          "Designing and implementing RESTful APIs using Vapor",
-          "Ensuring security through user authentication and authorization mechanisms",
-          "Handling server-side logic, including business operations and calculations",
-          "Maintaining server reliability and performance under high traffic",
-          "Managing data integrity and consistency across distributed systems",
-          "Implementing logging and monitoring to ensure system health and debug issues",
-        ],
-      },
-    },
-    // 4
-    {
-      group: "4",
-      title: "Interfacing with the Terminal",
-      description:
-        "In this step, you will learn about using the terminal in Swift backend engineering.",
-      isText: true,
-      question: {
-        questionText:
-          "Why is learning to use the terminal important for backend development, and what tasks can you perform using it?",
-      },
-    },
-    // 5
-    {
-      group: "4",
-      title: "Installing the Vapor Toolbox",
-      description:
-        "In this step, you will learn how to install the Vapor CLI globally.",
-      isText: true,
-      question: {
-        questionText:
-          "Write the command to install the Vapor Toolbox using Homebrew.",
-      },
-    },
-    // 6
-    {
-      group: "4",
-      title: "Adding a Swift Package with SwiftPM",
-      description:
-        "In this step, you will use Swift Package Manager to add a dependency.",
-      isText: true,
-      question: {
-        questionText:
-          "Write the command to add the FluentPostgresDriver package via SwiftPM.",
-      },
-    },
-    // 7
-    {
-      group: "4",
-      title: "User Creation and Authentication",
-      description:
-        "In this step, you will understand the key concept related to creating users in backend systems.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What is the process called that verifies a user's identity during account creation?",
-        placeholder: "Type your answer here...",
-        answer: "authentication",
-      },
-    },
-    // 8
-    {
-      group: "4",
-      title: "Database Foundations",
-      description:
-        "In this step, you will learn about the foundations of databases in backend engineering.",
-      isText: true,
-      question: {
-        questionText:
-          "What are the main types of databases used in backend engineering?",
-      },
-    },
-    // 9
-    {
-      group: "4",
-      title: "Connecting to PostgreSQL with Fluent",
-      description:
-        "In this step, you will write a code snippet to connect a Vapor app to a PostgreSQL database.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write a Swift code snippet using FluentPostgresDriver to configure the database connection.",
-      },
-    },
-    // 10
-    {
-      group: "4",
-      title: "Initiating a Vapor Project",
-      description:
-        "In this step, you will learn how to start a new Vapor project using the CLI.",
-      isSingleLineText: true,
-      question: {
-        questionText: "What is the command to create a new Vapor API project?",
-        answer: "vapor new MyApp --api",
-      },
-    },
-    // 11
-    {
-      group: "4",
-      title: "Advanced Data Storage Practices",
-      description:
-        "In this step, you will learn advanced practices for storing data responsibly in backend systems.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are best practices for ensuring responsible data storage in a backend system?",
-        options: [
-          "Cache data in memory (e.g., Redis) to reduce database access time",
-          "Use a single centralized backup to reduce complexity and cost",
-          "Encrypt sensitive data both at rest and in transit to ensure security",
-          "Implement database replication across multiple servers to improve fault tolerance",
-        ],
-        answer: [
-          "Cache data in memory (e.g., Redis) to reduce database access time",
-          "Encrypt sensitive data both at rest and in transit to ensure security",
-          "Implement database replication across multiple servers to improve fault tolerance",
-        ],
-      },
-    },
-    // 12
-    {
-      group: "4",
-      title: "Configuring Fluent and Running Migrations",
-      description:
-        "In this step, you will learn how to initialize Fluent and run migrations in Vapor.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Complete the code to configure PostgreSQL and register a User migration in Vapor.",
-        options: [
-          // 1) Correct configuration, migration registration, and await
-          `import Fluent
-import FluentPostgresDriver
-import Vapor
-
-public func configure(_ app: Application) throws {
-    app.databases.use(.postgres(
-        hostname: "localhost",
-        username: "user",
-        password: "pass",
-        database: "db"
-    ), as: .psql)
-    app.migrations.add(CreateUser())
-    try app.autoMigrate().wait()
-}`,
-
-          // 2) Missing the .wait() on autoMigrate
-          `import Fluent
-import FluentPostgresDriver
-import Vapor
-
-public func configure(_ app: Application) throws {
-    app.databases.use(.postgres(
-        hostname: "localhost",
-        username: "user",
-        password: "pass",
-        database: "db"
-    ), as: .psql)
-    app.migrations.add(CreateUser())
-    try app.autoMigrate()  // forgot .wait()
-}`,
-
-          // 3) Wrong driver (MySQL) instead of Postgres
-          `import Fluent
-import FluentMySQLDriver
-import Vapor
-
-public func configure(_ app: Application) throws {
-    app.databases.use(.mysql(
-        hostname: "localhost",
-        username: "user",
-        password: "pass",
-        database: "db"
-    ), as: .mysql)
-    app.migrations.add(CreateUser())
-    try app.autoMigrate().wait()
-}`,
-
-          // 4) Registered database but forgot to add the migration
-          `import Fluent
-import FluentPostgresDriver
-import Vapor
-
-public func configure(_ app: Application) throws {
-    app.databases.use(.postgres(
-        hostname: "localhost",
-        username: "user",
-        password: "pass",
-        database: "db"
-    ), as: .psql)
-    try app.autoMigrate().wait()  // missing app.migrations.add(CreateUser())
-}`,
-        ],
-        answer: `import Fluent
-import FluentPostgresDriver
-import Vapor
-
-public func configure(_ app: Application) throws {
-    app.databases.use(.postgres(
-        hostname: "localhost",
-        username: "user",
-        password: "pass",
-        database: "db"
-    ), as: .psql)
-    app.migrations.add(CreateUser())
-    try app.autoMigrate().wait()
-}`,
-      },
-    },
-    // 13
-    {
-      group: "4",
-      title: "Handling User Data",
-      description:
-        "In this step, you will learn how to retrieve a User model instance.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write a Vapor route handler to fetch a User by ID from the database.",
-      },
-    },
-    // 14
-    {
-      group: "4",
-      title: "Retrieving a User After Authentication",
-      description:
-        "In this step, you will learn how to retrieve the authenticated user.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write code to retrieve the authenticated User from the request auth context in Vapor.",
-      },
-    },
-    // 15
-    {
-      group: "4",
-      title: "Understanding the Authentication Flow",
-      description:
-        "In this step, you will learn about the typical flow of JWT authentication in a backend system.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the following steps in the correct order for a typical JWT authentication flow in Vapor.",
-        options: [
-          "User submits credentials via POST",
-          "Server verifies credentials against database",
-          "JWT token is generated and signed",
-          "Client stores token locally",
-          "Protected routes validate token",
-        ],
-        answer: [
-          "User submits credentials via POST",
-          "Server verifies credentials against database",
-          "JWT token is generated and signed",
-          "Client stores token locally",
-          "Protected routes validate token",
-        ],
-      },
-    },
-    // 16
-    {
-      group: "4",
-      title: "OAuth Authentication",
-      description:
-        "In this step, you will learn about OAuth-style authentication systems.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What is the widely used protocol for authorization that allows third-party services to access user data without exposing credentials?",
-        placeholder: "Type your answer here...",
-        answer: "OAuth 2.0",
-      },
-    },
-    // 17
-    {
-      group: "4",
-      title: "Using Environment Variables",
-      description:
-        "In this step, you will learn about using environment variables in backend development.",
-      isText: true,
-      question: {
-        questionText: "What role do environment variables play in a codebase?",
-      },
-    },
-    // 18
-    {
-      group: "4",
-      title: "Database Relationships with Fluent",
-      description:
-        "In this step, you will learn about defining relationships in Fluent.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write a Fluent model snippet to define a one-to-many relationship between User and Post.",
-      },
-    },
-    // 19
-    {
-      group: "4",
-      title: "Interfacing with an API",
-      description:
-        "In this step, you will learn the common HTTP methods used to interface with an API.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following HTTP methods are commonly used to interface with a REST API, and what do they do?",
-        options: [
-          "GET (Retrieves data)",
-          "POST (Creates a new resource)",
-          "PUT (Replaces a resource)",
-          "PATCH (Partially updates a resource)",
-          "DELETE (Deletes a resource)",
-        ],
-        answer: [
-          "GET (Retrieves data)",
-          "POST (Creates a new resource)",
-          "PATCH (Partially updates a resource)",
-          "DELETE (Deletes a resource)",
-        ],
-      },
-    },
-    // 20
-    {
-      group: "4",
-      title: "Creating a JWT Authentication System",
-      description:
-        "In this step, you will create a simple user authentication system with JWT in Vapor.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps with drag-and-drop to implement JWT authentication in Vapor.",
-        options: [
-          "Add jwt-kit dependency",
-          "Define User model",
-          "Configure JWT signer",
-          "Create register route",
-          "Hash password before storing",
-          "Create login route",
-          "Verify credentials",
-          "Generate JWT token",
-          "Return token to client",
-          "Protect routes with token middleware",
-        ],
-        answer: [
-          "Add jwt-kit dependency",
-          "Define User model",
-          "Configure JWT signer",
-          "Create register route",
-          "Hash password before storing",
-          "Create login route",
-          "Verify credentials",
-          "Generate JWT token",
-          "Return token to client",
-          "Protect routes with token middleware",
-        ],
-      },
-    },
-    // 21
-    {
-      group: "4",
-      title: "Deploying a Vapor Application",
-      description:
-        "In this step, you will learn how to deploy a Vapor application.",
-      isText: true,
-      question: {
-        questionText:
-          "Write the command to run your Vapor app in production mode.",
-      },
-    },
-    // 22
-    {
-      group: "4",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [69, 89],
-      },
-    },
-    // 1
-    {
-      group: "5",
-      title: "Benefits of Serverless Cloud Platforms",
-      description:
-        "In this step, you will explore the advantages of using Firebase in iOS development.",
-      isText: true,
-      question: {
-        questionText:
-          "What are the key benefits of using Firebase as a serverless backend for an iOS app, and how does it differ from a traditional server-based model?",
-      },
-    },
-    // 2
-    {
-      group: "5",
-      title: "Understanding Xcode",
-      description:
-        "In this step, you will explore what Xcode is and why it is the primary IDE for iOS development.",
-      isText: true,
-      question: {
-        questionText:
-          "What is Xcode and why is it the most popular IDE among iOS developers?",
-      },
-    },
-    // 3
-    {
-      group: "5",
-      title: "Installing Swift and SwiftPM",
-      description: "Install Swift and use the Swift Package Manager.",
-      isText: true,
-      question: {
-        questionText:
-          "What is the purpose of Swift and Swift Package Manager (SwiftPM) in iOS development?",
-      },
-    },
-    // 4
-    {
-      group: "5",
-      title: "Installing CocoaPods",
-      description: "Set up CocoaPods to manage Firebase dependencies.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "Enter the command to install CocoaPods on your macOS system.",
-        answer: "sudo gem install cocoapods",
-      },
-    },
-    // 5
-    {
-      group: "5",
-      title: "Adding Firebase via CocoaPods",
-      description: "Add Firebase SDK pods to your Xcode project.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What entry do you add under `pod 'Firebase/Core'` in your Podfile?",
-        answer:
-          "pod 'Firebase/Auth'\npod 'Firebase/Firestore'\npod 'Firebase/Storage'",
-      },
-    },
-    // 6
-    {
-      group: "5",
-      title: "Initializing a Firebase Project",
-      description:
-        "In this step, you will initialize Firebase in your iOS project by adding the config file.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What file do you download from the Firebase console and add to your Xcode project root?",
-        answer: "GoogleService-Info.plist",
-      },
-    },
-    // 7
-    {
-      group: "5",
-      title: "Selecting Firebase Modules",
-      description: "Choose which Firebase modules to include in your iOS app.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following Firebase SDK modules might you enable for an iOS app?",
-        options: [
-          "Auth",
-          "Firestore",
-          "Realtime Database",
-          "Cloud Functions",
-          "Analytics",
-          "Storage",
-        ],
-        answer: ["Auth", "Firestore", "Analytics", "Storage"],
-      },
-    },
-    // 8
-    {
-      group: "5",
-      title: "Configuring Firebase in AppDelegate",
-      description:
-        "Initialize Firebase in your AppDelegate or SwiftUI App entry point.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write the Swift code to configure Firebase in AppDelegate `application(_:didFinishLaunchingWithOptions:)`.",
-      },
-    },
-    // 9
-    {
-      group: "5",
-      title: "Setting Up Firestore",
-      description: "Learn how to initialize and use Firestore in Swift.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write the Swift code to get a Firestore instance and add a document to `users` collection.",
-      },
-    },
-    // 10
-    {
-      group: "5",
-      title: "Understanding Authentication",
-      description:
-        "In this step, you will learn about Firebase Authentication in iOS.",
-      isText: true,
-      question: {
-        questionText:
-          "What is Firebase Authentication, and which sign-in methods does it support on iOS?",
-      },
-    },
-    // 11
-    {
-      group: "5",
-      title: "Creating a User with FirebaseAuth",
-      description: "Create a new user account programmatically in Swift.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write Swift code using `Auth.auth().createUser` with email and password.",
-      },
-    },
-    // 12
-    {
-      group: "5",
-      title: "Verifying ID Tokens",
-      description: "Obtain and verify the current user's ID token.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write Swift code to fetch `currentUser.getIDToken(completion:)` and print the token.",
-      },
-    },
-    // 13
-    {
-      group: "5",
-      title: "CRUD with Firestore",
-      description: "Perform basic Firestore operations in Swift.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Complete the Swift code to create, read, update, and delete a document in Firestore.",
-        options: [
-          // 1) Correct sequence and syntax
-          `let db = Firestore.firestore()
-let doc = db.collection("users").document("alice")
-// create
-doc.setData(["email": "alice@example.com", "age": 30])
-// read
-doc.getDocument { snapshot, error in
-  let data = snapshot?.data()
-}
-// update
-doc.updateData(["age": 31])
-// delete
-doc.delete()`,
-
-          // 2) Mis-uses setData for update (overwrites entire document)
-          `let db = Firestore.firestore()
-let doc = db.collection("users").document("alice")
-// create
-doc.setData(["email": "alice@example.com", "age": 30])
-// read
-doc.getDocument { snapshot, error in
-  let data = snapshot?.data()
-}
-// update
-doc.setData(["age": 31])  // should use updateData
-// delete
-doc.delete()`,
-
-          // 3) Incorrect read method and missing closure brace
-          `let db = Firestore.firestore()
-let doc = db.collection("users").document("alice")
-// create
-doc.setData(["email": "alice@example.com", "age": 30])
-// read
-doc.getDocuments { snapshot, error in
-  let data = snapshot?.documents.first?.data()
-// update
-doc.updateData(["age": 31])
-// delete
-doc.delete()`,
-
-          // 4) Wrong delete call on collection instead of document
-          `let db = Firestore.firestore()
-let doc = db.collection("users").document("alice")
-// create
-doc.setData(["email": "alice@example.com", "age": 30])
-// read
-doc.getDocument { snapshot, error in
-  let data = snapshot?.data()
-}
-// update
-doc.updateData(["age": 31])
-// delete
-db.collection("users").delete()  // invalid: must call delete() on document`,
-        ],
-        answer: `let db = Firestore.firestore()
-let doc = db.collection("users").document("alice")
-// create
-doc.setData(["email": "alice@example.com", "age": 30])
-// read
-doc.getDocument { snapshot, error in
-  let data = snapshot?.data()
-}
-// update
-doc.updateData(["age": 31])
-// delete
-doc.delete()`,
-      },
-    },
-    // 14
-    {
-      group: "5",
-      title: "Calling Cloud Functions",
-      description: "Invoke an HTTPS Callable Cloud Function from Swift.",
-      isCode: true,
-      question: {
-        questionText:
-          'Write Swift code to call `functions.httpsCallable("helloWorld").call()` and handle the result.',
-      },
-    },
-    // 15
-    {
-      group: "5",
-      title: "Local Emulation",
-      description: "Learn how to test Firebase services locally.",
-      isSingleLineText: true,
-      question: {
-        questionText: "What command starts the local Firebase emulator suite?",
-        answer: "firebase emulators:start",
-      },
-    },
-    // 16
-    {
-      group: "5",
-      title: "Deploying to Firebase",
-      description: "Deploy your Cloud Functions and Firestore rules.",
-      isSingleLineText: true,
-      question: {
-        questionText: "What command do you use to deploy only Cloud Functions?",
-        answer: "firebase deploy --only functions",
-      },
-    },
-    // 17
-    {
-      group: "5",
-      title: "Uploading to Storage",
-      description: "Upload files to Firebase Storage in Swift.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write Swift code using `Storage.storage().reference()` to upload `data` to `images/photo.jpg`.",
-      },
-    },
-    // 18
-    {
-      group: "5",
-      title: "Security Rules Basics",
-      description: "Understand Firestore security rules for iOS clients.",
-      isText: true,
-      question: {
-        questionText:
-          "What are Firestore security rules and when are they evaluated on client requests?",
-      },
-    },
-    // 19
-    {
-      group: "5",
-      title: "Performance Monitoring",
-      description: "Explore Firebase’s performance monitoring for iOS apps.",
-      isText: true,
-      question: {
-        questionText:
-          "Which Firebase product helps you monitor performance metrics in an iOS app?",
-      },
-    },
-    // 20
-    {
-      group: "5",
-      title: "Popular Firebase Extensions",
-      description: "Learn about official Firebase Extensions you can install.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are Firebase Extensions you might add to your project?",
-        options: [
-          "Trigger Email via SendGrid",
-          "Resize Images",
-          "Translate Text",
-          "Backup Realtime Database",
-        ],
-        answer: [
-          "Trigger Email via SendGrid",
-          "Resize Images",
-          "Translate Text",
-          "Backup Realtime Database",
-        ],
-      },
-    },
-    // 21
-    {
-      group: "5",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [91, 110],
-      },
-    },
-  ],
-
-  ["android-en"]: [
-    {
-      group: "introduction",
-      title: "Introduction To Android Development with Java",
-      isStudyGuide: true,
-      description:
-        "Expose yourself to Java fundamentals and Android basics to improve the quality of your learning before making progress.",
-      question: {
-        questionText: (
-          <div>
-            <p style={{ marginBottom: 12 }}>
-              {" "}
-              One of the best predictors for student success is exposure to
-              course material before studying it.
-            </p>
-
-            <p style={{ marginBottom: 12 }}>
-              Remember to fail faster and fail forward! The real education
-              happens when you push through a challenge.
-            </p>
-          </div>
-        ),
-        metaData: `### Advice
-I know this looks like ChatGPT content…but it’s not—it's me!
-
-As a beginner:
-1. Programming is about structuring data and logic, not complex math.
-2. Like spoken languages, you can express the same idea in many ways.
-3. When something challenges you, break it into smaller steps and iterate quickly.
-
-### Exposure
-This guide exposes you to concepts before you answer questions, so you won’t be intimidated later. Skim it now, code along later.
-
-### Core Concepts in Java
-
-\`\`\`java
-// Lists with ArrayList
-import java.util.ArrayList;
-
-ArrayList<Object> myList = new ArrayList<>();
-myList.add(1);
-myList.add(2);
-myList.add(3);
-myList.add("a");
-myList.add(null);
-myList.add(false);
-myList.add("new data");
-\`\`\`
-
-\`\`\`java
-// Maps with HashMap
-import java.util.HashMap;
-
-HashMap<String, Object> dataSet = new HashMap<>();
-dataSet.put("introduction", "Welcome");
-dataSet.put("title", "Chapter 1");
-dataSet.put("isLive", true);
-dataSet.put("page", 4);
-dataSet.put("book", "Coding Basics");
-\`\`\`
-
-\`\`\`java
-// Defining a class
-public class House {
-    private String housePaint;
-
-    public House(String paint) {
-        this.housePaint = paint;
-    }
-
-    public String getPaint() {
-        return housePaint;
-    }
-
-    public void setPaint(String paint) {
-        this.housePaint = paint;
-    }
-
-    public void deletePaint() {
-        this.housePaint = null;
-    }
-}
-
-// Usage:
-// House firstHome = new House("pink");
-// System.out.println(firstHome.getPaint()); // "pink"
-\`\`\`
-
-### Android UI Quick Preview
-
-\`\`\`java
-// MainActivity.java
-package com.example.introapp;
-
-import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import android.widget.TextView;
-
-public class MainActivity extends AppCompatActivity {
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        TextView tv = new TextView(this);
-        tv.setText("Good job! You created a small Android app!");
-        tv.setTextSize(24);
-        setContentView(tv);
-    }
-}
-\`\`\`
-
-### Conclusion
-Failing fast is in your best interest when learning a new language. This one-pager will be available inside the app. Good luck, and happy coding in Java & Android!`,
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Understanding Coding",
-      description: "Grasp the basic concept of coding in Java.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "Which of the following best describes coding?",
-        options: [
-          "Writing instructions for computers to perform tasks",
-          "Creating physical components for computers",
-          "Designing user interfaces",
-          "Managing databases",
-        ],
-        answer: "Writing instructions for computers to perform tasks",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Sequence of Program Execution",
-      description: "Learn the correct order of program execution in Java.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps with drag-and-drop to order how a Java program is built and run.",
-        options: [
-          "Writing Code",
-          "Code Compilation",
-          "Debugging",
-          "Program Execution",
-        ],
-        answer: [
-          "Writing Code",
-          "Code Compilation",
-          "Debugging",
-          "Program Execution",
-        ],
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Introduction to Variables",
-      description:
-        "In this step, you will learn about declaring variables in Java.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Select all the steps involved in correctly declaring a variable in Java:",
-        options: [
-          "Specify a type (e.g., int, String)",
-          "Choose a descriptive variable name",
-          "Assign a value using the equals sign (=)",
-          "End the declaration with a semicolon (;)",
-          "Start the name with a number",
-          "Use uppercase letters for all variable names",
-        ],
-        answer: [
-          "Specify a type (e.g., int, String)",
-          "Choose a descriptive variable name",
-          "Assign a value using the equals sign (=)",
-          "End the declaration with a semicolon (;)",
-        ],
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Understanding List Declarations",
-      description:
-        "Complete the code by selecting the correct way to declare a list of items in Java.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which code block correctly declares a list of items in Java?",
-        options: [
-          `String[] items = {"apple", "banana", "cherry"};`,
-          `List<String> items = Arrays.asList("apple", "banana", "cherry");`,
-          `String items = "apple, banana, cherry";`,
-          `Map<String, Integer> items = Map.of("apple", 1, "banana", 2, "cherry", 3);`,
-          `class Items { /* ... */ }`,
-        ],
-        answer: `String[] items = {"apple", "banana", "cherry"};`,
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Variable Assignment in Java",
-      description: "Learn how to assign values to variables in Java.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Declare a variable named `age` and assign it the value 25.",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Understanding Data Types",
-      description: "Learn the basics of data types in Java.",
-      isSingleLineText: true,
-      question: {
-        questionText: "Which keyword is used to declare a constant in Java?",
-        placeholder: "Type your answer here...",
-        answer: "final",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Purpose of Variables",
-      description: "Understand why variables are used in programming.",
-      isText: true,
-      question: {
-        questionText:
-          "In your own words, explain the purpose of variables in programming.",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Bash Terminal Practice: Changing Directories",
-      description: "Practice changing directories in a terminal environment.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "Enter the command to change to the `new_folder` directory using a Bash terminal.",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [1, 8],
-      },
-    },
-
-    // 1
-    {
-      group: "1",
-      title: "Data Types in Programming",
-      description: "Identify different primitive data types used in Java.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are primitive data types in Java?",
-        options: [
-          "byte",
-          "short",
-          "int",
-          "long",
-          "float",
-          "double",
-          "boolean",
-          "char",
-        ],
-        answer: [
-          "byte",
-          "short",
-          "int",
-          "long",
-          "float",
-          "double",
-          "boolean",
-          "char",
-        ],
-      },
-    },
-    // 2
-    {
-      group: "1",
-      title: "Steps to Create a Function",
-      description: "Understand the sequence of creating and using a method.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps with drag-and-drop to create and use a Java method.",
-        options: [
-          "Define the method",
-          "Call the method",
-          "Execute the method body",
-          "Return a value",
-        ],
-        answer: [
-          "Define the method",
-          "Call the method",
-          "Execute the method body",
-          "Return a value",
-        ],
-      },
-    },
-    // 3
-    {
-      group: "1",
-      title: "Writing a Simple Function",
-      description: "Practice writing methods in Java.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write a static method named `greet` that takes a `String name` parameter and prints a greeting with that name.",
-      },
-    },
-    // 4
-    {
-      group: "1",
-      title: "Functions in Programming",
-      description: "Discuss the role of methods.",
-      isText: true,
-      question: {
-        questionText: "What is a method, and why is it useful in programming?",
-      },
-    },
-    // 5
-    {
-      group: "1",
-      title: "Conditional Statements",
-      description: "Identify the purpose of conditional statements.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "What is the primary purpose of an `if` statement?",
-        options: [
-          "To repeat a block of code multiple times",
-          "To execute a block of code based on a condition",
-          "To define a variable",
-          "To import external libraries",
-        ],
-        answer: "To execute a block of code based on a condition",
-      },
-    },
-    // 6
-    {
-      group: "1",
-      title: "Order of Conditional Checks",
-      description:
-        "Complete the code that evaluates an `if`/`else if`/`else` statement.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Complete the following code to check if `x` is greater than 10, equal to 10, or less than 10.",
-        options: [
-          // 1) Correct logic and operators
-          `if (x > 10) {
-    System.out.println("x is greater than 10");
-} else if (x == 10) {
-    System.out.println("x is equal to 10");
-} else {
-    System.out.println("x is less than 10");
-}`,
-
-          // 2) Swapped first two checks (wrong logic order)
-          `if (x == 10) {
-    System.out.println("x is equal to 10");
-} else if (x > 10) {
-    System.out.println("x is greater than 10");
-} else {
-    System.out.println("x is less than 10");
-}`,
-
-          // 3) Missing the else-if branch entirely
-          `if (x > 10) {
-    System.out.println("x is greater than 10");
-} else {
-    System.out.println("x is not greater than 10");
-}`,
-
-          // 4) Used >= for the second check (treats 10 as greater-than)
-          `if (x > 10) {
-    System.out.println("x is greater than 10");
-} else if (x >= 10) {
-    System.out.println("x is equal to 10");
-} else {
-    System.out.println("x is less than 10");
-}`,
-        ],
-        answer: `if (x > 10) {
-    System.out.println("x is greater than 10");
-} else if (x == 10) {
-    System.out.println("x is equal to 10");
-} else {
-    System.out.println("x is less than 10");
-}`,
-      },
-    },
-    // 7
-    {
-      group: "1",
-      title: "Implementing Conditional Logic",
-      description: "Apply conditional logic in code.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write an `if`/`else if`/`else` statement that checks if a number `num` is positive, negative, or zero, and prints an appropriate message.",
-      },
-    },
-    // 8
-    {
-      group: "1",
-      title: "Understanding Conditional Logic in Programming",
-      description:
-        "Learn how logical operators like AND and OR control conditions in programming.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "Which logical operator is used to check if both conditions in a conditional statement are true in Java?",
-        placeholder: "Type your answer here...",
-        answer: "&&",
-      },
-    },
-    // 9
-    {
-      group: "1",
-      title: "Real-world Use of Conditionals",
-      description: "Reflect on how conditionals are used.",
-      isText: true,
-      question: {
-        questionText:
-          "Provide an example of how conditional statements are used in real-world applications.",
-      },
-    },
-    // 10
-    {
-      group: "1",
-      title: "Terminal Practice: Help Command",
-      description: "Write the help command to observe basic commands.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "In a Bash terminal environment, enter the help command to discover basic commands.",
-      },
-    },
-    // 11
-    {
-      group: "1",
-      title: "Loops in Programming",
-      description: "Understand the purpose of loops.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which loop will continue executing as long as its condition remains true in Java?",
-        options: ["for loop", "while loop", "do...while loop", "foreach loop"],
-        answer: "while loop",
-      },
-    },
-    // 12
-    {
-      group: "1",
-      title: "Sequence of Loop Execution",
-      description: "Grasp the order in which loops execute.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps of a Java `for` loop execution with drag-and-drop.",
-        options: [
-          "Initialization",
-          "Condition Check",
-          "Execution of Code Block",
-          "Update Expression",
-        ],
-        answer: [
-          "Initialization",
-          "Condition Check",
-          "Execution of Code Block",
-          "Update Expression",
-        ],
-      },
-    },
-    // 13
-    {
-      group: "1",
-      title: "Creating a Loop",
-      description: "Practice writing loops.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText: "Write a `for` loop that prints numbers from 1 to 5.",
-      },
-    },
-    // 14
-    {
-      group: "1",
-      title: "Applications of Loops",
-      description: "Discuss where loops are useful.",
-      isText: true,
-      question: {
-        questionText:
-          "Describe a scenario in software development where loops are essential.",
-      },
-    },
-    // 15
-    {
-      group: "1",
-      title: "Arrays in Java",
-      description: "Identify methods used for manipulating arrays in Java.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are valid for manipulating arrays in Java?",
-        options: [
-          ".length",
-          "Arrays.sort()",
-          "Arrays.asList()",
-          "System.arraycopy()",
-          ".clone()",
-        ],
-        answer: [
-          "Arrays.sort()",
-          "Arrays.asList()",
-          "System.arraycopy()",
-          ".clone()",
-        ],
-      },
-    },
-    // 16
-    {
-      group: "1",
-      title: "Order of Array Operations",
-      description: "Understand how array operations are performed.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Complete the code to declare an array, add an element, remove the last element, and then access an element.",
-        options: [
-          // 1) Correct sequence
-          `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
-fruits.add("pink");
-fruits.remove(fruits.size() - 1);
-System.out.println(fruits.get(0));`,
-
-          // 2) Missing the removal step
-          `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
-fruits.add("pink");
-System.out.println(fruits.get(0));`,
-
-          // 3) Removed the first element instead of the last
-          `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
-fruits.add("pink");
-fruits.remove(0);
-System.out.println(fruits.get(0));`,
-
-          // 4) Accessing the wrong index after removal
-          `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
-fruits.add("pink");
-fruits.remove(fruits.size() - 1);
-System.out.println(fruits.get(1));`,
-
-          // 5) Operations in the wrong order (remove before add)
-          `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
-fruits.remove(fruits.size() - 1);
-fruits.add("pink");
-System.out.println(fruits.get(0));`,
-        ],
-        answer: `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
-fruits.add("pink");
-fruits.remove(fruits.size() - 1);
-System.out.println(fruits.get(0));`,
-      },
-    },
-    // 17
-    {
-      group: "1",
-      title: "Manipulating Arrays",
-      description: "Apply array operations in code.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          'Create an ArrayList `fruits` with "apple" and "banana". Add "pink" to the list and remove the first element.',
-      },
-    },
-    // 18
-    {
-      group: "1",
-      title: "Use Cases for Arrays",
-      description: "Explore scenarios where arrays are used.",
-      isText: true,
-      question: {
-        questionText:
-          "Provide an example of how an array can be used to manage data in an Android application.",
-      },
-    },
-    // 19
-    {
-      group: "1",
-      title: "Terminal Practice: Creating Directories",
-      description: "Creating a directory command in a bash terminal",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "In a Bash terminal environment, create a directory called `app` using the `mkdir` command.",
-      },
-    },
-    // 20
-    {
-      group: "1",
-      title: "Advanced Coding Output",
-      description:
-        "Predict the output of the following code with arrays, conditionals, logical operators, and streams.",
-      isSingleLineText: true,
-      question: {
-        questionText: (
-          <div>
-            What will be the output of the following code?
-            <br />
-            <pre>
-              {`
-List<Integer> arr = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
-int x = 10;
-int y = 5;
-
-if (x > y && arr.size() > 3) {
-    arr.add(x);
-    arr = arr.stream().filter(n -> n % 2 == 0).collect(Collectors.toList());
-}
-
-System.out.println(arr);
-`}
-            </pre>
-          </div>
-        ),
-        placeholder: "Type your answer here...",
-        answer: "[2, 4, 10]",
-      },
-    },
-    // 21
-    {
-      group: "1",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [10, 29],
-      },
-    },
-    // 1
-    {
-      group: "2",
-      title: "Introduction to Objects",
-      description:
-        "In this step, you will learn what an object is in programming.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "Which keyword is used to create a new object instance in Java?",
-        placeholder: "Type your answer here...",
-        answer: "new",
-      },
-    },
-    // 2
-    {
-      group: "2",
-      title: "Understanding the Constructor Method",
-      description:
-        "In this step, you will learn about the purpose of the constructor method in a class.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which of the following code blocks correctly defines the constructor method and instantiates the class in Java?",
-        options: [
-          `public class Car {
-    private String brand;
-    public Car(String brand) {
-      this.brand = brand;
-    }
-    public void drive() {
-      System.out.println("The car is driving");
-    }
-}
-Car myCar = new Car("Toyota");`,
-          `public class Car {
-    private String brand;
-    public Car() {
-      this.brand = "Toyota";
-    }
-    public void drive() {
-      System.out.println("The car is driving");
-    }
-}
-Car myCar = new Car();`,
-          `public class Car {
-    private String brand;
-    public void Car(String brand) {
-      this.brand = brand;
-    }
-    public void drive() {
-      System.out.println("The car is driving");
-    }
-}
-Car myCar = new Car("Toyota");`,
-          `public class Car {
-    private String brand;
-    public Car(String b) {
-      brand = b;
-    }
-    public void drive() {
-      System.out.println("The car is driving");
-    }
-}
-Car myCar = new Car("Toyota");`,
-        ],
-        answer: `public class Car {
-    private String brand;
-    public Car(String brand) {
-      this.brand = brand;
-    }
-    public void drive() {
-      System.out.println("The car is driving");
-    }
-}
-Car myCar = new Car("Toyota");`,
-      },
-    },
-    // 3
-    {
-      group: "2",
-      title: "Purpose of the Constructor Method",
-      description:
-        "In this step, you will learn about the purpose of the constructor method in a class.",
-      isText: true,
-      question: {
-        questionText:
-          "Explain the purpose of the constructor method in a class.",
-      },
-    },
-    // 4
-    {
-      group: "2",
-      title: "Creating an Instance of a Class",
-      description:
-        "In this step, you will learn how to create an instance of a class in Java.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Select all the correct steps required to create an instance of a class in Java:",
-        options: [
-          "Define the class using the `class` keyword",
-          "Use the `new` keyword to create an instance",
-          "Pass arguments required by the constructor when calling the class",
-          "Store the new instance in a variable",
-          "Declare the class instance without `new`",
-          "Instantiate the class before defining it",
-        ],
-        answer: [
-          "Define the class using the `class` keyword",
-          "Use the `new` keyword to create an instance",
-          "Pass arguments required by the constructor when calling the class",
-          "Store the new instance in a variable",
-        ],
-      },
-    },
-    // 5
-    {
-      group: "2",
-      title: "Declaring a Method in a Class",
-      description:
-        "In this step, you will learn how to declare a method inside a class.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Declare a method named `updateModel` in the `Car` class that updates the `model` property.",
-      },
-    },
-    // 6
-    {
-      group: "2",
-      title: "Using the this Keyword",
-      description:
-        "Complete the code by selecting the correct way to use the `this` keyword in a class method.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which code block correctly uses the `this` keyword to refer to the object's property?",
-        options: [
-          `public class Car {
-    private String brand;
-    public Car(String brand) { this.brand = brand; }
-    public void showBrand() { System.out.println(brand); }
-}
-Car myCar = new Car("Toyota");
-myCar.showBrand();`,
-          `public class Car {
-    private String brand;
-    public Car(String brand) { this.brand = brand; }
-    public void showBrand() { System.out.println(this.brand); }
-}
-Car myCar = new Car("Toyota");
-myCar.showBrand();`,
-          `public class Car {
-    private String brand;
-    public Car(String brand) { brand = this.brand; }
-    public void showBrand() { System.out.println(brand); }
-}
-Car myCar = new Car("Toyota");
-myCar.showBrand();`,
-          `public class Car {
-    private String brand;
-    public Car(String brand) { this.brand = brand; }
-    public void showBrand() { System.out.println(this.brand()); }
-}
-Car myCar = new Car("Toyota");
-myCar.showBrand();`,
-        ],
-        answer: `public class Car {
-    private String brand;
-    public Car(String brand) { this.brand = brand; }
-    public void showBrand() { System.out.println(this.brand); }
-}
-Car myCar = new Car("Toyota");
-myCar.showBrand();`,
-      },
-    },
-    // 7
-    {
-      group: "2",
-      title: "Adding Properties to an Object",
-      description:
-        "In this step, you will learn how to add properties to a class in Java.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Add a new property `private int year;` to the `Car` class.",
-      },
-    },
-    // 8
-    {
-      group: "2",
-      title: "Accessing and Modifying Object Properties",
-      description:
-        "In this step, you will learn how to get or set properties of an object in Java.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are valid ways to get or set properties in Java?",
-        options: [
-          "Use a getter method (e.g., getModel())",
-          "Use a setter method (e.g., setModel())",
-          "Access a public field directly (e.g., obj.model)",
-          "Use reflection APIs",
-        ],
-        answer: [
-          "Use a getter method (e.g., getModel())",
-          "Use a setter method (e.g., setModel())",
-          "Access a public field directly (e.g., obj.model)",
-        ],
-      },
-    },
-    // 9
-    {
-      group: "2",
-      title: "Modifying Object Properties",
-      description:
-        "In this step, you will learn how to modify properties of an object in Java.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Modify the `model` property of an instance of the `Car` class.",
-      },
-    },
-    // 10
-    {
-      group: "2",
-      title: "Understanding Inheritance",
-      description:
-        "In this step, you will learn about inheritance in object-oriented programming.",
-      isText: true,
-      question: {
-        questionText: "What is inheritance in object-oriented programming?",
-      },
-    },
-    // 11
-    {
-      group: "2",
-      title: "Implementing Inheritance",
-      description:
-        "In this step, you will implement inheritance in Java by extending a class.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Extend the `Car` class to create an `ElectricCar` class with an additional property `private int batteryLife;`.",
-      },
-    },
-    // 12
-    {
-      group: "2",
-      title: "Overriding Methods",
-      description:
-        "In this step, you will learn how to override methods in a subclass.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "What does it mean to override a method in a subclass?",
-        options: [
-          "Provide a new implementation for a superclass method",
-          "Delete the superclass method",
-          "Inherit the method without changes",
-          "Call the superclass method via super.method()",
-        ],
-        answer: "Provide a new implementation for a superclass method",
-      },
-    },
-    // 13
-    {
-      group: "2",
-      title: "Understanding Encapsulation",
-      description:
-        "In this step, you will learn about encapsulation in object-oriented programming.",
-      isText: true,
-      question: {
-        questionText: "What is encapsulation in object-oriented programming?",
-      },
-    },
-    // 14
-    {
-      group: "2",
-      title: "Implementing Encapsulation",
-      description:
-        "In this step, you will implement encapsulation by using getter and setter methods.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Add getter and setter methods for the `batteryLife` property in the `ElectricCar` class.",
-      },
-    },
-    // 15
-    {
-      group: "2",
-      title: "Encapsulation Concept",
-      description:
-        "In this step, you will define the concept of encapsulation in one word.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What is the primary concept encapsulation ensures in object-oriented programming?",
-        placeholder: "Type your answer here...",
-        answer: "Privacy",
-      },
-    },
-    // 16
-    {
-      group: "2",
-      title: "Combining Concepts",
-      description:
-        "In this step, you will combine various concepts learned to create a small project.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Create a small project that defines a `Person` class, uses inheritance to create a `Student` class, and demonstrates encapsulation and arrays of objects.",
-      },
-    },
-    // 17
-    {
-      group: "2",
-      title: "Printing In The Terminal",
-      description: "In this step, you will print a message using the terminal",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "Type a command to print the message: 'I'm talking to the inside of a computer!'",
-      },
-    },
-    // 18
-    {
-      group: "2",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [31, 47],
-      },
-    },
-    // 1
-    {
-      group: "3",
-      title: "Introduction to Android Views",
-      description:
-        "In this step, you will learn about Android Views, their role in creating reusable UI elements, and how they help manage the user interface efficiently.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "Which of the following best describes an Android View?",
-        options: [
-          "A method for handling events in Java",
-          "A feature exclusive to background services",
-          "A reusable piece of user interface defined by the View class or its subclasses",
-          "A built-in XML element that only represents layouts",
-        ],
-        answer:
-          "A reusable piece of user interface defined by the View class or its subclasses",
-      },
-    },
-    // 2
-    {
-      group: "3",
-      title: "Key Concepts in Android UI",
-      description:
-        "In this step, you will learn about fundamental Android UI concepts, including Activities, Fragments, XML layouts, and event handling.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText: "Which of the following are key concepts in Android UI?",
-        options: [
-          "Activities as screen controllers",
-          "Directly manipulating the window manager for animations",
-          "Fragments for modular UI",
-          "XML layouts for defining view hierarchies",
-          "Using TextView for data binding",
-        ],
-        answer: [
-          "Activities as screen controllers",
-          "Fragments for modular UI",
-          "XML layouts for defining view hierarchies",
-        ],
-      },
-    },
-    // 3
-    {
-      group: "3",
-      title: "Effect of LiveData Changes on UI",
-      description:
-        "In this step, you will explain what happens to an Activity or Fragment when its LiveData updates.",
-      isText: true,
-      question: {
-        questionText:
-          "What happens to the UI when observed LiveData in a ViewModel changes?",
-      },
-    },
-    // 4
-    {
-      group: "3",
-      title: "Creating a Simple Activity",
-      description:
-        "In this step, you will define a basic Android Activity that sets a TextView in onCreate.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which of the following code blocks correctly defines a simple Activity that sets its content view and updates a TextView?",
-        options: [
-          `public class MainActivity extends AppCompatActivity {
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        TextView tv = new TextView(this);
-        tv.setText("Hello, Android!");
-        setContentView(tv);
-    }
-}`,
-          `public class MainActivity {
-    protected void onCreate() {
-        setContentView(R.layout.activity_main);
-    }
-}`,
-          `class MainActivity extends Activity {
-    void onCreate(Bundle s) {
-        super.onCreate(s);
-    }
-}`,
-          `public class MainActivity extends AppCompatActivity {
-    void onStart() {
-        TextView tv = findViewById(R.id.tv);
-        tv.setText("Hello, Android!");
-    }
-}`,
-        ],
-        answer: `public class MainActivity extends AppCompatActivity {
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        TextView tv = new TextView(this);
-        tv.setText("Hello, Android!");
-        setContentView(tv);
-    }
-}`,
-      },
-    },
-    // 5
-    {
-      group: "3",
-      title: "Handling Button Clicks",
-      description:
-        "In this step, you will define a basic Activity that handles a button click event using setOnClickListener.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which of the following code blocks correctly sets a click listener on a Button?",
-        options: [
-          `Button btn = findViewById(R.id.btn);
-btn.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        Toast.makeText(this, "Clicked!", Toast.LENGTH_SHORT).show();
-    }
-});`,
-          `Button btn = findViewById(R.id.btn);
-btn.setOnClickListener(v -> {
-    Toast.makeText(MainActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
-});`,
-          `Button btn = findViewById(R.id.btn);
-btn.onClick(() -> Toast.makeText(this, "Clicked!", Toast.LENGTH_SHORT).show());`,
-          `findViewById(R.id.btn).setClickListener(this);`,
-        ],
-        answer: `Button btn = findViewById(R.id.btn);
-btn.setOnClickListener(v -> {
-    Toast.makeText(MainActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
-});`,
-      },
-    },
-    // 6
-    {
-      group: "3",
-      title: "Managing State with ViewModel",
-      description:
-        "In this step, you will learn how to use ViewModel and LiveData to manage UI-related data.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Modify your Activity to use a ViewModel with LiveData<Boolean> liked and observe it to update the UI.",
-      },
-    },
-    // 7
-    {
-      group: "3",
-      title: "Intent Extras",
-      description:
-        "In this step, you will learn about passing data between Activities using Intent extras.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What is the term used for passing data into an Activity at launch?",
-        placeholder: "Type your answer here...",
-        answer: "Intent extras",
-      },
-    },
-    // 8
-    {
-      group: "3",
-      title: "Passing and Using Extras",
-      description:
-        "In this step, you will learn how to pass and retrieve extras in an Activity.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          'Update your Activity to read a String extra named "username" from the Intent and display it.',
-      },
-    },
-    // 9
-    {
-      group: "3",
-      title: "Props vs State in Android",
-      description:
-        "In this step, you will learn the difference between Intent extras and LiveData state.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "What is the main difference between Intent extras and LiveData in an Android app?",
-        options: [
-          "Extras are immutable once set, LiveData can update over time",
-          "LiveData is only for background tasks",
-          "Extras trigger UI updates automatically",
-          "LiveData cannot be observed from Fragments",
-        ],
-        answer: "Extras are immutable once set, LiveData can update over time",
-      },
-    },
-    // 10
-    {
-      group: "3",
-      title: "Terminal Practice: Listing Files",
-      description:
-        "In this step, you will learn how to list files in a bash terminal.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "Use the terminal to list all files using the `ls` command.",
-      },
-    },
-    // 11
-    {
-      group: "3",
-      title: "Styling Android Views",
-      description:
-        "In this step, you will learn how to style Views using XML attributes and programmatic methods.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Add XML attributes to a TextView to set textSize, textColor, padding, and background.",
-      },
-    },
-    // 12
-    {
-      group: "3",
-      title: "ConstraintLayout Basics",
-      description:
-        "In this step, you will learn how to use ConstraintLayout for positioning UI elements.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the following steps to constrain a Button to the center of its parent:",
-        options: [
-          'app:layout_constraintTop_toTopOf="parent"',
-          'app:layout_constraintBottom_toBottomOf="parent"',
-          'app:layout_constraintStart_toStartOf="parent"',
-          'app:layout_constraintEnd_toEndOf="parent"',
-        ],
-        answer: [
-          'app:layout_constraintTop_toTopOf="parent"',
-          'app:layout_constraintBottom_toBottomOf="parent"',
-          'app:layout_constraintStart_toStartOf="parent"',
-          'app:layout_constraintEnd_toEndOf="parent"',
-        ],
-      },
-    },
-    // 13
-    {
-      group: "3",
-      title: "Sharing ViewModel Between Fragments",
-      description:
-        "In this step, you will learn how to share state via a ViewModel between Fragments.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Create a shared ViewModel in your Activity and have two Fragments observe its LiveData.",
-      },
-    },
-    // 14
-    {
-      group: "3",
-      title: "Observing LiveData for Side Effects",
-      description:
-        "In this step, you will learn how to observe LiveData to handle side effects in the UI.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Modify your Fragment to observe a LiveData<Int> retweetCount and show a Toast whenever it changes.",
-      },
-    },
-    // 15
-    {
-      group: "3",
-      title: "Understanding Activity Lifecycle",
-      description:
-        "In this step, you will learn about the Android Activity lifecycle and its callback methods.",
-      isText: true,
-      question: {
-        questionText:
-          "What are the main callbacks in the Activity lifecycle and when is onResume called?",
-      },
-    },
-    // 16
-    {
-      group: "3",
-      title: "Fetching Data with Retrofit and LiveData",
-      description:
-        "In this step, you will learn how to fetch data from an API using Retrofit and expose it via LiveData.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps to correctly fetch tweets using Retrofit and LiveData:",
-        options: [
-          "Define a Retrofit interface",
-          "Create a Repository to call Retrofit",
-          "Expose results as LiveData in ViewModel",
-          "Observe LiveData in UI",
-          "Handle errors in the Repository",
-        ],
-        answer: [
-          "Define a Retrofit interface",
-          "Create a Repository to call Retrofit",
-          "Expose results as LiveData in ViewModel",
-          "Handle errors in the Repository",
-          "Observe LiveData in UI",
-        ],
-      },
-    },
-    // 17
-    {
-      group: "3",
-      title: "Building a Complete Tweet App",
-      description:
-        "In this step, you will combine everything you have learned to build a complete Tweet app on Android.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Build an Android Tweet app with Retrofit, ViewModel, LiveData, and RecyclerView allowing users to like and retweet.",
-      },
-    },
-    // 18
-    {
-      group: "3",
-      title: "Terminal Practice: Building with Gradle",
-      description:
-        "In this step, you will learn how to build your Android project using the terminal.",
-      isText: true,
-      question: {
-        questionText:
-          "Enter the command to build your project using Gradle: `./gradlew build`.",
-      },
-    },
-    // 19
-    {
-      group: "3",
-      title: "Creating a New Android Project",
-      description:
-        "In this step, you will learn how to create a new Android project in Android Studio.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps to create a new Android app in Android Studio:",
-        options: [
-          "Open Android Studio and select New Project",
-          "Choose Empty Activity template",
-          "Select Java as the language",
-          "Enter application name and package",
-          "Click Finish to generate project",
-        ],
-        answer: [
-          "Open Android Studio and select New Project",
-          "Choose Empty Activity template",
-          "Select Java as the language",
-          "Enter application name and package",
-          "Click Finish to generate project",
-        ],
-      },
-    },
-    // 20
-    {
-      group: "3",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [49, 67],
-      },
-    },
-    // 1
-    {
-      group: "4",
-      title: "Introduction to Java Backend Engineering with Spring Boot",
-      description:
-        "In this step, you will learn what backend software engineering is and why it is important.",
-      isText: true,
-      question: {
-        questionText:
-          "What is backend software engineering and why is it important in building applications?",
-      },
-    },
-    // 2
-    {
-      group: "4",
-      title: "Main Lessons Overview",
-      description:
-        "In this step, you will identify a core responsibility of backend engineering in Java.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which of the following is a core responsibility in backend engineering?",
-        options: [
-          "Managing concurrency and ensuring thread safety in multi-user applications",
-          "Implementing user authentication directly in the user interface",
-          "Handling memory allocation in the Java Virtual Machine",
-          "Designing scalable UI components for cross-platform compatibility",
-          "Optimizing database queries and ensuring data consistency",
-        ],
-        answer: "Optimizing database queries and ensuring data consistency",
-      },
-    },
-    // 3
-    {
-      group: "4",
-      title: "Key Responsibilities of Backend Engineering",
-      description:
-        "In this step, you will learn about the various responsibilities involved in Java backend engineering with Spring Boot.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are core responsibilities of backend engineering?",
-        options: [
-          "Managing and optimizing databases for storing and retrieving data efficiently",
-          "Designing and implementing RESTful APIs using Spring MVC",
-          "Ensuring security through user authentication and authorization mechanisms",
-          "Handling server-side logic, including business operations and calculations",
-          "Maintaining server reliability and performance under high traffic",
-          "Managing data integrity and consistency across distributed systems",
-          "Implementing logging and monitoring to ensure system health and debug issues",
-        ],
-        answer: [
-          "Managing and optimizing databases for storing and retrieving data efficiently",
-          "Designing and implementing RESTful APIs using Spring MVC",
-          "Ensuring security through user authentication and authorization mechanisms",
-          "Handling server-side logic, including business operations and calculations",
-          "Maintaining server reliability and performance under high traffic",
-          "Managing data integrity and consistency across distributed systems",
-          "Implementing logging and monitoring to ensure system health and debug issues",
-        ],
-      },
-    },
-    // 4
-    {
-      group: "4",
-      title: "Interfacing with the Terminal",
-      description:
-        "In this step, you will learn about using the terminal in Java backend engineering.",
-      isText: true,
-      question: {
-        questionText:
-          "Why is learning to use the terminal important for backend development, and what kinds of tasks can you perform using it?",
-      },
-    },
-    // 5
-    {
-      group: "4",
-      title: "Installing Maven",
-      description:
-        "In this step, you will learn how to install Maven globally.",
-      isText: true,
-      question: {
-        questionText:
-          "Write the command to install Apache Maven using Homebrew or apt.",
-      },
-    },
-    // 6
-    {
-      group: "4",
-      title: "Adding a Maven Dependency",
-      description: "In this step, you will use Maven to add a dependency.",
-      isText: true,
-      question: {
-        questionText:
-          "Write the XML snippet to add the Spring Web starter dependency in pom.xml.",
-      },
-    },
-    // 7
-    {
-      group: "4",
-      title: "User Creation and Authentication",
-      description:
-        "In this step, you will understand the key concept related to creating users in backend systems.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What is the process called that verifies a user's identity during account creation?",
-        placeholder: "Type your answer here...",
-        answer: "authentication",
-      },
-    },
-    // 8
-    {
-      group: "4",
-      title: "Database Foundations",
-      description:
-        "In this step, you will learn about the foundations of databases in backend engineering.",
-      isText: true,
-      question: {
-        questionText:
-          "What are the main types of databases used in backend engineering?",
-      },
-    },
-    // 9
-    {
-      group: "4",
-      title: "Connecting to a Database with Spring Data JPA",
-      description:
-        "Write a code snippet to connect a Spring Boot application to a PostgreSQL database.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write a Java code snippet (application.properties and Entity configuration) to configure Spring Data JPA with PostgreSQL.",
-      },
-    },
-    // 10
-    {
-      group: "4",
-      title: "Initiating a Spring Boot Project",
-      description:
-        "In this step, you will learn how to start a Spring Boot project using the CLI.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What is the command to create a new Spring Boot project using Spring Initializr CLI?",
-        answer: "spring init --dependencies=web,data-jpa,postgresql my-app",
-      },
-    },
-    // 11
-    {
-      group: "4",
-      title: "Advanced Data Storage Practices",
-      description:
-        "In this step, you will learn advanced practices for storing data responsibly in backend systems.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are best practices for ensuring responsible data storage in a backend system?",
-        options: [
-          "Cache data in memory (e.g., with Redis) to reduce database access time",
-          "Use a single centralized backup to reduce complexity and cost",
-          "Encrypt sensitive data both at rest and in transit to ensure security",
-          "Implement database replication across multiple servers to improve fault tolerance",
-        ],
-        answer: [
-          "Cache data in memory (e.g., with Redis) to reduce database access time",
-          "Encrypt sensitive data both at rest and in transit to ensure security",
-          "Implement database replication across multiple servers to improve fault tolerance",
-        ],
-      },
-    },
-    // 12
-    {
-      group: "4",
-      title: "Configuring JPA and Saving an Entity",
-      description:
-        "In this step, you will learn how to initialize Spring Data JPA and save a User entity.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Complete the code to configure Spring Data JPA and save a User entity.",
-        options: [
-          // 1) Correct configuration with JPA annotations and repository usage
-          `@Entity
-public class User {
-    @Id @GeneratedValue
-    private Long id;
-    private String username;
-    // getters/setters
-}
-
-@Repository
-public interface UserRepository extends JpaRepository<User, Long> {}
-
-@Service
-public class UserService {
-    @Autowired
-    private UserRepository repo;
-
-    public void addUser(String name) {
-        User u = new User();
-        u.setUsername(name);
-        repo.save(u);
-    }
-}`,
-
-          // 2) Missing @GeneratedValue, so IDs won’t be auto-generated
-          `@Entity
-public class User {
-    @Id
-    private Long id;            // @GeneratedValue omitted
-    private String username;
-    // getters/setters
-}
-
-@Repository
-public interface UserRepository extends JpaRepository<User, Long> {}
-
-@Service
-public class UserService {
-    @Autowired
-    private UserRepository repo;
-
-    public void addUser(String name) {
-        User u = new User();
-        u.setUsername(name);
-        repo.save(u);
-    }
-}`,
-
-          // 3) Repository extends CrudRepository instead of JpaRepository
-          `@Entity
-public class User {
-    @Id @GeneratedValue
-    private Long id;
-    private String username;
-    // getters/setters
-}
-
-@Repository
-public interface UserRepository extends CrudRepository<User, Long> {}  // wrong interface
-
-@Service
-public class UserService {
-    @Autowired
-    private UserRepository repo;
-
-    public void addUser(String name) {
-        User u = new User();
-        u.setUsername(name);
-        repo.save(u);
-    }
-}`,
-
-          // 4) Service missing @Autowired injection, so repo is null
-          `@Entity
-public class User {
-    @Id @GeneratedValue
-    private Long id;
-    private String username;
-    // getters/setters
-}
-
-@Repository
-public interface UserRepository extends JpaRepository<User, Long> {}
-
-@Service
-public class UserService {
-    private UserRepository repo;  // forgot @Autowired
-
-    public void addUser(String name) {
-        User u = new User();
-        u.setUsername(name);
-        repo.save(u);             // NullPointerException at runtime
-    }
-}`,
-        ],
-        answer: `@Entity
-public class User {
-    @Id @GeneratedValue
-    private Long id;
-    private String username;
-    // getters/setters
-}
-
-@Repository
-public interface UserRepository extends JpaRepository<User, Long> {}
-
-@Service
-public class UserService {
-    @Autowired
-    private UserRepository repo;
-
-    public void addUser(String name) {
-        User u = new User();
-        u.setUsername(name);
-        repo.save(u);
-    }
-}`,
-      },
-    },
-    // 13
-    {
-      group: "4",
-      title: "Handling User Data",
-      description:
-        "In this step, you will learn how to retrieve a User entity by ID.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write a Java code snippet using UserRepository to fetch a User by its ID.",
-      },
-    },
-    // 14
-    {
-      group: "4",
-      title: "Retrieving a User After Authentication",
-      description:
-        "In this step, you will learn how to retrieve the authenticated user principal.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write a Spring Security code snippet to get the authenticated username in a controller.",
-      },
-    },
-    // 15
-    {
-      group: "4",
-      title: "Understanding the Authentication Flow",
-      description:
-        "In this step, you will learn about the typical flow of authentication in backend systems.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the following steps in the correct order for a typical JWT authentication flow in a Java backend.",
-        options: [
-          "User submits credentials to /login endpoint",
-          "AuthenticationManager verifies credentials",
-          "JWT token is generated and signed",
-          "Client stores token locally",
-          "Protected endpoints validate token",
-        ],
-        answer: [
-          "User submits credentials to /login endpoint",
-          "AuthenticationManager verifies credentials",
-          "JWT token is generated and signed",
-          "Client stores token locally",
-          "Protected endpoints validate token",
-        ],
-      },
-    },
-    // 16
-    {
-      group: "4",
-      title: "OAuth Authentication",
-      description:
-        "In this step, you will learn about OAuth-style authentication systems.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What is the widely used protocol for authorization that allows third-party services to access user data without exposing credentials?",
-        placeholder: "Type your answer here...",
-        answer: "OAuth 2.0",
-      },
-    },
-    // 17
-    {
-      group: "4",
-      title: "Using Environment Variables",
-      description:
-        "In this step, you will learn about using environment variables in backend development.",
-      isText: true,
-      question: {
-        questionText: "What role do environment variables play in a codebase?",
-      },
-    },
-    // 18
-    {
-      group: "4",
-      title: "Database Relationships with JPA",
-      description:
-        "In this step, you will learn about defining relationships in JPA.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write a JPA code snippet to define a one-to-many relationship between User and Post entities.",
-      },
-    },
-    // 19
-    {
-      group: "4",
-      title: "Interfacing with an API",
-      description:
-        "In this step, you will learn the common HTTP methods used to interface with a REST API.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following HTTP methods are commonly used to interface with a REST API, and what do they do?",
-        options: [
-          "GET (Retrieves data)",
-          "POST (Creates a new resource)",
-          "PUT (Replaces a resource)",
-          "PATCH (Partially updates a resource)",
-          "DELETE (Deletes a resource)",
-        ],
-        answer: [
-          "GET (Retrieves data)",
-          "POST (Creates a new resource)",
-          "PATCH (Partially updates a resource)",
-          "DELETE (Deletes a resource)",
-        ],
-      },
-    },
-    // 20
-    {
-      group: "4",
-      title: "Creating a JWT Authentication System",
-      description:
-        "In this step, you will create a simple user authentication system with JWT.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps with drag-and-drop to implement JWT authentication in a Spring Boot app.",
-        options: [
-          "Add jjwt dependency",
-          "Configure security filter chain",
-          "Define UserDetailsService",
-          "Create /register endpoint",
-          "Hash passwords before storing",
-          "Create /login endpoint",
-          "Authenticate credentials",
-          "Generate JWT token",
-          "Return token in response",
-          "Validate token in filter",
-        ],
-        answer: [
-          "Add jjwt dependency",
-          "Configure security filter chain",
-          "Define UserDetailsService",
-          "Create /register endpoint",
-          "Hash passwords before storing",
-          "Create /login endpoint",
-          "Authenticate credentials",
-          "Generate JWT token",
-          "Return token in response",
-          "Validate token in filter",
-        ],
-      },
-    },
-    // 21
-    {
-      group: "4",
-      title: "Deploying a Spring Boot Application",
-      description:
-        "In this step, you will learn how to deploy a Spring Boot application.",
-      isText: true,
-      question: {
-        questionText:
-          "Write the command to package and run your Spring Boot app with Maven.",
-      },
-    },
-    // 22
-    {
-      group: "4",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [69, 89],
-      },
-    },
-    // 1
-    {
-      group: "5",
-      title: "Benefits of Serverless Cloud Platforms",
-      description:
-        "Explore the advantages of using Firebase as a serverless backend for Android development.",
-      isText: true,
-      question: {
-        questionText:
-          "What are the key benefits of using Firebase as a serverless backend for an Android app, and how does it differ from a traditional server-based model?",
-      },
-    },
-    // 2
-    {
-      group: "5",
-      title: "Understanding Android Studio",
-      description:
-        "Learn what Android Studio is and why it's the primary IDE for Android development.",
-      isText: true,
-      question: {
-        questionText:
-          "What is Android Studio and why do most Android developers choose it?",
-      },
-    },
-    // 3
-    {
-      group: "5",
-      title: "Installing Java and Android SDK",
-      description:
-        "Install the Java JDK and Android SDK tools required for Android development.",
-      isText: true,
-      question: {
-        questionText:
-          "What roles do the Java JDK and the Android SDK play in building Android apps?",
-      },
-    },
-    // 4
-    {
-      group: "5",
-      title: "Adding Firebase to Gradle",
-      description:
-        "Configure your project-level Gradle file to include Firebase dependencies.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What lines do you add to your module-level `build.gradle` to include the Firebase BOM?",
-        answer:
-          "implementation platform('com.google.firebase:firebase-bom:31.2.3')",
-      },
-    },
-    // 5
-    {
-      group: "5",
-      title: "Applying Google Services Plugin",
-      description:
-        "Enable the Google Services Gradle plugin to integrate Firebase.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What line do you add to your project-level `build.gradle` to apply the Google Services plugin?",
-        answer: "classpath 'com.google.gms:google-services:4.4.0'",
-      },
-    },
-    // 6
-    {
-      group: "5",
-      title: "Initializing a Firebase Project in Android",
-      description:
-        "Add the `google-services.json` file and apply the plugin in your module Gradle.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What file do you download from the Firebase console and where do you place it in your Android project?",
-        answer: "google-services.json in app/",
-      },
-    },
-    // 7
-    {
-      group: "5",
-      title: "Selecting Firebase Modules",
-      description:
-        "Choose which Firebase Android SDK libraries to include in your app.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following Firebase modules might you add to your Android app?",
-        options: [
-          "firebase-auth",
-          "firebase-firestore",
-          "firebase-database",
-          "firebase-functions",
-          "firebase-storage",
-          "firebase-analytics",
-        ],
-        answer:
-          "firebase-auth, firebase-firestore, firebase-storage, firebase-analytics",
-      },
-    },
-    // 8
-    {
-      group: "5",
-      title: "Configuring FirebaseApp",
-      description: "Initialize Firebase in your Android `Application` class.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write the Java code to initialize Firebase in `public void onCreate()` of your `Application` subclass.",
-      },
-    },
-    // 9
-    {
-      group: "5",
-      title: "Setting Up Firestore",
-      description: "Learn how to obtain a Firestore instance and write data.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write Java code to get `FirebaseFirestore` instance and add a document to `users` collection.",
-      },
-    },
-    // 10
-    {
-      group: "5",
-      title: "Understanding Authentication",
-      description: "Learn about Firebase Authentication in Android.",
-      isText: true,
-      question: {
-        questionText:
-          "What is Firebase Authentication, and which sign-in methods does it support on Android?",
-      },
-    },
-    // 11
-    {
-      group: "5",
-      title: "Creating a User with FirebaseAuth",
-      description: "Programmatically create a new user account in Android.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write Java code using `FirebaseAuth.getInstance().createUserWithEmailAndPassword(...)`.",
-      },
-    },
-    // 12
-    {
-      group: "5",
-      title: "Retrieving the ID Token",
-      description: "Obtain the current user's ID token on the client.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write Java code to call `getCurrentUser().getIdToken(false)` and handle the result.",
-      },
-    },
-    // 13
-    {
-      group: "5",
-      title: "CRUD with Firestore",
-      description: "Perform basic Firestore operations in Android.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Complete the Java code to create, read, update, and delete a Firestore document.",
-        options: [
-          // 1) Correct sequence and syntax
-          `FirebaseFirestore db = FirebaseFirestore.getInstance();
-DocumentReference doc = db.collection("users").document("alice");
-// create
-doc.set(new User("alice@example.com", 30));
-// read
-doc.get().addOnSuccessListener(snapshot -> {
-    User u = snapshot.toObject(User.class);
-});
-// update
-doc.update("age", 31);
-// delete
-doc.delete();`,
-
-          // 2) Forgot to handle asynchronous read success
-          `FirebaseFirestore db = FirebaseFirestore.getInstance();
-DocumentReference doc = db.collection("users").document("alice");
-// create
-doc.set(new User("alice@example.com", 30));
-// read
-User u = doc.get().toObject(User.class);  // missing addOnSuccessListener
-// update
-doc.update("age", 31);
-// delete
-doc.delete();`,
-
-          // 3) Used add() instead of set(), creating a new doc ID
-          `FirebaseFirestore db = FirebaseFirestore.getInstance();
-CollectionReference users = db.collection("users");
-// create
-users.add(new User("alice@example.com", 30));  // wrong: adds new auto-ID doc
-// read
-DocumentReference doc = users.document("alice");
-doc.get().addOnSuccessListener(snapshot -> {
-    User u = snapshot.toObject(User.class);
-});
-// update
-doc.update("age", 31);
-// delete
-doc.delete();`,
-
-          // 4) Deleted the entire collection instead of the document
-          `FirebaseFirestore db = FirebaseFirestore.getInstance();
-DocumentReference doc = db.collection("users").document("alice");
-// create
-doc.set(new User("alice@example.com", 30));
-// read
-doc.get().addOnSuccessListener(snapshot -> {
-    User u = snapshot.toObject(User.class);
-});
-// update
-doc.update("age", 31);
-// delete
-db.collection("users").delete();  // invalid: delete() not on CollectionReference`,
-
-          // 5) Misused update call with wrong field name
-          `FirebaseFirestore db = FirebaseFirestore.getInstance();
-DocumentReference doc = db.collection("users").document("alice");
-// create
-doc.set(new User("alice@example.com", 30));
-// read
-doc.get().addOnSuccessListener(snapshot -> {
-    User u = snapshot.toObject(User.class);
-});
-// update
-doc.update("username", "alice");  // wrong field key: should be "age"
-// delete
-doc.delete();`,
-        ],
-        answer: `FirebaseFirestore db = FirebaseFirestore.getInstance();
-DocumentReference doc = db.collection("users").document("alice");
-// create
-doc.set(new User("alice@example.com", 30));
-// read
-doc.get().addOnSuccessListener(snapshot -> {
-    User u = snapshot.toObject(User.class);
-});
-// update
-doc.update("age", 31);
-// delete
-doc.delete();`,
-      },
-    },
-    // 14
-    {
-      group: "5",
-      title: "Calling Cloud Functions",
-      description: "Invoke an HTTPS Callable Cloud Function from Android.",
-      isCode: true,
-      question: {
-        questionText:
-          'Write Java code to call `FirebaseFunctions.getInstance().getHttpsCallable("helloWorld").call()`.',
-      },
-    },
-    // 15
-    {
-      group: "5",
-      title: "Local Emulation",
-      description: "Test Functions and Firestore locally with the emulator.",
-      isSingleLineText: true,
-      question: {
-        questionText: "What command starts the local Firebase emulator suite?",
-        answer: "firebase emulators:start",
-      },
-    },
-    // 16
-    {
-      group: "5",
-      title: "Deploying to Firebase",
-      description: "Deploy only your Cloud Functions from the CLI.",
-      isSingleLineText: true,
-      question: {
-        questionText: "What command do you use to deploy only Cloud Functions?",
-        answer: "firebase deploy --only functions",
-      },
-    },
-    // 17
-    {
-      group: "5",
-      title: "Uploading to Storage",
-      description: "Upload files to Firebase Storage in Android.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write Java code using `FirebaseStorage.getInstance().getReference()` to upload a file.",
-      },
-    },
-    // 18
-    {
-      group: "5",
-      title: "Security Rules Basics",
-      description: "Learn about Firestore security rules for Android clients.",
-      isText: true,
-      question: {
-        questionText:
-          "What are Firestore security rules and when are they evaluated for Android requests?",
-      },
-    },
-    // 19
-    {
-      group: "5",
-      title: "Performance Monitoring",
-      description: "Explore Firebase Performance Monitoring for Android apps.",
-      isText: true,
-      question: {
-        questionText:
-          "Which Firebase product helps you monitor performance metrics in an Android app?",
-      },
-    },
-    // 20
-    {
-      group: "5",
-      title: "Popular Firebase Extensions",
-      description: "Learn about official Firebase Extensions you can install.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are Firebase Extensions provided by Google?",
-        options: [
-          "Trigger Email via SendGrid",
-          "Resize Images",
-          "Translate Text",
-          "Backup Realtime Database",
-        ],
-        answer:
-          "Trigger Email via SendGrid, Resize Images, Translate Text, Backup Realtime Database",
-      },
-    },
-    // 21
-    {
-      group: "5",
-      title: "Review With AI Conversation (optional)",
-      isConversationReview: true,
-      description: "Review the subjects you've answered",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [91, 110],
-      },
-    },
-  ],
+  //   "py-en": [
+  //     {
+  //       group: "introduction",
+  //       title: "Introduction To Python Development",
+  //       isStudyGuide: true,
+  //       description:
+  //         "Expose yourself to Python fundamentals to improve the quality of your learning before making progress.",
+
+  //       question: {
+  //         questionText: (
+  //           <div>
+  //             <p style={{ marginBottom: 12 }}>
+  //               {" "}
+  //               One of the best predictors for student success is exposure to
+  //               course material before studying it.
+  //             </p>
+
+  //             <p style={{ marginBottom: 12 }}>
+  //               Remember to fail faster and fail forward! The real education
+  //               happens when you push through a challenge.
+  //             </p>
+  //           </div>
+  //         ),
+  //         metaData: `### Advice
+  // I know this looks like ChatGPT content…but it's not—it's me!
+
+  // As a beginner, remember:
+  // 1. Programming is mostly about organizing information rather than complex math. Code uses logic and control flow instead of algebraic equations.
+  // 2. Like natural languages, you can express the same idea in many ways.
+  // 3. When something challenges you, fail faster and break the problem into smaller, understandable steps.
+
+  // ### Exposure
+  // This guide exposes you to concepts before you answer questions, so you aren’t intimidated later. Don’t worry if you don’t grasp everything—skim it, then dive in.
+
+  // ### Core Concepts in Python
+
+  // \`\`\`py
+  // # Lists vs constructors
+  // my_list = [1, 2, 3, 'a', 'b', 'c', None, False]
+  // my_list.append('new data')
+
+  // # Dictionaries (key/value objects)
+  // data_set = {
+  //     "introduction": "Welcome",
+  //     "title": "Chapter 1",
+  //     "is_live": True
+  // }
+  // data_set["page"] = 4
+  // data_set["book"] = "Coding Basics"
+  // \`\`\`
+
+  // \`\`\`py
+  // # Custom classes
+  // class House:
+  //     def __init__(self, paint=None):
+  //         self.house_paint = paint
+
+  //     def get_paint(self):
+  //         return self.house_paint
+
+  //     def set_paint(self, paint):
+  //         self.house_paint = paint
+
+  //     def delete_paint(self):
+  //         self.house_paint = None
+  // \`\`\`
+
+  // ### Data Analysis with pandas
+
+  // \`\`\`py
+  // import pandas as pd
+
+  // # Create a DataFrame
+  // df = pd.DataFrame({
+  //     "house_paint": ["pink", "blue", "green"],
+  //     "rooms": [3, 4, 2]
+  // })
+
+  // # Inspect your data
+  // print(df.head())      # first rows
+  // print(df.describe())  # summary statistics
+
+  // # Filter and group
+  // filtered = df[df["rooms"] >= 3]
+  // grouped = df.groupby("house_paint").rooms.mean()
+  // \`\`\`
+
+  // ### Conclusion
+  // Failing fast is in your best interest when learning a new language. This one-pager will be available inside the app. Good luck, and happy coding!
+  // `,
+  //       },
+  //     },
+
+  //     {
+  //       group: "tutorial",
+  //       title: "Understanding Coding",
+  //       description: "Grasp the basic concept of coding in Python.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "Which of the following best describes coding?",
+  //         options: [
+  //           "Writing instructions for computers to perform tasks",
+  //           "Creating physical components for computers",
+  //           "Designing user interfaces",
+  //           "Managing databases",
+  //         ],
+  //         answer: "Writing instructions for computers to perform tasks",
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Sequence of Program Execution",
+  //       description: "Learn the correct order of program execution.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the steps with drag-and-drop to order how a Python program executes.",
+  //         options: [
+  //           "Writing Code",
+  //           "Code Interpretation",
+  //           "Debugging",
+  //           "Program Execution",
+  //         ],
+  //         answer: [
+  //           "Writing Code",
+  //           "Code Interpretation",
+  //           "Debugging",
+  //           "Program Execution",
+  //         ],
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Introduction to Variables",
+  //       description:
+  //         "In this step, you will learn about variables and how to use them in your code.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Select all the steps involved in correctly declaring a variable in Python:",
+  //         options: [
+  //           "Choose a descriptive variable name",
+  //           "Start the name with a letter or underscore",
+  //           "Assign a value using the equals sign (=)",
+  //           "End the name with a semicolon (;)",
+  //           "Use uppercase letters for all variable names",
+  //           "Include type annotations for static typing",
+  //         ],
+  //         answer: [
+  //           "Choose a descriptive variable name",
+  //           "Start the name with a letter or underscore",
+  //           "Assign a value using the equals sign (=)",
+  //         ],
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Understanding List Declarations",
+  //       description:
+  //         "Complete the code by selecting the correct way to declare a list of items in Python.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Which code block correctly declares a list of items in Python?",
+  //         options: [
+  //           `items = ['apple', 'banana', 'cherry']`,
+  //           `items = {'apple': 1, 'banana': 2, 'cherry': 3}`,
+  //           `def items():\n    return 'apple, banana, cherry'`,
+  //           `items = 'apple, banana, cherry'`,
+  //           `class Items:\n    pass`,
+  //         ],
+  //         answer: `items = ['apple', 'banana', 'cherry']`,
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Variable Assignment in Python",
+  //       description: "Learn how to assign values to variables in Python.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Declare a variable named `age` and assign it the value 25.",
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Understanding Data Types",
+  //       description: "Learn the basics of data types in Python.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "By convention, how should you name a constant in Python?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "UPPERCASE_WITH_UNDERSCORES",
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Purpose of Variables",
+  //       description: "Understand why variables are used in programming.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "In your own words, explain the purpose of variables in programming.",
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Bash Terminal Practice: Changing Directories",
+  //       description: "Practice changing directories in a terminal environment.",
+  //       isCode: true,
+  //       isTerminal: true,
+  //       question: {
+  //         questionText:
+  //           "Enter the command to change to the `new_folder` directory using a Bash terminal.",
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [1, 8],
+  //       },
+  //     },
+  //     // 1
+  //     {
+  //       group: "1",
+  //       title: "Data Types in Programming",
+  //       description: "Identify different primitive data types used in Python.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following are primitive data types in Python?",
+  //         options: [
+  //           "str",
+  //           "int",
+  //           "float",
+  //           "bool",
+  //           "NoneType",
+  //           "list",
+  //           "dict",
+  //           "complex",
+  //         ],
+  //         answer: ["str", "int", "float", "bool", "NoneType", "complex"],
+  //       },
+  //     },
+  //     // 2
+  //     {
+  //       group: "1",
+  //       title: "Steps to Create a Function",
+  //       description: "Understand the sequence of creating and using a function.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the steps with drag-and-drop to create and use a Python function.",
+  //         options: [
+  //           "Define the function",
+  //           "Call the function",
+  //           "Execute the function body",
+  //           "Return a value",
+  //         ],
+  //         answer: [
+  //           "Define the function",
+  //           "Call the function",
+  //           "Execute the function body",
+  //           "Return a value",
+  //         ],
+  //       },
+  //     },
+  //     // 3
+  //     {
+  //       group: "1",
+  //       title: "Writing a Simple Function",
+  //       description: "Practice writing functions in Python.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write a function named `greet` that takes a name as a parameter and prints a greeting with that name.",
+  //       },
+  //     },
+  //     // 4
+  //     {
+  //       group: "1",
+  //       title: "Functions in Programming",
+  //       description: "Discuss the role of functions.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What is a function, and why is it useful in programming?",
+  //       },
+  //     },
+  //     // 5
+  //     {
+  //       group: "1",
+  //       title: "Conditional Statements",
+  //       description: "Identify the purpose of conditional statements.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "What is the primary purpose of an `if` statement?",
+  //         options: [
+  //           "To repeat a block of code multiple times",
+  //           "To execute a block of code based on a condition",
+  //           "To define a variable",
+  //           "To import external libraries",
+  //         ],
+  //         answer: "To execute a block of code based on a condition",
+  //       },
+  //     },
+  //     // 6
+  //     {
+  //       group: "1",
+  //       title: "Order of Conditional Checks",
+  //       description:
+  //         "Complete the code that evaluates an `if`/`elif`/`else` statement.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Complete the following code to correctly implement an `if`/`elif`/`else` statement that checks if `x` is greater than 10, equal to 10, or less than 10.",
+  //         options: [
+  //           `if x > 10:\n    print("x is greater than 10")\nelif x == 10:\n    print("x is equal to 10")\nelse:\n    print("x is less than 10")`,
+  //           `if x == 10:\n    print("x is equal to 10")\nelif x > 10:\n    print("x is greater than 10")`,
+  //           `if x > 10:\n    print("x is greater than 10")\nelse:\n    print("x is not greater than 10")`,
+  //           `if x >= 10:\n    print("x is greater than or equal to 10")\nelse:\n    print("x is less than 10")`,
+  //         ],
+  //         answer: `if x > 10:\n    print("x is greater than 10")\nelif x == 10:\n    print("x is equal to 10")\nelse:\n    print("x is less than 10")`,
+  //       },
+  //     },
+  //     // 7
+  //     {
+  //       group: "1",
+  //       title: "Implementing Conditional Logic",
+  //       description: "Apply conditional logic in code.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write an `if`/`elif`/`else` statement that checks if a number `num` is positive, negative, or zero, and prints an appropriate message.",
+  //       },
+  //     },
+  //     // 8
+  //     {
+  //       group: "1",
+  //       title: "Understanding Conditional Logic in Programming",
+  //       description:
+  //         "Learn how logical operators like AND and OR control conditions in programming.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "Which logical operator is used to check if both conditions in a conditional statement are true in Python?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "and",
+  //       },
+  //     },
+  //     // 9
+  //     {
+  //       group: "1",
+  //       title: "Real-world Use of Conditionals",
+  //       description: "Reflect on how conditionals are used.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Provide an example of how conditional statements are used in real-world applications.",
+  //       },
+  //     },
+  //     // 10
+  //     {
+  //       group: "1",
+  //       title: "Terminal Practice: Help Command",
+  //       description: "Write the help command to observe basic commands.",
+  //       isCode: true,
+  //       isTerminal: true,
+  //       question: {
+  //         questionText:
+  //           "In a Bash terminal environment, enter the help command to discover basic commands.",
+  //       },
+  //     },
+  //     // 11
+  //     {
+  //       group: "1",
+  //       title: "Loops in Programming",
+  //       description: "Understand the purpose of loops.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which loop will continue executing as long as its condition remains true in Python?",
+  //         options: ["for loop", "while loop", "do...while loop", "foreach loop"],
+  //         answer: "while loop",
+  //       },
+  //     },
+  //     // 12
+  //     {
+  //       group: "1",
+  //       title: "Sequence of Loop Execution",
+  //       description: "Grasp the order in which loops execute.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the steps of a Python `for` loop execution with drag-and-drop.",
+  //         options: [
+  //           "Initialize iterator",
+  //           "Check condition",
+  //           "Execute code block",
+  //           "Advance iterator",
+  //         ],
+  //         answer: [
+  //           "Initialize iterator",
+  //           "Check condition",
+  //           "Execute code block",
+  //           "Advance iterator",
+  //         ],
+  //       },
+  //     },
+  //     // 13
+  //     {
+  //       group: "1",
+  //       title: "Creating a Loop",
+  //       description: "Practice writing loops.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write a `for` loop that prints numbers from 1 to 5 in Python.",
+  //       },
+  //     },
+  //     // 14
+  //     {
+  //       group: "1",
+  //       title: "Applications of Loops",
+  //       description: "Discuss where loops are useful.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Describe a scenario in software development where loops are essential.",
+  //       },
+  //     },
+  //     // 15
+  //     {
+  //       group: "1",
+  //       title: "Lists in Python",
+  //       description: "Identify methods used for manipulating lists in Python.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following methods are valid for manipulating lists in Python?",
+  //         options: [
+  //           ".append()",
+  //           ".pop()",
+  //           ".remove()",
+  //           ".extend()",
+  //           ".sort()",
+  //           ".reverse()",
+  //           ".map()", // map is a built-in function, not a list method
+  //           ".join()", // join is a string method
+  //         ],
+  //         answer: [
+  //           ".append()",
+  //           ".pop()",
+  //           ".remove()",
+  //           ".extend()",
+  //           ".sort()",
+  //           ".reverse()",
+  //         ],
+  //       },
+  //     },
+  //     // 16
+  //     {
+  //       group: "1",
+  //       title: "Order of List Operations",
+  //       description: "Understand how list operations are performed.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Complete the code to declare a list, add an element to it, remove the last element, and then access an element.",
+  //         options: [
+  //           `fruits = ['apple', 'banana']\nfruits.append('pink')\nfruits.pop()\nprint(fruits[0])`,
+  //           `fruits = 'apple, banana'\nfruits.append('pink')\nfruits.pop()\nprint(fruits[0])`,
+  //           `fruits = {'apple':1, 'banana':2}\nfruits.append('pink')\nfruits.pop()\nprint(list(fruits)[0])`,
+  //         ],
+  //         answer: `fruits = ['apple', 'banana']\nfruits.append('pink')\nfruits.pop()\nprint(fruits[0])`,
+  //       },
+  //     },
+  //     // 17
+  //     {
+  //       group: "1",
+  //       title: "Manipulating Lists",
+  //       description: "Apply list methods in code.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Create a list `fruits` with 'apple' and 'banana'. Add 'pink' to the end and remove 'apple' from the beginning.",
+  //       },
+  //     },
+  //     // 18
+  //     {
+  //       group: "1",
+  //       title: "Use Cases for Lists",
+  //       description: "Explore scenarios where lists are used.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Provide an example of how a list can be used to manage data in a Python application.",
+  //       },
+  //     },
+  //     // 19
+  //     {
+  //       group: "1",
+  //       title: "Terminal Practice: Creating Directories",
+  //       description: "Creating a directory command in a bash terminal",
+  //       isCode: true,
+  //       isTerminal: true,
+  //       question: {
+  //         questionText:
+  //           "In a Bash terminal environment, create a directory called `app` using the mkdir command.",
+  //       },
+  //     },
+  //     // 20
+  //     {
+  //       group: "1",
+  //       title: "Advanced Coding Output",
+  //       description:
+  //         "Predict the output of the following code with lists, conditionals, logical operators, and list comprehensions.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText: (
+  //           <div>
+  //             What will be the output of the following code?
+  //             <br />
+  //             <pre>
+  //               {`
+  // arr = [1, 2, 3, 4]
+  // x = 10
+  // y = 5
+
+  // if x > y and len(arr) > 3:
+  //     arr.append(x)
+  //     arr = [n for n in arr if n % 2 == 0]
+
+  // print(arr)
+  // `}
+  //             </pre>
+  //           </div>
+  //         ),
+  //         placeholder: "Type your answer here...",
+  //         answer: "[2, 4, 10]",
+  //       },
+  //     },
+  //     // 21
+  //     {
+  //       group: "1",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [10, 29], // Indices of steps to review
+  //       },
+  //     },
+  //     // 1
+  //     {
+  //       group: "2",
+  //       title: "Introduction to Objects",
+  //       description:
+  //         "In this step, you will learn what an object is in programming.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "In programming, which keyword creates a new object instance in Python?",
+  //         placeholder: "Type your answer here...",
+  //         answer:
+  //           "None (Python uses class instantiation without a specific keyword)",
+  //       },
+  //     },
+  //     // 2
+  //     {
+  //       group: "2",
+  //       title: "Understanding the __init__ Method",
+  //       description:
+  //         "In this step, you will learn about the purpose of the `__init__` method in a Python class.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following code blocks correctly defines the `__init__` method for class instantiation in Python?",
+  //         options: [
+  //           `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\nmy_car = Car("Toyota")`,
+  //           `class Car:\n    def init(self, brand):\n        self.brand = brand\n\nmy_car = Car("Toyota")`,
+  //           `class Car:\n    def __init__(brand):\n        self.brand = brand\n\nmy_car = Car("Toyota")`,
+  //           `class Car:\n    def __init__(self, brand):\n        brand = self.brand\n\nmy_car = Car("Toyota")`,
+  //         ],
+  //         answer: `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\nmy_car = Car("Toyota")`,
+  //       },
+  //     },
+  //     // 3
+  //     {
+  //       group: "2",
+  //       title: "Purpose of the __init__ Method",
+  //       description:
+  //         "In this step, you will learn about the purpose of the `__init__` method in a class.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Explain the purpose of the `__init__` method in a Python class.",
+  //       },
+  //     },
+  //     // 4
+  //     {
+  //       group: "2",
+  //       title: "Creating an Instance of a Class",
+  //       description:
+  //         "In this step, you will learn how to create an instance of a class in Python.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Select all correct steps required to create an instance of a class in Python:",
+  //         options: [
+  //           `Define class using class keyword`,
+  //           `Call constructor with parentheses`,
+  //           `Pass required arguments to constructor`,
+  //           `Store returned instance in a variable`,
+  //           `Use new keyword`,
+  //           `Define class with function keyword`,
+  //           `Call class directly without parentheses`,
+  //         ],
+  //         answer: [
+  //           `Define class using class keyword`,
+  //           `Call constructor with parentheses`,
+  //           `Pass required arguments to constructor`,
+  //           `Store returned instance in a variable`,
+  //         ],
+  //       },
+  //     },
+  //     // 5
+  //     {
+  //       group: "2",
+  //       title: "Declaring a Method in a Class",
+  //       description:
+  //         "In this step, you will learn how to declare a method inside a class.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Declare a method named `update_model` in the `Car` class that updates the `model` attribute.",
+  //       },
+  //     },
+  //     // 6
+  //     {
+  //       group: "2",
+  //       title: "Using self",
+  //       description:
+  //         "Complete the code by selecting the correct way to use `self` to refer to the instance property.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Which code block correctly uses `self` to refer to the object's property?",
+  //         options: [
+  //           `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\n    def show_brand(self):\n        print(brand)`,
+  //           `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\n    def show_brand(self):\n        print(self.brand)`,
+  //           `class Car:\n    def __init__(self, brand):\n        brand = self.brand\n\n    def show_brand(self):\n        print(brand)`,
+  //           `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\n    def show_brand(self):\n        print(self.brand())`,
+  //         ],
+  //         answer: `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\n    def show_brand(self):\n        print(self.brand)`,
+  //       },
+  //     },
+  //     // 7
+  //     {
+  //       group: "2",
+  //       title: "Adding Attributes to an Object",
+  //       description:
+  //         "In this step, you will learn how to add attributes to a Python class.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText: "Add a new attribute `year` to the `Car` class.",
+  //       },
+  //     },
+  //     // 8
+  //     {
+  //       group: "2",
+  //       title: "Accessing and Modifying Attributes",
+  //       description:
+  //         "In this step, you will learn how to get or set attributes of an object.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following are valid ways to get or set properties in Python?",
+  //         options: [
+  //           `Use dot notation (e.g., obj.property)`,
+  //           `Use getattr(obj, 'property')`,
+  //           `Use setter method if defined`,
+  //           `Use obj['property']`,
+  //           `Call obj.property() without defining method`,
+  //         ],
+  //         answer: [
+  //           `Use dot notation (e.g., obj.property)`,
+  //           `Use getattr(obj, 'property')`,
+  //           `Use setter method if defined`,
+  //         ],
+  //       },
+  //     },
+  //     // 9
+  //     {
+  //       group: "2",
+  //       title: "Modifying Object Attributes",
+  //       description:
+  //         "In this step, you will learn how to modify attributes of an object.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Modify the `model` attribute of an instance of the `Car` class.",
+  //       },
+  //     },
+  //     // 10
+  //     {
+  //       group: "2",
+  //       title: "Understanding Inheritance",
+  //       description:
+  //         "In this step, you will learn about inheritance in object-oriented programming.",
+  //       isText: true,
+  //       question: {
+  //         questionText: "What is inheritance in object-oriented programming?",
+  //       },
+  //     },
+  //     // 11
+  //     {
+  //       group: "2",
+  //       title: "Implementing Inheritance",
+  //       description:
+  //         "In this step, you will implement inheritance in Python by subclassing.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Extend the `Car` class to create an `ElectricCar` class with an additional attribute `battery_life`.",
+  //       },
+  //     },
+  //     // 12
+  //     {
+  //       group: "2",
+  //       title: "Overriding Methods",
+  //       description:
+  //         "In this step, you will learn how to override methods in a subclass.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "What does it mean to override a method in a subclass?",
+  //         options: [
+  //           `Replace superclass method with new implementation`,
+  //           `Delete method from superclass`,
+  //           `Inherit method without changes`,
+  //           `Call method from a different class`,
+  //           `Extend method functionality via super()`,
+  //         ],
+  //         answer: [
+  //           `Replace superclass method with new implementation`,
+  //           `Extend method functionality via super()`,
+  //         ],
+  //       },
+  //     },
+  //     // 13
+  //     {
+  //       group: "2",
+  //       title: "Understanding Encapsulation",
+  //       description:
+  //         "In this step, you will learn about encapsulation in object-oriented programming.",
+  //       isText: true,
+  //       question: {
+  //         questionText: "What is encapsulation in object-oriented programming?",
+  //       },
+  //     },
+  //     // 14
+  //     {
+  //       group: "2",
+  //       title: "Implementing Encapsulation",
+  //       description:
+  //         "In this step, you will implement encapsulation by using getter and setter methods.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Add getter and setter methods for the `battery_life` attribute in the `ElectricCar` class.",
+  //       },
+  //     },
+  //     // 15
+  //     {
+  //       group: "2",
+  //       title: "Encapsulation Concept",
+  //       description:
+  //         "In this step, you will define the core concept of encapsulation in one word.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What is the primary concept encapsulation ensures in object-oriented programming?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "Abstraction",
+  //       },
+  //     },
+  //     // 16
+  //     {
+  //       group: "2",
+  //       title: "Combining Concepts",
+  //       description:
+  //         "In this step, you will combine various concepts learned to create a small project.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Create a small project that defines a `Person` class, uses inheritance to create a `Student` subclass, and demonstrates encapsulation and lists of objects.",
+  //       },
+  //     },
+  //     // 17
+  //     {
+  //       group: "2",
+  //       title: "Printing in the Terminal",
+  //       description: "In this step, you will print a message using the terminal",
+  //       isCode: true,
+  //       isTerminal: true,
+  //       question: {
+  //         questionText:
+  //           "Type a command to print: 'I'm talking to the inside of a computer!'",
+  //       },
+  //     },
+  //     // 18
+  //     {
+  //       group: "2",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [31, 47],
+  //       },
+  //     },
+
+  //     {
+  //       group: "3",
+  //       title: "Introduction to React Components",
+  //       description:
+  //         "In this step, you will learn about React components, their role in creating reusable UI elements, and how they help manage the user interface efficiently.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following best describes a React component?",
+  //         options: [
+  //           "A method for handling events in JavaScript",
+  //           "A feature exclusive to server-side rendering in React",
+  //           "A reusable piece of user interface defined as a function or class that returns JSX",
+  //           "A built-in HTML element in React",
+  //         ],
+  //         answer:
+  //           "A reusable piece of user interface defined as a function or class that returns JSX",
+  //       },
+  //     },
+  //     {
+  //       group: "3",
+  //       title: "Key Concepts in React",
+  //       description:
+  //         "In this step, you will learn about the fundamental concepts of React, including properties (props), state, events, and styles.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText: "Which of the following are key concepts in React?",
+  //         options: [
+  //           "Managing properties to pass data between components",
+  //           "Manipulating the DOM directly for better performance",
+  //           "Using state to manage data within a component",
+  //           "Handling events such as clicks with event handlers",
+  //           "Applying inline styles or CSS classes to components",
+  //         ],
+  //         answer: [
+  //           "Managing properties to pass data between components",
+  //           "Using state to manage data within a component",
+  //           "Handling events such as clicks with event handlers",
+  //           "Applying inline styles or CSS classes to components",
+  //         ],
+  //       },
+  //     },
+  //     {
+  //       group: "3",
+  //       title: "Effect of State Changes on a Component",
+  //       description:
+  //         "In this step, you will explain what happens to a React component when its state changes.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What happens to a React component when its state changes?",
+  //       },
+  //     },
+
+  //     //next lecture
+  //     {
+  //       group: "3",
+  //       title: "Creating a Simple React Component",
+  //       description:
+  //         "In this step, you will define a basic React component that returns some simple JSX.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following code blocks correctly defines a simple React component that returns a heading and a paragraph?",
+  //         options: [
+  //           // Option 1: Correct answer
+  //           `function MyComponent() {
+  //   return (
+  //     <div>
+  //       <h1>Hello, World!</h1>
+  //       <p>Welcome to the thunderdome</p>
+  //     </div>
+  //   );
+  // }`,
+
+  //           // Option 2: Incorrect - missing return statement
+  //           `function MyComponent() {
+  //   <div>
+  //     <h1>Hello, World!</h1>
+  //     <p>Welcome to the thunderdome</p>
+  //   </div>;
+  // }`,
+
+  //           // Option 3: Incorrect - uses class instead of function
+  //           `class MyComponent {
+  //   render() {
+  //     return (
+  //       <div>
+  //         <h1>Hello, World!</h1>
+  //         <p>How are we today?</p>
+  //       </div>
+  //     );
+  //   }
+  // }`,
+
+  //           // Option 4: Incorrect - missing JSX inside the return
+  //           `function MyComponent() {
+  //   return (
+  //     <div>Hello World</div>
+  //     <p>How are we today?</p>
+  //   );
+  // }`,
+  //         ],
+  //         answer: `function MyComponent() {
+  //   return (
+  //     <div>
+  //       <h1>Hello, World!</h1>
+  //       <p>Welcome to the thunderdome</p>
+  //     </div>
+  //   );
+  // }`,
+  //       },
+  //     },
+  //     {
+  //       group: "3",
+  //       title: "Handling Events in React",
+  //       description:
+  //         "In this step, you will define a basic React component that handles a button click event using the `onClick` attribute.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following code blocks correctly defines a React component that handles a button click event?",
+  //         options: [
+  //           // Option 2: Incorrect - no event handler function defined
+  //           `function MyComponent() {
+  //   return (
+  //     <div>
+  //       <button
+  //         onClick={
+  //           alert('Button clicked!')
+  //         }
+  //       >
+  //         Click me
+  //       </button>
+  //     </div>
+  //   );
+  // }`,
+
+  //           // Option 3: Incorrect - inline event handler, not recommended
+  //           `function MyComponent() {
+  // return (
+  //   <div>
+  //     <button
+  //       onClick= () => {
+  //         alert('Button clicked!')
+  //       }
+  //     >
+  //       Click me
+  //     </button>
+  //   </div>
+  // );
+  // }`,
+  //           `function MyComponent() {
+  //   const handleClick = () => {
+  //     alert('Button clicked!');
+  //   };
+
+  //   return (
+  //     <div>
+  //       <button
+  //         onClick={handleClick}
+  //       >
+  //         Click me
+  //       </button>
+  //     </div>
+  //   );
+  // }`,
+
+  //           // Option 4: Incorrect - no onClick attribute
+  //           `function MyComponent() {
+  // return (
+  //   <div>
+  //     <button>
+  //       Click me
+  //     </button>
+  //   </div>
+  // );
+  //     }`,
+  //         ],
+  //         answer: `function MyComponent() {
+  //   const handleClick = () => {
+  //     alert('Button clicked!');
+  //   };
+
+  //   return (
+  //     <div>
+  //       <button
+  //         onClick={handleClick}
+  //       >
+  //         Click me
+  //       </button>
+  //     </div>
+  //   );
+  // }`,
+  //       },
+  //     },
+
+  //     {
+  //       group: "3",
+  //       title: "Managing State with useState Hook",
+  //       description:
+  //         "In this step, you will learn how to use the useState hook to manage the state of a component.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText: `Modify the Tweet component to include a like button that toggles the liked state using the useState hook.`,
+  //       },
+  //     },
+
+  //     //next lecture
+  //     {
+  //       group: "3",
+  //       title: "Component Properties",
+  //       description:
+  //         "In this step, you will learn about passing properties to components in React.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What is the term used for passing data to a React component?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "props",
+  //       },
+  //     },
+  //     {
+  //       group: "3",
+  //       title: "Passing and Using Props",
+  //       description:
+  //         "In this step, you will learn how to pass and use props in a React component.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Update the Tweet component to accept and display the user's name, handle, and tweet content as props.",
+  //       },
+  //     },
+  //     {
+  //       group: "3",
+  //       title: "Working with Props and State Together",
+  //       description:
+  //         "In this step, you will learn how to work with both props and state in a React component.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText:
+  //           "What is the main difference between props and state in React?",
+  //         options: [
+  //           "Props are immutable while state is mutable",
+  //           "Props are managed by the component itself while state is passed down from parent components",
+  //           "State is used for styling while props are used for logic",
+  //           "There is no difference; they are the same",
+  //         ],
+  //         answer: "Props are immutable while state is mutable",
+  //       },
+  //     },
+
+  //     //next lecture
+  //     {
+  //       group: "3",
+  //       title: "Terminal Practice: Listing Files",
+  //       description:
+  //         "In this step, you will learn how to list files in a bash terminal.",
+  //       isCode: true,
+  //       isTerminal: true,
+  //       question: {
+  //         questionText: `Use the terminal to list all the files using the list command.`,
+  //       },
+  //     },
+
+  //     {
+  //       group: "3",
+  //       title: "Styling React Components",
+  //       description:
+  //         "In this step, you will learn how to style React components using CSS.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText: `Add styles to the Tweet component to improve its appearance.`,
+  //       },
+  //     },
+  //     {
+  //       group: "3",
+  //       title: "Using Flexbox for Layouts",
+  //       description:
+  //         "In this step, you will learn how to use Flexbox to create layouts in React.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the following CSS properties in the order needed to center a basic layout with flexbox styling:",
+  //         options: [
+  //           "display: flex;",
+  //           "justify-content: center;",
+  //           "align-items: center;",
+  //           "flex-direction: row;",
+  //         ],
+  //         answer: [
+  //           "display: flex;",
+  //           "flex-direction: row;",
+  //           "justify-content: center;",
+  //           "align-items: center;",
+  //         ],
+  //       },
+  //     },
+
+  //     //next lecture
+  //     {
+  //       group: "3",
+  //       title: "Lifting State Up",
+  //       description:
+  //         "In this step, you will learn how to lift state up to a common ancestor component to share state between components.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText: `Create a parent component that manages the state for multiple Tweet components and passes the state and event handlers as props.`,
+  //       },
+  //     },
+  //     {
+  //       group: "3",
+  //       title: "Using useEffect for Side Effects",
+  //       description:
+  //         "In this step, you will learn how to use the useEffect hook to handle side effects in a React component.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Modify the Tweet component to use the useEffect hook to log a message to the console every time the number of retweets changes.",
+  //       },
+  //     },
+
+  //     {
+  //       group: "3",
+  //       title: "Understanding Component Lifecycle",
+  //       description:
+  //         "In this step, you will learn about the lifecycle of React components and how to use useEffect hook to manage side effects.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What is the component lifecycle in React and what is the purpose of the useEffect hook?",
+  //       },
+  //     },
+
+  //     //next
+  //     {
+  //       group: "3",
+  //       title: "Fetching Data with useEffect",
+  //       description:
+  //         "In this step, you will learn how to fetch data from an API using the useEffect hook.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the steps with drag-and-drop to correctly fetch data using useEffect.",
+  //         options: [
+  //           "Import React and useState",
+  //           "Import useEffect from React",
+  //           "Create a component",
+  //           "Define the useEffect hook",
+  //           "Make the API call inside useEffect",
+  //           "Use async/await or .then() to handle the API response",
+  //           "Update the component state with the fetched data",
+  //           "Handle errors in the API call",
+  //           "Render the data in the component",
+  //         ],
+  //         answer: [
+  //           "Import React and useState",
+  //           "Import useEffect from React",
+  //           "Create a component",
+  //           "Define the useEffect hook",
+  //           "Make the API call inside useEffect",
+  //           "Use async/await or .then() to handle the API response",
+  //           "Update the component state with the fetched data",
+  //           "Handle errors in the API call",
+  //           "Render the data in the component",
+  //         ],
+  //       },
+  //     },
+
+  //     {
+  //       group: "3",
+  //       title: "Building a Complete Tweet App",
+  //       description:
+  //         "In this step, you will combine everything you have learned to build a complete Tweet app.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText: `Build a complete Tweet app that fetches tweets from an API, displays them using the Tweet component, and allows users to like and retweet.`,
+  //       },
+  //     },
+  //     {
+  //       group: "3",
+  //       title: "Terminal Practice: Setting Up A React App",
+  //       description: "In this step, you will learn how to set up a react project",
+
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Enter the command to install the latest version of a react project with vite.",
+  //       },
+  //     },
+
+  //     //next
+  //     {
+  //       group: "3",
+  //       title: "Creating a New React Project with Vite",
+  //       description:
+  //         "In this step, you will learn how to create a new React project using Vite by following the correct steps and running command-line commands.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the steps with drag-and-drop to correctly create a new React project using Vite, including command-line commands.",
+  //         options: [
+  //           "Ensure Node.js, NPM and VSCode are installed",
+  //           "Run `npm create vite@latest` to create a new Vite project",
+  //           "Select the React template when prompted",
+  //           "Navigate to the project directory using `cd project-name`",
+  //           "Run `npm install` to install dependencies",
+  //           "Start the development server with `npm run dev`",
+  //         ],
+  //         answer: [
+  //           "Ensure Node.js, NPM and VSCode are installed",
+  //           "Run `npm create vite@latest` to create a new Vite project",
+  //           "Select the React template when prompted",
+  //           "Navigate to the project directory using `cd project-name`",
+  //           "Run `npm install` to install dependencies",
+  //           "Start the development server with `npm run dev`",
+  //         ],
+  //       },
+  //     },
+  //     {
+  //       group: "3",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [49, 67], // Indices of steps to review
+  //       },
+  //     },
+  //     // 1
+  //     {
+  //       group: "4",
+  //       title: "Introduction to Python Backend Engineering",
+  //       description:
+  //         "In this step, you will learn what backend software engineering is and why it is important.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What is backend software engineering and why is it important in building applications?",
+  //       },
+  //     },
+  //     // 2
+  //     {
+  //       group: "4",
+  //       title: "Main Lessons Overview",
+  //       description:
+  //         "In this step, you will identify a core responsibility of backend engineering in Python.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following is a core responsibility in backend engineering?",
+  //         options: [
+  //           "Managing concurrency and ensuring thread safety in multi-user applications",
+  //           "Implementing user authentication directly in the user interface",
+  //           "Handling memory allocation and garbage collection in the Python interpreter",
+  //           "Designing scalable front-end components for cross-browser compatibility",
+  //           "Optimizing database queries and ensuring data consistency",
+  //         ],
+  //         answer: "Optimizing database queries and ensuring data consistency",
+  //       },
+  //     },
+  //     // 3
+  //     {
+  //       group: "4",
+  //       title: "Key Responsibilities of Backend Engineering",
+  //       description:
+  //         "In this step, you will learn about the various responsibilities involved in Python backend engineering.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following are core responsibilities of backend engineering?",
+  //         options: [
+  //           "Managing and optimizing databases for storing and retrieving data efficiently",
+  //           "Designing and implementing RESTful APIs to facilitate communication between systems",
+  //           "Ensuring security through user authentication and authorization mechanisms",
+  //           "Handling server-side logic, including business operations and calculations",
+  //           "Maintaining server reliability and performance under high traffic",
+  //           "Managing data integrity and consistency across distributed systems",
+  //           "Implementing logging and monitoring to ensure system health and debug issues",
+  //         ],
+  //         answer: [
+  //           "Managing and optimizing databases for storing and retrieving data efficiently",
+  //           "Designing and implementing RESTful APIs to facilitate communication between systems",
+  //           "Ensuring security through user authentication and authorization mechanisms",
+  //           "Handling server-side logic, including business operations and calculations",
+  //           "Maintaining server reliability and performance under high traffic",
+  //           "Managing data integrity and consistency across distributed systems",
+  //           "Implementing logging and monitoring to ensure system health and debug issues",
+  //         ],
+  //       },
+  //     },
+  //     // 4
+  //     {
+  //       group: "4",
+  //       title: "Interfacing with the Terminal",
+  //       description:
+  //         "In this step, you will learn about using the terminal in Python backend engineering.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Why is learning to use the terminal important for backend development, and what kinds of tasks can you perform using it?",
+  //       },
+  //     },
+  //     // 5
+  //     {
+  //       group: "4",
+  //       title: "Upgrading pip",
+  //       description: "In this step, you will learn how to upgrade pip globally.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Write the command to upgrade pip, the Python package manager, globally.",
+  //       },
+  //     },
+  //     // 6
+  //     {
+  //       group: "4",
+  //       title: "Installing a Python Package",
+  //       description:
+  //         "In this step, you will use the terminal to install a package with pip.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Write the command to install Flask, a popular Python web framework.",
+  //       },
+  //     },
+  //     // 7
+  //     {
+  //       group: "4",
+  //       title: "User Creation and Authentication",
+  //       description:
+  //         "In this step, you will understand the key concept related to creating users in backend systems.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What is the process called that verifies a user's identity during account creation?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "authentication",
+  //       },
+  //     },
+  //     // 8
+  //     {
+  //       group: "4",
+  //       title: "Database Foundations",
+  //       description:
+  //         "In this step, you will learn about the foundations of databases in backend engineering.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What are the main types of databases used in backend engineering?",
+  //       },
+  //     },
+  //     // 9
+  //     {
+  //       group: "4",
+  //       title: "Connecting Systems",
+  //       description:
+  //         "Write a code snippet to connect a Python application to a PostgreSQL database using psycopg2.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write a Python code snippet to connect an application to a PostgreSQL database.",
+  //       },
+  //     },
+  //     // 10
+  //     {
+  //       group: "4",
+  //       title: "Starting a Django Project",
+  //       description:
+  //         "In this step, you will learn how to start a Django project using the command line.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText: "What is the command to start a new Django project?",
+  //         answer: "django-admin startproject mysite",
+  //       },
+  //     },
+  //     // 11
+  //     {
+  //       group: "4",
+  //       title: "Advanced Data Storage Practices",
+  //       description:
+  //         "In this step, you will learn advanced practices for storing data responsibly in backend systems.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following are best practices for ensuring responsible data storage in a backend system?",
+  //         options: [
+  //           "Cache data in memory (e.g., Redis) to reduce database access time",
+  //           "Use a single centralized backup to reduce complexity and cost",
+  //           "Encrypt sensitive data both at rest and in transit to ensure security",
+  //           "Implement database replication across multiple servers to improve fault tolerance",
+  //         ],
+  //         answer: [
+  //           "Cache data in memory (e.g., Redis) to reduce database access time",
+  //           "Encrypt sensitive data both at rest and in transit to ensure security",
+  //           "Implement database replication across multiple servers to improve fault tolerance",
+  //         ],
+  //       },
+  //     },
+  //     // 12
+  //     {
+  //       group: "4",
+  //       title: "Initializing SQLAlchemy and Adding a Record",
+  //       description:
+  //         "In this step, you will learn how to initialize SQLAlchemy and add a record.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Complete the code to initialize SQLAlchemy with a Flask app and add a new User record.",
+  //         options: [
+  //           // 1) Correct initialization & commit
+  //           `from flask import Flask
+  // from flask_sqlalchemy import SQLAlchemy
+
+  // app = Flask(__name__)
+  // app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@localhost/db'
+  // db = SQLAlchemy(app)
+
+  // class User(db.Model):
+  //     id = db.Column(db.Integer, primary_key=True)
+  //     username = db.Column(db.String, unique=True)
+
+  // # Add user
+  // new_user = User(username='alice')
+  // db.session.add(new_user)
+  // db.session.commit()`,
+  //           // 2) Forgot to call commit()
+  //           `from flask import Flask
+  // from flask_sqlalchemy import SQLAlchemy
+
+  // app = Flask(__name__)
+  // app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@localhost/db'
+  // db = SQLAlchemy(app)
+
+  // class User(db.Model):
+  //     id = db.Column(db.Integer, primary_key=True)
+  //     username = db.Column(db.String, unique=True)
+
+  // # Add user
+  // new_user = User(username='alice')
+  // db.session.add(new_user)  # forgot db.session.commit()`,
+  //           // 3) Used create_all instead of binding to app
+  //           `from flask import Flask
+  // from flask_sqlalchemy import SQLAlchemy
+
+  // app = Flask(__name__)
+  // app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@localhost/db'
+  // db = SQLAlchemy()
+
+  // class User(db.Model):
+  //     id = db.Column(db.Integer, primary_key=True)
+  //     username = db.Column(db.String, unique=True)
+
+  // db.create_all()  # missing db.init_app(app)
+
+  // # Add user
+  // new_user = User(username='alice')
+  // db.session.add(new_user)
+  // db.session.commit()`,
+  //           // 4) Incorrect URI key and missing session.add
+  //           `from flask import Flask
+  // from flask_sqlalchemy import SQLAlchemy
+
+  // app = Flask(__name__)
+  // app.config['DATABASE_URI'] = 'postgres://user:pass@localhost/db'  # wrong config key
+  // db = SQLAlchemy(app)
+
+  // class User(db.Model):
+  //     id = db.Column(db.Integer, primary_key=True)
+  //     username = db.Column(db.String, unique=True)
+
+  // # Add user
+  // new_user = User(username='alice')
+  // db.commit()  # wrong call: should be db.session.commit()`,
+  //         ],
+  //         answer: `from flask import Flask
+  // from flask_sqlalchemy import SQLAlchemy
+
+  // app = Flask(__name__)
+  // app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@localhost/db'
+  // db = SQLAlchemy(app)
+
+  // class User(db.Model):
+  //     id = db.Column(db.Integer, primary_key=True)
+  //     username = db.Column(db.String, unique=True)
+
+  // # Add user
+  // new_user = User(username='alice')
+  // db.session.add(new_user)
+  // db.session.commit()`,
+  //       },
+  //     },
+  //     // 13
+  //     {
+  //       group: "4",
+  //       title: "Handling User Data",
+  //       description:
+  //         "In this step, you will learn how to retrieve a user object using SQLAlchemy.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write a Python code snippet to get a User object by ID using SQLAlchemy.",
+  //       },
+  //     },
+  //     // 14
+  //     {
+  //       group: "4",
+  //       title: "Retrieving a Record After Authentication",
+  //       description:
+  //         "In this step, you will learn how to retrieve a record after verifying credentials.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write code to retrieve a User record from the database after authentication.",
+  //       },
+  //     },
+  //     // 15
+  //     {
+  //       group: "4",
+  //       title: "Understanding the Authentication Flow",
+  //       description:
+  //         "In this step, you will learn about the typical flow of authentication in backend systems.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the following steps in the correct order for a typical JWT authentication flow in a Python backend.",
+  //         options: [
+  //           "User submits credentials via POST",
+  //           "Backend verifies credentials against the database",
+  //           "JWT token is generated and signed",
+  //           "Client stores token locally",
+  //           "Backend validates token on protected routes",
+  //         ],
+  //         answer: [
+  //           "User submits credentials via POST",
+  //           "Backend verifies credentials against the database",
+  //           "JWT token is generated and signed",
+  //           "Client stores token locally",
+  //           "Backend validates token on protected routes",
+  //         ],
+  //       },
+  //     },
+  //     // 16
+  //     {
+  //       group: "4",
+  //       title: "OAuth Authentication",
+  //       description:
+  //         "In this step, you will learn about OAuth-style authentication systems.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What is the widely used protocol for authorization that allows third-party services to access user data without exposing credentials?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "OAuth 2.0",
+  //       },
+  //     },
+  //     // 17
+  //     {
+  //       group: "4",
+  //       title: "Using Environment Variables",
+  //       description:
+  //         "In this step, you will learn about using environment variables in backend development.",
+  //       isText: true,
+  //       question: {
+  //         questionText: "What role do environment variables play in a codebase?",
+  //       },
+  //     },
+  //     // 18
+  //     {
+  //       group: "4",
+  //       title: "Database Relationships",
+  //       description:
+  //         "In this step, you will learn about defining relationships in SQLAlchemy.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write a code snippet to define a one-to-many relationship between User and Post models in SQLAlchemy.",
+  //       },
+  //     },
+  //     // 19
+  //     {
+  //       group: "4",
+  //       title: "Interfacing with an API",
+  //       description:
+  //         "In this step, you will learn the common HTTP methods used to interface with an API.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following HTTP methods are commonly used to interface with a REST API, and what do they do?",
+  //         options: [
+  //           "GET (Retrieves data)",
+  //           "POST (Creates a new resource)",
+  //           "SEND (Sends data for processing)",
+  //           "PATCH (Partially updates a resource)",
+  //           "DELETE (Deletes a resource)",
+  //         ],
+  //         answer: [
+  //           "GET (Retrieves data)",
+  //           "POST (Creates a new resource)",
+  //           "PATCH (Partially updates a resource)",
+  //           "DELETE (Deletes a resource)",
+  //         ],
+  //       },
+  //     },
+  //     // 20
+  //     {
+  //       group: "4",
+  //       title: "Creating a JWT Authentication System",
+  //       description:
+  //         "In this step, you will create a simple user authentication system with JWT.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the steps with drag-and-drop to implement JWT authentication in Python.",
+  //         options: [
+  //           "Install PyJWT",
+  //           "Define User model",
+  //           "Create register endpoint",
+  //           "Hash passwords before storing",
+  //           "Create login endpoint",
+  //           "Verify user credentials",
+  //           "Generate JWT token",
+  //           "Return token to client",
+  //           "Protect routes with token verification",
+  //         ],
+  //         answer: [
+  //           "Install PyJWT",
+  //           "Define User model",
+  //           "Create register endpoint",
+  //           "Hash passwords before storing",
+  //           "Create login endpoint",
+  //           "Verify user credentials",
+  //           "Generate JWT token",
+  //           "Return token to client",
+  //           "Protect routes with token verification",
+  //         ],
+  //       },
+  //     },
+  //     // 21
+  //     {
+  //       group: "4",
+  //       title: "Deploying a Python Application",
+  //       description:
+  //         "In this step, you will learn how to deploy a Python backend application.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Write the command to start a Gunicorn server for your Flask app.",
+  //       },
+  //     },
+  //     // 22
+  //     {
+  //       group: "4",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [69, 89],
+  //       },
+  //     },
+  //     // 1
+  //     {
+  //       group: "5",
+  //       title: "Benefits of Serverless Cloud Platforms",
+  //       description:
+  //         "In this step, you will explore the advantages of using Firebase in software development.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What are the key benefits of using Firebase as a serverless backend, and how does it differ from traditional server-based models?",
+  //       },
+  //     },
+  //     // 2
+  //     {
+  //       group: "5",
+  //       title: "Understanding VSCode",
+  //       description:
+  //         "In this step, you will explore what Visual Studio Code (VSCode) is and why it is a popular code editor for Firebase development.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What is Visual Studio Code (VSCode) and why do many Firebase developers choose it?",
+  //       },
+  //     },
+  //     // 3
+  //     {
+  //       group: "5",
+  //       title: "Installing Node.js and npm",
+  //       description:
+  //         "Install Node.js and npm, required for the Firebase CLI and local emulation.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What is the purpose of Node.js and npm when working with Firebase projects?",
+  //       },
+  //     },
+  //     // 4
+  //     {
+  //       group: "5",
+  //       title: "Installing Project Dependencies",
+  //       description: "Install all dependencies listed in package.json.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "Enter the command to install dependencies from package.json.",
+  //         answer: "npm install",
+  //       },
+  //     },
+  //     // 5
+  //     {
+  //       group: "5",
+  //       title: "Install Firebase CLI",
+  //       description: "Install the Firebase CLI globally using npm.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What command do you use to install the Firebase CLI globally?",
+  //         answer: "npm install -g firebase-tools",
+  //       },
+  //     },
+  //     // 6
+  //     {
+  //       group: "5",
+  //       title: "Initializing a Firebase Project",
+  //       description:
+  //         "In this step, you will initialize a new Firebase project using the CLI.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What command do you use to initialize a Firebase project in your directory?",
+  //         answer: "firebase init",
+  //       },
+  //     },
+  //     // 7
+  //     {
+  //       group: "5",
+  //       title: "Selecting Firebase Features",
+  //       description:
+  //         "Choose which Firebase services to configure during initialization.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "During `firebase init`, which of the following features might you enable?",
+  //         options: [
+  //           "Authentication",
+  //           "Firestore",
+  //           "Realtime Database",
+  //           "Cloud Functions",
+  //           "Hosting",
+  //           "Storage",
+  //           "Emulators",
+  //         ],
+  //         answer: ["Authentication", "Firestore", "Cloud Functions", "Hosting"],
+  //       },
+  //     },
+  //     // 8
+  //     {
+  //       group: "5",
+  //       title: "Configuring Firebase SDK",
+  //       description:
+  //         "In this step, you will set up the Firebase Admin SDK in Python.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write the Python code to initialize the Firebase Admin SDK with a service account.",
+  //       },
+  //     },
+  //     // 9
+  //     {
+  //       group: "5",
+  //       title: "Setting Up Firestore",
+  //       description: "Learn how to initialize Firestore in your Python code.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Add the code to get a Firestore client from the initialized Admin SDK.",
+  //       },
+  //     },
+  //     // 10
+  //     {
+  //       group: "5",
+  //       title: "Understanding Authentication",
+  //       description:
+  //         "In this step, you will learn about Firebase Authentication.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What is Firebase Authentication, and what types of sign-in methods does it support?",
+  //       },
+  //     },
+  //     // 11
+  //     {
+  //       group: "5",
+  //       title: "Creating a User with Firebase Auth",
+  //       description:
+  //         "In this step, you will learn how to create a new user account programmatically.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write Python code using the Admin SDK to create a new user with email and password.",
+  //       },
+  //     },
+  //     // 12
+  //     {
+  //       group: "5",
+  //       title: "Verifying ID Tokens",
+  //       description:
+  //         "Learn how to verify a client’s Firebase ID token on your backend.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write Python code to verify a Firebase ID token and extract the user UID.",
+  //       },
+  //     },
+  //     // 13
+  //     {
+  //       group: "5",
+  //       title: "CRUD with Firestore",
+  //       description:
+  //         "In this step, you will perform basic database operations with Firestore.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Complete the Python code to add, get, update, and delete a document in Firestore.",
+  //         options: [
+  //           // 1) Correct sequence of calls
+  //           `# assume db is a Firestore client
+  // doc_ref = db.collection('users').document('alice')
+  // # create
+  // doc_ref.set({'email': 'alice@example.com', 'age': 30})
+  // # read
+  // user = doc_ref.get().to_dict()
+  // # update
+  // doc_ref.update({'age': 31})
+  // # delete
+  // doc_ref.delete()`,
+
+  //           // 2) Forgot to delete the document
+  //           `# assume db is a Firestore client
+  // doc_ref = db.collection('users').document('alice')
+  // # create
+  // doc_ref.set({'email': 'alice@example.com', 'age': 30})
+  // # read
+  // user = doc_ref.get().to_dict()
+  // # update
+  // doc_ref.update({'age': 31})
+  // # (missing delete step)`,
+
+  //           // 3) Used add() on a collection instead of document()
+  //           `# assume db is a Firestore client
+  // users_col = db.collection('users')
+  // # create
+  // new_ref = users_col.add({'email': 'alice@example.com', 'age': 30})
+  // # read
+  // user = new_ref.get().to_dict()
+  // # update
+  // new_ref.update({'age': 31})
+  // # delete
+  // new_ref.delete()`,
+
+  //           // 4) Read without converting to dict, and wrong delete call
+  //           `# assume db is a Firestore client
+  // doc_ref = db.collection('users').document('alice')
+  // # create
+  // doc_ref.set({'email': 'alice@example.com', 'age': 30})
+  // # read
+  // user = doc_ref.get()             # forgot .to_dict()
+  // # update
+  // doc_ref.update({'age': 31})
+  // # delete
+  // db.collection('users').delete()   # invalid: delete on collection`,
+  //         ],
+  //         answer: `# assume db is a Firestore client
+  // doc_ref = db.collection('users').document('alice')
+  // # create
+  // doc_ref.set({'email': 'alice@example.com', 'age': 30})
+  // # read
+  // user = doc_ref.get().to_dict()
+  // # update
+  // doc_ref.update({'age': 31})
+  // # delete
+  // doc_ref.delete()`,
+  //       },
+  //     },
+  //     // 14
+  //     {
+  //       group: "5",
+  //       title: "Writing Cloud Functions",
+  //       description:
+  //         "In this step, you will write a simple Firebase Cloud Function in Python.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Show a basic HTTP-triggered Cloud Function that returns 'Hello Firebase'.",
+  //       },
+  //     },
+  //     // 15
+  //     {
+  //       group: "5",
+  //       title: "Local Emulation",
+  //       description: "Learn how to test Functions and Firestore locally.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText: "What command starts the local Firebase emulator suite?",
+  //         answer: "firebase emulators:start",
+  //       },
+  //     },
+  //     // 16
+  //     {
+  //       group: "5",
+  //       title: "Deploying to Firebase",
+  //       description:
+  //         "In this step, you will deploy your Functions and Firestore rules to production.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText: "What command do you use to deploy only Cloud Functions?",
+  //         answer: "firebase deploy --only functions",
+  //       },
+  //     },
+  //     // 17
+  //     {
+  //       group: "5",
+  //       title: "Storage with Firebase",
+  //       description:
+  //         "Learn how to upload and serve files using Firebase Storage.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write Python code using the Admin SDK to upload a file to a Storage bucket.",
+  //       },
+  //     },
+  //     // 18
+  //     {
+  //       group: "5",
+  //       title: "Security Rules Basics",
+  //       description:
+  //         "In this step, you will learn about Firestore security rules.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What are Firestore security rules and when are they evaluated?",
+  //       },
+  //     },
+  //     // 19
+  //     {
+  //       group: "5",
+  //       title: "Monitoring and Analytics",
+  //       description:
+  //         "Explore Firebase’s built-in monitoring and analytics tools.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Which Firebase products help you monitor performance and usage of your backend?",
+  //       },
+  //     },
+  //     // 20
+  //     {
+  //       group: "5",
+  //       title: "Popular Firebase Extensions",
+  //       description: "Learn about official Firebase Extensions you can install.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following are Firebase Extensions provided by Google?",
+  //         options: [
+  //           "Trigger Email via SendGrid",
+  //           "Resize Images",
+  //           "Translate Text",
+  //           "Host Static Site",
+  //           "Backup Realtime Database",
+  //         ],
+  //         answer: [
+  //           "Trigger Email via SendGrid",
+  //           "Resize Images",
+  //           "Translate Text",
+  //           "Backup Realtime Database",
+  //         ],
+  //       },
+  //     },
+  //     // 21
+  //     {
+  //       group: "5",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [91, 110],
+  //       },
+  //     },
+  //   ],
+
+  //   ["swift-en"]: [
+  //     {
+  //       group: "introduction",
+  //       title: "Introduction To iOS Development with Swift",
+  //       isStudyGuide: true,
+  //       description:
+  //         "Expose yourself to Swift fundamentals and SwiftUI basics to improve the quality of your learning before making progress.",
+  //       question: {
+  //         questionText: (
+  //           <div>
+  //             <p style={{ marginBottom: 12 }}>
+  //               {" "}
+  //               One of the best predictors for student success is exposure to
+  //               course material before studying it.
+  //             </p>
+
+  //             <p style={{ marginBottom: 12 }}>
+  //               Remember to fail faster and fail forward! The real education
+  //               happens when you push through a challenge.
+  //             </p>
+  //           </div>
+  //         ),
+  //         metaData: `### Advice
+  // This looks like ChatGPT content…but it’s not—it's me, your instructor!
+
+  // As a beginner:
+  // 1. Programming is about structuring data and logic, not advanced math.
+  // 2. Like spoken languages, you can express the same idea in many ways.
+  // 3. When something challenges you, break it into smaller steps and iterate quickly.
+
+  // ### Exposure
+  // This guide exposes you to concepts before you answer questions, so you won’t be intimidated later. Skim it now, code along later.
+
+  // ### Core Concepts in Swift
+
+  // \`\`\`swift
+  // // Arrays
+  // var myArray: [Any] = [1, 2, 3, "a", "b", "c"]
+  // myArray.append("new data")
+
+  // // Dictionaries
+  // var dataSet: [String: Any] = [
+  //     "introduction": "Welcome",
+  //     "title": "Chapter 1",
+  //     "isLive": true
+  // ]
+  // dataSet["page"] = 4
+  // dataSet["book"] = "Coding Basics"
+  // \`\`\`
+
+  // \`\`\`swift
+  // // Defining a class
+  // class House {
+  //     private var housePaint: String?
+
+  //     init(paint: String? = nil) {
+  //         self.housePaint = paint
+  //     }
+
+  //     func getPaint() -> String? {
+  //         return housePaint
+  //     }
+
+  //     func setPaint(_ paint: String) {
+  //         housePaint = paint
+  //     }
+
+  //     func deletePaint() {
+  //         housePaint = nil
+  //     }
+  // }
+
+  // // Usage
+  // let firstHome = House(paint: "pink")
+  // let nextHome = House(paint: "blue")
+  // print(firstHome.getPaint()!)   // "pink"
+  // \`\`\`
+
+  // ### SwiftUI Quick Preview
+
+  // \`\`\`swift
+  // import SwiftUI
+
+  // struct CelebrationView: View {
+  //     let message: String
+
+  //     var body: some View {
+  //         VStack {
+  //             Text("Good job!")
+  //                 .font(.title)
+  //                 .padding(.bottom, 8)
+  //             Text(message)
+  //                 .multilineTextAlignment(.center)
+  //                 .padding()
+  //                 .border(Color.black, width: 2)
+  //         }
+  //     }
+  // }
+
+  // // Preview in Xcode
+  // struct CelebrationView_Previews: PreviewProvider {
+  //     static var previews: some View {
+  //         CelebrationView(message: "You created a small app!")
+  //     }
+  // }
+  // \`\`\`
+
+  // ### Conclusion
+  // Failing fast is in your best interest when learning a new language. This one-pager will be available inside the app. Good luck, and happy coding in Swift!`,
+  //       },
+  //     },
+
+  //     {
+  //       group: "tutorial",
+  //       title: "Understanding Coding",
+  //       description: "Grasp the basic concept of coding in Swift.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "Which of the following best describes coding?",
+  //         options: [
+  //           "Writing instructions for computers to perform tasks",
+  //           "Creating physical components for computers",
+  //           "Designing user interfaces",
+  //           "Managing databases",
+  //         ],
+  //         answer: "Writing instructions for computers to perform tasks",
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Sequence of Program Execution",
+  //       description: "Learn the correct order of program execution.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the steps with drag-and-drop to order how a Swift program is built and run.",
+  //         options: [
+  //           "Writing Code",
+  //           "Code Compilation",
+  //           "Debugging",
+  //           "Program Execution",
+  //         ],
+  //         answer: [
+  //           "Writing Code",
+  //           "Code Compilation",
+  //           "Debugging",
+  //           "Program Execution",
+  //         ],
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Introduction to Variables",
+  //       description:
+  //         "In this step, you will learn about variables and how to declare them in Swift.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Select all the steps involved in correctly declaring a variable in Swift:",
+  //         options: [
+  //           "Use the var or let keyword",
+  //           "Choose a descriptive variable name",
+  //           "Assign a value using the equals sign (=)",
+  //           "End the declaration with a semicolon (;)",
+  //           "Capitalize the first letter of the variable name",
+  //           "Annotate the type explicitly (optional)",
+  //         ],
+  //         answer: [
+  //           "Use the var or let keyword",
+  //           "Choose a descriptive variable name",
+  //           "Assign a value using the equals sign (=)",
+  //         ],
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Understanding List Declarations",
+  //       description:
+  //         "Complete the code by selecting the correct way to declare an array of items in Swift.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Which code block correctly declares a list of items in Swift?",
+  //         options: [
+  //           `let items = ["apple", "banana", "cherry"]`,
+  //           `var items: [String] = ["apple", "banana", "cherry"]`,
+  //           `let items = ("apple", "banana", "cherry")`,
+  //           `let items = "apple, banana, cherry"`,
+  //           `class Items {\n    // properties here\n}`,
+  //         ],
+  //         answer: `let items = ["apple", "banana", "cherry"]`,
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Variable Assignment in Swift",
+  //       description: "Learn how to assign values to variables in Swift.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Declare a variable named `age` and assign it the value 25.",
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Understanding Data Types",
+  //       description: "Learn the basics of data types in Swift.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText: "What keyword is used to declare a constant in Swift?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "let",
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Purpose of Variables",
+  //       description: "Understand why variables are used in programming.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "In your own words, explain the purpose of variables in programming.",
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Bash Terminal Practice: Changing Directories",
+  //       description: "Practice changing directories in a terminal environment.",
+  //       isCode: true,
+  //       isTerminal: true,
+  //       question: {
+  //         questionText:
+  //           "Enter the command to change to the `new_folder` directory using a Bash terminal.",
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [1, 8],
+  //       },
+  //     },
+  //     // 1
+  //     {
+  //       group: "1",
+  //       title: "Data Types in Programming",
+  //       description: "Identify different primitive data types used in Swift.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following are primitive data types in Swift?",
+  //         options: ["String", "Int", "Float", "Double", "Bool", "Character"],
+  //         answer: ["String", "Int", "Float", "Double", "Bool", "Character"],
+  //       },
+  //     },
+  //     // 2
+  //     {
+  //       group: "1",
+  //       title: "Steps to Create a Function",
+  //       description: "Understand the sequence of creating and using a function.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the steps with drag-and-drop to create and use a Swift function.",
+  //         options: [
+  //           "Define the function",
+  //           "Call the function",
+  //           "Execute the function body",
+  //           "Return a value",
+  //         ],
+  //         answer: [
+  //           "Define the function",
+  //           "Call the function",
+  //           "Execute the function body",
+  //           "Return a value",
+  //         ],
+  //       },
+  //     },
+  //     // 3
+  //     {
+  //       group: "1",
+  //       title: "Writing a Simple Function",
+  //       description: "Practice writing functions in Swift.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write a function named `greet` that takes a `name: String` parameter and prints a greeting with that name.",
+  //       },
+  //     },
+  //     // 4
+  //     {
+  //       group: "1",
+  //       title: "Functions in Programming",
+  //       description: "Discuss the role of functions.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What is a function, and why is it useful in programming?",
+  //       },
+  //     },
+  //     // 5
+  //     {
+  //       group: "1",
+  //       title: "Conditional Statements",
+  //       description: "Identify the purpose of conditional statements.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "What is the primary purpose of an `if` statement?",
+  //         options: [
+  //           "To repeat a block of code multiple times",
+  //           "To execute a block of code based on a condition",
+  //           "To define a variable",
+  //           "To import external libraries",
+  //         ],
+  //         answer: "To execute a block of code based on a condition",
+  //       },
+  //     },
+  //     // 6
+  //     {
+  //       group: "1",
+  //       title: "Order of Conditional Checks",
+  //       description:
+  //         "Complete the code that evaluates an `if`/`else if`/`else` statement.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Complete the following Swift code to check if `x` is greater than 10, equal to 10, or less than 10.",
+  //         options: [
+  //           // 1) Correct order and operators
+  //           `if x > 10 {
+  //     print("x is greater than 10")
+  // } else if x == 10 {
+  //     print("x is equal to 10")
+  // } else {
+  //     print("x is less than 10")
+  // }`,
+
+  //           // 2) Swapped the first two checks (wrong logic)
+  //           `if x == 10 {
+  //     print("x is equal to 10")
+  // } else if x > 10 {
+  //     print("x is greater than 10")
+  // } else {
+  //     print("x is less than 10")
+  // }`,
+
+  //           // 3) Missing the else-if branch entirely
+  //           `if x > 10 {
+  //     print("x is greater than 10")
+  // } else {
+  //     print("x is not greater than 10")
+  // }`,
+
+  //           // 4) Used >= instead of == for equality check
+  //           `if x > 10 {
+  //     print("x is greater than 10")
+  // } else if x >= 10 {
+  //     print("x is equal to 10")
+  // } else {
+  //     print("x is less than 10")
+  // }`,
+  //         ],
+  //         answer: `if x > 10 {
+  //     print("x is greater than 10")
+  // } else if x == 10 {
+  //     print("x is equal to 10")
+  // } else {
+  //     print("x is less than 10")
+  // }`,
+  //       },
+  //     },
+  //     // 7
+  //     {
+  //       group: "1",
+  //       title: "Implementing Conditional Logic",
+  //       description: "Apply conditional logic in code.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write an `if`/`else if`/`else` statement that checks if a number `num` is positive, negative, or zero, and prints an appropriate message.",
+  //       },
+  //     },
+  //     // 8
+  //     {
+  //       group: "1",
+  //       title: "Understanding Conditional Logic in Programming",
+  //       description:
+  //         "Learn how logical operators like AND and OR control conditions in programming.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "Which logical operator is used to check if both conditions in a conditional statement are true in Swift?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "&&",
+  //       },
+  //     },
+  //     // 9
+  //     {
+  //       group: "1",
+  //       title: "Real-world Use of Conditionals",
+  //       description: "Reflect on how conditionals are used.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Provide an example of how conditional statements are used in real-world applications.",
+  //       },
+  //     },
+  //     // 10
+  //     {
+  //       group: "1",
+  //       title: "Terminal Practice: Help Command",
+  //       description: "Write the help command to observe basic commands.",
+  //       isCode: true,
+  //       isTerminal: true,
+  //       question: {
+  //         questionText:
+  //           "In a Bash terminal environment, enter the help command to discover basic commands.",
+  //       },
+  //     },
+  //     // 11
+  //     {
+  //       group: "1",
+  //       title: "Loops in Programming",
+  //       description: "Understand the purpose of loops.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which loop will continue executing as long as its condition remains true in Swift?",
+  //         options: [
+  //           "for-in loop",
+  //           "while loop",
+  //           "repeat-while loop",
+  //           "forEach method",
+  //         ],
+  //         answer: "while loop",
+  //       },
+  //     },
+  //     // 12
+  //     {
+  //       group: "1",
+  //       title: "Sequence of Loop Execution",
+  //       description: "Grasp the order in which loops execute.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the steps of a Swift `for-in` loop execution with drag-and-drop.",
+  //         options: [
+  //           "Initialize iterator",
+  //           "Check condition",
+  //           "Execute code block",
+  //           "Advance iterator",
+  //         ],
+  //         answer: [
+  //           "Initialize iterator",
+  //           "Check condition",
+  //           "Execute code block",
+  //           "Advance iterator",
+  //         ],
+  //       },
+  //     },
+  //     // 13
+  //     {
+  //       group: "1",
+  //       title: "Creating a Loop",
+  //       description: "Practice writing loops.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write a `for i in 1...5 { print(i) }` loop that prints numbers from 1 to 5 in Swift.",
+  //       },
+  //     },
+  //     // 14
+  //     {
+  //       group: "1",
+  //       title: "Applications of Loops",
+  //       description: "Discuss where loops are useful.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Describe a scenario in software development where loops are essential.",
+  //       },
+  //     },
+  //     // 15
+  //     {
+  //       group: "1",
+  //       title: "Arrays in Swift",
+  //       description: "Identify methods used for manipulating arrays in Swift.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following methods are valid for manipulating arrays in Swift?",
+  //         options: [
+  //           ".append()",
+  //           ".removeLast()",
+  //           ".remove(at:)",
+  //           ".insert(_:at:)",
+  //           ".map()",
+  //           ".filter()",
+  //         ],
+  //         answer: [
+  //           ".append()",
+  //           ".removeLast()",
+  //           ".remove(at:)",
+  //           ".insert(_:at:)",
+  //           ".map()",
+  //           ".filter()",
+  //         ],
+  //       },
+  //     },
+  //     // 16
+  //     {
+  //       group: "1",
+  //       title: "Order of Array Operations",
+  //       description: "Understand how array operations are performed.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Complete the code to declare an array, add an element to it, remove the first element, and then access an element.",
+  //         options: [
+  //           // 1) Correct sequence
+  //           `var fruits = ["apple", "banana"]
+  // fruits.append("pink")
+  // fruits.removeFirst()
+  // print(fruits[0])`,
+
+  //           // 2) Missing the removal step
+  //           `var fruits = ["apple", "banana"]
+  // fruits.append("pink")
+  // print(fruits[0])`,
+
+  //           // 3) Operations in the wrong order
+  //           `var fruits = ["apple", "banana"]
+  // fruits.removeFirst()
+  // fruits.append("pink")
+  // print(fruits[0])`,
+
+  //           // 4) Accessing the wrong index
+  //           `var fruits = ["apple", "banana"]
+  // fruits.append("pink")
+  // fruits.removeFirst()
+  // print(fruits[1])`,
+  //         ],
+  //         answer: `var fruits = ["apple", "banana"]
+  // fruits.append("pink")
+  // fruits.removeFirst()
+  // print(fruits[0])`,
+  //       },
+  //     },
+  //     // 17
+  //     {
+  //       group: "1",
+  //       title: "Manipulating Arrays",
+  //       description: "Apply array methods in code.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           'Create an array `fruits` with "apple" and "banana". Add "pink" to the end and remove the first element.',
+  //       },
+  //     },
+  //     // 18
+  //     {
+  //       group: "1",
+  //       title: "Use Cases for Arrays",
+  //       description: "Explore scenarios where arrays are used.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Provide an example of how an array can be used to manage data in an iOS application.",
+  //       },
+  //     },
+  //     // 19
+  //     {
+  //       group: "1",
+  //       title: "Terminal Practice: Creating Directories",
+  //       description: "Creating a directory command in a bash terminal",
+  //       isCode: true,
+  //       isTerminal: true,
+  //       question: {
+  //         questionText:
+  //           "In a Bash terminal environment, create a directory called `app` using the `mkdir` command.",
+  //       },
+  //     },
+  //     // 20
+  //     {
+  //       group: "1",
+  //       title: "Advanced Coding Output",
+  //       description:
+  //         "Predict the output of the following code with arrays, conditionals, logical operators, and array operations.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText: (
+  //           <div>
+  //             What will be the output of the following code?
+  //             <br />
+  //             <pre>
+  //               {`
+  // var arr = [1, 2, 3, 4]
+  // let x = 10
+  // let y = 5
+
+  // if x > y && arr.count > 3 {
+  //     arr.append(x)
+  //     arr = arr.filter { $0 % 2 == 0 }
+  // }
+
+  // print(arr)
+  // `}
+  //             </pre>
+  //           </div>
+  //         ),
+  //         placeholder: "Type your answer here...",
+  //         answer: "[2, 4, 10]",
+  //       },
+  //     },
+  //     // 21
+  //     {
+  //       group: "1",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [10, 29],
+  //       },
+  //     },
+  //     // 1
+  //     {
+  //       group: "2",
+  //       title: "Introduction to Objects",
+  //       description:
+  //         "In this step, you will learn what an object is in programming.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText: "In Swift, how do you create a new instance of a class?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "Call the class initializer, e.g. MyClass()",
+  //       },
+  //     },
+  //     // 2
+  //     {
+  //       group: "2",
+  //       title: "Understanding the init Method",
+  //       description:
+  //         "In this step, you will learn about the purpose of the `init` method in a class.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following code blocks correctly defines the `init` method and instantiates the class in Swift?",
+  //         options: [
+  //           `class Car {
+  //     var brand: String
+  //     init(brand: String) {
+  //         self.brand = brand
+  //     }
+  // }
+  // let myCar = Car(brand: "Toyota")`,
+  //           `class Car {
+  //     var brand: String
+  //     func init(brand: String) {
+  //         self.brand = brand
+  //     }
+  // }
+  // let myCar = Car(brand: "Toyota")`,
+  //           `class Car {
+  //     var brand: String
+  //     init(_ brand: String) {
+  //         self.brand = brand
+  //     }
+  // }
+  // let myCar = Car("Toyota")`,
+  //           `class Car {
+  //     var brand: String?
+  //     init() {
+  //         brand = "Toyota"
+  //     }
+  // }
+  // let myCar = Car()`,
+  //         ],
+  //         answer: `class Car {
+  //     var brand: String
+  //     init(brand: String) {
+  //         self.brand = brand
+  //     }
+  // }
+  // let myCar = Car(brand: "Toyota")`,
+  //       },
+  //     },
+  //     // 3
+  //     {
+  //       group: "2",
+  //       title: "Purpose of the init Method",
+  //       description:
+  //         "In this step, you will learn about the purpose of the `init` method in a class.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Explain the purpose of the `init` method in a Swift class.",
+  //       },
+  //     },
+  //     // 4
+  //     {
+  //       group: "2",
+  //       title: "Creating an Instance of a Class",
+  //       description:
+  //         "In this step, you will learn how to create an instance of a class in Swift.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Select all the correct steps required to create an instance of a class in Swift:",
+  //         options: [
+  //           "Define the class with the `class` keyword",
+  //           "Call the class initializer with parentheses",
+  //           "Pass required parameters to the initializer",
+  //           "Store the returned instance in a variable",
+  //           "Use the `new` keyword",
+  //           "Call the class without parentheses",
+  //         ],
+  //         answer: [
+  //           "Define the class with the `class` keyword",
+  //           "Call the class initializer with parentheses",
+  //           "Pass required parameters to the initializer",
+  //           "Store the returned instance in a variable",
+  //         ],
+  //       },
+  //     },
+  //     // 5
+  //     {
+  //       group: "2",
+  //       title: "Declaring a Method in a Class",
+  //       description:
+  //         "In this step, you will learn how to declare a method inside a class.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Declare a method named `updateModel()` in the `Car` class that updates the `model` property.",
+  //       },
+  //     },
+  //     // 6
+  //     {
+  //       group: "2",
+  //       title: "Using self",
+  //       description:
+  //         "Complete the code by selecting the correct way to use `self` to refer to the instance property.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Which code block correctly uses `self` to refer to the object's property?",
+  //         options: [
+  //           `class Car {
+  //     var brand: String
+  //     init(brand: String) { self.brand = brand }
+  //     func showBrand() { print(brand) }
+  // }
+  // let myCar = Car(brand: "Toyota")
+  // myCar.showBrand()`,
+  //           `class Car {
+  //     var brand: String
+  //     init(brand: String) { self.brand = brand }
+  //     func showBrand() { print(self.brand) }
+  // }
+  // let myCar = Car(brand: "Toyota")
+  // myCar.showBrand()`,
+  //           `class Car {
+  //     var brand: String
+  //     init(brand: String) { brand = self.brand }
+  //     func showBrand() { print(self.brand) }
+  // }
+  // let myCar = Car(brand: "Toyota")
+  // myCar.showBrand()`,
+  //           `class Car {
+  //     var brand: String
+  //     init(brand: String) { self.brand = brand }
+  //     func showBrand() { print(self.brand()) }
+  // }
+  // let myCar = Car(brand: "Toyota")
+  // myCar.showBrand()`,
+  //         ],
+  //         answer: `class Car {
+  //     var brand: String
+  //     init(brand: String) { self.brand = brand }
+  //     func showBrand() { print(self.brand) }
+  // }
+  // let myCar = Car(brand: "Toyota")
+  // myCar.showBrand()`,
+  //       },
+  //     },
+  //     // 7
+  //     {
+  //       group: "2",
+  //       title: "Adding Properties to an Object",
+  //       description:
+  //         "In this step, you will learn how to add properties to a Swift class.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText: "Add a new property `year: Int` to the `Car` class.",
+  //       },
+  //     },
+  //     // 8
+  //     {
+  //       group: "2",
+  //       title: "Accessing and Modifying Object Properties",
+  //       description:
+  //         "In this step, you will learn how to get or set properties of an object in Swift.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following are valid ways to get or set properties in Swift?",
+  //         options: [
+  //           "Use dot notation (e.g., obj.property)",
+  //           "Use custom getter/setter if defined",
+  //           "Use Key-Value Coding (KVC)",
+  //           "Use reflection APIs",
+  //         ],
+  //         answer: [
+  //           "Use dot notation (e.g., obj.property)",
+  //           "Use custom getter/setter if defined",
+  //         ],
+  //       },
+  //     },
+  //     // 9
+  //     {
+  //       group: "2",
+  //       title: "Modifying Object Properties",
+  //       description:
+  //         "In this step, you will learn how to modify properties of an object.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Modify the `model` property of an instance of the `Car` class.",
+  //       },
+  //     },
+  //     // 10
+  //     {
+  //       group: "2",
+  //       title: "Understanding Inheritance",
+  //       description:
+  //         "In this step, you will learn about inheritance in object-oriented programming.",
+  //       isText: true,
+  //       question: {
+  //         questionText: "What is inheritance in object-oriented programming?",
+  //       },
+  //     },
+  //     // 11
+  //     {
+  //       group: "2",
+  //       title: "Implementing Inheritance",
+  //       description:
+  //         "In this step, you will implement inheritance in Swift by subclassing.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Extend the `Car` class to create an `ElectricCar` subclass with an additional property `batteryLife: Int`.",
+  //       },
+  //     },
+  //     // 12
+  //     {
+  //       group: "2",
+  //       title: "Overriding Methods",
+  //       description:
+  //         "In this step, you will learn how to override methods in a subclass.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "What does it mean to override a method in a subclass?",
+  //         options: [
+  //           "Provide a new implementation for a superclass method",
+  //           "Delete the superclass method",
+  //           "Call the superclass method without changes",
+  //           "Extend functionality via super.method()",
+  //         ],
+  //         answer: "Provide a new implementation for a superclass method",
+  //       },
+  //     },
+  //     // 13
+  //     {
+  //       group: "2",
+  //       title: "Understanding Encapsulation",
+  //       description:
+  //         "In this step, you will learn about encapsulation in object-oriented programming.",
+  //       isText: true,
+  //       question: {
+  //         questionText: "What is encapsulation in object-oriented programming?",
+  //       },
+  //     },
+  //     // 14
+  //     {
+  //       group: "2",
+  //       title: "Implementing Encapsulation",
+  //       description:
+  //         "In this step, you will implement encapsulation by using computed properties.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Add a computed property `batteryLife` with get and set in the `ElectricCar` subclass.",
+  //       },
+  //     },
+  //     // 15
+  //     {
+  //       group: "2",
+  //       title: "Encapsulation Concept",
+  //       description:
+  //         "In this step, you will define the core concept of encapsulation in one word.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What is the primary concept encapsulation ensures in object-oriented programming?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "Abstraction",
+  //       },
+  //     },
+  //     // 16
+  //     {
+  //       group: "2",
+  //       title: "Combining Concepts",
+  //       description:
+  //         "In this step, you will combine various concepts learned to create a small project.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Create a small project that defines a `Person` class, uses inheritance to create a `Student` subclass, and demonstrates encapsulation and arrays of objects in Swift.",
+  //       },
+  //     },
+  //     // 17
+  //     {
+  //       group: "2",
+  //       title: "Printing in Code",
+  //       description: "In this step, you will print a message using Swift code.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write a Swift statement to print: 'I'm talking to the inside of a computer!'",
+  //       },
+  //     },
+  //     // 18
+  //     {
+  //       group: "2",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [31, 47],
+  //       },
+  //     },
+  //     // 1
+  //     {
+  //       group: "3",
+  //       title: "Introduction to SwiftUI Views",
+  //       description:
+  //         "In this step, you will learn about SwiftUI views, their role in creating reusable UI elements, and how they help manage the user interface efficiently.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "Which of the following best describes a SwiftUI view?",
+  //         options: [
+  //           "A method for handling events in Swift",
+  //           "A feature exclusive to UIKit",
+  //           "A reusable piece of user interface defined as a struct or class conforming to View",
+  //           "A built-in HTML element in Swift",
+  //         ],
+  //         answer:
+  //           "A reusable piece of user interface defined as a struct or class conforming to View",
+  //       },
+  //     },
+  //     // 2
+  //     {
+  //       group: "3",
+  //       title: "Key Concepts in SwiftUI",
+  //       description:
+  //         "In this step, you will learn about fundamental SwiftUI concepts, including properties, state, modifiers, and layout containers.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText: "Which of the following are key concepts in SwiftUI?",
+  //         options: [
+  //           "@State for local mutable state",
+  //           "Directly manipulating the view hierarchy",
+  //           "View modifiers for styling and behavior",
+  //           "HStack, VStack, ZStack for layout",
+  //         ],
+  //         answer: [
+  //           "@State for local mutable state",
+  //           "View modifiers for styling and behavior",
+  //           "HStack, VStack, ZStack for layout",
+  //         ],
+  //       },
+  //     },
+  //     // 3
+  //     {
+  //       group: "3",
+  //       title: "Effect of State Changes on a View",
+  //       description:
+  //         "In this step, you will explain what happens to a SwiftUI view when its @State changes.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What happens to a SwiftUI view when its @State property changes?",
+  //       },
+  //     },
+  //     // 4
+  //     {
+  //       group: "3",
+  //       title: "Creating a Simple SwiftUI View",
+  //       description:
+  //         "In this step, you will define a basic SwiftUI view that displays a heading and a text.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following code blocks correctly defines a simple SwiftUI view that shows a title and subtitle?",
+  //         options: [
+  //           `struct MyView: View {
+  //     var body: some View {
+  //         VStack {
+  //             Text("Hello, World!")
+  //             Text("Welcome to the thunderdome")
+  //         }
+  //     }
+  // }`,
+  //           `class MyView: View {
+  //     func body() -> some View {
+  //         VStack {
+  //             Text("Hello, World!")
+  //             Text("Welcome to the thunderdome")
+  //         }
+  //     }
+  // }`,
+  //           `struct MyView {
+  //     var body: some View {
+  //         VStack {
+  //             Text("Hello, World!")
+  //             Text("Welcome to the thunderdome")
+  //         }
+  //     }
+  // }`,
+  //           `struct MyView: View {
+  //     var content: some View {
+  //         VStack {
+  //             Text("Hello, World!")
+  //             Text("Welcome to the thunderdome")
+  //         }
+  //     }
+  // }`,
+  //         ],
+  //         answer: `struct MyView: View {
+  //     var body: some View {
+  //         VStack {
+  //             Text("Hello, World!")
+  //             Text("Welcome to the thunderdome")
+  //         }
+  //     }
+  // }`,
+  //       },
+  //     },
+  //     // 5
+  //     {
+  //       group: "3",
+  //       title: "Handling Tap Gestures",
+  //       description:
+  //         "In this step, you will handle a button tap event using SwiftUI's modifiers.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following code blocks correctly defines a SwiftUI view that handles a button tap?",
+  //         options: [
+  //           `Button("Click me") {
+  //     print("Button clicked!")
+  // }`,
+  //           `Button(action: {
+  //     print("Button clicked!")
+  // }) {
+  //     Text("Click me")
+  // }`,
+  //           `Button("Click me", action: print("Button clicked!"))`,
+  //           `Button {
+  //     Text("Click me")
+  // } onTap: {
+  //     print("Button clicked!")
+  // }`,
+  //         ],
+  //         answer: `Button("Click me") {
+  //     print("Button clicked!")
+  // }`,
+  //       },
+  //     },
+  //     // 6
+  //     {
+  //       group: "3",
+  //       title: "Managing State with @State",
+  //       description:
+  //         "In this step, you will learn how to use the @State property wrapper to manage local view state.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Modify the TweetView to include a like button that toggles a `@State var liked: Bool` property.",
+  //       },
+  //     },
+  //     // 7
+  //     {
+  //       group: "3",
+  //       title: "View Properties",
+  //       description:
+  //         "In this step, you will learn about passing data into SwiftUI views.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What is the term used for data passed into a SwiftUI view?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "View properties (initializer parameters)",
+  //       },
+  //     },
+  //     // 8
+  //     {
+  //       group: "3",
+  //       title: "Passing and Using Properties",
+  //       description:
+  //         "In this step, you will learn how to pass and use properties in a SwiftUI view.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Update the TweetView to accept and display the user’s `name`, `handle`, and `content` as view properties.",
+  //       },
+  //     },
+  //     // 9
+  //     {
+  //       group: "3",
+  //       title: "Working with Properties and State Together",
+  //       description:
+  //         "In this step, you will learn the difference between properties and @State.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText:
+  //           "What is the main difference between view properties and @State?",
+  //         options: [
+  //           "Properties are immutable while @State is mutable",
+  //           "Properties trigger view updates while @State does not",
+  //           "@State is passed from parent views, properties are local",
+  //           "There is no difference; they behave the same",
+  //         ],
+  //         answer: "Properties are immutable while @State is mutable",
+  //       },
+  //     },
+  //     // 10
+  //     {
+  //       group: "3",
+  //       title: "Terminal Practice: Listing Files",
+  //       description:
+  //         "In this step, you will learn how to list files in a bash terminal.",
+  //       isCode: true,
+  //       isTerminal: true,
+  //       question: {
+  //         questionText:
+  //           "Use the terminal to list all files using the `ls` command.",
+  //       },
+  //     },
+  //     // 11
+  //     {
+  //       group: "3",
+  //       title: "Styling SwiftUI Views",
+  //       description:
+  //         "In this step, you will learn how to style SwiftUI views using modifiers.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Add modifiers to the TweetView to set font, padding, background, and corner radius.",
+  //       },
+  //     },
+  //     // 12
+  //     {
+  //       group: "3",
+  //       title: "Using Stacks for Layout",
+  //       description:
+  //         "In this step, you will learn how to use HStack and VStack for layout in SwiftUI.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the following in the order needed to center content using VStack and modifiers:",
+  //         options: [
+  //           "VStack { }",
+  //           ".frame(maxWidth: .infinity, maxHeight: .infinity)",
+  //           ".background(Color.white)",
+  //           ".multilineTextAlignment(.center)",
+  //         ],
+  //         answer: [
+  //           "VStack { }",
+  //           ".frame(maxWidth: .infinity, maxHeight: .infinity)",
+  //           ".multilineTextAlignment(.center)",
+  //           ".background(Color.white)",
+  //         ],
+  //       },
+  //     },
+  //     // 13
+  //     {
+  //       group: "3",
+  //       title: "Lifting State Up",
+  //       description:
+  //         "In this step, you will learn how to lift state to a parent view to share data.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Create a parent view that manages an array of Tweet models with @State and passes bindings to child TweetViews.",
+  //       },
+  //     },
+  //     // 14
+  //     {
+  //       group: "3",
+  //       title: "Using onAppear for Side Effects",
+  //       description:
+  //         "In this step, you will learn how to use onAppear to handle side effects in a SwiftUI view.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Modify the TweetView to use `.onAppear` or `.onChange` to log a message when the retweet count changes.",
+  //       },
+  //     },
+  //     // 15
+  //     {
+  //       group: "3",
+  //       title: "Understanding View Lifecycle",
+  //       description:
+  //         "In this step, you will learn about the SwiftUI view lifecycle and the purpose of onAppear.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What is the SwiftUI view lifecycle, and what is the purpose of onAppear?",
+  //       },
+  //     },
+  //     // 16
+  //     {
+  //       group: "3",
+  //       title: "Fetching Data with async/await",
+  //       description:
+  //         "In this step, you will learn how to fetch data from an API using async/await in SwiftUI.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the steps to correctly fetch data in a SwiftUI view using async/await:",
+  //         options: [
+  //           "Import SwiftUI and Foundation",
+  //           "Define @State var data",
+  //           "Use Task { await fetchData() } in .task modifier",
+  //           "Handle errors with do/catch",
+  //           "Update state with received data",
+  //           "Render data in view",
+  //         ],
+  //         answer: [
+  //           "Import SwiftUI and Foundation",
+  //           "Define @State var data",
+  //           "Use Task { await fetchData() } in .task modifier",
+  //           "Handle errors with do/catch",
+  //           "Update state with received data",
+  //           "Render data in view",
+  //         ],
+  //       },
+  //     },
+  //     // 17
+  //     {
+  //       group: "3",
+  //       title: "Building a Complete Tweet App",
+  //       description:
+  //         "In this step, you will combine everything you have learned to build a complete Tweet app in SwiftUI.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Build a SwiftUI Tweet app that fetches tweets via async/await, displays them in a List, and allows users to like and retweet.",
+  //       },
+  //     },
+  //     // 18
+  //     {
+  //       group: "3",
+  //       title: "Terminal Practice: Creating a Swift Package",
+  //       description:
+  //         "In this step, you will learn how to initialize a Swift package using the terminal.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Enter the command to create a new Swift package: `swift package init --type executable`.",
+  //       },
+  //     },
+  //     // 19
+  //     {
+  //       group: "3",
+  //       title: "Creating a New SwiftUI Project",
+  //       description:
+  //         "In this step, you will learn how to create a new SwiftUI project in Xcode.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText: "Arrange the steps to create a new SwiftUI app in Xcode:",
+  //         options: [
+  //           "Open Xcode and select File > New > Project",
+  //           "Choose App template and click Next",
+  //           "Select SwiftUI for Interface and Swift for Language",
+  //           "Enter product name and organization identifier",
+  //           "Choose a location and create the project",
+  //         ],
+  //         answer: [
+  //           "Open Xcode and select File > New > Project",
+  //           "Choose App template and click Next",
+  //           "Select SwiftUI for Interface and Swift for Language",
+  //           "Enter product name and organization identifier",
+  //           "Choose a location and create the project",
+  //         ],
+  //       },
+  //     },
+  //     // 20
+  //     {
+  //       group: "3",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [49, 67],
+  //       },
+  //     },
+  //     // 1
+  //     {
+  //       group: "4",
+  //       title: "Introduction to Swift Backend Engineering with Vapor",
+  //       description:
+  //         "In this step, you will learn what backend software engineering is and why it is important.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What is backend software engineering and why is it important in building applications?",
+  //       },
+  //     },
+  //     // 2
+  //     {
+  //       group: "4",
+  //       title: "Main Lessons Overview",
+  //       description:
+  //         "In this step, you will identify a core responsibility of backend engineering in Swift.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following is a core responsibility in backend engineering?",
+  //         options: [
+  //           "Managing concurrency and ensuring thread safety in multi-user applications",
+  //           "Implementing user authentication directly in the UI layer",
+  //           "Handling memory allocation in the Swift runtime",
+  //           "Designing scalable UI components for cross-platform compatibility",
+  //           "Optimizing database queries and ensuring data consistency",
+  //         ],
+  //         answer: "Optimizing database queries and ensuring data consistency",
+  //       },
+  //     },
+  //     // 3
+  //     {
+  //       group: "4",
+  //       title: "Key Responsibilities of Backend Engineering",
+  //       description:
+  //         "In this step, you will learn about the various responsibilities involved in Swift backend engineering with Vapor.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following are core responsibilities of backend engineering?",
+  //         options: [
+  //           "Managing and optimizing databases for storing and retrieving data efficiently",
+  //           "Designing and implementing RESTful APIs using Vapor",
+  //           "Ensuring security through user authentication and authorization mechanisms",
+  //           "Handling server-side logic, including business operations and calculations",
+  //           "Maintaining server reliability and performance under high traffic",
+  //           "Managing data integrity and consistency across distributed systems",
+  //           "Implementing logging and monitoring to ensure system health and debug issues",
+  //         ],
+  //         answer: [
+  //           "Managing and optimizing databases for storing and retrieving data efficiently",
+  //           "Designing and implementing RESTful APIs using Vapor",
+  //           "Ensuring security through user authentication and authorization mechanisms",
+  //           "Handling server-side logic, including business operations and calculations",
+  //           "Maintaining server reliability and performance under high traffic",
+  //           "Managing data integrity and consistency across distributed systems",
+  //           "Implementing logging and monitoring to ensure system health and debug issues",
+  //         ],
+  //       },
+  //     },
+  //     // 4
+  //     {
+  //       group: "4",
+  //       title: "Interfacing with the Terminal",
+  //       description:
+  //         "In this step, you will learn about using the terminal in Swift backend engineering.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Why is learning to use the terminal important for backend development, and what tasks can you perform using it?",
+  //       },
+  //     },
+  //     // 5
+  //     {
+  //       group: "4",
+  //       title: "Installing the Vapor Toolbox",
+  //       description:
+  //         "In this step, you will learn how to install the Vapor CLI globally.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Write the command to install the Vapor Toolbox using Homebrew.",
+  //       },
+  //     },
+  //     // 6
+  //     {
+  //       group: "4",
+  //       title: "Adding a Swift Package with SwiftPM",
+  //       description:
+  //         "In this step, you will use Swift Package Manager to add a dependency.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Write the command to add the FluentPostgresDriver package via SwiftPM.",
+  //       },
+  //     },
+  //     // 7
+  //     {
+  //       group: "4",
+  //       title: "User Creation and Authentication",
+  //       description:
+  //         "In this step, you will understand the key concept related to creating users in backend systems.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What is the process called that verifies a user's identity during account creation?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "authentication",
+  //       },
+  //     },
+  //     // 8
+  //     {
+  //       group: "4",
+  //       title: "Database Foundations",
+  //       description:
+  //         "In this step, you will learn about the foundations of databases in backend engineering.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What are the main types of databases used in backend engineering?",
+  //       },
+  //     },
+  //     // 9
+  //     {
+  //       group: "4",
+  //       title: "Connecting to PostgreSQL with Fluent",
+  //       description:
+  //         "In this step, you will write a code snippet to connect a Vapor app to a PostgreSQL database.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write a Swift code snippet using FluentPostgresDriver to configure the database connection.",
+  //       },
+  //     },
+  //     // 10
+  //     {
+  //       group: "4",
+  //       title: "Initiating a Vapor Project",
+  //       description:
+  //         "In this step, you will learn how to start a new Vapor project using the CLI.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText: "What is the command to create a new Vapor API project?",
+  //         answer: "vapor new MyApp --api",
+  //       },
+  //     },
+  //     // 11
+  //     {
+  //       group: "4",
+  //       title: "Advanced Data Storage Practices",
+  //       description:
+  //         "In this step, you will learn advanced practices for storing data responsibly in backend systems.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following are best practices for ensuring responsible data storage in a backend system?",
+  //         options: [
+  //           "Cache data in memory (e.g., Redis) to reduce database access time",
+  //           "Use a single centralized backup to reduce complexity and cost",
+  //           "Encrypt sensitive data both at rest and in transit to ensure security",
+  //           "Implement database replication across multiple servers to improve fault tolerance",
+  //         ],
+  //         answer: [
+  //           "Cache data in memory (e.g., Redis) to reduce database access time",
+  //           "Encrypt sensitive data both at rest and in transit to ensure security",
+  //           "Implement database replication across multiple servers to improve fault tolerance",
+  //         ],
+  //       },
+  //     },
+  //     // 12
+  //     {
+  //       group: "4",
+  //       title: "Configuring Fluent and Running Migrations",
+  //       description:
+  //         "In this step, you will learn how to initialize Fluent and run migrations in Vapor.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Complete the code to configure PostgreSQL and register a User migration in Vapor.",
+  //         options: [
+  //           // 1) Correct configuration, migration registration, and await
+  //           `import Fluent
+  // import FluentPostgresDriver
+  // import Vapor
+
+  // public func configure(_ app: Application) throws {
+  //     app.databases.use(.postgres(
+  //         hostname: "localhost",
+  //         username: "user",
+  //         password: "pass",
+  //         database: "db"
+  //     ), as: .psql)
+  //     app.migrations.add(CreateUser())
+  //     try app.autoMigrate().wait()
+  // }`,
+
+  //           // 2) Missing the .wait() on autoMigrate
+  //           `import Fluent
+  // import FluentPostgresDriver
+  // import Vapor
+
+  // public func configure(_ app: Application) throws {
+  //     app.databases.use(.postgres(
+  //         hostname: "localhost",
+  //         username: "user",
+  //         password: "pass",
+  //         database: "db"
+  //     ), as: .psql)
+  //     app.migrations.add(CreateUser())
+  //     try app.autoMigrate()  // forgot .wait()
+  // }`,
+
+  //           // 3) Wrong driver (MySQL) instead of Postgres
+  //           `import Fluent
+  // import FluentMySQLDriver
+  // import Vapor
+
+  // public func configure(_ app: Application) throws {
+  //     app.databases.use(.mysql(
+  //         hostname: "localhost",
+  //         username: "user",
+  //         password: "pass",
+  //         database: "db"
+  //     ), as: .mysql)
+  //     app.migrations.add(CreateUser())
+  //     try app.autoMigrate().wait()
+  // }`,
+
+  //           // 4) Registered database but forgot to add the migration
+  //           `import Fluent
+  // import FluentPostgresDriver
+  // import Vapor
+
+  // public func configure(_ app: Application) throws {
+  //     app.databases.use(.postgres(
+  //         hostname: "localhost",
+  //         username: "user",
+  //         password: "pass",
+  //         database: "db"
+  //     ), as: .psql)
+  //     try app.autoMigrate().wait()  // missing app.migrations.add(CreateUser())
+  // }`,
+  //         ],
+  //         answer: `import Fluent
+  // import FluentPostgresDriver
+  // import Vapor
+
+  // public func configure(_ app: Application) throws {
+  //     app.databases.use(.postgres(
+  //         hostname: "localhost",
+  //         username: "user",
+  //         password: "pass",
+  //         database: "db"
+  //     ), as: .psql)
+  //     app.migrations.add(CreateUser())
+  //     try app.autoMigrate().wait()
+  // }`,
+  //       },
+  //     },
+  //     // 13
+  //     {
+  //       group: "4",
+  //       title: "Handling User Data",
+  //       description:
+  //         "In this step, you will learn how to retrieve a User model instance.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write a Vapor route handler to fetch a User by ID from the database.",
+  //       },
+  //     },
+  //     // 14
+  //     {
+  //       group: "4",
+  //       title: "Retrieving a User After Authentication",
+  //       description:
+  //         "In this step, you will learn how to retrieve the authenticated user.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write code to retrieve the authenticated User from the request auth context in Vapor.",
+  //       },
+  //     },
+  //     // 15
+  //     {
+  //       group: "4",
+  //       title: "Understanding the Authentication Flow",
+  //       description:
+  //         "In this step, you will learn about the typical flow of JWT authentication in a backend system.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the following steps in the correct order for a typical JWT authentication flow in Vapor.",
+  //         options: [
+  //           "User submits credentials via POST",
+  //           "Server verifies credentials against database",
+  //           "JWT token is generated and signed",
+  //           "Client stores token locally",
+  //           "Protected routes validate token",
+  //         ],
+  //         answer: [
+  //           "User submits credentials via POST",
+  //           "Server verifies credentials against database",
+  //           "JWT token is generated and signed",
+  //           "Client stores token locally",
+  //           "Protected routes validate token",
+  //         ],
+  //       },
+  //     },
+  //     // 16
+  //     {
+  //       group: "4",
+  //       title: "OAuth Authentication",
+  //       description:
+  //         "In this step, you will learn about OAuth-style authentication systems.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What is the widely used protocol for authorization that allows third-party services to access user data without exposing credentials?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "OAuth 2.0",
+  //       },
+  //     },
+  //     // 17
+  //     {
+  //       group: "4",
+  //       title: "Using Environment Variables",
+  //       description:
+  //         "In this step, you will learn about using environment variables in backend development.",
+  //       isText: true,
+  //       question: {
+  //         questionText: "What role do environment variables play in a codebase?",
+  //       },
+  //     },
+  //     // 18
+  //     {
+  //       group: "4",
+  //       title: "Database Relationships with Fluent",
+  //       description:
+  //         "In this step, you will learn about defining relationships in Fluent.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write a Fluent model snippet to define a one-to-many relationship between User and Post.",
+  //       },
+  //     },
+  //     // 19
+  //     {
+  //       group: "4",
+  //       title: "Interfacing with an API",
+  //       description:
+  //         "In this step, you will learn the common HTTP methods used to interface with an API.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following HTTP methods are commonly used to interface with a REST API, and what do they do?",
+  //         options: [
+  //           "GET (Retrieves data)",
+  //           "POST (Creates a new resource)",
+  //           "PUT (Replaces a resource)",
+  //           "PATCH (Partially updates a resource)",
+  //           "DELETE (Deletes a resource)",
+  //         ],
+  //         answer: [
+  //           "GET (Retrieves data)",
+  //           "POST (Creates a new resource)",
+  //           "PATCH (Partially updates a resource)",
+  //           "DELETE (Deletes a resource)",
+  //         ],
+  //       },
+  //     },
+  //     // 20
+  //     {
+  //       group: "4",
+  //       title: "Creating a JWT Authentication System",
+  //       description:
+  //         "In this step, you will create a simple user authentication system with JWT in Vapor.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the steps with drag-and-drop to implement JWT authentication in Vapor.",
+  //         options: [
+  //           "Add jwt-kit dependency",
+  //           "Define User model",
+  //           "Configure JWT signer",
+  //           "Create register route",
+  //           "Hash password before storing",
+  //           "Create login route",
+  //           "Verify credentials",
+  //           "Generate JWT token",
+  //           "Return token to client",
+  //           "Protect routes with token middleware",
+  //         ],
+  //         answer: [
+  //           "Add jwt-kit dependency",
+  //           "Define User model",
+  //           "Configure JWT signer",
+  //           "Create register route",
+  //           "Hash password before storing",
+  //           "Create login route",
+  //           "Verify credentials",
+  //           "Generate JWT token",
+  //           "Return token to client",
+  //           "Protect routes with token middleware",
+  //         ],
+  //       },
+  //     },
+  //     // 21
+  //     {
+  //       group: "4",
+  //       title: "Deploying a Vapor Application",
+  //       description:
+  //         "In this step, you will learn how to deploy a Vapor application.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Write the command to run your Vapor app in production mode.",
+  //       },
+  //     },
+  //     // 22
+  //     {
+  //       group: "4",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [69, 89],
+  //       },
+  //     },
+  //     // 1
+  //     {
+  //       group: "5",
+  //       title: "Benefits of Serverless Cloud Platforms",
+  //       description:
+  //         "In this step, you will explore the advantages of using Firebase in iOS development.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What are the key benefits of using Firebase as a serverless backend for an iOS app, and how does it differ from a traditional server-based model?",
+  //       },
+  //     },
+  //     // 2
+  //     {
+  //       group: "5",
+  //       title: "Understanding Xcode",
+  //       description:
+  //         "In this step, you will explore what Xcode is and why it is the primary IDE for iOS development.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What is Xcode and why is it the most popular IDE among iOS developers?",
+  //       },
+  //     },
+  //     // 3
+  //     {
+  //       group: "5",
+  //       title: "Installing Swift and SwiftPM",
+  //       description: "Install Swift and use the Swift Package Manager.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What is the purpose of Swift and Swift Package Manager (SwiftPM) in iOS development?",
+  //       },
+  //     },
+  //     // 4
+  //     {
+  //       group: "5",
+  //       title: "Installing CocoaPods",
+  //       description: "Set up CocoaPods to manage Firebase dependencies.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "Enter the command to install CocoaPods on your macOS system.",
+  //         answer: "sudo gem install cocoapods",
+  //       },
+  //     },
+  //     // 5
+  //     {
+  //       group: "5",
+  //       title: "Adding Firebase via CocoaPods",
+  //       description: "Add Firebase SDK pods to your Xcode project.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What entry do you add under `pod 'Firebase/Core'` in your Podfile?",
+  //         answer:
+  //           "pod 'Firebase/Auth'\npod 'Firebase/Firestore'\npod 'Firebase/Storage'",
+  //       },
+  //     },
+  //     // 6
+  //     {
+  //       group: "5",
+  //       title: "Initializing a Firebase Project",
+  //       description:
+  //         "In this step, you will initialize Firebase in your iOS project by adding the config file.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What file do you download from the Firebase console and add to your Xcode project root?",
+  //         answer: "GoogleService-Info.plist",
+  //       },
+  //     },
+  //     // 7
+  //     {
+  //       group: "5",
+  //       title: "Selecting Firebase Modules",
+  //       description: "Choose which Firebase modules to include in your iOS app.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following Firebase SDK modules might you enable for an iOS app?",
+  //         options: [
+  //           "Auth",
+  //           "Firestore",
+  //           "Realtime Database",
+  //           "Cloud Functions",
+  //           "Analytics",
+  //           "Storage",
+  //         ],
+  //         answer: ["Auth", "Firestore", "Analytics", "Storage"],
+  //       },
+  //     },
+  //     // 8
+  //     {
+  //       group: "5",
+  //       title: "Configuring Firebase in AppDelegate",
+  //       description:
+  //         "Initialize Firebase in your AppDelegate or SwiftUI App entry point.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write the Swift code to configure Firebase in AppDelegate `application(_:didFinishLaunchingWithOptions:)`.",
+  //       },
+  //     },
+  //     // 9
+  //     {
+  //       group: "5",
+  //       title: "Setting Up Firestore",
+  //       description: "Learn how to initialize and use Firestore in Swift.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write the Swift code to get a Firestore instance and add a document to `users` collection.",
+  //       },
+  //     },
+  //     // 10
+  //     {
+  //       group: "5",
+  //       title: "Understanding Authentication",
+  //       description:
+  //         "In this step, you will learn about Firebase Authentication in iOS.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What is Firebase Authentication, and which sign-in methods does it support on iOS?",
+  //       },
+  //     },
+  //     // 11
+  //     {
+  //       group: "5",
+  //       title: "Creating a User with FirebaseAuth",
+  //       description: "Create a new user account programmatically in Swift.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write Swift code using `Auth.auth().createUser` with email and password.",
+  //       },
+  //     },
+  //     // 12
+  //     {
+  //       group: "5",
+  //       title: "Verifying ID Tokens",
+  //       description: "Obtain and verify the current user's ID token.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write Swift code to fetch `currentUser.getIDToken(completion:)` and print the token.",
+  //       },
+  //     },
+  //     // 13
+  //     {
+  //       group: "5",
+  //       title: "CRUD with Firestore",
+  //       description: "Perform basic Firestore operations in Swift.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Complete the Swift code to create, read, update, and delete a document in Firestore.",
+  //         options: [
+  //           // 1) Correct sequence and syntax
+  //           `let db = Firestore.firestore()
+  // let doc = db.collection("users").document("alice")
+  // // create
+  // doc.setData(["email": "alice@example.com", "age": 30])
+  // // read
+  // doc.getDocument { snapshot, error in
+  //   let data = snapshot?.data()
+  // }
+  // // update
+  // doc.updateData(["age": 31])
+  // // delete
+  // doc.delete()`,
+
+  //           // 2) Mis-uses setData for update (overwrites entire document)
+  //           `let db = Firestore.firestore()
+  // let doc = db.collection("users").document("alice")
+  // // create
+  // doc.setData(["email": "alice@example.com", "age": 30])
+  // // read
+  // doc.getDocument { snapshot, error in
+  //   let data = snapshot?.data()
+  // }
+  // // update
+  // doc.setData(["age": 31])  // should use updateData
+  // // delete
+  // doc.delete()`,
+
+  //           // 3) Incorrect read method and missing closure brace
+  //           `let db = Firestore.firestore()
+  // let doc = db.collection("users").document("alice")
+  // // create
+  // doc.setData(["email": "alice@example.com", "age": 30])
+  // // read
+  // doc.getDocuments { snapshot, error in
+  //   let data = snapshot?.documents.first?.data()
+  // // update
+  // doc.updateData(["age": 31])
+  // // delete
+  // doc.delete()`,
+
+  //           // 4) Wrong delete call on collection instead of document
+  //           `let db = Firestore.firestore()
+  // let doc = db.collection("users").document("alice")
+  // // create
+  // doc.setData(["email": "alice@example.com", "age": 30])
+  // // read
+  // doc.getDocument { snapshot, error in
+  //   let data = snapshot?.data()
+  // }
+  // // update
+  // doc.updateData(["age": 31])
+  // // delete
+  // db.collection("users").delete()  // invalid: must call delete() on document`,
+  //         ],
+  //         answer: `let db = Firestore.firestore()
+  // let doc = db.collection("users").document("alice")
+  // // create
+  // doc.setData(["email": "alice@example.com", "age": 30])
+  // // read
+  // doc.getDocument { snapshot, error in
+  //   let data = snapshot?.data()
+  // }
+  // // update
+  // doc.updateData(["age": 31])
+  // // delete
+  // doc.delete()`,
+  //       },
+  //     },
+  //     // 14
+  //     {
+  //       group: "5",
+  //       title: "Calling Cloud Functions",
+  //       description: "Invoke an HTTPS Callable Cloud Function from Swift.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           'Write Swift code to call `functions.httpsCallable("helloWorld").call()` and handle the result.',
+  //       },
+  //     },
+  //     // 15
+  //     {
+  //       group: "5",
+  //       title: "Local Emulation",
+  //       description: "Learn how to test Firebase services locally.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText: "What command starts the local Firebase emulator suite?",
+  //         answer: "firebase emulators:start",
+  //       },
+  //     },
+  //     // 16
+  //     {
+  //       group: "5",
+  //       title: "Deploying to Firebase",
+  //       description: "Deploy your Cloud Functions and Firestore rules.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText: "What command do you use to deploy only Cloud Functions?",
+  //         answer: "firebase deploy --only functions",
+  //       },
+  //     },
+  //     // 17
+  //     {
+  //       group: "5",
+  //       title: "Uploading to Storage",
+  //       description: "Upload files to Firebase Storage in Swift.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write Swift code using `Storage.storage().reference()` to upload `data` to `images/photo.jpg`.",
+  //       },
+  //     },
+  //     // 18
+  //     {
+  //       group: "5",
+  //       title: "Security Rules Basics",
+  //       description: "Understand Firestore security rules for iOS clients.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What are Firestore security rules and when are they evaluated on client requests?",
+  //       },
+  //     },
+  //     // 19
+  //     {
+  //       group: "5",
+  //       title: "Performance Monitoring",
+  //       description: "Explore Firebase’s performance monitoring for iOS apps.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Which Firebase product helps you monitor performance metrics in an iOS app?",
+  //       },
+  //     },
+  //     // 20
+  //     {
+  //       group: "5",
+  //       title: "Popular Firebase Extensions",
+  //       description: "Learn about official Firebase Extensions you can install.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following are Firebase Extensions you might add to your project?",
+  //         options: [
+  //           "Trigger Email via SendGrid",
+  //           "Resize Images",
+  //           "Translate Text",
+  //           "Backup Realtime Database",
+  //         ],
+  //         answer: [
+  //           "Trigger Email via SendGrid",
+  //           "Resize Images",
+  //           "Translate Text",
+  //           "Backup Realtime Database",
+  //         ],
+  //       },
+  //     },
+  //     // 21
+  //     {
+  //       group: "5",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [91, 110],
+  //       },
+  //     },
+  //   ],
+
+  //   ["android-en"]: [
+  //     {
+  //       group: "introduction",
+  //       title: "Introduction To Android Development with Java",
+  //       isStudyGuide: true,
+  //       description:
+  //         "Expose yourself to Java fundamentals and Android basics to improve the quality of your learning before making progress.",
+  //       question: {
+  //         questionText: (
+  //           <div>
+  //             <p style={{ marginBottom: 12 }}>
+  //               {" "}
+  //               One of the best predictors for student success is exposure to
+  //               course material before studying it.
+  //             </p>
+
+  //             <p style={{ marginBottom: 12 }}>
+  //               Remember to fail faster and fail forward! The real education
+  //               happens when you push through a challenge.
+  //             </p>
+  //           </div>
+  //         ),
+  //         metaData: `### Advice
+  // I know this looks like ChatGPT content…but it’s not—it's me!
+
+  // As a beginner:
+  // 1. Programming is about structuring data and logic, not complex math.
+  // 2. Like spoken languages, you can express the same idea in many ways.
+  // 3. When something challenges you, break it into smaller steps and iterate quickly.
+
+  // ### Exposure
+  // This guide exposes you to concepts before you answer questions, so you won’t be intimidated later. Skim it now, code along later.
+
+  // ### Core Concepts in Java
+
+  // \`\`\`java
+  // // Lists with ArrayList
+  // import java.util.ArrayList;
+
+  // ArrayList<Object> myList = new ArrayList<>();
+  // myList.add(1);
+  // myList.add(2);
+  // myList.add(3);
+  // myList.add("a");
+  // myList.add(null);
+  // myList.add(false);
+  // myList.add("new data");
+  // \`\`\`
+
+  // \`\`\`java
+  // // Maps with HashMap
+  // import java.util.HashMap;
+
+  // HashMap<String, Object> dataSet = new HashMap<>();
+  // dataSet.put("introduction", "Welcome");
+  // dataSet.put("title", "Chapter 1");
+  // dataSet.put("isLive", true);
+  // dataSet.put("page", 4);
+  // dataSet.put("book", "Coding Basics");
+  // \`\`\`
+
+  // \`\`\`java
+  // // Defining a class
+  // public class House {
+  //     private String housePaint;
+
+  //     public House(String paint) {
+  //         this.housePaint = paint;
+  //     }
+
+  //     public String getPaint() {
+  //         return housePaint;
+  //     }
+
+  //     public void setPaint(String paint) {
+  //         this.housePaint = paint;
+  //     }
+
+  //     public void deletePaint() {
+  //         this.housePaint = null;
+  //     }
+  // }
+
+  // // Usage:
+  // // House firstHome = new House("pink");
+  // // System.out.println(firstHome.getPaint()); // "pink"
+  // \`\`\`
+
+  // ### Android UI Quick Preview
+
+  // \`\`\`java
+  // // MainActivity.java
+  // package com.example.introapp;
+
+  // import android.os.Bundle;
+  // import androidx.appcompat.app.AppCompatActivity;
+  // import android.widget.TextView;
+
+  // public class MainActivity extends AppCompatActivity {
+  //     @Override
+  //     protected void onCreate(Bundle savedInstanceState) {
+  //         super.onCreate(savedInstanceState);
+  //         TextView tv = new TextView(this);
+  //         tv.setText("Good job! You created a small Android app!");
+  //         tv.setTextSize(24);
+  //         setContentView(tv);
+  //     }
+  // }
+  // \`\`\`
+
+  // ### Conclusion
+  // Failing fast is in your best interest when learning a new language. This one-pager will be available inside the app. Good luck, and happy coding in Java & Android!`,
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Understanding Coding",
+  //       description: "Grasp the basic concept of coding in Java.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "Which of the following best describes coding?",
+  //         options: [
+  //           "Writing instructions for computers to perform tasks",
+  //           "Creating physical components for computers",
+  //           "Designing user interfaces",
+  //           "Managing databases",
+  //         ],
+  //         answer: "Writing instructions for computers to perform tasks",
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Sequence of Program Execution",
+  //       description: "Learn the correct order of program execution in Java.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the steps with drag-and-drop to order how a Java program is built and run.",
+  //         options: [
+  //           "Writing Code",
+  //           "Code Compilation",
+  //           "Debugging",
+  //           "Program Execution",
+  //         ],
+  //         answer: [
+  //           "Writing Code",
+  //           "Code Compilation",
+  //           "Debugging",
+  //           "Program Execution",
+  //         ],
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Introduction to Variables",
+  //       description:
+  //         "In this step, you will learn about declaring variables in Java.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Select all the steps involved in correctly declaring a variable in Java:",
+  //         options: [
+  //           "Specify a type (e.g., int, String)",
+  //           "Choose a descriptive variable name",
+  //           "Assign a value using the equals sign (=)",
+  //           "End the declaration with a semicolon (;)",
+  //           "Start the name with a number",
+  //           "Use uppercase letters for all variable names",
+  //         ],
+  //         answer: [
+  //           "Specify a type (e.g., int, String)",
+  //           "Choose a descriptive variable name",
+  //           "Assign a value using the equals sign (=)",
+  //           "End the declaration with a semicolon (;)",
+  //         ],
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Understanding List Declarations",
+  //       description:
+  //         "Complete the code by selecting the correct way to declare a list of items in Java.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Which code block correctly declares a list of items in Java?",
+  //         options: [
+  //           `String[] items = {"apple", "banana", "cherry"};`,
+  //           `List<String> items = Arrays.asList("apple", "banana", "cherry");`,
+  //           `String items = "apple, banana, cherry";`,
+  //           `Map<String, Integer> items = Map.of("apple", 1, "banana", 2, "cherry", 3);`,
+  //           `class Items { /* ... */ }`,
+  //         ],
+  //         answer: `String[] items = {"apple", "banana", "cherry"};`,
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Variable Assignment in Java",
+  //       description: "Learn how to assign values to variables in Java.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Declare a variable named `age` and assign it the value 25.",
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Understanding Data Types",
+  //       description: "Learn the basics of data types in Java.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText: "Which keyword is used to declare a constant in Java?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "final",
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Purpose of Variables",
+  //       description: "Understand why variables are used in programming.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "In your own words, explain the purpose of variables in programming.",
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Bash Terminal Practice: Changing Directories",
+  //       description: "Practice changing directories in a terminal environment.",
+  //       isCode: true,
+  //       isTerminal: true,
+  //       question: {
+  //         questionText:
+  //           "Enter the command to change to the `new_folder` directory using a Bash terminal.",
+  //       },
+  //     },
+  //     {
+  //       group: "tutorial",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [1, 8],
+  //       },
+  //     },
+
+  //     // 1
+  //     {
+  //       group: "1",
+  //       title: "Data Types in Programming",
+  //       description: "Identify different primitive data types used in Java.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following are primitive data types in Java?",
+  //         options: [
+  //           "byte",
+  //           "short",
+  //           "int",
+  //           "long",
+  //           "float",
+  //           "double",
+  //           "boolean",
+  //           "char",
+  //         ],
+  //         answer: [
+  //           "byte",
+  //           "short",
+  //           "int",
+  //           "long",
+  //           "float",
+  //           "double",
+  //           "boolean",
+  //           "char",
+  //         ],
+  //       },
+  //     },
+  //     // 2
+  //     {
+  //       group: "1",
+  //       title: "Steps to Create a Function",
+  //       description: "Understand the sequence of creating and using a method.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the steps with drag-and-drop to create and use a Java method.",
+  //         options: [
+  //           "Define the method",
+  //           "Call the method",
+  //           "Execute the method body",
+  //           "Return a value",
+  //         ],
+  //         answer: [
+  //           "Define the method",
+  //           "Call the method",
+  //           "Execute the method body",
+  //           "Return a value",
+  //         ],
+  //       },
+  //     },
+  //     // 3
+  //     {
+  //       group: "1",
+  //       title: "Writing a Simple Function",
+  //       description: "Practice writing methods in Java.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write a static method named `greet` that takes a `String name` parameter and prints a greeting with that name.",
+  //       },
+  //     },
+  //     // 4
+  //     {
+  //       group: "1",
+  //       title: "Functions in Programming",
+  //       description: "Discuss the role of methods.",
+  //       isText: true,
+  //       question: {
+  //         questionText: "What is a method, and why is it useful in programming?",
+  //       },
+  //     },
+  //     // 5
+  //     {
+  //       group: "1",
+  //       title: "Conditional Statements",
+  //       description: "Identify the purpose of conditional statements.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "What is the primary purpose of an `if` statement?",
+  //         options: [
+  //           "To repeat a block of code multiple times",
+  //           "To execute a block of code based on a condition",
+  //           "To define a variable",
+  //           "To import external libraries",
+  //         ],
+  //         answer: "To execute a block of code based on a condition",
+  //       },
+  //     },
+  //     // 6
+  //     {
+  //       group: "1",
+  //       title: "Order of Conditional Checks",
+  //       description:
+  //         "Complete the code that evaluates an `if`/`else if`/`else` statement.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Complete the following code to check if `x` is greater than 10, equal to 10, or less than 10.",
+  //         options: [
+  //           // 1) Correct logic and operators
+  //           `if (x > 10) {
+  //     System.out.println("x is greater than 10");
+  // } else if (x == 10) {
+  //     System.out.println("x is equal to 10");
+  // } else {
+  //     System.out.println("x is less than 10");
+  // }`,
+
+  //           // 2) Swapped first two checks (wrong logic order)
+  //           `if (x == 10) {
+  //     System.out.println("x is equal to 10");
+  // } else if (x > 10) {
+  //     System.out.println("x is greater than 10");
+  // } else {
+  //     System.out.println("x is less than 10");
+  // }`,
+
+  //           // 3) Missing the else-if branch entirely
+  //           `if (x > 10) {
+  //     System.out.println("x is greater than 10");
+  // } else {
+  //     System.out.println("x is not greater than 10");
+  // }`,
+
+  //           // 4) Used >= for the second check (treats 10 as greater-than)
+  //           `if (x > 10) {
+  //     System.out.println("x is greater than 10");
+  // } else if (x >= 10) {
+  //     System.out.println("x is equal to 10");
+  // } else {
+  //     System.out.println("x is less than 10");
+  // }`,
+  //         ],
+  //         answer: `if (x > 10) {
+  //     System.out.println("x is greater than 10");
+  // } else if (x == 10) {
+  //     System.out.println("x is equal to 10");
+  // } else {
+  //     System.out.println("x is less than 10");
+  // }`,
+  //       },
+  //     },
+  //     // 7
+  //     {
+  //       group: "1",
+  //       title: "Implementing Conditional Logic",
+  //       description: "Apply conditional logic in code.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write an `if`/`else if`/`else` statement that checks if a number `num` is positive, negative, or zero, and prints an appropriate message.",
+  //       },
+  //     },
+  //     // 8
+  //     {
+  //       group: "1",
+  //       title: "Understanding Conditional Logic in Programming",
+  //       description:
+  //         "Learn how logical operators like AND and OR control conditions in programming.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "Which logical operator is used to check if both conditions in a conditional statement are true in Java?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "&&",
+  //       },
+  //     },
+  //     // 9
+  //     {
+  //       group: "1",
+  //       title: "Real-world Use of Conditionals",
+  //       description: "Reflect on how conditionals are used.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Provide an example of how conditional statements are used in real-world applications.",
+  //       },
+  //     },
+  //     // 10
+  //     {
+  //       group: "1",
+  //       title: "Terminal Practice: Help Command",
+  //       description: "Write the help command to observe basic commands.",
+  //       isCode: true,
+  //       isTerminal: true,
+  //       question: {
+  //         questionText:
+  //           "In a Bash terminal environment, enter the help command to discover basic commands.",
+  //       },
+  //     },
+  //     // 11
+  //     {
+  //       group: "1",
+  //       title: "Loops in Programming",
+  //       description: "Understand the purpose of loops.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which loop will continue executing as long as its condition remains true in Java?",
+  //         options: ["for loop", "while loop", "do...while loop", "foreach loop"],
+  //         answer: "while loop",
+  //       },
+  //     },
+  //     // 12
+  //     {
+  //       group: "1",
+  //       title: "Sequence of Loop Execution",
+  //       description: "Grasp the order in which loops execute.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the steps of a Java `for` loop execution with drag-and-drop.",
+  //         options: [
+  //           "Initialization",
+  //           "Condition Check",
+  //           "Execution of Code Block",
+  //           "Update Expression",
+  //         ],
+  //         answer: [
+  //           "Initialization",
+  //           "Condition Check",
+  //           "Execution of Code Block",
+  //           "Update Expression",
+  //         ],
+  //       },
+  //     },
+  //     // 13
+  //     {
+  //       group: "1",
+  //       title: "Creating a Loop",
+  //       description: "Practice writing loops.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText: "Write a `for` loop that prints numbers from 1 to 5.",
+  //       },
+  //     },
+  //     // 14
+  //     {
+  //       group: "1",
+  //       title: "Applications of Loops",
+  //       description: "Discuss where loops are useful.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Describe a scenario in software development where loops are essential.",
+  //       },
+  //     },
+  //     // 15
+  //     {
+  //       group: "1",
+  //       title: "Arrays in Java",
+  //       description: "Identify methods used for manipulating arrays in Java.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following are valid for manipulating arrays in Java?",
+  //         options: [
+  //           ".length",
+  //           "Arrays.sort()",
+  //           "Arrays.asList()",
+  //           "System.arraycopy()",
+  //           ".clone()",
+  //         ],
+  //         answer: [
+  //           "Arrays.sort()",
+  //           "Arrays.asList()",
+  //           "System.arraycopy()",
+  //           ".clone()",
+  //         ],
+  //       },
+  //     },
+  //     // 16
+  //     {
+  //       group: "1",
+  //       title: "Order of Array Operations",
+  //       description: "Understand how array operations are performed.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Complete the code to declare an array, add an element, remove the last element, and then access an element.",
+  //         options: [
+  //           // 1) Correct sequence
+  //           `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
+  // fruits.add("pink");
+  // fruits.remove(fruits.size() - 1);
+  // System.out.println(fruits.get(0));`,
+
+  //           // 2) Missing the removal step
+  //           `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
+  // fruits.add("pink");
+  // System.out.println(fruits.get(0));`,
+
+  //           // 3) Removed the first element instead of the last
+  //           `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
+  // fruits.add("pink");
+  // fruits.remove(0);
+  // System.out.println(fruits.get(0));`,
+
+  //           // 4) Accessing the wrong index after removal
+  //           `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
+  // fruits.add("pink");
+  // fruits.remove(fruits.size() - 1);
+  // System.out.println(fruits.get(1));`,
+
+  //           // 5) Operations in the wrong order (remove before add)
+  //           `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
+  // fruits.remove(fruits.size() - 1);
+  // fruits.add("pink");
+  // System.out.println(fruits.get(0));`,
+  //         ],
+  //         answer: `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
+  // fruits.add("pink");
+  // fruits.remove(fruits.size() - 1);
+  // System.out.println(fruits.get(0));`,
+  //       },
+  //     },
+  //     // 17
+  //     {
+  //       group: "1",
+  //       title: "Manipulating Arrays",
+  //       description: "Apply array operations in code.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           'Create an ArrayList `fruits` with "apple" and "banana". Add "pink" to the list and remove the first element.',
+  //       },
+  //     },
+  //     // 18
+  //     {
+  //       group: "1",
+  //       title: "Use Cases for Arrays",
+  //       description: "Explore scenarios where arrays are used.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Provide an example of how an array can be used to manage data in an Android application.",
+  //       },
+  //     },
+  //     // 19
+  //     {
+  //       group: "1",
+  //       title: "Terminal Practice: Creating Directories",
+  //       description: "Creating a directory command in a bash terminal",
+  //       isCode: true,
+  //       isTerminal: true,
+  //       question: {
+  //         questionText:
+  //           "In a Bash terminal environment, create a directory called `app` using the `mkdir` command.",
+  //       },
+  //     },
+  //     // 20
+  //     {
+  //       group: "1",
+  //       title: "Advanced Coding Output",
+  //       description:
+  //         "Predict the output of the following code with arrays, conditionals, logical operators, and streams.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText: (
+  //           <div>
+  //             What will be the output of the following code?
+  //             <br />
+  //             <pre>
+  //               {`
+  // List<Integer> arr = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
+  // int x = 10;
+  // int y = 5;
+
+  // if (x > y && arr.size() > 3) {
+  //     arr.add(x);
+  //     arr = arr.stream().filter(n -> n % 2 == 0).collect(Collectors.toList());
+  // }
+
+  // System.out.println(arr);
+  // `}
+  //             </pre>
+  //           </div>
+  //         ),
+  //         placeholder: "Type your answer here...",
+  //         answer: "[2, 4, 10]",
+  //       },
+  //     },
+  //     // 21
+  //     {
+  //       group: "1",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [10, 29],
+  //       },
+  //     },
+  //     // 1
+  //     {
+  //       group: "2",
+  //       title: "Introduction to Objects",
+  //       description:
+  //         "In this step, you will learn what an object is in programming.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "Which keyword is used to create a new object instance in Java?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "new",
+  //       },
+  //     },
+  //     // 2
+  //     {
+  //       group: "2",
+  //       title: "Understanding the Constructor Method",
+  //       description:
+  //         "In this step, you will learn about the purpose of the constructor method in a class.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following code blocks correctly defines the constructor method and instantiates the class in Java?",
+  //         options: [
+  //           `public class Car {
+  //     private String brand;
+  //     public Car(String brand) {
+  //       this.brand = brand;
+  //     }
+  //     public void drive() {
+  //       System.out.println("The car is driving");
+  //     }
+  // }
+  // Car myCar = new Car("Toyota");`,
+  //           `public class Car {
+  //     private String brand;
+  //     public Car() {
+  //       this.brand = "Toyota";
+  //     }
+  //     public void drive() {
+  //       System.out.println("The car is driving");
+  //     }
+  // }
+  // Car myCar = new Car();`,
+  //           `public class Car {
+  //     private String brand;
+  //     public void Car(String brand) {
+  //       this.brand = brand;
+  //     }
+  //     public void drive() {
+  //       System.out.println("The car is driving");
+  //     }
+  // }
+  // Car myCar = new Car("Toyota");`,
+  //           `public class Car {
+  //     private String brand;
+  //     public Car(String b) {
+  //       brand = b;
+  //     }
+  //     public void drive() {
+  //       System.out.println("The car is driving");
+  //     }
+  // }
+  // Car myCar = new Car("Toyota");`,
+  //         ],
+  //         answer: `public class Car {
+  //     private String brand;
+  //     public Car(String brand) {
+  //       this.brand = brand;
+  //     }
+  //     public void drive() {
+  //       System.out.println("The car is driving");
+  //     }
+  // }
+  // Car myCar = new Car("Toyota");`,
+  //       },
+  //     },
+  //     // 3
+  //     {
+  //       group: "2",
+  //       title: "Purpose of the Constructor Method",
+  //       description:
+  //         "In this step, you will learn about the purpose of the constructor method in a class.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Explain the purpose of the constructor method in a class.",
+  //       },
+  //     },
+  //     // 4
+  //     {
+  //       group: "2",
+  //       title: "Creating an Instance of a Class",
+  //       description:
+  //         "In this step, you will learn how to create an instance of a class in Java.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Select all the correct steps required to create an instance of a class in Java:",
+  //         options: [
+  //           "Define the class using the `class` keyword",
+  //           "Use the `new` keyword to create an instance",
+  //           "Pass arguments required by the constructor when calling the class",
+  //           "Store the new instance in a variable",
+  //           "Declare the class instance without `new`",
+  //           "Instantiate the class before defining it",
+  //         ],
+  //         answer: [
+  //           "Define the class using the `class` keyword",
+  //           "Use the `new` keyword to create an instance",
+  //           "Pass arguments required by the constructor when calling the class",
+  //           "Store the new instance in a variable",
+  //         ],
+  //       },
+  //     },
+  //     // 5
+  //     {
+  //       group: "2",
+  //       title: "Declaring a Method in a Class",
+  //       description:
+  //         "In this step, you will learn how to declare a method inside a class.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Declare a method named `updateModel` in the `Car` class that updates the `model` property.",
+  //       },
+  //     },
+  //     // 6
+  //     {
+  //       group: "2",
+  //       title: "Using the this Keyword",
+  //       description:
+  //         "Complete the code by selecting the correct way to use the `this` keyword in a class method.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Which code block correctly uses the `this` keyword to refer to the object's property?",
+  //         options: [
+  //           `public class Car {
+  //     private String brand;
+  //     public Car(String brand) { this.brand = brand; }
+  //     public void showBrand() { System.out.println(brand); }
+  // }
+  // Car myCar = new Car("Toyota");
+  // myCar.showBrand();`,
+  //           `public class Car {
+  //     private String brand;
+  //     public Car(String brand) { this.brand = brand; }
+  //     public void showBrand() { System.out.println(this.brand); }
+  // }
+  // Car myCar = new Car("Toyota");
+  // myCar.showBrand();`,
+  //           `public class Car {
+  //     private String brand;
+  //     public Car(String brand) { brand = this.brand; }
+  //     public void showBrand() { System.out.println(brand); }
+  // }
+  // Car myCar = new Car("Toyota");
+  // myCar.showBrand();`,
+  //           `public class Car {
+  //     private String brand;
+  //     public Car(String brand) { this.brand = brand; }
+  //     public void showBrand() { System.out.println(this.brand()); }
+  // }
+  // Car myCar = new Car("Toyota");
+  // myCar.showBrand();`,
+  //         ],
+  //         answer: `public class Car {
+  //     private String brand;
+  //     public Car(String brand) { this.brand = brand; }
+  //     public void showBrand() { System.out.println(this.brand); }
+  // }
+  // Car myCar = new Car("Toyota");
+  // myCar.showBrand();`,
+  //       },
+  //     },
+  //     // 7
+  //     {
+  //       group: "2",
+  //       title: "Adding Properties to an Object",
+  //       description:
+  //         "In this step, you will learn how to add properties to a class in Java.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Add a new property `private int year;` to the `Car` class.",
+  //       },
+  //     },
+  //     // 8
+  //     {
+  //       group: "2",
+  //       title: "Accessing and Modifying Object Properties",
+  //       description:
+  //         "In this step, you will learn how to get or set properties of an object in Java.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following are valid ways to get or set properties in Java?",
+  //         options: [
+  //           "Use a getter method (e.g., getModel())",
+  //           "Use a setter method (e.g., setModel())",
+  //           "Access a public field directly (e.g., obj.model)",
+  //           "Use reflection APIs",
+  //         ],
+  //         answer: [
+  //           "Use a getter method (e.g., getModel())",
+  //           "Use a setter method (e.g., setModel())",
+  //           "Access a public field directly (e.g., obj.model)",
+  //         ],
+  //       },
+  //     },
+  //     // 9
+  //     {
+  //       group: "2",
+  //       title: "Modifying Object Properties",
+  //       description:
+  //         "In this step, you will learn how to modify properties of an object in Java.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Modify the `model` property of an instance of the `Car` class.",
+  //       },
+  //     },
+  //     // 10
+  //     {
+  //       group: "2",
+  //       title: "Understanding Inheritance",
+  //       description:
+  //         "In this step, you will learn about inheritance in object-oriented programming.",
+  //       isText: true,
+  //       question: {
+  //         questionText: "What is inheritance in object-oriented programming?",
+  //       },
+  //     },
+  //     // 11
+  //     {
+  //       group: "2",
+  //       title: "Implementing Inheritance",
+  //       description:
+  //         "In this step, you will implement inheritance in Java by extending a class.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Extend the `Car` class to create an `ElectricCar` class with an additional property `private int batteryLife;`.",
+  //       },
+  //     },
+  //     // 12
+  //     {
+  //       group: "2",
+  //       title: "Overriding Methods",
+  //       description:
+  //         "In this step, you will learn how to override methods in a subclass.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "What does it mean to override a method in a subclass?",
+  //         options: [
+  //           "Provide a new implementation for a superclass method",
+  //           "Delete the superclass method",
+  //           "Inherit the method without changes",
+  //           "Call the superclass method via super.method()",
+  //         ],
+  //         answer: "Provide a new implementation for a superclass method",
+  //       },
+  //     },
+  //     // 13
+  //     {
+  //       group: "2",
+  //       title: "Understanding Encapsulation",
+  //       description:
+  //         "In this step, you will learn about encapsulation in object-oriented programming.",
+  //       isText: true,
+  //       question: {
+  //         questionText: "What is encapsulation in object-oriented programming?",
+  //       },
+  //     },
+  //     // 14
+  //     {
+  //       group: "2",
+  //       title: "Implementing Encapsulation",
+  //       description:
+  //         "In this step, you will implement encapsulation by using getter and setter methods.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Add getter and setter methods for the `batteryLife` property in the `ElectricCar` class.",
+  //       },
+  //     },
+  //     // 15
+  //     {
+  //       group: "2",
+  //       title: "Encapsulation Concept",
+  //       description:
+  //         "In this step, you will define the concept of encapsulation in one word.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What is the primary concept encapsulation ensures in object-oriented programming?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "Privacy",
+  //       },
+  //     },
+  //     // 16
+  //     {
+  //       group: "2",
+  //       title: "Combining Concepts",
+  //       description:
+  //         "In this step, you will combine various concepts learned to create a small project.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Create a small project that defines a `Person` class, uses inheritance to create a `Student` class, and demonstrates encapsulation and arrays of objects.",
+  //       },
+  //     },
+  //     // 17
+  //     {
+  //       group: "2",
+  //       title: "Printing In The Terminal",
+  //       description: "In this step, you will print a message using the terminal",
+  //       isCode: true,
+  //       isTerminal: true,
+  //       question: {
+  //         questionText:
+  //           "Type a command to print the message: 'I'm talking to the inside of a computer!'",
+  //       },
+  //     },
+  //     // 18
+  //     {
+  //       group: "2",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [31, 47],
+  //       },
+  //     },
+  //     // 1
+  //     {
+  //       group: "3",
+  //       title: "Introduction to Android Views",
+  //       description:
+  //         "In this step, you will learn about Android Views, their role in creating reusable UI elements, and how they help manage the user interface efficiently.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText: "Which of the following best describes an Android View?",
+  //         options: [
+  //           "A method for handling events in Java",
+  //           "A feature exclusive to background services",
+  //           "A reusable piece of user interface defined by the View class or its subclasses",
+  //           "A built-in XML element that only represents layouts",
+  //         ],
+  //         answer:
+  //           "A reusable piece of user interface defined by the View class or its subclasses",
+  //       },
+  //     },
+  //     // 2
+  //     {
+  //       group: "3",
+  //       title: "Key Concepts in Android UI",
+  //       description:
+  //         "In this step, you will learn about fundamental Android UI concepts, including Activities, Fragments, XML layouts, and event handling.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText: "Which of the following are key concepts in Android UI?",
+  //         options: [
+  //           "Activities as screen controllers",
+  //           "Directly manipulating the window manager for animations",
+  //           "Fragments for modular UI",
+  //           "XML layouts for defining view hierarchies",
+  //           "Using TextView for data binding",
+  //         ],
+  //         answer: [
+  //           "Activities as screen controllers",
+  //           "Fragments for modular UI",
+  //           "XML layouts for defining view hierarchies",
+  //         ],
+  //       },
+  //     },
+  //     // 3
+  //     {
+  //       group: "3",
+  //       title: "Effect of LiveData Changes on UI",
+  //       description:
+  //         "In this step, you will explain what happens to an Activity or Fragment when its LiveData updates.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What happens to the UI when observed LiveData in a ViewModel changes?",
+  //       },
+  //     },
+  //     // 4
+  //     {
+  //       group: "3",
+  //       title: "Creating a Simple Activity",
+  //       description:
+  //         "In this step, you will define a basic Android Activity that sets a TextView in onCreate.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following code blocks correctly defines a simple Activity that sets its content view and updates a TextView?",
+  //         options: [
+  //           `public class MainActivity extends AppCompatActivity {
+  //     @Override
+  //     protected void onCreate(Bundle savedInstanceState) {
+  //         super.onCreate(savedInstanceState);
+  //         TextView tv = new TextView(this);
+  //         tv.setText("Hello, Android!");
+  //         setContentView(tv);
+  //     }
+  // }`,
+  //           `public class MainActivity {
+  //     protected void onCreate() {
+  //         setContentView(R.layout.activity_main);
+  //     }
+  // }`,
+  //           `class MainActivity extends Activity {
+  //     void onCreate(Bundle s) {
+  //         super.onCreate(s);
+  //     }
+  // }`,
+  //           `public class MainActivity extends AppCompatActivity {
+  //     void onStart() {
+  //         TextView tv = findViewById(R.id.tv);
+  //         tv.setText("Hello, Android!");
+  //     }
+  // }`,
+  //         ],
+  //         answer: `public class MainActivity extends AppCompatActivity {
+  //     @Override
+  //     protected void onCreate(Bundle savedInstanceState) {
+  //         super.onCreate(savedInstanceState);
+  //         TextView tv = new TextView(this);
+  //         tv.setText("Hello, Android!");
+  //         setContentView(tv);
+  //     }
+  // }`,
+  //       },
+  //     },
+  //     // 5
+  //     {
+  //       group: "3",
+  //       title: "Handling Button Clicks",
+  //       description:
+  //         "In this step, you will define a basic Activity that handles a button click event using setOnClickListener.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following code blocks correctly sets a click listener on a Button?",
+  //         options: [
+  //           `Button btn = findViewById(R.id.btn);
+  // btn.setOnClickListener(new View.OnClickListener() {
+  //     @Override
+  //     public void onClick(View v) {
+  //         Toast.makeText(this, "Clicked!", Toast.LENGTH_SHORT).show();
+  //     }
+  // });`,
+  //           `Button btn = findViewById(R.id.btn);
+  // btn.setOnClickListener(v -> {
+  //     Toast.makeText(MainActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
+  // });`,
+  //           `Button btn = findViewById(R.id.btn);
+  // btn.onClick(() -> Toast.makeText(this, "Clicked!", Toast.LENGTH_SHORT).show());`,
+  //           `findViewById(R.id.btn).setClickListener(this);`,
+  //         ],
+  //         answer: `Button btn = findViewById(R.id.btn);
+  // btn.setOnClickListener(v -> {
+  //     Toast.makeText(MainActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
+  // });`,
+  //       },
+  //     },
+  //     // 6
+  //     {
+  //       group: "3",
+  //       title: "Managing State with ViewModel",
+  //       description:
+  //         "In this step, you will learn how to use ViewModel and LiveData to manage UI-related data.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Modify your Activity to use a ViewModel with LiveData<Boolean> liked and observe it to update the UI.",
+  //       },
+  //     },
+  //     // 7
+  //     {
+  //       group: "3",
+  //       title: "Intent Extras",
+  //       description:
+  //         "In this step, you will learn about passing data between Activities using Intent extras.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What is the term used for passing data into an Activity at launch?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "Intent extras",
+  //       },
+  //     },
+  //     // 8
+  //     {
+  //       group: "3",
+  //       title: "Passing and Using Extras",
+  //       description:
+  //         "In this step, you will learn how to pass and retrieve extras in an Activity.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           'Update your Activity to read a String extra named "username" from the Intent and display it.',
+  //       },
+  //     },
+  //     // 9
+  //     {
+  //       group: "3",
+  //       title: "Props vs State in Android",
+  //       description:
+  //         "In this step, you will learn the difference between Intent extras and LiveData state.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText:
+  //           "What is the main difference between Intent extras and LiveData in an Android app?",
+  //         options: [
+  //           "Extras are immutable once set, LiveData can update over time",
+  //           "LiveData is only for background tasks",
+  //           "Extras trigger UI updates automatically",
+  //           "LiveData cannot be observed from Fragments",
+  //         ],
+  //         answer: "Extras are immutable once set, LiveData can update over time",
+  //       },
+  //     },
+  //     // 10
+  //     {
+  //       group: "3",
+  //       title: "Terminal Practice: Listing Files",
+  //       description:
+  //         "In this step, you will learn how to list files in a bash terminal.",
+  //       isCode: true,
+  //       isTerminal: true,
+  //       question: {
+  //         questionText:
+  //           "Use the terminal to list all files using the `ls` command.",
+  //       },
+  //     },
+  //     // 11
+  //     {
+  //       group: "3",
+  //       title: "Styling Android Views",
+  //       description:
+  //         "In this step, you will learn how to style Views using XML attributes and programmatic methods.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Add XML attributes to a TextView to set textSize, textColor, padding, and background.",
+  //       },
+  //     },
+  //     // 12
+  //     {
+  //       group: "3",
+  //       title: "ConstraintLayout Basics",
+  //       description:
+  //         "In this step, you will learn how to use ConstraintLayout for positioning UI elements.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the following steps to constrain a Button to the center of its parent:",
+  //         options: [
+  //           'app:layout_constraintTop_toTopOf="parent"',
+  //           'app:layout_constraintBottom_toBottomOf="parent"',
+  //           'app:layout_constraintStart_toStartOf="parent"',
+  //           'app:layout_constraintEnd_toEndOf="parent"',
+  //         ],
+  //         answer: [
+  //           'app:layout_constraintTop_toTopOf="parent"',
+  //           'app:layout_constraintBottom_toBottomOf="parent"',
+  //           'app:layout_constraintStart_toStartOf="parent"',
+  //           'app:layout_constraintEnd_toEndOf="parent"',
+  //         ],
+  //       },
+  //     },
+  //     // 13
+  //     {
+  //       group: "3",
+  //       title: "Sharing ViewModel Between Fragments",
+  //       description:
+  //         "In this step, you will learn how to share state via a ViewModel between Fragments.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Create a shared ViewModel in your Activity and have two Fragments observe its LiveData.",
+  //       },
+  //     },
+  //     // 14
+  //     {
+  //       group: "3",
+  //       title: "Observing LiveData for Side Effects",
+  //       description:
+  //         "In this step, you will learn how to observe LiveData to handle side effects in the UI.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Modify your Fragment to observe a LiveData<Int> retweetCount and show a Toast whenever it changes.",
+  //       },
+  //     },
+  //     // 15
+  //     {
+  //       group: "3",
+  //       title: "Understanding Activity Lifecycle",
+  //       description:
+  //         "In this step, you will learn about the Android Activity lifecycle and its callback methods.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What are the main callbacks in the Activity lifecycle and when is onResume called?",
+  //       },
+  //     },
+  //     // 16
+  //     {
+  //       group: "3",
+  //       title: "Fetching Data with Retrofit and LiveData",
+  //       description:
+  //         "In this step, you will learn how to fetch data from an API using Retrofit and expose it via LiveData.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the steps to correctly fetch tweets using Retrofit and LiveData:",
+  //         options: [
+  //           "Define a Retrofit interface",
+  //           "Create a Repository to call Retrofit",
+  //           "Expose results as LiveData in ViewModel",
+  //           "Observe LiveData in UI",
+  //           "Handle errors in the Repository",
+  //         ],
+  //         answer: [
+  //           "Define a Retrofit interface",
+  //           "Create a Repository to call Retrofit",
+  //           "Expose results as LiveData in ViewModel",
+  //           "Handle errors in the Repository",
+  //           "Observe LiveData in UI",
+  //         ],
+  //       },
+  //     },
+  //     // 17
+  //     {
+  //       group: "3",
+  //       title: "Building a Complete Tweet App",
+  //       description:
+  //         "In this step, you will combine everything you have learned to build a complete Tweet app on Android.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Build an Android Tweet app with Retrofit, ViewModel, LiveData, and RecyclerView allowing users to like and retweet.",
+  //       },
+  //     },
+  //     // 18
+  //     {
+  //       group: "3",
+  //       title: "Terminal Practice: Building with Gradle",
+  //       description:
+  //         "In this step, you will learn how to build your Android project using the terminal.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Enter the command to build your project using Gradle: `./gradlew build`.",
+  //       },
+  //     },
+  //     // 19
+  //     {
+  //       group: "3",
+  //       title: "Creating a New Android Project",
+  //       description:
+  //         "In this step, you will learn how to create a new Android project in Android Studio.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the steps to create a new Android app in Android Studio:",
+  //         options: [
+  //           "Open Android Studio and select New Project",
+  //           "Choose Empty Activity template",
+  //           "Select Java as the language",
+  //           "Enter application name and package",
+  //           "Click Finish to generate project",
+  //         ],
+  //         answer: [
+  //           "Open Android Studio and select New Project",
+  //           "Choose Empty Activity template",
+  //           "Select Java as the language",
+  //           "Enter application name and package",
+  //           "Click Finish to generate project",
+  //         ],
+  //       },
+  //     },
+  //     // 20
+  //     {
+  //       group: "3",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [49, 67],
+  //       },
+  //     },
+  //     // 1
+  //     {
+  //       group: "4",
+  //       title: "Introduction to Java Backend Engineering with Spring Boot",
+  //       description:
+  //         "In this step, you will learn what backend software engineering is and why it is important.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What is backend software engineering and why is it important in building applications?",
+  //       },
+  //     },
+  //     // 2
+  //     {
+  //       group: "4",
+  //       title: "Main Lessons Overview",
+  //       description:
+  //         "In this step, you will identify a core responsibility of backend engineering in Java.",
+  //       isMultipleChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following is a core responsibility in backend engineering?",
+  //         options: [
+  //           "Managing concurrency and ensuring thread safety in multi-user applications",
+  //           "Implementing user authentication directly in the user interface",
+  //           "Handling memory allocation in the Java Virtual Machine",
+  //           "Designing scalable UI components for cross-platform compatibility",
+  //           "Optimizing database queries and ensuring data consistency",
+  //         ],
+  //         answer: "Optimizing database queries and ensuring data consistency",
+  //       },
+  //     },
+  //     // 3
+  //     {
+  //       group: "4",
+  //       title: "Key Responsibilities of Backend Engineering",
+  //       description:
+  //         "In this step, you will learn about the various responsibilities involved in Java backend engineering with Spring Boot.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following are core responsibilities of backend engineering?",
+  //         options: [
+  //           "Managing and optimizing databases for storing and retrieving data efficiently",
+  //           "Designing and implementing RESTful APIs using Spring MVC",
+  //           "Ensuring security through user authentication and authorization mechanisms",
+  //           "Handling server-side logic, including business operations and calculations",
+  //           "Maintaining server reliability and performance under high traffic",
+  //           "Managing data integrity and consistency across distributed systems",
+  //           "Implementing logging and monitoring to ensure system health and debug issues",
+  //         ],
+  //         answer: [
+  //           "Managing and optimizing databases for storing and retrieving data efficiently",
+  //           "Designing and implementing RESTful APIs using Spring MVC",
+  //           "Ensuring security through user authentication and authorization mechanisms",
+  //           "Handling server-side logic, including business operations and calculations",
+  //           "Maintaining server reliability and performance under high traffic",
+  //           "Managing data integrity and consistency across distributed systems",
+  //           "Implementing logging and monitoring to ensure system health and debug issues",
+  //         ],
+  //       },
+  //     },
+  //     // 4
+  //     {
+  //       group: "4",
+  //       title: "Interfacing with the Terminal",
+  //       description:
+  //         "In this step, you will learn about using the terminal in Java backend engineering.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Why is learning to use the terminal important for backend development, and what kinds of tasks can you perform using it?",
+  //       },
+  //     },
+  //     // 5
+  //     {
+  //       group: "4",
+  //       title: "Installing Maven",
+  //       description:
+  //         "In this step, you will learn how to install Maven globally.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Write the command to install Apache Maven using Homebrew or apt.",
+  //       },
+  //     },
+  //     // 6
+  //     {
+  //       group: "4",
+  //       title: "Adding a Maven Dependency",
+  //       description: "In this step, you will use Maven to add a dependency.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Write the XML snippet to add the Spring Web starter dependency in pom.xml.",
+  //       },
+  //     },
+  //     // 7
+  //     {
+  //       group: "4",
+  //       title: "User Creation and Authentication",
+  //       description:
+  //         "In this step, you will understand the key concept related to creating users in backend systems.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What is the process called that verifies a user's identity during account creation?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "authentication",
+  //       },
+  //     },
+  //     // 8
+  //     {
+  //       group: "4",
+  //       title: "Database Foundations",
+  //       description:
+  //         "In this step, you will learn about the foundations of databases in backend engineering.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What are the main types of databases used in backend engineering?",
+  //       },
+  //     },
+  //     // 9
+  //     {
+  //       group: "4",
+  //       title: "Connecting to a Database with Spring Data JPA",
+  //       description:
+  //         "Write a code snippet to connect a Spring Boot application to a PostgreSQL database.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write a Java code snippet (application.properties and Entity configuration) to configure Spring Data JPA with PostgreSQL.",
+  //       },
+  //     },
+  //     // 10
+  //     {
+  //       group: "4",
+  //       title: "Initiating a Spring Boot Project",
+  //       description:
+  //         "In this step, you will learn how to start a Spring Boot project using the CLI.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What is the command to create a new Spring Boot project using Spring Initializr CLI?",
+  //         answer: "spring init --dependencies=web,data-jpa,postgresql my-app",
+  //       },
+  //     },
+  //     // 11
+  //     {
+  //       group: "4",
+  //       title: "Advanced Data Storage Practices",
+  //       description:
+  //         "In this step, you will learn advanced practices for storing data responsibly in backend systems.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following are best practices for ensuring responsible data storage in a backend system?",
+  //         options: [
+  //           "Cache data in memory (e.g., with Redis) to reduce database access time",
+  //           "Use a single centralized backup to reduce complexity and cost",
+  //           "Encrypt sensitive data both at rest and in transit to ensure security",
+  //           "Implement database replication across multiple servers to improve fault tolerance",
+  //         ],
+  //         answer: [
+  //           "Cache data in memory (e.g., with Redis) to reduce database access time",
+  //           "Encrypt sensitive data both at rest and in transit to ensure security",
+  //           "Implement database replication across multiple servers to improve fault tolerance",
+  //         ],
+  //       },
+  //     },
+  //     // 12
+  //     {
+  //       group: "4",
+  //       title: "Configuring JPA and Saving an Entity",
+  //       description:
+  //         "In this step, you will learn how to initialize Spring Data JPA and save a User entity.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Complete the code to configure Spring Data JPA and save a User entity.",
+  //         options: [
+  //           // 1) Correct configuration with JPA annotations and repository usage
+  //           `@Entity
+  // public class User {
+  //     @Id @GeneratedValue
+  //     private Long id;
+  //     private String username;
+  //     // getters/setters
+  // }
+
+  // @Repository
+  // public interface UserRepository extends JpaRepository<User, Long> {}
+
+  // @Service
+  // public class UserService {
+  //     @Autowired
+  //     private UserRepository repo;
+
+  //     public void addUser(String name) {
+  //         User u = new User();
+  //         u.setUsername(name);
+  //         repo.save(u);
+  //     }
+  // }`,
+
+  //           // 2) Missing @GeneratedValue, so IDs won’t be auto-generated
+  //           `@Entity
+  // public class User {
+  //     @Id
+  //     private Long id;            // @GeneratedValue omitted
+  //     private String username;
+  //     // getters/setters
+  // }
+
+  // @Repository
+  // public interface UserRepository extends JpaRepository<User, Long> {}
+
+  // @Service
+  // public class UserService {
+  //     @Autowired
+  //     private UserRepository repo;
+
+  //     public void addUser(String name) {
+  //         User u = new User();
+  //         u.setUsername(name);
+  //         repo.save(u);
+  //     }
+  // }`,
+
+  //           // 3) Repository extends CrudRepository instead of JpaRepository
+  //           `@Entity
+  // public class User {
+  //     @Id @GeneratedValue
+  //     private Long id;
+  //     private String username;
+  //     // getters/setters
+  // }
+
+  // @Repository
+  // public interface UserRepository extends CrudRepository<User, Long> {}  // wrong interface
+
+  // @Service
+  // public class UserService {
+  //     @Autowired
+  //     private UserRepository repo;
+
+  //     public void addUser(String name) {
+  //         User u = new User();
+  //         u.setUsername(name);
+  //         repo.save(u);
+  //     }
+  // }`,
+
+  //           // 4) Service missing @Autowired injection, so repo is null
+  //           `@Entity
+  // public class User {
+  //     @Id @GeneratedValue
+  //     private Long id;
+  //     private String username;
+  //     // getters/setters
+  // }
+
+  // @Repository
+  // public interface UserRepository extends JpaRepository<User, Long> {}
+
+  // @Service
+  // public class UserService {
+  //     private UserRepository repo;  // forgot @Autowired
+
+  //     public void addUser(String name) {
+  //         User u = new User();
+  //         u.setUsername(name);
+  //         repo.save(u);             // NullPointerException at runtime
+  //     }
+  // }`,
+  //         ],
+  //         answer: `@Entity
+  // public class User {
+  //     @Id @GeneratedValue
+  //     private Long id;
+  //     private String username;
+  //     // getters/setters
+  // }
+
+  // @Repository
+  // public interface UserRepository extends JpaRepository<User, Long> {}
+
+  // @Service
+  // public class UserService {
+  //     @Autowired
+  //     private UserRepository repo;
+
+  //     public void addUser(String name) {
+  //         User u = new User();
+  //         u.setUsername(name);
+  //         repo.save(u);
+  //     }
+  // }`,
+  //       },
+  //     },
+  //     // 13
+  //     {
+  //       group: "4",
+  //       title: "Handling User Data",
+  //       description:
+  //         "In this step, you will learn how to retrieve a User entity by ID.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write a Java code snippet using UserRepository to fetch a User by its ID.",
+  //       },
+  //     },
+  //     // 14
+  //     {
+  //       group: "4",
+  //       title: "Retrieving a User After Authentication",
+  //       description:
+  //         "In this step, you will learn how to retrieve the authenticated user principal.",
+  //       isCode: true,
+  //       isTerminal: false,
+  //       question: {
+  //         questionText:
+  //           "Write a Spring Security code snippet to get the authenticated username in a controller.",
+  //       },
+  //     },
+  //     // 15
+  //     {
+  //       group: "4",
+  //       title: "Understanding the Authentication Flow",
+  //       description:
+  //         "In this step, you will learn about the typical flow of authentication in backend systems.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the following steps in the correct order for a typical JWT authentication flow in a Java backend.",
+  //         options: [
+  //           "User submits credentials to /login endpoint",
+  //           "AuthenticationManager verifies credentials",
+  //           "JWT token is generated and signed",
+  //           "Client stores token locally",
+  //           "Protected endpoints validate token",
+  //         ],
+  //         answer: [
+  //           "User submits credentials to /login endpoint",
+  //           "AuthenticationManager verifies credentials",
+  //           "JWT token is generated and signed",
+  //           "Client stores token locally",
+  //           "Protected endpoints validate token",
+  //         ],
+  //       },
+  //     },
+  //     // 16
+  //     {
+  //       group: "4",
+  //       title: "OAuth Authentication",
+  //       description:
+  //         "In this step, you will learn about OAuth-style authentication systems.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What is the widely used protocol for authorization that allows third-party services to access user data without exposing credentials?",
+  //         placeholder: "Type your answer here...",
+  //         answer: "OAuth 2.0",
+  //       },
+  //     },
+  //     // 17
+  //     {
+  //       group: "4",
+  //       title: "Using Environment Variables",
+  //       description:
+  //         "In this step, you will learn about using environment variables in backend development.",
+  //       isText: true,
+  //       question: {
+  //         questionText: "What role do environment variables play in a codebase?",
+  //       },
+  //     },
+  //     // 18
+  //     {
+  //       group: "4",
+  //       title: "Database Relationships with JPA",
+  //       description:
+  //         "In this step, you will learn about defining relationships in JPA.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write a JPA code snippet to define a one-to-many relationship between User and Post entities.",
+  //       },
+  //     },
+  //     // 19
+  //     {
+  //       group: "4",
+  //       title: "Interfacing with an API",
+  //       description:
+  //         "In this step, you will learn the common HTTP methods used to interface with a REST API.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following HTTP methods are commonly used to interface with a REST API, and what do they do?",
+  //         options: [
+  //           "GET (Retrieves data)",
+  //           "POST (Creates a new resource)",
+  //           "PUT (Replaces a resource)",
+  //           "PATCH (Partially updates a resource)",
+  //           "DELETE (Deletes a resource)",
+  //         ],
+  //         answer: [
+  //           "GET (Retrieves data)",
+  //           "POST (Creates a new resource)",
+  //           "PATCH (Partially updates a resource)",
+  //           "DELETE (Deletes a resource)",
+  //         ],
+  //       },
+  //     },
+  //     // 20
+  //     {
+  //       group: "4",
+  //       title: "Creating a JWT Authentication System",
+  //       description:
+  //         "In this step, you will create a simple user authentication system with JWT.",
+  //       isSelectOrder: true,
+  //       question: {
+  //         questionText:
+  //           "Arrange the steps with drag-and-drop to implement JWT authentication in a Spring Boot app.",
+  //         options: [
+  //           "Add jjwt dependency",
+  //           "Configure security filter chain",
+  //           "Define UserDetailsService",
+  //           "Create /register endpoint",
+  //           "Hash passwords before storing",
+  //           "Create /login endpoint",
+  //           "Authenticate credentials",
+  //           "Generate JWT token",
+  //           "Return token in response",
+  //           "Validate token in filter",
+  //         ],
+  //         answer: [
+  //           "Add jjwt dependency",
+  //           "Configure security filter chain",
+  //           "Define UserDetailsService",
+  //           "Create /register endpoint",
+  //           "Hash passwords before storing",
+  //           "Create /login endpoint",
+  //           "Authenticate credentials",
+  //           "Generate JWT token",
+  //           "Return token in response",
+  //           "Validate token in filter",
+  //         ],
+  //       },
+  //     },
+  //     // 21
+  //     {
+  //       group: "4",
+  //       title: "Deploying a Spring Boot Application",
+  //       description:
+  //         "In this step, you will learn how to deploy a Spring Boot application.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Write the command to package and run your Spring Boot app with Maven.",
+  //       },
+  //     },
+  //     // 22
+  //     {
+  //       group: "4",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [69, 89],
+  //       },
+  //     },
+  //     // 1
+  //     {
+  //       group: "5",
+  //       title: "Benefits of Serverless Cloud Platforms",
+  //       description:
+  //         "Explore the advantages of using Firebase as a serverless backend for Android development.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What are the key benefits of using Firebase as a serverless backend for an Android app, and how does it differ from a traditional server-based model?",
+  //       },
+  //     },
+  //     // 2
+  //     {
+  //       group: "5",
+  //       title: "Understanding Android Studio",
+  //       description:
+  //         "Learn what Android Studio is and why it's the primary IDE for Android development.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What is Android Studio and why do most Android developers choose it?",
+  //       },
+  //     },
+  //     // 3
+  //     {
+  //       group: "5",
+  //       title: "Installing Java and Android SDK",
+  //       description:
+  //         "Install the Java JDK and Android SDK tools required for Android development.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What roles do the Java JDK and the Android SDK play in building Android apps?",
+  //       },
+  //     },
+  //     // 4
+  //     {
+  //       group: "5",
+  //       title: "Adding Firebase to Gradle",
+  //       description:
+  //         "Configure your project-level Gradle file to include Firebase dependencies.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What lines do you add to your module-level `build.gradle` to include the Firebase BOM?",
+  //         answer:
+  //           "implementation platform('com.google.firebase:firebase-bom:31.2.3')",
+  //       },
+  //     },
+  //     // 5
+  //     {
+  //       group: "5",
+  //       title: "Applying Google Services Plugin",
+  //       description:
+  //         "Enable the Google Services Gradle plugin to integrate Firebase.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What line do you add to your project-level `build.gradle` to apply the Google Services plugin?",
+  //         answer: "classpath 'com.google.gms:google-services:4.4.0'",
+  //       },
+  //     },
+  //     // 6
+  //     {
+  //       group: "5",
+  //       title: "Initializing a Firebase Project in Android",
+  //       description:
+  //         "Add the `google-services.json` file and apply the plugin in your module Gradle.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText:
+  //           "What file do you download from the Firebase console and where do you place it in your Android project?",
+  //         answer: "google-services.json in app/",
+  //       },
+  //     },
+  //     // 7
+  //     {
+  //       group: "5",
+  //       title: "Selecting Firebase Modules",
+  //       description:
+  //         "Choose which Firebase Android SDK libraries to include in your app.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following Firebase modules might you add to your Android app?",
+  //         options: [
+  //           "firebase-auth",
+  //           "firebase-firestore",
+  //           "firebase-database",
+  //           "firebase-functions",
+  //           "firebase-storage",
+  //           "firebase-analytics",
+  //         ],
+  //         answer:
+  //           "firebase-auth, firebase-firestore, firebase-storage, firebase-analytics",
+  //       },
+  //     },
+  //     // 8
+  //     {
+  //       group: "5",
+  //       title: "Configuring FirebaseApp",
+  //       description: "Initialize Firebase in your Android `Application` class.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write the Java code to initialize Firebase in `public void onCreate()` of your `Application` subclass.",
+  //       },
+  //     },
+  //     // 9
+  //     {
+  //       group: "5",
+  //       title: "Setting Up Firestore",
+  //       description: "Learn how to obtain a Firestore instance and write data.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write Java code to get `FirebaseFirestore` instance and add a document to `users` collection.",
+  //       },
+  //     },
+  //     // 10
+  //     {
+  //       group: "5",
+  //       title: "Understanding Authentication",
+  //       description: "Learn about Firebase Authentication in Android.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What is Firebase Authentication, and which sign-in methods does it support on Android?",
+  //       },
+  //     },
+  //     // 11
+  //     {
+  //       group: "5",
+  //       title: "Creating a User with FirebaseAuth",
+  //       description: "Programmatically create a new user account in Android.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write Java code using `FirebaseAuth.getInstance().createUserWithEmailAndPassword(...)`.",
+  //       },
+  //     },
+  //     // 12
+  //     {
+  //       group: "5",
+  //       title: "Retrieving the ID Token",
+  //       description: "Obtain the current user's ID token on the client.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write Java code to call `getCurrentUser().getIdToken(false)` and handle the result.",
+  //       },
+  //     },
+  //     // 13
+  //     {
+  //       group: "5",
+  //       title: "CRUD with Firestore",
+  //       description: "Perform basic Firestore operations in Android.",
+  //       isCodeCompletion: true,
+  //       question: {
+  //         questionText:
+  //           "Complete the Java code to create, read, update, and delete a Firestore document.",
+  //         options: [
+  //           // 1) Correct sequence and syntax
+  //           `FirebaseFirestore db = FirebaseFirestore.getInstance();
+  // DocumentReference doc = db.collection("users").document("alice");
+  // // create
+  // doc.set(new User("alice@example.com", 30));
+  // // read
+  // doc.get().addOnSuccessListener(snapshot -> {
+  //     User u = snapshot.toObject(User.class);
+  // });
+  // // update
+  // doc.update("age", 31);
+  // // delete
+  // doc.delete();`,
+
+  //           // 2) Forgot to handle asynchronous read success
+  //           `FirebaseFirestore db = FirebaseFirestore.getInstance();
+  // DocumentReference doc = db.collection("users").document("alice");
+  // // create
+  // doc.set(new User("alice@example.com", 30));
+  // // read
+  // User u = doc.get().toObject(User.class);  // missing addOnSuccessListener
+  // // update
+  // doc.update("age", 31);
+  // // delete
+  // doc.delete();`,
+
+  //           // 3) Used add() instead of set(), creating a new doc ID
+  //           `FirebaseFirestore db = FirebaseFirestore.getInstance();
+  // CollectionReference users = db.collection("users");
+  // // create
+  // users.add(new User("alice@example.com", 30));  // wrong: adds new auto-ID doc
+  // // read
+  // DocumentReference doc = users.document("alice");
+  // doc.get().addOnSuccessListener(snapshot -> {
+  //     User u = snapshot.toObject(User.class);
+  // });
+  // // update
+  // doc.update("age", 31);
+  // // delete
+  // doc.delete();`,
+
+  //           // 4) Deleted the entire collection instead of the document
+  //           `FirebaseFirestore db = FirebaseFirestore.getInstance();
+  // DocumentReference doc = db.collection("users").document("alice");
+  // // create
+  // doc.set(new User("alice@example.com", 30));
+  // // read
+  // doc.get().addOnSuccessListener(snapshot -> {
+  //     User u = snapshot.toObject(User.class);
+  // });
+  // // update
+  // doc.update("age", 31);
+  // // delete
+  // db.collection("users").delete();  // invalid: delete() not on CollectionReference`,
+
+  //           // 5) Misused update call with wrong field name
+  //           `FirebaseFirestore db = FirebaseFirestore.getInstance();
+  // DocumentReference doc = db.collection("users").document("alice");
+  // // create
+  // doc.set(new User("alice@example.com", 30));
+  // // read
+  // doc.get().addOnSuccessListener(snapshot -> {
+  //     User u = snapshot.toObject(User.class);
+  // });
+  // // update
+  // doc.update("username", "alice");  // wrong field key: should be "age"
+  // // delete
+  // doc.delete();`,
+  //         ],
+  //         answer: `FirebaseFirestore db = FirebaseFirestore.getInstance();
+  // DocumentReference doc = db.collection("users").document("alice");
+  // // create
+  // doc.set(new User("alice@example.com", 30));
+  // // read
+  // doc.get().addOnSuccessListener(snapshot -> {
+  //     User u = snapshot.toObject(User.class);
+  // });
+  // // update
+  // doc.update("age", 31);
+  // // delete
+  // doc.delete();`,
+  //       },
+  //     },
+  //     // 14
+  //     {
+  //       group: "5",
+  //       title: "Calling Cloud Functions",
+  //       description: "Invoke an HTTPS Callable Cloud Function from Android.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           'Write Java code to call `FirebaseFunctions.getInstance().getHttpsCallable("helloWorld").call()`.',
+  //       },
+  //     },
+  //     // 15
+  //     {
+  //       group: "5",
+  //       title: "Local Emulation",
+  //       description: "Test Functions and Firestore locally with the emulator.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText: "What command starts the local Firebase emulator suite?",
+  //         answer: "firebase emulators:start",
+  //       },
+  //     },
+  //     // 16
+  //     {
+  //       group: "5",
+  //       title: "Deploying to Firebase",
+  //       description: "Deploy only your Cloud Functions from the CLI.",
+  //       isSingleLineText: true,
+  //       question: {
+  //         questionText: "What command do you use to deploy only Cloud Functions?",
+  //         answer: "firebase deploy --only functions",
+  //       },
+  //     },
+  //     // 17
+  //     {
+  //       group: "5",
+  //       title: "Uploading to Storage",
+  //       description: "Upload files to Firebase Storage in Android.",
+  //       isCode: true,
+  //       question: {
+  //         questionText:
+  //           "Write Java code using `FirebaseStorage.getInstance().getReference()` to upload a file.",
+  //       },
+  //     },
+  //     // 18
+  //     {
+  //       group: "5",
+  //       title: "Security Rules Basics",
+  //       description: "Learn about Firestore security rules for Android clients.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "What are Firestore security rules and when are they evaluated for Android requests?",
+  //       },
+  //     },
+  //     // 19
+  //     {
+  //       group: "5",
+  //       title: "Performance Monitoring",
+  //       description: "Explore Firebase Performance Monitoring for Android apps.",
+  //       isText: true,
+  //       question: {
+  //         questionText:
+  //           "Which Firebase product helps you monitor performance metrics in an Android app?",
+  //       },
+  //     },
+  //     // 20
+  //     {
+  //       group: "5",
+  //       title: "Popular Firebase Extensions",
+  //       description: "Learn about official Firebase Extensions you can install.",
+  //       isMultipleAnswerChoice: true,
+  //       question: {
+  //         questionText:
+  //           "Which of the following are Firebase Extensions provided by Google?",
+  //         options: [
+  //           "Trigger Email via SendGrid",
+  //           "Resize Images",
+  //           "Translate Text",
+  //           "Backup Realtime Database",
+  //         ],
+  //         answer:
+  //           "Trigger Email via SendGrid, Resize Images, Translate Text, Backup Realtime Database",
+  //       },
+  //     },
+  //     // 21
+  //     {
+  //       group: "5",
+  //       title: "Review With AI Conversation (optional)",
+  //       isConversationReview: true,
+  //       description: "Review the subjects you've answered",
+  //       question: {
+  //         questionText: "Let's chat about the questions we've worked on so far.",
+  //         range: [91, 110],
+  //       },
+  //     },
+  //   ],
   // ['py-en']: [
 
   // ],
@@ -15481,9 +15481,9 @@ export const androidLoot = [
 export let buildSuperLoot = () => {
   const maxLen = Math.max(
     loot.length,
-    pythonLoot.length,
-    androidLoot.length,
-    swiftLoot.length
+    // pythonLoot.length,
+    // androidLoot.length,
+    // swiftLoot.length
   );
 
   const superLoot = [];
@@ -15507,32 +15507,32 @@ export let buildSuperLoot = () => {
     }
 
     /* ----------------------  PYTHON  ------------------------ */
-    if (pythonLoot[i]) {
-      entry["python-en"] = pythonLoot[i]["py-en"] ?? "";
-      // if the base loot row was empty, use python’s money
-      entry.monetaryValue = Math.max(
-        entry.monetaryValue,
-        pythonLoot[i].monetaryValue ?? 0
-      );
-    }
+    // if (pythonLoot[i]) {
+    //   entry["python-en"] = pythonLoot[i]["py-en"] ?? "";
+    //   // if the base loot row was empty, use python’s money
+    //   entry.monetaryValue = Math.max(
+    //     entry.monetaryValue,
+    //     pythonLoot[i].monetaryValue ?? 0
+    //   );
+    // }
 
     /* ---------------------  ANDROID  ------------------------ */
-    if (androidLoot[i]) {
-      entry["android-en"] = androidLoot[i]["android-en"] ?? "";
-      entry.monetaryValue = Math.max(
-        entry.monetaryValue,
-        androidLoot[i].monetaryValue ?? 0
-      );
-    }
+    // if (androidLoot[i]) {
+    //   entry["android-en"] = androidLoot[i]["android-en"] ?? "";
+    //   entry.monetaryValue = Math.max(
+    //     entry.monetaryValue,
+    //     androidLoot[i].monetaryValue ?? 0
+    //   );
+    // }
 
     /* -----------------------  SWIFT  ------------------------ */
-    if (swiftLoot[i]) {
-      entry["swift-en"] = swiftLoot[i]["swift-en"] ?? "";
-      entry.monetaryValue = Math.max(
-        entry.monetaryValue,
-        swiftLoot[i].monetaryValue ?? 0
-      );
-    }
+    // if (swiftLoot[i]) {
+    //   entry["swift-en"] = swiftLoot[i]["swift-en"] ?? "";
+    //   entry.monetaryValue = Math.max(
+    //     entry.monetaryValue,
+    //     swiftLoot[i].monetaryValue ?? 0
+    //   );
+    // }
 
     superLoot.push(entry);
   }

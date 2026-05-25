@@ -57,6 +57,53 @@ import {
   nativeModalMotionProps,
   nativeOverlayMotionProps,
 } from "../../utility/modalMotion";
+import { pickProgrammingLanguage } from "../../utility/translation";
+import { getObjectsByGroup, steps as allSteps } from "../../utility/content";
+
+const buildLearnPrompt = (step, userLanguage) => {
+  const languageName = pickProgrammingLanguage(userLanguage);
+  const isEnglish = userLanguage?.includes("en");
+
+  if (step?.isConversationReview) {
+    const relevantSteps = getObjectsByGroup(step?.group, allSteps[userLanguage]);
+    return `Generate educational material about ${JSON.stringify(
+      relevantSteps,
+    )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally the ${languageName} or relevant code should consider line breaks and formatting and have a maximum print width of 80 characters and never start with a backticking markdown with triple backticks specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets.  Never specify the answer. Lastly the user is speaking in ${
+      isEnglish ? "english" : "spanish"
+    }`;
+  }
+
+  return `Generate educational ${languageName} material about ${JSON.stringify(
+    step,
+  )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally any ${languageName} or relevant code should have a maximum print width of 80 characters and never start with a backticking markdown with triple backticks specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
+    isEnglish ? "english" : "spanish"
+  }`;
+};
+
+const learnLectureCache = new Map();
+const maxLearnLectureCacheEntries = 20;
+
+const getLearnCacheKey = (step, userLanguage) => {
+  try {
+    return `${userLanguage}:${JSON.stringify(step)}`;
+  } catch {
+    return `${userLanguage}:${step?.group || ""}:${step?.title || ""}:${
+      step?.question?.questionText || ""
+    }`;
+  }
+};
+
+const cacheLearnLecture = (cacheKey, messages) => {
+  if (!cacheKey || !Array.isArray(messages) || messages.length < 1) return;
+
+  learnLectureCache.delete(cacheKey);
+  learnLectureCache.set(cacheKey, messages);
+
+  if (learnLectureCache.size > maxLearnLectureCacheEntries) {
+    const [oldestKey] = learnLectureCache.keys();
+    learnLectureCache.delete(oldestKey);
+  }
+};
 
 const lightHighlightColors = [
   "green.100",
@@ -343,8 +390,7 @@ const LearnLoadingAnimation = ({ userLanguage }) => (
 const EducationalModal = ({
   isOpen,
   onClose,
-  educationalMessages,
-  educationalContent,
+  step,
   userLanguage,
 }) => {
   const topRef = useRef();
@@ -374,6 +420,59 @@ const EducationalModal = ({
     finalTranscript,
   } = useSpeechRecognition();
   const { resetMessages, messages, submitPrompt } = useThinkingGeminiChat();
+
+  const learnCacheKey = React.useMemo(
+    () => getLearnCacheKey(step, userLanguage),
+    [step, userLanguage],
+  );
+
+  // Educational content chat. Generated lectures are cached by step/language
+  // so closing and reopening the modal shows the same lecture instead of
+  // issuing another generation request.
+  const {
+    messages: generatedEducationalMessages,
+    submitPrompt: submitEducationalPrompt,
+    resetMessages: resetEducationalMessages,
+  } = useSimpleGeminiChat();
+  const [cachedEducationalMessages, setCachedEducationalMessages] = useState(
+    () => learnLectureCache.get(learnCacheKey) || [],
+  );
+  const educationalMessages =
+    cachedEducationalMessages.length > 0
+      ? cachedEducationalMessages
+      : generatedEducationalMessages;
+  const educationalContent = [];
+
+  useEffect(() => {
+    if (!isOpen || !step) return;
+    const cachedMessages = learnLectureCache.get(learnCacheKey);
+    if (cachedMessages?.length > 0) {
+      setCachedEducationalMessages(cachedMessages);
+      return;
+    }
+
+    setCachedEducationalMessages([]);
+    resetEducationalMessages();
+    submitEducationalPrompt(buildLearnPrompt(step, userLanguage)).catch(
+      (error) => console.error("Failed to generate learning content:", error),
+    );
+    // Only fire when the modal opens (not when step/userLanguage change while
+    // open) - matches the previous behaviour of LearnModalHost.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, learnCacheKey]);
+
+  useEffect(() => {
+    const lastMessage =
+      generatedEducationalMessages[generatedEducationalMessages.length - 1];
+
+    if (
+      lastMessage?.content?.trim() &&
+      lastMessage?.meta?.loading === false
+    ) {
+      cacheLearnLecture(learnCacheKey, generatedEducationalMessages);
+      setCachedEducationalMessages(generatedEducationalMessages);
+    }
+  }, [generatedEducationalMessages, learnCacheKey]);
 
   useEffect(() => {
     if (transcript) {

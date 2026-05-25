@@ -1,49 +1,57 @@
-import { flushSync } from "react-dom";
-
 export const runImmediateSurfaceUpdate = (task) => {
   if (typeof task !== "function") return;
+  task();
+};
 
-  try {
-    flushSync(task);
-  } catch {
-    task();
-  }
+const getPressTime = () =>
+  typeof performance !== "undefined" && typeof performance.now === "function"
+    ? performance.now()
+    : Date.now();
+
+const markHandledPress = (pressRef, key) => {
+  pressRef.current = {
+    key,
+    handledAt: getPressTime(),
+    skipClick: true,
+  };
+};
+
+const shouldSkipFollowUpClick = (pressRef, key) => {
+  const recent = pressRef.current;
+  if (!recent?.skipClick || recent.key !== key) return false;
+
+  return getPressTime() - recent.handledAt < 1000;
 };
 
 export const getInstantSurfacePressProps = (pressRef, key, action) => ({
+  "data-instant-surface-trigger": "true",
   touchAction: "manipulation",
   onTouchStart: (event) => {
+    if (typeof window !== "undefined" && window.PointerEvent) {
+      return;
+    }
+
     if (event.touches?.length > 1) return;
     if (event.cancelable) {
       event.preventDefault();
     }
 
-    const recent = pressRef.current;
-    if (recent?.key === key && Date.now() - recent.at < 750) {
-      return;
-    }
-
-    pressRef.current = { key, at: Date.now() };
+    markHandledPress(pressRef, key);
     action?.(event);
   },
   onPointerDown: (event) => {
     if (event.pointerType === "mouse" && event.button !== 0) return;
-    const recent = pressRef.current;
-    if (recent?.key === key && Date.now() - recent.at < 750) {
-      return;
-    }
 
     if (event.pointerType !== "mouse" && event.cancelable) {
       event.preventDefault();
     }
 
-    pressRef.current = { key, at: Date.now() };
+    markHandledPress(pressRef, key);
     action?.(event);
   },
   onClick: (event) => {
-    const recent = pressRef.current;
-    if (recent?.key === key && Date.now() - recent.at < 750) {
-      pressRef.current = { key: "", at: 0 };
+    if (shouldSkipFollowUpClick(pressRef, key)) {
+      pressRef.current = { key: "", handledAt: 0, skipClick: false };
       return;
     }
 
