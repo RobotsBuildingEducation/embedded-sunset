@@ -48,6 +48,7 @@ import {
 } from "../../hooks/useGeminiChat";
 import { LuSend } from "react-icons/lu";
 import { isUnsupportedBrowser } from "../../utility/browser";
+import { useLiteOverlayEffects } from "../../utility/perfProfile";
 import { InstallAppModal } from "../InstallModal/InstallModal";
 import {
   getThemedCodeBlockStyles,
@@ -393,6 +394,7 @@ const EducationalModal = ({
   step,
   userLanguage,
 }) => {
+  const liteOverlayEffects = useLiteOverlayEffects();
   const topRef = useRef();
   const newMessageRef = useRef(null);
 
@@ -701,7 +703,11 @@ const EducationalModal = ({
         motionPreset="none"
         returnFocusOnClose={false}
       >
-        <ModalOverlay motionProps={nativeOverlayMotionProps} />
+        <ModalOverlay
+          motionProps={nativeOverlayMotionProps}
+          bg={liteOverlayEffects ? "blackAlpha.500" : "appOverlay"}
+          backdropFilter={liteOverlayEffects ? "none" : "blur(8px)"}
+        />
 
         {educationalMessages.length < 1 ? (
           <ModalContent

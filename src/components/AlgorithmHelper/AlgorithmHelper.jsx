@@ -39,6 +39,7 @@ import {
   nativeModalMotionProps,
   nativeOverlayMotionProps,
 } from "../../utility/modalMotion";
+import { useLiteOverlayEffects } from "../../utility/perfProfile";
 
 const newTheme = {
   h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
@@ -97,6 +98,7 @@ const newTheme = {
 };
 
 export const AlgorithmHelper = ({ isOpen, onClose, userLanguage }) => {
+  const liteOverlayEffects = useLiteOverlayEffects();
   const isMobile = useBreakpointValue({ base: true, md: false });
 
   let mapImage = createDecisionMap();
@@ -220,7 +222,11 @@ export const AlgorithmHelper = ({ isOpen, onClose, userLanguage }) => {
       motionPreset="none"
       returnFocusOnClose={false}
     >
-      <ModalOverlay motionProps={nativeOverlayMotionProps} />
+      <ModalOverlay
+        motionProps={nativeOverlayMotionProps}
+        bg={liteOverlayEffects ? "blackAlpha.500" : "appOverlay"}
+        backdropFilter={liteOverlayEffects ? "none" : "blur(8px)"}
+      />
       <ModalContent
         motionProps={nativeModalMotionProps}
         borderRadius="lg"

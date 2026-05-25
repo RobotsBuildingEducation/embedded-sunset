@@ -14,11 +14,16 @@ import Markdown from "react-markdown";
 import { translation } from "../../utility/translation";
 import { newTheme } from "../../App.theme";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
+import { useLiteOverlayEffects } from "../../utility/perfProfile";
 
 const StudyGuideModal = ({ isOpen, onClose, content, userLanguage }) => {
+  const liteOverlayEffects = useLiteOverlayEffects();
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl" scrollBehavior="inside">
-      <ModalOverlay />
+      <ModalOverlay
+        bg={liteOverlayEffects ? "blackAlpha.500" : "appOverlay"}
+        backdropFilter={liteOverlayEffects ? "none" : "blur(8px)"}
+      />
       <ModalContent>
         <ModalHeader>
           {translation[userLanguage]["settings.button.studyGuide"]}

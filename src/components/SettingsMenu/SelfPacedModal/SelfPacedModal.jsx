@@ -33,6 +33,7 @@ import {
   nativeModalMotionProps,
   nativeOverlayMotionProps,
 } from "../../../utility/modalMotion";
+import { useLiteOverlayEffects } from "../../../utility/perfProfile";
 
 const getSelfPacedStorageKey = (userId) =>
   `selfPacedSettings:${userId || "local"}`;
@@ -183,6 +184,7 @@ const SelfPacedModal = ({
   userLanguage,
   onSettingsSaved = () => {},
 }) => {
+  const liteOverlayEffects = useLiteOverlayEffects();
   const initialFocusRef = useRef(null);
   const modalBodyRef = useRef(null);
   const [isDataLoading, setIsDataLoading] = useState(true);
@@ -507,8 +509,8 @@ const SelfPacedModal = ({
     >
       <ModalOverlay
         motionProps={nativeOverlayMotionProps}
-        bg="appOverlay"
-        backdropFilter="blur(8px)"
+        bg={liteOverlayEffects ? "blackAlpha.500" : "appOverlay"}
+        backdropFilter={liteOverlayEffects ? "none" : "blur(8px)"}
       />
       <ModalContent
         motionProps={nativeModalMotionProps}

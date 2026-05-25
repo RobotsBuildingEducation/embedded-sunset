@@ -28,6 +28,7 @@ import {
   nativeModalMotionProps,
   nativeOverlayMotionProps,
 } from "../../../utility/modalMotion";
+import { useLiteOverlayEffects } from "../../../utility/perfProfile";
 
 const BitcoinModeModal = ({
   isOpen,
@@ -35,6 +36,7 @@ const BitcoinModeModal = ({
   userLanguage,
   from = "onboarding",
 }) => {
+  const liteOverlayEffects = useLiteOverlayEffects();
   return (
     <Modal
       isOpen={isOpen}
@@ -43,7 +45,11 @@ const BitcoinModeModal = ({
       motionPreset="none"
       returnFocusOnClose={false}
     >
-      <ModalOverlay motionProps={nativeOverlayMotionProps} />
+      <ModalOverlay
+        motionProps={nativeOverlayMotionProps}
+        bg={liteOverlayEffects ? "blackAlpha.500" : "appOverlay"}
+        backdropFilter={liteOverlayEffects ? "none" : "blur(8px)"}
+      />
       <ModalContent
         motionProps={nativeModalMotionProps}
         display="flex"

@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useColorMode } from "@chakra-ui/react";
 import { useThemeStore } from "../../useThemeStore";
+import { isIOSWebKit } from "../../utility/perfProfile";
 
 // Map theme colors to RGB values
 const themeColorMap = {
@@ -21,6 +22,7 @@ const AnimatedBackground = () => {
   const { colorMode } = useColorMode();
   const rgb = themeColorMap[themeColor] || themeColorMap.orange;
   const isMidnight = colorMode === "dark";
+  const isLiteMode = isIOSWebKit();
 
   const baseBackground = isMidnight
     ? `
@@ -60,10 +62,14 @@ const AnimatedBackground = () => {
       {/* Animated orbs */}
       <motion.div
         animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.2, 0.35, 0.2],
+          scale: isLiteMode ? 1 : [1, 1.2, 1],
+          opacity: isLiteMode ? 0.2 : [0.2, 0.35, 0.2],
         }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        transition={
+          isLiteMode
+            ? undefined
+            : { duration: 8, repeat: Infinity, ease: "easeInOut" }
+        }
         style={{
           position: "absolute",
           top: "10%",
@@ -74,20 +80,24 @@ const AnimatedBackground = () => {
           background: `radial-gradient(circle, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${
             isMidnight ? 0.06 : 0.12
           }) 0%, transparent 70%)`,
-          filter: `blur(${isMidnight ? 84 : 60}px)`,
+          filter: `blur(${isLiteMode ? 30 : isMidnight ? 84 : 60}px)`,
         }}
       />
       <motion.div
         animate={{
-          scale: [1.2, 1, 1.2],
-          opacity: [0.15, 0.3, 0.15],
+          scale: isLiteMode ? 1.2 : [1.2, 1, 1.2],
+          opacity: isLiteMode ? 0.15 : [0.15, 0.3, 0.15],
         }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 2,
-        }}
+        transition={
+          isLiteMode
+            ? undefined
+            : {
+                duration: 10,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 2,
+              }
+        }
         style={{
           position: "absolute",
           bottom: "20%",
@@ -98,7 +108,7 @@ const AnimatedBackground = () => {
           background: `radial-gradient(circle, rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${
             isMidnight ? 0.045 : 0.1
           }) 0%, transparent 70%)`,
-          filter: `blur(${isMidnight ? 72 : 50}px)`,
+          filter: `blur(${isLiteMode ? 24 : isMidnight ? 72 : 50}px)`,
         }}
       />
 
