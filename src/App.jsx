@@ -92,7 +92,6 @@ import { appTheme } from "./theme.js";
 import {
   createUser,
   deleteSpecificDocuments,
-  fetchUsersWithToken,
   getOnboardingStep,
   getUserData,
   getUserStep,
@@ -5062,6 +5061,23 @@ const SplashScreen = React.memo(({ numPoints = 50 }) => {
   );
 });
 
+const getErrorMessage = (
+  error,
+  fallback = "Something went wrong. Please try again.",
+) => {
+  if (!error) return fallback;
+  if (typeof error === "string") return error;
+  if (error?.error?.message) return error.error.message;
+  if (error?.message) return error.message;
+  if (error?.code) return error.code;
+
+  try {
+    return JSON.stringify(error);
+  } catch {
+    return fallback;
+  }
+};
+
 const Home = ({
   isSignedIn,
   setIsSignedIn,
@@ -5319,99 +5335,117 @@ const Home = ({
 
     const startTime = Date.now();
 
+    setErrorMessage("");
     setShowSplash(true);
-    let accs = parseInt(localStorage.getItem("accs") || "0", 10);
-
-    // Check if the user has already generated 3 questions
-    // if (accs >= 10) {
-    //   // Silently skip the function
-    //   return;
-    // }
-
-    // Increment the counter and store it back in localStorage
-    accs += 1;
-    localStorage.setItem("accs", accs);
     setIsCreatingAccount(true);
-    setLoadingMessage();
-    const newKeys = await generateNostrKeys(
-      userName,
-      setLoadingMessage,
-      translation[userLanguage]["nostrContent.onboardedProfileAbout"],
-      translation[userLanguage]["nostrContent.introductionPost"],
-    );
-    setKeys(newKeys);
+    setLoadingMessage("createAccount.isCreating");
 
-    localStorage.setItem("displayName", userName);
+    try {
+      let accs = parseInt(localStorage.getItem("accs") || "0", 10);
 
-    const defaultInterval = 2880;
-    const currentTime = new Date();
-    const endTime = new Date(currentTime.getTime() + defaultInterval * 60000);
+      // Check if the user has already generated 3 questions
+      // if (accs >= 10) {
+      //   // Silently skip the function
+      //   return;
+      // }
 
-    await ensureAppCheckReady();
-
-    // Create user in Firestore with language and theme preferences.
-    const createdUserData = await createUser(
-      newKeys.npub,
-      userName,
-      userLanguage,
-    );
-    applyUserThemePreferences(createdUserData, setColorMode);
-    await updateUserData(
-      newKeys.npub,
-      defaultInterval, // Set the default interval for the streak
-      0, // Initial streak count is 0
-      currentTime, // Start time
-      endTime,
-      5,
-      new Date(currentTime.getTime() + 86400000),
-      0,
-      0, // End time, 48 hours from start time
-    );
-    // console.log("run analytics");
-    // logEvent(analytics, "select_content", {
-    //   content_type: "button",
-    //   item_id: "account_created",
-    // });
-    // console.log("end analytics");
-    setIsSignedIn(true);
-
-    const minSplashDuration = 1600; // Keep the shard animation from unmounting mid-shatter.
-    const elapsed = Date.now() - startTime;
-    if (elapsed < minSplashDuration) {
-      await new Promise((resolve) =>
-        setTimeout(resolve, minSplashDuration - elapsed),
+      // Increment the counter and store it back in localStorage
+      accs += 1;
+      localStorage.setItem("accs", accs);
+      const newKeys = await generateNostrKeys(
+        userName,
+        setLoadingMessage,
+        translation[userLanguage]["nostrContent.onboardedProfileAbout"],
+        translation[userLanguage]["nostrContent.introductionPost"],
       );
-    }
 
-    setIsCreatingAccount(false);
-    setShowSplash(false);
-    navigate("/onboarding/1");
+      if (!newKeys?.npub) {
+        throw new Error("Could not create your account keys. Please try again.");
+      }
+
+      setKeys(newKeys);
+
+      localStorage.setItem("displayName", userName);
+
+      const defaultInterval = 2880;
+      const currentTime = new Date();
+      const endTime = new Date(
+        currentTime.getTime() + defaultInterval * 60000,
+      );
+
+      await ensureAppCheckReady();
+
+      // Create user in Firestore with language and theme preferences.
+      const createdUserData = await createUser(
+        newKeys.npub,
+        userName,
+        userLanguage,
+      );
+      applyUserThemePreferences(createdUserData, setColorMode);
+      await updateUserData(
+        newKeys.npub,
+        defaultInterval, // Set the default interval for the streak
+        0, // Initial streak count is 0
+        currentTime, // Start time
+        endTime,
+        5,
+        new Date(currentTime.getTime() + 86400000),
+        0,
+        0, // End time, 48 hours from start time
+      );
+      // console.log("run analytics");
+      // logEvent(analytics, "select_content", {
+      //   content_type: "button",
+      //   item_id: "account_created",
+      // });
+      // console.log("end analytics");
+      setIsSignedIn(true);
+
+      const minSplashDuration = 1600; // Keep the shard animation from unmounting mid-shatter.
+      const elapsed = Date.now() - startTime;
+      if (elapsed < minSplashDuration) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, minSplashDuration - elapsed),
+        );
+      }
+
+      navigate("/onboarding/1");
+    } catch (error) {
+      console.error("Error creating account", error);
+      setErrorMessage(
+        getErrorMessage(
+          error,
+          "We couldn't finish creating your account. Please try again.",
+        ),
+      );
+    } finally {
+      setIsCreatingAccount(false);
+      setShowSplash(false);
+    }
   };
 
   const handleSignIn = async () => {
-    try {
-      setIsSigningIn(true);
-      try {
-        await auth(secretKey);
-      } catch (error) {
-        setIsSigningIn(false);
+    setErrorMessage("");
+    setIsSigningIn(true);
 
-        setErrorMessage(JSON.stringify(error) || "An unknown error occurred");
+    try {
+      const authResult = await auth(secretKey);
+
+      if (!authResult) {
+        setErrorMessage("Please check your Nostr secret key and try again.");
+        return;
       }
 
       const npub = localStorage.getItem("local_npub");
       const userName = localStorage.getItem("displayName");
 
-      try {
-        await ensureAppCheckReady();
-        const userData = await createUser(npub, userName, userLanguage);
-        applyUserThemePreferences(userData, setColorMode);
-      } catch (error) {
-        console.error("Error ensuring user record exists", error);
-        setIsSigningIn(false);
-        setErrorMessage(JSON.stringify(error));
-        return;
+      if (!npub) {
+        throw new Error("Sign in did not return a user id. Please try again.");
       }
+
+      await ensureAppCheckReady();
+      const userData = await createUser(npub, userName, userLanguage);
+      applyUserThemePreferences(userData, setColorMode);
 
       const defaultInterval = 2880;
       const existingUserData = await getUserData(npub).catch((error) => {
@@ -5446,14 +5480,10 @@ const Home = ({
         }
       }
 
-      const currentStep = await getUserStep(npub).catch((error) => {
-        setIsSigningIn(false);
-        setErrorMessage(JSON.stringify(error));
-      }); // Retrieve the current tutorial step
+      const currentStep = await getUserStep(npub); // Retrieve the current tutorial step
 
       const onboardingProgress = await getOnboardingStep(npub);
 
-      setIsSigningIn(false);
       setIsSignedIn(true);
       setCurrentStep(currentStep);
 
@@ -5467,35 +5497,42 @@ const Home = ({
         navigate(`/q/${currentStep}`);
       }
     } catch (error) {
-      // const err = error.error;
+      console.error("Error signing in", error);
+      setErrorMessage(
+        getErrorMessage(
+          error,
+          "We couldn't finish signing you in. Please try again.",
+        ),
+      );
+    } finally {
       setIsSigningIn(false);
-      setErrorMessage({ error });
     }
   };
 
   const handleNip07SignIn = async () => {
+    setErrorMessage("");
+    setIsSigningIn(true);
+
     try {
-      setIsSigningIn(true);
       const result = await authWithExtension();
 
       if (!result) {
-        setIsSigningIn(false);
+        setErrorMessage(
+          "Nostr extension sign-in was not completed. Please approve the request and try again.",
+        );
         return;
       }
 
       const npub = localStorage.getItem("local_npub");
       const userName = localStorage.getItem("displayName");
 
-      try {
-        await ensureAppCheckReady();
-        const userData = await createUser(npub, userName, userLanguage);
-        applyUserThemePreferences(userData, setColorMode);
-      } catch (error) {
-        console.error("Error ensuring user record exists", error);
-        setIsSigningIn(false);
-        setErrorMessage(JSON.stringify(error));
-        return;
+      if (!npub) {
+        throw new Error("Extension sign-in did not return a user id.");
       }
+
+      await ensureAppCheckReady();
+      const userData = await createUser(npub, userName, userLanguage);
+      applyUserThemePreferences(userData, setColorMode);
 
       const defaultInterval = 2880;
       const existingUserData = await getUserData(npub).catch((error) => {
@@ -5530,14 +5567,10 @@ const Home = ({
         }
       }
 
-      const currentStep = await getUserStep(npub).catch((error) => {
-        setIsSigningIn(false);
-        setErrorMessage(JSON.stringify(error));
-      });
+      const currentStep = await getUserStep(npub);
 
       const onboardingProgress = await getOnboardingStep(npub);
 
-      setIsSigningIn(false);
       setIsSignedIn(true);
       setCurrentStep(currentStep);
 
@@ -5551,8 +5584,15 @@ const Home = ({
         navigate(`/q/${currentStep}`);
       }
     } catch (error) {
+      console.error("Error signing in with extension", error);
+      setErrorMessage(
+        getErrorMessage(
+          error,
+          "We couldn't finish signing you in. Please try again.",
+        ),
+      );
+    } finally {
       setIsSigningIn(false);
-      setErrorMessage({ error });
     }
   };
 
@@ -5799,6 +5839,12 @@ const Home = ({
                 >
                   {translation[userLanguage]["landing.button.signIn"]}
                 </Button>
+
+                {errorMessage ? (
+                  <Text color="red.500" fontSize="sm" maxWidth="320px">
+                    {getErrorMessage(errorMessage)}
+                  </Text>
+                ) : null}
 
                 <FormControl
                   display="flex"
@@ -6450,9 +6496,11 @@ const Home = ({
                 "Sign in with Extension"}
             </Button>
 
-            <Text color="red" fontSize="sm">
-              {errorMessage ? errorMessage?.error?.message : null}
-            </Text>
+            {errorMessage ? (
+              <Text color="red.500" fontSize="sm" maxWidth="320px">
+                {getErrorMessage(errorMessage)}
+              </Text>
+            ) : null}
           </VStack>
         )}
         {view === "created" && keys && (
@@ -7080,187 +7128,232 @@ function App({ isShutDown }) {
   };
 
   useEffect(() => {
+    let isMounted = true;
+
+    const stopLoading = () => {
+      if (isMounted) {
+        setLoading(false);
+      }
+    };
+
+    const bootTimeoutId = window.setTimeout(() => {
+      console.warn(
+        "Startup secure setup timed out; showing the app so the user can retry.",
+      );
+      showAlert(
+        "error",
+        "Secure setup is taking longer than expected. You can try again or refresh.",
+      );
+      stopLoading();
+    }, 12000);
+
     const initializeApp = async () => {
       const npub = localStorage.getItem("local_npub");
 
-      // deleteSpecificDocuments();
-      // let count = await getTotalUsers();
-      // window.alert("wtf");
-      ensureAppCheckReady()
-        .then(() => fetchUsersWithToken())
-        .catch((error) => {
-          console.error("App Check blocked startup Firestore reads", error);
-        });
+      try {
+        // deleteSpecificDocuments();
+        // let count = await getTotalUsers();
+        // window.alert("wtf");
 
-      if (npub && window.location.pathname !== "/dashboard") {
-        try {
-          await ensureAppCheckReady();
+        if (npub && window.location.pathname !== "/dashboard") {
+          setIsSignedIn(true);
 
-          const windowurl = window.location.href;
+          try {
+            await ensureAppCheckReady();
 
-          // Regex to match and capture the number after "/q/"
-          const matchnumber = windowurl.match(/\/q\/(\d+)$/);
+            const windowurl = window.location.href;
 
-          let step = matchnumber ? matchnumber[1] : null;
+            // Regex to match and capture the number after "/q/"
+            const matchnumber = windowurl.match(/\/q\/(\d+)$/);
 
-          if (!step) {
-            step = await getUserStep(npub); // Fetch the current step
-          }
+            let step = matchnumber ? matchnumber[1] : null;
 
-          // if (step == 0) {
-          //   localStorage.clear();
-          //   navigate("/");
-          // } else {
-
-          if (location.pathname === "/about") {
-            // Do nothing if on /about
-          } else if (step > -1) {
-            auth(localStorage.getItem("local_nsec"));
-            setIsSignedIn(true);
-            setCurrentStep(step);
-
-            const userDoc = doc(database, "users", npub);
-            const userSnapshot = await getDoc(userDoc);
-
-            // Wrap Firestore getDoc in try...catch to handle potential errors
-            if (userSnapshot.exists()) {
-              const userData = userSnapshot.data();
-              applyUserThemePreferences(userData, setColorMode);
-
-              setHasSubmittedPasscode(userData?.hasSubmittedPasscode);
-
-              setUserLanguage(
-                userData.userLanguage ||
-                  localStorage.getItem("userLanguage") ||
-                  "en",
-              );
-
-              localStorage.setItem(
-                "userLanguage",
-                userData.language ||
-                  localStorage.getItem("userLanguage") ||
-                  "en",
-              );
-
-              if (userData.hasOwnProperty("allowPosts")) {
-                // Use the value from Firestore (even if it's false)
-                setAllowPosts(userData.allowPosts);
-              } else {
-                // If the field doesn't exist, update the document to set allowPosts to true
-                setAllowPosts(false);
-                const userDocRef = doc(
-                  database,
-                  "users",
-                  localStorage.getItem("local_npub"),
-                );
-                updateDoc(userDocRef, { allowPosts: false })
-                  .then(() =>
-                    console.log("allowPosts field added with value true"),
-                  )
-                  .catch((error) =>
-                    console.error("Error updating allowPosts:", error),
-                  );
-              }
-            } else {
-              localStorage.setItem("userLanguage", "en");
-              setUserLanguage("en");
+            if (!step) {
+              step = await getUserStep(npub); // Fetch the current step
             }
 
-            if (location.pathname === "/experiment") {
-            } else if (location.pathname === "/about") {
+            // if (step == 0) {
+            //   localStorage.clear();
+            //   navigate("/");
+            // } else {
+
+            if (location.pathname === "/about") {
               // Do nothing if on /about
-            } else if (
-              step === "subscription" ||
-              (step > 9 &&
-                localStorage.getItem("passcode") !==
-                  import.meta.env.VITE_PATREON_PASSCODE)
-            ) {
-              navigate("/subscription");
-            } else if (step === "award") {
-              navigate("/award");
-            } else if (location.pathname === "/subscription" && step < 10) {
-              showAlert(
-                "error",
-                translation[userLanguage]["completeTutorialFirst"],
-              );
-
-              // topRef.current?.scrollIntoView();
-              window.scrollTo(0, 0);
-
-              navigate(`/q/${step}`);
-            } else {
-              // if (step !== 0) {
-
-              // topRef.current?.scrollIntoView();
-              window.scrollTo(0, 0);
-
-              const onboardingProgress = await getOnboardingStep(npub);
-              if (
-                onboardingProgress !== "done" &&
-                parseInt(onboardingProgress, 10) <= 6 &&
-                parseInt(onboardingProgress, 10) === step + 1
-              ) {
-                navigate(`/onboarding/${parseInt(onboardingProgress, 10)}`);
-              } else {
-                navigate(`/q/${step}`);
+            } else if (step > -1) {
+              const storedNsec = localStorage.getItem("local_nsec");
+              if (storedNsec && storedNsec !== "nip07") {
+                const restoredAuth = await auth(storedNsec);
+                if (!restoredAuth) {
+                  console.warn(
+                    "Stored Nostr key could not be restored during startup.",
+                  );
+                }
               }
-              // }
-            }
-          } else {
-            //step is probably onboarding?
-            if (step === "subscription") {
-              navigate("/subscription");
-            } else if (step === "onboarding") {
-              const matchnumber = windowurl.match(/\/onboarding\/(\d+)$/);
 
-              let step = matchnumber ? matchnumber[1] : null;
-              const userDoc = doc(
-                database,
-                "users",
-                localStorage.getItem("local_npub"),
-              );
+              setIsSignedIn(true);
+              setCurrentStep(step);
+
+              const userDoc = doc(database, "users", npub);
               const userSnapshot = await getDoc(userDoc);
+
+              // Wrap Firestore getDoc in try...catch to handle potential errors
               if (userSnapshot.exists()) {
                 const userData = userSnapshot.data();
                 applyUserThemePreferences(userData, setColorMode);
+
+                setHasSubmittedPasscode(userData?.hasSubmittedPasscode);
 
                 setUserLanguage(
                   userData.userLanguage ||
                     localStorage.getItem("userLanguage") ||
                     "en",
                 );
-              }
-              // x
-              if (step > 6) {
-                setOnboardingToDone(localStorage.getItem("local_npub"), 0);
 
-                navigate("/q/0");
-              } else {
-                // navigate("q/0");
-                if (!step) {
-                  step = await getOnboardingStep(npub); // Fetch the current step
+                localStorage.setItem(
+                  "userLanguage",
+                  userData.language ||
+                    localStorage.getItem("userLanguage") ||
+                    "en",
+                );
+
+                if (userData.hasOwnProperty("allowPosts")) {
+                  // Use the value from Firestore (even if it's false)
+                  setAllowPosts(userData.allowPosts);
+                } else {
+                  // If the field doesn't exist, update the document to set allowPosts to true
+                  setAllowPosts(false);
+                  const userDocRef = doc(
+                    database,
+                    "users",
+                    localStorage.getItem("local_npub"),
+                  );
+                  updateDoc(userDocRef, { allowPosts: false })
+                    .then(() =>
+                      console.log("allowPosts field added with value true"),
+                    )
+                    .catch((error) =>
+                      console.error("Error updating allowPosts:", error),
+                    );
                 }
+              } else {
+                localStorage.setItem("userLanguage", "en");
+                setUserLanguage("en");
+              }
 
-                setIsSignedIn(true);
-                navigate(`/onboarding/${step}`);
+              if (location.pathname === "/experiment") {
+              } else if (location.pathname === "/about") {
+                // Do nothing if on /about
+              } else if (
+                step === "subscription" ||
+                (step > 9 &&
+                  localStorage.getItem("passcode") !==
+                    import.meta.env.VITE_PATREON_PASSCODE)
+              ) {
+                navigate("/subscription");
+              } else if (step === "award") {
+                navigate("/award");
+              } else if (location.pathname === "/subscription" && step < 10) {
+                showAlert(
+                  "error",
+                  translation[userLanguage]["completeTutorialFirst"],
+                );
+
+                // topRef.current?.scrollIntoView();
+                window.scrollTo(0, 0);
+
+                navigate(`/q/${step}`);
+              } else {
+                // if (step !== 0) {
+
+                // topRef.current?.scrollIntoView();
+                window.scrollTo(0, 0);
+
+                const onboardingProgress = await getOnboardingStep(npub);
+                if (
+                  onboardingProgress !== "done" &&
+                  parseInt(onboardingProgress, 10) <= 6 &&
+                  parseInt(onboardingProgress, 10) === step + 1
+                ) {
+                  navigate(`/onboarding/${parseInt(onboardingProgress, 10)}`);
+                } else {
+                  navigate(`/q/${step}`);
+                }
+                // }
+              }
+            } else {
+              //step is probably onboarding?
+              if (step === "subscription") {
+                navigate("/subscription");
+              } else if (step === "onboarding") {
+                const matchnumber = windowurl.match(/\/onboarding\/(\d+)$/);
+
+                let step = matchnumber ? matchnumber[1] : null;
+                const userDoc = doc(
+                  database,
+                  "users",
+                  localStorage.getItem("local_npub"),
+                );
+                const userSnapshot = await getDoc(userDoc);
+                if (userSnapshot.exists()) {
+                  const userData = userSnapshot.data();
+                  applyUserThemePreferences(userData, setColorMode);
+
+                  setUserLanguage(
+                    userData.userLanguage ||
+                      localStorage.getItem("userLanguage") ||
+                      "en",
+                  );
+                }
+                // x
+                if (step > 6) {
+                  setOnboardingToDone(localStorage.getItem("local_npub"), 0);
+
+                  navigate("/q/0");
+                } else {
+                  // navigate("q/0");
+                  if (!step) {
+                    step = await getOnboardingStep(npub); // Fetch the current step
+                  }
+
+                  setIsSignedIn(true);
+                  navigate(`/onboarding/${step}`);
+                }
               }
             }
-          }
-        } catch (error) {
-          // Catch permission denied errors and handle them accordingly
-          if (error.code === "permission-denied") {
-            console.error("Permission Denied: ", error);
-            // localStorage.clear(); // Clear any local state or authentication
-            // navigate("/"); // Redirect to the root route or any other route
-          } else {
-            console.error("Unexpected Error: ", error);
+          } catch (error) {
+            // Catch permission denied errors and handle them accordingly
+            if (error.code === "permission-denied") {
+              console.error("Permission Denied: ", error);
+              showAlert(
+                "error",
+                "We couldn't access your saved progress. Please try again.",
+              );
+              // localStorage.clear(); // Clear any local state or authentication
+              // navigate("/"); // Redirect to the root route or any other route
+            } else {
+              console.error("Unexpected Error: ", error);
+              showAlert(
+                "error",
+                getErrorMessage(
+                  error,
+                  "We couldn't refresh your session. Please try again.",
+                ),
+              );
+            }
           }
         }
+      } finally {
+        clearTimeout(bootTimeoutId);
+        stopLoading();
       }
-      setLoading(false);
     };
 
     initializeApp();
+
+    return () => {
+      isMounted = false;
+      clearTimeout(bootTimeoutId);
+    };
   }, [navigate, setColorMode]);
 
   if (loading) {

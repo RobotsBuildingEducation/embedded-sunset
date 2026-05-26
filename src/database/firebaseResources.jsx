@@ -40,21 +40,35 @@ export const appCheck = initializeAppCheck(app, {
 });
 
 let appCheckReadyPromise = null;
+const APP_CHECK_READY_TIMEOUT_MS = 5000;
+
+const withAppCheckTimeout = (promise) =>
+  new Promise((resolve, reject) => {
+    const timeoutId = setTimeout(() => {
+      reject(
+        new Error(
+          "Secure verification is taking too long. Please check your connection and try again.",
+        ),
+      );
+    }, APP_CHECK_READY_TIMEOUT_MS);
+
+    promise.then(resolve, reject).finally(() => clearTimeout(timeoutId));
+  });
 
 export const ensureAppCheckReady = async () => {
   if (!appCheckReadyPromise) {
-    appCheckReadyPromise = getAppCheckToken(appCheck)
-      .then((tokenResult) => {
+    appCheckReadyPromise = withAppCheckTimeout(
+      getAppCheckToken(appCheck).then((tokenResult) => {
         if (!tokenResult?.token) {
           throw new Error("Firebase App Check did not return a token.");
         }
 
         return tokenResult.token;
-      })
-      .catch((error) => {
-        appCheckReadyPromise = null;
-        throw error;
-      });
+      }),
+    ).catch((error) => {
+      appCheckReadyPromise = null;
+      throw error;
+    });
   }
 
   return appCheckReadyPromise;
