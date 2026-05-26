@@ -785,11 +785,7 @@ const SelfPacedModal = ({
           </Box>
         </ModalBody>
         <ModalFooter px={6} py={5} justifyContent="flex-end" gap={3}>
-          <Button
-            variant="secondary"
-            onClick={onClose}
-            data-sound-close="true"
-          >
+          <Button variant="secondary" onClick={onClose} data-sound-close="true">
             {translation[userLanguage]["button.close"]}
           </Button>
           <Button onClick={handleSave}>
