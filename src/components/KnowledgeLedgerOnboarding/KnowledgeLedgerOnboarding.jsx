@@ -19,8 +19,7 @@ import Editor from "@monaco-editor/react";
 import { LiveProvider, LivePreview, LiveError } from "react-live";
 import { FaMagic } from "react-icons/fa";
 import {
-  useSimpleGeminiChat,
-  useThinkingGeminiChat,
+  useKnowledgeLedgerOnboardingGeminiChat,
 } from "../../hooks/useGeminiChat";
 import { useAlertStore } from "../../useAlertStore";
 import { usePasscodeModalStore } from "../../usePasscodeModalStore";
@@ -103,7 +102,8 @@ export default function KnowledgeLedgerOnboarding({
   const [hasRunCode, setHasRunCode] = useState(false);
   const [userInput, setUserInput] = useState("");
   const [userIdea, setUserIdea] = useState("");
-  const { submitPrompt, messages, resetMessages } = useThinkingGeminiChat();
+  const { submitPrompt, messages, resetMessages } =
+    useKnowledgeLedgerOnboardingGeminiChat();
   const showAlert = useAlertStore((s) => s.showAlert);
   const openPasscodeModal = usePasscodeModalStore((s) => s.openPasscodeModal);
   const { hasCopied, onCopy } = useClipboard(

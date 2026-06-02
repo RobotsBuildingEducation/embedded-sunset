@@ -125,6 +125,38 @@ const thinkingmodel = getGenerativeModel(vertexAI, {
   },
 });
 
+const educationmodel = getGenerativeModel(vertexAI, {
+  model: "gemini-3.1-flash-lite",
+  generationConfig: {
+    // Keep Learn modal output fast and low-latency while testing this model.
+    thinkingConfig: { thinkingBudget: 0 },
+  },
+});
+
+const conversationReviewModel = getGenerativeModel(vertexAI, {
+  model: "gemini-3.1-flash-lite",
+  generationConfig: {
+    // Keep Conversation Review responses fast while testing this model.
+    thinkingConfig: { thinkingBudget: 0 },
+  },
+});
+
+const knowledgeLedgerOnboardingModel = getGenerativeModel(vertexAI, {
+  model: "gemini-3.1-flash-lite",
+  generationConfig: {
+    // Keep Knowledge Ledger onboarding generation fast while testing this model.
+    thinkingConfig: { thinkingBudget: 0 },
+  },
+});
+
+const knowledgeLedgerModalModel = getGenerativeModel(vertexAI, {
+  model: "gemini-3.1-flash-lite",
+  generationConfig: {
+    // Keep Knowledge Ledger modal generation fast while testing this model.
+    thinkingConfig: { thinkingBudget: 0 },
+  },
+});
+
 export {
   database,
   analytics,
@@ -133,4 +165,8 @@ export {
   messaging,
   promodel,
   thinkingmodel,
+  educationmodel,
+  conversationReviewModel,
+  knowledgeLedgerOnboardingModel,
+  knowledgeLedgerModalModel,
 };

@@ -42,10 +42,7 @@ import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { IoMicCircleOutline } from "react-icons/io5";
 import { PiMicrophoneFill, PiMicrophoneLight } from "react-icons/pi";
-import {
-  useSimpleGeminiChat,
-  useThinkingGeminiChat,
-} from "../../hooks/useGeminiChat";
+import { useEducationGeminiChat } from "../../hooks/useGeminiChat";
 import { LuSend } from "react-icons/lu";
 import { isUnsupportedBrowser } from "../../utility/browser";
 import { useLiteOverlayEffects } from "../../utility/perfProfile";
@@ -606,7 +603,7 @@ const EducationalModal = ({
     browserSupportsSpeechRecognition,
     finalTranscript,
   } = useSpeechRecognition();
-  const { resetMessages, messages, submitPrompt } = useThinkingGeminiChat();
+  const { resetMessages, messages, submitPrompt } = useEducationGeminiChat();
 
   const learnCacheKey = React.useMemo(
     () => getLearnCacheKey(step, userLanguage),
@@ -620,7 +617,7 @@ const EducationalModal = ({
     messages: generatedEducationalMessages,
     submitPrompt: submitEducationalPrompt,
     resetMessages: resetEducationalMessages,
-  } = useSimpleGeminiChat();
+  } = useEducationGeminiChat();
   const [cachedEducationalMessages, setCachedEducationalMessages] = useState(
     () => learnLectureCache.get(learnCacheKey) || [],
   );

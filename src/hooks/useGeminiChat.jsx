@@ -4,6 +4,10 @@ import {
   simplemodel,
   promodel,
   thinkingmodel,
+  educationmodel,
+  conversationReviewModel,
+  knowledgeLedgerOnboardingModel,
+  knowledgeLedgerModalModel,
 } from "../database/firebaseResources";
 import { Schema } from "firebase/vertexai";
 
@@ -99,15 +103,12 @@ export const useGeminiChat = () => {
   };
 };
 
-export const useSimpleGeminiChat = () => {
+const useStreamingGeminiChat = (geminiModel) => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const messageIdRef = useRef(0);
   const resetVersionRef = useRef(0);
 
-  /**
-   * submitPrompt: Streams text from a given prompt (string).
-   */
   const submitPrompt = useCallback(async (prompt) => {
     const messageId = ++messageIdRef.current;
     const resetVersion = resetVersionRef.current;
@@ -115,24 +116,20 @@ export const useSimpleGeminiChat = () => {
     setLoading(true);
 
     try {
-      // 1) Make the streaming request
-      const result = await simplemodel.generateContentStream(prompt);
+      const result = await geminiModel.generateContentStream(prompt);
 
-      // 2) Create a new message object to store partial text
       const newMessage = {
         id: messageId,
         content: "",
         meta: {
-          loading: true, // Whether the streaming is ongoing
-          chunks: [], // We’ll store each chunk of text here
+          loading: true,
+          chunks: [],
         },
       };
 
-      // 3) Append this new message to the messages array
       if (!isCurrentStream()) return;
       setMessages((prev) => [...prev, newMessage]);
 
-      // 4) Accumulate partial text in a local variable, updating state after each chunk
       let fullResponse = "";
 
       for await (const chunk of result.stream) {
@@ -141,7 +138,6 @@ export const useSimpleGeminiChat = () => {
         const chunkText = chunk.text();
         fullResponse += chunkText;
 
-        // 5) Update the last message with partial text
         setMessages((prev) => {
           if (!isCurrentStream()) return prev;
 
@@ -156,7 +152,7 @@ export const useSimpleGeminiChat = () => {
                       ...message.meta.chunks,
                       {
                         content: chunkText,
-                        final: false, // We’ll mark it final after the loop ends
+                        final: false,
                       },
                     ],
                   },
@@ -166,7 +162,6 @@ export const useSimpleGeminiChat = () => {
         });
       }
 
-      // 6) Mark the last chunk as final
       if (!isCurrentStream()) return;
       setMessages((prev) => {
         if (!isCurrentStream()) return prev;
@@ -203,11 +198,8 @@ export const useSimpleGeminiChat = () => {
         setLoading(false);
       }
     }
-  }, []);
+  }, [geminiModel]);
 
-  /**
-   * resetMessages: Clears out all existing messages and resets streaming state.
-   */
   const resetMessages = useCallback(() => {
     resetVersionRef.current += 1;
     setMessages([]);
@@ -221,6 +213,20 @@ export const useSimpleGeminiChat = () => {
     resetMessages,
   };
 };
+
+export const useSimpleGeminiChat = () => useStreamingGeminiChat(simplemodel);
+
+export const useEducationGeminiChat = () =>
+  useStreamingGeminiChat(educationmodel);
+
+export const useConversationReviewGeminiChat = () =>
+  useStreamingGeminiChat(conversationReviewModel);
+
+export const useKnowledgeLedgerOnboardingGeminiChat = () =>
+  useStreamingGeminiChat(knowledgeLedgerOnboardingModel);
+
+export const useKnowledgeLedgerModalGeminiChat = () =>
+  useStreamingGeminiChat(knowledgeLedgerModalModel);
 
 export const useThinkingGeminiChat = () => {
   const [messages, setMessages] = useState([]);

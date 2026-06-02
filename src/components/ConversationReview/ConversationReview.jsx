@@ -31,7 +31,7 @@ import "prismjs/themes/prism.css";
 import { translation } from "../../utility/translation";
 import { getObjectsByGroup } from "../../utility/content";
 import ReactConfetti from "react-confetti";
-import { useSimpleGeminiChat } from "../../hooks/useGeminiChat";
+import { useConversationReviewGeminiChat } from "../../hooks/useGeminiChat";
 
 import PreConversation from "./PreConversation";
 
@@ -91,7 +91,8 @@ const ConversationReview = ({
   const [response, setResponse] = useState("");
   const [conversation, setConversation] = useState([]);
   const [streamingResponse, setStreamingResponse] = useState("");
-  const { resetMessages, messages, submitPrompt } = useSimpleGeminiChat();
+  const { resetMessages, messages, submitPrompt } =
+    useConversationReviewGeminiChat();
   const [storedRequest, setStoredRequest] = useState("");
   const chatboxRef = useRef(null);
   const chatContainerRef = useRef(null);
@@ -223,7 +224,15 @@ const ConversationReview = ({
   return (
     <VStack spacing={4} align="center" width="100%" maxWidth="600px">
       <Accordion allowToggle style={{ width: "100%" }}>
-        <AccordionItem key={"x"}>
+        <AccordionItem
+          key={"x"}
+          bg="appSurface"
+          borderWidth="2px"
+          borderColor="appBorderStrong"
+          borderRadius="lg"
+          boxShadow="sm"
+          overflow="hidden"
+        >
           <AccordionButton p={6} justifyContent={"space-between"}>
             <Box textAlign="left">
               {translation[userLanguage]["button.subjectsCovered"]}{" "}

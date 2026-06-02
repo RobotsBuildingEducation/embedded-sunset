@@ -25,10 +25,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { database } from "../../database/firebaseResources";
-import {
-  useSimpleGeminiChat,
-  useThinkingGeminiChat,
-} from "../../hooks/useGeminiChat";
+import { useConversationReviewGeminiChat } from "../../hooks/useGeminiChat";
 import { translation } from "../../utility/translation";
 const LiveReactEditorModal = lazy(() => import("../LiveCodeEditor/LiveCodeEditor"));
 import { CloudCanvas, SunsetCanvas } from "../../elements/SunsetCanvas";
@@ -201,7 +198,8 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
   const [savedIdea, setSavedIdea] = useState("");
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { submitPrompt, messages, resetMessages } = useThinkingGeminiChat();
+  const { submitPrompt, messages, resetMessages } =
+    useConversationReviewGeminiChat();
 
   useEffect(() => {
     const fetchData = async () => {

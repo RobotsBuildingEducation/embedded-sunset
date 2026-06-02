@@ -25,7 +25,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { database } from "../../database/firebaseResources";
-import { useThinkingGeminiChat } from "../../hooks/useGeminiChat";
+import { useKnowledgeLedgerModalGeminiChat } from "../../hooks/useGeminiChat";
 import { translation } from "../../utility/translation";
 const LiveReactEditorModal = lazy(() => import("../LiveCodeEditor/LiveCodeEditor"));
 import { CloudCanvas } from "../../elements/SunsetCanvas";
@@ -107,7 +107,8 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
   const lastSavedSnapshotRef = useRef("");
   const autosaveTimerRef = useRef(null);
 
-  const { submitPrompt, messages, resetMessages } = useThinkingGeminiChat();
+  const { submitPrompt, messages, resetMessages } =
+    useKnowledgeLedgerModalGeminiChat();
   const groupId = useMemo(
     () => String(step?.group ?? "default"),
     [step?.group],
