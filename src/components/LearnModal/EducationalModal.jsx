@@ -120,6 +120,84 @@ const darkHighlightColors = [
   "whiteAlpha.200",
   "whiteAlpha.200",
 ];
+
+const markdownTextBlockRegexes = [
+  /^#{1,6}\s+/,
+  /^[-*+]\s+/,
+  /^\d+[.)]\s+/,
+  /^>\s+/,
+  /^\*\*[^*]+/,
+];
+
+const wordRegex = /[A-Za-zÀ-ÖØ-öø-ÿ]{2,}/g;
+
+const countWords = (value = "") => value.match(wordRegex)?.length || 0;
+
+const stripInlineCode = (value = "") => value.replace(/`[^`]*`/g, " ");
+
+const looksLikeDefiniteCodeLine = (value = "") => {
+  const syntaxValue = stripInlineCode(value).trim();
+
+  return (
+    /^(const|let|var|function|class|return|import|export|try|catch|async|await|throw|new)\b/.test(
+      syntaxValue,
+    ) ||
+    /^(if|else|for|while|switch)\s*(?:\(|{|$)/.test(syntaxValue) ||
+    /^console\./.test(syntaxValue) ||
+    /^[\w$.[\]'"]+\s*=\s*.+/.test(syntaxValue) ||
+    /^[\w$.]+\(.+\);?$/.test(syntaxValue) ||
+    /^[\w$]+\s*:\s*([`"'[{(]|\d|true|false|null|undefined)/.test(value) ||
+    /=>|<\/?[A-Z_a-z][^>]*>/.test(syntaxValue)
+  );
+};
+
+const looksLikeMarkdownTextBlock = (value = "") =>
+  markdownTextBlockRegexes.some((regex) => regex.test(value.trim()));
+
+const looksLikeProseLine = (line = "") => {
+  const value = line.trim();
+  if (!value) return false;
+  if (looksLikeMarkdownTextBlock(value)) return true;
+  if (looksLikeDefiniteCodeLine(value)) return false;
+
+  const withoutInlineCode = stripInlineCode(value);
+  const proseWords = countWords(withoutInlineCode);
+  const hasInlineCode = /`[^`]+`/.test(value);
+  const hasSentencePunctuation = /[.!?](?:\s|$)|[,;:]\s/.test(
+    withoutInlineCode,
+  );
+  const startsLikeSentence = /^[A-ZÀ-ÖØ-Þ¿¡]/.test(withoutInlineCode);
+
+  return (
+    (proseWords >= 4 &&
+      (hasInlineCode || hasSentencePunctuation || startsLikeSentence)) ||
+    (hasInlineCode && proseWords >= 2) ||
+    (proseWords >= 2 && hasSentencePunctuation && startsLikeSentence)
+  );
+};
+
+const looksLikeCodeContinuation = (line = "") => {
+  const value = line.trim();
+  if (!value || looksLikeProseLine(value)) return false;
+
+  return (
+    /^[}\])]/.test(value) ||
+    /^[\w$]+\s*:/.test(value) ||
+    /[,;]$/.test(value) ||
+    /^[+\-*/%]?=/.test(value)
+  );
+};
+
+const isFenceLine = (line = "") => line.trim().startsWith("```");
+
+const trimTrailingBlankLines = (lines) => {
+  const trimmed = [...lines];
+  while (trimmed.length > 0 && !trimmed[trimmed.length - 1].trim()) {
+    trimmed.pop();
+  }
+  return trimmed;
+};
+
 export const newTheme = () => {
   let highlightIndex = 0;
   return {
@@ -245,35 +323,113 @@ export const newTheme = () => {
 const looksLikeLooseCode = (line = "") => {
   const value = line.trim();
   if (!value) return false;
-  if (/^[-*]\s/.test(value)) return false;
-  if (/^\d+\.\s/.test(value)) return false;
+  if (looksLikeProseLine(value)) return false;
   return (
-    /^(const|let|var|function|class|if|else|for|while|return|import|export|try|catch|async|await)\b/.test(
-      value,
-    ) ||
-    /^console\./.test(value) ||
-    /[;{}]|=>|<\/?[A-Z_a-z][^>]*>/.test(value)
+    looksLikeDefiniteCodeLine(value) ||
+    /^[{}[\](),;]+$/.test(value) ||
+    (/[;{}]/.test(value) && !looksLikeProseLine(value))
   );
+};
+
+const getFencedLineKind = (line = "") => {
+  if (!line.trim()) return "blank";
+  if (looksLikeLooseCode(line) || looksLikeCodeContinuation(line)) {
+    return "code";
+  }
+  if (looksLikeProseLine(line)) return "text";
+  return "unknown";
+};
+
+const repairFencedMarkdown = (openingLine, bodyLines) => {
+  const segments = [];
+  let currentType = null;
+  let currentLines = [];
+  let currentHasCode = false;
+
+  const pushSegment = () => {
+    if (currentLines.length < 1) return;
+
+    if (currentType === "code") {
+      const codeLines = trimTrailingBlankLines(currentLines);
+      if (codeLines.some((line) => line.trim())) {
+        segments.push({ type: "code", lines: codeLines });
+      }
+    } else {
+      segments.push({ type: "text", lines: currentLines });
+    }
+
+    currentType = null;
+    currentLines = [];
+    currentHasCode = false;
+  };
+
+  bodyLines.forEach((line) => {
+    const kind = getFencedLineKind(line);
+
+    if (kind === "blank") {
+      currentLines.push(line);
+      return;
+    }
+
+    if (kind === "text") {
+      if (currentType === "code" && currentHasCode) {
+        pushSegment();
+      }
+
+      if (!currentType) {
+        currentType = "text";
+      }
+
+      currentLines.push(line);
+      return;
+    }
+
+    if (currentType === "text" && kind === "code") {
+      pushSegment();
+    }
+
+    if (!currentType) {
+      currentType = "code";
+    }
+
+    currentLines.push(line);
+    currentHasCode = currentHasCode || kind === "code";
+  });
+
+  pushSegment();
+
+  if (!segments.some((segment) => segment.type === "text")) {
+    return [openingLine, ...bodyLines, "```"];
+  }
+
+  return segments.flatMap((segment) => {
+    if (segment.type === "text") {
+      return segment.lines;
+    }
+
+    return [openingLine, ...segment.lines, "```"];
+  });
 };
 
 const normalizeLearnMarkdown = (content = "") => {
   const lines = String(content || "").trimStart().split("\n");
   const output = [];
   let inFence = false;
+  let fenceOpeningLine = "";
+  let fenceBodyLines = [];
   let inLooseCode = false;
 
-  lines.forEach((line) => {
-    if (line.trim().startsWith("```")) {
-      if (inLooseCode) {
-        output.push("```");
-        inLooseCode = false;
-      }
-      inFence = !inFence;
-      output.push(line);
-      return;
-    }
+  const closeLooseCode = () => {
+    if (!inLooseCode) return;
+    output.push("```");
+    inLooseCode = false;
+  };
 
-    if (!inFence && looksLikeLooseCode(line)) {
+  const appendContentLine = (line) => {
+    if (
+      looksLikeLooseCode(line) ||
+      (inLooseCode && looksLikeCodeContinuation(line))
+    ) {
       if (!inLooseCode) {
         output.push("```javascript");
         inLooseCode = true;
@@ -282,16 +438,45 @@ const normalizeLearnMarkdown = (content = "") => {
       return;
     }
 
-    if (inLooseCode) {
-      output.push("```");
-      inLooseCode = false;
-    }
+    closeLooseCode();
     output.push(line);
+  };
+
+  const closeFence = () => {
+    output.push(...repairFencedMarkdown(fenceOpeningLine, fenceBodyLines));
+    inFence = false;
+    fenceOpeningLine = "";
+    fenceBodyLines = [];
+  };
+
+  lines.forEach((line) => {
+    if (isFenceLine(line)) {
+      closeLooseCode();
+
+      if (inFence) {
+        closeFence();
+      } else {
+        inFence = true;
+        fenceOpeningLine = line;
+        fenceBodyLines = [];
+      }
+
+      return;
+    }
+
+    if (inFence) {
+      fenceBodyLines.push(line);
+      return;
+    }
+
+    appendContentLine(line);
   });
 
-  if (inLooseCode) {
-    output.push("```");
+  if (inFence) {
+    closeFence();
   }
+
+  closeLooseCode();
 
   return output.join("\n");
 };
