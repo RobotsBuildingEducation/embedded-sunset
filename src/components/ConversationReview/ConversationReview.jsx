@@ -15,7 +15,6 @@ import {
   Heading,
   useColorMode,
 } from "@chakra-ui/react";
-import { useChatCompletion } from "../../hooks/useChatCompletion";
 import { VoiceInput } from "../../App";
 import { CloudCanvas, SunsetCanvas } from "../../elements/SunsetCanvas";
 import Markdown from "react-markdown";

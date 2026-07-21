@@ -8,8 +8,10 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import Markdown from "react-markdown";
-import { useSimpleGeminiChat } from "../../hooks/useGeminiChat";
-import { useChatCompletion } from "../../hooks/useChatCompletion";
+import {
+  useGeminiGradingChatCompletion,
+  useSimpleGeminiChat,
+} from "../../hooks/useGeminiChat";
 import { translation } from "../../utility/translation";
 import { IoChatbubblesOutline } from "react-icons/io5";
 import { getInstantSurfacePressProps } from "../../utility/instantSurface";
@@ -26,9 +28,7 @@ export default function PromptWritingQuestion({
   const learnPressRef = useRef({ key: "", at: 0 });
   const { messages: streamMsgs, submitPrompt: runPrompt } =
     useSimpleGeminiChat();
-  const { submitPrompt: gradePrompt } = useChatCompletion({
-    response_format: { type: "json_object" },
-  });
+  const { submitPrompt: gradePrompt } = useGeminiGradingChatCompletion();
   const [feedback, setFeedback] = useState(null);
   const actionShadow = useColorModeValue(
     "0 12px 24px rgba(15, 23, 42, 0.12)",

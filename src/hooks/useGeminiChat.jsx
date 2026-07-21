@@ -8,6 +8,7 @@ import {
   conversationReviewModel,
   knowledgeLedgerOnboardingModel,
   knowledgeLedgerModalModel,
+  gradingModel,
 } from "../database/firebaseResources";
 import { Schema } from "firebase/vertexai";
 
@@ -211,6 +212,186 @@ const useStreamingGeminiChat = (geminiModel) => {
     loading,
     submitPrompt,
     resetMessages,
+  };
+};
+
+const createGeminiChatCompletionMessage = ({
+  content = "",
+  role = "",
+  meta,
+  timestamp,
+  ...restOfParams
+}) => ({
+  ...restOfParams,
+  content,
+  role,
+  timestamp: timestamp ?? Date.now(),
+  meta: {
+    loading: false,
+    responseTime: "",
+    chunks: [],
+    ...meta,
+  },
+});
+
+const normalizeGeminiJsonText = (text = "") => {
+  const trimmed = text.trim();
+  const fencedJson = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+
+  return fencedJson ? fencedJson[1].trim() : trimmed;
+};
+
+const formatGeminiGradingPrompt = (chatMessages = []) => {
+  const transcript = chatMessages
+    .map(({ role = "user", content = "" }) => `${role}:\n${content}`)
+    .join("\n\n");
+
+  return `
+You are grading a learning app answer.
+Return only valid JSON that matches the schema requested by the user prompt.
+Do not wrap the JSON in markdown or include any explanation outside JSON.
+
+${transcript}
+  `.trim();
+};
+
+export const useGeminiGradingChatCompletion = () => {
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const messageIdRef = useRef(0);
+  const resetVersionRef = useRef(0);
+
+  const submitPrompt = useCallback(async (newMessages = []) => {
+    if (!newMessages || newMessages.length < 1) return;
+
+    const messageId = ++messageIdRef.current;
+    const resetVersion = resetVersionRef.current;
+    const isCurrentStream = () => resetVersionRef.current === resetVersion;
+    const startedAt = Date.now();
+    setLoading(true);
+
+    const promptMessages = newMessages.map(createGeminiChatCompletionMessage);
+    const responseMessage = createGeminiChatCompletionMessage({
+      id: messageId,
+      content: "",
+      role: "assistant",
+      timestamp: 0,
+      meta: { loading: true, chunks: [] },
+    });
+
+    setMessages((prev) => [...prev, ...promptMessages, responseMessage]);
+
+    try {
+      const result = await gradingModel.generateContentStream(
+        formatGeminiGradingPrompt(newMessages),
+      );
+
+      let fullResponse = "";
+
+      for await (const chunk of result.stream) {
+        if (!isCurrentStream()) return;
+
+        const chunkText = chunk.text();
+        fullResponse += chunkText;
+
+        setMessages((prev) =>
+          prev.map((message) =>
+            message.id === messageId
+              ? {
+                  ...message,
+                  content: fullResponse,
+                  meta: {
+                    ...message.meta,
+                    chunks: [
+                      ...message.meta.chunks,
+                      {
+                        content: chunkText,
+                        role: "assistant",
+                        timestamp: Date.now(),
+                        final: false,
+                      },
+                    ],
+                  },
+                }
+              : message,
+          ),
+        );
+      }
+
+      if (!isCurrentStream()) return;
+
+      const finalContent = normalizeGeminiJsonText(fullResponse);
+      const finishedAt = Date.now();
+      const responseTime = `${((finishedAt - startedAt) / 1000).toFixed(2)} sec.`;
+
+      setMessages((prev) =>
+        prev.map((message) => {
+          if (message.id !== messageId) {
+            return message;
+          }
+
+          const chunks = [...message.meta.chunks];
+          const lastChunkIndex = chunks.length - 1;
+          if (lastChunkIndex >= 0) {
+            chunks[lastChunkIndex] = {
+              ...chunks[lastChunkIndex],
+              final: true,
+            };
+          } else {
+            chunks.push({
+              content: finalContent,
+              role: "assistant",
+              timestamp: finishedAt,
+              final: true,
+            });
+          }
+
+          return {
+            ...message,
+            content: finalContent,
+            timestamp: finishedAt,
+            meta: {
+              ...message.meta,
+              loading: false,
+              responseTime,
+              chunks,
+              done: true,
+            },
+          };
+        }),
+      );
+    } catch (error) {
+      console.error("Error grading with Gemini:", error);
+      throw error;
+    } finally {
+      if (isCurrentStream()) {
+        setLoading(false);
+      }
+    }
+  }, []);
+
+  const resetMessages = useCallback(() => {
+    resetVersionRef.current += 1;
+    setMessages([]);
+    setLoading(false);
+  }, []);
+
+  const setExternalMessages = useCallback(
+    (nextMessages = []) => {
+      if (!loading) {
+        setMessages(nextMessages.map(createGeminiChatCompletionMessage));
+      }
+    },
+    [loading],
+  );
+
+  return {
+    messages,
+    loading,
+    submitPrompt,
+    abortResponse: resetMessages,
+    resetMessages,
+    setMessages: setExternalMessages,
   };
 };
 

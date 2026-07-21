@@ -94,7 +94,7 @@ initMessaging();
 const vertexAI = getVertexAI(app, { location: "global" });
 
 const model = getGenerativeModel(vertexAI, {
-  model: "gemini-3-flash-preview",
+  model: "gemini-3.5-flash-lite",
   generationConfig: {
     // Firebase AI Logic doesn't support Gemini 3 thinking_level yet.
     // For now, keep using thinking budgets (0 ≈ "minimal" behavior you're after).
@@ -103,7 +103,7 @@ const model = getGenerativeModel(vertexAI, {
 });
 
 const simplemodel = getGenerativeModel(vertexAI, {
-  model: "gemini-3-flash-preview",
+  model: "gemini-3.5-flash-lite",
   generationConfig: {
     // Firebase AI Logic doesn't support Gemini 3 thinking_level yet.
     // For now, keep using thinking budgets (0 ≈ "minimal" behavior you're after).
@@ -117,7 +117,7 @@ const promodel = getGenerativeModel(vertexAI, {
 });
 
 const thinkingmodel = getGenerativeModel(vertexAI, {
-  model: "gemini-3-flash-preview",
+  model: "gemini-3.5-flash-lite",
   generationConfig: {
     // Firebase AI Logic doesn't support Gemini 3 thinking_level yet.
     // For now, keep using thinking budgets (0 ≈ "minimal" behavior you're after).
@@ -126,7 +126,7 @@ const thinkingmodel = getGenerativeModel(vertexAI, {
 });
 
 const educationmodel = getGenerativeModel(vertexAI, {
-  model: "gemini-3.1-flash-lite",
+  model: "gemini-3.5-flash-lite",
   generationConfig: {
     // Keep Learn modal output fast and low-latency while testing this model.
     thinkingConfig: { thinkingBudget: 0 },
@@ -134,7 +134,7 @@ const educationmodel = getGenerativeModel(vertexAI, {
 });
 
 const conversationReviewModel = getGenerativeModel(vertexAI, {
-  model: "gemini-3.1-flash-lite",
+  model: "gemini-3.5-flash-lite",
   generationConfig: {
     // Keep Conversation Review responses fast while testing this model.
     thinkingConfig: { thinkingBudget: 0 },
@@ -142,7 +142,7 @@ const conversationReviewModel = getGenerativeModel(vertexAI, {
 });
 
 const knowledgeLedgerOnboardingModel = getGenerativeModel(vertexAI, {
-  model: "gemini-3.1-flash-lite",
+  model: "gemini-3.5-flash-lite",
   generationConfig: {
     // Keep Knowledge Ledger onboarding generation fast while testing this model.
     thinkingConfig: { thinkingBudget: 0 },
@@ -150,9 +150,18 @@ const knowledgeLedgerOnboardingModel = getGenerativeModel(vertexAI, {
 });
 
 const knowledgeLedgerModalModel = getGenerativeModel(vertexAI, {
-  model: "gemini-3.1-flash-lite",
+  model: "gemini-3.5-flash-lite",
   generationConfig: {
     // Keep Knowledge Ledger modal generation fast while testing this model.
+    thinkingConfig: { thinkingBudget: 0 },
+  },
+});
+
+const gradingModel = getGenerativeModel(vertexAI, {
+  model: "gemini-3.5-flash-lite",
+  generationConfig: {
+    // Grade in the frontend with fast JSON-only responses for comparison.
+    responseMimeType: "application/json",
     thinkingConfig: { thinkingBudget: 0 },
   },
 });
@@ -169,4 +178,5 @@ export {
   conversationReviewModel,
   knowledgeLedgerOnboardingModel,
   knowledgeLedgerModalModel,
+  gradingModel,
 };

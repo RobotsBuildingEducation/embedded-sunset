@@ -214,7 +214,10 @@ import { useSharedNostr } from "./hooks/useNOSTR";
 import Markdown from "react-markdown";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 
-import { useSimpleGeminiChat } from "./hooks/useGeminiChat";
+import {
+  useGeminiGradingChatCompletion,
+  useSimpleGeminiChat,
+} from "./hooks/useGeminiChat";
 
 import { logEvent } from "firebase/analytics";
 const BitcoinOnboarding = lazy(
@@ -2127,9 +2130,11 @@ const Step = ({
     setLastChapterReviewStep(currentStep);
   };
 
-  const { resetMessages, messages, submitPrompt } = useChatCompletion({
-    response_format: { type: "json_object" },
-  });
+  const {
+    resetMessages: resetGradingMessages,
+    messages: gradingMessages,
+    submitPrompt: submitGradingPrompt,
+  } = useGeminiGradingChatCompletion();
 
   const navigate = useNavigate();
   const toast = useToast();
@@ -2739,7 +2744,7 @@ const Step = ({
     // ansrctrl += 1;
     // localStorage.setItem("ansrctrl", ansrctrl);
 
-    resetMessages();
+    resetGradingMessages();
     setFeedback("");
     setGrade("");
     setIsSending(true);
@@ -2763,7 +2768,7 @@ const Step = ({
       // console.log("review");
       const relevantSteps = getObjectsByGroup(step?.group, steps[userLanguage]);
 
-      await submitPrompt(
+      await submitGradingPrompt(
         [
           {
             content: `The user is having a conversation and reviewing the following subjects"${JSON.stringify(
@@ -2780,7 +2785,7 @@ const Step = ({
         true,
       );
     } else if (step.isSelectOrder) {
-      await submitPrompt(
+      await submitGradingPrompt(
         [
           {
             content: `The user is answering the following question "${
@@ -2798,7 +2803,7 @@ const Step = ({
     } else if (step.isMultipleChoice || step.isCodeCompletion) {
       // console.log("ANSWER", answer);
       // console.log("    step.question.answer", step.question.answer);
-      await submitPrompt([
+      await submitGradingPrompt([
         {
           content: `The user is answering the following question "${
             step.question.questionText
@@ -2812,7 +2817,7 @@ const Step = ({
       ]);
     } else if (step.isPromptWriting) {
       // we delegate most grading to the component, but you could:
-      await submitPrompt([
+      await submitGradingPrompt([
         {
           role: "user",
           content: `
@@ -2824,7 +2829,7 @@ const Step = ({
         },
       ]);
     } else if (step.isSingleLineText) {
-      await submitPrompt(
+      await submitGradingPrompt(
         [
           {
             content: `The user is answering the following question "${
@@ -2841,7 +2846,7 @@ const Step = ({
         true,
       );
     } else if (step.isMultipleAnswerChoice) {
-      await submitPrompt(
+      await submitGradingPrompt(
         [
           {
             content: `The user is answering the following question "${
@@ -2860,7 +2865,7 @@ const Step = ({
         true,
       );
     } else if (step.isText) {
-      await submitPrompt(
+      await submitGradingPrompt(
         [
           {
             content: `The user is answering the following question "${
@@ -2875,7 +2880,7 @@ const Step = ({
         true,
       );
     } else if (step.isTerminal) {
-      await submitPrompt([
+      await submitGradingPrompt([
         {
           content: `The user is answering the following question "${
             step.question.questionText
@@ -2886,7 +2891,7 @@ const Step = ({
         },
       ]);
     } else {
-      await submitPrompt(
+      await submitGradingPrompt(
         [
           {
             content: `The user is answering the following question "${
@@ -3068,9 +3073,9 @@ const Step = ({
 
   // Stream messages and handle feedback
   useEffect(() => {
-    if (messages?.length > 0) {
+    if (gradingMessages?.length > 0) {
       try {
-        const lastMessage = messages[messages.length - 1];
+        const lastMessage = gradingMessages[gradingMessages.length - 1];
 
         const isLastMessage =
           lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
@@ -3133,7 +3138,7 @@ const Step = ({
         });
       }
     }
-  }, [messages]);
+  }, [gradingMessages]);
 
   // Reset state for a new step
   useEffect(() => {
@@ -3146,7 +3151,7 @@ const Step = ({
     resetEducationalMessages();
     setEducationalContent([]);
     setIsCorrect(null);
-    resetMessages();
+    resetGradingMessages();
     hasShownDailyGoalCelebrationRef.current = false;
   }, [step]);
 
@@ -4228,7 +4233,7 @@ const Step = ({
                 useVoice={true}
                 stopListening={stopListening}
                 setFeedback={setFeedback}
-                resetFeedbackMessages={resetMessages}
+                resetFeedbackMessages={resetGradingMessages}
                 step={step}
                 userLanguage={userLanguage}
               />
@@ -4244,7 +4249,7 @@ const Step = ({
                 useVoice={true}
                 stopListening={stopListening}
                 setFeedback={setFeedback}
-                resetFeedbackMessages={resetMessages}
+                resetFeedbackMessages={resetGradingMessages}
                 step={step}
                 userLanguage={userLanguage}
               />
@@ -4270,7 +4275,7 @@ const Step = ({
                 useVoice={true}
                 stopListening={stopListening}
                 setFeedback={setFeedback}
-                resetFeedbackMessages={resetMessages}
+                resetFeedbackMessages={resetGradingMessages}
                 step={step}
                 userLanguage={userLanguage}
                 currentStep={currentStep}
@@ -4294,7 +4299,7 @@ const Step = ({
                   stopListening={stopListening}
                   resetVoiceState={resetVoiceState}
                   setFeedback={setFeedback}
-                  resetFeedbackMessages={resetMessages}
+                  resetFeedbackMessages={resetGradingMessages}
                   step={step}
                   userLanguage={userLanguage}
                   handleModalCheck={handleModalCheck}
