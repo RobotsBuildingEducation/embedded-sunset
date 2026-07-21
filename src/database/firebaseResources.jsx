@@ -111,6 +111,23 @@ const simplemodel = getGenerativeModel(vertexAI, {
   },
 });
 
+const questionGenerationModel = getGenerativeModel(vertexAI, {
+  model: "gemini-3.5-flash-lite",
+  generationConfig: {
+    // Generated questions are parsed and rendered as card data in the UI.
+    responseMimeType: "application/json",
+    thinkingConfig: { thinkingBudget: 0 },
+  },
+});
+
+const adaptiveLearningModel = getGenerativeModel(vertexAI, {
+  model: "gemini-3.5-flash-lite",
+  generationConfig: {
+    // Keep adaptive-learning suggestions fast while preserving Markdown output.
+    thinkingConfig: { thinkingBudget: 0 },
+  },
+});
+
 const promodel = getGenerativeModel(vertexAI, {
   // model: "gemini-1.5-flash",
   model: "gemini-2.5-pro-preview-03-25",
@@ -171,6 +188,8 @@ export {
   analytics,
   model,
   simplemodel,
+  questionGenerationModel,
+  adaptiveLearningModel,
   messaging,
   promodel,
   thinkingmodel,

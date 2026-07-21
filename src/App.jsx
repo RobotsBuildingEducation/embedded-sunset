@@ -65,7 +65,6 @@ import {
   useLocation,
 } from "react-router-dom";
 
-import { useChatCompletion } from "./hooks/useChatCompletion";
 import {
   // CloudCanvas,
   SunsetCanvas,
@@ -215,7 +214,9 @@ import Markdown from "react-markdown";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 
 import {
+  useAdaptiveLearningGeminiChat,
   useGeminiGradingChatCompletion,
+  useQuestionGenerationGeminiChat,
   useSimpleGeminiChat,
 } from "./hooks/useGeminiChat";
 
@@ -2293,15 +2294,15 @@ const Step = ({
     resetMessages: resetNewQuestionMessages,
     messages: newQuestionMessages,
     submitPrompt: submitNewQuestionMessages,
-  } = useChatCompletion({
-    response_format: { type: "json_object" },
-  });
+    loading: isNewQuestionLoading,
+  } = useQuestionGenerationGeminiChat();
 
   const {
     resetMessages: resetSuggestionMessages,
     messages: suggestionMessages,
     submitPrompt: submitSuggestionMessages,
-  } = useChatCompletion({});
+    loading: isSuggestionModelLoading,
+  } = useAdaptiveLearningGeminiChat();
 
   useEffect(() => {
     setStep(steps[userLanguage][currentStep]);
@@ -2321,19 +2322,14 @@ const Step = ({
           .slice(1, currentStep) // All completed steps
           .map((step) => step.title);
 
-        await submitSuggestionMessages([
-          {
-            content: `
+        await submitSuggestionMessages(`
             The user is on question ${currentStep}. If the question number is 0 offer some words of encouragement when it comes to learning journeys and do not proceed with further instruction. If the question is 1, suggest learning the very basics of coding in two sentences and ignore the rest of this instruction. Otherwise, for any other question, the user has completed the following subjects: ${JSON.stringify(subjectsCompleted)}. Based on their progress, suggest the next best topic to learn and explain why. Based on their progress, suggest the next best topic to learn and explain why while also providing a brief example of code too to expose the individual to the concept. This must always be in ${pickProgrammingLanguage(userLanguage)} when code is being expressed.           
             
             This applies to any question: Respond in minimalist markdown without any headers, only bold facing is allowed to indicate headers for new paragraphs. Never reference the user's subjects, that's for your eyes only. Never reference other businesses or organizations.
               The user is speaking ${
                 userLanguage.includes("en") ? "English" : "Spanish"
               }.
-            `,
-            role: "user",
-          },
-        ]);
+            `);
       } catch (error) {
         console.error("Error generating suggestion:", error);
         showAlert("warning", translation[userLanguage]["ai.error"]);
@@ -2525,9 +2521,7 @@ const Step = ({
           .slice(1, currentStep) // All completed steps
           .map((step) => step.title);
 
-        await submitSuggestionMessages([
-          {
-            content: `
+        await submitSuggestionMessages(`
             The user is on question ${currentStep}. If the question number is 0 offer some words of encouragement when it comes to learning journeys and do not proceed with further instruction. If the question is 1, suggest learning the very basics of coding in two sentences and ignore the rest of this instruction. Otherwise, for any other question, the user has completed the following subjects: ${JSON.stringify(subjectsCompleted)}. Based on their progress, suggest the next best topic to learn and explain why.  Based on their progress, suggest the next best topic to learn and explain why while also providing a brief example of code too to expose the individual to the concept.
 
             This applies to any question: Respond in minimalist markdown without any headers, only bold facing is allowed to indicate headers for new paragraphs. Never reference the user's subjects, that's for your eyes only. Never reference other businesses or organizations.
@@ -2536,10 +2530,7 @@ const Step = ({
               }.
 
               The user is using the following programming language: ${pickProgrammingLanguage(userLanguage)}
-            `,
-            role: "user",
-          },
-        ]);
+            `);
       } catch (error) {
         console.error("Error generating suggestion:", error);
         showAlert("warning", translation[userLanguage]["ai.error"]);
@@ -2570,19 +2561,14 @@ const Step = ({
           .slice(1, currentStep) // All completed steps
           .map((step) => step.title);
 
-        await submitSuggestionMessages([
-          {
-            content: `
+        await submitSuggestionMessages(`
             The user is on question ${currentStep}. If the question number is 0 offer some words of encouragement when it comes to learning journeys and do not proceed with further instruction. If the question is 1, suggest learning the very basics of coding in two sentences and ignore the rest of this instruction. Otherwise, for any other question, the user has completed the following subjects: ${JSON.stringify(subjectsCompleted)}. Based on their progress, suggest the next best topic to learn and explain why while also providing a brief example of code too to expose the individual to the concept.
             
             This applies to any question: Respond in minimalist markdown without any headers, only bold facing is allowed to indicate headers for new paragraphs. Never reference the user's subjects, that's for your eyes only. Never reference other businesses or organizations.
               The user is speaking ${
                 userLanguage.includes("en") ? "English" : "Spanish"
               }.
-            `,
-            role: "user",
-          },
-        ]);
+            `);
       } catch (error) {
         console.error("Error generating suggestion:", error);
         showAlert("warning", translation[userLanguage]["ai.error"]);
@@ -2604,13 +2590,6 @@ const Step = ({
 
         if (isLastMessage) {
           setSuggestionMessage(lastMessage.content); // Store suggestion
-        } else {
-          setSuggestionMessage(lastMessage.content);
-          setSuggestionLoading(false);
-
-          // if (lastMessage.content.length > 0) {
-          //   setIsAnimating(false);
-          // }
         }
       } catch (error) {
         console.error("Error processing suggestion response:", error);
@@ -3618,8 +3597,7 @@ const Step = ({
         First, The user was working on the following step:
         ${JSON.stringify(step)}.
 
-        Secondly, the user has answered the following subjects: ${getUserAnsweredSubjects()}
-        )},
+        Secondly, the user has answered the following subjects: ${getUserAnsweredSubjects()}.
 
 
         The request: Create/invent a completely new and custom adaptive question and feel free to explore creativity using the same interface with group, title, description, <question_type> and the custom question object interface. Here are the types of question_types (e.g isMultipleChoice, isCodeCompletion) and their respective question objects that we've used in the tutorial group, so that you can understand how questions are designed to encourage variance in learning: ${JSON.stringify(getObjectsByGroup("tutorial", steps[userLanguage]))}. It is extremely important to understand that the data types used in the "answer" field are specific and must not change under any circumstance, or else the request will fail due to unexpected data type.
@@ -3628,17 +3606,12 @@ const Step = ({
         
         Remember, the types are things like isText, isTerminal, isMultipleChoice, isCodeCompletion, etc. But it must strictly be a different UI type than the step that the user started you off with. For example, if the user is sending you an isText: true question, you can't respond with an isText: true output.
         
-        Return the question in the proper JSON format as guided in the language of ${userLanguage.includes("en") ? "English" : "Spanish"}.}
+        Return only the question as a valid JSON object, without Markdown or code fences, in ${userLanguage.includes("en") ? "English" : "Spanish"}.
       `;
 
       // console.log("PROMPT", prompt);
-      // Submit the prompt to the chat completion API
-      await submitNewQuestionMessages([
-        {
-          content: prompt,
-          role: "user",
-        },
-      ]);
+      // Submit the prompt to the dedicated Gemini question-generation model.
+      await submitNewQuestionMessages(prompt);
 
       // // Process the API response once available
       // if (messages?.length > 0) {
@@ -3761,7 +3734,8 @@ const Step = ({
           text={chapterReviewText}
           onStart={dismissChapterReview}
         />
-      ) : newQuestionMessages.length > 0 && isEmpty(generatedQuestion) ? (
+      ) : (isNewQuestionLoading || newQuestionMessages.length > 0) &&
+        isEmpty(generatedQuestion) ? (
         <Box
           width="100%"
           minH="calc(100dvh - 160px)"
@@ -4633,7 +4607,9 @@ const Step = ({
             </Box>
           )}
 
-          {suggestionMessages.length > 0 &&
+          {(suggestionLoading ||
+            isSuggestionModelLoading ||
+            suggestionMessages.length > 0) &&
           isEmpty(suggestionMessage) &&
           !step?.isTerminal ? (
             <Box p={4} textAlign="center" mt="-86px">

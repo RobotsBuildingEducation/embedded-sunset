@@ -2,6 +2,8 @@ import { useCallback, useRef, useState } from "react";
 import {
   model,
   simplemodel,
+  questionGenerationModel,
+  adaptiveLearningModel,
   promodel,
   thinkingmodel,
   educationmodel,
@@ -396,6 +398,12 @@ export const useGeminiGradingChatCompletion = () => {
 };
 
 export const useSimpleGeminiChat = () => useStreamingGeminiChat(simplemodel);
+
+export const useQuestionGenerationGeminiChat = () =>
+  useStreamingGeminiChat(questionGenerationModel);
+
+export const useAdaptiveLearningGeminiChat = () =>
+  useStreamingGeminiChat(adaptiveLearningModel);
 
 export const useEducationGeminiChat = () =>
   useStreamingGeminiChat(educationmodel);

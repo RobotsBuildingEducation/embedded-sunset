@@ -35,6 +35,10 @@ import {
   nativeOverlayMotionProps,
 } from "../../utility/modalMotion";
 import { useLiteOverlayEffects } from "../../utility/perfProfile";
+import {
+  GENERATED_REACT_RUNTIME_REQUIREMENTS,
+  normalizeGeneratedReactCode,
+} from "../../utility/generatedReactCode";
 
 const getBuildStorageKey = (userId, groupId) =>
   `buildYourApp:${userId || "local"}:${groupId}`;
@@ -154,6 +158,7 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
         const fallback = readBuildFallback(userId, groupId);
         if (!loadedIdea && fallback?.idea) loadedIdea = fallback.idea;
         if (!loadedCode && fallback?.code) loadedCode = fallback.code;
+        loadedCode = normalizeGeneratedReactCode(loadedCode);
 
         if (!isMounted) return;
 
@@ -197,7 +202,7 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
     if (fenceClosedRef.current) return;
 
     const last = messages[messages.length - 1];
-    const content = last?.content || "";
+    const content = normalizeGeneratedReactCode(last?.content || "");
     const parsed = parseFenced(content);
 
     if (!parsed.hasFence) {
@@ -278,6 +283,7 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
       
       2. When generating your response, you MUST format your software in this manner:\n  Globally: Never use imports. Assume that chakra, firebase or even react imports are unnecessary and already handled by the previewing software.\n\n  
       - A. If you are upgrading to React, do NOT include any import statements or define dependencies (e.g useEffect/useState should be React.useEffect/React.useState) and conclude the component or components with render(<TheComponentYouCreated />). This means React code is only ever about writing component functions, nothing else. Never do something like const { Box } = ChakraUI, just use the Box it's configured to work. \n  
+      ${GENERATED_REACT_RUNTIME_REQUIREMENTS}\n
       - B. If you are generating plain html, use !DOCTYPE\n  
       - C. Do NOT return purely plain JavaScript snippets. Use React components or HTML only based on the criteria.\n  
       - D. If you are writing firebase (with or without react), use v9, and you MUST use a unique document in the 'experiments' collection. Never use any other collection or your firebase software will fail. Never use imports or we will fail. Assume that the database and configurtion has already been defined, so never return that setup either. Refer to the database element as "database" and not "db" or anything else. Do not use auth. Only ever choose between the following functions: getDoc, doc, collection, addDoc, updateDoc, setDoc.\n  

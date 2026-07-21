@@ -222,6 +222,7 @@ import {
   SlideFade,
   useClipboard,
   useColorMode,
+  useToast,
   Img,
   Mark,
   RequiredIndicator,
@@ -232,6 +233,7 @@ import {
 import Editor from "@monaco-editor/react";
 import { LiveError, LivePreview, LiveProvider } from "react-live";
 import { appTheme } from "../../theme";
+import { normalizeGeneratedReactCode } from "../../utility/generatedReactCode";
 
 import { database } from "../../database/firebaseResources";
 import {
@@ -311,7 +313,7 @@ const LiveReactEditorModal = ({
 
   // Normalize React 18 root/render patterns to react-live's `render(el)`
   const normalizeReactEntry = (src = "") => {
-    let s = src;
+    let s = normalizeGeneratedReactCode(src);
 
     // ReactDOM.createRoot(root).render(<App />)
     s = s.replace(
@@ -721,6 +723,9 @@ const LiveReactEditorModal = ({
                     ScaleFade,
                     Slide,
                     SlideFade,
+                    useClipboard,
+                    useColorMode,
+                    useToast,
                     // Firestore helpers & db handle for demos
                     database,
                     getDoc,

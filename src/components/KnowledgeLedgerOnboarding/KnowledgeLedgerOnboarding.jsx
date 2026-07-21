@@ -14,6 +14,7 @@ import {
   Progress,
   useColorMode,
   useColorModeValue,
+  useToast,
 } from "@chakra-ui/react";
 import Editor from "@monaco-editor/react";
 import { LiveProvider, LivePreview, LiveError } from "react-live";
@@ -33,6 +34,10 @@ import { database } from "../../database/firebaseResources";
 import WaveBar from "../WaveBar";
 import { soundManager } from "../../utility/soundManager";
 import { triggerHaptic } from "tactus";
+import {
+  GENERATED_REACT_RUNTIME_REQUIREMENTS,
+  normalizeGeneratedReactCode,
+} from "../../utility/generatedReactCode";
 
 export const transcriptDisplay = {
   tutorial: {
@@ -135,7 +140,11 @@ export default function KnowledgeLedgerOnboarding({
 
   // whenever AI messages change, init arrays
   useEffect(() => {
-    setEditorCodes(messages.map((m) => stripCodeFences(m.content)));
+    setEditorCodes(
+      messages.map((m) =>
+        normalizeGeneratedReactCode(stripCodeFences(m.content)),
+      ),
+    );
     setIsPreviewings(messages.map(() => false));
     setErrors(messages.map(() => ""));
     setConsoleLogs(messages.map(() => []));
@@ -210,6 +219,8 @@ export default function KnowledgeLedgerOnboarding({
         2. Your code should conclude with the line: render(<TheComponentYouCreated />)
         
         3. Use the React object for useState and useEffect (React.useState, React.useEffect) without importing. Do not use it for createElement, just use the jsx notation instead.
+
+        ${GENERATED_REACT_RUNTIME_REQUIREMENTS}
         
         4. Print width of 80.
         
@@ -423,6 +434,7 @@ export default function KnowledgeLedgerOnboarding({
                       React,
                       useState: React.useState,
                       useEffect: React.useEffect,
+                      useToast,
                       Button,
                       Input,
                       Text,

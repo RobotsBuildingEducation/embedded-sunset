@@ -30,6 +30,10 @@ import { translation } from "../../utility/translation";
 const LiveReactEditorModal = lazy(() => import("../LiveCodeEditor/LiveCodeEditor"));
 import { CloudCanvas, SunsetCanvas } from "../../elements/SunsetCanvas";
 import { soundManager } from "../../utility/soundManager";
+import {
+  GENERATED_REACT_RUNTIME_REQUIREMENTS,
+  normalizeGeneratedReactCode,
+} from "../../utility/generatedReactCode";
 
 const getBuildStorageKey = (userId, groupId) =>
   `buildYourApp:${userId || "local"}:${groupId}`;
@@ -230,6 +234,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
         const fallback = readBuildFallback(userId, step.group);
         if (!loadedIdea && fallback?.idea) loadedIdea = fallback.idea;
         if (!loadedCode && fallback?.code) loadedCode = fallback.code;
+        loadedCode = normalizeGeneratedReactCode(loadedCode);
 
         setIdea(loadedIdea);
         setSavedIdea(loadedIdea);
@@ -245,8 +250,9 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
   useEffect(() => {
     if (messages.length > 0) {
       const last = messages[messages.length - 1];
-      setCode(last.content);
-      saveBuild(last.content, "build");
+      const normalizedCode = normalizeGeneratedReactCode(last.content);
+      setCode(normalizedCode);
+      saveBuild(normalizedCode, "build");
     }
   }, [messages]);
 
@@ -291,6 +297,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
       1. This is the MOST important to understand: The code should be progressively and appropriately built based on the user's progress to incentivize further interest, excitement and progress, so you should implement the app in a way that highlights the user's progress. For example, if the user's most recent progress/group has learned how to use firebase, then implement firebase features. If the user has recently learned react, implement react UIs, etc. If it's just javascript, then use HMTL. The goal is to build out a simple but real demo that users can operate and preview in an editor and to generate an awesome user experience to highlight one's growth.\n\n` +
       `2. When generating your response, you MUST format your software in this manner:\n  Globally: Never use imports. Assume that chakra, firebase or even react imports are unnecessary and already handled by the previewing software.\n\n  
       - A. If you are upgrading to React, do NOT include any import statements or define dependencies (for example, if you use useEffect or useState, you use React.useEffect and React.useState),and conclude the component or components with render(<TheComponentYouCreated />). This means React code is only ever about writing component functions, nothing else.\n  
+      ${GENERATED_REACT_RUNTIME_REQUIREMENTS}\n
       - B. If you are generating plain html, use !DOCTYPE\n  
       - C. Do NOT return purely plain JavaScript snippets. Use React components or HTML only based on the criteria.\n  
       - D. If you are writing firebase (with or without react), use v9, and you MUST use a unique document in the 'experiments' collection. Never use any other collection or your firebase software will fail. Never use imports or we will fail. Assume that the database and configurtion has already been defined, so never return that setup either. Refer to the database element as "database" and not "db" or anything else. Do not use auth. Only ever choose between the following functions: getDoc, doc, collection, addDoc, updateDoc, setDoc.\n  
