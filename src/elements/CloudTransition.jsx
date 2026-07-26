@@ -303,22 +303,21 @@ const LIGHT_TRANSITION_THEMES = {
     skyTop: "#0b1023",
     skyBottom: "#1a2038",
     clouds: [
-      "rgba(255,255,255,0.15)",
-      "rgba(160,170,210,0.1)",
-      "rgba(120,130,180,0.12)",
+      "rgba(7,12,27,0.76)",
+      "rgba(15,23,42,0.72)",
+      "rgba(30,41,59,0.64)",
     ],
+    cloudHighlight: "rgba(71,85,105,0.28)",
+    cloudFade: "rgba(2,6,23,0)",
   },
 };
 
 const createDarkTransitionTheme = (glows = []) => ({
   skyTop: "#040816",
   skyBottom: "#101836",
-  clouds: [
-    "rgba(168,180,216,0.16)",
-    "rgba(109,128,176,0.14)",
-    "rgba(255,255,255,0.08)",
-  ],
-  cloudHighlight: "rgba(255,255,255,0.18)",
+  clouds: ["rgba(7,12,27,0.76)", "rgba(15,23,42,0.72)", "rgba(30,41,59,0.64)"],
+  cloudHighlight: "rgba(71,85,105,0.28)",
+  cloudFade: "rgba(2,6,23,0)",
   sparkleColor: "191,219,254",
   sparkleCrossColor: "255,255,255",
   glows,
@@ -859,7 +858,7 @@ const CloudTransition = ({
     const drawCloudLobe = (cx, cy, r, color) => {
       const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
       grad.addColorStop(0, color);
-      grad.addColorStop(1, "rgba(255,255,255,0)");
+      grad.addColorStop(1, transitionTheme.cloudFade || "rgba(255,255,255,0)");
       ctx.fillStyle = grad;
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);

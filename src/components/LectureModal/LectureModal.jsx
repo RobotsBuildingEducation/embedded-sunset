@@ -39,12 +39,28 @@ import {
 } from "../../elements/RandomCharacter";
 
 const newTheme = {
-  h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  h4: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  h5: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  h6: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  h1: (props) => (
+    <Heading as="h4" mt={6} size="md" color="inherit" {...props} />
+  ),
+  h2: (props) => (
+    <Heading as="h4" mt={6} size="md" color="inherit" {...props} />
+  ),
+  h3: (props) => (
+    <Heading as="h4" mt={6} size="md" color="inherit" {...props} />
+  ),
+  h4: (props) => (
+    <Heading as="h4" mt={6} size="md" color="inherit" {...props} />
+  ),
+  h5: (props) => (
+    <Heading as="h4" mt={6} size="md" color="inherit" {...props} />
+  ),
+  h6: (props) => (
+    <Heading as="h4" mt={6} size="md" color="inherit" {...props} />
+  ),
+  p: (props) => <Text mb={2} color="inherit" {...props} />,
+  text: (props) => <Text as="span" color="inherit" {...props} />,
+  strong: (props) => <Box as="strong" color="inherit" {...props} />,
+  a: (props) => <Link color="#90CDF4" textDecoration="underline" {...props} />,
   code: ({ node, inline, className, children, ...props }) => {
     const content = Array.isArray(children)
       ? children.join("")
@@ -86,6 +102,31 @@ const newTheme = {
         </Code>
       </Box>
     );
+  },
+};
+
+const REVIEW_TEXT_COLOR = "#F7FAFC";
+const reviewAccordionButtonStyles = {
+  border: "1px solid transparent",
+  height: "100%",
+  padding: "40px",
+  color: REVIEW_TEXT_COLOR,
+  bg: "rgba(5,8,21,0.42)",
+  transition: "background-color 160ms ease, border-color 160ms ease",
+  _hover: {
+    bg: "rgba(12,21,40,0.96)",
+    color: REVIEW_TEXT_COLOR,
+    borderColor: "rgba(144,205,244,0.48)",
+  },
+  _focusVisible: {
+    bg: "rgba(12,21,40,0.96)",
+    color: REVIEW_TEXT_COLOR,
+    borderColor: "#90CDF4",
+    boxShadow: "0 0 0 3px rgba(144,205,244,0.28)",
+  },
+  _expanded: {
+    bg: "rgba(12,21,40,0.82)",
+    color: REVIEW_TEXT_COLOR,
   },
 };
 
@@ -487,7 +528,7 @@ const LectureModal = ({
       {/* <Heading as="h1" color="purple">
         Module Review
       </Heading> */}
-      <Box p={4} color="white">
+      <Box p={4} color={REVIEW_TEXT_COLOR}>
         <Box
           p={4}
           borderColor="transparent"
@@ -604,9 +645,7 @@ const LectureModal = ({
               >
                 <h2>
                   <AccordionButton
-                    border="1px solid transparent"
-                    height="100%"
-                    padding="40px"
+                    {...reviewAccordionButtonStyles}
                     onMouseDown={handleSummaryView}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
@@ -620,7 +659,11 @@ const LectureModal = ({
                     <AccordionIcon />
                   </AccordionButton>
                 </h2>
-                <AccordionPanel pb={4} textAlign={"left"}>
+                <AccordionPanel
+                  pb={4}
+                  textAlign="left"
+                  color={REVIEW_TEXT_COLOR}
+                >
                   <Markdown
                     components={ChakraUIRenderer(newTheme)}
                     children={
@@ -638,16 +681,12 @@ const LectureModal = ({
 
               <AccordionItem border="1px solid transparent">
                 <h2>
-                  <AccordionButton
-                    border="1px solid transparent"
-                    height="100%"
-                    padding="40px"
-                  >
+                  <AccordionButton {...reviewAccordionButtonStyles}>
                     <Box textAlign="left">Practice</Box>
                     <AccordionIcon />
                   </AccordionButton>
                 </h2>
-                <AccordionPanel pb={4} p={0}>
+                <AccordionPanel pb={4} p={0} color={REVIEW_TEXT_COLOR}>
                   <PracticeModule
                     currentTranscript={transcriptObject}
                     userLanguage={userLanguage}
