@@ -5,6 +5,8 @@ const config = {
   useSystemColorMode: false,
 };
 
+export const APP_SQUIRCLE_SHAPE = "superellipse(2)";
+
 export const appTheme = extendTheme({
   config,
   colors: {

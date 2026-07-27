@@ -50,6 +50,10 @@ import {
   Divider,
   useColorMode,
   useColorModeValue,
+  InputGroup,
+  InputLeftElement,
+  SimpleGrid,
+  Stack,
 } from "@chakra-ui/react";
 import ReactBash from "react-bash";
 import SpeechRecognition, {
@@ -86,7 +90,7 @@ import DailyGoalCelebrationModal from "./components/DailyGoalCelebrationModal/Da
 import { MiniKitContextProvider } from "./providers/MiniKitProvider.jsx";
 import AnimatedBackground from "./components/AnimatedBackground/AnimatedBackground";
 import { ThemeInitializer } from "./ThemeInitializer.jsx";
-import { appTheme } from "./theme.js";
+import { APP_SQUIRCLE_SHAPE, appTheme } from "./theme.js";
 
 import {
   createUser,
@@ -139,6 +143,7 @@ import { isUnsupportedBrowser } from "./utility/browser";
 import {
   ChevronDownIcon,
   EmailIcon,
+  LockIcon,
   PlusSquareIcon,
   RepeatIcon,
 } from "@chakra-ui/icons";
@@ -1322,7 +1327,6 @@ export const VoiceInput = ({
           />
         ) : null}
       </Suspense>
-
     </VStack>
   );
 };
@@ -2411,9 +2415,7 @@ const Step = ({
       ) {
         setStreak(0);
         setDailyProgress(0);
-        const newEndTime = new Date(
-          currentTime.getTime() + savedTimer * 60000,
-        );
+        const newEndTime = new Date(currentTime.getTime() + savedTimer * 60000);
         setStartTime(currentTime);
         setEndTime(newEndTime);
 
@@ -4852,7 +4854,6 @@ const Step = ({
           </>
         </>
       )}
-
     </VStack>
   );
 };
@@ -5341,7 +5342,9 @@ const Home = ({
       );
 
       if (!newKeys?.npub) {
-        throw new Error("Could not create your account keys. Please try again.");
+        throw new Error(
+          "Could not create your account keys. Please try again.",
+        );
       }
 
       setKeys(newKeys);
@@ -5350,9 +5353,7 @@ const Home = ({
 
       const defaultInterval = 2880;
       const currentTime = new Date();
-      const endTime = new Date(
-        currentTime.getTime() + defaultInterval * 60000,
-      );
+      const endTime = new Date(currentTime.getTime() + defaultInterval * 60000);
 
       await ensureAppCheckReady();
 
@@ -6727,14 +6728,95 @@ const Home = ({
   );
 };
 
+const SUBSCRIPTION_COPY = {
+  en: {
+    title: "Thanks for trying out my app!",
+    subtitle: "Enter the membership passcode to unlock the rest of the app.",
+    benefitsHeading: "Becoming a member grants you",
+    benefitApps:
+      "Full access to this coding platform, the companion language-learning app, and future education apps.",
+    benefitContent:
+      "A growing collection of subscriber content about business, engineering, investing, and building real products.",
+    benefitScholarships:
+      "Support the mission to create scholarships with learning.",
+    recommended: "Recommended",
+    appsOnlyTitle: "Apps only",
+    appsOnlyPrice: "$120",
+    appsOnlyDetail: "Pay once for access to the apps only.",
+    appsOnlyCta: "Pay once",
+    annualTitle: "Annual",
+    annualPrice: "$5/mo",
+    annualDetail: "50% off",
+    annualBilling: "Billed $60/year",
+    annualCta: "Subscribe annually",
+    monthlyTitle: "Monthly",
+    monthlyPrice: "$10/mo",
+    monthlyCta: "Subscribe monthly",
+    passcodeHeading: "Already a member?",
+    passcodeDetail: "Enter the passcode from your membership post.",
+    passcodePlaceholder: "Membership passcode",
+    emptyPasscode: "Enter the membership passcode.",
+    invalidPasscode: "Invalid passcode. Please try again.",
+    accountError: "We couldn't find your account. Please sign in again.",
+    verifying: "Verifying",
+    submit: "Unlock the app",
+  },
+  es: {
+    title: "¡Gracias por probar mi app!",
+    subtitle:
+      "Ingresa el código de membresía para desbloquear el resto de la app.",
+    benefitsHeading: "Al hacerte miembro obtienes",
+    benefitApps:
+      "Acceso completo a esta plataforma de programación, la app complementaria de idiomas y futuras apps educativas.",
+    benefitContent:
+      "Una colección creciente de contenido para miembros sobre negocios, ingeniería, inversión y creación de productos reales.",
+    benefitScholarships:
+      "Apoya la misión de crear becas mediante el aprendizaje.",
+    recommended: "Recomendado",
+    appsOnlyTitle: "Solo apps",
+    appsOnlyPrice: "$120",
+    appsOnlyDetail: "Pago único para acceder solamente a las apps.",
+    appsOnlyCta: "Pagar una vez",
+    annualTitle: "Anual",
+    annualPrice: "$5/mes",
+    annualDetail: "50% de descuento",
+    annualBilling: "Facturado a $60/año",
+    annualCta: "Suscribirse anual",
+    monthlyTitle: "Mensual",
+    monthlyPrice: "$10/mes",
+    monthlyCta: "Suscribirse mensual",
+    passcodeHeading: "¿Ya eres miembro?",
+    passcodeDetail: "Ingresa el código de tu publicación de membresía.",
+    passcodePlaceholder: "Código de membresía",
+    emptyPasscode: "Ingresa el código de membresía.",
+    invalidPasscode: "Código inválido. Inténtalo de nuevo.",
+    accountError: "No encontramos tu cuenta. Inicia sesión de nuevo.",
+    verifying: "Verificando",
+    submit: "Desbloquear la app",
+  },
+};
+
 const PasscodePage = ({ isOldAccount, userLanguage }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [input, setInput] = useState("");
-  const [isValid, setIsValid] = useState(null);
+  const [validationError, setValidationError] = useState("");
   const navigate = useNavigate();
-  const alert = useAlertStore((s) => s.alert);
-  const hideAlert = useAlertStore((s) => s.hideAlert);
   const showAlert = useAlertStore((s) => s.showAlert);
+  const copy = SUBSCRIPTION_COPY[userLanguage === "es" ? "es" : "en"];
+  const clarifyUsd = (text) =>
+    userLanguage === "en" ? text : text.replace(/(\$\d+(?:\.\d+)?)/, "$1 USD");
+
+  const pageBg = useColorModeValue(
+    "radial-gradient(circle at 14% 12%, rgba(236,72,153,0.13), transparent 27%), radial-gradient(circle at 86% 16%, rgba(59,130,246,0.13), transparent 25%), var(--chakra-colors-appBg)",
+    "radial-gradient(circle at 14% 12%, rgba(236,72,153,0.16), transparent 28%), radial-gradient(circle at 86% 16%, rgba(59,130,246,0.16), transparent 26%), var(--chakra-colors-appBg)",
+  );
+  const cardShadow = useColorModeValue(
+    "0 28px 80px rgba(77,58,38,0.16)",
+    "0 28px 80px rgba(2,6,23,0.48)",
+  );
+  const errorBg = useColorModeValue("red.50", "rgba(127,29,29,0.42)");
+  const errorColor = useColorModeValue("red.800", "red.100");
 
   const bannedUserList = [
     "npub1cfyf77uc459arthry2y6ndj8dr2t7fjn6rl5feakghv884f8s73qe9dayg",
@@ -6743,151 +6825,425 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
   ];
   const correctPasscode = import.meta.env.VITE_PATREON_PASSCODE;
 
-  const checkPasscode = async () => {
-    if (
-      input === correctPasscode &&
-      bannedUserList.find((item) => item === localStorage.getItem("local_npub"))
-    ) {
+  const pricingOptions = [
+    {
+      title: copy.annualTitle,
+      price: clarifyUsd(copy.annualPrice),
+      detail: copy.annualDetail,
+      billing: clarifyUsd(copy.annualBilling),
+      recommended: copy.recommended,
+      accent: "purple.300",
+      hoverAccent: "purple.400",
+      activeAccent: "purple.500",
+      shadow: "#6b46c1",
+      cta: copy.annualCta,
+      href: "https://www.patreon.com/NotesAndOtherStuff",
+    },
+    {
+      title: copy.monthlyTitle,
+      price: clarifyUsd(copy.monthlyPrice),
+      accent: "orange.400",
+      hoverAccent: "orange.500",
+      activeAccent: "orange.600",
+      shadow: "#b7791f",
+      cta: copy.monthlyCta,
+      href: "https://www.patreon.com/NotesAndOtherStuff",
+    },
+    {
+      title: copy.appsOnlyTitle,
+      price: clarifyUsd(copy.appsOnlyPrice),
+      detail: copy.appsOnlyDetail,
+      accent: "teal.300",
+      hoverAccent: "teal.400",
+      activeAccent: "teal.500",
+      shadow: "#0f766e",
+      cta: copy.appsOnlyCta,
+      href: "https://www.patreon.com/posts/146522893?forSale=true",
+    },
+  ];
+
+  const checkPasscode = async (candidate) => {
+    const normalizedPasscode = candidate.trim().toUpperCase();
+    const normalizedCorrectPasscode = String(correctPasscode || "")
+      .trim()
+      .toUpperCase();
+
+    if (!normalizedPasscode) {
+      setValidationError(copy.emptyPasscode);
+      return;
+    }
+
+    if (normalizedPasscode !== normalizedCorrectPasscode) {
+      setValidationError(copy.invalidPasscode);
+      return;
+    }
+
+    if (bannedUserList.includes(localStorage.getItem("local_npub"))) {
       showAlert(
         "error",
         "You have been banned and the passcode has been changed. Contact the application owner on Patreon if this is a mistake.",
       );
-    } else {
-      if (input === correctPasscode) {
-        // console.log("we did it");
-        localStorage.setItem("passcode", input);
-        localStorage.setItem("features_passcode", input);
+      return;
+    }
 
-        // Assuming you have the user's unique identifier stored in local storage
-        const userId = localStorage.getItem("local_npub"); // Replace with actual user ID if needed
-        const userDocRef = doc(database, "users", userId);
-        const userSnapshot = await getDoc(userDocRef);
+    setIsSubmitting(true);
+    setValidationError("");
 
-        if (userSnapshot.exists()) {
-          // console.log("User document exists");
-          const userData = userSnapshot.data();
-          const userStep = userData.previousStep; // Default to 0 if no previousStep
-
-          // console.log("User step:", userStep);
-
-          // Navigate to the next step
-
-          // Update Firestore document with previousStep + 1
-          await updateDoc(userDocRef, {
-            step: isOldAccount ? userStep + 1 : userStep + 1,
-            hasSubmittedPasscode: true,
-          });
-
-          navigate(`/q/${isOldAccount ? userStep + 1 : userStep + 1}`);
-          // console.log("Updated user step to:", userStep + 1);
-        } else {
-          console.log("User document not found");
-        }
-      } else {
-        setIsValid(false);
+    try {
+      const userId = localStorage.getItem("local_npub");
+      if (!userId) {
+        setValidationError(copy.accountError);
+        return;
       }
-    }
-  };
 
-  useEffect(() => {
-    localStorage.setItem("passcode", input);
-    if (localStorage.getItem("passcode") === correctPasscode) {
-      checkPasscode(); // Auto-check if passcode is already stored
-    }
-  }, [input]);
-
-  useEffect(() => {
-    setIsLoading(true);
-    const checkUser = async () => {
-      const userId = localStorage.getItem("local_npub"); // Replace with actual user ID if needed
       const userDocRef = doc(database, "users", userId);
       const userSnapshot = await getDoc(userDocRef);
 
-      if (userSnapshot.exists()) {
-        // console.log("User document exists");
+      if (!userSnapshot.exists()) {
+        setValidationError(copy.accountError);
+        return;
+      }
+
+      localStorage.setItem("passcode", normalizedPasscode);
+      localStorage.setItem("features_passcode", normalizedPasscode);
+
+      const userData = userSnapshot.data();
+      const previousStep = Number(userData.previousStep);
+      const nextStep = Number.isFinite(previousStep) ? previousStep + 1 : 10;
+
+      await updateDoc(userDocRef, {
+        step: nextStep,
+        hasSubmittedPasscode: true,
+      });
+
+      navigate(`/q/${nextStep}`);
+    } catch (error) {
+      console.error("Error unlocking subscription:", error);
+      setValidationError(copy.accountError);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    await checkPasscode(input);
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const checkUser = async () => {
+      try {
+        const userId = localStorage.getItem("local_npub");
+        if (!userId) return;
+
+        const userDocRef = doc(database, "users", userId);
+        const userSnapshot = await getDoc(userDocRef);
+
+        if (!userSnapshot.exists()) return;
+
         const userData = userSnapshot.data();
-        const hasSubscribed = userData?.hasSubmittedPasscode;
+        if (!userData?.hasSubmittedPasscode) return;
 
-        if (hasSubscribed) {
-          localStorage.setItem(
-            "passcode",
-            import.meta.env.VITE_PATREON_PASSCODE,
-          );
-          localStorage.setItem(
-            "features_passcode",
-            import.meta.env.VITE_PATREON_PASSCODE,
-          );
+        localStorage.setItem("passcode", correctPasscode);
+        localStorage.setItem("features_passcode", correctPasscode);
 
-          const userStep = isOldAccount ? userData.step : userData.previousStep;
-          setIsLoading(false);
-          navigate(`/q/${isOldAccount ? userStep : userStep + 1}`);
-        } else {
-          setIsLoading(false);
-        }
+        const userStep = Number(
+          isOldAccount ? userData.step : userData.previousStep,
+        );
+        const nextStep = Number.isFinite(userStep)
+          ? isOldAccount
+            ? userStep
+            : userStep + 1
+          : 10;
+        navigate(`/q/${nextStep}`);
+      } catch (error) {
+        console.error("Error checking subscription:", error);
+      } finally {
+        if (isMounted) setIsLoading(false);
       }
     };
 
     checkUser();
-  }, []);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [correctPasscode, isOldAccount, navigate]);
 
   if (isLoading) {
     return (
-      <Box>
+      <Box minH="100dvh" bg="appBg">
         <CloudCanvas />
       </Box>
     );
   }
+
   return (
-    <Box width="100%" display="flex" justifyContent={"center"}>
+    <Box
+      minH="100dvh"
+      bg={pageBg}
+      color="appText"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      px={{ base: 1, md: 4 }}
+      py={{ base: 2, md: 8 }}
+    >
       <Box
-        minHeight="90vh"
-        display="flex"
-        flexDirection={"column"}
-        alignItems={"center"}
-        justifyContent={"center"}
-        width="100%"
-        maxWidth="680px"
-        padding={4}
-        marginTop={12}
-        paddingBottom={12}
+        as="form"
+        onSubmit={handleSubmit}
+        w="100%"
+        maxW="760px"
+        bg="appSurfaceElevated"
+        borderWidth="1px"
+        borderColor="appBorderStrong"
+        borderRadius={{ base: "30px", md: "36px" }}
+        style={{ cornerShape: APP_SQUIRCLE_SHAPE }}
+        boxShadow={cardShadow}
+        backdropFilter="blur(18px)"
+        p={{ base: 3, md: 6 }}
+        my={{ base: 0, md: 4 }}
       >
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            marginLeft: 120,
-          }}
-        >
-          <CloudCanvas />
-        </div>{" "}
-        <div style={{ marginTop: "-32px" }}>
-          <RandomCharacter />
-        </div>
-        <br />
-        <Text maxWidth="600px">
-          <div style={{ textAlign: "left" }}>
-            {translation[userLanguage]["passcode.instructions"]}
+        <VStack align="stretch" spacing={{ base: 4, md: 6 }}>
+          <Stack
+            direction={{ base: "column", sm: "row" }}
+            align="center"
+            spacing={{ base: 3, sm: 5 }}
+            textAlign={{ base: "center", sm: "left" }}
+          >
+            <Box
+              minW="110px"
+              px={4}
+              py={1}
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              bg="appSurfaceMuted"
+              borderWidth="1px"
+              borderColor="appBorder"
+              borderRadius="28px"
+              style={{ cornerShape: APP_SQUIRCLE_SHAPE }}
+              overflow="hidden"
+            >
+              <RiseUpAnimation speed="0.5s">
+                <RandomCharacter notSoRandomCharacter="31" width="96px" />
+              </RiseUpAnimation>
+            </Box>
 
-            <br />
+            <Box>
+              <Text
+                fontSize="xs"
+                fontWeight="bold"
+                letterSpacing="0.16em"
+                textTransform="uppercase"
+                color="appTextMuted"
+                mb={2}
+              >
+                Robots Building Education
+              </Text>
+              <Heading size={{ base: "lg", md: "xl" }} mb={3} color="appText">
+                {copy.title}
+              </Heading>
+              <Text color="appTextMuted" fontSize={{ base: "12px", md: "sm" }}>
+                {copy.subtitle}
+              </Text>
+            </Box>
+          </Stack>
 
-            <Text fontSize={"smaller"}>
-              {" "}
-              {translation[userLanguage]["passcode.label"]}
+          <Box
+            bg="appSurfaceGlass"
+            borderWidth="1px"
+            borderColor="appBorder"
+            borderRadius="28px"
+            style={{ cornerShape: APP_SQUIRCLE_SHAPE }}
+            p={{ base: 4, md: 5 }}
+            textAlign="left"
+          >
+            <Text fontWeight="bold" fontSize={{ base: "xs", md: "sm" }} mb={3}>
+              {copy.benefitsHeading}
             </Text>
-            <Input
-              backgroundColor="appSurface"
-              style={{
-                boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
-              }}
-              value={input}
-              onChange={(e) => setInput(e.target.value.toUpperCase())}
-            />
-          </div>
-        </Text>
-        <Button onClick={() => navigate(`/q/9`)} mt={4}>
-          {translation[userLanguage]["backToQuestion9"]}
-        </Button>
+            <VStack
+              as="ul"
+              align="stretch"
+              spacing={2}
+              pl={5}
+              color="appTextMuted"
+              fontSize={{ base: "xs", md: "sm" }}
+              listStyleType="disc"
+            >
+              <Text as="li">{copy.benefitApps}</Text>
+              <Text as="li">{copy.benefitContent}</Text>
+              <Text as="li">{copy.benefitScholarships}</Text>
+            </VStack>
+          </Box>
+
+          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={3}>
+            {pricingOptions.map((option) => (
+              <Box
+                key={option.title}
+                bg="appSurfaceGlass"
+                borderWidth="1px"
+                borderColor={option.accent}
+                borderRadius="28px"
+                style={{ cornerShape: APP_SQUIRCLE_SHAPE }}
+                p={4}
+                position="relative"
+                minH="230px"
+                display="flex"
+                flexDirection="column"
+              >
+                {option.recommended && (
+                  <Text
+                    position="absolute"
+                    top="-12px"
+                    left="50%"
+                    transform="translateX(-50%)"
+                    bg={option.activeAccent}
+                    color="white"
+                    borderRadius="full"
+                    px={3}
+                    py={1}
+                    fontSize="xs"
+                    fontWeight="black"
+                    lineHeight="short"
+                    whiteSpace="nowrap"
+                  >
+                    {option.recommended}
+                  </Text>
+                )}
+                <Text color={option.accent} fontWeight="bold" fontSize="sm">
+                  {option.title}
+                </Text>
+                <Text fontSize="3xl" fontWeight="black" mt={1}>
+                  {option.price}
+                </Text>
+                {option.detail && (
+                  <Text color="appTextMuted" fontSize="sm" mt={1}>
+                    {option.detail}
+                  </Text>
+                )}
+                {option.billing && (
+                  <Text color="appTextMuted" fontSize="sm" mt={1}>
+                    {option.billing}
+                  </Text>
+                )}
+                <Box mt="auto" pt={4}>
+                  <Button
+                    as="a"
+                    href={option.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    w="100%"
+                    size="md"
+                    h="auto"
+                    py={5}
+                    bg={option.accent}
+                    color="white"
+                    boxShadow={`0 4px 0 ${option.shadow}`}
+                    _hover={{
+                      bg: option.hoverAccent,
+                      color: "white",
+                      transform: "translateY(-1px)",
+                    }}
+                    _active={{
+                      bg: option.activeAccent,
+                      color: "white",
+                      transform: "translateY(2px)",
+                      boxShadow: `0 2px 0 ${option.shadow}`,
+                    }}
+                  >
+                    {option.cta}
+                  </Button>
+                </Box>
+              </Box>
+            ))}
+          </SimpleGrid>
+
+          <Box
+            bg="appSurfaceInset"
+            borderWidth="1px"
+            borderColor="appBorder"
+            borderRadius="18px"
+            p={{ base: 5, md: 6 }}
+          >
+            <Heading size="sm" mb={1}>
+              {copy.passcodeHeading}
+            </Heading>
+            <Text color="appTextMuted" fontSize="sm" mb={4}>
+              {copy.passcodeDetail}
+            </Text>
+
+            <Stack spacing={3}>
+              <InputGroup>
+                <InputLeftElement pointerEvents="none">
+                  <LockIcon color="appTextSubtle" />
+                </InputLeftElement>
+                <Input
+                  value={input}
+                  onChange={(event) => {
+                    setInput(event.target.value.toUpperCase());
+                    if (validationError) setValidationError("");
+                  }}
+                  bg="appSurface"
+                  borderColor="appBorderStrong"
+                  color="appText"
+                  placeholder={copy.passcodePlaceholder}
+                  autoComplete="off"
+                  fontSize="16px"
+                  _placeholder={{ color: "appTextSubtle" }}
+                  _focusVisible={{
+                    borderColor: "blue.300",
+                    boxShadow: "0 0 0 1px var(--chakra-colors-blue-300)",
+                  }}
+                />
+              </InputGroup>
+
+              {validationError && (
+                <Alert
+                  status="error"
+                  bg={errorBg}
+                  color={errorColor}
+                  borderWidth="1px"
+                  borderColor="red.400"
+                  borderRadius="12px"
+                >
+                  <AlertIcon color="red.400" />
+                  <AlertDescription fontSize="sm">
+                    {validationError}
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              <Stack direction={{ base: "column", sm: "row" }} spacing={3}>
+                <Button
+                  type="submit"
+                  colorScheme="pink"
+                  flex="1"
+                  h="auto"
+                  py={5}
+                  isLoading={isSubmitting}
+                  loadingText={copy.verifying}
+                >
+                  {copy.submit}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  borderColor="appBorderStrong"
+                  color="appText"
+                  h="auto"
+                  py={5}
+                  _hover={{ bg: "appSurfaceMuted" }}
+                  onClick={() => navigate("/q/9")}
+                >
+                  {translation[userLanguage]["backToQuestion9"]}
+                </Button>
+              </Stack>
+            </Stack>
+          </Box>
+        </VStack>
       </Box>
     </Box>
   );
