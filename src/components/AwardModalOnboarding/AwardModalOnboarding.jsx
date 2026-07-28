@@ -301,12 +301,12 @@ const AwardModalOnboarding = ({
             // as="a"
 
             onMouseDown={() => {
-              window.open("https://patreon.com/notesandotherstuff/membership");
+              window.open("https://subscribe.piyali.app/");
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
                 window.open(
-                  "https://patreon.com/notesandotherstuff/membership"
+                  "https://subscribe.piyali.app/"
                 );
               }
             }}

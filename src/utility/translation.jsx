@@ -1309,10 +1309,10 @@ reverse(head) {
       //   <br />
       //   {/* <a
       //     style={{ textDecoration: "underline" }}
-      //     href="https://patreon.com/notesandotherstuff"
+      //     href="https://subscribe.piyali.app/"
       //     target="_blank"
       //   >
-      //     https://patreon.com/notesandotherstuff
+      //     https://subscribe.piyali.app/
       //   </a> */}
       // </div>
     ),
@@ -1686,7 +1686,7 @@ reverse(head) {
             color: "#63b3ed",
             fontWeight: "bold",
           }}
-          href="https://www.patreon.com/NotesAndOtherStuff/about"
+          href="https://subscribe.piyali.app/"
           target="_blank"
         >
           Register and subscribe as a member
@@ -3187,10 +3187,10 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
         <br />
         {/* <a
           style={{ textDecoration: "underline" }}
-          href="https://patreon.com/notesandotherstuff"
+          href="https://subscribe.piyali.app/"
           target="_blank"
         >
-          https://patreon.com/notesandotherstuff
+          https://subscribe.piyali.app/
         </a> */}
       </div>
     ),
@@ -4685,10 +4685,10 @@ reverse(head) {
       //   <br />
       //   {/* <a
       //     style={{ textDecoration: "underline" }}
-      //     href="https://patreon.com/notesandotherstuff"
+      //     href="https://subscribe.piyali.app/"
       //     target="_blank"
       //   >
-      //     https://patreon.com/notesandotherstuff
+      //     https://subscribe.piyali.app/
       //   </a> */}
       // </div>
     ),
@@ -5043,7 +5043,7 @@ reverse(head) {
             color: "#63b3ed",
             fontWeight: "bold",
           }}
-          href="https://www.patreon.com/NotesAndOtherStuff/membership"
+          href="https://subscribe.piyali.app/"
           target="_blank"
         >
           Register and subscribe as a member
@@ -6308,10 +6308,10 @@ reverse(head) {
       //   <br />
       //   {/* <a
       //     style={{ textDecoration: "underline" }}
-      //     href="https://patreon.com/notesandotherstuff"
+      //     href="https://subscribe.piyali.app/"
       //     target="_blank"
       //   >
-      //     https://patreon.com/notesandotherstuff
+      //     https://subscribe.piyali.app/
       //   </a> */}
       // </div>
     ),
@@ -6666,7 +6666,7 @@ reverse(head) {
             color: "#63b3ed",
             fontWeight: "bold",
           }}
-          href="https://www.patreon.com/NotesAndOtherStuff/about"
+          href="https://subscribe.piyali.app/"
           target="_blank"
         >
           Register and subscribe as a member
@@ -7947,10 +7947,10 @@ reverse(head) {
       //   <br />
       //   {/* <a
       //     style={{ textDecoration: "underline" }}
-      //     href="https://patreon.com/notesandotherstuff"
+      //     href="https://subscribe.piyali.app/"
       //     target="_blank"
       //   >
-      //     https://patreon.com/notesandotherstuff
+      //     https://subscribe.piyali.app/
       //   </a> */}
       // </div>
     ),
@@ -8305,7 +8305,7 @@ reverse(head) {
             color: "#63b3ed",
             fontWeight: "bold",
           }}
-          href="https://www.patreon.com/NotesAndOtherStuff/about"
+          href="https://subscribe.piyali.app/"
           target="_blank"
         >
           Register and subscribe as a member
@@ -9584,10 +9584,10 @@ reverse(head) {
       //   <br />
       //   {/* <a
       //     style={{ textDecoration: "underline" }}
-      //     href="https://patreon.com/notesandotherstuff"
+      //     href="https://subscribe.piyali.app/"
       //     target="_blank"
       //   >
-      //     https://patreon.com/notesandotherstuff
+      //     https://subscribe.piyali.app/
       //   </a> */}
       // </div>
     ),
@@ -9942,7 +9942,7 @@ reverse(head) {
             color: "#63b3ed",
             fontWeight: "bold",
           }}
-          href="https://www.patreon.com/NotesAndOtherStuff/about"
+          href="https://subscribe.piyali.app/"
           target="_blank"
         >
           Register and subscribe as a member

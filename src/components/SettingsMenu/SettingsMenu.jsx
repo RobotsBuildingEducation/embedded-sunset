@@ -524,12 +524,12 @@ const SettingsMenu = ({
                   _hover={{ opacity: 0.98, transform: "translateY(-1px)" }}
                   _active={{ opacity: 0.95, transform: "translateY(0)" }}
                   onMouseDown={() =>
-                    window.open("https://patreon.com/notesandotherstuff/about")
+                    window.open("https://subscribe.piyali.app/")
                   }
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
                       window.open(
-                        "https://patreon.com/notesandotherstuff/about",
+                        "https://subscribe.piyali.app/",
                       );
                     }
                   }}
