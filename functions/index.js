@@ -8,11 +8,23 @@ const { promisify } = require("util");
 const pipelineAsync = promisify(pipeline);
 const admin = require("firebase-admin"); // Import Firebase Admin SDK
 const fireFunctions = require("firebase-functions/v1"); // Imports v1 functions
+const { onRequest } = require("firebase-functions/v2/https");
+const { defineSecret } = require("firebase-functions/params");
+const {
+  createPatreonHandler,
+  getPatreonConfig,
+} = require("./patreon");
 
 dotenv.config();
 
 // Initialize Firebase Admin SDK
 admin.initializeApp();
+
+const PATREON_CLIENT_SECRET = defineSecret("PATREON_CLIENT_SECRET");
+const PATREON_TOKEN_ENCRYPTION_KEY = defineSecret(
+  "PATREON_TOKEN_ENCRYPTION_KEY"
+);
+const PATREON_WEBHOOK_SECRET = defineSecret("PATREON_WEBHOOK_SECRET");
 
 const app = express();
 app.use(cors());
@@ -695,5 +707,38 @@ app.get("/.well-known/farcaster.json", (req, res) => {
     }),
   });
 });
+
+// Patreon auth is a separate v2 function so OAuth callbacks and authenticated
+// webhooks do not inherit the legacy app's CORS or App Check middleware.
+// PATREON_AUTH_ENABLED defaults to false, keeping this endpoint inert unless an
+// environment (the local emulator for now) deliberately opts in.
+exports.patreonAuth = onRequest(
+  {
+    region: "us-central1",
+    timeoutSeconds: 30,
+    memory: "256MiB",
+    secrets: [
+      PATREON_CLIENT_SECRET,
+      PATREON_TOKEN_ENCRYPTION_KEY,
+      PATREON_WEBHOOK_SECRET,
+    ],
+  },
+  createPatreonHandler({
+    db: admin.firestore(),
+    logger: functions.logger,
+    getConfig: () =>
+      getPatreonConfig({
+        ...process.env,
+        PATREON_CLIENT_SECRET:
+          PATREON_CLIENT_SECRET.value() || process.env.PATREON_CLIENT_SECRET,
+        PATREON_TOKEN_ENCRYPTION_KEY:
+          PATREON_TOKEN_ENCRYPTION_KEY.value() ||
+          process.env.PATREON_TOKEN_ENCRYPTION_KEY,
+        PATREON_WEBHOOK_SECRET:
+          PATREON_WEBHOOK_SECRET.value() ||
+          process.env.PATREON_WEBHOOK_SECRET,
+      }),
+  })
+);
 
 exports.app = fireFunctions.https.onRequest(app);

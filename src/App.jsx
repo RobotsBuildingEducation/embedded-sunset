@@ -204,6 +204,12 @@ import { useAlertStore } from "./useAlertStore";
 import CountdownTimer from "./elements/CountdownTimer";
 
 import { PasscodeModal } from "./components/PasscodeModal/PasscodeModal";
+import PatreonAuthDevGate from "./components/PatreonAuthDevGate";
+import PatreonOAuthPopupReturn from "./components/PatreonOAuthPopupReturn";
+import PatreonOAuthModalReturn from "./components/PatreonOAuthModalReturn";
+import { getPatreonStatus, restorePatreonSession } from "./utils/patreonApi.js";
+import { canSilentlySignPatreonProof } from "./utils/patreonNostrProof.js";
+import { hasPendingPatreonModalReturn } from "./utils/patreonOAuthReturn.js";
 import { usePasscodeModalStore } from "./usePasscodeModalStore";
 
 import { OrbCanvas } from "./elements/OrbCanvas";
@@ -7577,16 +7583,43 @@ function App({ isShutDown }) {
                 setUserLanguage("en");
               }
 
+              let patreonAuthorized = false;
+              const localPatreonEnabled =
+                import.meta.env.DEV &&
+                import.meta.env.VITE_PATREON_AUTH_ENABLED !== "false";
+              if (localPatreonEnabled && step > 9 && npub) {
+                try {
+                  let patreonStatus = await getPatreonStatus(npub);
+                  if (
+                    !patreonStatus.authorized &&
+                    canSilentlySignPatreonProof()
+                  ) {
+                    patreonStatus = await restorePatreonSession(npub, {
+                      allowExtension: false,
+                    });
+                  }
+                  patreonAuthorized = Boolean(patreonStatus.authorized);
+                } catch (patreonError) {
+                  console.warn(
+                    "Unable to restore local Patreon access during startup",
+                    patreonError,
+                  );
+                }
+              }
+
               if (location.pathname === "/experiment") {
               } else if (location.pathname === "/about") {
                 // Do nothing if on /about
               } else if (
                 step === "subscription" ||
                 (step > 9 &&
+                  !patreonAuthorized &&
                   localStorage.getItem("passcode") !==
                     import.meta.env.VITE_PATREON_PASSCODE)
               ) {
-                navigate("/subscription");
+                if (location.pathname !== "/subscription") {
+                  navigate("/subscription");
+                }
               } else if (step === "award") {
                 navigate("/award");
               } else if (location.pathname === "/subscription" && step < 10) {
@@ -7620,7 +7653,9 @@ function App({ isShutDown }) {
             } else {
               //step is probably onboarding?
               if (step === "subscription") {
-                navigate("/subscription");
+                if (location.pathname !== "/subscription") {
+                  navigate("/subscription");
+                }
               } else if (step === "onboarding") {
                 const matchnumber = windowurl.match(/\/onboarding\/(\d+)$/);
 
@@ -7866,14 +7901,30 @@ function App({ isShutDown }) {
             <Route
               path="/subscription"
               element={
-                <PasscodePage
-                  userLanguage={userLanguage}
-                  isOldAccount={
-                    currentStep > 9 &&
-                    localStorage.getItem("passcode") !==
-                      import.meta.env.VITE_PATREON_PASSCODE
-                  }
-                />
+                import.meta.env.DEV &&
+                import.meta.env.VITE_PATREON_AUTH_ENABLED !== "false" ? (
+                  new URLSearchParams(location.search).get("patreon_popup") === "1" ? (
+                    <PatreonOAuthPopupReturn />
+                  ) : new URLSearchParams(location.search).get("patreon_modal") === "1" ||
+                    hasPendingPatreonModalReturn() ? (
+                    <PatreonOAuthModalReturn />
+                  ) : (
+                    <PatreonAuthDevGate
+                      userLanguage={userLanguage}
+                      currentStep={currentStep}
+                      legacyPasscodeVerified={Boolean(hasSubmittedPasscode)}
+                    />
+                  )
+                ) : (
+                  <PasscodePage
+                    userLanguage={userLanguage}
+                    isOldAccount={
+                      currentStep > 9 &&
+                      localStorage.getItem("passcode") !==
+                        import.meta.env.VITE_PATREON_PASSCODE
+                    }
+                  />
+                )
               }
             />
             {location.pathname !== "/about" &&

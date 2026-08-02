@@ -8,6 +8,13 @@
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
+        "source": "/api/patreon/**",
+        "function": {
+          "region": "us-central1",
+          "functionId": "patreonAuth"
+        }
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
@@ -45,5 +52,9 @@
         "*.local"
       ]
     }
-  ]
+  ],
+  "emulators": {
+    "functions": { "host": "127.0.0.1", "port": 5001 },
+    "firestore": { "host": "127.0.0.1", "port": 8080 }
+  }
 }
