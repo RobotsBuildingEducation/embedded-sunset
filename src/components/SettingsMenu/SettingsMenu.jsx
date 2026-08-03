@@ -59,6 +59,7 @@ import {
   PATREON_MODAL_RETURN_PARAM,
   shouldReopenPatreonModal,
 } from "../../utils/patreonOAuthReturn.js";
+import { PATREON_AUTH_ENABLED } from "../../utils/patreonFeature.js";
 
 const SettingsMenu = ({
   testIsMatch,
@@ -550,8 +551,7 @@ const SettingsMenu = ({
                 {translation[userLanguage]["settings.button.bitcoinMode"]}
               </Button> */}
 
-              {import.meta.env.DEV &&
-              import.meta.env.VITE_PATREON_AUTH_ENABLED !== "false" ? (
+              {PATREON_AUTH_ENABLED ? (
                 <Button
                   {...secondaryMenuButtonProps}
                   borderWidth="3px"

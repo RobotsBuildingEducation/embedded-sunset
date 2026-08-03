@@ -211,6 +211,10 @@ import PatreonOAuthModalReturn from "./components/PatreonOAuthModalReturn";
 import { getPatreonStatus, restorePatreonSession } from "./utils/patreonApi.js";
 import { canSilentlySignPatreonProof } from "./utils/patreonNostrProof.js";
 import { hasPendingPatreonModalReturn } from "./utils/patreonOAuthReturn.js";
+import {
+  PATREON_AUTH_ENABLED,
+  resolveSubscriptionAccess,
+} from "./utils/patreonFeature.js";
 import { usePasscodeModalStore } from "./usePasscodeModalStore";
 
 import { OrbCanvas } from "./elements/OrbCanvas";
@@ -1824,7 +1828,7 @@ const Step = ({
   emailStep,
   allowPosts,
   setAllowPosts,
-  hasSubmittedPasscode,
+  subscriptionAuthorized,
   setCurrentStep,
   navigateWithTransition,
   setTransitionStats,
@@ -3241,9 +3245,7 @@ const Step = ({
     const nextStep = currentStep + 1;
     const npub = localStorage.getItem("local_npub");
     const shouldGoToSubscription =
-      currentStep === 9 &&
-      localStorage.getItem("passcode") !==
-        import.meta.env.VITE_PATREON_PASSCODE;
+      currentStep === 9 && !subscriptionAuthorized;
     const isFinalStep = currentStep >= steps[userLanguage].length - 1;
     const nextPath = shouldGoToSubscription
       ? "/subscription"
@@ -3650,10 +3652,6 @@ const Step = ({
     functionCall();
     // }
   };
-  const hasPasscode =
-    localStorage.getItem("passcode") ===
-      import.meta.env.VITE_PATREON_PASSCODE || hasSubmittedPasscode;
-
   const actionBarButtonProps = {
     "data-instant-surface-trigger": "true",
     width: "48px",
@@ -4049,7 +4047,8 @@ const Step = ({
                               );
                             })
                             .map(({ s, idx }) => {
-                              const disabled = idx >= 10 && !hasPasscode;
+                              const disabled =
+                                idx >= 10 && !subscriptionAuthorized;
                               const label = `${idx > 0 ? idx + ". " : ""}${s.title}`;
                               return disabled ? (
                                 <Tooltip
@@ -7295,6 +7294,20 @@ function App({ isShutDown }) {
   const hideAlert = useAlertStore((s) => s.hideAlert);
   const showAlert = useAlertStore((s) => s.showAlert);
   const [hasSubmittedPasscode, setHasSubmittedPasscode] = useState(false);
+  const [patreonAuthorized, setPatreonAuthorized] = useState(false);
+  const handlePatreonAuthorized = useCallback(
+    () => setPatreonAuthorized(true),
+    [],
+  );
+
+  const legacyPasscodeVerified =
+    Boolean(hasSubmittedPasscode) ||
+    localStorage.getItem("passcode") === import.meta.env.VITE_PATREON_PASSCODE;
+  const subscriptionAuthorized = resolveSubscriptionAccess({
+    patreonEnabled: PATREON_AUTH_ENABLED,
+    patreonAuthorized,
+    legacyPasscodeVerified,
+  }).authorized;
 
   const [allowPosts, setAllowPosts] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(() => {
@@ -7518,6 +7531,9 @@ function App({ isShutDown }) {
 
     const initializeApp = async () => {
       const npub = localStorage.getItem("local_npub");
+      let startupLegacyPasscodeVerified =
+        localStorage.getItem("passcode") ===
+        import.meta.env.VITE_PATREON_PASSCODE;
 
       try {
         // deleteSpecificDocuments();
@@ -7571,6 +7587,9 @@ function App({ isShutDown }) {
                 applyUserThemePreferences(userData, setColorMode);
 
                 setHasSubmittedPasscode(userData?.hasSubmittedPasscode);
+                startupLegacyPasscodeVerified =
+                  startupLegacyPasscodeVerified ||
+                  Boolean(userData?.hasSubmittedPasscode);
 
                 setUserLanguage(
                   userData.userLanguage ||
@@ -7609,11 +7628,8 @@ function App({ isShutDown }) {
                 setUserLanguage("en");
               }
 
-              let patreonAuthorized = false;
-              const localPatreonEnabled =
-                import.meta.env.DEV &&
-                import.meta.env.VITE_PATREON_AUTH_ENABLED !== "false";
-              if (localPatreonEnabled && step > 9 && npub) {
+              let startupPatreonAuthorized = false;
+              if (PATREON_AUTH_ENABLED && step > 9 && npub) {
                 try {
                   let patreonStatus = await getPatreonStatus(npub);
                   if (
@@ -7624,24 +7640,31 @@ function App({ isShutDown }) {
                       allowExtension: false,
                     });
                   }
-                  patreonAuthorized = Boolean(patreonStatus.authorized);
+                  startupPatreonAuthorized = Boolean(
+                    patreonStatus.authorized,
+                  );
                 } catch (patreonError) {
                   console.warn(
-                    "Unable to restore local Patreon access during startup",
+                    "Unable to restore Patreon access during startup",
                     patreonError,
                   );
                 }
               }
+              setPatreonAuthorized(startupPatreonAuthorized);
+
+              const startupSubscriptionAuthorized =
+                resolveSubscriptionAccess({
+                  patreonEnabled: PATREON_AUTH_ENABLED,
+                  patreonAuthorized: startupPatreonAuthorized,
+                  legacyPasscodeVerified: startupLegacyPasscodeVerified,
+                }).authorized;
 
               if (location.pathname === "/experiment") {
               } else if (location.pathname === "/about") {
                 // Do nothing if on /about
               } else if (
                 step === "subscription" ||
-                (step > 9 &&
-                  !patreonAuthorized &&
-                  localStorage.getItem("passcode") !==
-                    import.meta.env.VITE_PATREON_PASSCODE)
+                (step > 9 && !startupSubscriptionAuthorized)
               ) {
                 if (location.pathname !== "/subscription") {
                   navigate("/subscription");
@@ -7927,8 +7950,7 @@ function App({ isShutDown }) {
             <Route
               path="/subscription"
               element={
-                import.meta.env.DEV &&
-                import.meta.env.VITE_PATREON_AUTH_ENABLED !== "false" ? (
+                PATREON_AUTH_ENABLED ? (
                   new URLSearchParams(location.search).get("patreon_popup") === "1" ? (
                     <PatreonOAuthPopupReturn />
                   ) : new URLSearchParams(location.search).get("patreon_modal") === "1" ||
@@ -7938,7 +7960,8 @@ function App({ isShutDown }) {
                     <PatreonAuthDevGate
                       userLanguage={userLanguage}
                       currentStep={currentStep}
-                      legacyPasscodeVerified={Boolean(hasSubmittedPasscode)}
+                      legacyPasscodeVerified={legacyPasscodeVerified}
+                      onAuthorized={handlePatreonAuthorized}
                     />
                   )
                 ) : (
@@ -7969,7 +7992,7 @@ function App({ isShutDown }) {
                         postNostrContent={postNostrContent}
                         assignExistingBadgeToNpub={assignExistingBadgeToNpub}
                         emailStep={clonedStep}
-                        hasSubmittedPasscode={hasSubmittedPasscode}
+                        subscriptionAuthorized={subscriptionAuthorized}
                         setCurrentStep={setCurrentStep}
                         navigateWithTransition={navigateWithTransition}
                         setTransitionStats={setTransitionStats}

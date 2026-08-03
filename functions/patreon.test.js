@@ -381,6 +381,51 @@ test("keeps every Patreon route inert until the environment opts in", async () =
   assert.equal(db.records.size, 0);
 });
 
+test("status requires the active Robots Building Education key", async () => {
+  const db = new FakeFirestore();
+  const handler = createPatreonHandler({
+    db,
+    getConfig: () => handlerConfig(),
+    logger: { info() {}, warn() {}, error() {} },
+  });
+  const response = fakeResponse();
+
+  await handler(
+    {
+      method: "GET",
+      url: "/api/patreon/status",
+      headers: {},
+    },
+    response,
+  );
+
+  assert.equal(response.statusCode, 400);
+  assert.equal(JSON.parse(response.body).error, "active_key_required");
+});
+
+test("removes the unsigned OAuth start route", async () => {
+  const db = new FakeFirestore();
+  const handler = createPatreonHandler({
+    db,
+    getConfig: () => handlerConfig(),
+    logger: { info() {}, warn() {}, error() {} },
+  });
+  const response = fakeResponse();
+
+  await handler(
+    {
+      method: "GET",
+      url: "/api/patreon/start",
+      headers: {},
+    },
+    response,
+  );
+
+  assert.equal(response.statusCode, 404);
+  assert.deepEqual(JSON.parse(response.body), { error: "not_found" });
+  assert.equal(db.records.size, 0);
+});
+
 test("enables Patreon auth automatically in the Functions emulator", () => {
   const config = getPatreonConfig({ FUNCTIONS_EMULATOR: "true" });
   assert.equal(config.enabled, true);
@@ -737,7 +782,7 @@ test("unknown signed webhook event is acknowledged without account changes", asy
 
 test("forced refresh is atomically limited by both session and IP", async () => {
   const now = Date.now();
-  const npub = "npub-refresh";
+  const npub = nip19.npubEncode(getPublicKey(generateSecretKey()));
   const npubHash = sha256(npub);
   const patreonUserHash = sha256("patreon-user-1");
   const account = { ...storedAuthorization(now), npub };
@@ -776,6 +821,7 @@ test("forced refresh is atomically limited by both session and IP", async () => 
       url: "/api/patreon/refresh-status",
       ip: "203.0.113.10",
       headers: {
+        "x-rbe-npub": npub,
         cookie: `__session=${encodeURIComponent(
           encodeSessionCookieValue("auth-session", "session-one"),
         )}`,
@@ -793,6 +839,7 @@ test("forced refresh is atomically limited by both session and IP", async () => 
       url: "/api/patreon/refresh-status",
       ip: "203.0.113.11",
       headers: {
+        "x-rbe-npub": npub,
         cookie: `__session=${encodeURIComponent(
           encodeSessionCookieValue("auth-session", "session-one"),
         )}`,
@@ -810,6 +857,7 @@ test("forced refresh is atomically limited by both session and IP", async () => 
       url: "/api/patreon/refresh-status",
       ip: "203.0.113.10",
       headers: {
+        "x-rbe-npub": npub,
         cookie: `__session=${encodeURIComponent(
           encodeSessionCookieValue("auth-session", "session-two"),
         )}`,
@@ -822,7 +870,7 @@ test("forced refresh is atomically limited by both session and IP", async () => 
 });
 
 test("status invalidates an old session after its Patreon mapping changes", async () => {
-  const npub = "old-npub";
+  const npub = nip19.npubEncode(getPublicKey(generateSecretKey()));
   const oldNpubHash = sha256(npub);
   const patreonUserId = "patreon-user-1";
   const patreonUserHash = sha256(patreonUserId);
@@ -856,6 +904,7 @@ test("status invalidates an old session after its Patreon mapping changes", asyn
       method: "GET",
       url: "/api/patreon/status",
       headers: {
+        "x-rbe-npub": npub,
         cookie: `__session=${encodeURIComponent(
           encodeSessionCookieValue("auth-session", rawSessionId),
         )}`,

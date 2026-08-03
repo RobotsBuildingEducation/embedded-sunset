@@ -1293,6 +1293,19 @@ async function handleSessionStatus({
   log,
   forceRefresh = false,
 }) {
+  const activeNpub = String(
+    req.headers?.["x-rbe-npub"] || req.header?.("X-RBE-Npub") || "",
+  ).trim();
+  if (!activeNpub || !decodeNpub(activeNpub)) {
+    return sendJson(res, 400, {
+      authorized: false,
+      configured: true,
+      linked: false,
+      error: "active_key_required",
+      subscription: null,
+    });
+  }
+
   const cookies = parseCookies(req.headers.cookie);
   const rawSessionId = decodeSessionCookieValue(
     cookies[FIREBASE_SESSION_COOKIE],
@@ -1311,9 +1324,6 @@ async function handleSessionStatus({
     const recovery = recoverySnapshot.exists
       ? recoverySnapshot.data() || {}
       : null;
-    const activeNpub = String(
-      req.headers?.["x-rbe-npub"] || req.header?.("X-RBE-Npub") || "",
-    ).trim();
     const recoveryIsValid =
       recovery?.status === "pending" &&
       Number(recovery.expiresAtMs || 0) > now &&
@@ -1371,18 +1381,13 @@ async function handleSessionStatus({
 
   const session = sessionSnapshot.data() || {};
   const now = Date.now();
-  const activeNpub = String(
-    req.headers?.["x-rbe-npub"] || req.header?.("X-RBE-Npub") || "",
-  ).trim();
   const sessionNpubHash = String(
     session.linkedNpubHash ||
       (session.linkedNpub ? sha256(session.linkedNpub) : ""),
   );
   if (
-    activeNpub &&
-    (!decodeNpub(activeNpub) ||
-      !sessionNpubHash ||
-      !safeEqual(sessionNpubHash, sha256(activeNpub)))
+    !sessionNpubHash ||
+    !safeEqual(sessionNpubHash, sha256(activeNpub))
   ) {
     await sessionRef.delete();
     res.setHeader(
@@ -2214,8 +2219,8 @@ function createPatreonHandler({ db, getConfig, fetchImpl = fetch, logger }) {
     const path = requestPath(req).replace(/\/+$/, "") || "/";
     res.setHeader("Cache-Control", "no-store, max-age=0");
 
-    // The new surface is inert unless an environment explicitly enables it.
-    // Local emulators opt in; production remains disabled by default.
+    // The surface is inert unless a specific environment explicitly enables it.
+    // Local emulators opt in automatically; production requires its own flag.
     if (config.enabled === false) {
       return sendJson(res, 404, { error: "not_found" });
     }
@@ -2523,33 +2528,7 @@ function createPatreonHandler({ db, getConfig, fetchImpl = fetch, logger }) {
     }
 
     if (path.endsWith("/start")) {
-      if (req.method !== "GET") {
-        return sendJson(res, 405, { error: "method_not_allowed" });
-      }
-      if (!config.configured) {
-        return res.redirect(302, redirectTarget(config, "unavailable"));
-      }
-
-      const state = crypto.randomBytes(32).toString("base64url");
-      const authorizeUrl = new URL(PATREON_AUTHORIZE_URL);
-      authorizeUrl.searchParams.set("response_type", "code");
-      authorizeUrl.searchParams.set("client_id", config.clientId);
-      authorizeUrl.searchParams.set("redirect_uri", config.redirectUri);
-      authorizeUrl.searchParams.set("scope", "identity");
-      authorizeUrl.searchParams.set("state", state);
-
-      res.setHeader(
-        "Set-Cookie",
-        serializeCookie(
-          FIREBASE_SESSION_COOKIE,
-          encodeSessionCookieValue(OAUTH_STATE_COOKIE_KIND, state),
-          {
-            maxAge: 10 * 60,
-            secure: config.cookieSecure,
-          },
-        ),
-      );
-      return res.redirect(302, authorizeUrl.toString());
+      return sendJson(res, 404, { error: "not_found" });
     }
 
     if (path.endsWith("/callback")) {

@@ -27,7 +27,12 @@ function normalizedStatusError(error) {
   return "unavailable";
 }
 
-export default function PatreonAuthDevGate({ legacyPasscodeVerified = false, userLanguage = "en", currentStep = 10 }) {
+export default function PatreonAuthDevGate({
+  legacyPasscodeVerified = false,
+  userLanguage = "en",
+  currentStep = 10,
+  onAuthorized,
+}) {
   const navigate = useNavigate();
   const npub = String(localStorage.getItem("local_npub") || "").trim();
   const patreonResult = useMemo(() => new URLSearchParams(window.location.search).get("patreon") || "", []);
@@ -81,9 +86,10 @@ export default function PatreonAuthDevGate({ legacyPasscodeVerified = false, use
 
   useEffect(() => {
     if (!verified) return;
+    onAuthorized?.();
     const step = Number(currentStep);
     navigate(`/q/${Number.isFinite(step) && step > 9 ? step : 10}`, { replace: true });
-  }, [currentStep, navigate, verified]);
+  }, [currentStep, navigate, onAuthorized, verified]);
 
   useEffect(() => {
     if (patreonResult !== "checkout_required") return;

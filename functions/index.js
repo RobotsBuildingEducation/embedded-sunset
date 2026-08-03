@@ -710,8 +710,8 @@ app.get("/.well-known/farcaster.json", (req, res) => {
 
 // Patreon auth is a separate v2 function so OAuth callbacks and authenticated
 // webhooks do not inherit the legacy app's CORS or App Check middleware.
-// PATREON_AUTH_ENABLED defaults to false, keeping this endpoint inert unless an
-// environment (the local emulator for now) deliberately opts in.
+// PATREON_AUTH_ENABLED defaults to false, keeping this endpoint inert unless a
+// specific local or production environment deliberately opts in.
 exports.patreonAuth = onRequest(
   {
     region: "us-central1",
