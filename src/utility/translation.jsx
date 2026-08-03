@@ -1038,7 +1038,7 @@ reverse(head) {
       "Your countdown starts automatically as soon as you create an account.",
     "landing.questionsAnswered": "Questions answered",
     "landing.button.telemetry": "Create Account",
-    "landing.button.signIn": "Sign In",
+    "landing.button.signIn": "Sign In With Key",
     "createAccount.instructions": "All we need to start is a user name.",
     "createAccount.input.placeholder": "Enter a user name",
     "button.back": "Back",
@@ -1081,7 +1081,7 @@ reverse(head) {
     "signIn.instructions": "Enter your nostr secret key",
     "signIn.input.placeholder": "Enter your secret key (nsec...)",
     "signIn.or": "or",
-    "signIn.nip07": "Sign in with Extension",
+    "signIn.nip07": "Sign In With NIP-07 Extension",
     "nsecPrompt.title": "Optional: Add Your Secret Key",
     "nsecPrompt.description":
       "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",
@@ -2998,7 +2998,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
       "Tu cuenta regresiva comienza automáticamente en cuanto creas una cuenta.",
     "landing.questionsAnswered": "Preguntas contestadas:",
     "landing.button.telemetry": "Crear Cuenta",
-    "landing.button.signIn": "Iniciar Sesión",
+    "landing.button.signIn": "Iniciar sesión con clave",
     "createAccount.instructions":
       "¡Solo necesitamos un nombre de usuario y haremos el resto!",
     "createAccount.input.placeholder": "Ingrese un nombre de usuario",
@@ -3027,7 +3027,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "signIn.instructions": "Ingrese su clave secreta de nostr",
     "signIn.input.placeholder": "Ingrese su clave secreta (nsec...)",
     "signIn.or": "o",
-    "signIn.nip07": "Iniciar sesión con Extensión",
+    "signIn.nip07": "Iniciar sesión con la extensión NIP-07",
     "nsecPrompt.title": "Opcional: Agregar Tu Clave Secreta",
     "nsecPrompt.description":
       "Para usar funciones como publicar contenido y depósitos de billetera, puedes proporcionar opcionalmente tu clave secreta (nsec). Esto se almacena localmente en tu dispositivo.",
@@ -4414,7 +4414,7 @@ reverse(head) {
     "landing.promotion.detail":
       "Your countdown starts automatically as soon as you create an account.",
     "landing.button.telemetry": "Create Account",
-    "landing.button.signIn": "Sign In",
+    "landing.button.signIn": "Sign In With Key",
     "createAccount.instructions": "All we need to start is a user name.",
     "createAccount.input.placeholder": "Enter a user name",
     "button.back": "Back",
@@ -4457,7 +4457,7 @@ reverse(head) {
     "signIn.instructions": "Enter your nostr secret key",
     "signIn.input.placeholder": "Enter your secret key (nsec...)",
     "signIn.or": "or",
-    "signIn.nip07": "Sign in with Extension",
+    "signIn.nip07": "Sign In With NIP-07 Extension",
     "nsecPrompt.title": "Optional: Add Your Secret Key",
     "nsecPrompt.description":
       "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",
@@ -6037,7 +6037,7 @@ reverse(head) {
     "landing.promotion.detail":
       "Your countdown starts automatically as soon as you create an account.",
     "landing.button.telemetry": "Create Account",
-    "landing.button.signIn": "Sign In",
+    "landing.button.signIn": "Sign In With Key",
     "createAccount.instructions": "All we need to start is a user name.",
     "createAccount.input.placeholder": "Enter a user name",
     "button.back": "Back",
@@ -6080,7 +6080,7 @@ reverse(head) {
     "signIn.instructions": "Enter your nostr secret key",
     "signIn.input.placeholder": "Enter your secret key (nsec...)",
     "signIn.or": "or",
-    "signIn.nip07": "Sign in with Extension",
+    "signIn.nip07": "Sign In With NIP-07 Extension",
     "nsecPrompt.title": "Optional: Add Your Secret Key",
     "nsecPrompt.description":
       "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",
@@ -7676,7 +7676,7 @@ reverse(head) {
     "landing.promotion.detail":
       "Your countdown starts automatically as soon as you create an account.",
     "landing.button.telemetry": "Create Account",
-    "landing.button.signIn": "Sign In",
+    "landing.button.signIn": "Sign In With Key",
     "createAccount.instructions": "All we need to start is a user name.",
     "createAccount.input.placeholder": "Enter a user name",
     "button.back": "Back",
@@ -7719,7 +7719,7 @@ reverse(head) {
     "signIn.instructions": "Enter your nostr secret key",
     "signIn.input.placeholder": "Enter your secret key (nsec...)",
     "signIn.or": "or",
-    "signIn.nip07": "Sign in with Extension",
+    "signIn.nip07": "Sign In With NIP-07 Extension",
     "nsecPrompt.title": "Optional: Add Your Secret Key",
     "nsecPrompt.description":
       "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",
@@ -9313,7 +9313,7 @@ reverse(head) {
     "landing.promotion.detail":
       "Your countdown starts automatically as soon as you create an account.",
     "landing.button.telemetry": "Create Account",
-    "landing.button.signIn": "Sign In",
+    "landing.button.signIn": "Sign In With Key",
     "createAccount.instructions": "All we need to start is a user name.",
     "createAccount.input.placeholder": "Enter a user name",
     "button.back": "Back",
@@ -9356,7 +9356,7 @@ reverse(head) {
     "signIn.instructions": "Enter your nostr secret key",
     "signIn.input.placeholder": "Enter your secret key (nsec...)",
     "signIn.or": "or",
-    "signIn.nip07": "Sign in with Extension",
+    "signIn.nip07": "Sign In With NIP-07 Extension",
     "nsecPrompt.title": "Optional: Add Your Secret Key",
     "nsecPrompt.description":
       "To use features like posting content and wallet deposits, you can optionally provide your secret key (nsec). This is stored locally on your device.",

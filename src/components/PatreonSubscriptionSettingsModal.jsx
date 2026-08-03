@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useCallback, useEffect, useState } from "react";
-import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from "@chakra-ui/react";
+import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, useToken } from "@chakra-ui/react";
 import PatreonKeyReplacementGate from "./PatreonKeyReplacementGate.jsx";
 import SubscriptionSettingsPanel from "./SubscriptionSettingsPanel.jsx";
 import { cancelPatreonReplacement, disconnectPatreon, getPatreonStatus, replacePatreonLink, restorePatreonSession, startPatreonLink } from "../utils/patreonApi.js";
@@ -11,11 +11,14 @@ import {
   clearPendingPatreonModalReturn,
   rememberPatreonModalReturn,
 } from "../utils/patreonOAuthReturn.js";
+import { useThemeStore } from "../useThemeStore.jsx";
 
 const checkoutUrl = import.meta.env.VITE_PATREON_CHECKOUT_URL || "https://subscribe.piyali.app/";
 
 export default function PatreonSubscriptionSettingsModal({ isOpen, onClose, appLanguage = "en" }) {
   const npub = String(localStorage.getItem("local_npub") || "").trim();
+  const themeColor = useThemeStore((state) => state.themeColor);
+  const [accent300] = useToken("colors", [`${themeColor}.300`]);
   const copy = patreonCopyFor(SETTINGS_COPY, appLanguage);
   const [status, setStatus] = useState(null);
   const [resolved, setResolved] = useState(false);
@@ -111,7 +114,7 @@ export default function PatreonSubscriptionSettingsModal({ isOpen, onClose, appL
     <Modal isOpen={isOpen} onClose={onClose} size="lg" scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent bg="appSurfaceElevated" color="appText" borderRadius="28px">
-        <ModalHeader>{copy.tab}</ModalHeader><ModalCloseButton />
+        <ModalHeader>{copy.tab}</ModalHeader><ModalCloseButton _focusVisible={{ boxShadow: `0 0 0 3px ${accent300}` }} />
         <ModalBody>
           {status?.replacementRequired ? (
             <PatreonKeyReplacementGate appLanguage={appLanguage} onConfirm={replace} onCancel={cancelReplacement} isChecking={busy} statusError={actionError} embedded />

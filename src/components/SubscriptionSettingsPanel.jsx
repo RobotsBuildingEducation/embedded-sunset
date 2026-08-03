@@ -1,13 +1,23 @@
 /* eslint-disable react/prop-types */
 import { useMemo, useState } from "react";
-import { Alert, AlertIcon, Box, Button, ButtonGroup, Center, Heading, Spinner, Stack, Text } from "@chakra-ui/react";
+import { Alert, AlertIcon, Box, Button, ButtonGroup, Center, Heading, Spinner, Stack, Text, useToken } from "@chakra-ui/react";
 import { FaPatreon } from "react-icons/fa";
 import { FiExternalLink } from "react-icons/fi";
 import { PATREON_FLOW_COPY, SETTINGS_COPY, SUBSCRIPTION_COPY, patreonCopyFor } from "./patreonSubscriptionCopy.js";
 import { formatUsdEntitlement, getSubscriptionSettingsState, PATREON_MEMBERSHIP_URL, PATREON_PAYMENT_URL } from "./subscriptionSettingsModel.js";
+import { useThemeStore } from "../useThemeStore.jsx";
 
 export default function SubscriptionSettingsPanel({ appLanguage = "en", statusPayload = {}, statusError = "", isResolved = true, isBusy = false, onReconnect, onCheckout, onDisconnect }) {
   const lang = appLanguage === "es" ? "es" : "en";
+  const themeColor = useThemeStore((state) => state.themeColor);
+  const [accent200, accent300, accent400, accent500, accent600] = useToken("colors", [
+    `${themeColor}.200`,
+    `${themeColor}.300`,
+    `${themeColor}.400`,
+    `${themeColor}.500`,
+    `${themeColor}.600`,
+  ]);
+  const accentShadow = `0 4px 0 ${accent600}`;
   const copy = patreonCopyFor(SETTINGS_COPY, lang);
   const flowCopy = patreonCopyFor(PATREON_FLOW_COPY, lang);
   const subscriptionCopy = patreonCopyFor(SUBSCRIPTION_COPY, lang);
@@ -34,7 +44,7 @@ export default function SubscriptionSettingsPanel({ appLanguage = "en", statusPa
   if (!isResolved) {
     return (
       <Center minH="320px" flexDirection="column" gap={4} aria-live="polite">
-        <Spinner color="purple.400" thickness="4px" size="lg" />
+        <Spinner color={accent400} thickness="4px" size="lg" />
         <Text color="appTextMuted" fontSize="sm">{subscriptionCopy.checkingPatreon}</Text>
       </Center>
     );
@@ -46,11 +56,11 @@ export default function SubscriptionSettingsPanel({ appLanguage = "en", statusPa
         <Box
           bg="appSurfaceMuted"
           borderWidth="1px"
-          borderColor="purple.200"
+          borderColor={accent200}
           borderRadius="24px"
           p={{ base: 5, md: 6 }}
         >
-          <Text color="purple.400" fontSize="xs" fontWeight="black" letterSpacing="wide" textTransform="uppercase">
+          <Text color={accent400} fontSize="xs" fontWeight="black" letterSpacing="wide" textTransform="uppercase">
             {flowCopy.almostThere}
           </Text>
           <Heading size="md" mt={2}>{flowCopy.finishTitle}</Heading>
@@ -64,11 +74,11 @@ export default function SubscriptionSettingsPanel({ appLanguage = "en", statusPa
             mt={5}
             leftIcon={<FaPatreon />}
             rightIcon={<FiExternalLink />}
-            bg="purple.400"
+            bg={accent400}
             color="white"
-            boxShadow="0 4px 0 #6b46c1"
-            _hover={{ bg: "purple.500", color: "white", transform: "translateY(-1px)" }}
-            _active={{ bg: "purple.600", color: "white", transform: "translateY(2px)" }}
+            boxShadow={accentShadow}
+            _hover={{ bg: accent500, color: "white", transform: "translateY(-1px)" }}
+            _active={{ bg: accent600, color: "white", transform: "translateY(2px)" }}
           >
             {flowCopy.openCheckout}
           </Button>
@@ -93,7 +103,7 @@ export default function SubscriptionSettingsPanel({ appLanguage = "en", statusPa
         <Box
           bg="transparent"
           borderWidth="1px"
-          borderColor="purple.300"
+          borderColor={accent300}
           borderRadius="24px"
           p={4}
           pt={5}
@@ -105,10 +115,10 @@ export default function SubscriptionSettingsPanel({ appLanguage = "en", statusPa
           w="100%"
           mx="auto"
         >
-          <Text position="absolute" top="-12px" left="50%" transform="translateX(-50%)" bg="purple.500" color="white" borderRadius="full" px={3} py={1} fontSize="xs" fontWeight="black" lineHeight="short" whiteSpace="nowrap">
+          <Text position="absolute" top="-12px" left="50%" transform="translateX(-50%)" bg={accent500} color="white" borderRadius="full" px={3} py={1} fontSize="xs" fontWeight="black" lineHeight="short" whiteSpace="nowrap">
             {flowCopy.annualRecommended}
           </Text>
-          <Text color="purple.300" fontWeight="black" fontSize="sm" textAlign="center">{flowCopy.membershipTitle}</Text>
+          <Text color={accent300} fontWeight="black" fontSize="sm" textAlign="center">{flowCopy.membershipTitle}</Text>
           <Text fontSize="2xl" fontWeight="black" mt={1} textAlign="center">{clarifyUsd(flowCopy.membershipPrice)}</Text>
           <Text color="appTextMuted" fontSize="sm" mt={1} textAlign="center">{clarifyUsd(flowCopy.annualValue)}</Text>
           <Box mt="auto" pt={4}>
@@ -120,11 +130,11 @@ export default function SubscriptionSettingsPanel({ appLanguage = "en", statusPa
               py={5}
               isLoading={isBusy}
               loadingText={subscriptionCopy.checkingPatreon}
-              bg="purple.300"
+              bg={accent300}
               color="white"
-              boxShadow="0 4px 0 #6b46c1"
-              _hover={{ bg: "purple.400", color: "white", transform: "translateY(-1px)" }}
-              _active={{ bg: "purple.500", color: "white", transform: "translateY(2px)", boxShadow: "0 2px 0 #6b46c1" }}
+              boxShadow={accentShadow}
+              _hover={{ bg: accent400, color: "white", transform: "translateY(-1px)" }}
+              _active={{ bg: accent500, color: "white", transform: "translateY(2px)", boxShadow: `0 2px 0 ${accent600}` }}
             >
               {flowCopy.membershipCta}
             </Button>
@@ -144,9 +154,9 @@ export default function SubscriptionSettingsPanel({ appLanguage = "en", statusPa
         {entitledAmountCents > 0 && <Text fontSize="sm" color="appTextMuted" mt={3}>{copy.entitlement}: {formatUsdEntitlement(entitledAmountCents, lang)}</Text>}
       </Box>
       <ButtonGroup flexWrap="wrap" gap={2}>
-        {view.showReconnect && <Button variant="outline" onClick={onReconnect} isDisabled={isBusy}>{copy.reconnect}</Button>}
-        {view.showManage && <Button as="a" href={PATREON_MEMBERSHIP_URL} target="_blank" rel="noopener noreferrer" variant="outline">{copy.manage}</Button>}
-        {view.showPayment && <Button as="a" href={PATREON_PAYMENT_URL} target="_blank" rel="noopener noreferrer" variant="outline">{copy.payment}</Button>}
+        {view.showReconnect && <Button variant="outline" borderColor={accent400} color={accent500} onClick={onReconnect} isDisabled={isBusy}>{copy.reconnect}</Button>}
+        {view.showManage && <Button as="a" href={PATREON_MEMBERSHIP_URL} target="_blank" rel="noopener noreferrer" variant="outline" borderColor={accent400} color={accent500}>{copy.manage}</Button>}
+        {view.showPayment && <Button as="a" href={PATREON_PAYMENT_URL} target="_blank" rel="noopener noreferrer" variant="outline" borderColor={accent400} color={accent500}>{copy.payment}</Button>}
       </ButtonGroup>
       {view.showDisconnect && !confirmingDisconnect && <Button alignSelf="flex-start" colorScheme="red" variant="ghost" onClick={() => setConfirmingDisconnect(true)}>{copy.disconnect}</Button>}
       {linked && confirmingDisconnect && (

@@ -133,6 +133,7 @@ import {
 
 import { pickProgrammingLanguage, translation } from "./utility/translation";
 import { soundManager } from "./utility/soundManager";
+import { isNsecSecretKey } from "./utils/nostrKeyInput.js";
 
 const Dashboard = lazy(() =>
   import("./components/Dashboard/Dashboard").then((m) => ({
@@ -5066,6 +5067,18 @@ const getErrorMessage = (
   }
 };
 
+const SecretKeyDetectedMessage = ({ userLanguage }) => (
+  <Text role="alert" color="red.500" fontSize="sm" maxWidth="320px">
+    {userLanguage === "es"
+      ? "Clave secreta detectada. Usa "
+      : "Secret key detected. Use "}
+    <Text as="strong" fontWeight="bold">
+      {translation[userLanguage]["landing.button.signIn"]}
+    </Text>{" "}
+    {userLanguage === "es" ? "en su lugar" : "instead"}
+  </Text>
+);
+
 const Home = ({
   isSignedIn,
   setIsSignedIn,
@@ -5099,6 +5112,7 @@ const Home = ({
   const [errorMessage, setErrorMessage] = useState("");
 
   const [userName, setUserName] = useState("");
+  const secretKeyDetected = isNsecSecretKey(userName);
   const [secretKey, setSecretKey] = useState("");
   const [keys, setKeys] = useState(null);
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
@@ -5287,6 +5301,11 @@ const Home = ({
   }, [isSignedIn, navigate, setView]);
 
   const televise = async () => {
+    if (isNsecSecretKey(userName)) {
+      setErrorMessage("");
+      return;
+    }
+
     // if (localStorage.getItem(socket)) {
     //   // document.body.innerHTML = "";
     //   return; // Exit the function and prevent further actions
@@ -5800,6 +5819,10 @@ const Home = ({
                 backgroundColor="appSurface"
               />
 
+              {secretKeyDetected ? (
+                <SecretKeyDetectedMessage userLanguage={userLanguage} />
+              ) : null}
+
               <VStack>
                 <Button
                   onKeyDown={(e) =>
@@ -5808,7 +5831,7 @@ const Home = ({
                   onMouseDown={televise}
                   colorScheme="purple"
                   variant="outline"
-                  isDisabled={userName.length < 2}
+                  isDisabled={userName.trim().length < 2 || secretKeyDetected}
                   style={{ width: "150px" }}
                 >
                   {translation[userLanguage]["landing.button.telemetry"]}
@@ -6375,6 +6398,9 @@ const Home = ({
                   onChange={(e) => setUserName(e.target.value)}
                   backgroundColor="appSurface"
                 />
+                {secretKeyDetected ? (
+                  <SecretKeyDetectedMessage userLanguage={userLanguage} />
+                ) : null}
               </Box>
               <HStack w="100%" mt={4} mb={12} justifyContent="center">
                 <Button
@@ -6384,7 +6410,7 @@ const Home = ({
                   onMouseDown={televise}
                   colorScheme="purple"
                   variant="outline"
-                  isDisabled={userName.length < 2}
+                  isDisabled={userName.trim().length < 2 || secretKeyDetected}
                   style={{ width: "150px" }}
                 >
                   {translation[userLanguage]["landing.button.telemetry"]}
@@ -6481,7 +6507,7 @@ const Home = ({
               }}
             >
               {translation[userLanguage]["signIn.nip07"] ||
-                "Sign in with Extension"}
+                "Sign In With NIP-07 Extension"}
             </Button>
 
             {errorMessage ? (

@@ -15,6 +15,7 @@ import { CloudCanvas } from "../../elements/SunsetCanvas";
 import { translation } from "../../utility/translation";
 import { PiClockCountdownDuotone } from "react-icons/pi";
 import { soundManager } from "../../utility/soundManager";
+import { isNsecSecretKey } from "../../utils/nostrKeyInput.js";
 
 export const Landing = ({
   userLanguage,
@@ -27,6 +28,7 @@ export const Landing = ({
   loadingMessage,
 }) => {
   const navigate = useNavigate();
+  const secretKeyDetected = isNsecSecretKey(userName);
   const handleLanguageToggle = () => {
     soundManager.resume();
     soundManager.play("modeSwitch");
@@ -100,10 +102,22 @@ export const Landing = ({
         boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
       />
 
+      {secretKeyDetected ? (
+        <Text role="alert" color="red.500" fontSize="sm" maxWidth="320px">
+          {userLanguage === "es"
+            ? "Clave secreta detectada. Usa "
+            : "Secret key detected. Use "}
+          <Text as="strong" fontWeight="bold">
+            {translation[userLanguage]["landing.button.signIn"]}
+          </Text>{" "}
+          {userLanguage === "es" ? "en su lugar" : "instead"}
+        </Text>
+      ) : null}
+
       <HStack spacing={4}>
         <Button
           onMouseDown={televise}
-          isDisabled={userName.length < 2}
+          isDisabled={userName.trim().length < 2 || secretKeyDetected}
           colorScheme="purple"
           variant="outline"
         >

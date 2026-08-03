@@ -552,7 +552,13 @@ const SettingsMenu = ({
 
               {import.meta.env.DEV &&
               import.meta.env.VITE_PATREON_AUTH_ENABLED !== "false" ? (
-                <Button {...secondaryMenuButtonProps} onClick={onSubscriptionOpen}>
+                <Button
+                  {...secondaryMenuButtonProps}
+                  borderWidth="3px"
+                  borderColor="#e6d18c"
+                  boxShadow="0 8px 18px rgba(184, 148, 44, 0.1)"
+                  onClick={onSubscriptionOpen}
+                >
                   {userLanguage === "es" ? "Suscripción" : "Subscription"}
                 </Button>
               ) : localStorage.getItem("passcode") !==
