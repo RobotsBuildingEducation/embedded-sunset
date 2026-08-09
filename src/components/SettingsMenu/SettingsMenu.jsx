@@ -23,7 +23,7 @@ import {
   useToken,
 } from "@chakra-ui/react";
 
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { IoAppsOutline } from "react-icons/io5";
 
 import BitcoinModeModal from "./BitcoinModeModal/BitcoinModeModal";
@@ -52,6 +52,15 @@ import {
   nativeOverlayMotionProps,
   nativeRightDrawerMotionProps,
 } from "../../utility/modalMotion";
+import PatreonSubscriptionSettingsModal from "../PatreonSubscriptionSettingsModal.jsx";
+import {
+  clearPatreonModalReopen,
+  consumePatreonModalReturn,
+  PATREON_MODAL_RESULT_PARAM,
+  PATREON_MODAL_RETURN_PARAM,
+  shouldReopenPatreonModal,
+} from "../../utils/patreonOAuthReturn.js";
+import { PATREON_AUTH_ENABLED } from "../../utils/patreonFeature.js";
 
 const SettingsMenu = ({
   testIsMatch,
@@ -68,9 +77,11 @@ const SettingsMenu = ({
   setAllowPosts,
   soundEnabled,
   setSoundEnabled,
+  onPatreonAuthorized,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
+  const location = useLocation();
   const btnRef = useRef(); // Reference to the settings icon button
   const menuPressRef = useRef({ key: "", at: 0 });
   const firstButtonRef = useRef(); // Reference to the first button in the drawer
@@ -150,6 +161,7 @@ const SettingsMenu = ({
     onOpen: onAlgorithmHelperOpen,
     onClose: onAlgorithmHelperClose,
   } = useDisclosure();
+  const [patreonReturnResult, setPatreonReturnResult] = useState("");
 
   const {
     isOpen: isInstallModalOpen,
@@ -204,6 +216,53 @@ const SettingsMenu = ({
     onOpen: onLangOpen,
     onClose: onLangClose,
   } = useDisclosure();
+
+  const {
+    isOpen: isSubscriptionOpen,
+    onOpen: onSubscriptionOpen,
+    onClose: onSubscriptionClose,
+  } = useDisclosure();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const returnedThroughRoute =
+      location.pathname !== "/subscription" &&
+      params.get(PATREON_MODAL_RETURN_PARAM) === "1";
+    const shouldReopen = shouldReopenPatreonModal();
+    if (!returnedThroughRoute && !shouldReopen) return;
+
+    const storedReturn = shouldReopen ? consumePatreonModalReturn() : null;
+    setPatreonReturnResult(
+      params.get(PATREON_MODAL_RESULT_PARAM) || storedReturn?.result || "",
+    );
+
+    onSubscriptionOpen();
+    if (returnedThroughRoute) {
+      params.delete(PATREON_MODAL_RETURN_PARAM);
+      params.delete(PATREON_MODAL_RESULT_PARAM);
+      navigate(
+        {
+          pathname: location.pathname,
+          search: params.toString() ? `?${params.toString()}` : "",
+          hash: location.hash,
+        },
+        { replace: true },
+      );
+    }
+  }, [
+    location.hash,
+    location.key,
+    location.pathname,
+    location.search,
+    navigate,
+    onSubscriptionOpen,
+  ]);
+
+  const handleSubscriptionClose = () => {
+    clearPatreonModalReopen();
+    setPatreonReturnResult("");
+    onSubscriptionClose();
+  };
 
   // const [interval, setIntervalState] = useState(2880);
 
@@ -336,11 +395,7 @@ const SettingsMenu = ({
     <IconButton
       ref={btnRef}
       icon={<IoAppsOutline />}
-      {...getInstantSurfacePressProps(
-        menuPressRef,
-        "settings",
-        onOpen,
-      )}
+      {...getInstantSurfacePressProps(menuPressRef, "settings", onOpen)}
       boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
       position="fixed"
       top={4}
@@ -512,8 +567,18 @@ const SettingsMenu = ({
                 {translation[userLanguage]["settings.button.bitcoinMode"]}
               </Button> */}
 
-              {localStorage.getItem("passcode") !==
-              import.meta.env.VITE_PATREON_PASSCODE ? (
+              {PATREON_AUTH_ENABLED ? (
+                <Button
+                  {...secondaryMenuButtonProps}
+                  borderWidth="3px"
+                  borderColor="#e6d18c"
+                  boxShadow="0 8px 18px rgba(184, 148, 44, 0.1)"
+                  onClick={onSubscriptionOpen}
+                >
+                  {userLanguage === "es" ? "Suscripción" : "Subscription"}
+                </Button>
+              ) : localStorage.getItem("passcode") !==
+                import.meta.env.VITE_PATREON_PASSCODE ? (
                 <Button
                   {...secondaryMenuButtonProps}
                   color="#2e2200"
@@ -528,9 +593,7 @@ const SettingsMenu = ({
                   }
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
-                      window.open(
-                        "https://subscribe.piyali.app/",
-                      );
+                      window.open("https://subscribe.piyali.app/");
                     }
                   }}
                 >
@@ -753,6 +816,16 @@ const SettingsMenu = ({
           isOpen={isLangOpen}
           onClose={onLangClose}
           onSelect={handleLanguageSelect}
+        />
+      ) : null}
+
+      {isSubscriptionOpen ? (
+        <PatreonSubscriptionSettingsModal
+          isOpen={isSubscriptionOpen}
+          onClose={handleSubscriptionClose}
+          appLanguage={userLanguage}
+          onAuthorized={onPatreonAuthorized}
+          returnResult={patreonReturnResult}
         />
       ) : null}
     </>

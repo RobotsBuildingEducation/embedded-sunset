@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "start": "vite",
+    "dev": "node scripts/startLocalDev.mjs",
+    "dev:ui": "vite",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "breaking-change": " npm run start -- --port=4445"
+    "breaking-change": "npm run dev"
   },
   "dependencies": {
     "@cashu/cashu-ts": "2.1",

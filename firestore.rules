@@ -10,6 +10,18 @@ service cloud.firestore {
       allow read, write: if true;
     }
 
+    // Patreon authorization data is server-only.
+    match /patreonOAuthSessions/{document=**} { allow read, write: if false; }
+    match /patreonLinkChallenges/{document=**} { allow read, write: if false; }
+    match /patreonOAuthStates/{document=**} { allow read, write: if false; }
+    match /patreonAccountLinks/{document=**} { allow read, write: if false; }
+    match /patreonUserLinks/{document=**} { allow read, write: if false; }
+    match /patreonLinkRecoveries/{document=**} { allow read, write: if false; }
+    match /patreonOAuthAuditEvents/{document=**} { allow read, write: if false; }
+    match /patreonWebhookReceipts/{document=**} { allow read, write: if false; }
+    match /patreonRecoveryRateLimits/{document=**} { allow read, write: if false; }
+    match /patreonRefreshRateLimits/{document=**} { allow read, write: if false; }
+
     // Match any document in the 'users' collection
     match /users/{userId} {
 

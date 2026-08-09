@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 DATA
+.firebase-emulator-data/
 
 # Editor directories and files
 .vscode/*
@@ -27,4 +28,3 @@ DATA
 *.env
 # Sentry Config File
 .env.sentry-build-plugin
-

@@ -133,6 +133,7 @@ import {
 
 import { pickProgrammingLanguage, translation } from "./utility/translation";
 import { soundManager } from "./utility/soundManager";
+import { isNsecSecretKey } from "./utils/nostrKeyInput.js";
 
 const Dashboard = lazy(() =>
   import("./components/Dashboard/Dashboard").then((m) => ({
@@ -204,6 +205,15 @@ import { useAlertStore } from "./useAlertStore";
 import CountdownTimer from "./elements/CountdownTimer";
 
 import { PasscodeModal } from "./components/PasscodeModal/PasscodeModal";
+import PatreonAuthDevGate from "./components/PatreonAuthDevGate";
+import PatreonOAuthDrawerReturn from "./components/PatreonOAuthDrawerReturn";
+import { hasPatreonOAuthReturn } from "./utils/patreonOAuthReturn.js";
+import { getPatreonStatus, restorePatreonSession } from "./utils/patreonApi.js";
+import { canSilentlySignPatreonProof } from "./utils/patreonNostrProof.js";
+import {
+  PATREON_AUTH_ENABLED,
+  resolveSubscriptionAccess,
+} from "./utils/patreonFeature.js";
 import { usePasscodeModalStore } from "./usePasscodeModalStore";
 
 import { OrbCanvas } from "./elements/OrbCanvas";
@@ -1817,7 +1827,7 @@ const Step = ({
   emailStep,
   allowPosts,
   setAllowPosts,
-  hasSubmittedPasscode,
+  subscriptionAuthorized,
   setCurrentStep,
   navigateWithTransition,
   setTransitionStats,
@@ -3234,9 +3244,7 @@ const Step = ({
     const nextStep = currentStep + 1;
     const npub = localStorage.getItem("local_npub");
     const shouldGoToSubscription =
-      currentStep === 9 &&
-      localStorage.getItem("passcode") !==
-        import.meta.env.VITE_PATREON_PASSCODE;
+      currentStep === 9 && !subscriptionAuthorized;
     const isFinalStep = currentStep >= steps[userLanguage].length - 1;
     const nextPath = shouldGoToSubscription
       ? "/subscription"
@@ -3643,10 +3651,6 @@ const Step = ({
     functionCall();
     // }
   };
-  const hasPasscode =
-    localStorage.getItem("passcode") ===
-      import.meta.env.VITE_PATREON_PASSCODE || hasSubmittedPasscode;
-
   const actionBarButtonProps = {
     "data-instant-surface-trigger": "true",
     width: "48px",
@@ -4042,7 +4046,8 @@ const Step = ({
                               );
                             })
                             .map(({ s, idx }) => {
-                              const disabled = idx >= 10 && !hasPasscode;
+                              const disabled =
+                                idx >= 10 && !subscriptionAuthorized;
                               const label = `${idx > 0 ? idx + ". " : ""}${s.title}`;
                               return disabled ? (
                                 <Tooltip
@@ -5060,6 +5065,18 @@ const getErrorMessage = (
   }
 };
 
+const SecretKeyDetectedMessage = ({ userLanguage }) => (
+  <Text role="alert" color="red.500" fontSize="sm" maxWidth="320px">
+    {userLanguage === "es"
+      ? "Clave secreta detectada. Usa "
+      : "Secret key detected. Use "}
+    <Text as="strong" fontWeight="bold">
+      {translation[userLanguage]["landing.button.signIn"]}
+    </Text>{" "}
+    {userLanguage === "es" ? "en su lugar" : "instead"}
+  </Text>
+);
+
 const Home = ({
   isSignedIn,
   setIsSignedIn,
@@ -5093,6 +5110,7 @@ const Home = ({
   const [errorMessage, setErrorMessage] = useState("");
 
   const [userName, setUserName] = useState("");
+  const secretKeyDetected = isNsecSecretKey(userName);
   const [secretKey, setSecretKey] = useState("");
   const [keys, setKeys] = useState(null);
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
@@ -5281,6 +5299,11 @@ const Home = ({
   }, [isSignedIn, navigate, setView]);
 
   const televise = async () => {
+    if (isNsecSecretKey(userName)) {
+      setErrorMessage("");
+      return;
+    }
+
     // if (localStorage.getItem(socket)) {
     //   // document.body.innerHTML = "";
     //   return; // Exit the function and prevent further actions
@@ -5794,6 +5817,10 @@ const Home = ({
                 backgroundColor="appSurface"
               />
 
+              {secretKeyDetected ? (
+                <SecretKeyDetectedMessage userLanguage={userLanguage} />
+              ) : null}
+
               <VStack>
                 <Button
                   onKeyDown={(e) =>
@@ -5802,7 +5829,7 @@ const Home = ({
                   onMouseDown={televise}
                   colorScheme="purple"
                   variant="outline"
-                  isDisabled={userName.length < 2}
+                  isDisabled={userName.trim().length < 2 || secretKeyDetected}
                   style={{ width: "150px" }}
                 >
                   {translation[userLanguage]["landing.button.telemetry"]}
@@ -6369,6 +6396,9 @@ const Home = ({
                   onChange={(e) => setUserName(e.target.value)}
                   backgroundColor="appSurface"
                 />
+                {secretKeyDetected ? (
+                  <SecretKeyDetectedMessage userLanguage={userLanguage} />
+                ) : null}
               </Box>
               <HStack w="100%" mt={4} mb={12} justifyContent="center">
                 <Button
@@ -6378,7 +6408,7 @@ const Home = ({
                   onMouseDown={televise}
                   colorScheme="purple"
                   variant="outline"
-                  isDisabled={userName.length < 2}
+                  isDisabled={userName.trim().length < 2 || secretKeyDetected}
                   style={{ width: "150px" }}
                 >
                   {translation[userLanguage]["landing.button.telemetry"]}
@@ -6475,7 +6505,7 @@ const Home = ({
               }}
             >
               {translation[userLanguage]["signIn.nip07"] ||
-                "Sign in with Extension"}
+                "Sign In With NIP-07 Extension"}
             </Button>
 
             {errorMessage ? (
@@ -7263,6 +7293,28 @@ function App({ isShutDown }) {
   const hideAlert = useAlertStore((s) => s.hideAlert);
   const showAlert = useAlertStore((s) => s.showAlert);
   const [hasSubmittedPasscode, setHasSubmittedPasscode] = useState(false);
+  const [patreonAuthorizedNpub, setPatreonAuthorizedNpub] = useState("");
+  const handlePatreonAuthorized = useCallback(
+    () => setPatreonAuthorizedNpub(
+      String(localStorage.getItem("local_npub") || "").trim(),
+    ),
+    [],
+  );
+  const activePatreonNpub = String(
+    localStorage.getItem("local_npub") || "",
+  ).trim();
+  const patreonAuthorized = Boolean(
+    activePatreonNpub && patreonAuthorizedNpub === activePatreonNpub,
+  );
+
+  const legacyPasscodeVerified =
+    Boolean(hasSubmittedPasscode) ||
+    localStorage.getItem("passcode") === import.meta.env.VITE_PATREON_PASSCODE;
+  const subscriptionAuthorized = resolveSubscriptionAccess({
+    patreonEnabled: PATREON_AUTH_ENABLED,
+    patreonAuthorized,
+    legacyPasscodeVerified,
+  }).authorized;
 
   const [allowPosts, setAllowPosts] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(() => {
@@ -7485,7 +7537,14 @@ function App({ isShutDown }) {
     }, 12000);
 
     const initializeApp = async () => {
+      if (window.location.pathname === "/patreon-return") return;
+      const preservePatreonReturnRoute = hasPatreonOAuthReturn(
+        window.location.search,
+      );
       const npub = localStorage.getItem("local_npub");
+      let startupLegacyPasscodeVerified =
+        localStorage.getItem("passcode") ===
+        import.meta.env.VITE_PATREON_PASSCODE;
 
       try {
         // deleteSpecificDocuments();
@@ -7539,6 +7598,9 @@ function App({ isShutDown }) {
                 applyUserThemePreferences(userData, setColorMode);
 
                 setHasSubmittedPasscode(userData?.hasSubmittedPasscode);
+                startupLegacyPasscodeVerified =
+                  startupLegacyPasscodeVerified ||
+                  Boolean(userData?.hasSubmittedPasscode);
 
                 setUserLanguage(
                   userData.userLanguage ||
@@ -7577,16 +7639,61 @@ function App({ isShutDown }) {
                 setUserLanguage("en");
               }
 
-              if (location.pathname === "/experiment") {
+              let startupPatreonAuthorized = false;
+              if (PATREON_AUTH_ENABLED && step > 9 && npub) {
+                try {
+                  let patreonStatus = await getPatreonStatus(npub);
+                  if (localStorage.getItem("local_npub") !== npub) {
+                    patreonStatus = { authorized: false };
+                  }
+                  if (
+                    !patreonStatus.authorized &&
+                    canSilentlySignPatreonProof() &&
+                    localStorage.getItem("local_npub") === npub
+                  ) {
+                    patreonStatus = await restorePatreonSession(npub, {
+                      allowExtension: false,
+                    });
+                    if (localStorage.getItem("local_npub") !== npub) {
+                      patreonStatus = { authorized: false };
+                    }
+                  }
+                  startupPatreonAuthorized = Boolean(
+                    patreonStatus.authorized,
+                  );
+                } catch (patreonError) {
+                  console.warn(
+                    "Unable to restore Patreon access during startup",
+                    patreonError,
+                  );
+                }
+              }
+              setPatreonAuthorizedNpub(
+                startupPatreonAuthorized ? npub : "",
+              );
+
+              const startupSubscriptionAuthorized =
+                resolveSubscriptionAccess({
+                  patreonEnabled: PATREON_AUTH_ENABLED,
+                  patreonAuthorized: startupPatreonAuthorized,
+                  legacyPasscodeVerified: startupLegacyPasscodeVerified,
+                }).authorized;
+
+              if (preservePatreonReturnRoute) {
+                // The OAuth callback deliberately returned to this exact
+                // surface. Do not let normal progress restoration replace it
+                // with the next onboarding/question route before Patreon is
+                // resolved by the gate or subscription modal.
+              } else if (location.pathname === "/experiment") {
               } else if (location.pathname === "/about") {
                 // Do nothing if on /about
               } else if (
                 step === "subscription" ||
-                (step > 9 &&
-                  localStorage.getItem("passcode") !==
-                    import.meta.env.VITE_PATREON_PASSCODE)
+                (step > 9 && !startupSubscriptionAuthorized)
               ) {
-                navigate("/subscription");
+                if (location.pathname !== "/subscription") {
+                  navigate("/subscription");
+                }
               } else if (step === "award") {
                 navigate("/award");
               } else if (location.pathname === "/subscription" && step < 10) {
@@ -7620,7 +7727,9 @@ function App({ isShutDown }) {
             } else {
               //step is probably onboarding?
               if (step === "subscription") {
-                navigate("/subscription");
+                if (location.pathname !== "/subscription") {
+                  navigate("/subscription");
+                }
               } else if (step === "onboarding") {
                 const matchnumber = windowurl.match(/\/onboarding\/(\d+)$/);
 
@@ -7813,6 +7922,7 @@ function App({ isShutDown }) {
             setAllowPosts={setAllowPosts}
             soundEnabled={soundEnabled}
             setSoundEnabled={setSoundEnabled}
+            onPatreonAuthorized={handlePatreonAuthorized}
           />
         )}
 
@@ -7866,14 +7976,23 @@ function App({ isShutDown }) {
             <Route
               path="/subscription"
               element={
-                <PasscodePage
-                  userLanguage={userLanguage}
-                  isOldAccount={
-                    currentStep > 9 &&
-                    localStorage.getItem("passcode") !==
-                      import.meta.env.VITE_PATREON_PASSCODE
-                  }
-                />
+                PATREON_AUTH_ENABLED ? (
+                  <PatreonAuthDevGate
+                    userLanguage={userLanguage}
+                    currentStep={currentStep}
+                    legacyPasscodeVerified={legacyPasscodeVerified}
+                    onAuthorized={handlePatreonAuthorized}
+                  />
+                ) : (
+                  <PasscodePage
+                    userLanguage={userLanguage}
+                    isOldAccount={
+                      currentStep > 9 &&
+                      localStorage.getItem("passcode") !==
+                        import.meta.env.VITE_PATREON_PASSCODE
+                    }
+                  />
+                )
               }
             />
             {location.pathname !== "/about" &&
@@ -7892,7 +8011,7 @@ function App({ isShutDown }) {
                         postNostrContent={postNostrContent}
                         assignExistingBadgeToNpub={assignExistingBadgeToNpub}
                         emailStep={clonedStep}
-                        hasSubmittedPasscode={hasSubmittedPasscode}
+                        subscriptionAuthorized={subscriptionAuthorized}
                         setCurrentStep={setCurrentStep}
                         navigateWithTransition={navigateWithTransition}
                         setTransitionStats={setTransitionStats}
@@ -7960,6 +8079,14 @@ export const AppWrapper = () => {
       document.removeEventListener("click", warmAudio, options);
     };
   }, []);
+
+  if (window.location.pathname === "/patreon-return") {
+    return (
+      <ChakraProvider theme={appTheme}>
+        <PatreonOAuthDrawerReturn />
+      </ChakraProvider>
+    );
+  }
 
   // useEffect(() => {
   //   if (localStorage.getItem("security") === import.meta.env.VITE_SECURITY) {
