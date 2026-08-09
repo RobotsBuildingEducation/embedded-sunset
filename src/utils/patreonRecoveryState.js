@@ -27,10 +27,17 @@ export async function resolvePatreonStatus({
   getStatus,
   restoreStatus,
   canRestore = false,
+  preferRestore = false,
+  isCurrent = () => true,
 }) {
   let payload = await getStatus(npub);
-  if (shouldRestorePatreonSession(payload, canRestore)) {
+  if (!isCurrent()) return null;
+  if (
+    Boolean(preferRestore && canRestore) ||
+    shouldRestorePatreonSession(payload, canRestore)
+  ) {
     payload = await restoreStatus(npub);
+    if (!isCurrent()) return null;
   }
   return payload;
 }
@@ -42,6 +49,58 @@ export function classifyPatreonReplacementResponse(responseOk, payload = {}) {
     return { kind: "restart", error };
   }
   return { kind: "failure", error };
+}
+
+export async function replaceAndResolvePatreonStatus({
+  npub,
+  replaceLink,
+  getStatus,
+  restoreStatus,
+  canRestore = false,
+}) {
+  let replacementError;
+  try {
+    const payload = await replaceLink(npub);
+    if (payload?.authorized) return payload;
+    replacementError = Object.assign(
+      new Error(payload?.error || "replacement_failed"),
+      { payload },
+    );
+  } catch (error) {
+    replacementError = error;
+  }
+
+  // The replacement transaction may commit even if a mobile browser loses or
+  // cannot parse its success response. Reconcile from the key-bound source of
+  // truth before treating the action as failed or cancelling its recovery.
+  try {
+    const reconciled = await resolvePatreonStatus({
+      npub,
+      getStatus,
+      restoreStatus,
+      canRestore,
+      preferRestore: true,
+    });
+    if (reconciled?.authorized) return reconciled;
+  } catch {
+    // Preserve the original replacement error for the UI below.
+  }
+
+  throw replacementError;
+}
+
+export function shouldShowPatreonReplacement({
+  statusPayload,
+  returnResult = "",
+  isResolved = false,
+} = {}) {
+  if (statusPayload?.authorized) return false;
+  if (statusPayload?.replacementRequired) return true;
+
+  // A typed OAuth result is only an initial navigation hint. Once live status
+  // resolves, it must not pin the drawer to the replacement screen after a
+  // successful replacement or cancellation.
+  return !isResolved && returnResult === "replace_required";
 }
 
 export function createPatreonRecheckGate({

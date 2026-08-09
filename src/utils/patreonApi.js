@@ -45,14 +45,19 @@ export async function restorePatreonSession(npub, { allowExtension = true } = {}
   return request("/key-status", { method: "POST", body: proof });
 }
 
-export async function startPatreonLink(npub, plan = "annual", { returnMode = "page" } = {}) {
+export async function startPatreonLink(
+  npub,
+  plan = "annual",
+  { returnMode = "page", language = "en" } = {},
+) {
   const proof = await createPatreonNostrProof({ npub, action: "link" });
   return request("/link-start", {
     method: "POST",
     body: {
       ...proof,
       plan: ["annual", "monthly"].includes(plan) ? plan : "annual",
-      returnMode: ["popup", "modal"].includes(returnMode) ? returnMode : "page",
+      returnMode: returnMode === "modal" ? "modal" : "page",
+      language: language === "es" ? "es" : "en",
     },
   });
 }
@@ -70,8 +75,14 @@ export async function replacePatreonLink(npub) {
   });
 }
 
-export function cancelPatreonReplacement() {
-  return request("/cancel-replacement", { method: "POST" });
+export async function cancelPatreonReplacement(npub) {
+  const proof = npub
+    ? await createPatreonNostrProof({ npub, action: "restore" })
+    : undefined;
+  return request("/cancel-replacement", {
+    method: "POST",
+    ...(proof ? { body: proof } : {}),
+  });
 }
 
 export async function disconnectPatreon(npub) {

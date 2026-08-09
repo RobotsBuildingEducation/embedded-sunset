@@ -5,6 +5,8 @@
     { "collectionGroup": "patreonLinkChallenges", "fieldPath": "expiresAt", "ttl": true, "indexes": [] },
     { "collectionGroup": "patreonOAuthStates", "fieldPath": "expiresAt", "ttl": true, "indexes": [] },
     { "collectionGroup": "patreonLinkRecoveries", "fieldPath": "expiresAt", "ttl": true, "indexes": [] },
+    { "collectionGroup": "patreonLinkRecoveryResumes", "fieldPath": "expiresAt", "ttl": true, "indexes": [] },
+    { "collectionGroup": "patreonPendingCheckouts", "fieldPath": "expiresAt", "ttl": true, "indexes": [] },
     { "collectionGroup": "patreonOAuthAuditEvents", "fieldPath": "expiresAt", "ttl": true, "indexes": [] },
     { "collectionGroup": "patreonWebhookReceipts", "fieldPath": "expiresAt", "ttl": true, "indexes": [] },
     { "collectionGroup": "patreonRecoveryRateLimits", "fieldPath": "expiresAt", "ttl": true, "indexes": [] },

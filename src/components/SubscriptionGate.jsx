@@ -151,6 +151,24 @@ export default function SubscriptionGate({
     );
   }
 
+  if (isPatreonAwaiting) {
+    return (
+      <Box minH="100dvh" bg={pageBg} color="appText" display="flex" alignItems="center" justifyContent="center" px={{ base: 2, md: 4 }} py={{ base: 3, md: 8 }}>
+        <Box bg="appSurfaceElevated" borderWidth="1px" borderColor="appBorderStrong" borderRadius={{ base: "30px", md: "36px" }} style={{ cornerShape: APP_SQUIRCLE_SHAPE }} p={{ base: 4, md: 7 }} maxW="620px" w="100%" boxShadow={cardShadow}>
+          <VStack align="stretch" spacing={{ base: 5, md: 6 }}>
+            <Box textAlign="center">
+              <Box bg="appSurfaceMuted" borderWidth="1px" borderColor="appBorder" borderRadius="28px" style={{ cornerShape: APP_SQUIRCLE_SHAPE }} px={4} py={1} w="fit-content" mx="auto" mb={4}>
+                <RandomCharacter notSoRandomCharacter="31" width="92px" />
+              </Box>
+            </Box>
+            {renderPatreonAction()}
+            {patreonFeedback && <Text role="alert" color={errorColor} fontSize="xs" textAlign="center">{patreonFeedback}</Text>}
+          </VStack>
+        </Box>
+      </Box>
+    );
+  }
+
   return (
     <Box minH="100dvh" bg={pageBg} color="appText" display="flex" alignItems="center" justifyContent="center" px={{ base: 1, md: 4 }} py={{ base: 2, md: 8 }}>
       <Box bg="appSurfaceElevated" borderWidth="1px" borderColor="appBorderStrong" borderRadius={{ base: "30px", md: "36px" }} style={{ cornerShape: APP_SQUIRCLE_SHAPE }} p={{ base: 3, md: 6 }} maxW="760px" w="100%" my={{ base: 0, md: 4 }} boxShadow={cardShadow}>

@@ -21,6 +21,8 @@ const OAUTH_STATE_COLLECTION = "patreonOAuthStates";
 const ACCOUNT_LINK_COLLECTION = "patreonAccountLinks";
 const PATREON_USER_LINK_COLLECTION = "patreonUserLinks";
 const RECOVERY_COLLECTION = "patreonLinkRecoveries";
+const RECOVERY_RESUME_COLLECTION = "patreonLinkRecoveryResumes";
+const PENDING_CHECKOUT_COLLECTION = "patreonPendingCheckouts";
 const AUDIT_COLLECTION = "patreonOAuthAuditEvents";
 const WEBHOOK_RECEIPT_COLLECTION = "patreonWebhookReceipts";
 const RECOVERY_RATE_LIMIT_COLLECTION = "patreonRecoveryRateLimits";
@@ -40,6 +42,18 @@ const WEBHOOK_EVENTS = new Set([
   "members:pledge:create",
   "members:pledge:update",
   "members:pledge:delete",
+]);
+const OAUTH_COMPLETION_RESULTS = new Set([
+  "checkout_required",
+  "connected",
+  "link_conflict",
+  "not_subscribed",
+  "oauth_cancelled",
+  "oauth_error",
+  "replace_rate_limited",
+  "replace_required",
+  "state_error",
+  "unavailable",
 ]);
 const USER_AGENT = "Robots Building Education - Patreon subscription verification";
 
@@ -87,9 +101,6 @@ function getPatreonConfig(env = process.env) {
       positiveNumber(env.PATREON_STALE_GRACE_HOURS, 6) * 60 * 60 * 1000,
     refreshCooldownMs:
       positiveNumber(env.PATREON_REFRESH_COOLDOWN_SECONDS, 30) * 1000,
-    allowStateCookieFallback:
-      String(env.PATREON_ALLOW_STATE_COOKIE_FALLBACK || "").toLowerCase() ===
-      "true",
     cookieSecure:
       cookieSecureSetting === "true"
         ? true
@@ -472,23 +483,39 @@ function redirectTarget(config, result, searchParams = {}) {
     }
   }
 
+  const safeResult = OAUTH_COMPLETION_RESULTS.has(String(result))
+    ? String(result)
+    : "oauth_error";
+  const safeSearchParams = {};
+  if (["annual", "monthly"].includes(String(searchParams.plan))) {
+    safeSearchParams.plan = String(searchParams.plan);
+  }
+  if (["en", "es"].includes(String(searchParams.lang))) {
+    safeSearchParams.lang = String(searchParams.lang);
+  }
   const appendSearchParams = (params) => {
-    Object.entries(searchParams).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== "") {
-        params.set(key, String(value));
-      }
+    Object.entries(safeSearchParams).forEach(([key, value]) => {
+      params.set(key, value);
     });
   };
 
   if (!baseUrl) {
-    const params = new URLSearchParams({ patreon: result });
+    const params = new URLSearchParams({ patreon: safeResult });
     appendSearchParams(params);
-    return `/subscription?${params.toString()}`;
+    return `/patreon-return?${params.toString()}`;
   }
-  const url = new URL("/subscription", baseUrl);
-  url.searchParams.set("patreon", result);
+  const url = new URL("/patreon-return", baseUrl);
+  url.searchParams.set("patreon", safeResult);
   appendSearchParams(url.searchParams);
   return url.toString();
+}
+
+function completedOAuthRedirect(config, oauthState = {}) {
+  return redirectTarget(
+    config,
+    String(oauthState.completionResult || "oauth_error"),
+    oauthState.completionSearchParams || {},
+  );
 }
 
 async function parseJsonResponse(response, label) {
@@ -842,6 +869,47 @@ async function createBrowserSession({ db, record, config }) {
   return rawSessionId;
 }
 
+async function storePendingCheckoutForKey({ db, record, config, now = Date.now() }) {
+  const npub = String(record.npub || "");
+  if (!npub || !decodeNpub(npub)) {
+    throw new Error("Pending Patreon checkout is missing a valid key");
+  }
+  const expiresAtMs = now + config.sessionDurationMs;
+  const pendingRef = db
+    .collection(PENDING_CHECKOUT_COLLECTION)
+    .doc(sha256(npub));
+  await pendingRef.set({
+    ...record,
+    npub,
+    npubHash: sha256(npub),
+    hexPubkey: String(record.hexPubkey || ""),
+    pendingCheckout: true,
+    createdAtMs: now,
+    updatedAtMs: now,
+    expiresAtMs,
+    expiresAt: new Date(expiresAtMs),
+  });
+  return pendingRef;
+}
+
+async function pendingCheckoutForProvenKey(db, npub) {
+  const npubHash = sha256(npub);
+  const pendingRef = db
+    .collection(PENDING_CHECKOUT_COLLECTION)
+    .doc(npubHash);
+  const snapshot = await pendingRef.get();
+  const pending = snapshot.exists ? snapshot.data() || {} : null;
+  if (
+    !pending ||
+    !pending.pendingCheckout ||
+    pending.npubHash !== npubHash ||
+    Number(pending.expiresAtMs || 0) <= Date.now()
+  ) {
+    return null;
+  }
+  return { pending, pendingRef };
+}
+
 async function linkPatreonAccount({ db, npub, hexPubkey, record }) {
   const now = Date.now();
   const npubHash = sha256(npub);
@@ -1029,6 +1097,9 @@ async function createRecoveryIntent({
     .collection(PATREON_USER_LINK_COLLECTION)
     .doc(patreonUserHash);
   const recoveryRef = db.collection(RECOVERY_COLLECTION).doc(recoveryHash);
+  const resumeRef = db
+    .collection(RECOVERY_RESUME_COLLECTION)
+    .doc(nextNpubHash);
 
   await enforceRecoveryCreationRateLimits({
     db,
@@ -1067,6 +1138,16 @@ async function createRecoveryIntent({
         cancelledAtMs: now,
         expiresAt: new Date(now + RECOVERY_DURATION_MS),
       });
+      if (
+        previousRecovery.nextNpubHash &&
+        previousRecovery.nextNpubHash !== nextNpubHash
+      ) {
+        transaction.delete(
+          db
+            .collection(RECOVERY_RESUME_COLLECTION)
+            .doc(String(previousRecovery.nextNpubHash)),
+        );
+      }
     }
 
     transaction.set(recoveryRef, {
@@ -1097,6 +1178,13 @@ async function createRecoveryIntent({
       { pendingRecoveryHash: recoveryHash, updatedAtMs: now },
       { merge: true },
     );
+    transaction.set(resumeRef, {
+      recoveryHash,
+      nextNpubHash,
+      createdAtMs: now,
+      expiresAtMs: now + RECOVERY_DURATION_MS,
+      expiresAt: new Date(now + RECOVERY_DURATION_MS),
+    });
   });
 
   await writeAuditEvent(db, "replacement_requested", {
@@ -1224,6 +1312,188 @@ async function revokeLinkedSessionsWithRetry(options, log) {
   throw lastError;
 }
 
+async function pendingRecoveryForProvenKey(db, npub) {
+  const now = Date.now();
+  const nextNpubHash = sha256(npub);
+  const resumeRef = db
+    .collection(RECOVERY_RESUME_COLLECTION)
+    .doc(nextNpubHash);
+  const resumeSnapshot = await resumeRef.get();
+  const resume = resumeSnapshot.exists ? resumeSnapshot.data() || {} : null;
+  if (
+    !resume ||
+    !resume.recoveryHash ||
+    resume.nextNpubHash !== nextNpubHash ||
+    Number(resume.expiresAtMs || 0) <= now
+  ) {
+    return null;
+  }
+
+  const recoveryHash = String(resume.recoveryHash);
+  const recoveryRef = db.collection(RECOVERY_COLLECTION).doc(recoveryHash);
+  const recoverySnapshot = await recoveryRef.get();
+  const recovery = recoverySnapshot.exists
+    ? recoverySnapshot.data() || {}
+    : null;
+  if (
+    !recovery ||
+    recovery.status !== "pending" ||
+    recovery.nextNpubHash !== nextNpubHash ||
+    Number(recovery.expiresAtMs || 0) <= now
+  ) {
+    return null;
+  }
+
+  return { recovery, recoveryHash, recoveryRef, resumeRef };
+}
+
+async function restorePendingCheckoutForProvenKey({
+  req,
+  res,
+  db,
+  config,
+  fetchImpl,
+  proof,
+}) {
+  const result = await pendingCheckoutForProvenKey(db, proof.npub);
+  if (!result) return null;
+
+  const { pending, pendingRef } = result;
+  const evaluation = await evaluateStoredPatreonRecord(
+    pending,
+    config,
+    fetchImpl,
+  );
+  const currentRecord = {
+    ...pending,
+    ...(evaluation.updates || {}),
+    npub: proof.npub,
+    hexPubkey: proof.hexPubkey,
+  };
+
+  if (!evaluation.authorized) {
+    const now = Date.now();
+    await pendingRef.set(
+      {
+        ...(evaluation.updates || {}),
+        pendingCheckout: true,
+        updatedAtMs: now,
+      },
+      { merge: true },
+    );
+    const rawSessionId = await createBrowserSession({
+      db,
+      record: currentRecord,
+      config,
+    });
+    res.setHeader(
+      "Set-Cookie",
+      serializeCookie(
+        FIREBASE_SESSION_COOKIE,
+        encodeSessionCookieValue(AUTH_SESSION_COOKIE_KIND, rawSessionId),
+        {
+          maxAge: config.sessionDurationMs / 1000,
+          secure: config.cookieSecure,
+        },
+      ),
+    );
+    return sendJson(res, 200, {
+      authorized: false,
+      configured: true,
+      linked: false,
+      connected: true,
+      checkoutRequired: true,
+      selectedPlan: currentRecord.selectedPlan || "annual",
+      reason: evaluation.reason,
+      subscription: buildSubscriptionSummary(currentRecord, {
+        reason: evaluation.reason,
+      }),
+    });
+  }
+
+  const authorizedRecord = buildStoredAuthorization({
+    ...currentRecord,
+    authorized: true,
+  });
+  try {
+    await linkPatreonAccount({
+      db,
+      npub: proof.npub,
+      hexPubkey: proof.hexPubkey,
+      record: authorizedRecord,
+    });
+  } catch (error) {
+    if (error?.code === "patreon_account_already_linked") {
+      const rawRecoveryId = await createRecoveryIntent({
+        db,
+        linkProof: proof,
+        authorizedRecord,
+        ipHash: requestIpHash(req),
+      });
+      await pendingRef.delete();
+      res.setHeader(
+        "Set-Cookie",
+        serializeCookie(
+          FIREBASE_SESSION_COOKIE,
+          encodeSessionCookieValue(OAUTH_RECOVERY_COOKIE_KIND, rawRecoveryId),
+          {
+            maxAge: RECOVERY_DURATION_MS / 1000,
+            secure: config.cookieSecure,
+          },
+        ),
+      );
+      return sendJson(res, 200, {
+        authorized: false,
+        configured: true,
+        linked: false,
+        replacementRequired: true,
+        reason: "replace_required",
+        subscription: buildSubscriptionSummary(authorizedRecord),
+      });
+    }
+    if (error?.code === "rbe_key_already_linked") {
+      await pendingRef.delete();
+      return sendJson(res, 409, {
+        authorized: false,
+        configured: true,
+        linked: false,
+        reason: "link_conflict",
+        subscription: null,
+      });
+    }
+    throw error;
+  }
+
+  const linkedRecord = {
+    ...authorizedRecord,
+    npub: proof.npub,
+    hexPubkey: proof.hexPubkey,
+  };
+  const rawSessionId = await createBrowserSession({
+    db,
+    record: linkedRecord,
+    config,
+  });
+  await pendingRef.delete();
+  res.setHeader(
+    "Set-Cookie",
+    serializeCookie(
+      FIREBASE_SESSION_COOKIE,
+      encodeSessionCookieValue(AUTH_SESSION_COOKIE_KIND, rawSessionId),
+      {
+        maxAge: config.sessionDurationMs / 1000,
+        secure: config.cookieSecure,
+      },
+    ),
+  );
+  return sendJson(res, 200, {
+    authorized: true,
+    configured: true,
+    linked: true,
+    subscription: buildSubscriptionSummary(linkedRecord),
+  });
+}
+
 function webhookMemberState(eventName, payload) {
   const data = payload?.data || {};
   const attributes = data.attributes || {};
@@ -1282,6 +1552,55 @@ function requestPath(req) {
   } catch {
     return req.path || "/";
   }
+}
+
+function firstQueryValue(value) {
+  return String(Array.isArray(value) ? value[0] || "" : value || "");
+}
+
+function readOAuthCallbackParams(req, config) {
+  const result = {
+    state: firstQueryValue(req.query?.state),
+    code: firstQueryValue(req.query?.code),
+    error: firstQueryValue(req.query?.error),
+  };
+
+  let expectedCallback;
+  try {
+    expectedCallback = new URL(config.redirectUri);
+  } catch {
+    return result;
+  }
+
+  const candidates = [
+    req.originalUrl,
+    req.url,
+    req.headers?.["x-original-url"],
+    req.headers?.["x-forwarded-url"],
+    req.headers?.["x-forwarded-uri"],
+    req.headers?.["x-original-uri"],
+    req.headers?.["x-rewrite-url"],
+    req.headers?.["x-envoy-original-path"],
+    req.headers?.referer,
+  ];
+  for (const candidate of candidates) {
+    if (!candidate || (result.state && result.code)) continue;
+    try {
+      const candidateUrl = new URL(String(candidate), expectedCallback.origin);
+      if (
+        candidateUrl.origin !== expectedCallback.origin ||
+        candidateUrl.pathname !== expectedCallback.pathname
+      ) {
+        continue;
+      }
+      result.state ||= candidateUrl.searchParams.get("state") || "";
+      result.code ||= candidateUrl.searchParams.get("code") || "";
+      result.error ||= candidateUrl.searchParams.get("error") || "";
+    } catch {
+      // Ignore malformed proxy metadata and continue with other transports.
+    }
+  }
+  return result;
 }
 
 async function handleSessionStatus({
@@ -1536,6 +1855,9 @@ async function handleSessionStatus({
       if (!linkProof.npub || !linkProof.hexPubkey) {
         throw new Error("Pending Patreon checkout lost its Robots Building Education key link");
       }
+      const pendingCheckoutRef = db
+        .collection(PENDING_CHECKOUT_COLLECTION)
+        .doc(sha256(linkProof.npub));
 
       try {
         await linkPatreonAccount({
@@ -1554,6 +1876,7 @@ async function handleSessionStatus({
             ipHash: requestIpHash(req),
           });
           await sessionRef.delete();
+          await pendingCheckoutRef.delete();
           res.setHeader(
             "Set-Cookie",
             serializeCookie(
@@ -1579,6 +1902,7 @@ async function handleSessionStatus({
         }
         if (error?.code === "rbe_key_already_linked") {
           await sessionRef.delete();
+          await pendingCheckoutRef.delete();
           res.setHeader(
             "Set-Cookie",
             clearCookie(FIREBASE_SESSION_COOKIE, config.cookieSecure),
@@ -1593,6 +1917,7 @@ async function handleSessionStatus({
         }
         throw error;
       }
+      await pendingCheckoutRef.delete();
     }
 
     if (evaluation.updates) {
@@ -1651,15 +1976,6 @@ async function handleReplacement({ req, res, db, config, fetchImpl, log }) {
     });
     return sendJson(res, status, { error });
   };
-  const cookies = parseCookies(req.headers.cookie);
-  const rawRecoveryId = decodeSessionCookieValue(
-    cookies[FIREBASE_SESSION_COOKIE],
-    OAUTH_RECOVERY_COOKIE_KIND,
-  );
-  if (!rawRecoveryId) {
-    return rejectReplacement(401, "replacement_expired");
-  }
-
   let proof;
   try {
     proof = await consumeNostrChallenge({
@@ -1676,7 +1992,28 @@ async function handleReplacement({ req, res, db, config, fetchImpl, log }) {
   }
 
   const now = Date.now();
-  const recoveryHash = sha256(rawRecoveryId);
+  const cookies = parseCookies(req.headers.cookie);
+  const rawRecoveryId = decodeSessionCookieValue(
+    cookies[FIREBASE_SESSION_COOKIE],
+    OAUTH_RECOVERY_COOKIE_KIND,
+  );
+  let recoveryHash = rawRecoveryId ? sha256(rawRecoveryId) : "";
+  const usingResumePointer = !recoveryHash;
+  let resumeRef = null;
+  if (!recoveryHash) {
+    const pendingRecovery = await pendingRecoveryForProvenKey(db, proof.npub);
+    if (!pendingRecovery) {
+      return rejectReplacement(401, "replacement_expired", {
+        nextNpubHash: sha256(proof.npub),
+      });
+    }
+    recoveryHash = pendingRecovery.recoveryHash;
+    resumeRef = pendingRecovery.resumeRef;
+  } else {
+    resumeRef = db
+      .collection(RECOVERY_RESUME_COLLECTION)
+      .doc(sha256(proof.npub));
+  }
   const recoveryRef = db.collection(RECOVERY_COLLECTION).doc(recoveryHash);
   const recoverySnapshot = await recoveryRef.get();
   const recovery = recoverySnapshot.exists
@@ -1736,17 +2073,27 @@ async function handleReplacement({ req, res, db, config, fetchImpl, log }) {
   const reverseRef = db
     .collection(PATREON_USER_LINK_COLLECTION)
     .doc(patreonUserHash);
+  const recoveryResumeRef = resumeRef || db
+    .collection(RECOVERY_RESUME_COLLECTION)
+    .doc(nextNpubHash);
   const rawSessionId = crypto.randomBytes(32).toString("base64url");
   const sessionRef = db.collection(SESSION_COLLECTION).doc(sha256(rawSessionId));
 
   try {
     await db.runTransaction(async (transaction) => {
-      const [freshRecoverySnapshot, reverseSnapshot, oldSnapshot, newSnapshot] =
+      const [
+        freshRecoverySnapshot,
+        reverseSnapshot,
+        oldSnapshot,
+        newSnapshot,
+        resumeSnapshot,
+      ] =
         await Promise.all([
           transaction.get(recoveryRef),
           transaction.get(reverseRef),
           transaction.get(oldAccountRef),
           transaction.get(newAccountRef),
+          transaction.get(recoveryResumeRef),
         ]);
       const freshRecovery = freshRecoverySnapshot.exists
         ? freshRecoverySnapshot.data() || {}
@@ -1754,9 +2101,14 @@ async function handleReplacement({ req, res, db, config, fetchImpl, log }) {
       const reverse = reverseSnapshot.exists ? reverseSnapshot.data() || {} : {};
       const oldAccount = oldSnapshot.exists ? oldSnapshot.data() || {} : {};
       const newAccount = newSnapshot.exists ? newSnapshot.data() || {} : null;
+      const resume = resumeSnapshot.exists ? resumeSnapshot.data() || {} : {};
       if (
         freshRecovery.status !== "pending" ||
         Number(freshRecovery.expiresAtMs || 0) <= now ||
+        (usingResumePointer &&
+          (resume.recoveryHash !== recoveryHash ||
+            resume.nextNpubHash !== nextNpubHash ||
+            Number(resume.expiresAtMs || 0) <= now)) ||
         reverse.pendingRecoveryHash !== recoveryHash ||
         reverse.npubHash !== previousNpubHash ||
         oldAccount.patreonUserId !== currentRecord.patreonUserId ||
@@ -1783,6 +2135,7 @@ async function handleReplacement({ req, res, db, config, fetchImpl, log }) {
         pendingRecoveryHash: "",
       });
       transaction.delete(oldAccountRef);
+      transaction.delete(recoveryResumeRef);
       transaction.set(recoveryRef, {
         status: "completed",
         patreonUserHash,
@@ -1867,10 +2220,27 @@ async function handleCancelReplacement({ req, res, db, config, log }) {
     "Set-Cookie",
     clearCookie(FIREBASE_SESSION_COOKIE, config.cookieSecure),
   );
-  if (!rawRecoveryId) return sendJson(res, 200, { ok: true });
+  let recoveryHash = rawRecoveryId ? sha256(rawRecoveryId) : "";
+  if (!recoveryHash && req.body?.challengeId && req.body?.signedEvent) {
+    try {
+      const proof = await consumeNostrChallenge({
+        db,
+        challengeId: String(req.body.challengeId),
+        signedEvent: req.body.signedEvent,
+        expectedAction: "restore",
+      });
+      const pendingRecovery = await pendingRecoveryForProvenKey(db, proof.npub);
+      recoveryHash = pendingRecovery?.recoveryHash || "";
+    } catch (error) {
+      if (error?.isNostrProofError) {
+        return sendJson(res, 401, { error: "invalid_nostr_proof" });
+      }
+      throw error;
+    }
+  }
+  if (!recoveryHash) return sendJson(res, 200, { ok: true });
 
   const now = Date.now();
-  const recoveryHash = sha256(rawRecoveryId);
   const recoveryRef = db.collection(RECOVERY_COLLECTION).doc(recoveryHash);
   let auditData = null;
   await db.runTransaction(async (transaction) => {
@@ -1902,6 +2272,13 @@ async function handleCancelReplacement({ req, res, db, config, log }) {
         reverseRef,
         { pendingRecoveryHash: "", updatedAtMs: now },
         { merge: true },
+      );
+    }
+    if (recovery.nextNpubHash) {
+      transaction.delete(
+        db
+          .collection(RECOVERY_RESUME_COLLECTION)
+          .doc(String(recovery.nextNpubHash)),
       );
     }
   });
@@ -2299,9 +2676,15 @@ function createPatreonHandler({ db, getConfig, fetchImpl = fetch, logger }) {
           ? requestedPlan
           : "annual";
         const requestedReturnMode = String(req.body?.returnMode || "");
-        const returnMode = ["popup", "modal"].includes(requestedReturnMode)
+        const returnMode = requestedReturnMode === "modal"
           ? requestedReturnMode
           : "page";
+        const requestedLanguage = String(req.body?.language || "")
+          .trim()
+          .toLowerCase();
+        const language = ["en", "es"].includes(requestedLanguage)
+          ? requestedLanguage
+          : "";
         const state = crypto.randomBytes(32).toString("base64url");
         await db
           .collection(OAUTH_STATE_COLLECTION)
@@ -2311,6 +2694,8 @@ function createPatreonHandler({ db, getConfig, fetchImpl = fetch, logger }) {
             hexPubkey: proof.hexPubkey,
             selectedPlan,
             returnMode,
+            ...(language ? { language } : {}),
+            status: "pending",
             createdAtMs: Date.now(),
             expiresAtMs: Date.now() + OAUTH_STATE_DURATION_MS,
             expiresAt: new Date(Date.now() + OAUTH_STATE_DURATION_MS),
@@ -2367,6 +2752,31 @@ function createPatreonHandler({ db, getConfig, fetchImpl = fetch, logger }) {
           .doc(sha256(proof.npub));
         const accountSnapshot = await accountRef.get();
         if (!accountSnapshot.exists) {
+          const pendingRecovery = await pendingRecoveryForProvenKey(
+            db,
+            proof.npub,
+          );
+          if (pendingRecovery) {
+            return sendJson(res, 200, {
+              authorized: false,
+              configured: true,
+              linked: false,
+              replacementRequired: true,
+              reason: "replace_required",
+              subscription: buildSubscriptionSummary(
+                pendingRecovery.recovery,
+              ),
+            });
+          }
+          const restoredCheckout = await restorePendingCheckoutForProvenKey({
+            req,
+            res,
+            db,
+            config,
+            fetchImpl,
+            proof,
+          });
+          if (restoredCheckout) return restoredCheckout;
           return sendJson(res, 200, {
             authorized: false,
             configured: true,
@@ -2540,114 +2950,121 @@ function createPatreonHandler({ db, getConfig, fetchImpl = fetch, logger }) {
       }
 
       const cookies = parseCookies(req.headers.cookie);
-      let expectedLinkState = decodeSessionCookieValue(
+      const expectedLinkState = decodeSessionCookieValue(
         cookies[FIREBASE_SESSION_COOKIE],
         OAUTH_LINK_STATE_COOKIE_KIND,
       );
-      let expectedState =
+      const expectedState =
         expectedLinkState ||
         decodeSessionCookieValue(
           cookies[FIREBASE_SESSION_COOKIE],
           OAUTH_STATE_COOKIE_KIND,
         );
-      const receivedState = String(req.query?.state || "");
-      const code = String(req.query?.code || "");
-      const oauthError = String(req.query?.error || "");
-      res.setHeader(
-        "Set-Cookie",
-        clearCookie(FIREBASE_SESSION_COOKIE, config.cookieSecure),
-      );
-
-      // A local HTTPS tunnel and the localhost UI are different cookie
-      // origins. In explicitly enabled local development, recover the state
-      // from the short-lived, signed-Nostr-key-bound Firestore record instead.
-      // Production keeps requiring the same-origin OAuth state cookie.
-      if (
-        config.allowStateCookieFallback &&
-        receivedState &&
-        (!expectedState || !safeEqual(expectedState, receivedState))
-      ) {
-        try {
-          const oauthStateSnapshot = await db
-            .collection(OAUTH_STATE_COLLECTION)
-            .doc(sha256(receivedState))
-            .get();
-          const oauthState = oauthStateSnapshot.exists
-            ? oauthStateSnapshot.data() || {}
-            : null;
-          if (
-            oauthState &&
-            Number(oauthState.expiresAtMs || 0) > Date.now() &&
-            oauthState.npub &&
-            oauthState.hexPubkey
-          ) {
-            expectedLinkState = receivedState;
-            expectedState = receivedState;
-          }
-        } catch (error) {
-          log.warn(
-            "Unable to recover local Patreon OAuth state",
-            error?.message || error,
-          );
-        }
-      }
-
-      if (
-        !expectedState ||
-        !receivedState ||
-        !safeEqual(expectedState, receivedState)
-      ) {
+      const callbackParams = readOAuthCallbackParams(req, config);
+      const receivedState = callbackParams.state || expectedState;
+      const code = callbackParams.code;
+      const oauthError = callbackParams.error;
+      // The server-side, one-use state record is authoritative. The shared
+      // __session cookie is only a cleanup hint: status/key restoration and a
+      // newer link attempt can legitimately replace it while Patreon is open.
+      // Rejecting a valid returned state because that cookie is stale makes
+      // callback success depend on response timing across browser surfaces.
+      if (!receivedState) {
+        log.warn("Patreon OAuth callback rejected", {
+          reason: "missing_returned_state",
+          hadStateCookie: Boolean(expectedState),
+        });
         return res.redirect(302, redirectTarget(config, "state_error"));
       }
 
-      let linkProof = null;
-      if (expectedLinkState) {
-        try {
-          const oauthStateRef = db
-            .collection(OAUTH_STATE_COLLECTION)
-            .doc(sha256(receivedState));
-          const oauthStateSnapshot = await oauthStateRef.get();
-          const oauthState = oauthStateSnapshot.exists
-            ? oauthStateSnapshot.data() || {}
-            : null;
-          if (oauthStateSnapshot.exists) await oauthStateRef.delete();
-          if (oauthState && Number(oauthState.expiresAtMs || 0) > Date.now()) {
-            linkProof = {
-              npub: String(oauthState.npub || ""),
-              hexPubkey: String(oauthState.hexPubkey || ""),
-              selectedPlan: String(oauthState.selectedPlan || "annual"),
-              returnMode: ["popup", "modal"].includes(oauthState.returnMode)
-                ? oauthState.returnMode
-                : "page",
-            };
-          }
-        } catch (error) {
-          log.error("Unable to read Patreon link state", error?.message || error);
-        }
-        if (!linkProof?.npub || !linkProof?.hexPubkey) {
-          return res.redirect(302, redirectTarget(config, "state_error"));
-        }
+      const oauthStateRef = db
+        .collection(OAUTH_STATE_COLLECTION)
+        .doc(sha256(receivedState));
+      let oauthState = null;
+      try {
+        const oauthStateSnapshot = await oauthStateRef.get();
+        oauthState = oauthStateSnapshot.exists
+          ? oauthStateSnapshot.data() || {}
+          : null;
+      } catch (error) {
+        log.error("Unable to read Patreon link state", error?.message || error);
       }
+      if (
+        !oauthState ||
+        Number(oauthState.expiresAtMs || 0) <= Date.now() ||
+        !oauthState.npub ||
+        !oauthState.hexPubkey
+      ) {
+        log.warn("Patreon OAuth callback rejected", {
+          reason: "invalid_server_state",
+          hadStateCookie: Boolean(expectedState),
+          stateCookieMatched: Boolean(
+            expectedState && safeEqual(expectedState, receivedState),
+          ),
+        });
+        return res.redirect(302, redirectTarget(config, "state_error"));
+      }
+      if (oauthState.status === "completed") {
+        return res.redirect(302, completedOAuthRedirect(config, oauthState));
+      }
+
+      const linkProof = {
+        npub: String(oauthState.npub),
+        hexPubkey: String(oauthState.hexPubkey),
+        selectedPlan: ["annual", "monthly"].includes(oauthState.selectedPlan)
+          ? oauthState.selectedPlan
+          : "annual",
+      };
+      const finishCallback = async (
+        result,
+        searchParams = {},
+        { preserveCookie = false } = {},
+      ) => {
+        const completionResult = OAUTH_COMPLETION_RESULTS.has(String(result))
+          ? String(result)
+          : "oauth_error";
+        const completionSearchParams = {};
+        if (["annual", "monthly"].includes(String(searchParams.plan))) {
+          completionSearchParams.plan = String(searchParams.plan);
+        }
+        if (["en", "es"].includes(String(oauthState.language))) {
+          completionSearchParams.lang = String(oauthState.language);
+        }
+        const completedAtMs = Date.now();
+        await oauthStateRef.set(
+          {
+            status: "completed",
+            completionResult,
+            completionSearchParams,
+            completedAtMs,
+          },
+          { merge: true },
+        );
+        log.info("Patreon OAuth callback completed", {
+          result: completionResult,
+          hadStateCookie: Boolean(expectedState),
+          stateCookieMatched: Boolean(
+            expectedState && safeEqual(expectedState, receivedState),
+          ),
+        });
+        if (!preserveCookie && expectedState) {
+          res.setHeader(
+            "Set-Cookie",
+            clearCookie(FIREBASE_SESSION_COOKIE, config.cookieSecure),
+          );
+        }
+        return res.redirect(
+          302,
+          redirectTarget(config, completionResult, completionSearchParams),
+        );
+      };
 
       if (oauthError) {
-        return res.redirect(302, redirectTarget(config, "oauth_cancelled", {
-          ...(linkProof?.returnMode === "popup" ? { patreon_popup: "1" } : {}),
-          ...(linkProof?.returnMode === "modal" ? { patreon_modal: "1" } : {}),
-        }));
+        return finishCallback("oauth_cancelled");
       }
       if (!code) {
-        return res.redirect(302, redirectTarget(config, "oauth_error", {
-          ...(linkProof?.returnMode === "popup" ? { patreon_popup: "1" } : {}),
-          ...(linkProof?.returnMode === "modal" ? { patreon_modal: "1" } : {}),
-        }));
+        return finishCallback("oauth_error");
       }
-
-      const callbackTarget = (result, searchParams = {}) =>
-        redirectTarget(config, result, {
-          ...searchParams,
-          ...(linkProof?.returnMode === "popup" ? { patreon_popup: "1" } : {}),
-          ...(linkProof?.returnMode === "modal" ? { patreon_modal: "1" } : {}),
-        });
 
       try {
         const tokens = await exchangeAuthorizationCode(code, config, fetchImpl);
@@ -2662,7 +3079,7 @@ function createPatreonHandler({ db, getConfig, fetchImpl = fetch, logger }) {
             reason: membership.reason,
             ...getMembershipDiagnostics(identity, config),
           });
-          if (linkProof?.npub && linkProof?.hexPubkey) {
+          if (linkProof.npub && linkProof.hexPubkey) {
             const now = Date.now();
             const pendingRecord = buildPendingCheckoutRecord({
               identity,
@@ -2676,6 +3093,12 @@ function createPatreonHandler({ db, getConfig, fetchImpl = fetch, logger }) {
               db,
               record: pendingRecord,
               config,
+            });
+            await storePendingCheckoutForKey({
+              db,
+              record: pendingRecord,
+              config,
+              now,
             });
             res.setHeader(
               "Set-Cookie",
@@ -2691,17 +3114,13 @@ function createPatreonHandler({ db, getConfig, fetchImpl = fetch, logger }) {
                 },
               ),
             );
-            return res.redirect(
-              302,
-              callbackTarget("checkout_required", {
-                plan: pendingRecord.selectedPlan,
-              }),
+            return finishCallback(
+              "checkout_required",
+              { plan: pendingRecord.selectedPlan },
+              { preserveCookie: true },
             );
           }
-          return res.redirect(
-            302,
-            callbackTarget("not_subscribed"),
-          );
+          return finishCallback("not_subscribed");
         }
 
         const now = Date.now();
@@ -2711,7 +3130,7 @@ function createPatreonHandler({ db, getConfig, fetchImpl = fetch, logger }) {
           config,
           now,
         });
-        if (linkProof?.npub && linkProof?.hexPubkey) {
+        if (linkProof.npub && linkProof.hexPubkey) {
           try {
             await linkPatreonAccount({
               db,
@@ -2743,25 +3162,23 @@ function createPatreonHandler({ db, getConfig, fetchImpl = fetch, logger }) {
                     },
                   ),
                 );
-                return res.redirect(
-                  302,
-                  callbackTarget("replace_required"),
+                return finishCallback(
+                  "replace_required",
+                  {},
+                  { preserveCookie: true },
                 );
               } catch (recoveryError) {
                 const recoveryCode = String(
                   recoveryError?.code || recoveryError?.message || "",
                 );
                 if (recoveryCode === "recovery_rate_limited") {
-                  return res.redirect(
-                    302,
-                    callbackTarget("replace_rate_limited"),
-                  );
+                  return finishCallback("replace_rate_limited");
                 }
                 throw recoveryError;
               }
             }
             if (error?.code === "rbe_key_already_linked") {
-              return res.redirect(302, callbackTarget("link_conflict"));
+              return finishCallback("link_conflict");
             }
             throw error;
           }
@@ -2784,10 +3201,10 @@ function createPatreonHandler({ db, getConfig, fetchImpl = fetch, logger }) {
             },
           ),
         );
-        return res.redirect(302, callbackTarget("connected"));
+        return finishCallback("connected", {}, { preserveCookie: true });
       } catch (error) {
         log.error("Patreon OAuth callback failed", error?.message || error);
-        return res.redirect(302, callbackTarget("oauth_error"));
+        return finishCallback("oauth_error");
       }
     }
 

@@ -138,7 +138,6 @@ function handlerConfig(overrides = {}) {
     webhookSecret: "webhook-secret",
     campaignId: "campaign-1",
     cookieSecure: false,
-    allowStateCookieFallback: false,
     statusCacheMs: 60_000,
     staleGraceMs: 60_000,
     refreshCooldownMs: 30_000,
@@ -426,6 +425,59 @@ test("removes the unsigned OAuth start route", async () => {
   assert.equal(db.records.size, 0);
 });
 
+test("signed OAuth start stores an allowlisted callback language", async () => {
+  const secretKey = generateSecretKey();
+  const hexPubkey = getPublicKey(secretKey);
+  const npub = nip19.npubEncode(hexPubkey);
+  const challengeId = "localized-link-challenge";
+  const now = Date.now();
+  const eventTemplate = buildNostrAuthEvent({
+    action: "link",
+    challengeId,
+    challenge: "localized-link-value",
+    expiresAtMs: now + 60_000,
+  });
+  const db = new FakeFirestore({
+    [`patreonLinkChallenges/${sha256(challengeId)}`]: {
+      npub,
+      hexPubkey,
+      action: "link",
+      eventTemplateJson: JSON.stringify(eventTemplate),
+      expiresAtMs: now + 60_000,
+      usedAtMs: null,
+    },
+  });
+  const handler = createPatreonHandler({
+    db,
+    getConfig: () => handlerConfig(),
+    logger: { info() {}, warn() {}, error() {} },
+  });
+  const response = fakeResponse();
+
+  await handler(
+    {
+      method: "POST",
+      url: "/api/patreon/link-start",
+      headers: {},
+      body: {
+        challengeId,
+        signedEvent: finalizeEvent(eventTemplate, secretKey),
+        plan: "annual",
+        returnMode: "modal",
+        language: "es",
+      },
+    },
+    response,
+  );
+
+  assert.equal(response.statusCode, 200);
+  const authorizeUrl = new URL(JSON.parse(response.body).authorizeUrl);
+  const state = authorizeUrl.searchParams.get("state");
+  const oauthState = db.records.get(`patreonOAuthStates/${sha256(state)}`);
+  assert.equal(oauthState.language, "es");
+  assert.equal(oauthState.returnMode, "modal");
+});
+
 test("enables Patreon auth automatically in the Functions emulator", () => {
   const config = getPatreonConfig({ FUNCTIONS_EMULATOR: "true" });
   assert.equal(config.enabled, true);
@@ -495,6 +547,68 @@ test("status restores a pending replacement from its key-bound recovery cookie",
   assert.equal(payload.subscription.status, "active");
   assert.equal("encryptedAccessToken" in payload.subscription, false);
   assert.equal("patreonUserId" in payload.subscription, false);
+});
+
+test("signed key restore discovers a replacement created in another browser", async () => {
+  const secretKey = generateSecretKey();
+  const hexPubkey = getPublicKey(secretKey);
+  const npub = nip19.npubEncode(hexPubkey);
+  const nextNpubHash = sha256(npub);
+  const recoveryHash = sha256("cross-browser-recovery");
+  const challengeId = "cross-browser-restore-challenge";
+  const now = Date.now();
+  const eventTemplate = buildNostrAuthEvent({
+    action: "restore",
+    challengeId,
+    challenge: "restore-value",
+    expiresAtMs: now + 60_000,
+  });
+  const db = new FakeFirestore({
+    [`patreonLinkChallenges/${sha256(challengeId)}`]: {
+      npub,
+      hexPubkey,
+      action: "restore",
+      eventTemplateJson: JSON.stringify(eventTemplate),
+      expiresAtMs: now + 60_000,
+      usedAtMs: null,
+    },
+    [`patreonLinkRecoveries/${recoveryHash}`]: {
+      ...storedAuthorization(),
+      status: "pending",
+      nextNpubHash,
+      expiresAtMs: now + 60_000,
+    },
+    [`patreonLinkRecoveryResumes/${nextNpubHash}`]: {
+      recoveryHash,
+      nextNpubHash,
+      expiresAtMs: now + 60_000,
+    },
+  });
+  const handler = createPatreonHandler({
+    db,
+    getConfig: () => handlerConfig(),
+    logger: { info() {}, warn() {}, error() {} },
+  });
+  const response = fakeResponse();
+
+  await handler(
+    {
+      method: "POST",
+      url: "/api/patreon/key-status",
+      headers: {},
+      body: {
+        challengeId,
+        signedEvent: finalizeEvent(eventTemplate, secretKey),
+      },
+    },
+    response,
+  );
+
+  const payload = JSON.parse(response.body);
+  assert.equal(response.statusCode, 200);
+  assert.equal(payload.authorized, false);
+  assert.equal(payload.replacementRequired, true);
+  assert.equal(payload.reason, "replace_required");
 });
 
 test("browser sessions carry hashed link identifiers and a Firestore TTL", () => {
@@ -980,10 +1094,12 @@ test("first-time OAuth linking creates no recovery intent", async () => {
   const hexPubkey = getPublicKey(secretKey);
   const npub = nip19.npubEncode(hexPubkey);
   const state = "first-link-state";
+  let tokenExchanges = 0;
   const db = new FakeFirestore({
     [`patreonOAuthStates/${sha256(state)}`]: {
       npub,
       hexPubkey,
+      language: "es",
       returnMode: "popup",
       expiresAtMs: Date.now() + 60_000,
     },
@@ -997,18 +1113,21 @@ test("first-time OAuth linking creates no recovery intent", async () => {
         redirectUri: "https://tunnel.example/api/patreon/callback",
         appUrl: "http://localhost:4445",
       }),
-    fetchImpl: async (url) => ({
-      ok: true,
-      status: 200,
-      json: async () =>
-        String(url).includes("/token")
-          ? {
-              access_token: "access",
-              refresh_token: "refresh",
-              expires_in: 3600,
-            }
-          : identityWithMembership(),
-    }),
+    fetchImpl: async (url) => {
+      if (String(url).includes("/token")) tokenExchanges += 1;
+      return {
+        ok: true,
+        status: 200,
+        json: async () =>
+          String(url).includes("/token")
+            ? {
+                access_token: "access",
+                refresh_token: "refresh",
+                expires_in: 3600,
+              }
+            : identityWithMembership(),
+      };
+    },
     logger: { info() {}, warn() {}, error() {} },
   });
   const response = fakeResponse();
@@ -1027,7 +1146,9 @@ test("first-time OAuth linking creates no recovery intent", async () => {
   );
   assert.equal(response.statusCode, 302);
   assert.match(response.headers.Location, /patreon=connected/);
-  assert.match(response.headers.Location, /patreon_popup=1/);
+  assert.equal(new URL(response.headers.Location).searchParams.get("lang"), "es");
+  assert.match(response.headers.Location, /\/patreon-return\?/);
+  assert.doesNotMatch(response.headers.Location, /patreon_popup/);
   assert.equal(db.records.has(`patreonAccountLinks/${sha256(npub)}`), true);
   assert.equal(
     [...db.records.keys()].some((key) =>
@@ -1035,6 +1156,38 @@ test("first-time OAuth linking creates no recovery intent", async () => {
     ),
     false,
   );
+  const sessionCookie = parseCookies(response.headers["Set-Cookie"]).__session;
+  assert.ok(decodeSessionCookieValue(sessionCookie, "auth-session"));
+  const statusResponse = fakeResponse();
+  await handler(
+    {
+      method: "GET",
+      url: "/api/patreon/status",
+      headers: {
+        cookie: `__session=${encodeURIComponent(sessionCookie)}`,
+        "x-rbe-npub": npub,
+      },
+    },
+    statusResponse,
+  );
+  assert.equal(JSON.parse(statusResponse.body).authorized, true);
+  const replayResponse = fakeResponse();
+  await handler(
+    {
+      method: "GET",
+      url: "/api/patreon/callback",
+      query: { state, code: "already-used-code" },
+      headers: {},
+    },
+    replayResponse,
+  );
+  assert.equal(replayResponse.statusCode, 302);
+  assert.match(replayResponse.headers.Location, /patreon=connected/);
+  assert.equal(
+    new URL(replayResponse.headers.Location).searchParams.get("lang"),
+    "es",
+  );
+  assert.equal(tokenExchanges, 1);
 });
 
 test("OAuth keeps a key-bound pending session when checkout is still required", async () => {
@@ -1114,7 +1267,174 @@ test("OAuth keeps a key-bound pending session when checkout is still required", 
   assert.equal(pendingSession.selectedPlan, "monthly");
   assert.equal(pendingSession.linkedNpub, npub);
   assert.notEqual(pendingSession.encryptedAccessToken, "pending-access");
+  const durablePending = db.records.get(
+    `patreonPendingCheckouts/${sha256(npub)}`,
+  );
+  assert.equal(durablePending.pendingCheckout, true);
+  assert.equal(durablePending.npubHash, sha256(npub));
+  assert.ok(durablePending.expiresAt instanceof Date);
   assert.equal(db.records.has(`patreonAccountLinks/${sha256(npub)}`), false);
+});
+
+test("signed key restore recovers checkout-required state without the callback cookie", async () => {
+  const secretKey = generateSecretKey();
+  const hexPubkey = getPublicKey(secretKey);
+  const npub = nip19.npubEncode(hexPubkey);
+  const challengeId = "pending-checkout-restore";
+  const now = Date.now();
+  const eventTemplate = buildNostrAuthEvent({
+    action: "restore",
+    challengeId,
+    challenge: "pending-checkout-value",
+    expiresAtMs: now + 60_000,
+  });
+  const pending = {
+    authorized: false,
+    pendingCheckout: true,
+    selectedPlan: "monthly",
+    patreonUserId: "patreon-user-1",
+    memberId: "",
+    tierIds: [],
+    entitledAmountCents: 0,
+    patronStatus: "",
+    lastChargeStatus: "",
+    lastVerifiedAtMs: now - 1_000,
+    oauthExpiresAtMs: now + 120_000,
+    encryptedAccessToken: encryptToken("access", "encryption-secret"),
+    encryptedRefreshToken: encryptToken("refresh", "encryption-secret"),
+    npub,
+    npubHash: sha256(npub),
+    hexPubkey,
+    expiresAtMs: now + 60_000,
+  };
+  const db = new FakeFirestore({
+    [`patreonLinkChallenges/${sha256(challengeId)}`]: {
+      npub,
+      hexPubkey,
+      action: "restore",
+      eventTemplateJson: JSON.stringify(eventTemplate),
+      expiresAtMs: now + 60_000,
+      usedAtMs: null,
+    },
+    [`patreonPendingCheckouts/${sha256(npub)}`]: pending,
+  });
+  const handler = createPatreonHandler({
+    db,
+    getConfig: () => handlerConfig(),
+    fetchImpl: async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        data: {
+          id: "patreon-user-1",
+          type: "user",
+          relationships: { memberships: { data: [] } },
+        },
+        included: [],
+      }),
+    }),
+    logger: { info() {}, warn() {}, error() {} },
+  });
+  const response = fakeResponse();
+
+  await handler(
+    {
+      method: "POST",
+      url: "/api/patreon/key-status",
+      headers: {},
+      body: {
+        challengeId,
+        signedEvent: finalizeEvent(eventTemplate, secretKey),
+      },
+    },
+    response,
+  );
+
+  const payload = JSON.parse(response.body);
+  assert.equal(response.statusCode, 200);
+  assert.equal(payload.authorized, false);
+  assert.equal(payload.checkoutRequired, true);
+  assert.equal(payload.selectedPlan, "monthly");
+  assert.match(response.headers["Set-Cookie"], /auth-session/);
+  assert.equal(
+    db.records.get(`patreonPendingCheckouts/${sha256(npub)}`).pendingCheckout,
+    true,
+  );
+});
+
+test("signed key restore links a pending checkout that became subscribed", async () => {
+  const secretKey = generateSecretKey();
+  const hexPubkey = getPublicKey(secretKey);
+  const npub = nip19.npubEncode(hexPubkey);
+  const challengeId = "paid-checkout-restore";
+  const now = Date.now();
+  const eventTemplate = buildNostrAuthEvent({
+    action: "restore",
+    challengeId,
+    challenge: "paid-checkout-value",
+    expiresAtMs: now + 60_000,
+  });
+  const db = new FakeFirestore({
+    [`patreonLinkChallenges/${sha256(challengeId)}`]: {
+      npub,
+      hexPubkey,
+      action: "restore",
+      eventTemplateJson: JSON.stringify(eventTemplate),
+      expiresAtMs: now + 60_000,
+      usedAtMs: null,
+    },
+    [`patreonPendingCheckouts/${sha256(npub)}`]: {
+      authorized: false,
+      pendingCheckout: true,
+      selectedPlan: "annual",
+      patreonUserId: "patreon-user-1",
+      memberId: "",
+      tierIds: [],
+      entitledAmountCents: 0,
+      patronStatus: "",
+      lastChargeStatus: "",
+      lastVerifiedAtMs: now - 1_000,
+      oauthExpiresAtMs: now + 120_000,
+      encryptedAccessToken: encryptToken("access", "encryption-secret"),
+      encryptedRefreshToken: encryptToken("refresh", "encryption-secret"),
+      npub,
+      npubHash: sha256(npub),
+      hexPubkey,
+      expiresAtMs: now + 60_000,
+    },
+  });
+  const handler = createPatreonHandler({
+    db,
+    getConfig: () => handlerConfig(),
+    fetchImpl: async () => ({
+      ok: true,
+      status: 200,
+      json: async () => identityWithMembership(),
+    }),
+    logger: { info() {}, warn() {}, error() {} },
+  });
+  const response = fakeResponse();
+
+  await handler(
+    {
+      method: "POST",
+      url: "/api/patreon/key-status",
+      headers: {},
+      body: {
+        challengeId,
+        signedEvent: finalizeEvent(eventTemplate, secretKey),
+      },
+    },
+    response,
+  );
+
+  const payload = JSON.parse(response.body);
+  assert.equal(response.statusCode, 200);
+  assert.equal(payload.authorized, true);
+  assert.equal(payload.linked, true);
+  assert.equal(db.records.has(`patreonAccountLinks/${sha256(npub)}`), true);
+  assert.equal(db.records.has(`patreonPendingCheckouts/${sha256(npub)}`), false);
+  assert.match(response.headers["Set-Cookie"], /auth-session/);
 });
 
 test("a pending checkout session links and unlocks after membership becomes active", async () => {
@@ -1185,7 +1505,7 @@ test("a pending checkout session links and unlocks after membership becomes acti
   );
 });
 
-test("local callback tunnel can recover signed link state without a shared cookie", async () => {
+test("callback can recover signed link state without a shared cookie", async () => {
   const secretKey = generateSecretKey();
   const hexPubkey = getPublicKey(secretKey);
   const npub = nip19.npubEncode(hexPubkey);
@@ -1201,7 +1521,6 @@ test("local callback tunnel can recover signed link state without a shared cooki
     db,
     getConfig: () =>
       handlerConfig({
-        allowStateCookieFallback: true,
         clientId: "client-id",
         clientSecret: "client-secret",
         redirectUri: "https://tunnel.example/api/patreon/callback",
@@ -1238,26 +1557,51 @@ test("local callback tunnel can recover signed link state without a shared cooki
   assert.equal(db.records.has(`patreonAccountLinks/${sha256(npub)}`), true);
   assert.equal(
     db.records.has(`patreonOAuthStates/${sha256(state)}`),
-    false,
+    true,
+  );
+  assert.equal(
+    db.records.get(`patreonOAuthStates/${sha256(state)}`).status,
+    "completed",
   );
 });
 
-test("production callback still rejects a missing OAuth state cookie", async () => {
+test("production callback recovers proxy-stripped parameters with a stale cookie", async () => {
+  const secretKey = generateSecretKey();
+  const hexPubkey = getPublicKey(secretKey);
+  const npub = nip19.npubEncode(hexPubkey);
   const state = "no-cookie-production-state";
   const db = new FakeFirestore({
     [`patreonOAuthStates/${sha256(state)}`]: {
-      npub: "npub1test",
-      hexPubkey: "a".repeat(64),
+      npub,
+      hexPubkey,
       expiresAtMs: Date.now() + 60_000,
     },
   });
+  let tokenExchanges = 0;
   const handler = createPatreonHandler({
     db,
     getConfig: () =>
       handlerConfig({
-        allowStateCookieFallback: false,
+        clientId: "client-id",
+        clientSecret: "client-secret",
+        redirectUri: "https://robotsbuildingeducation.com/api/patreon/callback",
         appUrl: "https://robotsbuildingeducation.com",
       }),
+    fetchImpl: async (url) => {
+      if (String(url).includes("/token")) tokenExchanges += 1;
+      return {
+        ok: true,
+        status: 200,
+        json: async () =>
+          String(url).includes("/token")
+            ? {
+                access_token: "access",
+                refresh_token: "refresh",
+                expires_in: 3600,
+              }
+            : identityWithMembership(),
+      };
+    },
     logger: { info() {}, warn() {}, error() {} },
   });
   const response = fakeResponse();
@@ -1266,18 +1610,76 @@ test("production callback still rejects a missing OAuth state cookie", async () 
     {
       method: "GET",
       url: "/api/patreon/callback",
-      query: { state, code: "oauth-code" },
-      headers: {},
+      originalUrl: "/api/patreon/callback",
+      query: {},
+      headers: {
+        cookie: `__session=${encodeURIComponent(
+          encodeSessionCookieValue("oauth-link-state", "newer-or-stale-state"),
+        )}`,
+        referer: `https://robotsbuildingeducation.com/api/patreon/callback?code=oauth-code&state=${state}`,
+      },
     },
     response,
   );
 
   assert.equal(response.statusCode, 302);
-  assert.match(response.headers.Location, /patreon=state_error/);
+  assert.match(response.headers.Location, /patreon=connected/);
+  assert.equal(tokenExchanges, 1);
   assert.equal(
     db.records.has(`patreonOAuthStates/${sha256(state)}`),
     true,
   );
+});
+
+test("callback does not recover OAuth parameters from a foreign referrer", async () => {
+  const secretKey = generateSecretKey();
+  const hexPubkey = getPublicKey(secretKey);
+  const npub = nip19.npubEncode(hexPubkey);
+  const state = "foreign-referrer-state";
+  const db = new FakeFirestore({
+    [`patreonOAuthStates/${sha256(state)}`]: {
+      npub,
+      hexPubkey,
+      expiresAtMs: Date.now() + 60_000,
+    },
+  });
+  let tokenExchanges = 0;
+  const handler = createPatreonHandler({
+    db,
+    getConfig: () =>
+      handlerConfig({
+        clientId: "client-id",
+        clientSecret: "client-secret",
+        redirectUri: "https://robotsbuildingeducation.com/api/patreon/callback",
+        appUrl: "https://robotsbuildingeducation.com",
+      }),
+    fetchImpl: async () => {
+      tokenExchanges += 1;
+      return { ok: true, status: 200, json: async () => ({}) };
+    },
+    logger: { info() {}, warn() {}, error() {} },
+  });
+  const response = fakeResponse();
+
+  await handler(
+    {
+      method: "GET",
+      url: "/api/patreon/callback",
+      originalUrl: "/api/patreon/callback",
+      query: {},
+      headers: {
+        cookie: `__session=${encodeURIComponent(
+          encodeSessionCookieValue("oauth-link-state", state),
+        )}`,
+        referer: `https://attacker.example/api/patreon/callback?code=stolen-code&state=${state}`,
+      },
+    },
+    response,
+  );
+
+  assert.equal(response.statusCode, 302);
+  assert.match(response.headers.Location, /patreon=oauth_error/);
+  assert.equal(tokenExchanges, 0);
 });
 
 test("OAuth conflict creates a pending recovery without moving the old link", async () => {
@@ -1355,6 +1757,11 @@ test("OAuth conflict creates a pending recovery without moving the old link", as
   assert.equal(recoveries.length, 1);
   assert.equal(recoveries[0][1].status, "pending");
   assert.equal(recoveries[0][1].nextNpubHash, nextNpubHash);
+  const resume = db.records.get(
+    `patreonLinkRecoveryResumes/${nextNpubHash}`,
+  );
+  assert.equal(resume.recoveryHash, recoveries[0][0].split("/")[1]);
+  assert.equal(resume.expiresAt instanceof Date, true);
 });
 
 test("cancelling replacement clears pending state and records a sanitized audit", async () => {
@@ -1411,7 +1818,7 @@ test("cancelling replacement clears pending state and records a sanitized audit"
   );
 });
 
-test("signed recovery atomically moves a Patreon link to the new key", async () => {
+test("signed recovery atomically moves a Patreon link without the callback cookie", async () => {
   const secretKey = generateSecretKey();
   const hexPubkey = getPublicKey(secretKey);
   const npub = nip19.npubEncode(hexPubkey);
@@ -1419,8 +1826,7 @@ test("signed recovery atomically moves a Patreon link to the new key", async () 
   const previousNpubHash = sha256("old-npub");
   const patreonUserId = "patreon-user-1";
   const patreonUserHash = sha256(patreonUserId);
-  const rawRecoveryId = "recovery-secret";
-  const recoveryHash = sha256(rawRecoveryId);
+  const recoveryHash = sha256("recovery-secret");
   const challengeId = "replace-challenge";
   const now = Date.now();
   const eventTemplate = buildNostrAuthEvent({
@@ -1455,6 +1861,11 @@ test("signed recovery atomically moves a Patreon link to the new key", async () 
   };
   const db = new FakeFirestore({
     [`patreonLinkRecoveries/${recoveryHash}`]: recovery,
+    [`patreonLinkRecoveryResumes/${nextNpubHash}`]: {
+      recoveryHash,
+      nextNpubHash,
+      expiresAtMs: now + 60_000,
+    },
     [`patreonLinkChallenges/${sha256(challengeId)}`]: {
       npub,
       hexPubkey,
@@ -1495,11 +1906,7 @@ test("signed recovery atomically moves a Patreon link to the new key", async () 
     {
       method: "POST",
       url: "/api/patreon/replace-link",
-      headers: {
-        cookie: `__session=${encodeURIComponent(
-          encodeSessionCookieValue("oauth-recovery", rawRecoveryId),
-        )}`,
-      },
+      headers: {},
       body: { challengeId, signedEvent },
     },
     response,
@@ -1522,17 +1929,17 @@ test("signed recovery atomically moves a Patreon link to the new key", async () 
     db.records.get(`patreonLinkRecoveries/${recoveryHash}`).status,
     "completed",
   );
+  assert.equal(
+    db.records.has(`patreonLinkRecoveryResumes/${nextNpubHash}`),
+    false,
+  );
 
   const replayResponse = fakeResponse();
   await handler(
     {
       method: "POST",
       url: "/api/patreon/replace-link",
-      headers: {
-        cookie: `__session=${encodeURIComponent(
-          encodeSessionCookieValue("oauth-recovery", rawRecoveryId),
-        )}`,
-      },
+      headers: {},
       body: { challengeId, signedEvent },
     },
     replayResponse,

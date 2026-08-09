@@ -206,11 +206,10 @@ import CountdownTimer from "./elements/CountdownTimer";
 
 import { PasscodeModal } from "./components/PasscodeModal/PasscodeModal";
 import PatreonAuthDevGate from "./components/PatreonAuthDevGate";
-import PatreonOAuthPopupReturn from "./components/PatreonOAuthPopupReturn";
-import PatreonOAuthModalReturn from "./components/PatreonOAuthModalReturn";
+import PatreonOAuthDrawerReturn from "./components/PatreonOAuthDrawerReturn";
+import { hasPatreonOAuthReturn } from "./utils/patreonOAuthReturn.js";
 import { getPatreonStatus, restorePatreonSession } from "./utils/patreonApi.js";
 import { canSilentlySignPatreonProof } from "./utils/patreonNostrProof.js";
-import { hasPendingPatreonModalReturn } from "./utils/patreonOAuthReturn.js";
 import {
   PATREON_AUTH_ENABLED,
   resolveSubscriptionAccess,
@@ -7294,10 +7293,18 @@ function App({ isShutDown }) {
   const hideAlert = useAlertStore((s) => s.hideAlert);
   const showAlert = useAlertStore((s) => s.showAlert);
   const [hasSubmittedPasscode, setHasSubmittedPasscode] = useState(false);
-  const [patreonAuthorized, setPatreonAuthorized] = useState(false);
+  const [patreonAuthorizedNpub, setPatreonAuthorizedNpub] = useState("");
   const handlePatreonAuthorized = useCallback(
-    () => setPatreonAuthorized(true),
+    () => setPatreonAuthorizedNpub(
+      String(localStorage.getItem("local_npub") || "").trim(),
+    ),
     [],
+  );
+  const activePatreonNpub = String(
+    localStorage.getItem("local_npub") || "",
+  ).trim();
+  const patreonAuthorized = Boolean(
+    activePatreonNpub && patreonAuthorizedNpub === activePatreonNpub,
   );
 
   const legacyPasscodeVerified =
@@ -7530,6 +7537,10 @@ function App({ isShutDown }) {
     }, 12000);
 
     const initializeApp = async () => {
+      if (window.location.pathname === "/patreon-return") return;
+      const preservePatreonReturnRoute = hasPatreonOAuthReturn(
+        window.location.search,
+      );
       const npub = localStorage.getItem("local_npub");
       let startupLegacyPasscodeVerified =
         localStorage.getItem("passcode") ===
@@ -7632,13 +7643,20 @@ function App({ isShutDown }) {
               if (PATREON_AUTH_ENABLED && step > 9 && npub) {
                 try {
                   let patreonStatus = await getPatreonStatus(npub);
+                  if (localStorage.getItem("local_npub") !== npub) {
+                    patreonStatus = { authorized: false };
+                  }
                   if (
                     !patreonStatus.authorized &&
-                    canSilentlySignPatreonProof()
+                    canSilentlySignPatreonProof() &&
+                    localStorage.getItem("local_npub") === npub
                   ) {
                     patreonStatus = await restorePatreonSession(npub, {
                       allowExtension: false,
                     });
+                    if (localStorage.getItem("local_npub") !== npub) {
+                      patreonStatus = { authorized: false };
+                    }
                   }
                   startupPatreonAuthorized = Boolean(
                     patreonStatus.authorized,
@@ -7650,7 +7668,9 @@ function App({ isShutDown }) {
                   );
                 }
               }
-              setPatreonAuthorized(startupPatreonAuthorized);
+              setPatreonAuthorizedNpub(
+                startupPatreonAuthorized ? npub : "",
+              );
 
               const startupSubscriptionAuthorized =
                 resolveSubscriptionAccess({
@@ -7659,7 +7679,12 @@ function App({ isShutDown }) {
                   legacyPasscodeVerified: startupLegacyPasscodeVerified,
                 }).authorized;
 
-              if (location.pathname === "/experiment") {
+              if (preservePatreonReturnRoute) {
+                // The OAuth callback deliberately returned to this exact
+                // surface. Do not let normal progress restoration replace it
+                // with the next onboarding/question route before Patreon is
+                // resolved by the gate or subscription modal.
+              } else if (location.pathname === "/experiment") {
               } else if (location.pathname === "/about") {
                 // Do nothing if on /about
               } else if (
@@ -7897,6 +7922,7 @@ function App({ isShutDown }) {
             setAllowPosts={setAllowPosts}
             soundEnabled={soundEnabled}
             setSoundEnabled={setSoundEnabled}
+            onPatreonAuthorized={handlePatreonAuthorized}
           />
         )}
 
@@ -7951,19 +7977,12 @@ function App({ isShutDown }) {
               path="/subscription"
               element={
                 PATREON_AUTH_ENABLED ? (
-                  new URLSearchParams(location.search).get("patreon_popup") === "1" ? (
-                    <PatreonOAuthPopupReturn />
-                  ) : new URLSearchParams(location.search).get("patreon_modal") === "1" ||
-                    hasPendingPatreonModalReturn() ? (
-                    <PatreonOAuthModalReturn />
-                  ) : (
-                    <PatreonAuthDevGate
-                      userLanguage={userLanguage}
-                      currentStep={currentStep}
-                      legacyPasscodeVerified={legacyPasscodeVerified}
-                      onAuthorized={handlePatreonAuthorized}
-                    />
-                  )
+                  <PatreonAuthDevGate
+                    userLanguage={userLanguage}
+                    currentStep={currentStep}
+                    legacyPasscodeVerified={legacyPasscodeVerified}
+                    onAuthorized={handlePatreonAuthorized}
+                  />
                 ) : (
                   <PasscodePage
                     userLanguage={userLanguage}
@@ -8060,6 +8079,14 @@ export const AppWrapper = () => {
       document.removeEventListener("click", warmAudio, options);
     };
   }, []);
+
+  if (window.location.pathname === "/patreon-return") {
+    return (
+      <ChakraProvider theme={appTheme}>
+        <PatreonOAuthDrawerReturn />
+      </ChakraProvider>
+    );
+  }
 
   // useEffect(() => {
   //   if (localStorage.getItem("security") === import.meta.env.VITE_SECURITY) {

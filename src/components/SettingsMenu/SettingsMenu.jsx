@@ -55,6 +55,7 @@ import {
 import PatreonSubscriptionSettingsModal from "../PatreonSubscriptionSettingsModal.jsx";
 import {
   clearPatreonModalReopen,
+  consumePatreonModalReturn,
   PATREON_MODAL_RESULT_PARAM,
   PATREON_MODAL_RETURN_PARAM,
   shouldReopenPatreonModal,
@@ -76,6 +77,7 @@ const SettingsMenu = ({
   setAllowPosts,
   soundEnabled,
   setSoundEnabled,
+  onPatreonAuthorized,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
@@ -159,6 +161,7 @@ const SettingsMenu = ({
     onOpen: onAlgorithmHelperOpen,
     onClose: onAlgorithmHelperClose,
   } = useDisclosure();
+  const [patreonReturnResult, setPatreonReturnResult] = useState("");
 
   const {
     isOpen: isInstallModalOpen,
@@ -225,22 +228,39 @@ const SettingsMenu = ({
     const returnedThroughRoute =
       location.pathname !== "/subscription" &&
       params.get(PATREON_MODAL_RETURN_PARAM) === "1";
-    if (!returnedThroughRoute && !shouldReopenPatreonModal()) return;
+    const shouldReopen = shouldReopenPatreonModal();
+    if (!returnedThroughRoute && !shouldReopen) return;
+
+    const storedReturn = shouldReopen ? consumePatreonModalReturn() : null;
+    setPatreonReturnResult(
+      params.get(PATREON_MODAL_RESULT_PARAM) || storedReturn?.result || "",
+    );
 
     onSubscriptionOpen();
     if (returnedThroughRoute) {
       params.delete(PATREON_MODAL_RETURN_PARAM);
       params.delete(PATREON_MODAL_RESULT_PARAM);
-      navigate({
-        pathname: location.pathname,
-        search: params.toString() ? `?${params.toString()}` : "",
-        hash: location.hash,
-      }, { replace: true });
+      navigate(
+        {
+          pathname: location.pathname,
+          search: params.toString() ? `?${params.toString()}` : "",
+          hash: location.hash,
+        },
+        { replace: true },
+      );
     }
-  }, [location.hash, location.key, location.pathname, location.search, navigate, onSubscriptionOpen]);
+  }, [
+    location.hash,
+    location.key,
+    location.pathname,
+    location.search,
+    navigate,
+    onSubscriptionOpen,
+  ]);
 
   const handleSubscriptionClose = () => {
     clearPatreonModalReopen();
+    setPatreonReturnResult("");
     onSubscriptionClose();
   };
 
@@ -375,11 +395,7 @@ const SettingsMenu = ({
     <IconButton
       ref={btnRef}
       icon={<IoAppsOutline />}
-      {...getInstantSurfacePressProps(
-        menuPressRef,
-        "settings",
-        onOpen,
-      )}
+      {...getInstantSurfacePressProps(menuPressRef, "settings", onOpen)}
       boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
       position="fixed"
       top={4}
@@ -577,9 +593,7 @@ const SettingsMenu = ({
                   }
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
-                      window.open(
-                        "https://subscribe.piyali.app/",
-                      );
+                      window.open("https://subscribe.piyali.app/");
                     }
                   }}
                 >
@@ -810,6 +824,8 @@ const SettingsMenu = ({
           isOpen={isSubscriptionOpen}
           onClose={handleSubscriptionClose}
           appLanguage={userLanguage}
+          onAuthorized={onPatreonAuthorized}
+          returnResult={patreonReturnResult}
         />
       ) : null}
     </>
