@@ -32,9 +32,9 @@ export const PATREON_FLOW_COPY = {
     finishBody: "After you subscribe, return to this page. Robots Building Education will verify your membership and unlock automatically.",
     openCheckout: "Open Patreon checkout",
     membershipTitle: "Membership",
-    membershipPrice: "$10/mo",
+    membershipPrice: "$8/mo",
     annualRecommended: "ANNUAL · 50% OFF",
-    annualValue: "or $5/mo for annual subscriptions",
+    annualValue: "or $4/mo for annual subscriptions ($48/year)",
     membershipCta: "Subscribe with Patreon",
   },
   es: {
@@ -43,9 +43,9 @@ export const PATREON_FLOW_COPY = {
     finishBody: "Después de suscribirte, regresa a esta página. Robots Building Education verificará tu membresía y se desbloqueará automáticamente.",
     openCheckout: "Abrir pago de Patreon",
     membershipTitle: "Membresía",
-    membershipPrice: "$10/mes",
+    membershipPrice: "$8/mes",
     annualRecommended: "ANUAL · 50% DE DESCUENTO",
-    annualValue: "o $5/mes con la suscripción anual",
+    annualValue: "o $4/mes con la suscripción anual ($48/año)",
     membershipCta: "Suscribirse con Patreon",
   },
 };
