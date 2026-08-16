@@ -7,26 +7,14 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { translation } from "../../utility/translation";
-import { IoChatbubblesOutline } from "react-icons/io5";
-import { getInstantSurfacePressProps } from "../../utility/instantSurface";
 
 const MultipleChoiceQuestion = ({
   question,
   selectedOption,
   setSelectedOption,
-  onLearnClick,
-  userLanguage,
-  handleModalCheck,
 }) => {
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const optionRefs = useRef([]);
-  const learnButtonRef = useRef(null);
-  const learnPressRef = useRef({ key: "", at: 0 });
-  const actionShadow = useColorModeValue(
-    "0 12px 24px rgba(15, 23, 42, 0.12)",
-    "0 16px 34px rgba(2, 6, 23, 0.42)",
-  );
   const optionShadow = useColorModeValue(
     "0 14px 30px rgba(15, 23, 42, 0.08)",
     "0 18px 38px rgba(2, 6, 23, 0.42)",
@@ -37,10 +25,6 @@ const MultipleChoiceQuestion = ({
   );
 
   const handleKeyDown = (e) => {
-    if (e.target === learnButtonRef.current) {
-      return;
-    }
-
     switch (e.key) {
       case "ArrowUp":
         e.preventDefault();
@@ -87,24 +71,6 @@ const MultipleChoiceQuestion = ({
 
   return (
     <VStack spacing={4} onKeyDown={handleKeyDown} width="100%" maxWidth="600px">
-      <Button
-        ref={learnButtonRef}
-        {...getInstantSurfacePressProps(learnPressRef, "learn", () =>
-          handleModalCheck(onLearnClick),
-        )}
-        colorScheme="pink"
-        tabIndex={0}
-        background="pink.300"
-        color="white"
-        boxShadow={actionShadow}
-        _hover={{ bg: "pink.400" }}
-        _active={{ bg: "pink.400" }}
-      >
-        <IoChatbubblesOutline />
-        &nbsp;
-        {translation[userLanguage]["app.button.learn"]}
-      </Button>
-
       <VStack align={"stretch"} width="100%" maxWidth={"600px"}>
         {question.options.map((option, index) => (
           <Button

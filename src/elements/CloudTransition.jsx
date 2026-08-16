@@ -1,12 +1,7 @@
 // CloudTransition.jsx
 import React, { useEffect, useRef, useState, useMemo, useId } from "react";
 import { Box, Button, Flex, Icon, Text, useColorMode } from "@chakra-ui/react";
-import {
-  CheckCircleIcon,
-  QuestionIcon,
-  RepeatIcon,
-  StarIcon,
-} from "@chakra-ui/icons";
+import { StarIcon } from "@chakra-ui/icons";
 // Icons for additional types
 import { FiType, FiAlignLeft } from "react-icons/fi";
 import {
@@ -15,9 +10,20 @@ import {
   RiBookOpenLine,
   RiChatQuoteLine,
   RiChat3Line,
+  RiBugLine,
+  RiCheckboxMultipleLine,
+  RiCodeBoxLine,
+  RiDragMove2Line,
+  RiFlagLine,
+  RiFocus3Line,
+  RiGitBranchLine,
+  RiInputField,
+  RiLinkM,
+  RiListOrdered2,
+  RiMedalLine,
+  RiRadioButtonLine,
+  RiRouteLine,
 } from "react-icons/ri";
-import { BsCodeSquare } from "react-icons/bs";
-
 import { motion, AnimatePresence } from "framer-motion";
 import WaveBar from "../components/WaveBar";
 import {
@@ -56,25 +62,88 @@ const SKILL_NODE_STYLES = {
 
 const QUESTION_TYPE_STYLES = {
   order: {
-    icon: RepeatIcon,
+    icon: RiListOrdered2,
     label: "Ordering Challenge",
     accent: "#8b5cf6",
     gradient: "linear(to-br, rgba(139,92,246,0.22), rgba(59,130,246,0.18))",
     halo: "rgba(139,92,246,0.22)",
   },
   multiAnswer: {
-    icon: CheckCircleIcon,
+    icon: RiCheckboxMultipleLine,
     label: "Multi-Select",
     accent: "#10b981",
     gradient: "linear(to-br, rgba(16,185,129,0.22), rgba(59,130,246,0.14))",
     halo: "rgba(16,185,129,0.18)",
   },
   multiChoice: {
-    icon: QuestionIcon,
+    icon: RiRadioButtonLine,
     label: "Multiple Choice",
     accent: "#0ea5e9",
     gradient: "linear(to-br, rgba(14,165,233,0.22), rgba(99,102,241,0.16))",
     halo: "rgba(14,165,233,0.2)",
+  },
+  codeTracing: {
+    icon: RiRouteLine,
+    label: "Code Tracing",
+    accent: "#38bdf8",
+    gradient: "linear(to-br, rgba(56,189,248,0.22), rgba(99,102,241,0.16))",
+    halo: "rgba(56,189,248,0.2)",
+  },
+  fillCodeBlanks: {
+    icon: RiInputField,
+    label: "Fill Code Blanks",
+    accent: "#84cc16",
+    gradient: "linear(to-br, rgba(132,204,22,0.22), rgba(16,185,129,0.16))",
+    halo: "rgba(132,204,22,0.18)",
+  },
+  parsons: {
+    icon: RiDragMove2Line,
+    label: "Parsons Problem",
+    accent: "#8b5cf6",
+    gradient: "linear(to-br, rgba(139,92,246,0.22), rgba(59,130,246,0.18))",
+    halo: "rgba(139,92,246,0.22)",
+  },
+  matchPairs: {
+    icon: RiLinkM,
+    label: "Match the Pairs",
+    accent: "#0ea5e9",
+    gradient: "linear(to-br, rgba(14,165,233,0.22), rgba(6,182,212,0.16))",
+    halo: "rgba(14,165,233,0.2)",
+  },
+  relevantLine: {
+    icon: RiFocus3Line,
+    label: "Find the Relevant Line",
+    accent: "#f59e0b",
+    gradient: "linear(to-br, rgba(245,158,11,0.22), rgba(251,146,60,0.16))",
+    halo: "rgba(245,158,11,0.2)",
+  },
+  bestImplementation: {
+    icon: RiMedalLine,
+    label: "Best Implementation",
+    accent: "#eab308",
+    gradient: "linear(to-br, rgba(234,179,8,0.22), rgba(249,115,22,0.16))",
+    halo: "rgba(234,179,8,0.2)",
+  },
+  fixBug: {
+    icon: RiBugLine,
+    label: "Fix the Bug",
+    accent: "#f43f5e",
+    gradient: "linear(to-br, rgba(244,63,94,0.22), rgba(249,115,22,0.14))",
+    halo: "rgba(244,63,94,0.2)",
+  },
+  refactoring: {
+    icon: RiGitBranchLine,
+    label: "Refactoring Challenge",
+    accent: "#d946ef",
+    gradient: "linear(to-br, rgba(217,70,239,0.22), rgba(99,102,241,0.16))",
+    halo: "rgba(217,70,239,0.2)",
+  },
+  projectCheckpoint: {
+    icon: RiFlagLine,
+    label: "Project Checkpoint",
+    accent: "#10b981",
+    gradient: "linear(to-br, rgba(16,185,129,0.22), rgba(6,182,212,0.16))",
+    halo: "rgba(16,185,129,0.2)",
   },
 
   // Expanded types
@@ -100,7 +169,7 @@ const QUESTION_TYPE_STYLES = {
     halo: "rgba(6,182,212,0.18)",
   },
   codeCompletion: {
-    icon: BsCodeSquare,
+    icon: RiCodeBoxLine,
     label: "Code Completion",
     accent: "#84cc16",
     gradient: "linear(to-br, rgba(132,204,22,0.22), rgba(16,185,129,0.16))",
@@ -213,7 +282,21 @@ const detectQuestionKind = (step) => {
   if (!step || typeof step !== "object") return "default";
   const q = step.question ?? step;
 
-  // 1) Explicit flags
+  // 1) Exercise-specific flags must run before the broader legacy families.
+  if (step.isCodeTracing || q?.isCodeTracing) return "codeTracing";
+  if (step.isFillCodeBlanks || q?.isFillCodeBlanks) return "fillCodeBlanks";
+  if (step.isParsonsProblem || q?.isParsonsProblem) return "parsons";
+  if (step.isMatchPairs || q?.isMatchPairs) return "matchPairs";
+  if (step.isRelevantLine || q?.isRelevantLine) return "relevantLine";
+  if (step.isBestImplementation || q?.isBestImplementation)
+    return "bestImplementation";
+  if (step.isFixBug || q?.isFixBug) return "fixBug";
+  if (step.isRefactoringChallenge || q?.isRefactoringChallenge)
+    return "refactoring";
+  if (step.isProjectCheckpoint || q?.isProjectCheckpoint)
+    return "projectCheckpoint";
+
+  // 2) Explicit legacy flags
   if (step.isStudyGuide || q?.isStudyGuide) return "study";
   if (step.isSelectOrder || q?.isSelectOrder) return "order";
   if (step.isMultipleAnswerChoice || q?.isMultipleAnswerChoice)
@@ -221,17 +304,17 @@ const detectQuestionKind = (step) => {
   if (step.isMultipleChoice || q?.isMultipleChoice) return "multiChoice";
   if (step.isCodeCompletion || q?.isCodeCompletion) return "codeCompletion";
 
-  // 2) Code family
+  // 3) Code family
   if (step.isCode || q?.isCode) {
     const isTerminal = Boolean(step.isTerminal ?? q?.isTerminal);
     return isTerminal ? "terminal" : "code";
   }
 
-  // 3) Text inputs
+  // 4) Text inputs
   if (step.isSingleLineText || q?.isSingleLineText) return "singleLine";
   if (step.isText || q?.isText) return "text";
 
-  // 4) Lightweight inference
+  // 5) Lightweight inference
   const answer = q?.answer ?? q?.answers ?? step.answer;
   if (Array.isArray(answer) && answer.length > 1) return "multiAnswer";
 

@@ -15,11 +15,6 @@ import {
   Switch,
   Progress,
   useDisclosure,
-  Select,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Menu,
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { GiBullseye } from "react-icons/gi";
@@ -28,6 +23,7 @@ import { triggerHaptic } from "tactus";
 
 import {
   incrementUserOnboardingStep,
+  setUserOnboardingStep,
   setOnboardingToDone,
 } from "./utility/nosql";
 
@@ -48,7 +44,7 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { getToken } from "firebase/messaging";
 
 import { LuPuzzle } from "react-icons/lu";
-import { FaBitcoin, FaCode } from "react-icons/fa";
+import { FaBitcoin } from "react-icons/fa";
 
 const KnowledgeLedgerOnboarding = lazy(() =>
   import("./components/KnowledgeLedgerOnboarding/KnowledgeLedgerOnboarding"),
@@ -57,8 +53,6 @@ import { Image } from "@chakra-ui/image";
 import AwardModalOnboarding from "./components/AwardModalOnboarding/AwardModalOnboarding";
 import { onboardingTranscript } from "./utility/transcript";
 import { useSharedNostr } from "./hooks/useNOSTR";
-import { TechOverview } from "./components/TechOverview/TechOverview";
-import { ChevronDownIcon } from "@chakra-ui/icons";
 import WaveBar from "./components/WaveBar";
 import { soundManager } from "./utility/soundManager";
 
@@ -78,7 +72,6 @@ const scrollToTopInstantly = () => {
 
 export const Onboarding = ({
   userLanguage,
-  setUserLanguage,
   setCurrentStep,
 }) => {
   const { assignExistingBadgeToNpub } = useSharedNostr(
@@ -124,6 +117,20 @@ export const Onboarding = ({
   useLayoutEffect(() => {
     scrollToTopInstantly();
   }, [step]);
+
+  useLayoutEffect(() => {
+    if (step !== "4") return;
+
+    const npub = localStorage.getItem("local_npub");
+    if (npub) {
+      setUserOnboardingStep(npub, 5).catch((error) => {
+        console.error("Failed to migrate removed language step", error);
+      });
+    }
+    setCurrentStep(3);
+    scrollToTopInstantly();
+    navigate("/q/3", { replace: true });
+  }, [navigate, setCurrentStep, step]);
 
   useEffect(() => {
     async function fetchNotificationStatus() {
@@ -202,20 +209,6 @@ export const Onboarding = ({
       } catch (error) {
         console.error("Error deleting FCM token:", error);
       }
-    }
-  };
-
-  // inside Onboarding, before the return
-  const handleLanguageSelect = async (e) => {
-    playOnboardingChord();
-    const newLanguage = e.target.value;
-    setUserLanguage(newLanguage);
-    localStorage.setItem("userLanguage", newLanguage);
-
-    const npub = localStorage.getItem("local_npub");
-    if (npub) {
-      const userDoc = doc(database, "users", npub);
-      await updateDoc(userDoc, { language: newLanguage });
     }
   };
 
@@ -377,7 +370,7 @@ export const Onboarding = ({
                 /> */}
                 <Box width="250px" mb={4}>
                   <WaveBar
-                    value={(2 / 7) * 100}
+                    value={(2 / 6) * 100}
                     start="#02fabc"
                     end="#12ff69"
                     delay={0}
@@ -865,7 +858,7 @@ export const Onboarding = ({
                 /> */}
                 <Box width="250px" mb={4}>
                   <WaveBar
-                    value={(3 / 7) * 100}
+                    value={(3 / 6) * 100}
                     start="#02fabc"
                     end="#12ff69"
                     delay={0}
@@ -925,214 +918,6 @@ export const Onboarding = ({
             </VStack>
           )}
 
-          {/* New Step 4: Choose your language */}
-          {step === "4" && (
-            <VStack spacing={4}>
-              <Box>
-                <Text fontSize="sm">
-                  {translation[userLanguage]["onboardingProgress"]}
-                </Text>
-                {/* 
-                <Progress
-                  opacity="0.8"
-                  border="1px solid #ececec"
-                  // boxShadow="0px 0px 0.5px 2px #ececec"
-                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                  value={(4 / 7) * 100}
-                  size="md"
-                  colorScheme={"green"}
-                  width="250px"
-                  mb={4}
-                  borderRadius="4px"
-                  background={"#ececec"}
-                /> */}
-
-                <Box width="250px" mb={4}>
-                  <WaveBar
-                    value={(4 / 7) * 100}
-                    start="#02fabc"
-                    end="#12ff69"
-                    delay={0}
-                    bg="appSurfaceGlass"
-                    border="var(--chakra-colors-appBorder)"
-                  />
-                </Box>
-              </Box>
-
-              <RiseUpAnimation>
-                <Box
-                  borderRadius="24px"
-                  p={4}
-                  bg="appSurface"
-                  boxShadow="0.5px 0.5px 1px black"
-                >
-                  <Text
-                    mb={6}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <FaCode color="#9f6bfa" />
-                    &nbsp;
-                    {translation[userLanguage]["onboarding.languages.title"]}
-                  </Text>
-
-                  <Text mb={6} textAlign="left" fontSize="sm" width="100%">
-                    {
-                      translation[userLanguage][
-                        "onboarding.languages.description"
-                      ]
-                    }
-                  </Text>
-
-                  {/* Replace Select with Menu */}
-                  <Menu width="100%" mb={6}>
-                    <MenuButton
-                      as={Button}
-                      rightIcon={<ChevronDownIcon />}
-                      width="250px"
-                      boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                    >
-                      {
-                        {
-                          en: translation[userLanguage][
-                            "language.javascript.english"
-                          ],
-                          es: translation[userLanguage][
-                            "language.javascript.spanish"
-                          ],
-                          // "py-en":
-                          //   translation[userLanguage][
-                          //     "language.python.english"
-                          //   ],
-                          // "swift-en":
-                          //   translation[userLanguage]["language.swift.english"],
-                          // "android-en":
-                          //   translation[userLanguage][
-                          //     "language.android.english"
-                          //   ],
-                          // "compsci-en":
-                          //   translation[userLanguage][
-                          //     "language.compsci.english"
-                          //   ],
-                        }[userLanguage]
-                      }
-                    </MenuButton>
-                    <MenuList boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)">
-                      <MenuItem
-                        p={6}
-                        borderBottom="1px solid #ececec"
-                        onClick={() => {
-                          triggerHaptic();
-                          handleLanguageSelect({ target: { value: "en" } });
-                        }}
-                      >
-                        {
-                          translation[userLanguage][
-                            "language.javascript.english"
-                          ]
-                        }
-                      </MenuItem>
-                      <MenuItem
-                        p={6}
-                        borderBottom="1px solid #ececec"
-                        onClick={() => {
-                          triggerHaptic();
-                          handleLanguageSelect({ target: { value: "es" } });
-                        }}
-                      >
-                        {
-                          translation[userLanguage][
-                            "language.javascript.spanish"
-                          ]
-                        }
-                      </MenuItem>
-                      {/* <MenuItem
-                        p={6}
-                        borderBottom="1px solid #ececec"
-                        onClick={() => {
-                          triggerHaptic();
-                          handleLanguageSelect({ target: { value: "py-en" } });
-                        }}
-                      >
-                        {translation[userLanguage]["language.python.english"]}
-                      </MenuItem>
-                      <MenuItem
-                        p={6}
-                        borderBottom="1px solid #ececec"
-                        onClick={() => {
-                          triggerHaptic();
-                          handleLanguageSelect({
-                            target: { value: "swift-en" },
-                          });
-                        }}
-                      >
-                        {translation[userLanguage]["language.swift.english"]}
-                      </MenuItem>
-                      <MenuItem
-                        p={6}
-                        onClick={() => {
-                          triggerHaptic();
-                          handleLanguageSelect({
-                            target: { value: "android-en" },
-                          });
-                        }}
-                      >
-                        {translation[userLanguage]["language.android.english"]}
-                      </MenuItem>
-
-                      <MenuItem
-                        p={6}
-                        onClick={() => {
-                          triggerHaptic();
-                          handleLanguageSelect({
-                            target: { value: "compsci-en" },
-                          });
-                        }}
-                      >
-                        {translation[userLanguage]["language.compsci.english"]}
-                      </MenuItem> */}
-                    </MenuList>
-                  </Menu>
-
-                  <TechOverview userLanguage={userLanguage} />
-
-                  <br />
-                  <Button
-                    onClick={() => {
-                      triggerHaptic();
-                      playOnboardingChord();
-                      incrementUserOnboardingStep(
-                        localStorage.getItem("local_npub"),
-                      );
-                      setCurrentStep(3);
-                      scrollToTopInstantly();
-                      navigate("/q/3");
-                    }}
-                    boxShadow="0.5px 0.5px 1px 0px black"
-                    mb={18}
-                    data-sound-ignore-select="true"
-                  >
-                    {translation[userLanguage]["button.setLanguage"]}
-                  </Button>
-                </Box>
-              </RiseUpAnimation>
-
-              <Box
-                width="100%"
-                display="flex"
-                justifyContent="flex-end"
-                mt="-36px"
-              >
-                <RiseUpAnimation>
-                  <Box>
-                    <RandomCharacter />
-                  </Box>
-                </RiseUpAnimation>
-              </Box>
-            </VStack>
-          )}
-
           {step === "5" && (
             <VStack spacing={4}>
               <Box>
@@ -1155,7 +940,7 @@ export const Onboarding = ({
                 /> */}
                 <Box width="250px" mb={4}>
                   <WaveBar
-                    value={(5 / 7) * 100}
+                    value={(4 / 6) * 100}
                     start="#02fabc"
                     end="#12ff69"
                     delay={0}
@@ -1246,7 +1031,7 @@ export const Onboarding = ({
                 /> */}
                 <Box width="250px" mb={4}>
                   <WaveBar
-                    value={(6 / 7) * 100}
+                    value={(5 / 6) * 100}
                     start="#02fabc"
                     end="#12ff69"
                     delay={0}

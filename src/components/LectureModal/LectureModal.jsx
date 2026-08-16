@@ -28,6 +28,7 @@ import { database } from "../../database/firebaseResources";
 import { translation } from "../../utility/translation";
 import Markdown from "react-markdown";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
+import { isInlineMarkdownCode } from "../../utility/markdownCode";
 import { PracticeModule } from "../PracticeModule/PracticeModule";
 import { CheckCircleIcon, TimeIcon } from "@chakra-ui/icons";
 import CloudTransition from "../../elements/CloudTransition";
@@ -65,9 +66,14 @@ const newTheme = {
     const content = Array.isArray(children)
       ? children.join("")
       : String(children);
-    const isSingleWord = content.trim().split(/\s+/).length === 1;
+    const isInline = isInlineMarkdownCode({
+      inline,
+      className,
+      children,
+      node,
+    });
 
-    if (isSingleWord) {
+    if (isInline) {
       return (
         <Code
           p={1}
@@ -213,14 +219,14 @@ const LectureModal = ({
   let navigate = useNavigate();
   const { getLastNotesByNpub, assignExistingBadgeToNpub } = useSharedNostr(
     localStorage.getItem("local_npub"),
-    localStorage.getItem("local_nsec")
+    localStorage.getItem("local_nsec"),
   );
   const toast = useToast();
   const [badges, setBadges] = useState([]);
   const [areBadgesLoading, setAreBadgesLoading] = useState(true);
   const { getUserBadges } = useSharedNostr(
     localStorage.getItem("local_npub"),
-    localStorage.getItem("local_nsec")
+    localStorage.getItem("local_nsec"),
   );
 
   const [hasViewedSummary, setHasViewedSummary] = useState(false);
@@ -464,7 +470,7 @@ const LectureModal = ({
         });
 
         await assignExistingBadgeToNpub(
-          transcriptObject.name.replace(/ /g, "-")
+          transcriptObject.name.replace(/ /g, "-"),
         );
         getBadges();
       }
@@ -565,7 +571,7 @@ const LectureModal = ({
               <br />
               {badgeImages.slice(0, visibleCount).map((bdge, index) => {
                 const isBadgeEarned = badges.some(
-                  (badge) => badge.image === bdge.imageLink
+                  (badge) => badge.image === bdge.imageLink,
                 );
 
                 return (

@@ -31,6 +31,8 @@ export const CodeEditor = ({ value, onChange, height = 400, userLanguage }) => {
     "py-en": "python",
     "compsci-en": "python",
   };
+  const editorValue = typeof value === "string" ? value : "";
+  const language = pick[userLanguage] || "javascript";
 
   return (
     <div
@@ -43,11 +45,11 @@ export const CodeEditor = ({ value, onChange, height = 400, userLanguage }) => {
     >
       <Editor
         className="editor-container"
-        value={value}
-        onValueChange={onChange}
+        value={editorValue}
+        onValueChange={(nextValue) => onChange?.(String(nextValue ?? ""))}
         highlight={(code) =>
           // hljs returns an object with `.value` = HTML string of <span>…</span>
-          hljs.highlight(code, { language: pick[userLanguage] }).value
+          hljs.highlight(String(code ?? ""), { language }).value
         }
         padding={16}
         style={{

@@ -19,6 +19,19 @@ import {
   themeColors,
   themeModes,
 } from "../useThemeStore";
+import {
+  CONTINUING_LEARNING_PROFILE_VERSION,
+  getCourseLocale,
+  getInitialContinuingLearningSummary,
+  normalizeGeneratedQuestionContent,
+  normalizeContinuingLearningSummary,
+} from "./questionGeneration";
+
+export const CURRICULUM_VERSION = 3;
+const EXPANDED_TUTORIAL_OFFSET = 9;
+const LEGACY_FIRST_CHAPTER_STEP = 10;
+const EXPANDED_TUTORIAL_END_STEP =
+  LEGACY_FIRST_CHAPTER_STEP + EXPANDED_TUTORIAL_OFFSET - 1;
 
 export const generatePromotionCode = () => {
   if (typeof globalThis !== "undefined" && globalThis.crypto?.randomUUID) {
@@ -84,6 +97,223 @@ export const getUserData = async (userId) => {
   }
 };
 
+const getContinuingLearningRef = (userId, userLanguage = "en") =>
+  doc(
+    database,
+    "users",
+    userId,
+    "continuingLearning",
+    getCourseLocale(userLanguage),
+  );
+
+const getContinuingLearningQuestionsRef = (userId, userLanguage = "en") =>
+  collection(
+    database,
+    "users",
+    userId,
+    "continuingLearning",
+    getCourseLocale(userLanguage),
+    "questions",
+  );
+
+const normalizeContinuingLearningQuestion = (
+  questionId,
+  storedQuestion = {},
+) => {
+  const questionCount = Math.max(
+    0,
+    Number(storedQuestion.questionCount ?? questionId) || 0,
+  );
+  const question =
+    storedQuestion.question && typeof storedQuestion.question === "object"
+      ? normalizeGeneratedQuestionContent(storedQuestion.question)
+      : null;
+
+  return {
+    ...storedQuestion,
+    id: String(questionId),
+    questionCount,
+    title:
+      typeof storedQuestion.title === "string" && storedQuestion.title.trim()
+        ? storedQuestion.title.trim()
+        : question?.title || "Generated practice",
+    questionType:
+      typeof storedQuestion.questionType === "string"
+        ? storedQuestion.questionType
+        : null,
+    question,
+  };
+};
+
+export const getContinuingLearningQuestions = async (
+  userId,
+  userLanguage = "en",
+) => {
+  if (!userId) return [];
+
+  const questionsSnapshot = await getDocs(
+    getContinuingLearningQuestionsRef(userId, userLanguage),
+  );
+
+  return questionsSnapshot.docs
+    .map((questionSnapshot) =>
+      normalizeContinuingLearningQuestion(
+        questionSnapshot.id,
+        questionSnapshot.data(),
+      ),
+    )
+    .filter(
+      (entry) =>
+        entry.questionCount > 0 &&
+        entry.question &&
+        typeof entry.question === "object",
+    )
+    .sort((a, b) => a.questionCount - b.questionCount);
+};
+
+export const saveContinuingLearningQuestion = async (
+  userId,
+  userLanguage = "en",
+  { questionCount, questionType = null, question } = {},
+) => {
+  if (!userId || !question || typeof question !== "object") return null;
+
+  const normalizedQuestionCount = Math.max(0, Number(questionCount) || 0);
+  if (normalizedQuestionCount < 1) return null;
+
+  const locale = getCourseLocale(userLanguage);
+  const normalizedQuestion = normalizeGeneratedQuestionContent(question);
+  const questionRef = doc(
+    getContinuingLearningQuestionsRef(userId, locale),
+    String(normalizedQuestionCount),
+  );
+  const now = new Date().toISOString();
+  const existingQuestion = await getDoc(questionRef);
+  const payload = {
+    version: CONTINUING_LEARNING_PROFILE_VERSION,
+    language: locale,
+    questionCount: normalizedQuestionCount,
+    title:
+      typeof normalizedQuestion.title === "string" &&
+      normalizedQuestion.title.trim()
+        ? normalizedQuestion.title.trim()
+        : "Generated practice",
+    questionType:
+      typeof questionType === "string" && questionType ? questionType : null,
+    question: normalizedQuestion,
+    createdAt: existingQuestion.exists()
+      ? existingQuestion.data()?.createdAt || now
+      : now,
+    updatedAt: now,
+  };
+
+  await setDoc(questionRef, payload, { merge: true });
+  return normalizeContinuingLearningQuestion(questionRef.id, payload);
+};
+
+export const getContinuingLearningState = async (
+  userId,
+  userLanguage = "en",
+) => {
+  const locale = getCourseLocale(userLanguage);
+  const initialSummary = getInitialContinuingLearningSummary(locale);
+  const fallbackState = {
+    version: CONTINUING_LEARNING_PROFILE_VERSION,
+    language: locale,
+    summary: initialSummary,
+    questionCount: 0,
+    lastQuestionType: null,
+    currentQuestion: null,
+  };
+
+  if (!userId) return fallbackState;
+
+  const profileRef = getContinuingLearningRef(userId, locale);
+  const profileSnapshot = await getDoc(profileRef);
+  const now = new Date().toISOString();
+
+  if (!profileSnapshot.exists()) {
+    const initialState = {
+      ...fallbackState,
+      createdAt: now,
+      updatedAt: now,
+    };
+    await setDoc(profileRef, initialState);
+    return initialState;
+  }
+
+  const storedState = profileSnapshot.data() || {};
+  const normalizedState = {
+    ...fallbackState,
+    ...storedState,
+    version: CONTINUING_LEARNING_PROFILE_VERSION,
+    language: locale,
+    summary: normalizeContinuingLearningSummary(storedState.summary, locale),
+    questionCount: Math.max(0, Number(storedState.questionCount) || 0),
+    lastQuestionType:
+      typeof storedState.lastQuestionType === "string"
+        ? storedState.lastQuestionType
+        : null,
+    currentQuestion:
+      storedState.currentQuestion &&
+      typeof storedState.currentQuestion === "object" &&
+      !Array.isArray(storedState.currentQuestion)
+        ? normalizeGeneratedQuestionContent(storedState.currentQuestion)
+        : null,
+  };
+
+  if (
+    storedState.version !== normalizedState.version ||
+    storedState.summary !== normalizedState.summary
+  ) {
+    await setDoc(
+      profileRef,
+      { ...normalizedState, updatedAt: now },
+      { merge: true },
+    );
+  }
+
+  return normalizedState;
+};
+
+export const saveContinuingLearningState = async (
+  userId,
+  userLanguage = "en",
+  nextState = {},
+) => {
+  if (!userId) return null;
+
+  const locale = getCourseLocale(userLanguage);
+  const profileRef = getContinuingLearningRef(userId, locale);
+  const payload = {
+    ...nextState,
+    version: CONTINUING_LEARNING_PROFILE_VERSION,
+    language: locale,
+    updatedAt: new Date().toISOString(),
+  };
+
+  if (Object.prototype.hasOwnProperty.call(payload, "summary")) {
+    payload.summary = normalizeContinuingLearningSummary(
+      payload.summary,
+      locale,
+    );
+  }
+
+  if (Object.prototype.hasOwnProperty.call(payload, "questionCount")) {
+    payload.questionCount = Math.max(0, Number(payload.questionCount) || 0);
+  }
+
+  if (Object.prototype.hasOwnProperty.call(payload, "currentQuestion")) {
+    payload.currentQuestion =
+      payload.currentQuestion && typeof payload.currentQuestion === "object"
+        ? normalizeGeneratedQuestionContent(payload.currentQuestion)
+        : null;
+  }
+
+  await setDoc(profileRef, payload, { merge: true });
+  return payload;
+};
+
 // Function to create or update a user in Firestore
 export const createUser = async (npub, userName, language) => {
   if (!npub) {
@@ -106,6 +336,7 @@ export const createUser = async (npub, userName, language) => {
     step: "onboarding",
     onboardingStep: 1,
     previousStep: 0,
+    curriculumVersion: CURRICULUM_VERSION,
     language,
     allowPosts: true,
     themeColor: getLocalThemeColor(),
@@ -138,8 +369,12 @@ export const createUser = async (npub, userName, language) => {
   const data = existingSnapshot.data() || {};
   const updates = {};
 
-  if (!data.isAdaptiveLearning) {
+  if (typeof data.isAdaptiveLearning === "undefined") {
     updates.isAdaptiveLearning = true;
+  }
+
+  if (typeof data.curriculumVersion !== "number") {
+    updates.curriculumVersion = 1;
   }
 
   if (userName && data.name !== userName) {
@@ -259,6 +494,15 @@ export const incrementUserOnboardingStep = async (npub) => {
   }
 };
 
+export const setUserOnboardingStep = async (npub, onboardingStep) => {
+  const userDoc = doc(database, "users", npub);
+  const userSnapshot = await getDoc(userDoc);
+
+  if (userSnapshot.exists()) {
+    await updateDoc(userDoc, { onboardingStep });
+  }
+};
+
 export const setOnboardingToDone = async (npub, stepNumber = 0) => {
   const userDoc = doc(database, "users", npub);
   const userSnapshot = await getDoc(userDoc);
@@ -300,7 +544,46 @@ export const getUserStep = async (npub) => {
   const userSnapshot = await getDoc(userDoc);
 
   if (userSnapshot.exists()) {
-    return userSnapshot.data().step || 0;
+    const data = userSnapshot.data();
+    if (data.curriculumVersion !== CURRICULUM_VERSION) {
+      const previousCurriculumVersion = Number(data.curriculumVersion || 0);
+      const needsExpandedTutorialOffset = previousCurriculumVersion < 2;
+      const migrateIndex = (value) =>
+        needsExpandedTutorialOffset &&
+        typeof value === "number" &&
+        value >= LEGACY_FIRST_CHAPTER_STEP
+          ? value + EXPANDED_TUTORIAL_OFFSET
+          : value;
+      const savedAtLegacyPaywall =
+        data.step === "subscription" &&
+        Number(data.previousStep) < EXPANDED_TUTORIAL_END_STEP;
+      const migratedStep = savedAtLegacyPaywall
+        ? LEGACY_FIRST_CHAPTER_STEP
+        : migrateIndex(data.step || 0);
+      const migratedPreviousStep = migrateIndex(data.previousStep || 0);
+      const answeredStepIds = Array.isArray(data.answeredStepIds)
+        ? data.answeredStepIds.map(migrateIndex)
+        : [];
+      const answeredSteps = Object.fromEntries(
+        Object.entries(data.answeredSteps || {}).map(([key, value]) => {
+          const numericKey = Number(key);
+          const migratedKey = Number.isFinite(numericKey)
+            ? migrateIndex(numericKey)
+            : key;
+          return [String(migratedKey), value];
+        }),
+      );
+
+      await updateDoc(userDoc, {
+        curriculumVersion: CURRICULUM_VERSION,
+        step: migratedStep,
+        previousStep: migratedPreviousStep,
+        answeredStepIds,
+        answeredSteps,
+      });
+      return migratedStep;
+    }
+    return data.step || 0;
   } else {
     return 0; // Default to step 0 if user document does not exist
   }
@@ -375,7 +658,7 @@ export const fetchUsersWithToken = async () => {
 // Global question count utilities
 const questionDoc = doc(database, "analytics", "questionsAnswered");
 export const BASE_QUESTION_COUNT = 4200;
-export const COURSE_LESSON_COUNT = 112;
+export const COURSE_LESSON_COUNT = 121;
 
 export const subscribeToQuestionsAnswered = (callback) =>
   onSnapshot(questionDoc, (snap) => {

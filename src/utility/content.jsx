@@ -1,3 +1,6 @@
+import { revampCourse } from "./curriculumRevamp";
+export { tutorial_interface } from "./questionGeneration";
+
 export const getObjectsByGroup = (groupNumber, arrayOfObjects) => {
   return arrayOfObjects.filter((obj) => obj.group === groupNumber);
 };
@@ -2584,11 +2587,11 @@ const items = new Items();`,
     },
     {
       group: "tutorial",
-      title: "Review With AI Conversation (optional)",
+      title: "Build Your App",
       isConversationReview: true,
-      description: "Review the subjects you've answered",
+      description: "Build an app based on your progress",
       question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
+        questionText: "Enter an app idea and build it as you make progress!",
         range: [1, 8], // Indices of steps to review
       },
     },
@@ -2936,12 +2939,12 @@ console.log(arr);
     },
     {
       group: "1",
-      title: "Review With AI Conversation (optional)",
+      title: "Build Your App",
       isConversationReview: true,
-      description: "Review the subjects you've answered",
+      description: "Build an app based on your progress",
       question: {
         questionText: "Let's chat about the questions we've worked on so far.",
-        range: [10, 29], // Indices of steps to review
+        range: [9, 17], // Indices of steps to review
       },
     },
     {
@@ -3326,12 +3329,12 @@ myCar.showBrand();`,
     //next lecture
     {
       group: "2",
-      title: "Review With AI Conversation (optional)",
+      title: "Build Your App",
       isConversationReview: true,
-      description: "Review the subjects you've answered",
+      description: "Build an app based on your progress",
       question: {
         questionText: "Let's chat about the questions we've worked on so far.",
-        range: [31, 47], // Indices of steps to review
+        range: [18, 30], // Indices of steps to review
       },
     },
     {
@@ -3761,12 +3764,12 @@ return (
     },
     {
       group: "3",
-      title: "Review With AI Conversation (optional)",
+      title: "Build Your App",
       isConversationReview: true,
-      description: "Review the subjects you've answered",
+      description: "Build an app based on your progress",
       question: {
         questionText: "Let's chat about the questions we've worked on so far.",
-        range: [49, 67], // Indices of steps to review
+        range: [31, 48], // Indices of steps to review
       },
     },
     {
@@ -4253,12 +4256,12 @@ await addDoc(collection(db, 'users'), {
     },
     {
       group: "4",
-      title: "Review With AI Conversation (optional)",
+      title: "Build Your App",
       isConversationReview: true,
-      description: "Review the subjects you've answered",
+      description: "Build an app based on your progress",
       question: {
         questionText: "Let's chat about the questions we've worked on so far.",
-        range: [69, 89], // Indices of steps to review
+        range: [49, 68], // Indices of steps to review
       },
     },
     {
@@ -4584,9 +4587,9 @@ await addDoc(collection(db, 'users'), {
     },
     {
       group: "5",
-      title: "Review With AI Conversation (optional)",
+      title: "Build Your App",
       isConversationReview: true,
-      description: "Review the subjects you've answered",
+      description: "Build an app based on your progress",
       question: {
         questionText: "Let's chat about the questions we've worked on so far.",
         range: [91, 110], // Indices of steps to review
@@ -4754,12 +4757,12 @@ return (
 }
 \`\`\`
 
-Y eso es todo. En el último ejemplo, hemos utilizado una biblioteca llamada React, que nos da acceso a funciones especiales especializadas para renderizar elementos en una pantalla. Pero sigue el mismo proceso de pensamiento que lo anterior.
+And that's it. In the last example, we have used a library called React, which gives us access to special functions specialized for rendering elements on a screen. But it follows the same thought process as above.
 
-### Conclusión
-Recuerda que fallar más rápido está en tu mejor interés cuando aprendes nuevas habilidades con software. Este documento de una página estará disponible dentro de la aplicación. También hay muchas otras características para ayudar en tu viaje, pero dejaré eso a tu exploración de la plataforma y todo lo que tiene para ofrecer.
+### Conclusion
+Remember that failing faster is in your best interest when learning new software skills. This one-page document will be available within the application. There are also many other features to help on your journey, but I will leave that to your exploration of the platform and everything it has to offer.
 
-Mantente enfocado y ¡mucha suerte con el resto!
+Stay focused and good luck with the rest!
     
                 `,
       },
@@ -4894,10 +4897,12 @@ Mantente enfocado y ¡mucha suerte con el resto!
     },
     {
       group: "tutorial",
-      title: "Revisión con Conversación AI (opcional)",
+      title: "Construye tu Aplicación",
       isConversationReview: true,
-      description: "Revisa los temas que has respondido.",
+      description: "Construye una aplicación según tu progreso",
       question: {
+        questionText:
+          "¡Ingresa una idea de aplicación y constrúyela a medida que avanzas!",
         range: [1, 8],
       },
     },
@@ -5225,12 +5230,12 @@ console.log(arr);
     },
     {
       group: "1",
-      title: "Revisión con Conversación AI (opcional)",
+      title: "Construye tu Aplicación",
       isConversationReview: true,
-      description: "Revisa los temas que has respondido.",
+      description: "Construye una aplicación según tu progreso",
       question: {
         questionText:
-          "Hablemos sobre las preguntas en las que hemos trabajado hasta ahora.",
+          "¡Ingresa una idea de aplicación y constrúyela a medida que avanzas!",
         range: [10, 29],
       },
     },
@@ -5593,12 +5598,12 @@ console.log(arr);
     },
     {
       group: "2",
-      title: "Revisión con Conversación AI (opcional)",
+      title: "Construye tu Aplicación",
       isConversationReview: true,
-      description: "Revisa los temas que has respondido",
+      description: "Construye una aplicación según tu progreso",
       question: {
         questionText:
-          "Hablemos sobre las preguntas en las que hemos trabajado hasta ahora.",
+          "¡Ingresa una idea de aplicación y constrúyela a medida que avanzas!",
         range: [31, 47],
       },
     },
@@ -6002,12 +6007,12 @@ console.log(arr);
     },
     {
       group: "3",
-      title: "Revisión con Conversación AI (opcional)",
+      title: "Construye tu Aplicación",
       isConversationReview: true,
-      description: "Revisa los temas que has respondido",
+      description: "Construye una aplicación según tu progreso",
       question: {
         questionText:
-          "Hablemos sobre las preguntas en las que hemos trabajado hasta ahora.",
+          "¡Ingresa una idea de aplicación y constrúyela a medida que avanzas!",
         range: [49, 67],
       },
     },
@@ -6482,12 +6487,12 @@ console.log(arr);
     },
     {
       group: "4",
-      title: "Revisión con Conversación de IA",
+      title: "Construye tu Aplicación",
       isConversationReview: true,
-      description: "Revisa los temas que has respondido.",
+      description: "Construye una aplicación según tu progreso",
       question: {
         questionText:
-          "Hablemos de las preguntas en las que hemos trabajado hasta ahora.",
+          "¡Ingresa una idea de aplicación y constrúyela a medida que avanzas!",
         range: [69, 89],
       },
     },
@@ -6815,12 +6820,12 @@ console.log(arr);
     },
     {
       group: "5",
-      title: "Revisión con Conversación AI (opcional)",
+      title: "Construye tu Aplicación",
       isConversationReview: true,
-      description: "Revisa los temas que has respondido",
+      description: "Construye una aplicación según tu progreso",
       question: {
         questionText:
-          "Vamos a conversar sobre las preguntas que hemos trabajado hasta ahora.",
+          "¡Ingresa una idea de aplicación y constrúyela a medida que avanzas!",
         range: [91, 110],
       },
     },
@@ -13144,6 +13149,9 @@ console.log(arr);
   // ],
 };
 
+revampCourse(steps.en, "en");
+revampCourse(steps.es, "es");
+
 export const loot = [
   {},
   {
@@ -13703,6 +13711,25 @@ export const loot = [
     es: "La revisión con IA mejora la auto‑depuración, pero no aumenta más el salario.",
   },
 ];
+
+// The expanded tutorial adds interaction onboarding without changing the
+// chapter curriculum. Keep chapter reward metadata aligned with its original
+// questions and use neutral entries for the additional tutorial steps.
+const englishFirstChapterIndex = steps.en.findIndex(
+  (step) => String(step?.group) === "1",
+);
+const tutorialLootGap = steps.en.length - loot.length;
+if (tutorialLootGap > 0) {
+  loot.splice(
+    englishFirstChapterIndex - tutorialLootGap,
+    0,
+    ...Array.from({ length: tutorialLootGap }, () => ({
+      monetaryValue: 0,
+      en: "Tutorial practice for learning a new question style.",
+      es: "Práctica del tutorial para aprender un nuevo estilo de pregunta.",
+    })),
+  );
+}
 
 // Tutorial-only loot meter for the Python track
 export const pythonLoot = [
@@ -15618,103 +15645,6 @@ export const lectureSummaries = {
 };
 
 export const generatedSteps = [];
-
-export const tutorial_interface = [
-  {
-    group: "",
-    title: "",
-    description: "",
-    isMultipleChoice: true,
-    question: {
-      questionText: "",
-      options: ["", "", "", ""],
-      answer: "",
-    },
-  },
-  {
-    group: "",
-    title: "",
-    description: "",
-    isSelectOrder: true,
-    question: {
-      questionText: "",
-      options: ["", "", "", ""],
-      answer: ["", "", "", ""],
-    },
-  },
-  {
-    group: "",
-    title: "",
-    description: "",
-    isMultipleAnswerChoice: true,
-    question: {
-      questionText: "",
-      options: ["", "", "", "", "", ""],
-      answer: ["", "", ""],
-    },
-  },
-  {
-    group: "",
-    title: "",
-    description: "",
-    isCodeCompletion: true,
-    question: {
-      questionText: "",
-      options: [``, ``, ``, ``],
-      answer: ``,
-    },
-  },
-  {
-    group: "tutorial",
-    title: "",
-    description: "",
-    isCode: true,
-    isTerminal: false,
-    question: {
-      questionText: "",
-    },
-  },
-  {
-    group: "tutorial",
-    title: "",
-    description: "",
-    isSingleLineText: true,
-    question: {
-      questionText: "",
-      placeholder: "",
-      answer: "",
-    },
-  },
-  {
-    group: "tutorial",
-    title: "",
-    description: "",
-    isText: true,
-    question: {
-      questionText: "",
-    },
-  },
-  {
-    group: "tutorial",
-    title: "",
-    description: "",
-    isCode: true,
-    isTerminal: true,
-    question: {
-      questionText: "",
-    },
-  },
-  {
-    group: "tutorial",
-    title: "",
-    isConversationReview: true,
-    description: "",
-    question: {
-      questionText: "",
-      range: [1, 8],
-    },
-  },
-];
 
 export const celebrationMessages = {
   en: [
