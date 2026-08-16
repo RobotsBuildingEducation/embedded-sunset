@@ -64,6 +64,10 @@ export const looksLikeDefiniteCodeLine = (value = "") => {
     /^console\./.test(syntaxValue) ||
     /^[\w$.[\]'"]+\s*=\s*.+/.test(syntaxValue) ||
     /^[\w$.]+\(.*\);?$/.test(syntaxValue) ||
+    // Object literals can contain long human-readable string values. Treat
+    // the property syntax as authoritative so those lines do not get pulled
+    // out of a surrounding code block as prose.
+    /^\{\s*[`"'A-Za-z_$][\w$]*\s*:\s*.+/.test(syntaxValue) ||
     // Object property keys (single identifier / quoted property followed by colon and value)
     /^([`"'\w$]+)\s*:\s*([`"'[{(]|\d|true|false|null|undefined|[\w$])/i.test(
       syntaxValue,
@@ -140,6 +144,77 @@ export const looksLikeLooseCode = (line = "") => {
     /^[{}[\](),;]+$/.test(value) ||
     (/[;{}]/.test(value) && !looksLikeProseLine(value))
   );
+};
+
+const unwrapStandaloneCodeSpan = (line = "") => {
+  const match = String(line).match(/^(\s*)`([^`\n]+)`\s*$/);
+  if (!match) return null;
+
+  const candidate = match[2].trim();
+  if (!looksLikeLooseCode(candidate) && !looksLikeCodeContinuation(candidate)) {
+    return null;
+  }
+
+  return `${match[1]}${candidate}`;
+};
+
+export const mergeFragmentedCodeFenceLines = (lines = []) => {
+  const merged = [];
+  let inFence = false;
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
+
+    if (!isFenceLine(line)) {
+      merged.push(line);
+      continue;
+    }
+
+    if (!inFence) {
+      merged.push(line);
+      inFence = true;
+      continue;
+    }
+
+    // If a generated response closes a fence, emits one or more standalone
+    // code rows, and immediately opens another fence, keep the rows in the
+    // existing block instead of rendering a detached inline-code pill.
+    const bridgeLines = [];
+    let cursor = index + 1;
+    let containsCode = false;
+
+    while (cursor < lines.length && !isFenceLine(lines[cursor])) {
+      const bridgeLine = lines[cursor];
+      if (!bridgeLine.trim()) {
+        bridgeLines.push(bridgeLine);
+        cursor += 1;
+        continue;
+      }
+
+      const unwrapped = unwrapStandaloneCodeSpan(bridgeLine);
+      const candidate = unwrapped ?? bridgeLine;
+      if (!unwrapped && !looksLikeLooseCode(candidate)) break;
+
+      bridgeLines.push(candidate);
+      containsCode = true;
+      cursor += 1;
+    }
+
+    if (
+      containsCode &&
+      cursor < lines.length &&
+      isFenceLine(lines[cursor])
+    ) {
+      merged.push(...bridgeLines);
+      index = cursor;
+      continue;
+    }
+
+    merged.push(line);
+    inFence = false;
+  }
+
+  return merged;
 };
 
 export const repairFencedMarkdown = (openingLine, bodyLines) => {
@@ -238,9 +313,11 @@ export const repairFencedMarkdown = (openingLine, bodyLines) => {
 };
 
 export const normalizeLearnMarkdown = (content = "") => {
-  const lines = String(content || "")
+  const lines = mergeFragmentedCodeFenceLines(
+    String(content || "")
     .trimStart()
-    .split("\n");
+      .split("\n"),
+  );
   const output = [];
   let inFence = false;
   let fenceOpeningLine = "";

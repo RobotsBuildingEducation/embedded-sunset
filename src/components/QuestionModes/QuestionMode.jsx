@@ -18,7 +18,8 @@ import {
 } from "@chakra-ui/react";
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import { CodeEditor } from "../CodeEditor/CodeEditor";
-import { getQuestionType } from "../../utility/questionTypes";
+import LiveReactEditorModal from "../LiveCodeEditor/LiveCodeEditor";
+import { getQuestionType, scrambleArray } from "../../utility/questionTypes";
 
 const copy = {
   en: {
@@ -172,7 +173,8 @@ const FillCodeBlanks = ({ question, value, onChange, labels }) => {
 };
 
 const ReorderLines = ({ question, value, onChange }) => {
-  const lines = Array.isArray(value) ? value : question.lines || [];
+  const lines =
+    Array.isArray(value) && value.length > 0 ? value : question.lines || [];
   const move = (index, offset) => {
     const nextIndex = index + offset;
     if (nextIndex < 0 || nextIndex >= lines.length) return;
@@ -181,56 +183,76 @@ const ReorderLines = ({ question, value, onChange }) => {
     onChange(next);
   };
   return (
-    <VStack width="100%" align="stretch" spacing={2}>
+    <VStack width="100%" align="stretch" spacing={3}>
       {lines.map((line, index) => (
         <HStack
           key={`${index}-${line}`}
           bg="appSurface"
-          borderWidth="1px"
+          borderWidth="1.5px"
           borderColor="appBorder"
-          borderRadius="xl"
-          minHeight={{ base: "120px", md: "112px" }}
+          borderRadius="2xl"
+          minHeight="72px"
           p={{ base: 3, md: 4 }}
           spacing={3}
+          boxShadow="sm"
+          _hover={{ borderColor: "pink.300", boxShadow: "md" }}
+          transition="all 0.2s ease"
         >
-          <Badge borderRadius="full" px={2} py={1} fontSize="sm">
+          <Badge
+            colorScheme="pink"
+            borderRadius="full"
+            px={2.5}
+            py={1}
+            fontSize="xs"
+            fontWeight="bold"
+          >
             {index + 1}
           </Badge>
           <Code
             flex="1"
-            minHeight="72px"
-            px={4}
-            py={3}
+            p={3}
+            borderRadius="xl"
             display="flex"
             alignItems="center"
             whiteSpace="pre-wrap"
+            fontSize="sm"
+            bg="appCodeBg"
+            color="appCodeColor"
           >
             {line}
           </Code>
-          <VStack spacing={2} justify="center" flexShrink={0}>
+          <VStack spacing={1.5} justify="center" flexShrink={0}>
             <Button
               type="button"
-              minWidth="52px"
-              height="48px"
+              size="sm"
+              width="40px"
+              height="34px"
               p={0}
               borderRadius="lg"
               aria-label="Move line up"
               onClick={() => move(index, -1)}
               isDisabled={index === 0}
+              colorScheme="pink"
+              variant="ghost"
+              _hover={{ bg: "pink.50", color: "pink.600" }}
             >
-              <ChevronUpIcon boxSize={6} />
+              <ChevronUpIcon boxSize={5} />
             </Button>
             <Button
               type="button"
-              minWidth="52px"
-              height="48px"
+              size="sm"
+              width="40px"
+              height="34px"
               p={0}
               borderRadius="lg"
               aria-label="Move line down"
               onClick={() => move(index, 1)}
               isDisabled={index === lines.length - 1}
+              colorScheme="pink"
+              variant="ghost"
+              _hover={{ bg: "pink.50", color: "pink.600" }}
             >
-              <ChevronDownIcon boxSize={6} />
+              <ChevronDownIcon boxSize={5} />
             </Button>
           </VStack>
         </HStack>
@@ -248,86 +270,87 @@ const MatchPairs = ({ question, value, onChange, labels }) => {
   return (
     <VStack width="100%" align="stretch" spacing={3}>
       {pairs.map((pair) => {
-        const selectedChoice = value?.[pair.left] || "";
+        const selected = value?.[pair.left] || "";
         return (
-          <FormControl
-            key={pair.left}
-            display={{ md: "grid" }}
-            gridTemplateColumns="1fr 1.4fr"
-            gap={3}
-            alignItems="center"
-          >
-            <FormLabel mb={{ base: 2, md: 0 }}>{pair.left}</FormLabel>
-            <Menu matchWidth placement="bottom-start">
-              <MenuButton
-                as={Button}
-                aria-label={`${pair.left}: ${labels.pair}`}
-                rightIcon={<ChevronDownIcon boxSize={5} />}
-                width="100%"
-                minHeight="48px"
-                height="auto"
-                py={3}
-                px={4}
-                textAlign="left"
-                justifyContent="space-between"
-                fontWeight="normal"
+          <Menu key={pair.left} matchWidth>
+            <MenuButton
+              as={Button}
+              variant="unstyled"
+              display="block"
+              width="100%"
+              height="auto"
+              bg="appSurface"
+              borderRadius="2xl"
+              borderWidth="1.5px"
+              borderColor={selected ? "pink.300" : "appBorder"}
+              p={4}
+              boxShadow="sm"
+              textAlign="left"
+              cursor="pointer"
+              transition="all 0.2s ease"
+              _hover={{
+                borderColor: "pink.400",
+                boxShadow: "md",
+                bg: "appSurfaceHover",
+              }}
+              _active={{ bg: "appSurfaceElevated", transform: "scale(0.995)" }}
+            >
+              <HStack justify="space-between" mb={2}>
+                <Code
+                  px={3}
+                  py={1}
+                  borderRadius="lg"
+                  fontSize="sm"
+                  fontWeight="bold"
+                  colorScheme="pink"
+                >
+                  {pair.left}
+                </Code>
+                <ChevronDownIcon boxSize={5} color="pink.400" />
+              </HStack>
+              <Text
+                fontSize="sm"
+                color={selected ? "inherit" : "gray.400"}
+                fontWeight={selected ? "semibold" : "normal"}
                 whiteSpace="normal"
-                color={selectedChoice ? "appText" : "appTextMuted"}
-                bg="appSurface"
-                borderWidth="1px"
-                borderColor="appBorderStrong"
-                borderRadius="xl"
-                _hover={{ bg: "appSurfaceMuted", borderColor: "pink.300" }}
-                _expanded={{
-                  bg: "appSurfaceElevated",
-                  borderColor: "pink.400",
-                  boxShadow: "0 0 0 3px rgba(236, 72, 153, 0.18)",
-                }}
-                _focusVisible={{
-                  borderColor: "pink.400",
-                  boxShadow: "0 0 0 3px rgba(236, 72, 153, 0.22)",
-                }}
+                wordBreak="break-word"
+                lineHeight="1.5"
               >
-                {selectedChoice || labels.choose}
-              </MenuButton>
-              <MenuList
-                bg="appSurfaceElevated"
-                color="appText"
-                borderColor="appBorderStrong"
-                borderRadius="xl"
-                boxShadow="xl"
-                p={2}
-                zIndex={20}
-              >
-                {choices.map((choice) => {
-                  const isSelected = choice === selectedChoice;
-                  return (
-                    <MenuItem
-                      key={choice}
-                      role="menuitemradio"
-                      aria-checked={isSelected}
-                      onClick={() =>
-                        onChange({ ...(value || {}), [pair.left]: choice })
-                      }
-                      bg={isSelected ? "appSurfaceStrong" : "transparent"}
-                      borderRadius="lg"
-                      py={3}
-                      whiteSpace="normal"
-                      _hover={{ bg: "appSurfaceMuted" }}
-                      _focus={{ bg: "appSurfaceMuted" }}
-                    >
-                      <HStack spacing={3} width="100%">
-                        <Box width={4} flexShrink={0}>
-                          {isSelected && <CheckIcon boxSize={3} />}
-                        </Box>
-                        <Text>{choice}</Text>
-                      </HStack>
-                    </MenuItem>
-                  );
-                })}
-              </MenuList>
-            </Menu>
-          </FormControl>
+                {selected || labels.pair}
+              </Text>
+            </MenuButton>
+            <MenuList
+              zIndex="popover"
+              bg="appSurfaceElevated"
+              borderColor="appBorder"
+              maxH="300px"
+              overflowY="auto"
+              borderRadius="xl"
+              boxShadow="xl"
+              p={1.5}
+            >
+              {choices.map((choice) => (
+                <MenuItem
+                  key={choice}
+                  onClick={() =>
+                    onChange({ ...(value || {}), [pair.left]: choice })
+                  }
+                  bg={selected === choice ? "pink.50" : "transparent"}
+                  color={selected === choice ? "pink.600" : "inherit"}
+                  fontWeight={selected === choice ? "bold" : "normal"}
+                  _hover={{ bg: "pink.100", color: "pink.700" }}
+                  borderRadius="lg"
+                  whiteSpace="normal"
+                  wordBreak="break-word"
+                  py={2.5}
+                  px={3}
+                  my={0.5}
+                >
+                  {choice}
+                </MenuItem>
+              ))}
+            </MenuList>
+          </Menu>
         );
       })}
     </VStack>
@@ -382,7 +405,7 @@ export default function QuestionMode({ step, value, onChange, userLanguage }) {
     const hasAnswer = value !== null && value !== undefined;
     if (initializedType === initializationKey && hasAnswer) return;
     if (type === "parsons")
-      onChange([...(question.lines || [])].sort(() => Math.random() - 0.5));
+      onChange(scrambleArray(question.lines || []));
     else if (type === "projectCheckpoint") {
       const savedCode =
         typeof window !== "undefined"
@@ -430,8 +453,47 @@ export default function QuestionMode({ step, value, onChange, userLanguage }) {
     }
   };
 
+  const previewSource = useMemo(() => {
+    if (question.previewCode) return question.previewCode;
+    if (typeof value === "string" && value.trim()) return value;
+    if (Array.isArray(value) && value.length > 0 && type === "parsons") {
+      return value.join("\n");
+    }
+    if (question.starterCode && typeof question.starterCode === "string") {
+      return question.starterCode;
+    }
+    return "";
+  }, [question.previewCode, question.starterCode, type, value]);
+
+  const shouldRenderPreview = Boolean(
+    (step.showPreview || question.showPreview) &&
+      previewSource &&
+      previewSource.trim(),
+  );
+
   return (
     <VStack spacing={5} width="100%" maxWidth="600px" align="stretch">
+      {shouldRenderPreview && (
+        <Box
+          width="100%"
+          borderRadius="2xl"
+          borderWidth="1px"
+          borderColor="appBorder"
+          overflow="hidden"
+          bg="white"
+          height="180px"
+          boxShadow="sm"
+          p={2}
+        >
+          <LiveReactEditorModal
+            code={previewSource}
+            mode="preview"
+            autoRun={true}
+            hideRunButton={true}
+            previewHeight="100%"
+          />
+        </Box>
+      )}
       {type === "codeTracing" && (
         <>
           <CodePanel code={question.code} />

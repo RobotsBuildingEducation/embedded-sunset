@@ -16,6 +16,8 @@ import {
   Progress,
   Box,
   Switch,
+  VStack,
+  HStack,
   useColorModeValue,
 } from "@chakra-ui/react";
 import { getUserData, updateUserData } from "../../../utility/nosql";
@@ -347,10 +349,14 @@ const SelfPacedModal = ({
       signal = "";
     }
     return (
-      <div>
-        {dayLabel}
-        <br />({signal})
-      </div>
+      <HStack spacing={2} justify="center">
+        <Text as="span" fontWeight="bold">
+          {dayLabel}
+        </Text>
+        <Text as="span" opacity={0.75} fontSize="xs" fontWeight="medium">
+          ({signal})
+        </Text>
+      </HStack>
     );
   };
 
@@ -620,16 +626,7 @@ const SelfPacedModal = ({
                 {translation[userLanguage]["modal.selfPace.instruction"]}
               </Text>
 
-              <Box
-                width="100%"
-                display="flex"
-                flexDirection={{ base: "column", md: "row" }}
-                flexWrap="wrap"
-                justifyContent="center"
-                alignItems="center"
-                gap={3}
-                mt={4}
-              >
+              <VStack width="100%" spacing={2.5} align="stretch" mt={4}>
                 {[1440, 2880, 4320].map((option) => {
                   const isSelected = interval === option;
                   return (
@@ -639,12 +636,11 @@ const SelfPacedModal = ({
                       variant="outline"
                       data-sound-ignore-select="true"
                       aria-pressed={isSelected}
-                      width={{ base: "100%", md: "auto" }}
-                      maxW={{ base: "360px", md: "none" }}
-                      minW={{ md: "150px" }}
-                      minH="56px"
+                      width="100%"
+                      minH="48px"
                       px={4}
                       py={3}
+                      borderRadius="xl"
                       justifyContent="center"
                       borderColor={
                         isSelected
@@ -667,19 +663,17 @@ const SelfPacedModal = ({
                           : "appSurfaceMuted",
                       }}
                     >
-                      <Text
+                      <Box
                         color={intervalButtonTextColor}
-                        fontWeight="semibold"
                         fontSize="sm"
                         textAlign="center"
-                        lineHeight="1.35"
                       >
                         {getMarkLabel(option)}
-                      </Text>
+                      </Box>
                     </Button>
                   );
                 })}
-              </Box>
+              </VStack>
 
               <Box mt={4}>
                 <CountdownTimer
@@ -733,7 +727,7 @@ const SelfPacedModal = ({
                 aria-label="slider-daily-goals"
                 value={dailyGoals}
                 min={1}
-                max={20}
+                max={30}
                 step={1}
                 onChange={handleDailyGoalsChange}
                 mt={4}

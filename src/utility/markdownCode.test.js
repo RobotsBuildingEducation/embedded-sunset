@@ -96,6 +96,56 @@ test("preserves Firestore security rules code blocks without breaking mid-way", 
   assert.match(normalized, /&& request\.resource\.data\.ownerId == request\.auth\.uid;/);
 });
 
+test("keeps long object-literal rows inside a continuous code block", () => {
+  const reactExample = [
+    "```javascript",
+    "import { useState } from 'react';",
+    "",
+    "function TweetApp() {",
+    "  const [tweets, setTweets] = useState([",
+    "    { id: 1, author: 'Alice', content: 'Learning React today!', likes: 4 },",
+    "    { id: 2, author: 'Bob', content: 'Immutable state updates are cool', likes: 2 },",
+    "  ]);",
+    "",
+    "  return (",
+    "    <main>",
+    "      <h1>Feed</h1>",
+    "    </main>",
+    "  );",
+    "}",
+    "```",
+  ].join("\n");
+
+  const normalized = normalizeLearnMarkdown(reactExample);
+
+  assert.equal((normalized.match(/```javascript/g) || []).length, 1);
+  assert.equal((normalized.match(/```$/gm) || []).length, 1);
+  assert.match(normalized, /useState\(\[\n    \{ id: 1/);
+  assert.match(normalized, /likes: 4 \},\n    \{ id: 2/);
+  assert.match(normalized, /likes: 2 \},\n  \]\);/);
+});
+
+test("rejoins code fences interrupted by a standalone inline-code row", () => {
+  const fragmentedExample = [
+    "```javascript",
+    "const tweets = [",
+    "```",
+    "`{ id: 1, author: 'Alice', content: 'Learning React today!', likes: 4 },`",
+    "```javascript",
+    "  { id: 2, author: 'Bob', content: 'State updates are cool', likes: 2 },",
+    "];",
+    "```",
+  ].join("\n");
+
+  const normalized = normalizeLearnMarkdown(fragmentedExample);
+
+  assert.equal((normalized.match(/```javascript/g) || []).length, 1);
+  assert.equal((normalized.match(/```$/gm) || []).length, 1);
+  assert.equal(normalized.includes("`{ id: 1"), false);
+  assert.match(normalized, /const tweets = \[\n\{ id: 1/);
+  assert.match(normalized, /likes: 4 \},\n  \{ id: 2/);
+});
+
 test("preserves text paragraphs and subsequent code blocks intact", () => {
   const lecture = [
     "For `update` and `delete` operations, the document already exists. Here, you must check the existing `resource` data to ensure the person making the request is the original owner:",

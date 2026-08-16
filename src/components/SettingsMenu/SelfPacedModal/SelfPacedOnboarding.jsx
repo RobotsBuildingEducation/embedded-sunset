@@ -8,6 +8,8 @@ import {
   SliderThumb,
   CircularProgress,
   Box,
+  VStack,
+  HStack,
   useColorModeValue,
 } from "@chakra-ui/react";
 import {
@@ -362,15 +364,7 @@ const SelfPacedOnboarding = ({
         {translation[userLanguage]["modal.selfPace.instruction"]}
       </Text>
 
-      <Box
-        width="100%"
-        display="flex"
-        flexDirection={{ base: "column", md: "row" }}
-        flexWrap="wrap"
-        justifyContent="center"
-        alignItems="center"
-        gap={3}
-      >
+      <VStack width="100%" maxWidth="420px" spacing={2.5} align="stretch" mt={4}>
         {[1440, 2880, 4320].map((option) => {
           const isSelected = interval === option;
           return (
@@ -380,12 +374,11 @@ const SelfPacedOnboarding = ({
               variant="outline"
               data-sound-ignore-select="true"
               aria-pressed={isSelected}
-              width={{ base: "100%", md: "auto" }}
-              maxW={{ base: "360px", md: "none" }}
-              minW={{ md: "170px" }}
-              minH={{ base: "72px", md: "48px" }}
-              px={{ base: 4, md: 5 }}
-              py={{ base: 4, md: 3 }}
+              width="100%"
+              minH="48px"
+              px={4}
+              py={3}
+              borderRadius="xl"
               justifyContent="center"
               borderColor={
                 isSelected ? selectedIntervalButtonBorder : intervalButtonBorder
@@ -407,14 +400,14 @@ const SelfPacedOnboarding = ({
                 color={intervalButtonTextColor}
                 fontWeight="semibold"
                 textAlign="center"
-                lineHeight="1.35"
+                fontSize="sm"
               >
                 {getMarkLabel(option)}
               </Text>
             </Button>
           );
         })}
-      </Box>
+      </VStack>
 
       <br />
       <br />
@@ -433,7 +426,7 @@ const SelfPacedOnboarding = ({
         aria-label="slider-daily-goals"
         value={dailyGoals}
         min={1}
-        max={20}
+        max={30}
         step={1}
         onChange={handleDailyGoalsChange}
         mt={2}

@@ -26,6 +26,7 @@ import {
   normalizeGeneratedQuestionContent,
   normalizeContinuingLearningSummary,
 } from "./questionGeneration";
+import { steps } from "./content";
 
 export const CURRICULUM_VERSION = 3;
 const EXPANDED_TUTORIAL_OFFSET = 9;
@@ -658,7 +659,8 @@ export const fetchUsersWithToken = async () => {
 // Global question count utilities
 const questionDoc = doc(database, "analytics", "questionsAnswered");
 export const BASE_QUESTION_COUNT = 4200;
-export const COURSE_LESSON_COUNT = 121;
+export const COURSE_LESSON_COUNT =
+  Array.isArray(steps?.en) && steps.en.length > 0 ? steps.en.length : 141;
 
 export const subscribeToQuestionsAnswered = (callback) =>
   onSnapshot(questionDoc, (snap) => {

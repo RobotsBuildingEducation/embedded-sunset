@@ -2997,16 +2997,6 @@ export const MatrixTree = () => {
         matrix = create_matrix(3, 3)
         print(matrix)
         `,
-
-    content:
-      "Matrices are rectangular arrays of numbers or other mathematical objects, arranged in rows and columns. They are used in various fields such as computer graphics, image processing, and scientific computations. Mastering matrix operations is essential for solving complex mathematical and computational problems.",
-    code: `
-        def create_matrix(rows, cols):
-            return [[0] * cols for _ in range(rows)]
-        
-        matrix = create_matrix(3, 3)
-        print(matrix)
-          `,
     "Connected Cells": {
       content:
         "Connected cells in a matrix refer to groups of adjacent cells that share the same value. Finding connected components is crucial for problems like island counting, flood fill, and image segmentation. Various traversal techniques are used to explore and process these components.",

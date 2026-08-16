@@ -3036,16 +3036,47 @@ const myCar = new Car('Toyota');`,
 const myCar = new Car('Toyota');`, // The correct answer
       },
     },
-    //next lecture
     {
       group: "2",
-      title: "Understanding the Constructor Method",
+      title: "Transforming Arrays with map",
       description:
-        "In this step, you will learn about the purpose of the `constructor` method in a class.",
-      isText: true,
+        "In this step, you will learn how to transform an array of objects into new values using the .map() array method.",
+      isCodeCompletion: true,
       question: {
         questionText:
-          "Explain the purpose of the `constructor` method in a class.",
+          "Which of the following code blocks correctly uses `.map()` to extract an array of all car brands?",
+        options: [
+          `const cars = [
+  { brand: 'Toyota', model: 'Corolla' },
+  { brand: 'Honda', model: 'Civic' }
+];
+
+const brands = cars.map(car => car.brand);`,
+          `const cars = [
+  { brand: 'Toyota', model: 'Corolla' },
+  { brand: 'Honda', model: 'Civic' }
+];
+
+const brands = cars.filter(car => car.brand);`,
+          `const cars = [
+  { brand: 'Toyota', model: 'Corolla' },
+  { brand: 'Honda', model: 'Civic' }
+];
+
+const brands = cars.forEach(car => return car.brand);`,
+          `const cars = [
+  { brand: 'Toyota', model: 'Corolla' },
+  { brand: 'Honda', model: 'Civic' }
+];
+
+const brands = cars.map(brand);`,
+        ],
+        answer: `const cars = [
+  { brand: 'Toyota', model: 'Corolla' },
+  { brand: 'Honda', model: 'Civic' }
+];
+
+const brands = cars.map(car => car.brand);`,
       },
     },
     {
@@ -3292,15 +3323,30 @@ myCar.showBrand();`,
     //next lecture
     {
       group: "2",
-      title: "Understanding Encapsulation",
+      title: "Object Destructuring and Spread Syntax",
       description:
-        "In this step, you will define the concept of encapsulation in object-oriented programming with a single word.",
-      isSingleLineText: true,
+        "In this step, you will learn how to extract properties from objects using destructuring and create updated copies using the spread operator.",
+      isCodeCompletion: true,
       question: {
         questionText:
-          "What is the primary concept encapsulation ensures in object-oriented programming?",
-        placeholder: "Type your answer here...",
-        answer: "Privacy",
+          "Which code block correctly extracts `brand` using destructuring and creates `updatedCar` with the spread operator?",
+        options: [
+          `const car = { brand: 'Tesla', model: 'Model 3', year: 2023 };
+const { brand } = car;
+const updatedCar = { ...car, year: 2024 };`,
+          `const car = { brand: 'Tesla', model: 'Model 3', year: 2023 };
+const [ brand ] = car;
+const updatedCar = car + { year: 2024 };`,
+          `const car = { brand: 'Tesla', model: 'Model 3', year: 2023 };
+const brand = car{brand};
+const updatedCar = copy(car, year: 2024);`,
+          `const car = { brand: 'Tesla', model: 'Model 3', year: 2023 };
+const { brand } = car;
+const updatedCar = { car, year: 2024 };`,
+        ],
+        answer: `const car = { brand: 'Tesla', model: 'Model 3', year: 2023 };
+const { brand } = car;
+const updatedCar = { ...car, year: 2024 };`,
       },
     },
     {
@@ -3338,6 +3384,439 @@ myCar.showBrand();`,
       },
     },
     {
+          "group": "3",
+          "title": "Semantic HTML Elements",
+          "description": "In this step, you will match semantic HTML tags to their structural roles in modern web design.",
+          "isMatchPairs": true,
+          "showPreview": true,
+          "question": {
+                "questionText": "Match each semantic HTML tag to its primary structural role on the page:",
+                "pairs": [
+                      {
+                            "left": "<main>",
+                            "right": "The dominant content area of the webpage"
+                      },
+                      {
+                            "left": "<nav>",
+                            "right": "The container for primary navigation links"
+                      },
+                      {
+                            "left": "<article>",
+                            "right": "A self-contained composition like a post or card"
+                      },
+                      {
+                            "left": "<button>",
+                            "right": "An interactive clickable element for user actions"
+                      }
+                ],
+                "choices": [
+                      "The dominant content area of the webpage",
+                      "The container for primary navigation links",
+                      "A self-contained composition like a post or card",
+                      "An interactive clickable element for user actions"
+                ],
+                "answer": {
+                      "<main>": "The dominant content area of the webpage",
+                      "<nav>": "The container for primary navigation links",
+                      "<article>": "A self-contained composition like a post or card",
+                      "<button>": "An interactive clickable element for user actions"
+                },
+                "previewCode": "function Demo() {\n  const [tab, setTab] = useState('Home');\n  return (\n    <main style={{ padding: '12px', fontFamily: 'system-ui, sans-serif' }}>\n      <nav style={{ display: 'flex', gap: '14px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px', alignItems: 'center' }}>\n        <a href=\"#\" onClick={(e) => { e.preventDefault(); setTab('Home'); }} style={{ color: tab === 'Home' ? '#ec4899' : '#64748b', fontWeight: tab === 'Home' ? 'bold' : '500', textDecoration: tab === 'Home' ? 'underline' : 'none', cursor: 'pointer' }}>Home</a>\n        <a href=\"#\" onClick={(e) => { e.preventDefault(); setTab('Explore'); }} style={{ color: tab === 'Explore' ? '#ec4899' : '#64748b', fontWeight: tab === 'Explore' ? 'bold' : '500', textDecoration: tab === 'Explore' ? 'underline' : 'none', cursor: 'pointer' }}>Explore</a>\n      </nav>\n      <article style={{ marginTop: '12px', padding: '12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>\n        <h3 style={{ margin: '0 0 4px 0', fontSize: '15px', color: '#0f172a' }}>{tab === 'Home' ? 'Post Article' : 'Explore Feed'}</h3>\n        <p style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#64748b' }}>{tab === 'Home' ? 'Clean semantic web anatomy' : 'Discover community posts'}</p>\n        <button style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>{tab === 'Home' ? 'Action' : 'Follow'}</button>\n      </article>\n    </main>\n  );\n}\nrender(<Demo />)"
+          }
+    },
+    {
+          "group": "3",
+          "title": "HTML Attributes and Inputs",
+          "description": "In this step, you will learn how to configure input elements using HTML attributes like type, placeholder, and required.",
+          "isFillCodeBlanks": true,
+          "showPreview": true,
+          "question": {
+                "questionText": "Complete the self-closing input tag with the correct attribute names:",
+                "template": "<input {{type}}=\"email\" {{placeholder}}=\"Enter your email\" {{required}} />",
+                "blanks": [
+                      {
+                            "key": "type",
+                            "label": "Input Type",
+                            "hint": "Specifies the expected data format"
+                      },
+                      {
+                            "key": "placeholder",
+                            "label": "Hint Text",
+                            "hint": "Placeholder text shown inside the input"
+                      },
+                      {
+                            "key": "required",
+                            "label": "Requirement",
+                            "hint": "Specifies that the field must be filled"
+                      }
+                ],
+                "answer": {
+                      "type": "type",
+                      "placeholder": "placeholder",
+                      "required": "required"
+                },
+                "previewCode": "<div style={{ padding: '16px', fontFamily: 'sans-serif' }}>\n  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>Email Address</label>\n  <input type=\"email\" placeholder=\"Enter your email\" required style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} />\n</div>"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Accessible Buttons vs Divs",
+          "description": "In this step, you will compare semantic button elements with generic divs in terms of accessibility.",
+          "isBestImplementation": true,
+          "showPreview": true,
+          "question": {
+                "questionText": "Which implementation provides native keyboard accessibility, focus management, and semantic clarity?",
+                "options": [
+                      "// Option 1: Native button with semantic role\n<button onClick={handleSave} className=\"save-btn\">\n  Save Changes\n</button>",
+                      "// Option 2: Generic div without keyboard accessibility\n<div onClick={handleSave} className=\"save-btn\">\n  Save Changes\n</div>",
+                      "// Option 3: Paragraph tag used as button\n<p onClick={handleSave} className=\"save-btn\">\n  Save Changes\n</p>",
+                      "// Option 4: Heading tag used as button\n<h3 onClick={handleSave} className=\"save-btn\">\n  Save Changes\n</h3>"
+                ],
+                "answer": "// Option 1: Native button with semantic role\n<button onClick={handleSave} className=\"save-btn\">\n  Save Changes\n</button>",
+                "previewCode": "<div style={{ padding: '16px', display: 'flex', gap: '8px' }}>\n  <button style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>\n    Save Changes\n  </button>\n</div>"
+          }
+    },
+    {
+          "group": "3",
+          "title": "JSX Syntax Rules",
+          "description": "In this step, you will fix common JSX syntax errors including the class attribute and unclosed tags.",
+          "isFixBug": true,
+          "showPreview": true,
+          "question": {
+                "questionText": "Fix the JSX syntax error: change class to className and properly self-close the <img> tag.",
+                "starterCode": "<div class=\"user-card\">\n  <img src=\"avatar.png\">\n  <h2>User Profile</h2>\n</div>",
+                "acceptedAnswers": [
+                      "<div className=\"user-card\">\n  <img src=\"avatar.png\" />\n  <h2>User Profile</h2>\n</div>",
+                      "<div className=\"user-card\"><img src=\"avatar.png\" /><h2>User Profile</h2></div>"
+                ],
+                "answer": "<div className=\"user-card\">\n  <img src=\"avatar.png\" />\n  <h2>User Profile</h2>\n</div>",
+                "previewCode": "<div style={{ padding: '12px', border: '1px solid #e2e8f0', borderRadius: '8px', maxWidth: '200px', textAlign: 'center' }}>\n  <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#f472b6', margin: '0 auto 8px auto' }} />\n  <h3 style={{ margin: 0, fontSize: '14px' }}>User Profile</h3>\n</div>"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Assembling Card Markup",
+          "description": "In this step, you will assemble a structured profile card component using semantic HTML elements.",
+          "isParsonsProblem": true,
+          "showPreview": true,
+          "question": {
+                "questionText": "Reorder the lines to assemble a clean semantic profile card component:",
+                "lines": [
+                      "<article className=\"profile-card\">",
+                      "  <header>",
+                      "    <h1>Alex Rivera</h1>",
+                      "  </header>",
+                      "  <p>Software Engineer</p>",
+                      "  <button>Follow</button>",
+                      "</article>"
+                ],
+                "answer": [
+                      "<article className=\"profile-card\">",
+                      "  <header>",
+                      "    <h1>Alex Rivera</h1>",
+                      "  </header>",
+                      "  <p>Software Engineer</p>",
+                      "  <button>Follow</button>",
+                      "</article>"
+                ],
+                "previewCode": "<article style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #cbd5e1', maxWidth: '240px' }}>\n  <header><h2 style={{ margin: '0 0 4px 0', fontSize: '16px' }}>Alex Rivera</h2></header>\n  <p style={{ margin: '0 0 12px 0', fontSize: '13px', color: '#64748b' }}>Software Engineer</p>\n  <button style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>Follow</button>\n</article>"
+          }
+    },
+    {
+          "group": "3",
+          "title": "The CSS Box Model Layers",
+          "description": "In this step, you will learn the four concentric layers that make up the CSS box model.",
+          "isSelectOrder": true,
+          "question": {
+                "questionText": "Arrange the CSS Box Model layers from the innermost core to the outermost boundary:",
+                "options": [
+                      "Content (Text / Images)",
+                      "Padding (Inner spacing)",
+                      "Border (Edge boundary)",
+                      "Margin (Outer spacing)"
+                ],
+                "answer": [
+                      "Content (Text / Images)",
+                      "Padding (Inner spacing)",
+                      "Border (Edge boundary)",
+                      "Margin (Outer spacing)"
+                ]
+          }
+    },
+    {
+          "group": "3",
+          "title": "Box Sizing and Spacing Properties",
+          "description": "In this step, you will match CSS layout and box sizing properties to their visual behaviors.",
+          "isMatchPairs": true,
+          "question": {
+                "questionText": "Match each CSS property to its exact layout effect:",
+                "pairs": [
+                      {
+                            "left": "padding: 16px",
+                            "right": "Adds space between content and its border"
+                      },
+                      {
+                            "left": "margin: 0 auto",
+                            "right": "Horizontally centers a block element"
+                      },
+                      {
+                            "left": "box-sizing: border-box",
+                            "right": "Includes padding and border in total width"
+                      },
+                      {
+                            "left": "border-radius: 8px",
+                            "right": "Rounds the corners of the box"
+                      }
+                ],
+                "choices": [
+                      "Adds space between content and its border",
+                      "Horizontally centers a block element",
+                      "Includes padding and border in total width",
+                      "Rounds the corners of the box"
+                ],
+                "answer": {
+                      "padding: 16px": "Adds space between content and its border",
+                      "margin: 0 auto": "Horizontally centers a block element",
+                      "box-sizing: border-box": "Includes padding and border in total width",
+                      "border-radius: 8px": "Rounds the corners of the box"
+                }
+          }
+    },
+    {
+          "group": "3",
+          "title": "Responsive CSS Units",
+          "description": "In this step, you will learn about modern responsive units in CSS.",
+          "isCodeCompletion": true,
+          "question": {
+                "questionText": "Which CSS rule uses relative units (rem and %) to ensure responsive text and fluid layout?",
+                "options": [
+                      ".container {\n  width: 100%;\n  max-width: 60rem;\n  font-size: 1.125rem;\n  padding: 1.5rem;\n}",
+                      ".container {\n  width: 1000px;\n  max-width: 1000px;\n  font-size: 18px;\n  padding: 24px;\n}",
+                      ".container {\n  width: 100pt;\n  max-width: 60pt;\n  font-size: 1.125pt;\n  padding: 1.5pt;\n}",
+                      ".container {\n  width: 100in;\n  max-width: 60in;\n  font-size: 1.125in;\n  padding: 1.5in;\n}"
+                ],
+                "answer": ".container {\n  width: 100%;\n  max-width: 60rem;\n  font-size: 1.125rem;\n  padding: 1.5rem;\n}"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Identifying Layout Overflow",
+          "description": "In this step, you will identify CSS rules that cause unexpected horizontal scrolling.",
+          "isRelevantLine": true,
+          "question": {
+                "questionText": "Which line creates unwanted horizontal scrollbars by combining full viewport width with fixed padding?",
+                "code": ".card {\n  display: block;\n  width: 100vw;\n  padding: 40px;\n  background: #ffffff;\n}",
+                "answer": [
+                      3
+                ]
+          }
+    },
+    {
+          "group": "3",
+          "title": "Flexbox Navbar Alignment",
+          "description": "In this step, you will use flexbox layout rules to align a responsive navigation bar.",
+          "isParsonsProblem": true,
+          "showPreview": true,
+          "question": {
+                "questionText": "Reorder the CSS declarations to configure a horizontal flex container with space-between alignment and centered items:",
+                "lines": [
+                      ".navbar {",
+                      "  display: flex;",
+                      "  flex-direction: row;",
+                      "  justify-content: space-between;",
+                      "  align-items: center;",
+                      "  gap: 16px;",
+                      "}"
+                ],
+                "answer": [
+                      ".navbar {",
+                      "  display: flex;",
+                      "  flex-direction: row;",
+                      "  justify-content: space-between;",
+                      "  align-items: center;",
+                      "  gap: 16px;",
+                      "}"
+                ],
+                "previewCode": "<nav style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: '16px', padding: '12px', background: '#0f172a', color: '#fff', borderRadius: '8px' }}>\n  <span style={{ fontWeight: 'bold', color: '#ec4899' }}>BrandLogo</span>\n  <div style={{ display: 'flex', gap: '8px' }}>\n    <button style={{ background: '#334155', color: '#fff', border: 'none', padding: '4px 8px', borderRadius: '4px' }}>Docs</button>\n    <button style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '4px 8px', borderRadius: '4px' }}>Login</button>\n  </div>\n</nav>"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Controlled Input Binding",
+          "description": "In this step, you will learn how to create a controlled input using value and onChange with React state.",
+          "isCodeCompletion": true,
+          "showPreview": true,
+          "question": {
+                "questionText": "Which component correctly implements a controlled input with two-way state binding?",
+                "options": [
+                      "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      placeholder=\"Search...\"\n    />\n  );\n}",
+                      "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={setQuery(query)}\n      placeholder=\"Search...\"\n    />\n  );\n}",
+                      "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      defaultValue={query}\n      onChange={(e) => query = e.target.value}\n      placeholder=\"Search...\"\n    />\n  );\n}",
+                      "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onInput={query}\n      placeholder=\"Search...\"\n    />\n  );\n}"
+                ],
+                "answer": "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      placeholder=\"Search...\"\n    />\n  );\n}",
+                "previewCode": "function Demo() {\n  const [val, setVal] = useState('React Live');\n  return (\n    <div style={{ padding: '12px' }}>\n      <input value={val} onChange={e => setVal(e.target.value)} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1' }} />\n      <p style={{ marginTop: '8px', fontSize: '13px' }}>Typed: <b>{val}</b></p>\n    </div>\n  );\n}\nrender(<Demo />)"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Live Search Filter",
+          "description": "In this step, you will filter an array of items based on a controlled search query state.",
+          "isFillCodeBlanks": true,
+          "question": {
+                "questionText": "Complete the array filter statement to perform a case-insensitive search match:",
+                "template": "const filteredUsers = users.{{filter}}((user) => user.name.toLowerCase().{{includes}}(query.toLowerCase()));",
+                "blanks": [
+                      {
+                            "key": "filter",
+                            "label": "Array Method",
+                            "hint": "Method that returns matching elements"
+                      },
+                      {
+                            "key": "includes",
+                            "label": "String Method",
+                            "hint": "Method checking if substring is present"
+                      }
+                ],
+                "answer": {
+                      "filter": "filter",
+                      "includes": "includes"
+                }
+          }
+    },
+    {
+          "group": "3",
+          "title": "Form Submission and preventDefault",
+          "description": "In this step, you will learn how to handle form submit events without reloading the browser page.",
+          "isCodeCompletion": true,
+          "question": {
+                "questionText": "Which submit handler correctly prevents the default browser page reload and submits state?",
+                "options": [
+                      "const handleSubmit = (e) => {\n  e.preventDefault();\n  if (!text.trim()) return;\n  onAddTweet(text);\n  setText('');\n};",
+                      "const handleSubmit = (e) => {\n  e.stopImmediatePropagation();\n  onAddTweet(text);\n};",
+                      "const handleSubmit = (e) => {\n  window.reload();\n  onAddTweet(text);\n};",
+                      "const handleSubmit = (e) => {\n  return false;\n};"
+                ],
+                "answer": "const handleSubmit = (e) => {\n  e.preventDefault();\n  if (!text.trim()) return;\n  onAddTweet(text);\n  setText('');\n};"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Multi-Field Form State",
+          "description": "In this step, you will build a form component managing multiple state inputs.",
+          "isCode": true,
+          "isTerminal": false,
+          "question": {
+                "questionText": "Create a React component named ProfileForm with state for username and bio, rendering two inputs and a submit button."
+          }
+    },
+    {
+          "group": "3",
+          "title": "Resetting Input State",
+          "description": "In this step, you will fix a form bug where the input field fails to clear upon submission.",
+          "isFixBug": true,
+          "question": {
+                "questionText": "Fix the handleSubmit function so that setMessage('') is called after message dispatch:",
+                "starterCode": "const handleSubmit = (e) => {\n  e.preventDefault();\n  sendMessage(message);\n  // Bug: input is not cleared\n};",
+                "acceptedAnswers": [
+                      "const handleSubmit = (e) => {\n  e.preventDefault();\n  sendMessage(message);\n  setMessage('');\n};",
+                      "const handleSubmit = (e) => {\n  e.preventDefault();\n  sendMessage(message);\n  setMessage(\"\");\n};"
+                ],
+                "answer": "const handleSubmit = (e) => {\n  e.preventDefault();\n  sendMessage(message);\n  setMessage('');\n};"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Ternary Conditional Rendering",
+          "description": "In this step, you will learn how to render alternative UI components using the ternary operator.",
+          "isCodeCompletion": true,
+          "showPreview": true,
+          "question": {
+                "questionText": "Which JSX block correctly uses a ternary operator to conditionally render either a profile or a login button?",
+                "options": [
+                      "return (\n  <div>\n    {isLoggedIn ? <UserProfile user={user} /> : <button onClick={login}>Log In</button>}\n  </div>\n);",
+                      "return (\n  <div>\n    {if (isLoggedIn) { <UserProfile user={user} /> } else { <button onClick={login}>Log In</button> }}\n  </div>\n);",
+                      "return (\n  <div>\n    {isLoggedIn && <UserProfile user={user} /> : <button onClick={login}>Log In</button>}\n  </div>\n);",
+                      "return (\n  <div>\n    {isLoggedIn ? <UserProfile user={user} />}\n  </div>\n);"
+                ],
+                "answer": "return (\n  <div>\n    {isLoggedIn ? <UserProfile user={user} /> : <button onClick={login}>Log In</button>}\n  </div>\n);",
+                "previewCode": "function Demo() {\n  const [logged, setLogged] = useState(false);\n  return (\n    <div style={{ padding: '12px' }}>\n      {logged ? (\n        <span style={{ color: '#16a34a', fontWeight: 'bold' }}>👤 Welcome back, Alex!</span>\n      ) : (\n        <button onClick={() => setLogged(true)} style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px' }}>Log In</button>\n      )}\n    </div>\n  );\n}\nrender(<Demo />)"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Short-Circuit Logical AND Rendering",
+          "description": "In this step, you will use the logical && operator to conditionally display notifications and banners.",
+          "isCodeCompletion": true,
+          "question": {
+                "questionText": "Which JSX expression cleanly renders an error message banner only when the error state contains a value?",
+                "options": [
+                      "return (\n  <div>\n    {error && <div className=\"error-banner\">{error}</div>}\n    <TweetList tweets={tweets} />\n  </div>\n);",
+                      "return (\n  <div>\n    {error || <div className=\"error-banner\">{error}</div>}\n    <TweetList tweets={tweets} />\n  </div>\n);",
+                      "return (\n  <div>\n    {error == <div className=\"error-banner\">{error}</div>}\n    <TweetList tweets={tweets} />\n  </div>\n);",
+                      "return (\n  <div>\n    {show(error, <div className=\"error-banner\">{error}</div>)}\n    <TweetList tweets={tweets} />\n  </div>\n);"
+                ],
+                "answer": "return (\n  <div>\n    {error && <div className=\"error-banner\">{error}</div>}\n    <TweetList tweets={tweets} />\n  </div>\n);"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Loading State Hierarchy",
+          "description": "In this step, you will structure conditional rendering for loading and loaded states.",
+          "isParsonsProblem": true,
+          "question": {
+                "questionText": "Reorder the lines to handle loading state before returning the main feed:",
+                "lines": [
+                      "if (isLoading) {",
+                      "  return <div className=\"spinner\">Loading...</div>;",
+                      "}",
+                      "return (",
+                      "  <main className=\"content-card\">",
+                      "    <h1>Feed Ready</h1>",
+                      "  </main>",
+                      ");"
+                ],
+                "answer": [
+                      "if (isLoading) {",
+                      "  return <div className=\"spinner\">Loading...</div>;",
+                      "}",
+                      "return (",
+                      "  <main className=\"content-card\">",
+                      "    <h1>Feed Ready</h1>",
+                      "  </main>",
+                      ");"
+                ]
+          }
+    },
+    {
+          "group": "3",
+          "title": "Empty State Notification",
+          "description": "In this step, you will handle zero-item lists with an informative empty state message.",
+          "isCode": true,
+          "isTerminal": false,
+          "question": {
+                "questionText": "Create a React component named NotificationList that accepts an array of notifications as props and displays 'No new notifications' when notifications.length is 0."
+          }
+    },
+    {
+          "group": "3",
+          "title": "Tab Switcher Pattern",
+          "description": "In this step, you will compare patterns for toggling between multiple view views cleanly.",
+          "isBestImplementation": true,
+          "showPreview": true,
+          "question": {
+                "questionText": "Which pattern cleanly and declaratively switches between multiple view components based on activeTab state?",
+                "options": [
+                      "function AppTabs() {\n  const [tab, setTab] = useState('home');\n  return (\n    <div>\n      {tab === 'home' && <HomeView />}\n      {tab === 'explore' && <ExploreView />}\n      {tab === 'notifications' && <NotificationsView />}\n    </div>\n  );\n}",
+                      "function AppTabs() {\n  const [tab, setTab] = useState('home');\n  return (\n    <div>\n      {tab === 'home' ? <HomeView /> : tab === 'explore' ? <ExploreView /> : <NotificationsView />}\n    </div>\n  );\n}",
+                      "function AppTabs() {\n  return (\n    <div>\n      <HomeView style={{ display: 'none' }} />\n      <ExploreView style={{ display: 'none' }} />\n      <NotificationsView />\n    </div>\n  );\n}",
+                      "function AppTabs() {\n  let current = window.location.hash;\n  return <div>{current}</div>;\n}"
+                ],
+                "answer": "function AppTabs() {\n  const [tab, setTab] = useState('home');\n  return (\n    <div>\n      {tab === 'home' && <HomeView />}\n      {tab === 'explore' && <ExploreView />}\n      {tab === 'notifications' && <NotificationsView />}\n    </div>\n  );\n}",
+                "previewCode": "function DemoTabs() {\n  const [tab, setTab] = useState('home');\n  return (\n    <div style={{ padding: '12px', fontFamily: 'sans-serif' }}>\n      <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>\n        <button onClick={() => setTab('home')} style={{ background: tab === 'home' ? '#ec4899' : '#e2e8f0', color: tab === 'home' ? '#fff' : '#000', border: 'none', padding: '4px 10px', borderRadius: '6px' }}>Home</button>\n        <button onClick={() => setTab('settings')} style={{ background: tab === 'settings' ? '#ec4899' : '#e2e8f0', color: tab === 'settings' ? '#fff' : '#000', border: 'none', padding: '4px 10px', borderRadius: '6px' }}>Settings</button>\n      </div>\n      <div style={{ padding: '8px', background: '#f8fafc', borderRadius: '6px' }}>\n        {tab === 'home' ? '🏠 Home Feed Content' : '⚙️ User Preferences & Settings'}\n      </div>\n    </div>\n  );\n}\nrender(<DemoTabs />)"
+          }
+    },
+{
       group: "3",
       title: "Introduction to React Components",
       description:
@@ -3562,14 +4041,14 @@ return (
     },
     {
       group: "3",
-      title: "Passing and Using Props",
+      title: "Rendering Dynamic Lists with map and Keys",
       description:
-        "In this step, you will learn how to pass and use props in a React component.",
+        "In this step, you will learn how to render a dynamic list of elements in React using .map() and provide unique key props.",
       isCode: true,
       isTerminal: false,
       question: {
         questionText:
-          "Update the Tweet component to accept and display the user's name, handle, and tweet content as props.",
+          "Update the TweetFeed component to render an array of tweets using .map() and assign each Tweet a unique key prop.",
       },
     },
     {
@@ -3763,14 +4242,168 @@ return (
       },
     },
     {
-      group: "3",
-      title: "Build Your App",
-      isConversationReview: true,
-      description: "Build an app based on your progress",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [31, 48], // Indices of steps to review
-      },
+          "group": "3",
+          "title": "React State Immutability",
+          "description": "In this step, you will understand why React requires immutable state updates.",
+          "isMultipleChoice": true,
+          "question": {
+                "questionText": "Why should you never mutate React state directly with array.push or obj.prop = value?",
+                "options": [
+                      "Direct mutation does not trigger a re-render and can cause stale UI bugs",
+                      "Direct mutation causes a JavaScript syntax error in modern browsers",
+                      "React state is stored on a server that forbids modification",
+                      "Mutating state directly slows down internet speed"
+                ],
+                "answer": "Direct mutation does not trigger a re-render and can cause stale UI bugs"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Key Props and DOM Reconciliation",
+          "description": "In this step, you will understand how React uses unique keys to reconcile dynamic lists.",
+          "isBestImplementation": true,
+          "question": {
+                "questionText": "Choose the best implementation for rendering dynamic list items with stable unique keys.",
+                "options": [
+                      "// Option 1: Stable unique database ID as key\n{items.map((item) => (\n  <TodoItem key={item.id} task={item.task} />\n))}",
+                      "// Option 2: Array index as key (fragile on reorder/delete)\n{items.map((item, index) => (\n  <TodoItem key={index} task={item.task} />\n))}",
+                      "// Option 3: Math.random() as key (forces complete remount on every render)\n{items.map((item) => (\n  <TodoItem key={Math.random()} task={item.task} />\n))}",
+                      "// Option 4: Missing key prop entirely\n{items.map((item) => (\n  <TodoItem task={item.task} />\n))}"
+                ],
+                "answer": "// Option 1: Stable unique database ID as key\n{items.map((item) => (\n  <TodoItem key={item.id} task={item.task} />\n))}"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Lifting State with Callbacks",
+          "description": "In this step, you will practice lifting state to a parent and passing updater callbacks down to children.",
+          "isParsonsProblem": true,
+          "question": {
+                "questionText": "Reorder the lines to define a parent component that manages count state and passes count and onIncrement to child buttons:",
+                "lines": [
+                      "function CounterApp() {",
+                      "  const [count, setCount] = useState(0);",
+                      "  const handleIncrement = () => setCount((c) => c + 1);",
+                      "  return (",
+                      "    <div>",
+                      "      <Display count={count} />",
+                      "      <IncrementButton onIncrement={handleIncrement} />",
+                      "    </div>",
+                      "  );",
+                      "}"
+                ],
+                "answer": [
+                      "function CounterApp() {",
+                      "  const [count, setCount] = useState(0);",
+                      "  const handleIncrement = () => setCount((c) => c + 1);",
+                      "  return (",
+                      "    <div>",
+                      "      <Display count={count} />",
+                      "      <IncrementButton onIncrement={handleIncrement} />",
+                      "    </div>",
+                      "  );",
+                      "}"
+                ]
+          }
+    },
+    {
+          "group": "3",
+          "title": "Preventing Infinite Render Loops",
+          "description": "In this step, you will identify a missing dependency array causing infinite re-render loops in useEffect.",
+          "isRelevantLine": true,
+          "question": {
+                "questionText": "Click the line that causes an infinite loop by missing its dependency array in useEffect:",
+                "code": "function DataFetcher() {\n  const [count, setCount] = useState(0);\n  useEffect(() => {\n    setCount((c) => c + 1);\n  });\n  return <div>{count}</div>;\n}",
+                "answer": [
+                      5
+                ]
+          }
+    },
+    {
+          "group": "3",
+          "title": "Custom Hook Extraction",
+          "description": "In this step, you will learn how to extract reusable state logic into a custom hook.",
+          "isCodeCompletion": true,
+          "question": {
+                "questionText": "Select the code block that correctly creates a reusable custom hook named useToggle:",
+                "options": [
+                      "function useToggle(initial = false) {\n  const [value, setValue] = useState(initial);\n  const toggle = () => setValue((v) => !v);\n  return [value, toggle];\n}",
+                      "function useToggle(initial = false) {\n  let value = initial;\n  const toggle = () => { value = !value; };\n  return [value, toggle];\n}",
+                      "function useToggle(initial = false) {\n  const toggle = useState(initial);\n  return toggle;\n}",
+                      "function useToggle() {\n  return window.toggle;\n}"
+                ],
+                "answer": "function useToggle(initial = false) {\n  const [value, setValue] = useState(initial);\n  const toggle = () => setValue((v) => !v);\n  return [value, toggle];\n}"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Derived State Computation",
+          "description": "In this step, you will learn to compute derived values during render rather than keeping duplicate state.",
+          "isBestImplementation": true,
+          "question": {
+                "questionText": "Choose the best pattern to compute active todo count without maintaining redundant synchronized state variables:",
+                "options": [
+                      "// Option 1: Compute on the fly during render\nfunction TodoList({ todos }) {\n  const activeCount = todos.filter((t) => !t.done).length;\n  return <div>Active: {activeCount}</div>;\n}",
+                      "// Option 2: Redundant state variable synced via useEffect\nfunction TodoList({ todos }) {\n  const [activeCount, setActiveCount] = useState(0);\n  useEffect(() => {\n    setActiveCount(todos.filter((t) => !t.done).length);\n  }, [todos]);\n  return <div>Active: {activeCount}</div>;\n}",
+                      "// Option 3: Global variable outside component\nlet activeCount = 0;\nfunction TodoList({ todos }) {\n  activeCount = todos.length;\n  return <div>Active: {activeCount}</div>;\n}",
+                      "// Option 4: Query DOM directly\nfunction TodoList() {\n  const count = document.querySelectorAll('.active').length;\n  return <div>Active: {count}</div>;\n}"
+                ],
+                "answer": "// Option 1: Compute on the fly during render\nfunction TodoList({ todos }) {\n  const activeCount = todos.filter((t) => !t.done).length;\n  return <div>Active: {activeCount}</div>;\n}"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Component Composition with children",
+          "description": "In this step, you will use the children prop to create reusable container components.",
+          "isCodeCompletion": true,
+          "question": {
+                "questionText": "Select the code block that creates a reusable Card wrapper using the children prop:",
+                "options": [
+                      "function Card({ title, children }) {\n  return (\n    <div className=\"card-box\">\n      <h2>{title}</h2>\n      <div className=\"card-body\">{children}</div>\n    </div>\n  );\n}",
+                      "function Card({ title, content }) {\n  return (\n    <div className=\"card-box\">\n      <h2>{title}</h2>\n      <div className=\"card-body\">{content.render()}</div>\n    </div>\n  );\n}",
+                      "function Card({ title }) {\n  return (\n    <div className=\"card-box\">\n      <h2>{title}</h2>\n    </div>\n  );\n}",
+                      "function Card() {\n  return <div>{window.children}</div>;\n}"
+                ],
+                "answer": "function Card({ title, children }) {\n  return (\n    <div className=\"card-box\">\n      <h2>{title}</h2>\n      <div className=\"card-body\">{children}</div>\n    </div>\n  );\n}"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Cleanup in Async Effects",
+          "description": "In this step, you will prevent memory leaks by adding a cleanup function to an asynchronous effect.",
+          "isFixBug": true,
+          "question": {
+                "questionText": "Fix the bug in useEffect by returning a cleanup function that sets isMounted to false when the component unmounts:",
+                "starterCode": "useEffect(() => {\n  let isMounted = true;\n  fetchProfile().then((data) => {\n    if (isMounted) setProfile(data);\n  });\n  // Bug: missing cleanup return\n}, []);",
+                "acceptedAnswers": [
+                      "useEffect(() => {\n  let isMounted = true;\n  fetchProfile().then((data) => {\n    if (isMounted) setProfile(data);\n  });\n  return () => { isMounted = false; };\n}, []);",
+                      "useEffect(() => {\n  let isMounted = true;\n  fetchProfile().then((data) => {\n    if (isMounted) setProfile(data);\n  });\n  return () => {\n    isMounted = false;\n  };\n}, []);"
+                ],
+                "answer": "useEffect(() => {\n  let isMounted = true;\n  fetchProfile().then((data) => {\n    if (isMounted) setProfile(data);\n  });\n  return () => { isMounted = false; };\n}, []);"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Building a Filterable Interactive Dashboard",
+          "description": "In this step, you will assemble components, state hooks, search filtering, and list rendering into an interactive dashboard.",
+          "isCode": true,
+          "isTerminal": false,
+          "question": {
+                "questionText": "Build a complete React component named ProductDashboard that manages a search input, filters an array of products by name, and displays active results."
+          }
+    },
+    {
+          "group": "3",
+          "title": "Build Your App",
+          "isConversationReview": true,
+          "description": "Build an app based on your progress",
+          "question": {
+                "questionText": "Let's chat about the questions we've worked on so far.",
+                "range": [
+                      39,
+                      88
+                ]
+          }
     },
     {
       group: "4",
@@ -3847,13 +4480,46 @@ return (
     },
     {
       group: "4",
-      title: "Installing NPM",
-      description: "In this step, you will learn how to install npm globally",
-
-      isText: true,
+      title: "Asynchronous JavaScript and async/await",
+      description:
+        "In this step, you will learn how asynchronous Promises work when interacting with servers and databases.",
+      isCodeCompletion: true,
       question: {
         questionText:
-          "Write the command to install the node package manager (npm) globally onto your computer",
+          "Which code block correctly uses an `async` function with `await` and `try/catch` to fetch data safely?",
+        options: [
+          `async function loadUserData(userId) {
+  try {
+    const user = await fetchUserFromDatabase(userId);
+    console.log('User loaded:', user);
+  } catch (error) {
+    console.error('Failed to load user:', error);
+  }
+}`,
+          `function loadUserData(userId) {
+  try {
+    const user = await fetchUserFromDatabase(userId);
+    console.log('User loaded:', user);
+  } catch (error) {
+    console.error('Failed to load user:', error);
+  }
+}`,
+          `async function loadUserData(userId) {
+  const user = fetchUserFromDatabase(userId);
+  await user.catch(error);
+}`,
+          `async function loadUserData(userId) {
+  wait fetchUserFromDatabase(userId);
+}`,
+        ],
+        answer: `async function loadUserData(userId) {
+  try {
+    const user = await fetchUserFromDatabase(userId);
+    console.log('User loaded:', user);
+  } catch (error) {
+    console.error('Failed to load user:', error);
+  }
+}`,
       },
     },
 
@@ -5324,13 +5990,45 @@ console.log(arr);
     },
     {
       group: "2",
-      title: "Entendiendo el Método Constructor",
+      title: "Transformando Arreglos con map",
       description:
-        "En este paso, aprenderás sobre el propósito del método `constructor` en una clase.",
-      isText: true,
+        "En este paso, aprenderás cómo transformar un arreglo de objetos en nuevos valores usando el método .map().",
+      isCodeCompletion: true,
       question: {
         questionText:
-          "Explica el propósito del método `constructor` en una clase.",
+          "¿Cuál de los siguientes bloques de código usa correctamente `.map()` para extraer un arreglo con todas las marcas de coches?",
+        options: [
+          `const coches = [
+  { marca: 'Toyota', modelo: 'Corolla' },
+  { marca: 'Honda', modelo: 'Civic' }
+];
+
+const marcas = coches.map(coche => coche.marca);`,
+          `const coches = [
+  { marca: 'Toyota', modelo: 'Corolla' },
+  { marca: 'Honda', modelo: 'Civic' }
+];
+
+const marcas = coches.filter(coche => coche.marca);`,
+          `const coches = [
+  { marca: 'Toyota', modelo: 'Corolla' },
+  { marca: 'Honda', modelo: 'Civic' }
+];
+
+const marcas = coches.forEach(coche => return coche.marca);`,
+          `const coches = [
+  { marca: 'Toyota', modelo: 'Corolla' },
+  { marca: 'Honda', modelo: 'Civic' }
+];
+
+const marcas = coches.map(marca);`,
+        ],
+        answer: `const coches = [
+  { marca: 'Toyota', modelo: 'Corolla' },
+  { marca: 'Honda', modelo: 'Civic' }
+];
+
+const marcas = coches.map(coche => coche.marca);`,
       },
     },
     {
@@ -5562,15 +6260,30 @@ console.log(arr);
     },
     {
       group: "2",
-      title: "Entendiendo la Encapsulación",
+      title: "Desestructuración de Objetos y Operador Spread",
       description:
-        "En este paso, definirás el concepto de encapsulación en la programación orientada a objetos con una sola palabra.",
-      isSingleLineText: true,
+        "En este paso, aprenderás cómo extraer propiedades de objetos mediante desestructuración y crear copias actualizadas con el operador spread.",
+      isCodeCompletion: true,
       question: {
         questionText:
-          "¿Qué concepto principal asegura la encapsulación en la programación orientada a objetos?",
-        placeholder: "Escribe tu respuesta aquí...",
-        answer: "Privacidad",
+          "¿Cuál bloque de código extrae correctamente `marca` con desestructuración y crea `cocheActualizado` con el operador spread?",
+        options: [
+          `const coche = { marca: 'Tesla', modelo: 'Model 3', año: 2023 };
+const { marca } = coche;
+const cocheActualizado = { ...coche, año: 2024 };`,
+          `const coche = { marca: 'Tesla', modelo: 'Model 3', año: 2023 };
+const [ marca ] = coche;
+const cocheActualizado = coche + { año: 2024 };`,
+          `const coche = { marca: 'Tesla', modelo: 'Model 3', año: 2023 };
+const marca = coche{marca};
+const cocheActualizado = copy(coche, año: 2024);`,
+          `const coche = { marca: 'Tesla', modelo: 'Model 3', año: 2023 };
+const { marca } = coche;
+const cocheActualizado = { coche, año: 2024 };`,
+        ],
+        answer: `const coche = { marca: 'Tesla', modelo: 'Model 3', año: 2023 };
+const { marca } = coche;
+const cocheActualizado = { ...coche, año: 2024 };`,
       },
     },
     {
@@ -5608,6 +6321,439 @@ console.log(arr);
       },
     },
     {
+          "group": "3",
+          "title": "Elementos HTML Semánticos",
+          "description": "En este paso, relacionarás las etiquetas HTML semánticas con sus roles estructurales en el diseño web moderno.",
+          "isMatchPairs": true,
+          "showPreview": true,
+          "question": {
+                "questionText": "Relaciona cada etiqueta HTML semántica con su rol estructural principal en la página:",
+                "pairs": [
+                      {
+                            "left": "<main>",
+                            "right": "El área de contenido principal de la página web"
+                      },
+                      {
+                            "left": "<nav>",
+                            "right": "El contenedor para los enlaces de navegación principales"
+                      },
+                      {
+                            "left": "<article>",
+                            "right": "Una composición independiente como una publicación o tarjeta"
+                      },
+                      {
+                            "left": "<button>",
+                            "right": "Un elemento interactivo cliqueable para acciones del usuario"
+                      }
+                ],
+                "choices": [
+                      "El área de contenido principal de la página web",
+                      "El contenedor para los enlaces de navegación principales",
+                      "Una composición independiente como una publicación o tarjeta",
+                      "Un elemento interactivo cliqueable para acciones del usuario"
+                ],
+                "answer": {
+                      "<main>": "El área de contenido principal de la página web",
+                      "<nav>": "El contenedor para los enlaces de navegación principales",
+                      "<article>": "Una composición independiente como una publicación o tarjeta",
+                      "<button>": "Un elemento interactivo cliqueable para acciones del usuario"
+                },
+                "previewCode": "function Demo() {\n  const [tab, setTab] = useState('Inicio');\n  return (\n    <main style={{ padding: '12px', fontFamily: 'system-ui, sans-serif' }}>\n      <nav style={{ display: 'flex', gap: '14px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px', alignItems: 'center' }}>\n        <a href=\"#\" onClick={(e) => { e.preventDefault(); setTab('Inicio'); }} style={{ color: tab === 'Inicio' ? '#ec4899' : '#64748b', fontWeight: tab === 'Inicio' ? 'bold' : '500', textDecoration: tab === 'Inicio' ? 'underline' : 'none', cursor: 'pointer' }}>Inicio</a>\n        <a href=\"#\" onClick={(e) => { e.preventDefault(); setTab('Explorar'); }} style={{ color: tab === 'Explorar' ? '#ec4899' : '#64748b', fontWeight: tab === 'Explorar' ? 'bold' : '500', textDecoration: tab === 'Explorar' ? 'underline' : 'none', cursor: 'pointer' }}>Explorar</a>\n      </nav>\n      <article style={{ marginTop: '12px', padding: '12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>\n        <h3 style={{ margin: '0 0 4px 0', fontSize: '15px', color: '#0f172a' }}>{tab === 'Inicio' ? 'Artículo Publicado' : 'Feed de Exploración'}</h3>\n        <p style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#64748b' }}>{tab === 'Inicio' ? 'Anatomía web semántica limpia' : 'Descubre publicaciones de la comunidad'}</p>\n        <button style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>{tab === 'Inicio' ? 'Acción' : 'Seguir'}</button>\n      </article>\n    </main>\n  );\n}\nrender(<Demo />)"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Atributos HTML y Entradas",
+          "description": "En este paso, aprenderás a configurar elementos de entrada usando atributos HTML como type, placeholder y required.",
+          "isFillCodeBlanks": true,
+          "showPreview": true,
+          "question": {
+                "questionText": "Completa la etiqueta de entrada autocerrada con los nombres de atributos correctos:",
+                "template": "<input {{type}}=\"email\" {{placeholder}}=\"Ingresa tu correo\" {{required}} />",
+                "blanks": [
+                      {
+                            "key": "type",
+                            "label": "Tipo de Entrada",
+                            "hint": "Especifica el formato de datos esperado"
+                      },
+                      {
+                            "key": "placeholder",
+                            "label": "Texto de Sugerencia",
+                            "hint": "Texto mostrado dentro de la entrada"
+                      },
+                      {
+                            "key": "required",
+                            "label": "Obligatorio",
+                            "hint": "Especifica que el campo es obligatorio"
+                      }
+                ],
+                "answer": {
+                      "type": "type",
+                      "placeholder": "placeholder",
+                      "required": "required"
+                },
+                "previewCode": "<div style={{ padding: '16px', fontFamily: 'sans-serif' }}>\n  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>Correo Electrónico</label>\n  <input type=\"email\" placeholder=\"Ingresa tu correo\" required style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} />\n</div>"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Botones Accesibles vs Divs",
+          "description": "En este paso, compararás botones semánticos con divs genéricos en términos de accesibilidad.",
+          "isBestImplementation": true,
+          "showPreview": true,
+          "question": {
+                "questionText": "¿Cuál implementación proporciona accesibilidad por teclado nativa, gestión del foco y claridad semántica?",
+                "options": [
+                      "// Opción 1: Botón nativo con rol semántico\n<button onClick={handleSave} className=\"save-btn\">\n  Guardar Cambios\n</button>",
+                      "// Opción 2: Div genérico sin accesibilidad por teclado\n<div onClick={handleSave} className=\"save-btn\">\n  Guardar Cambios\n</div>",
+                      "// Opción 3: Etiqueta de párrafo usada como botón\n<p onClick={handleSave} className=\"save-btn\">\n  Guardar Cambios\n</p>",
+                      "// Opción 4: Etiqueta de encabezado usada como botón\n<h3 onClick={handleSave} className=\"save-btn\">\n  Guardar Cambios\n</h3>"
+                ],
+                "answer": "// Opción 1: Botón nativo con rol semántico\n<button onClick={handleSave} className=\"save-btn\">\n  Guardar Cambios\n</button>",
+                "previewCode": "<div style={{ padding: '16px', display: 'flex', gap: '8px' }}>\n  <button style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>\n    Guardar Cambios\n  </button>\n</div>"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Reglas de Sintaxis JSX",
+          "description": "En este paso, corregirás errores comunes de sintaxis JSX incluyendo el atributo class y etiquetas no cerradas.",
+          "isFixBug": true,
+          "showPreview": true,
+          "question": {
+                "questionText": "Corrige el error de sintaxis JSX: cambia class a className y autocierra correctamente la etiqueta <img>.",
+                "starterCode": "<div class=\"user-card\">\n  <img src=\"avatar.png\">\n  <h2>Perfil de Usuario</h2>\n</div>",
+                "acceptedAnswers": [
+                      "<div className=\"user-card\">\n  <img src=\"avatar.png\" />\n  <h2>Perfil de Usuario</h2>\n</div>",
+                      "<div className=\"user-card\"><img src=\"avatar.png\" /><h2>Perfil de Usuario</h2></div>"
+                ],
+                "answer": "<div className=\"user-card\">\n  <img src=\"avatar.png\" />\n  <h2>Perfil de Usuario</h2>\n</div>",
+                "previewCode": "<div style={{ padding: '12px', border: '1px solid #e2e8f0', borderRadius: '8px', maxWidth: '200px', textAlign: 'center' }}>\n  <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#f472b6', margin: '0 auto 8px auto' }} />\n  <h3 style={{ margin: 0, fontSize: '14px' }}>Perfil de Usuario</h3>\n</div>"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Ensamblando la Estructura de Tarjeta",
+          "description": "En este paso, ensamblarás un componente de tarjeta de perfil estructurado usando elementos HTML semánticos.",
+          "isParsonsProblem": true,
+          "showPreview": true,
+          "question": {
+                "questionText": "Ordena las líneas para ensamblar un componente semántico limpio de tarjeta de perfil:",
+                "lines": [
+                      "<article className=\"profile-card\">",
+                      "  <header>",
+                      "    <h1>Alex Rivera</h1>",
+                      "  </header>",
+                      "  <p>Ingeniero de Software</p>",
+                      "  <button>Seguir</button>",
+                      "</article>"
+                ],
+                "answer": [
+                      "<article className=\"profile-card\">",
+                      "  <header>",
+                      "    <h1>Alex Rivera</h1>",
+                      "  </header>",
+                      "  <p>Ingeniero de Software</p>",
+                      "  <button>Seguir</button>",
+                      "</article>"
+                ],
+                "previewCode": "<article style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #cbd5e1', maxWidth: '240px' }}>\n  <header><h2 style={{ margin: '0 0 4px 0', fontSize: '16px' }}>Alex Rivera</h2></header>\n  <p style={{ margin: '0 0 12px 0', fontSize: '13px', color: '#64748b' }}>Ingeniero de Software</p>\n  <button style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>Seguir</button>\n</article>"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Capas del Modelo de Caja CSS",
+          "description": "En este paso, aprenderás las cuatro capas concéntricas que componen el modelo de caja CSS.",
+          "isSelectOrder": true,
+          "question": {
+                "questionText": "Ordena las capas del modelo de caja CSS desde el núcleo interno hasta el límite exterior:",
+                "options": [
+                      "Contenido (Texto / Imágenes)",
+                      "Padding (Espaciado interior)",
+                      "Borde (Límite exterior)",
+                      "Margen (Espaciado exterior)"
+                ],
+                "answer": [
+                      "Contenido (Texto / Imágenes)",
+                      "Padding (Espaciado interior)",
+                      "Borde (Límite exterior)",
+                      "Margen (Espaciado exterior)"
+                ]
+          }
+    },
+    {
+          "group": "3",
+          "title": "Propiedades de Dimensiones y Espaciado",
+          "description": "En este paso, relacionarás propiedades de espaciado y modelo de caja CSS con sus comportamientos visuales.",
+          "isMatchPairs": true,
+          "question": {
+                "questionText": "Relaciona cada propiedad CSS con su efecto exacto en el diseño:",
+                "pairs": [
+                      {
+                            "left": "padding: 16px",
+                            "right": "Añade espacio entre el contenido y su borde"
+                      },
+                      {
+                            "left": "margin: 0 auto",
+                            "right": "Centra horizontalmente un elemento de bloque"
+                      },
+                      {
+                            "left": "box-sizing: border-box",
+                            "right": "Incluye padding y borde en el ancho total"
+                      },
+                      {
+                            "left": "border-radius: 8px",
+                            "right": "Redondea las esquinas de la caja"
+                      }
+                ],
+                "choices": [
+                      "Añade espacio entre el contenido y su borde",
+                      "Centra horizontalmente un elemento de bloque",
+                      "Incluye padding y borde en el ancho total",
+                      "Redondea las esquinas de la caja"
+                ],
+                "answer": {
+                      "padding: 16px": "Añade espacio entre el contenido y su borde",
+                      "margin: 0 auto": "Centra horizontalmente un elemento de bloque",
+                      "box-sizing: border-box": "Incluye padding y borde en el ancho total",
+                      "border-radius: 8px": "Redondea las esquinas de la caja"
+                }
+          }
+    },
+    {
+          "group": "3",
+          "title": "Unidades CSS Responsivas",
+          "description": "En este paso, aprenderás sobre las unidades relativas modernas en CSS.",
+          "isCodeCompletion": true,
+          "question": {
+                "questionText": "¿Qué regla CSS usa unidades relativas (rem y %) para asegurar texto responsivo y diseño fluido?",
+                "options": [
+                      ".container {\n  width: 100%;\n  max-width: 60rem;\n  font-size: 1.125rem;\n  padding: 1.5rem;\n}",
+                      ".container {\n  width: 1000px;\n  max-width: 1000px;\n  font-size: 18px;\n  padding: 24px;\n}",
+                      ".container {\n  width: 100pt;\n  max-width: 60pt;\n  font-size: 1.125pt;\n  padding: 1.5pt;\n}",
+                      ".container {\n  width: 100in;\n  max-width: 60in;\n  font-size: 1.125in;\n  padding: 1.5in;\n}"
+                ],
+                "answer": ".container {\n  width: 100%;\n  max-width: 60rem;\n  font-size: 1.125rem;\n  padding: 1.5rem;\n}"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Identificando Desbordamiento de Diseño",
+          "description": "En este paso, identificarás reglas CSS que provocan desplazamiento horizontal inesperado.",
+          "isRelevantLine": true,
+          "question": {
+                "questionText": "¿Qué línea crea barras de desplazamiento horizontal no deseadas al combinar el ancho total de la ventana con padding fijo?",
+                "code": ".card {\n  display: block;\n  width: 100vw;\n  padding: 40px;\n  background: #ffffff;\n}",
+                "answer": [
+                      3
+                ]
+          }
+    },
+    {
+          "group": "3",
+          "title": "Alineación de Barra de Navegación con Flexbox",
+          "description": "En este paso, usarás reglas de flexbox para alinear una barra de navegación responsiva.",
+          "isParsonsProblem": true,
+          "showPreview": true,
+          "question": {
+                "questionText": "Ordena las declaraciones CSS para configurar un contenedor flex horizontal con alineación space-between y elementos centrados:",
+                "lines": [
+                      ".navbar {",
+                      "  display: flex;",
+                      "  flex-direction: row;",
+                      "  justify-content: space-between;",
+                      "  align-items: center;",
+                      "  gap: 16px;",
+                      "}"
+                ],
+                "answer": [
+                      ".navbar {",
+                      "  display: flex;",
+                      "  flex-direction: row;",
+                      "  justify-content: space-between;",
+                      "  align-items: center;",
+                      "  gap: 16px;",
+                      "}"
+                ],
+                "previewCode": "<nav style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: '16px', padding: '12px', background: '#0f172a', color: '#fff', borderRadius: '8px' }}>\n  <span style={{ fontWeight: 'bold', color: '#ec4899' }}>LogoMarca</span>\n  <div style={{ display: 'flex', gap: '8px' }}>\n    <button style={{ background: '#334155', color: '#fff', border: 'none', padding: '4px 8px', borderRadius: '4px' }}>Docs</button>\n    <button style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '4px 8px', borderRadius: '4px' }}>Ingresar</button>\n  </div>\n</nav>"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Vinculación de Entrada Controlada",
+          "description": "En este paso, aprenderás a crear una entrada controlada usando value y onChange con el estado de React.",
+          "isCodeCompletion": true,
+          "showPreview": true,
+          "question": {
+                "questionText": "¿Cuál componente implementa correctamente una entrada controlada con vinculación bidireccional de estado?",
+                "options": [
+                      "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      placeholder=\"Buscar...\"\n    />\n  );\n}",
+                      "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={setQuery(query)}\n      placeholder=\"Buscar...\"\n    />\n  );\n}",
+                      "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      defaultValue={query}\n      onChange={(e) => query = e.target.value}\n      placeholder=\"Buscar...\"\n    />\n  );\n}",
+                      "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onInput={query}\n      placeholder=\"Buscar...\"\n    />\n  );\n}"
+                ],
+                "answer": "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      placeholder=\"Buscar...\"\n    />\n  );\n}",
+                "previewCode": "function Demo() {\n  const [val, setVal] = useState('React en Vivo');\n  return (\n    <div style={{ padding: '12px' }}>\n      <input value={val} onChange={e => setVal(e.target.value)} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1' }} />\n      <p style={{ marginTop: '8px', fontSize: '13px' }}>Escrito: <b>{val}</b></p>\n    </div>\n  );\n}\nrender(<Demo />)"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Filtro de Búsqueda en Vivo",
+          "description": "En este paso, filtrarás un arreglo de elementos según el estado de una consulta de búsqueda controlada.",
+          "isFillCodeBlanks": true,
+          "question": {
+                "questionText": "Completa la sentencia de filtrado de arreglo para realizar una búsqueda insensible a mayúsculas:",
+                "template": "const filteredUsers = users.{{filter}}((user) => user.name.toLowerCase().{{includes}}(query.toLowerCase()));",
+                "blanks": [
+                      {
+                            "key": "filter",
+                            "label": "Método de Arreglo",
+                            "hint": "Método que devuelve elementos coincidentes"
+                      },
+                      {
+                            "key": "includes",
+                            "label": "Método de Cadena",
+                            "hint": "Método que verifica si una subcadena está presente"
+                      }
+                ],
+                "answer": {
+                      "filter": "filter",
+                      "includes": "includes"
+                }
+          }
+    },
+    {
+          "group": "3",
+          "title": "Envío de Formularios y preventDefault",
+          "description": "En este paso, aprenderás a manejar eventos de envío de formulario sin recargar la página del navegador.",
+          "isCodeCompletion": true,
+          "question": {
+                "questionText": "¿Cuál controlador de envío evita correctamente la recarga predeterminada del navegador y envía el estado?",
+                "options": [
+                      "const handleSubmit = (e) => {\n  e.preventDefault();\n  if (!text.trim()) return;\n  onAddTweet(text);\n  setText('');\n};",
+                      "const handleSubmit = (e) => {\n  e.stopImmediatePropagation();\n  onAddTweet(text);\n};",
+                      "const handleSubmit = (e) => {\n  window.reload();\n  onAddTweet(text);\n};",
+                      "const handleSubmit = (e) => {\n  return false;\n};"
+                ],
+                "answer": "const handleSubmit = (e) => {\n  e.preventDefault();\n  if (!text.trim()) return;\n  onAddTweet(text);\n  setText('');\n};"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Estado de Formulario Multicampo",
+          "description": "En este paso, construirás un componente de formulario que gestione múltiples entradas de estado.",
+          "isCode": true,
+          "isTerminal": false,
+          "question": {
+                "questionText": "Crea un componente de React llamado ProfileForm con estado para username y bio, renderizando dos entradas y un botón de envío."
+          }
+    },
+    {
+          "group": "3",
+          "title": "Restableciendo Estado de Entrada",
+          "description": "En este paso, corregirás un error de formulario donde el campo de entrada no se limpia al enviar.",
+          "isFixBug": true,
+          "question": {
+                "questionText": "Corrige la función handleSubmit para que setMessage('') sea llamada tras despachar el mensaje:",
+                "starterCode": "const handleSubmit = (e) => {\n  e.preventDefault();\n  sendMessage(message);\n  // Bug: la entrada no se limpia\n};",
+                "acceptedAnswers": [
+                      "const handleSubmit = (e) => {\n  e.preventDefault();\n  sendMessage(message);\n  setMessage('');\n};",
+                      "const handleSubmit = (e) => {\n  e.preventDefault();\n  sendMessage(message);\n  setMessage(\"\");\n};"
+                ],
+                "answer": "const handleSubmit = (e) => {\n  e.preventDefault();\n  sendMessage(message);\n  setMessage('');\n};"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Renderizado Condicional Ternario",
+          "description": "En este paso, aprenderás a renderizar componentes alternativos de interfaz usando el operador ternario.",
+          "isCodeCompletion": true,
+          "showPreview": true,
+          "question": {
+                "questionText": "¿Cuál bloque JSX usa correctamente un operador ternario para renderizar condicionalmente un perfil o un botón de inicio de sesión?",
+                "options": [
+                      "return (\n  <div>\n    {isLoggedIn ? <UserProfile user={user} /> : <button onClick={login}>Iniciar Sesión</button>}\n  </div>\n);",
+                      "return (\n  <div>\n    {if (isLoggedIn) { <UserProfile user={user} /> } else { <button onClick={login}>Iniciar Sesión</button> }}\n  </div>\n);",
+                      "return (\n  <div>\n    {isLoggedIn && <UserProfile user={user} /> : <button onClick={login}>Iniciar Sesión</button>}\n  </div>\n);",
+                      "return (\n  <div>\n    {isLoggedIn ? <UserProfile user={user} />}\n  </div>\n);"
+                ],
+                "answer": "return (\n  <div>\n    {isLoggedIn ? <UserProfile user={user} /> : <button onClick={login}>Iniciar Sesión</button>}\n  </div>\n);",
+                "previewCode": "function Demo() {\n  const [logged, setLogged] = useState(false);\n  return (\n    <div style={{ padding: '12px' }}>\n      {logged ? (\n        <span style={{ color: '#16a34a', fontWeight: 'bold' }}>👤 ¡Bienvenido de nuevo, Alex!</span>\n      ) : (\n        <button onClick={() => setLogged(true)} style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px' }}>Iniciar Sesión</button>\n      )}\n    </div>\n  );\n}\nrender(<Demo />)"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Renderizado Lógico AND de Cortocircuito",
+          "description": "En este paso, usarás el operador lógico && para mostrar condicionalmente notificaciones y banners.",
+          "isCodeCompletion": true,
+          "question": {
+                "questionText": "¿Qué expresión JSX renderiza limpiamente un banner de mensaje de error solo cuando el estado error contiene un valor?",
+                "options": [
+                      "return (\n  <div>\n    {error && <div className=\"error-banner\">{error}</div>}\n    <TweetList tweets={tweets} />\n  </div>\n);",
+                      "return (\n  <div>\n    {error || <div className=\"error-banner\">{error}</div>}\n    <TweetList tweets={tweets} />\n  </div>\n);",
+                      "return (\n  <div>\n    {error == <div className=\"error-banner\">{error}</div>}\n    <TweetList tweets={tweets} />\n  </div>\n);",
+                      "return (\n  <div>\n    {show(error, <div className=\"error-banner\">{error}</div>)}\n    <TweetList tweets={tweets} />\n  </div>\n);"
+                ],
+                "answer": "return (\n  <div>\n    {error && <div className=\"error-banner\">{error}</div>}\n    <TweetList tweets={tweets} />\n  </div>\n);"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Jerarquía de Estado de Carga",
+          "description": "En este paso, estructurarás el renderizado condicional para estados de carga y datos listos.",
+          "isParsonsProblem": true,
+          "question": {
+                "questionText": "Ordena las líneas para manejar el estado de carga antes de devolver el feed principal:",
+                "lines": [
+                      "if (isLoading) {",
+                      "  return <div className=\"spinner\">Cargando...</div>;",
+                      "}",
+                      "return (",
+                      "  <main className=\"content-card\">",
+                      "    <h1>Feed Listo</h1>",
+                      "  </main>",
+                      ");"
+                ],
+                "answer": [
+                      "if (isLoading) {",
+                      "  return <div className=\"spinner\">Cargando...</div>;",
+                      "}",
+                      "return (",
+                      "  <main className=\"content-card\">",
+                      "    <h1>Feed Listo</h1>",
+                      "  </main>",
+                      ");"
+                ]
+          }
+    },
+    {
+          "group": "3",
+          "title": "Notificación de Lista Vacía",
+          "description": "En este paso, manejarás listas con cero elementos mostrando un mensaje informativo de estado vacío.",
+          "isCode": true,
+          "isTerminal": false,
+          "question": {
+                "questionText": "Crea un componente de React llamado NotificationList que acepte un arreglo de notificaciones como prop y muestre 'No hay notificaciones' cuando notifications.length sea 0."
+          }
+    },
+    {
+          "group": "3",
+          "title": "Patrón de Selector de Pestañas",
+          "description": "En este paso, compararás patrones para alternar entre múltiples vistas de forma limpia.",
+          "isBestImplementation": true,
+          "showPreview": true,
+          "question": {
+                "questionText": "¿Qué patrón alterna de forma limpia y declarativa entre múltiples vistas según el estado activeTab?",
+                "options": [
+                      "function AppTabs() {\n  const [tab, setTab] = useState('home');\n  return (\n    <div>\n      {tab === 'home' && <HomeView />}\n      {tab === 'explore' && <ExploreView />}\n      {tab === 'notifications' && <NotificationsView />}\n    </div>\n  );\n}",
+                      "function AppTabs() {\n  const [tab, setTab] = useState('home');\n  return (\n    <div>\n      {tab === 'home' ? <HomeView /> : tab === 'explore' ? <ExploreView /> : <NotificationsView />}\n    </div>\n  );\n}",
+                      "function AppTabs() {\n  return (\n    <div>\n      <HomeView style={{ display: 'none' }} />\n      <ExploreView style={{ display: 'none' }} />\n      <NotificationsView />\n    </div>\n  );\n}",
+                      "function AppTabs() {\n  let current = window.location.hash;\n  return <div>{current}</div>;\n}"
+                ],
+                "answer": "function AppTabs() {\n  const [tab, setTab] = useState('home');\n  return (\n    <div>\n      {tab === 'home' && <HomeView />}\n      {tab === 'explore' && <ExploreView />}\n      {tab === 'notifications' && <NotificationsView />}\n    </div>\n  );\n}",
+                "previewCode": "function DemoTabs() {\n  const [tab, setTab] = useState('home');\n  return (\n    <div style={{ padding: '12px', fontFamily: 'sans-serif' }}>\n      <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>\n        <button onClick={() => setTab('home')} style={{ background: tab === 'home' ? '#ec4899' : '#e2e8f0', color: tab === 'home' ? '#fff' : '#000', border: 'none', padding: '4px 10px', borderRadius: '6px' }}>Inicio</button>\n        <button onClick={() => setTab('settings')} style={{ background: tab === 'settings' ? '#ec4899' : '#e2e8f0', color: tab === 'settings' ? '#fff' : '#000', border: 'none', padding: '4px 10px', borderRadius: '6px' }}>Ajustes</button>\n      </div>\n      <div style={{ padding: '8px', background: '#f8fafc', borderRadius: '6px' }}>\n        {tab === 'home' ? '🏠 Contenido del Feed de Inicio' : '⚙️ Preferencias y Ajustes de Usuario'}\n      </div>\n    </div>\n  );\n}\nrender(<DemoTabs />)"
+          }
+    },
+{
       group: "3",
       title: "Introducción a los Componentes de React",
       description:
@@ -5812,14 +6958,14 @@ console.log(arr);
     },
     {
       group: "3",
-      title: "Pasando y Usando Props",
+      title: "Renderizando Listas Dinámicas con map y Keys",
       description:
-        "En este paso, aprenderás cómo pasar y usar props en un componente de React.",
+        "En este paso, aprenderás cómo renderizar una lista dinámica de elementos en React usando .map() y asignar props key únicas.",
       isCode: true,
       isTerminal: false,
       question: {
         questionText:
-          "Actualiza el componente Tweet para aceptar y mostrar el nombre de usuario, el handle y el contenido del tweet como props.",
+          "Actualiza el componente TweetFeed para renderizar un arreglo de tweets usando .map() y asigna a cada Tweet una prop key única.",
       },
     },
     {
@@ -6006,15 +7152,168 @@ console.log(arr);
       },
     },
     {
-      group: "3",
-      title: "Construye tu Aplicación",
-      isConversationReview: true,
-      description: "Construye una aplicación según tu progreso",
-      question: {
-        questionText:
-          "¡Ingresa una idea de aplicación y constrúyela a medida que avanzas!",
-        range: [49, 67],
-      },
+          "group": "3",
+          "title": "Inmutabilidad del Estado en React",
+          "description": "En este paso, entenderás por qué React requiere actualizaciones inmutables del estado.",
+          "isMultipleChoice": true,
+          "question": {
+                "questionText": "¿Por qué nunca debes mutar el estado de React directamente con array.push u obj.prop = valor?",
+                "options": [
+                      "La mutación directa no activa una nueva renderización y puede causar errores de interfaz desactualizada",
+                      "La mutación directa causa un error de sintaxis de JavaScript en navegadores modernos",
+                      "El estado de React se almacena en un servidor que prohíbe modificaciones",
+                      "Mutar el estado directamente ralentiza la velocidad de internet"
+                ],
+                "answer": "La mutación directa no activa una nueva renderización y puede causar errores de interfaz desactualizada"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Props Key y Reconciliación del DOM",
+          "description": "En este paso, comprenderás cómo React usa keys únicas para reconciliar listas dinámicas.",
+          "isBestImplementation": true,
+          "question": {
+                "questionText": "Elige la mejor implementación para renderizar elementos de listas dinámicas con keys únicas estables.",
+                "options": [
+                      "// Opción 1: ID único y estable de base de datos como key\n{items.map((item) => (\n  <TodoItem key={item.id} task={item.task} />\n))}",
+                      "// Opción 2: Índice del arreglo como key (frágil al reordenar o eliminar)\n{items.map((item, index) => (\n  <TodoItem key={index} task={item.task} />\n))}",
+                      "// Opción 3: Math.random() como key (fuerza desmontaje completo en cada render)\n{items.map((item) => (\n  <TodoItem key={Math.random()} task={item.task} />\n))}",
+                      "// Opción 4: Sin prop key en absoluto\n{items.map((item) => (\n  <TodoItem task={item.task} />\n))}"
+                ],
+                "answer": "// Opción 1: ID único y estable de base de datos como key\n{items.map((item) => (\n  <TodoItem key={item.id} task={item.task} />\n))}"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Elevando Estado con Callbacks",
+          "description": "En este paso, practicarás elevar el estado a un componente padre y pasar callbacks actualizadores a los hijos.",
+          "isParsonsProblem": true,
+          "question": {
+                "questionText": "Ordena las líneas para definir un componente padre que gestione el estado count y pase count y onIncrement a botones hijos:",
+                "lines": [
+                      "function CounterApp() {",
+                      "  const [count, setCount] = useState(0);",
+                      "  const handleIncrement = () => setCount((c) => c + 1);",
+                      "  return (",
+                      "    <div>",
+                      "      <Display count={count} />",
+                      "      <IncrementButton onIncrement={handleIncrement} />",
+                      "    </div>",
+                      "  );",
+                      "}"
+                ],
+                "answer": [
+                      "function CounterApp() {",
+                      "  const [count, setCount] = useState(0);",
+                      "  const handleIncrement = () => setCount((c) => c + 1);",
+                      "  return (",
+                      "    <div>",
+                      "      <Display count={count} />",
+                      "      <IncrementButton onIncrement={handleIncrement} />",
+                      "    </div>",
+                      "  );",
+                      "}"
+                ]
+          }
+    },
+    {
+          "group": "3",
+          "title": "Previniendo Bucles de Renderizado Infinito",
+          "description": "En este paso, identificarás un arreglo de dependencias faltante que causa bucles de renderizado infinito en useEffect.",
+          "isRelevantLine": true,
+          "question": {
+                "questionText": "Haz clic en la línea que causa un bucle infinito al omitir su arreglo de dependencias en useEffect:",
+                "code": "function DataFetcher() {\n  const [count, setCount] = useState(0);\n  useEffect(() => {\n    setCount((c) => c + 1);\n  });\n  return <div>{count}</div>;\n}",
+                "answer": [
+                      5
+                ]
+          }
+    },
+    {
+          "group": "3",
+          "title": "Extracción de Custom Hook",
+          "description": "En este paso, aprenderás a extraer lógica de estado reutilizable en un custom hook.",
+          "isCodeCompletion": true,
+          "question": {
+                "questionText": "Selecciona el bloque de código que crea correctamente un custom hook reutilizable llamado useToggle:",
+                "options": [
+                      "function useToggle(initial = false) {\n  const [value, setValue] = useState(initial);\n  const toggle = () => setValue((v) => !v);\n  return [value, toggle];\n}",
+                      "function useToggle(initial = false) {\n  let value = initial;\n  const toggle = () => { value = !value; };\n  return [value, toggle];\n}",
+                      "function useToggle(initial = false) {\n  const toggle = useState(initial);\n  return toggle;\n}",
+                      "function useToggle() {\n  return window.toggle;\n}"
+                ],
+                "answer": "function useToggle(initial = false) {\n  const [value, setValue] = useState(initial);\n  const toggle = () => setValue((v) => !v);\n  return [value, toggle];\n}"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Cálculo de Estado Derivado",
+          "description": "En este paso, aprenderás a calcular valores derivados durante el render en lugar de mantener estado duplicado.",
+          "isBestImplementation": true,
+          "question": {
+                "questionText": "Elige el mejor patrón para calcular el conteo de tareas activas sin mantener variables de estado redundantes y sincronizadas:",
+                "options": [
+                      "// Opción 1: Calcular sobre la marcha durante el render\nfunction TodoList({ todos }) {\n  const activeCount = todos.filter((t) => !t.done).length;\n  return <div>Activas: {activeCount}</div>;\n}",
+                      "// Opción 2: Variable de estado redundante sincronizada con useEffect\nfunction TodoList({ todos }) {\n  const [activeCount, setActiveCount] = useState(0);\n  useEffect(() => {\n    setActiveCount(todos.filter((t) => !t.done).length);\n  }, [todos]);\n  return <div>Activas: {activeCount}</div>;\n}",
+                      "// Opción 3: Variable global fuera del componente\nlet activeCount = 0;\nfunction TodoList({ todos }) {\n  activeCount = todos.length;\n  return <div>Activas: {activeCount}</div>;\n}",
+                      "// Opción 4: Consultar el DOM directamente\nfunction TodoList() {\n  const count = document.querySelectorAll('.active').length;\n  return <div>Activas: {count}</div>;\n}"
+                ],
+                "answer": "// Opción 1: Calcular sobre la marcha durante el render\nfunction TodoList({ todos }) {\n  const activeCount = todos.filter((t) => !t.done).length;\n  return <div>Activas: {activeCount}</div>;\n}"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Composición de Componentes con children",
+          "description": "En este paso, usarás la prop children para crear componentes contenedores reutilizables.",
+          "isCodeCompletion": true,
+          "question": {
+                "questionText": "Selecciona el bloque de código que crea un contenedor Card reutilizable usando la prop children:",
+                "options": [
+                      "function Card({ title, children }) {\n  return (\n    <div className=\"card-box\">\n      <h2>{title}</h2>\n      <div className=\"card-body\">{children}</div>\n    </div>\n  );\n}",
+                      "function Card({ title, content }) {\n  return (\n    <div className=\"card-box\">\n      <h2>{title}</h2>\n      <div className=\"card-body\">{content.render()}</div>\n    </div>\n  );\n}",
+                      "function Card({ title }) {\n  return (\n    <div className=\"card-box\">\n      <h2>{title}</h2>\n    </div>\n  );\n}",
+                      "function Card() {\n  return <div>{window.children}</div>;\n}"
+                ],
+                "answer": "function Card({ title, children }) {\n  return (\n    <div className=\"card-box\">\n      <h2>{title}</h2>\n      <div className=\"card-body\">{children}</div>\n    </div>\n  );\n}"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Limpieza en Efectos Asíncronos",
+          "description": "En este paso, evitarás fugas de memoria añadiendo una función de limpieza a un efecto asíncrono.",
+          "isFixBug": true,
+          "question": {
+                "questionText": "Corrige el error en useEffect devolviendo una función de limpieza que establezca isMounted en false al desmontar el componente:",
+                "starterCode": "useEffect(() => {\n  let isMounted = true;\n  fetchProfile().then((data) => {\n    if (isMounted) setProfile(data);\n  });\n  // Bug: falta retorno de limpieza\n}, []);",
+                "acceptedAnswers": [
+                      "useEffect(() => {\n  let isMounted = true;\n  fetchProfile().then((data) => {\n    if (isMounted) setProfile(data);\n  });\n  return () => { isMounted = false; };\n}, []);",
+                      "useEffect(() => {\n  let isMounted = true;\n  fetchProfile().then((data) => {\n    if (isMounted) setProfile(data);\n  });\n  return () => {\n    isMounted = false;\n  };\n}, []);"
+                ],
+                "answer": "useEffect(() => {\n  let isMounted = true;\n  fetchProfile().then((data) => {\n    if (isMounted) setProfile(data);\n  });\n  return () => { isMounted = false; };\n}, []);"
+          }
+    },
+    {
+          "group": "3",
+          "title": "Construyendo un Panel Interactivo con Filtros",
+          "description": "En este paso, ensamblarás componentes, hooks de estado, filtrado de búsqueda y renderizado de listas en un panel interactivo.",
+          "isCode": true,
+          "isTerminal": false,
+          "question": {
+                "questionText": "Crea un componente de React completo llamado ProductDashboard que gestione una entrada de búsqueda, filtre un arreglo de productos por nombre y muestre los resultados activos."
+          }
+    },
+    {
+          "group": "3",
+          "title": "Construye tu Aplicación",
+          "isConversationReview": true,
+          "description": "Construye una aplicación según tu progreso",
+          "question": {
+                "questionText": "¡Ingresa una idea de aplicación y constrúyela a medida que avanzas!",
+                "range": [
+                      39,
+                      88
+                ]
+          }
     },
     {
       group: "4",
@@ -6089,12 +7388,46 @@ console.log(arr);
     },
     {
       group: "4",
-      title: "Instalando NPM",
-      description: "En este paso, aprenderás cómo instalar npm globalmente.",
-      isText: true,
+      title: "JavaScript Asíncrono y async/await",
+      description:
+        "En este paso, aprenderás cómo funcionan las Promesas asíncronas al interactuar con servidores y bases de datos.",
+      isCodeCompletion: true,
       question: {
         questionText:
-          "Escribe el comando para instalar globalmente el gestor de paquetes de Node (npm) en tu computadora.",
+          "¿Cuál bloque de código usa correctamente una función `async` con `await` y `try/catch` para obtener datos de forma segura?",
+        options: [
+          `async function cargarUsuario(idUsuario) {
+  try {
+    const usuario = await obtenerUsuarioDeBaseDatos(idUsuario);
+    console.log('Usuario cargado:', usuario);
+  } catch (error) {
+    console.error('Error al cargar usuario:', error);
+  }
+}`,
+          `function cargarUsuario(idUsuario) {
+  try {
+    const usuario = await obtenerUsuarioDeBaseDatos(idUsuario);
+    console.log('Usuario cargado:', usuario);
+  } catch (error) {
+    console.error('Error al cargar usuario:', error);
+  }
+}`,
+          `async function cargarUsuario(idUsuario) {
+  const usuario = obtenerUsuarioDeBaseDatos(idUsuario);
+  await usuario.catch(error);
+}`,
+          `async function cargarUsuario(idUsuario) {
+  wait obtenerUsuarioDeBaseDatos(idUsuario);
+}`,
+        ],
+        answer: `async function cargarUsuario(idUsuario) {
+  try {
+    const usuario = await obtenerUsuarioDeBaseDatos(idUsuario);
+    console.log('Usuario cargado:', usuario);
+  } catch (error) {
+    console.error('Error al cargar usuario:', error);
+  }
+}`,
       },
     },
     {

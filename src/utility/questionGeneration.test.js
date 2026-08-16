@@ -13,7 +13,10 @@ import {
   tutorial_interface,
   validateGeneratedQuestion,
 } from "./questionGeneration.js";
-import { getQuestionType } from "./questionTypes.js";
+import {
+  getQuestionType,
+  scrambleArray,
+} from "./questionTypes.js";
 import { tutorialSteps } from "./curriculumRevamp.js";
 
 test("canonical interfaces cover every unique supported generation type", () => {
@@ -193,4 +196,11 @@ test("curriculum review step is titled Build Your App in English and Spanish", (
   assert.notEqual(spanishReview.title.includes("opcional"), true);
 });
 
-
+test("scrambleArray guarantees a different order when input has multiple elements", () => {
+  const input = ["a", "b", "c", "d"];
+  for (let i = 0; i < 20; i++) {
+    const scrambled = scrambleArray(input);
+    assert.equal(scrambled.length, input.length);
+    assert.ok(scrambled.some((item, idx) => item !== input[idx]));
+  }
+});

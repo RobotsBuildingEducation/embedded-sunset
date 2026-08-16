@@ -77,6 +77,20 @@ export const getQuestionType = (step) => {
 export const isNewQuestionType = (step) =>
   NEW_QUESTION_FLAGS.some((flag) => Boolean(step?.[flag]));
 
+export const scrambleArray = (arr) => {
+  if (!Array.isArray(arr) || arr.length <= 1) return [...(arr || [])];
+  let shuffled = [...arr];
+  for (let attempt = 0; attempt < 10; attempt++) {
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    const isDifferent = shuffled.some((item, idx) => item !== arr[idx]);
+    if (isDifferent) return shuffled;
+  }
+  return [...shuffled.slice(1), shuffled[0]];
+};
+
 const normalizeText = (value) =>
   String(value ?? "")
     .replace(/\r\n/g, "\n")

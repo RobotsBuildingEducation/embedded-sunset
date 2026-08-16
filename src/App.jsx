@@ -317,7 +317,11 @@ import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWrit
 import QuestionMode, {
   CodePanel,
 } from "./components/QuestionModes/QuestionMode";
-import { getQuestionType, isNewQuestionType } from "./utility/questionTypes";
+import {
+  getQuestionType,
+  isNewQuestionType,
+  scrambleArray,
+} from "./utility/questionTypes";
 import {
   buildQuestionGenerationPrompt,
   chooseQuestionGenerationType,
@@ -3200,6 +3204,11 @@ In addition to the grading fields already requested, return updatedLearningSumma
       answer = selectedOptions;
     } else if (isNewQuestionType(step)) {
       answer = modeAnswer;
+      // A Parsons board can render its source lines before its local answer
+      // state is initialized. Submit exactly those visible lines in that case.
+      if (step.isParsonsProblem && !Array.isArray(answer)) {
+        answer = step.question?.lines || [];
+      }
     }
 
     if (isNewQuestionType(step)) {
@@ -3638,7 +3647,11 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
         ? [...(step.question?.options || [])].sort(() => Math.random() - 0.5)
         : [],
     );
-    setModeAnswer(null);
+    setModeAnswer(
+      step.isParsonsProblem
+        ? scrambleArray(step.question?.lines || [])
+        : null,
+    );
 
     setSuggestionMessage("");
     setFeedback("");
