@@ -21,6 +21,7 @@ import {
 } from "../../../utility/transcript";
 import { useSharedNostr } from "../../../hooks/useNOSTR";
 import { CloudCanvas } from "../../../elements/SunsetCanvas";
+import { getDittoBadgeUrl } from "../../../utility/badgeUrl";
 
 const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
   // pick transcript set (kept for parity, even if unused here)
@@ -170,9 +171,7 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
                   "";
                 const key =
                   badge.badgeAddress || badge.id || `${badge.image}-${title}`;
-                const href = badge.badgeAddress
-                  ? `https://badges.page/a/${badge.badgeAddress}`
-                  : null;
+                const href = getDittoBadgeUrl(badge.badgeAddress);
 
                 const imageEl = (
                   <Image

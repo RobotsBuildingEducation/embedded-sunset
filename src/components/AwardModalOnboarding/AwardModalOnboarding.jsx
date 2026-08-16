@@ -23,6 +23,7 @@ import ReactConfetti from "react-confetti";
 import { useSharedNostr } from "../../hooks/useNOSTR";
 import { soundManager } from "../../utility/soundManager";
 import { triggerHaptic } from "tactus";
+import { getDittoBadgeUrl } from "../../utility/badgeUrl";
 
 const AwardModalOnboarding = ({
   isOpen,
@@ -121,45 +122,39 @@ const AwardModalOnboarding = ({
               justifyContent: "center",
             }}
           >
-            <a
-              target="_blank"
-              href={`https://badges.page/a/${
-                onboardingTranscript["address"] || ""
-              }`}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  window.open(
-                    `https://badges.page/a/${
-                      onboardingTranscript["address"] || ""
-                    }`,
-                  );
-                }
-              }}
-            >
-              <Image
-                loading="eager"
-                src={onboardingTranscript["imgSrc"]}
-                width={150}
-                style={{
-                  borderRadius: "33%",
-                  boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
-                }}
-              />
-            </a>
+            {(() => {
+              const mainHref = getDittoBadgeUrl(onboardingTranscript["address"]);
+              const mainImg = (
+                <Image
+                  loading="eager"
+                  src={onboardingTranscript["imgSrc"]}
+                  width={150}
+                  style={{
+                    borderRadius: "33%",
+                    boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+                  }}
+                />
+              );
+              return mainHref ? (
+                <a
+                  href={mainHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      window.open(mainHref, "_blank", "noopener,noreferrer");
+                    }
+                  }}
+                >
+                  {mainImg}
+                </a>
+              ) : (
+                mainImg
+              );
+            })()}
           </Box>
           <br />
           <br />
-          {/* <Button
-            onMouseDown={handleCopyKeys}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                handleCopyKeys();
-              }
-            }}
-            mb={2}
-          >
-            🔑 {translation[userLanguage]["button.copyKey"]}
-          </Button> */}
 
           <div style={{ maxWidth: "600px" }}>
             {
@@ -167,20 +162,6 @@ const AwardModalOnboarding = ({
                 "modal.decentralizedTranscript.awareness"
               ]
             }{" "}
-            {/* <a
-              target="_blank"
-              href="https://embedded-rox.app"
-              style={{ textDecoration: "underline", fontWeight: "bold" }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  window.open("https://embedded-rox.app");
-                }
-              }}
-            >
-              {translation[userLanguage][
-                "settings.button.yourTutor"
-              ].toLowerCase()}
-            </a> */}
           </div>
 
           <br />
@@ -217,78 +198,63 @@ const AwardModalOnboarding = ({
               justifyContent="center"
               marginInline="auto"
             >
-              {badges.map((badge) => (
-                <div
-                  style={{
-                    margin: 6,
-
-                    width: "250px",
-                    height: "100px",
-                    display: "flex",
-                  }}
-                >
-                  <a
-                    href={`https://badges.page/a/${(() => {
-                      const badgeName = badge.badgeAddress.split(":")[2];
-                      let matchingTranscript =
-                        onboardingTranscript["name"]["en"].replace(
-                          /\s+/g,
-                          "-",
-                        ) === badgeName;
-
-                      let result = matchingTranscript
-                        ? onboardingTranscript.address
-                        : null;
-                      return result;
-                    })()}`}
-                    target="_blank"
-                    onKeyDown={() => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        window.open(
-                          `https://badges.page/a/${(() => {
-                            const badgeName = badge.badgeAddress.split(":")[2];
-
-                            let matchingTranscript =
-                              onboardingTranscript["name"]["en"].replace(
-                                /\s+/g,
-                                "-",
-                              ) === badgeName;
-
-                            let result = matchingTranscript
-                              ? onboardingTranscript.address
-                              : null;
-                            return result;
-                          })()}`,
-                        );
-                      }
-                    }}
-                  >
-                    <Image
-                      loading="eager"
-                      src={badge.image}
-                      width={100}
-                      style={{
-                        borderRadius: "33%",
-                        boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
-                        marginBottom: 4,
-                      }}
-                    />
-                  </a>
-                  <div
+              {badges.map((badge) => {
+                const bHref = getDittoBadgeUrl(badge.badgeAddress);
+                const badgeImg = (
+                  <Image
+                    loading="eager"
+                    src={badge.image}
+                    width={100}
                     style={{
-                      padding: 6,
-                      marginLeft: "12px",
+                      borderRadius: "33%",
+                      boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+                      marginBottom: 4,
+                    }}
+                  />
+                );
 
+                return (
+                  <div
+                    key={badge.badgeAddress || badge.id || badge.image}
+                    style={{
+                      margin: 6,
+                      width: "250px",
+                      height: "100px",
                       display: "flex",
                       alignItems: "center",
                     }}
                   >
-                    <Text fontSize={"sm"}>
-                      {translation[userLanguage][badge.name] || badge.name}
-                    </Text>
+                    {bHref ? (
+                      <a
+                        href={bHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            window.open(bHref, "_blank", "noopener,noreferrer");
+                          }
+                        }}
+                      >
+                        {badgeImg}
+                      </a>
+                    ) : (
+                      badgeImg
+                    )}
+                    <div
+                      style={{
+                        padding: 6,
+                        marginLeft: "12px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text fontSize={"sm"}>
+                        {translation[userLanguage][badge.name] || badge.name}
+                      </Text>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </Box>
           )}
           <br />

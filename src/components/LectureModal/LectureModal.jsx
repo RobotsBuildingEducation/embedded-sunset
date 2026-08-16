@@ -38,6 +38,7 @@ import {
   PanRightComponent,
   RiseUpAnimation,
 } from "../../elements/RandomCharacter";
+import { getDittoBadgeUrl } from "../../utility/badgeUrl";
 
 const newTheme = {
   h1: (props) => (
@@ -353,7 +354,7 @@ const LectureModal = ({
     if (transcriptData.tutorial?.imgSrc) {
       images.push({
         imageLink: transcriptData.tutorial.imgSrc,
-        badgeLink: `https://badges.page/a/${transcriptData.tutorial.address}`,
+        badgeLink: getDittoBadgeUrl(transcriptData.tutorial.address),
       });
     }
 
@@ -365,7 +366,7 @@ const LectureModal = ({
       if (transcriptData[key]?.imgSrc) {
         images.push({
           imageLink: transcriptData[key].imgSrc,
-          badgeLink: `https://badges.page/a/${transcriptData[key].address}`,
+          badgeLink: getDittoBadgeUrl(transcriptData[key].address),
         });
       }
     });

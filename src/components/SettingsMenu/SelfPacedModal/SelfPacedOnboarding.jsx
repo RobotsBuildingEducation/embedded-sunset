@@ -290,7 +290,8 @@ const SelfPacedOnboarding = ({
 
   const setPresetGoal = (event, goalType) => {
     if (goalType === "week") {
-      setDailyGoals(16);
+      const dailyTarget = Math.ceil(COURSE_LESSON_COUNT / 7);
+      setDailyGoals(dailyTarget);
       setInterval(1440);
     } else {
       //month

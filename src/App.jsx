@@ -2155,9 +2155,9 @@ const Step = ({
   const actionBarTourSteps = userLanguage?.includes("es")
     ? [
         {
-          title: "Billetera de Bitcoin",
+          title: "Crea becas con el aprendizaje",
           description:
-            "Crea y financia una pequeña billetera con aproximadamente 10 centavos y crea becas con el aprendizaje mientras avanzas.",
+            "Crea y financia una pequeña billetera de Bitcoin con aproximadamente 10 centavos y crea becas con el aprendizaje mientras avanzas.",
         },
         {
           title: "Modo a tu ritmo",
@@ -2181,9 +2181,9 @@ const Step = ({
       ]
     : [
         {
-          title: "Bitcoin wallet",
+          title: "Create scholarships with learning",
           description:
-            "Create and fund a small wallet with ~10 cents and create scholarships with learning as you make progress.",
+            "Create and fund a small Bitcoin wallet with ~10 cents and create scholarships with learning as you make progress.",
         },
         {
           title: "Self-paced mode",
@@ -4356,7 +4356,7 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
             _focusVisible={{ boxShadow: "none" }}
             zIndex="popover"
           >
-            <Box px={5} py={4} height="100%">
+            <Box px={{ base: 4, sm: 5 }} py={4} height="100%">
               <VStack
                 align="stretch"
                 justify="space-between"
@@ -4364,7 +4364,11 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
                 height="100%"
               >
                 <Box>
-                  <Text fontSize={{ base: "lg", sm: "xl" }} fontWeight="bold">
+                  <Text
+                    fontSize={{ base: "15px", sm: "md", md: "lg" }}
+                    fontWeight="bold"
+                    lineHeight="1.25"
+                  >
                     {tourStep.title}
                   </Text>
                   <Text
