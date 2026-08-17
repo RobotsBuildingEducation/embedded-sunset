@@ -38,8 +38,37 @@ const copy = {
 
 const localeFor = (userLanguage) => (userLanguage === "es" ? "es" : "en");
 
+export const CodeWindowHeader = ({ title = "script.js" }) => (
+  <HStack
+    bg="blackAlpha.300"
+    px={4}
+    py={2.5}
+    borderBottomWidth="1px"
+    borderBottomColor="whiteAlpha.100"
+    justify="space-between"
+    align="center"
+  >
+    <HStack spacing={2}>
+      <Box w="10px" h="10px" borderRadius="full" bg="#ff5f56" />
+      <Box w="10px" h="10px" borderRadius="full" bg="#ffbd2e" />
+      <Box w="10px" h="10px" borderRadius="full" bg="#27c93f" />
+    </HStack>
+    <Text
+      fontSize="xs"
+      fontWeight="semibold"
+      color="gray.400"
+      letterSpacing="wider"
+      fontFamily="mono"
+      userSelect="none"
+    >
+      {title}
+    </Text>
+    <Box w="36px" />
+  </HStack>
+);
+
 export const CodePanel = ({ code, selectedLines = [], onLineClick }) => {
-  const panelBg = useColorModeValue("gray.900", "#07101f");
+  const panelBg = useColorModeValue("#1e1e2e", "#0f172a");
   const lineHover = useColorModeValue("whiteAlpha.200", "whiteAlpha.200");
   return (
     <Box
@@ -47,127 +76,293 @@ export const CodePanel = ({ code, selectedLines = [], onLineClick }) => {
       bg={panelBg}
       color="gray.100"
       borderRadius="2xl"
-      py={4}
-      overflowX="auto"
-      boxShadow="lg"
-      fontFamily="mono"
-      fontSize="sm"
+      borderWidth="1px"
+      borderColor="whiteAlpha.200"
+      overflow="hidden"
+      boxShadow="xl"
+      fontFamily="'Fira Code', 'JetBrains Mono', 'Menlo', 'Consolas', monospace"
+      fontSize={{ base: "xs", md: "sm" }}
     >
-      {String(code || "")
-        .split("\n")
-        .map((line, index) => {
-          const lineNumber = index + 1;
-          const selected = selectedLines.includes(lineNumber);
-          return (
-            <Box
-              as={onLineClick ? "button" : "div"}
-              type={onLineClick ? "button" : undefined}
-              key={`${lineNumber}-${line}`}
-              display="grid"
-              gridTemplateColumns="44px minmax(0, 1fr)"
-              width="100%"
-              textAlign="left"
-              bg={selected ? "pink.700" : "transparent"}
-              _hover={
-                onLineClick ? { bg: selected ? "pink.700" : lineHover } : {}
-              }
-              onClick={onLineClick ? () => onLineClick(lineNumber) : undefined}
-              aria-pressed={onLineClick ? selected : undefined}
-            >
-              <Text
-                as="span"
-                color="gray.500"
-                textAlign="right"
-                pr={3}
-                userSelect="none"
+      <CodeWindowHeader title="preview.js" />
+      <Box py={3} overflowX="auto">
+        {String(code || "")
+          .split("\n")
+          .map((line, index) => {
+            const lineNumber = index + 1;
+            const selected = selectedLines.includes(lineNumber);
+            return (
+              <Box
+                as={onLineClick ? "button" : "div"}
+                type={onLineClick ? "button" : undefined}
+                key={`${lineNumber}-${line}`}
+                display="grid"
+                gridTemplateColumns="44px minmax(0, 1fr)"
+                width="100%"
+                textAlign="left"
+                bg={selected ? "pink.700" : "transparent"}
+                _hover={
+                  onLineClick ? { bg: selected ? "pink.700" : lineHover } : {}
+                }
+                onClick={onLineClick ? () => onLineClick(lineNumber) : undefined}
+                aria-pressed={onLineClick ? selected : undefined}
+                lineHeight="1.8"
+                px={1}
+                transition="background 0.15s ease"
               >
-                {lineNumber}
-              </Text>
-              <Text
-                as="span"
-                whiteSpace="pre-wrap"
-                overflowWrap="anywhere"
-                pr={4}
-              >
-                {line || " "}
-              </Text>
-            </Box>
-          );
-        })}
+                <Text
+                  as="span"
+                  color="gray.500"
+                  textAlign="right"
+                  pr={3}
+                  userSelect="none"
+                  borderRightWidth="1px"
+                  borderRightColor="whiteAlpha.100"
+                >
+                  {lineNumber}
+                </Text>
+                <Text
+                  as="span"
+                  whiteSpace="pre-wrap"
+                  overflowWrap="anywhere"
+                  pl={3}
+                  pr={4}
+                  color="gray.100"
+                >
+                  {line || " "}
+                </Text>
+              </Box>
+            );
+          })}
+      </Box>
     </Box>
+  );
+};
+
+const isCodeSnippet = (text) => {
+  const str = String(text || "").trim();
+  return (
+    str.includes("\n") ||
+    str.startsWith("<") ||
+    str.includes("</") ||
+    str.includes("/>") ||
+    str.includes("onClick") ||
+    str.startsWith("const ") ||
+    str.startsWith("let ") ||
+    str.startsWith("var ") ||
+    str.startsWith("function") ||
+    str.startsWith("return ") ||
+    str.startsWith("import ") ||
+    str.startsWith("export ") ||
+    str.startsWith("class ") ||
+    str.includes("=>") ||
+    str.includes("console.") ||
+    str.includes("eval(") ||
+    str.includes("arr.")
   );
 };
 
 const OptionCards = ({ options, value, onChange, code = false }) => (
   <VStack width="100%" align="stretch" spacing={3}>
-    {(options || []).map((option, index) => (
-      <Button
-        key={`${index}-${option}`}
-        variant="unstyled"
-        height="auto"
-        minH="64px"
-        p={4}
-        whiteSpace="pre-wrap"
-        textAlign="left"
-        justifyContent="flex-start"
-        borderWidth="2px"
-        borderColor={value === option ? "pink.300" : "appBorder"}
-        bg={value === option ? "appSurfaceElevated" : "appSurface"}
-        borderRadius="2xl"
-        boxShadow="sm"
-        onClick={() => onChange(option)}
-      >
-        {code ? <Code whiteSpace="pre-wrap">{option}</Code> : option}
-      </Button>
-    ))}
+    {(options || []).map((option, index) => {
+      const isCode = code || isCodeSnippet(option);
+      const isSelected = value === option;
+
+      return (
+        <Button
+          key={`${index}-${option}`}
+          variant="unstyled"
+          height="auto"
+          minH="54px"
+          p={{ base: 3.5, md: 4 }}
+          display="block"
+          width="100%"
+          textAlign="left"
+          borderWidth="2px"
+          borderColor={isSelected ? "pink.400" : "appBorder"}
+          bg={isSelected ? "appSurfaceElevated" : "appSurface"}
+          borderRadius="xl"
+          boxShadow={isSelected ? "md" : "sm"}
+          _hover={{
+            borderColor: isSelected ? "pink.400" : "pink.300",
+            bg: isSelected ? "appSurfaceElevated" : "appSurfaceHover",
+          }}
+          transition="all 0.15s ease"
+          onClick={() => onChange(option)}
+        >
+          {isCode ? (
+            <Box width="100%" py={0.5}>
+              <Text
+                as="pre"
+                fontFamily="'Fira Code', 'JetBrains Mono', 'Menlo', 'Consolas', monospace"
+                fontSize={{ base: "12px", sm: "13px", md: "13.5px" }}
+                lineHeight="1.6"
+                whiteSpace="pre-wrap"
+                wordBreak="break-word"
+                textAlign="left"
+                color="inherit"
+                letterSpacing="-0.01em"
+              >
+                {option}
+              </Text>
+            </Box>
+          ) : (
+            <Text
+              fontSize={{ base: "sm", md: "md" }}
+              whiteSpace="normal"
+              lineHeight="1.5"
+            >
+              {option}
+            </Text>
+          )}
+        </Button>
+      );
+    })}
   </VStack>
 );
 
 const FillCodeBlanks = ({ question, value, onChange, labels }) => {
   const blanks = question.blanks || [];
   const template = String(question.template || "");
-  const parts = template.split(/(\{\{[^}]+\}\})/g);
+  const lines = template.split("\n");
+  const panelBg = useColorModeValue("#1e1e2e", "#0f172a");
+
+  const getHeaderTitle = () => {
+    if (question.filename) return question.filename;
+    if (
+      template.includes("<input") ||
+      template.includes("<div") ||
+      template.includes("<button") ||
+      template.includes("<html") ||
+      template.includes("</")
+    ) {
+      return template.includes("React") ||
+        template.includes("useState") ||
+        template.includes("className")
+        ? "App.jsx"
+        : "index.html";
+    }
+    if (template.trim().startsWith("{") && template.includes('"scripts"')) {
+      return "package.json";
+    }
+    return "script.js";
+  };
+
   return (
     <VStack width="100%" align="stretch" spacing={4}>
       <Box
-        bg="appCodeBg"
-        color="appCodeColor"
+        width="100%"
+        bg={panelBg}
+        color="gray.100"
         borderRadius="2xl"
-        p={4}
-        fontFamily="mono"
-        whiteSpace="pre-wrap"
-        boxShadow="sm"
+        borderWidth="1px"
+        borderColor="whiteAlpha.200"
+        overflow="hidden"
+        boxShadow="xl"
       >
-        {parts.map((part, index) => {
-          const match = part.match(/^\{\{([^}]+)\}\}$/);
-          if (!match)
-            return <React.Fragment key={index}>{part}</React.Fragment>;
-          const key = match[1];
-          return (
-            <Input
-              key={`${key}-${index}`}
-              aria-label={`${labels.blank}: ${key}`}
-              value={value?.[key] || ""}
-              onChange={(event) =>
-                onChange({ ...(value || {}), [key]: event.target.value })
-              }
-              display="inline-block"
-              width={`${Math.max(80, (value?.[key]?.length || key.length) * 12)}px`}
-              height="32px"
-              mx={1}
-              px={2}
-              bg="appSurface"
-              borderColor="pink.300"
-              fontFamily="mono"
-            />
-          );
-        })}
+        <CodeWindowHeader title={getHeaderTitle()} />
+        <Box
+          py={{ base: 3, md: 4 }}
+          px={{ base: 2, md: 3 }}
+          overflowX="auto"
+          fontFamily="'Fira Code', 'JetBrains Mono', 'Menlo', 'Consolas', monospace"
+          fontSize={{ base: "13px", md: "14px" }}
+          lineHeight="1.8"
+        >
+          {lines.map((line, lineIndex) => {
+            const lineParts = line.split(/(\{\{[^}]+\}\})/g);
+            return (
+              <Box
+                key={lineIndex}
+                display="flex"
+                alignItems="center"
+                minH={{ base: "30px", md: "34px" }}
+                whiteSpace="pre"
+              >
+                <Text
+                  as="span"
+                  color="gray.500"
+                  width="36px"
+                  textAlign="right"
+                  pr={3}
+                  userSelect="none"
+                  flexShrink={0}
+                  borderRightWidth="1px"
+                  borderRightColor="whiteAlpha.100"
+                  fontSize="xs"
+                >
+                  {lineIndex + 1}
+                </Text>
+                <Box
+                  as="span"
+                  display="inline-flex"
+                  alignItems="center"
+                  pl={3}
+                  pr={4}
+                  whiteSpace="pre"
+                >
+                  {lineParts.map((part, partIndex) => {
+                    const match = part.match(/^\{\{([^}]+)\}\}$/);
+                    if (!match)
+                      return (
+                        <Text as="span" key={partIndex} whiteSpace="pre">
+                          {part}
+                        </Text>
+                      );
+                    const key = match[1];
+                    const currentValue = value?.[key] || "";
+                    const charLength = Math.max(currentValue.length, 3);
+                    const inputWidth = `${Math.max(48, Math.min(150, charLength * 9.5 + 16))}px`;
+
+                    return (
+                      <Input
+                        key={`${key}-${partIndex}`}
+                        aria-label={labels.blank}
+                        placeholder="..."
+                        value={currentValue}
+                        onChange={(event) =>
+                          onChange({
+                            ...(value || {}),
+                            [key]: event.target.value,
+                          })
+                        }
+                        display="inline-flex"
+                        alignItems="center"
+                        width={inputWidth}
+                        height={{ base: "24px", md: "26px" }}
+                        mx="2px"
+                        px="6px"
+                        fontSize={{ base: "12px", md: "13px" }}
+                        fontWeight="semibold"
+                        textAlign="center"
+                        bg="whiteAlpha.100"
+                        color="pink.300"
+                        borderColor="pink.400"
+                        borderWidth="1.5px"
+                        borderRadius="md"
+                        _placeholder={{
+                          color: "whiteAlpha.400",
+                          fontSize: "11px",
+                          fontStyle: "italic",
+                        }}
+                        _hover={{
+                          borderColor: "pink.300",
+                          bg: "whiteAlpha.200",
+                        }}
+                        _focus={{
+                          borderColor: "pink.400",
+                          bg: "whiteAlpha.250",
+                          boxShadow: "0 0 0 2px rgba(236, 72, 153, 0.4)",
+                        }}
+                        fontFamily="'Fira Code', 'JetBrains Mono', 'Menlo', 'Consolas', monospace"
+                      />
+                    );
+                  })}
+                </Box>
+              </Box>
+            );
+          })}
+        </Box>
       </Box>
-      {blanks.map((blank) => (
-        <Text key={blank.key} fontSize="sm" color="appTextMuted">
-          {blank.label || blank.key}: {blank.hint}
-        </Text>
-      ))}
     </VStack>
   );
 };
@@ -183,52 +378,59 @@ const ReorderLines = ({ question, value, onChange }) => {
     onChange(next);
   };
   return (
-    <VStack width="100%" align="stretch" spacing={3}>
+    <VStack width="100%" align="stretch" spacing={2}>
       {lines.map((line, index) => (
         <HStack
           key={`${index}-${line}`}
           bg="appSurface"
           borderWidth="1.5px"
           borderColor="appBorder"
-          borderRadius="2xl"
-          minHeight="72px"
-          p={{ base: 3, md: 4 }}
-          spacing={3}
+          borderRadius="xl"
+          minHeight="48px"
+          p={{ base: 2, md: 2.5 }}
+          spacing={{ base: 2, md: 2.5 }}
           boxShadow="sm"
           _hover={{ borderColor: "pink.300", boxShadow: "md" }}
-          transition="all 0.2s ease"
+          transition="all 0.15s ease"
         >
           <Badge
             colorScheme="pink"
-            borderRadius="full"
-            px={2.5}
-            py={1}
+            borderRadius="md"
+            minW="22px"
+            textAlign="center"
+            px={1.5}
+            py={0.5}
             fontSize="xs"
             fontWeight="bold"
+            flexShrink={0}
           >
             {index + 1}
           </Badge>
           <Code
             flex="1"
-            p={3}
-            borderRadius="xl"
+            p={{ base: 2, md: 2.5 }}
+            borderRadius="lg"
             display="flex"
             alignItems="center"
+            textAlign="left"
             whiteSpace="pre-wrap"
-            fontSize="sm"
+            wordBreak="break-word"
+            fontFamily="'Fira Code', 'JetBrains Mono', 'Menlo', 'Consolas', monospace"
+            fontSize={{ base: "11.5px", sm: "12.5px", md: "13px" }}
+            lineHeight="1.5"
             bg="appCodeBg"
             color="appCodeColor"
           >
             {line}
           </Code>
-          <VStack spacing={1.5} justify="center" flexShrink={0}>
+          <VStack spacing={0.5} justify="center" flexShrink={0}>
             <Button
               type="button"
-              size="sm"
-              width="40px"
-              height="34px"
+              size="xs"
+              width="26px"
+              height="22px"
               p={0}
-              borderRadius="lg"
+              borderRadius="md"
               aria-label="Move line up"
               onClick={() => move(index, -1)}
               isDisabled={index === 0}
@@ -236,15 +438,15 @@ const ReorderLines = ({ question, value, onChange }) => {
               variant="ghost"
               _hover={{ bg: "pink.50", color: "pink.600" }}
             >
-              <ChevronUpIcon boxSize={5} />
+              <ChevronUpIcon boxSize={3.5} />
             </Button>
             <Button
               type="button"
-              size="sm"
-              width="40px"
-              height="34px"
+              size="xs"
+              width="26px"
+              height="22px"
               p={0}
-              borderRadius="lg"
+              borderRadius="md"
               aria-label="Move line down"
               onClick={() => move(index, 1)}
               isDisabled={index === lines.length - 1}
@@ -252,7 +454,7 @@ const ReorderLines = ({ question, value, onChange }) => {
               variant="ghost"
               _hover={{ bg: "pink.50", color: "pink.600" }}
             >
-              <ChevronDownIcon boxSize={5} />
+              <ChevronDownIcon boxSize={3.5} />
             </Button>
           </VStack>
         </HStack>
@@ -360,7 +562,13 @@ const MatchPairs = ({ question, value, onChange, labels }) => {
 const Workbench = ({ question, value, onChange, userLanguage, labels }) => {
   const starterCode =
     typeof question.starterCode === "string" ? question.starterCode : "";
-  const editorValue = typeof value === "string" ? value : starterCode;
+  const isStale =
+    typeof value === "string" &&
+    starterCode &&
+    starterCode.includes("appName") &&
+    value.includes("console.log(1)");
+  const editorValue =
+    typeof value === "string" && !isStale ? value : starterCode;
 
   return (
     <VStack width="100%" align="stretch" spacing={4}>
@@ -398,7 +606,6 @@ export default function QuestionMode({ step, value, onChange, userLanguage }) {
   const locale = localeFor(userLanguage);
   const labels = copy[locale];
   const [initializedType, setInitializedType] = useState("");
-  const projectStorageKey = `courseProject:${question.projectId || "course-app"}:${question.checkpointId || step.title}`;
 
   useEffect(() => {
     const initializationKey = `${step.title}-${type}`;
@@ -406,13 +613,7 @@ export default function QuestionMode({ step, value, onChange, userLanguage }) {
     if (initializedType === initializationKey && hasAnswer) return;
     if (type === "parsons")
       onChange(scrambleArray(question.lines || []));
-    else if (type === "projectCheckpoint") {
-      const savedCode =
-        typeof window !== "undefined"
-          ? window.localStorage.getItem(projectStorageKey)
-          : "";
-      onChange(savedCode || question.starterCode || "");
-    } else if (["fixBug", "refactoring"].includes(type))
+    else if (["fixBug", "refactoring"].includes(type))
       onChange(question.starterCode || "");
     else if (["fillCodeBlanks", "matchPairs"].includes(type)) onChange({});
     else if (type === "relevantLine") onChange([]);
@@ -423,22 +624,10 @@ export default function QuestionMode({ step, value, onChange, userLanguage }) {
     onChange,
     question.lines,
     question.starterCode,
-    projectStorageKey,
     step.title,
     type,
     value,
   ]);
-
-  useEffect(() => {
-    if (
-      type === "projectCheckpoint" &&
-      typeof window !== "undefined" &&
-      typeof value === "string" &&
-      value.trim()
-    ) {
-      window.localStorage.setItem(projectStorageKey, value);
-    }
-  }, [projectStorageKey, type, value]);
 
   const toggleLine = (lineNumber) => {
     const selected = Array.isArray(value) ? value : [];
@@ -547,7 +736,7 @@ export default function QuestionMode({ step, value, onChange, userLanguage }) {
           code
         />
       )}
-      {["fixBug", "refactoring", "projectCheckpoint"].includes(type) && (
+      {["fixBug", "refactoring"].includes(type) && (
         <Workbench
           question={question}
           value={value}

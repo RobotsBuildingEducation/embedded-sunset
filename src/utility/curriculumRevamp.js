@@ -16,7 +16,6 @@ const MODE_FLAGS = [
   "isBestImplementation",
   "isFixBug",
   "isRefactoringChallenge",
-  "isProjectCheckpoint",
 ];
 
 const TARGET_FLAGS = {
@@ -28,7 +27,6 @@ const TARGET_FLAGS = {
   best: "isBestImplementation",
   fix: "isFixBug",
   refactor: "isRefactoringChallenge",
-  project: "isProjectCheckpoint",
 };
 
 const localeCopy = {
@@ -41,7 +39,6 @@ const localeCopy = {
     best: "Choose the clearest and most reliable implementation.",
     fix: "Repair the bug while preserving the intended behavior.",
     refactor: "Improve the code without changing its behavior.",
-    project: "Complete this chapter checkpoint in your growing application.",
     tests: [
       "The code addresses the requirement",
       "The result remains readable",
@@ -1324,7 +1321,7 @@ export const tutorialSteps = (locale) => {
         ),
         options: [
           "items.forEach(printItem);",
-          "printItem(items[0]); printItem(items[1]);",
+          "printItem(items[0]);\nprintItem(items[1]);",
           "items = printItem;",
         ],
         answer: "items.forEach(printItem);",
@@ -1356,30 +1353,6 @@ export const tutorialSteps = (locale) => {
         tests: [
           t("Still prints 1, 2, and 3", "Aún imprime 1, 2 y 3"),
           t("Uses a loop", "Usa un ciclo"),
-        ],
-      },
-    },
-    {
-      group: "tutorial",
-      title: t("Mini-project Checkpoint", "Punto de Control del Mini-Proyecto"),
-      description: t(
-        "Name the small application you will build.",
-        "Nombra la pequeña aplicación que construirás.",
-      ),
-      isProjectCheckpoint: true,
-      question: {
-        questionText: t(
-          "Replace the empty string in the starter code with a name for your app. For example: const appName = 'Study Buddy';",
-          "Reemplaza la cadena vacía del código inicial con un nombre para tu aplicación. Por ejemplo: const appName = 'Compañero de Estudio';",
-        ),
-        projectId: "tutorial-app",
-        checkpointId: t("Name your app", "Nombra tu aplicación"),
-        starterCode: "const appName = '';",
-        tests: [
-          t(
-            "appName contains a non-empty name",
-            "appName contiene un nombre que no está vacío",
-          ),
         ],
       },
     },

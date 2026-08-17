@@ -168,25 +168,47 @@ const MultipleAnswerQuestion = ({
                 : "appSurfaceInset",
             }}
           >
-            <HStack spacing={4} width="100%" alignItems="center">
+            <HStack spacing={3.5} width="100%" alignItems="flex-start">
               <Box
-                width="24px"
-                height="24px"
+                width="22px"
+                height="22px"
+                mt={0.5}
                 flexShrink={0}
-                borderRadius="15%"
+                borderRadius="md"
                 borderWidth="2px"
                 borderColor={
                   selectedOptions.includes(option)
-                    ? "pink.300"
+                    ? "pink.400"
                     : "appBorderStrong"
                 }
                 backgroundColor={
-                  selectedOptions.includes(option) ? "pink.300" : "transparent"
+                  selectedOptions.includes(option) ? "pink.400" : "transparent"
                 }
+                transition="all 0.15s ease"
               />
-              <Text flex="1" noOfLines={[2, 3, 4]} color="appText">
-                {option}
-              </Text>
+              <Box flex="1">
+                {String(option || "").includes("\n") ||
+                /^(const |let |var |function|return |import |export |class )|(=>|console\.|eval\(|arr\.)/.test(
+                  String(option || "").trim(),
+                ) ? (
+                  <Text
+                    as="pre"
+                    fontFamily="'Fira Code', 'JetBrains Mono', 'Menlo', 'Consolas', monospace"
+                    fontSize={{ base: "12px", sm: "13px", md: "13.5px" }}
+                    lineHeight="1.6"
+                    whiteSpace="pre-wrap"
+                    wordBreak="break-word"
+                    textAlign="left"
+                    color="appText"
+                  >
+                    {option}
+                  </Text>
+                ) : (
+                  <Text color="appText" fontSize={{ base: "sm", md: "md" }} lineHeight="1.5">
+                    {option}
+                  </Text>
+                )}
+              </Box>
             </HStack>
           </Button>
         ))}

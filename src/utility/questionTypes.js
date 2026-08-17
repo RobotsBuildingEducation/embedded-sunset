@@ -44,11 +44,6 @@ export const QUESTION_TYPE_DEFINITIONS = [
     label: "Refactoring challenge",
   },
   {
-    key: "projectCheckpoint",
-    flag: "isProjectCheckpoint",
-    label: "Mini-project checkpoint",
-  },
-  {
     key: "conversationReview",
     flag: "isConversationReview",
     label: "AI conversation review",
@@ -64,7 +59,6 @@ export const NEW_QUESTION_FLAGS = [
   "isBestImplementation",
   "isFixBug",
   "isRefactoringChallenge",
-  "isProjectCheckpoint",
 ];
 
 export const getQuestionType = (step) => {

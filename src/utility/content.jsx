@@ -1,16853 +1,5622 @@
-import { revampCourse } from "./curriculumRevamp";
 export { tutorial_interface } from "./questionGeneration";
-
 export const getObjectsByGroup = (groupNumber, arrayOfObjects) => {
-  return arrayOfObjects.filter((obj) => obj.group === groupNumber);
+  return arrayOfObjects.filter(obj => obj.group === groupNumber);
 };
-
 export const steps = {
-  //   "compsci-en": [
-  //     {
-  //       group: "introduction",
-  //       title: "Introduction To Computer Science",
-  //       isStudyGuide: true,
-  //       description:
-  //         "Expose yourself to fundamentals to improve the quality of your learning before making progress.",
-  //       question: {
-  //         questionText: (
-  //           <div>
-  //             <p style={{ marginBottom: 12 }}>
-  //               {" "}
-  //               One of the best predictors for student success is exposure to
-  //               course material before studying it. You're encouraged to read
-  //               about the fundamentals of software in the study guide before
-  //               starting. You can reference this study guide in the menu
-  //               throughout your progress too.
-  //             </p>
-
-  //             <p style={{ marginBottom: 12 }}>
-  //               Remember to fail faster and fail forward! The real education
-  //               happens when you push through a challenge. We'll start off nice
-  //               and easy at first, but then we'll start to level up the difficulty
-  //               as you collect more progress. Make sure to use the tools at your
-  //               disposal! You're going to need it.
-  //             </p>
-  //           </div>
-  //         ),
-  //         metaData: `
-  // We’ll evolve a single dataset through each core chapter to illustrate connections:
-
-  // 1. Data Structures I — Arrays & Strings
-  // \`\`\`python
-  // # Step 1: Start with a list of numbers
-  // data = [3, 1, 4, 1, 5]
-  // print(data[2])           # O(1) access → 4
-  // \`\`\`
-  // Lists store items contiguously, allowing constant-time reads but dynamic sizing.
-
-  // 2. Data Structures II — Linked Lists
-  // \`\`\`python
-  // # Step 2: Convert list into a singly linked list
-  // class Node:
-  //     def __init__(self, value):
-  //         self.value = value
-  //         self.next = None
-
-  // def to_linked_list(arr):
-  //     head = None
-  //     for item in reversed(arr):
-  //         node = Node(item)
-  //         node.next = head
-  //         head = node
-  //     return head
-
-  // list_head = to_linked_list(data)
-  // print(list_head.value)   # 3 at head, traversal is O(n)
-  // \`\`\`
-  // Linked lists allow dynamic insertion but require linear traversal for access.
-
-  // 3. Data Structures III — Trees (Array & Hash Map)
-  // \`\`\`python
-  // # 3a. Binary heap stored in an array (complete binary tree)
-  // heap = [None, 3, 1, 4, 1, 5]  # 1-based index: parent i, children 2i & 2i+1
-  // root, left, right = heap[1], heap[2], heap[3]
-  // print(root, left, right)      # 3 1 4
-
-  // # 3b. General tree with an adjacency hash map
-  // tree = {
-  //     "A": ["B", "C"],
-  //     "B": ["D", "E"],
-  //     "C": ["F"],
-  //     "D": [], "E": [], "F": []
-  // }
-
-  // # 3c. Depth-First Search (DFS) — preorder
-  // def dfs(node):
-  //     stack = [node]
-  //     while stack:
-  //         cur = stack.pop()
-  //         print(cur, end=" ")
-  //         # push children in reverse to visit left-to-right
-  //         for child in reversed(tree[cur]):
-  //             stack.append(child)
-
-  // dfs("A")   # A B D E C F  — O(n)
-
-  // # 3d. Breadth-First Search (BFS)
-  // from collections import deque
-  // def bfs(node):
-  //     q = deque([node])
-  //     while q:
-  //         cur = q.popleft()
-  //         print(cur, end=" ")
-  //         q.extend(tree[cur])
-
-  // bfs("A")   # A B C D E F  — O(n)
-  // \`\`\`
-  // *Array* representation offers O(1) parent/child math for complete trees (heaps);
-  // a *hash-map* adjacency list provides flexible, sparse storage with O(1) add-child.
-  // DFS explores depth before breadth using a stack; BFS explores level by level using a queue.
-
-  // 4. Algorithms I — Sorting
-  // \`\`\`python
-  // # Step 4: Sort the list in-place via bubble sort
-  // def bubble_sort(a):
-  //     n = len(a)
-  //     for i in range(n):
-  //         for j in range(0, n - i - 1):
-  //             if a[j] > a[j + 1]:
-  //                 a[j], a[j + 1] = a[j + 1], a[j]
-
-  // bubble_sort(data)
-  // print(data)  # [1, 1, 3, 4, 5] • O(n²)
-  // \`\`\`
-  // Elementary sorts teach algorithmic structure; bubble sort is O(n²).
-
-  // 5. Algorithms II — Search
-  // \`\`\`python
-  // # Step 5: Perform binary search on sorted list
-  // def binary_search(a, target):
-  //     low, high = 0, len(a) - 1
-  //     while low <= high:
-  //         mid = (low + high) // 2
-  //         if a[mid] == target:
-  //             return mid
-  //         elif a[mid] < target:
-  //             low = mid + 1
-  //         else:
-  //             high = mid - 1
-  //     return -1
-
-  // pos = binary_search(data, 4)
-  // print(pos)  # index of value 4, O(log n)
-  // \`\`\`
-  // Divide-and-conquer search runs in logarithmic time.
-
-  // 6. Operating Systems — File I/O
-  // \`\`\`python
-  // # Step 6: Read a file with OS support
-  // with open('data.txt', 'r', encoding='utf-8') as f:
-  //     contents = f.read()
-  // print(contents)
-  // \`\`\`
-  // Behind the scenes: the OS schedules I/O, buffers data, and performs context switches.
-
-  // ***Advice***
-
-  // ***Trace manually:*** Walk through indices, pointers **and DFS/BFS orderings** on paper.
-  // ***Annotate:*** Mark time complexities alongside loops (# O(n²), # O(log n)).
-  // ***Experiment:*** Tweak each example in your REPL or editor to see real outputs.
-
-  // This single evolving example now links arrays, linked lists, **tree representations with DFS & BFS**, algorithms, and OS interactions—showing how each layer builds on the last.
-  // `,
-  //       },
-  //     },
-
-  //     {
-  //       group: "tutorial",
-  //       title: "OOP Basics: Class and Instance",
-  //       description: "Identify classes vs. instances in Python.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText:
-  //           "In Python OOP, which of the following best describes a class?",
-  //         options: [
-  //           "A blueprint that defines attributes and behaviors",
-  //           "A specific object created during execution",
-  //           "A standalone function outside of any object",
-  //           "A module imported into a script",
-  //         ],
-  //         answer: "A blueprint that defines attributes and behaviors",
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Defining __init__ and Methods",
-  //       description: "Order Python class definition steps.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the steps to define a Python class with an __init__ and a method:",
-  //         options: [
-  //           "Use class keyword with class name",
-  //           "Define __init__ method with parameters (self, ...)",
-  //           "Define additional methods indented at class level",
-  //           "Instantiate the class by calling ClassName()",
-  //         ],
-  //         answer: [
-  //           "Use class keyword with class name",
-  //           "Define __init__ method with parameters (self, ...)",
-  //           "Define additional methods indented at class level",
-  //           "Instantiate the class by calling ClassName()",
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Creating an Instance",
-  //       description: "Select correct steps to instantiate a Python object.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Select all the correct steps to create an object from a Python class:",
-  //         options: [
-  //           "Call the class with parentheses and required arguments",
-  //           "Assign the result to a variable",
-  //           "Import the class from its module",
-  //           "Pass arguments to __init__",
-  //         ],
-  //         answer: [
-  //           "Call the class with parentheses and required arguments",
-  //           "Assign the result to a variable",
-  //           "Pass arguments to __init__",
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Code Completion: Define a Python Class",
-  //       description: "Choose the correct class definition snippet.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Which snippet correctly defines a Python class Person with name and age?",
-  //         options: [
-  //           "class Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age",
-  //           "def Person(name, age):\n    return { 'name': name, 'age': age }",
-  //           "class Person(name, age):\n    self.name = name\n    self.age = age",
-  //           "class Person:\n    name = None\n    age = None",
-  //         ],
-  //         answer:
-  //           "class Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age",
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Implement a Method",
-  //       description: "Add a method to your Python class.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Extend the Person class by adding a greet(self) method that returns 'Hello, my name is ' + self.name.",
-  //         answer: null,
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Accessing Attributes",
-  //       description: "Recall Python attribute access syntax.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What syntax retrieves the age attribute from a person instance?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "person.age",
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Shell Practice: Initialize Python Project",
-  //       description:
-  //         "Use Bash to set up a new project directory and Python file.",
-  //       isCode: true,
-  //       isTerminal: true,
-  //       question: {
-  //         questionText:
-  //           "In Bash, create a directory named `project`, change into it, and then create an empty Python file called `app.py`.",
-  //         answer: "mkdir project && cd project && touch app.py",
-  //       },
-  //     },
-
-  //     {
-  //       group: "tutorial",
-  //       title: "OOP Benefit",
-  //       description: "Explain an advantage of Python OOP.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "In your own words, explain one advantage of using classes and objects in Python.",
-  //         answer: null,
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [1, 8],
-  //       },
-  //     },
-
-  //     // 1
-  //     {
-  //       group: "1",
-  //       title: "Abstract Data Types vs. Concrete Implementations",
-  //       description:
-  //         "Distinguish abstract data types (ADTs) from their concrete implementations.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText: "Which of the following are abstract data types?",
-  //         options: ["List", "Stack", "Queue", "Array", "Binary Tree"],
-  //         answer: ["Stack", "Queue", "Binary Tree"],
-  //       },
-  //     },
-  //     // 2
-  //     {
-  //       group: "1",
-  //       title: "Complexity Classes Ordering",
-  //       description:
-  //         "Order common complexity classes from fastest to slowest growth.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange these complexity classes from fastest (lowest growth) to slowest (highest growth):",
-  //         options: ["O(1)", "O(log n)", "O(n)", "O(n log n)", "O(n²)"],
-  //         answer: ["O(1)", "O(log n)", "O(n)", "O(n log n)", "O(n²)"],
-  //       },
-  //     },
-  //     // 3
-  //     {
-  //       group: "1",
-  //       title: "Array Access Complexity",
-  //       description: "Identify the time complexity of array indexing.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "What is the Big-O time complexity to access an element by index in a contiguous array?",
-  //         options: ["O(1)", "O(log n)", "O(n)", "O(n²)"],
-  //         answer: ["O(1)"],
-  //       },
-  //     },
-  //     // 4
-  //     {
-  //       group: "1",
-  //       title: "Contiguous vs. Non-contiguous Storage",
-  //       description: "Distinguish data structures by their memory layout.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which data structure stores its elements contiguously in memory?",
-  //         options: ["Array", "Linked List", "Binary Tree", "Hash Table"],
-  //         answer: "Array",
-  //       },
-  //     },
-  //     // 5
-  //     {
-  //       group: "1",
-  //       title: "Python List Indexing",
-  //       description: "Practice simple list indexing in Python.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Create a Python list called `nums` with values `[3, 1, 4, 1, 5]` and print the third element (index 2).",
-  //       },
-  //     },
-  //     // 6
-  //     {
-  //       group: "1",
-  //       title: "List Indexing Code Completion",
-  //       description: "Fill in the missing code to index a Python list.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText: "Complete the following code:",
-  //         options: [
-  //           "nums = [3, 1, 4, 1, 5]\nprint(nums[2])",
-  //           "nums = [3, 1, 4, 1, 5]\nprint(nums[3])",
-  //           "nums = [3, 1, 4, 1, 5]\nprint(nums[len(nums)])",
-  //         ],
-  //         answer: "nums = [3, 1, 4, 1, 5]\nprint(nums[2])",
-  //       },
-  //     },
-  //     // 7
-  //     {
-  //       group: "1",
-  //       title: "Why Complexity Matters",
-  //       description: "Reflect on the importance of algorithmic complexity.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "In your own words, explain why understanding time complexity (Big-O) is important when choosing a data structure.",
-  //       },
-  //     },
-  //     // 8
-  //     {
-  //       group: "1",
-  //       title: "Amortized Analysis of append()",
-  //       description: "Identify amortized time complexity of Python list append.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText:
-  //           "What is the amortized time complexity of `list.append()` in Python?",
-  //         options: ["O(1)", "O(log n)", "O(n)", "O(n²)"],
-  //         answer: "O(1)",
-  //       },
-  //     },
-  //     // 9
-  //     {
-  //       group: "1",
-  //       title: "Dynamic Array Resizing Steps",
-  //       description:
-  //         "Order the internal steps that a dynamic array takes when it grows.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the steps Python’s list takes when it needs more capacity:",
-  //         options: [
-  //           "Allocate new larger block",
-  //           "Copy old elements to new block",
-  //           "Free the old block",
-  //           "Update internal pointer",
-  //         ],
-  //         answer: [
-  //           "Allocate new larger block",
-  //           "Copy old elements to new block",
-  //           "Free the old block",
-  //           "Update internal pointer",
-  //         ],
-  //       },
-  //     },
-  //     // 10
-  //     {
-  //       group: "1",
-  //       title: "Traversing a List",
-  //       description: "Write code to traverse and print each element of a list.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Given `items = [10, 20, 30, 40]`, write a Python for-loop that prints each item.",
-  //       },
-  //     },
-  //     // 11
-  //     {
-  //       group: "1",
-  //       title: "List Length Operator",
-  //       description: "Identify the operator that returns the length of a list.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "Which Python built-in function returns the number of elements in a list?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "len",
-  //       },
-  //     },
-  //     // 12
-  //     {
-  //       group: "1",
-  //       title: "Immutable vs. Mutable Sequences",
-  //       description: "Distinguish lists from tuples in Python.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "Which of the following statements is true?",
-  //         options: [
-  //           "Lists are immutable, tuples are mutable",
-  //           "Lists are mutable, tuples are immutable",
-  //           "Both are immutable",
-  //           "Both are mutable",
-  //         ],
-  //         answer: "Lists are mutable, tuples are immutable",
-  //       },
-  //     },
-  //     // 13
-  //     {
-  //       group: "1",
-  //       title: "String as Character Array",
-  //       description: "Convert a string into a list of its characters.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write Python code to turn the string `\"hello\"` into `['h','e','l','l','o']`.",
-  //       },
-  //     },
-  //     // 14
-  //     {
-  //       group: "1",
-  //       title: "Implementing a Simple Stack",
-  //       description: "Use a Python list to model a stack (LIFO).",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText: "Complete the methods to push and pop from a stack:",
-  //         options: [
-  //           // Correct: uses append and pop(), returns the popped value
-  //           `class Stack:
-  //     def __init__(self):
-  //         self.data = []
-
-  //     def push(self, x):
-  //         self.data.append(x)
-
-  //     def pop(self):
-  //         return self.data.pop()`,
-
-  //           // Wrong: forgets to return the popped value
-  //           `class Stack:
-  //     def __init__(self):
-  //         self.data = []
-
-  //     def push(self, x):
-  //         self.data.append(x)
-
-  //     def pop(self):
-  //         self.data.pop()`,
-
-  //           // Wrong: uses FIFO pop(0) instead of LIFO
-  //           `class Stack:
-  //     def __init__(self):
-  //         self.data = []
-
-  //     def push(self, x):
-  //         self.data.append(x)
-
-  //     def pop(self):
-  //         return self.data.pop(0)`,
-
-  //           // Wrong: inserts at the front, reversing the order
-  //           `class Stack:
-  //     def __init__(self):
-  //         self.data = []
-
-  //     def push(self, x):
-  //         self.data.insert(0, x)
-
-  //     def pop(self):
-  //         return self.data.pop()`,
-  //         ],
-  //         answer: `class Stack:
-  //     def __init__(self):
-  //         self.data = []
-
-  //     def push(self, x):
-  //         self.data.append(x)
-
-  //     def pop(self):
-  //         return self.data.pop()`,
-  //       },
-  //     },
-  //     // 15
-  //     {
-  //       group: "1",
-  //       title: "Use Cases for Different Structures",
-  //       description: "Reflect on where you’d use arrays vs. stacks.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Give one real-world scenario where a stack (LIFO) is preferred over a plain list.",
-  //       },
-  //     },
-  //     // 16
-  //     {
-  //       group: "1",
-  //       title: "Pointer-Style Traversal (Conceptual)",
-  //       description: "Understand how a linked list differs in traversal.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "In contrast to arrays, how does a linked list traverse from one element to the next?",
-  //       },
-  //     },
-  //     // 17
-  //     {
-  //       group: "1",
-  //       title: "Implementing a Queue with deque",
-  //       description: "Use `collections.deque` to model a queue (FIFO).",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write Python code to import `deque`, enqueue 1,2,3, then dequeue one element.",
-  //       },
-  //     },
-  //     // 18
-  //     {
-  //       group: "1",
-  //       title: "Comparing Access Patterns",
-  //       description: "Discuss random vs. sequential access trade-offs.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Why are arrays good for random access but linked lists are not?",
-  //       },
-  //     },
-  //     // 19
-  //     {
-  //       group: "1",
-  //       title: "List Initialization",
-  //       description: "Allocate a fixed-size list with default values.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText: "Write code to create a list of five zeros in Python.",
-  //       },
-  //     },
-  //     // 20
-  //     {
-  //       group: "1",
-  //       title: "Importance of Foundations",
-  //       description: "Summarize key takeaways from Chapter 1.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "In two sentences, explain why understanding data-structure foundations (ADTs, complexity, memory layout) is crucial before diving into implementations.",
-  //       },
-  //     },
-  //     // 21
-  //     {
-  //       group: "1",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [10, 29],
-  //       },
-  //     },
-  //     // 1
-  //     {
-  //       group: "2",
-  //       title: "Memory Layout: Array vs. Linked List",
-  //       description:
-  //         "Compare how arrays and linked lists store elements in memory.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "Which statement correctly describes memory layout?",
-  //         options: [
-  //           "Arrays use node pointers scattered in memory",
-  //           "Linked lists store elements contiguously",
-  //           "Arrays store elements contiguously, linked lists use pointers",
-  //           "Both use contiguous memory blocks",
-  //         ],
-  //         answer: [
-  //           "Arrays store elements contiguously, linked lists use pointers",
-  //         ],
-  //       },
-  //     },
-  //     // 2
-  //     {
-  //       group: "2",
-  //       title: "Access Time: Array Indexing vs. List Traversal",
-  //       description: "Identify the time complexity of accessing vs. traversing.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText:
-  //           "What are the time complexities for accessing the 𝑖ᵗʰ element?",
-  //         options: [
-  //           "Array: O(1), Linked List: O(n)",
-  //           "Array: O(n), Linked List: O(1)",
-  //           "Array: O(log n), Linked List: O(log n)",
-  //           "Array: O(n), Linked List: O(n)",
-  //         ],
-  //         answer: ["Array: O(1), Linked List: O(n)"],
-  //       },
-  //     },
-  //     // 3
-  //     {
-  //       group: "2",
-  //       title: "Amortized Analysis of list.append()",
-  //       description:
-  //         "Recall the amortized time complexity of appending to a Python list.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText:
-  //           "What is the amortized time complexity of `my_list.append(x)`?",
-  //         options: ["O(1)", "O(n)", "O(log n)", "O(n²)"],
-  //         answer: ["O(1)"],
-  //       },
-  //     },
-  //     // 4
-  //     {
-  //       group: "2",
-  //       title: "Dynamic Array Resizing Steps",
-  //       description:
-  //         "Order the steps Python’s list takes when resizing its capacity.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText: "Arrange these internal steps when capacity is exceeded:",
-  //         options: [
-  //           "Copy old elements to new block",
-  //           "Allocate new larger block",
-  //           "Update internal pointer",
-  //           "Free old block",
-  //         ],
-  //         answer: [
-  //           "Allocate new larger block",
-  //           "Copy old elements to new block",
-  //           "Free old block",
-  //           "Update internal pointer",
-  //         ],
-  //       },
-  //     },
-  //     // 5
-  //     {
-  //       group: "2",
-  //       title: "List Append in Code",
-  //       description: "Practice appending items and checking length.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write Python code to create `nums = [1,2,3]`, append `4`, then print its length.",
-  //       },
-  //     },
-  //     // 6
-  //     {
-  //       group: "2",
-  //       title: "Linked List Insertion Complexity",
-  //       description: "Identify insertion complexities at head and tail.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "What is the time complexity to insert:",
-  //         options: [
-  //           "At head: O(1), At tail (no pointer): O(n)",
-  //           "At head: O(n), At tail: O(1)",
-  //           "At head: O(1), At tail: O(1)",
-  //           "At head: O(n), At tail: O(n)",
-  //         ],
-  //         answer: ["At head: O(1), At tail (no pointer): O(n)"],
-  //       },
-  //     },
-  //     // 7
-  //     {
-  //       group: "2",
-  //       title: "Building a Simple Linked List",
-  //       description: "Link three nodes and print the second value.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText: "Complete code so `head.next.v` prints `2`:",
-  //         options: [
-  //           //# 1) Correct definition, linking, and print
-  //           `class Node:
-  //     def __init__(self, v):
-  //         self.v = v
-  //         self.next = None
-
-  // head = Node(1)
-  // second = Node(2)
-  // third = Node(3)
-  // # link
-  // head.next = second
-  // second.next = third
-
-  // print(head.next.v)  # 2`,
-
-  //           //# 2) `head` is never assigned (NameError)
-  //           `class Node:
-  //     def __init__(self, v):
-  //         self.v = v
-  //         self.next = None
-
-  // n1 = Node(1)
-  // second = Node(2)
-  // third = Node(3)
-  // # link
-  // n1.next = second
-  // second.next = third
-
-  // print(head.next.v)  # 2`,
-
-  //           // # 3) Linked to the wrong node (prints 3 instead of 2)
-  //           `class Node:
-  //     def __init__(self, v):
-  //         self.v = v
-  //         self.next = None
-
-  // head = Node(1)
-  // second = Node(2)
-  // third = Node(3)
-  // # incorrect link
-  // head.next = third
-  // third.next = second
-
-  // print(head.next.v)  # 2`,
-
-  //           //# 4) Using wrong attribute name (AttributeError)
-  //           `class Node:
-  //     def __init__(self, v):
-  //         self.v = v
-  //         self.next = None
-
-  // head = Node(1)
-  // second = Node(2)
-  // third = Node(3)
-  // # link
-  // head.next = second
-  // second.next = third
-
-  // print(head.next.value)  # 2`,
-  //         ],
-  //         answer: `class Node:
-  //     def __init__(self, v):
-  //         self.v = v
-  //         self.next = None
-
-  // head = Node(1)
-  // second = Node(2)
-  // third = Node(3)
-  // # link
-  // head.next = second
-  // second.next = third
-
-  // print(head.next.v)  # 2`,
-  //       },
-  //     },
-  //     // 8
-  //     {
-  //       group: "2",
-  //       title: "Traversing a Linked List",
-  //       description: "Write code to retrieve the 3rd element from a list.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Given `head` of a linked list, write a loop to print the 3rd node’s value.",
-  //       },
-  //     },
-  //     // 9
-  //     {
-  //       group: "2",
-  //       title: "Stack ADT Characteristics",
-  //       description: "Identify the behavior of a stack.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "Which property defines a stack (LIFO)?",
-  //         options: [
-  //           "First In, First Out",
-  //           "Last In, First Out",
-  //           "Random Removal",
-  //           "Priority Removal",
-  //         ],
-  //         answer: ["Last In, First Out"],
-  //       },
-  //     },
-  //     // 10
-  //     {
-  //       group: "2",
-  //       title: "Stack Implementation with list",
-  //       description: "Complete push/pop methods using a Python list.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText: "Fill in methods so `push` and `pop` work correctly:",
-  //         options: [
-  //           `class Stack:
-  //     def __init__(self):
-  //         self.data = []
-  //     def push(self, x):
-  //         self.data.append(x)
-  //     def pop(self):
-  //         return self.data.pop()`,
-
-  //           `class Stack:
-  //     def __init__(self):
-  //         self.data = []
-  //     def push(self, x):
-  //         self.data.append(x)
-  //     def pop(self):
-  //         return self.data.pop(0)`,
-
-  //           `class Stack:
-  //     def __init__(self):
-  //         self.data = []
-  //     def push(self, x):
-  //         self.data.insert(0, x)
-  //     def pop(self):
-  //         return self.data.pop()`,
-
-  //           `class Stack:
-  //     def __init__(self):
-  //         self.data = []
-  //     def push(self, x):
-  //         self.data.append(x)
-  //     def pop(self):
-  //         self.data.pop()`,
-  //         ],
-  //         answer: `class Stack:
-  //     def __init__(self):
-  //         self.data = []
-  //     def push(self, x):
-  //         self.data.append(x)
-  //     def pop(self):
-  //         return self.data.pop()`,
-  //       },
-  //     },
-  //     // 11
-  //     {
-  //       group: "2",
-  //       title: "Queue ADT Characteristics",
-  //       description: "Identify the behavior of a queue.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "Which property defines a queue (FIFO)?",
-  //         options: [
-  //           "Last In, First Out",
-  //           "First In, First Out",
-  //           "Priority Insertion",
-  //           "Random Access",
-  //         ],
-  //         answer: ["First In, First Out"],
-  //       },
-  //     },
-  //     // 12
-  //     {
-  //       group: "2",
-  //       title: "Queue Implementation with deque",
-  //       description: "Use `collections.deque` for enqueue/dequeue.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write code to:\n1. `from collections import deque`\n2. `q = deque()`\n3. `q.append(5)`\n4. `print(q.popleft())`",
-  //       },
-  //     },
-  //     // 13
-  //     {
-  //       group: "2",
-  //       title: "Comparing Append vs. Insert",
-  //       description: "Contrast amortized append with linked-list insert.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "In two sentences, compare `list.append()` amortized O(1) vs. linked-list insertion at head.",
-  //       },
-  //     },
-  //     // 14
-  //     {
-  //       group: "2",
-  //       title: "Real-World Use of Stacks & Queues",
-  //       description: "Reflect on practical applications.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Give one real-world scenario each for using a stack and a queue.",
-  //       },
-  //     },
-  //     // 15
-  //     {
-  //       group: "2",
-  //       title: "Array vs. Linked List Trade-Offs",
-  //       description: "Choose when to use each structure.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "Which scenario favors a linked list over an array?",
-  //         options: [
-  //           "Frequent random access",
-  //           "Fixed-size buffer",
-  //           "Frequent insertions/deletions at arbitrary positions",
-  //           "Contiguous memory requirement",
-  //         ],
-  //         answer: ["Frequent insertions/deletions at arbitrary positions"],
-  //       },
-  //     },
-  //     // 16
-  //     {
-  //       group: "2",
-  //       title: "Implementing Stack via Linked List",
-  //       description: "Use Node pointers to model a stack.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText: "Complete push and pop using a linked-list head pointer:",
-  //         options: [
-  //           `class Node:
-  //     def __init__(self, v):
-  //         self.v = v
-  //         self.next = None
-
-  // class Stack:
-  //     def __init__(self):
-  //         self.top = None
-
-  //     def push(self, x):
-  //         node = Node(x)
-  //         node.next = self.top
-  //         self.top = node
-
-  //     def pop(self):
-  //         val = self.top.v
-  //         self.top = self.top.next
-  //         return val`,
-
-  //           `class Node:
-  //     def __init__(self, v):
-  //         self.v = v
-  //         self.next = None
-
-  // class Stack:
-  //     def __init__(self):
-  //         self.top = None
-
-  //     def push(self, x):
-  //         node = Node(x)
-  //         node.next = self.top
-  //         self.top = node
-
-  //     def pop(self):
-  //         val = self.top.v
-  //         return val`,
-
-  //           `class Node:
-  //     def __init__(self, v):
-  //         self.v = v
-  //         self.next = None
-
-  // class Stack:
-  //     def __init__(self):
-  //         self.top = None
-
-  //     def push(self, x):
-  //         node = Node(x)
-  //         node.next = self.top
-  //         self.top = node
-
-  //     def pop(self):
-  //         self.top = self.top.next
-  //         return self.top.v`,
-
-  //           `class Node:
-  //     def __init__(self, v):
-  //         self.v = v
-  //         self.next = None
-
-  // class Stack:
-  //     def __init__(self):
-  //         self.top = None
-
-  //     def push(self, x):
-  //         node = Node(x)
-  //         self.top.next = node
-  //         self.top = node
-
-  //     def pop(self):
-  //         val = self.top.v
-  //         self.top = self.top.next
-  //         return val`,
-  //         ],
-  //         answer: `class Node:
-  //     def __init__(self, v):
-  //         self.v = v
-  //         self.next = None
-
-  // class Stack:
-  //     def __init__(self):
-  //         self.top = None
-
-  //     def push(self, x):
-  //         node = Node(x)
-  //         node.next = self.top
-  //         self.top = node
-
-  //     def pop(self):
-  //         val = self.top.v
-  //         self.top = self.top.next
-  //         return val`,
-  //       },
-  //     },
-  //     // 17
-  //     {
-  //       group: "2",
-  //       title: "Implementing Queue via Linked List",
-  //       description: "Use head/tail pointers to model a queue.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write Python code to implement `enqueue(x)` at tail and `dequeue()` at head using Node and head/tail pointers.",
-  //       },
-  //     },
-  //     // 18
-  //     {
-  //       group: "2",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [31, 47],
-  //       },
-  //     },
-  //     // 1
-  //     {
-  //       group: "3",
-  //       title: "Hierarchical vs. Associative Structures",
-  //       description:
-  //         "Identify which of these are hierarchical versus associative data structures.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following are hierarchical data structures?",
-  //         options: ["Binary Tree", "Heap", "Hash Table", "Queue"],
-  //         answer: ["Binary Tree", "Heap"],
-  //       },
-  //     },
-  //     // 2
-  //     {
-  //       group: "3",
-  //       title: "Associative Structures",
-  //       description: "Identify which of these are associative data structures.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "Which of the following are associative data structures?",
-  //         options: ["List", "Hash Table", "Stack", "Graph"],
-  //         answer: ["Hash Table"],
-  //       },
-  //     },
-  //     // 3
-  //     {
-  //       group: "3",
-  //       title: "In-Order Traversal Sequence",
-  //       description: "Order the steps of in-order traversal for a binary tree.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange these actions in the correct order for in-order traversal:",
-  //         options: ["Visit left subtree", "Visit node", "Visit right subtree"],
-  //         answer: ["Visit left subtree", "Visit node", "Visit right subtree"],
-  //       },
-  //     },
-  //     // 4
-  //     {
-  //       group: "3",
-  //       title: "Pre-Order Traversal Implementation",
-  //       description:
-  //         "Fill in the blanks to implement pre-order traversal recursively.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Complete the `preorder` function so it prints values in root-left-right order:",
-  //         options: [
-  //           `def preorder(node):
-  //     if node is None:
-  //         return
-  //     print(node.value)
-  //     preorder(node.left)
-  //     preorder(node.right)`,
-
-  //           `def preorder(node):
-  //     if node is None:
-  //         return
-  //     preorder(node.left)
-  //     print(node.value)
-  //     preorder(node.right)`,
-
-  //           `def preorder(node):
-  //     if node is None:
-  //         return
-  //     preorder(node.right)
-  //     print(node.value)
-  //     preorder(node.left)`,
-  //         ],
-  //         answer: `def preorder(node):
-  //     if node is None:
-  //         return
-  //     print(node.value)
-  //     preorder(node.left)
-  //     preorder(node.right)`,
-  //       },
-  //     },
-  //     // 5
-  //     {
-  //       group: "3",
-  //       title: "Post-Order Traversal",
-  //       description: "Identify the sequence for post-order traversal.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText:
-  //           "In post-order traversal, nodes are visited in which order?",
-  //         options: [
-  //           "Root, Left, Right",
-  //           "Left, Right, Root",
-  //           "Left, Root, Right",
-  //           "Right, Left, Root",
-  //         ],
-  //         answer: "Left, Right, Root",
-  //       },
-  //     },
-  //     // 6
-  //     {
-  //       group: "3",
-  //       title: "Level-Order (Breadth-First) Traversal",
-  //       description: "Write code to perform level-order traversal using a queue.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Given `root` of a binary tree, write a Python function `level_order(root)` that prints each level’s values using `collections.deque`.",
-  //       },
-  //     },
-  //     // 7
-  //     {
-  //       group: "3",
-  //       title: "Heap Property: Min vs. Max",
-  //       description: "Distinguish min-heap and max-heap properties.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "Which property defines a min-heap?",
-  //         options: [
-  //           "Every parent ≥ its children",
-  //           "Every parent ≤ its children",
-  //           "Complete binary tree shape only",
-  //           "Balanced tree only",
-  //         ],
-  //         answer: "Every parent ≤ its children",
-  //       },
-  //     },
-  //     // 8
-  //     {
-  //       group: "3",
-  //       title: "Using heapq: Push & Pop",
-  //       description: "Practice using Python’s `heapq` to push and pop values.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write code to import `heapq`, create a list `h = []`, push 5 and 2, then pop and print the smallest value.",
-  //       },
-  //     },
-  //     // 9
-  //     {
-  //       group: "3",
-  //       title: "Priority Queue Tuples",
-  //       description: "Implement a priority queue with custom priorities.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Complete code to push `(priority, task)` pairs so lowest priority is served first:",
-  //         options: [
-  //           `import heapq
-
-  // pq = []
-  // heapq.heappush(pq, (2, 'clean'))
-  // heapq.heappush(pq, (1, 'cook'))
-  // print(heapq.heappop(pq))  # (1, 'cook')`,
-
-  //           `import heapq
-
-  // pq = []
-  // heapq.push(pq, (2, 'clean'))
-  // heapq.push(pq, (1, 'cook'))
-  // print(heapq.pop(pq))`,
-
-  //           `import heapq
-
-  // pq = []
-  // heapq.heappush(pq, 'clean')
-  // heapq.heappush(pq, 'cook')
-  // print(heapq.heappop(pq))`,
-  //         ],
-  //         answer: `import heapq
-
-  // pq = []
-  // heapq.heappush(pq, (2, 'clean'))
-  // heapq.heappush(pq, (1, 'cook'))
-  // print(heapq.heappop(pq))  # (1, 'cook')`,
-  //       },
-  //     },
-  //     // 10
-  //     {
-  //       group: "3",
-  //       title: "Hash Table Collision Strategies",
-  //       description: "Identify common collision-resolution methods.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following are valid hash table collision-resolution strategies?",
-  //         options: [
-  //           "Separate chaining",
-  //           "Open addressing",
-  //           "Binary search",
-  //           "Depth-first search",
-  //         ],
-  //         answer: ["Separate chaining", "Open addressing"],
-  //       },
-  //     },
-  //     // 11
-  //     {
-  //       group: "3",
-  //       title: "Python dict Operations",
-  //       description: "Practice basic insert and lookup in a dict.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write code to create `d = {}`, set `d['a']=1`, then print `d['a']`.",
-  //       },
-  //     },
-  //     // 12
-  //     {
-  //       group: "3",
-  //       title: "Load Factor Definition",
-  //       description: "Explain the load factor in a hash table.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText: "What is the load factor of a hash table?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "Number of entries divided by number of buckets",
-  //       },
-  //     },
-  //     // 13
-  //     {
-  //       group: "3",
-  //       title: "Simple Hash Function",
-  //       description: "Fill in a basic hash function using modulo arithmetic.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Complete `hash_func` so it returns `sum(ord(c) for c in key) % size`:",
-  //         options: [
-  //           `def hash_func(key, size):
-  //     return sum(ord(c) for c in key) % size`,
-
-  //           `def hash_func(key, size):
-  //     return len(key) % size`,
-
-  //           `def hash_func(key, size):
-  //     return key % size`,
-  //         ],
-  //         answer: `def hash_func(key, size):
-  //     return sum(ord(c) for c in key) % size`,
-  //       },
-  //     },
-  //     // 14
-  //     {
-  //       group: "3",
-  //       title: "Open Addressing Loop",
-  //       description: "Complete code for linear probing collision resolution.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Fill in the `while` condition to probe next slot until an empty bucket:",
-  //         options: [
-  //           `def insert(table, key, size):
-  //     idx = hash_func(key, size)
-  //     while table[idx] is not None:
-  //         idx = (idx + 1) % size
-  //     table[idx] = key`,
-
-  //           `def insert(table, key, size):
-  //     idx = hash_func(key)
-  //     if table[idx] is None:
-  //         table[idx] = key`,
-
-  //           `def insert(table, key, size):
-  //     idx = hash_func(key, size)
-  //     for i in range(size):
-  //         table[idx] = key`,
-  //         ],
-  //         answer: `def insert(table, key, size):
-  //     idx = hash_func(key, size)
-  //     while table[idx] is not None:
-  //         idx = (idx + 1) % size
-  //     table[idx] = key`,
-  //       },
-  //     },
-  //     // 15
-  //     {
-  //       group: "3",
-  //       title: "Real-World Hash Use Case",
-  //       description: "Reflect on practical applications of hash tables.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Provide one real-world use case where a hash table improves performance.",
-  //       },
-  //     },
-  //     // 16
-  //     {
-  //       group: "3",
-  //       title: "Tree vs. Hash Table Lookup",
-  //       description: "Compare lookup complexities in two structures.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "In two sentences, compare average-case lookup time for a hash table versus a balanced binary search tree.",
-  //       },
-  //     },
-  //     // 17
-  //     {
-  //       group: "3",
-  //       title: "Priority Queue Use Case",
-  //       description: "Identify when to use a heap-based priority queue.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "Which scenario best uses a priority queue (min-heap)?",
-  //         options: [
-  //           "Scheduling tasks by priority",
-  //           "Random element removal",
-  //           "First-come, first-served queue",
-  //           "Depth-first traversal",
-  //         ],
-  //         answer: ["Scheduling tasks by priority"],
-  //       },
-  //     },
-  //     // 18
-  //     {
-  //       group: "3",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [49, 67],
-  //       },
-  //     },
-  //     // 1
-  //     {
-  //       group: "4",
-  //       title: "What Is an Algorithm?",
-  //       description: "Define core concepts of algorithms and complexity.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "In your own words, what is an algorithm and why is time complexity important when evaluating one?",
-  //       },
-  //     },
-  //     // 2
-  //     {
-  //       group: "4",
-  //       title: "Comparison Sorts Complexity Ordering",
-  //       description:
-  //         "Order common comparison sorts by average-case time complexity.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange these sorting algorithms from lowest (fastest) to highest (slowest) average-case complexity:",
-  //         options: [
-  //           "Bubble Sort (O(n²))",
-  //           "Insertion Sort (O(n²))",
-  //           "Merge Sort (O(n log n))",
-  //           "Quick Sort (O(n log n))",
-  //         ],
-  //         answer: [
-  //           "Merge Sort (O(n log n))",
-  //           "Quick Sort (O(n log n))",
-  //           "Bubble Sort (O(n²))",
-  //           "Insertion Sort (O(n²))",
-  //         ],
-  //       },
-  //     },
-  //     // 3
-  //     {
-  //       group: "4",
-  //       title: "Bubble Sort Implementation",
-  //       description: "Write a basic bubble sort in Python.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write a Python function `bubble_sort(arr)` that sorts `arr` in-place using bubble sort.",
-  //       },
-  //     },
-  //     // 4
-  //     {
-  //       group: "4",
-  //       title: "Insertion Sort Implementation",
-  //       description: "Write a basic insertion sort in Python.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write a Python function `insertion_sort(arr)` that sorts `arr` in-place using insertion sort.",
-  //       },
-  //     },
-  //     // 5
-  //     {
-  //       group: "4",
-  //       title: "Merge Sort Code Completion",
-  //       description: "Fill in missing steps of merge sort.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Complete the Python `merge_sort` function so it correctly splits and merges:",
-  //         options: [
-  //           `def merge_sort(arr):
-  //     if len(arr) <= 1:
-  //         return arr
-  //     mid = len(arr) // 2
-  //     left = merge_sort(arr[:mid])
-  //     right = merge_sort(arr[mid:])
-  //     result = []
-  //     i = j = 0
-  //     while i < len(left) and j < len(right):
-  //         if left[i] < right[j]:
-  //             result.append(left[i])
-  //             i += 1
-  //         else:
-  //             result.append(right[j])
-  //             j += 1
-  //     result.extend(left[i:])
-  //     result.extend(right[j:])
-  //     return result`,
-
-  //           `def merge_sort(arr):
-  //     if len(arr) <= 1:
-  //         return arr
-  //     mid = len(arr) // 2
-  //     left = merge_sort(arr[:mid])
-  //     right = merge_sort(arr[mid:])
-  //     i = j = 0
-  //     while i < len(left) and j < len(right):
-  //         if left[i] < right[j]:
-  //             result.append(left[i])
-  //             i += 1
-  //         else:
-  //             result.append(right[j])
-  //             j += 1
-  //     result.extend(left[i:])
-  //     result.extend(right[j:])
-  //     return result`,
-
-  //           `def merge_sort(arr):
-  //     if len(arr) <= 1:
-  //         return arr
-  //     mid = len(arr) // 2
-  //     left = merge_sort(arr[:mid])
-  //     right = merge_sort(arr[mid:])
-  //     result = []
-  //     i = j = 0
-  //     while i < len(left) and j < len(right):
-  //         if left[i] < right[j]:
-  //             result.append(left[i])
-  //             i += 1
-  //         else:
-  //             result.append(right[j])
-  //             j += 1
-  //     result.extend(left[i:])
-  //     return result`,
-
-  //           `def merge_sort(arr):
-  //     if len(arr) <= 1:
-  //         return arr
-  //     mid = len(arr) // 2
-  //     left = merge_sort(arr[:mid])
-  //     right = merge_sort(arr[mid:])
-  //     result = []
-  //     i = j = 0
-  //     while i < len(left) and j < len(right):
-  //         if left[i] < right[j]:
-  //             result.append(left[i])
-  //             i += 1
-  //         else:
-  //             result.append(right[j])
-  //             j += 1
-  //     result.extend(right[j:])
-  //     return result`,
-  //         ],
-  //         answer: `def merge_sort(arr):
-  //     if len(arr) <= 1:
-  //         return arr
-  //     mid = len(arr) // 2
-  //     left = merge_sort(arr[:mid])
-  //     right = merge_sort(arr[mid:])
-  //     result = []
-  //     i = j = 0
-  //     while i < len(left) and j < len(right):
-  //         if left[i] < right[j]:
-  //             result.append(left[i])
-  //             i += 1
-  //         else:
-  //             result.append(right[j])
-  //             j += 1
-  //     result.extend(left[i:])
-  //     result.extend(right[j:])
-  //     return result`,
-  //       },
-  //     },
-  //     // 6
-  //     {
-  //       group: "4",
-  //       title: "Quick Sort Partition",
-  //       description: "Implement the Lomuto partition scheme.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText: "Fill in the `partition` function for quick sort:",
-  //         options: [
-  //           `def partition(arr, low, high):
-  //     pivot = arr[high]
-  //     i = low - 1
-  //     for j in range(low, high):
-  //         if arr[j] <= pivot:
-  //             i += 1
-  //             arr[i], arr[j] = arr[j], arr[i]
-  //     arr[i+1], arr[high] = arr[high], arr[i+1]
-  //     return i+1`,
-
-  //           `def partition(arr, low, high):
-  //     pivot = arr[high]
-  //     i = low - 1
-  //     for j in range(low, high):
-  //         if arr[j] <= pivot:
-  //             i += 1
-  //             arr[i], arr[j] = arr[j], arr[i]
-  //     return i+1`,
-
-  //           `def partition(arr, low, high):
-  //     pivot = arr[low]
-  //     i = low - 1
-  //     for j in range(low, high):
-  //         if arr[j] <= pivot:
-  //             i += 1
-  //             arr[i], arr[j] = arr[j], arr[i]
-  //     arr[i+1], arr[high] = arr[high], arr[i+1]
-  //     return i+1`,
-
-  //           `def partition(arr, low, high):
-  //     pivot = arr[high]
-  //     i = low - 1
-  //     for j in range(low, high):
-  //         if arr[j] < pivot:
-  //             i += 1
-  //             arr[i], arr[j] = arr[j], arr[i]
-  //     arr[i+1], arr[high] = arr[high], arr[i+1]
-  //     return i+1`,
-
-  //           `def partition(arr, low, high):
-  //     pivot = arr[high]
-  //     i = low
-  //     for j in range(low, high):
-  //         if arr[j] <= pivot:
-  //             arr[i], arr[j] = arr[j], arr[i]
-  //             i += 1
-  //     arr[i], arr[high] = arr[high], arr[i]
-  //     return i`,
-  //         ],
-  //         answer: `def partition(arr, low, high):
-  //     pivot = arr[high]
-  //     i = low - 1
-  //     for j in range(low, high):
-  //         if arr[j] <= pivot:
-  //             i += 1
-  //             arr[i], arr[j] = arr[j], arr[i]
-  //     arr[i+1], arr[high] = arr[high], arr[i+1]
-  //     return i+1`,
-  //       },
-  //     },
-  //     // 7
-  //     {
-  //       group: "4",
-  //       title: "Sorting Stability",
-  //       description: "Understand stable vs. unstable sorts.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText: "Which of these sorting algorithms are stable?",
-  //         options: ["Bubble Sort", "Quick Sort", "Merge Sort", "Insertion Sort"],
-  //         answer: ["Bubble Sort", "Merge Sort", "Insertion Sort"],
-  //       },
-  //     },
-  //     // 8
-  //     {
-  //       group: "4",
-  //       title: "Binary Search Precondition",
-  //       description: "Identify the primary requirement for binary search.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which precondition must hold true before performing a binary search on an array?",
-  //         options: [
-  //           "Array must be sorted",
-  //           "Array must contain unique elements",
-  //           "Array must be linked-list",
-  //           "Array must be in contiguous memory",
-  //         ],
-  //         answer: "Array must be sorted",
-  //       },
-  //     },
-  //     // 9
-  //     {
-  //       group: "4",
-  //       title: "Binary Search Steps",
-  //       description: "Order the core steps of the binary search algorithm.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange these steps in the order a binary search would perform them:",
-  //         options: [
-  //           "Compare target to middle element",
-  //           "Adjust low/high bounds",
-  //           "Return index if match",
-  //           "Compute middle index",
-  //         ],
-  //         answer: [
-  //           "Compute middle index",
-  //           "Compare target to middle element",
-  //           "Return index if match",
-  //           "Adjust low/high bounds",
-  //         ],
-  //       },
-  //     },
-  //     // 10
-  //     {
-  //       group: "4",
-  //       title: "Implementing Binary Search",
-  //       description: "Write an iterative binary search in Python.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write a Python function `binary_search(arr, target)` that returns the index of `target` or -1 if not found.",
-  //       },
-  //     },
-  //     // 11
-  //     {
-  //       group: "4",
-  //       title: "Divide-and-Conquer Pattern",
-  //       description: "Explain the divide-and-conquer strategy in algorithms.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "In two sentences, explain how the divide-and-conquer approach is used in merge sort and quick sort.",
-  //       },
-  //     },
-  //     // 12
-  //     {
-  //       group: "4",
-  //       title: "BFS vs. DFS",
-  //       description: "Distinguish breadth-first from depth-first traversal.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "Which traversal explores neighbors level by level?",
-  //         options: [
-  //           "Depth-First Search (DFS)",
-  //           "Breadth-First Search (BFS)",
-  //           "Binary Search",
-  //           "Merge Sort",
-  //         ],
-  //         answer: "Breadth-First Search (BFS)",
-  //       },
-  //     },
-  //     // 13
-  //     {
-  //       group: "4",
-  //       title: "DFS Recursive Implementation",
-  //       description: "Write a recursive depth-first search on a graph.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Given `graph` as adjacency dict, write `def dfs(node, visited): …` that prints each node once.",
-  //       },
-  //     },
-  //     // 14
-  //     {
-  //       group: "4",
-  //       title: "BFS Iterative Implementation",
-  //       description: "Use a queue for breadth-first search.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write a Python `bfs(start)` that uses `collections.deque` to traverse `graph` level by level.",
-  //       },
-  //     },
-  //     // 15
-  //     {
-  //       group: "4",
-  //       title: "Graph Representation",
-  //       description: "Choose a graph representation format.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "Which Python data structure best represents a sparse graph?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "Adjacency list",
-  //       },
-  //     },
-  //     // 16
-  //     {
-  //       group: "4",
-  //       title: "Traversal Complexity",
-  //       description: "Identify time complexity of BFS/DFS.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText:
-  //           "What is the time complexity of BFS or DFS on a graph with V vertices and E edges?",
-  //         options: ["O(V + E)", "O(V²)", "O(E log V)", "O(V + E log V)"],
-  //         answer: "O(V + E)",
-  //       },
-  //     },
-  //     // 17
-  //     {
-  //       group: "4",
-  //       title: "Priority Queue for Dijkstra",
-  //       description: "Use `heapq` in Dijkstra’s algorithm.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write Python code to import `heapq`, push `(0, start)`, pop the smallest distance.",
-  //       },
-  //     },
-  //     // 18
-  //     {
-  //       group: "4",
-  //       title: "Dijkstra Steps Ordering",
-  //       description: "Arrange the high-level steps of Dijkstra’s algorithm.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText: "Arrange these Dijkstra steps in order:",
-  //         options: [
-  //           "Initialize distances",
-  //           "Extract min-distance node",
-  //           "Relax its edges",
-  //           "Repeat until all nodes visited",
-  //         ],
-  //         answer: [
-  //           "Initialize distances",
-  //           "Extract min-distance node",
-  //           "Relax its edges",
-  //           "Repeat until all nodes visited",
-  //         ],
-  //       },
-  //     },
-  //     // 19
-  //     {
-  //       group: "4",
-  //       title: "Implementing Dijkstra Relaxation",
-  //       description: "Fill in the relaxation step inside Dijkstra’s loop.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText: "Complete the Python code to relax edges:",
-  //         options: [
-  //           `dist_u = dist[current]
-  // for neighbor, weight in graph[current]:
-  //     if dist_u + weight < dist[neighbor]:
-  //         dist[neighbor] = dist_u + weight
-  //         heapq.heappush(pq, (dist[neighbor], neighbor))`,
-
-  //           `dist_u = dist[current]
-  // for neighbor, weight in graph[current]:
-  //     if dist_u + weight < dist[neighbor]:
-  //         dist[neighbor] = dist_u + weight
-  //         # forgot to push to the queue`,
-
-  //           `dist_u = dist[current]
-  // for neighbor, weight in graph[current]:
-  //     if dist_u + weight <= dist[neighbor]:
-  //         dist[neighbor] = dist_u + weight
-  //         heapq.heappush(pq, (dist[neighbor], neighbor))`,
-
-  //           `dist_u = dist[neighbor]
-  // for neighbor, weight in graph[current]:
-  //     if dist_u + weight < dist[neighbor]:
-  //         dist[neighbor] = dist_u + weight
-  //         heapq.heappush(pq, (dist[neighbor], neighbor))`,
-
-  //           `dist_u = dist[current]
-  // for neighbor, weight in graph[current]:
-  //     if dist_u + weight < dist[neighbor]:
-  //         dist[neighbor] = dist_u + weight
-  //         heapq.heappush(pq, (neighbor, dist[neighbor]))`,
-  //         ],
-  //         answer: `dist_u = dist[current]
-  // for neighbor, weight in graph[current]:
-  //     if dist_u + weight < dist[neighbor]:
-  //         dist[neighbor] = dist_u + weight
-  //         heapq.heappush(pq, (dist[neighbor], neighbor))`,
-  //       },
-  //     },
-  //     // 20
-  //     {
-  //       group: "4",
-  //       title: "Real-World Graph Use Case",
-  //       description: "Reflect on graph algorithm applications.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Describe one real-world problem that can be solved using BFS, DFS, or Dijkstra’s algorithm.",
-  //       },
-  //     },
-  //     // 21
-  //     {
-  //       group: "4",
-  //       title: "Graph Construction in Code",
-  //       description: "Build a graph adjacency list from edge list.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Given `edges = [(0,1),(1,2),(2,0)]`, write code to build `graph` as `{0:[1],1:[2],2:[0]}`.",
-  //       },
-  //     },
-  //     // 22
-  //     {
-  //       group: "4",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [69, 89],
-  //       },
-  //     },
-  //     // 1
-  //     {
-  //       group: "5",
-  //       title: "Processes vs. Threads",
-  //       description: "Distinguish processes from threads in an operating system.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which statement correctly differentiates a process from a thread?",
-  //         options: [
-  //           "A process shares memory with other processes; a thread has its own memory",
-  //           "A process has its own memory space; threads within a process share memory",
-  //           "Threads run independently of the OS; processes require kernel scheduling",
-  //           "Processes are lighter weight than threads",
-  //         ],
-  //         answer: [
-  //           "A process has its own memory space; threads within a process share memory",
-  //         ],
-  //       },
-  //     },
-  //     // 2
-  //     {
-  //       group: "5",
-  //       title: "Scheduling Policies Ordering",
-  //       description:
-  //         "Order common CPU scheduling policies by their typical response time fairness.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange these scheduling policies from most fair (each process gets time) to least fair:",
-  //         options: [
-  //           "Round Robin",
-  //           "First-Come, First-Served (FCFS)",
-  //           "Shortest Job Next",
-  //           "Priority Scheduling",
-  //         ],
-  //         answer: [
-  //           "Round Robin",
-  //           "Shortest Job Next",
-  //           "FCFS",
-  //           "Priority Scheduling",
-  //         ],
-  //       },
-  //     },
-  //     // 3
-  //     {
-  //       group: "5",
-  //       title: "Context Switching Steps",
-  //       description:
-  //         "Order the high-level steps the OS takes during a context switch.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange these actions in the order performed during a context switch:",
-  //         options: [
-  //           "Save current CPU registers to PCB",
-  //           "Load next process’s registers from PCB",
-  //           "Update scheduler data structures",
-  //           "Jump to the next process’s instruction pointer",
-  //         ],
-  //         answer: [
-  //           "Save current CPU registers to PCB",
-  //           "Update scheduler data structures",
-  //           "Load next process’s registers from PCB",
-  //           "Jump to the next process’s instruction pointer",
-  //         ],
-  //       },
-  //     },
-  //     // 4
-  //     {
-  //       group: "5",
-  //       title: "Memory Management Overview",
-  //       description: "Explain why an OS needs to manage memory.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "In your own words, why does an operating system use memory management (e.g., paging, segmentation)?",
-  //       },
-  //     },
-  //     // 5
-  //     {
-  //       group: "5",
-  //       title: "Paging Definition",
-  //       description: "Identify the core concept of paging.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "What does paging in memory management refer to?",
-  //         options: [
-  //           "Dividing physical memory into fixed-size frames",
-  //           "Grouping processes into pages for scheduling",
-  //           "Loading entire processes into contiguous memory",
-  //           "Swapping registers between processes",
-  //         ],
-  //         answer: ["Dividing physical memory into fixed-size frames"],
-  //       },
-  //     },
-  //     // 6
-  //     {
-  //       group: "5",
-  //       title: "Segmentation Definition",
-  //       description: "Identify the core concept of segmentation.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "What is memory segmentation?",
-  //         options: [
-  //           "Combining multiple pages into one segment",
-  //           "Dividing memory into variable-sized logical segments",
-  //           "Allocating fixed-size frames to segments",
-  //           "Swapping entire segments between disk and RAM",
-  //         ],
-  //         answer: ["Dividing memory into variable-sized logical segments"],
-  //       },
-  //     },
-  //     // 7
-  //     {
-  //       group: "5",
-  //       title: "Virtual Memory Benefits",
-  //       description: "Reflect on why virtual memory is useful.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "List two benefits that virtual memory provides to applications and the OS.",
-  //       },
-  //     },
-  //     // 8
-  //     {
-  //       group: "5",
-  //       title: "Page Replacement Algorithms",
-  //       description:
-  //         "Order common page-replacement strategies by their eviction policy.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText: "Arrange these algorithms by which page they evict:",
-  //         options: [
-  //           "FIFO (First-In, First-Out)",
-  //           "LRU (Least Recently Used)",
-  //           "Optimal (theoretical best)",
-  //           "Clock (second-chance)",
-  //         ],
-  //         answer: [
-  //           "FIFO (First-In, First-Out)",
-  //           "Clock (second-chance)",
-  //           "LRU (Least Recently Used)",
-  //           "Optimal (theoretical best)",
-  //         ],
-  //       },
-  //     },
-  //     // 9
-  //     {
-  //       group: "5",
-  //       title: "File Descriptor Basics",
-  //       description:
-  //         "Identify the role of file descriptors in UNIX-like systems.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What integer values are typically used for standard input, output, and error file descriptors?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "0, 1, and 2",
-  //       },
-  //     },
-  //     // 10
-  //     {
-  //       group: "5",
-  //       title: "File Buffering Layers",
-  //       description: "Select which layers buffer file I/O operations.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following buffer data during file operations?",
-  //         options: [
-  //           "Application-level buffers (e.g., stdio)",
-  //           "OS page cache",
-  //           "Disk controller cache",
-  //           "CPU register cache",
-  //         ],
-  //         answer: [
-  //           "Application-level buffers (e.g., stdio)",
-  //           "OS page cache",
-  //           "Disk controller cache",
-  //         ],
-  //       },
-  //     },
-  //     // 11
-  //     {
-  //       group: "5",
-  //       title: "Device Types",
-  //       description: "Distinguish block devices from character devices.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following are block devices versus character devices?",
-  //         options: [
-  //           "Hard disk (block)",
-  //           "Serial port (char)",
-  //           "Keyboard (char)",
-  //           "USB mass storage (block)",
-  //         ],
-  //         answer: [
-  //           "Hard disk (block)",
-  //           "USB mass storage (block)",
-  //           "Serial port (char)",
-  //           "Keyboard (char)",
-  //         ],
-  //       },
-  //     },
-  //     // 12
-  //     {
-  //       group: "5",
-  //       title: "System Call Sequence",
-  //       description: "Order the steps when making a file read system call.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText: "Arrange these steps for `read()` system call:",
-  //         options: [
-  //           "User process invokes read() in libc",
-  //           "Mode switch to kernel",
-  //           "Kernel locates file and copies data",
-  //           "Mode switch back to user",
-  //         ],
-  //         answer: [
-  //           "User process invokes read() in libc",
-  //           "Mode switch to kernel",
-  //           "Kernel locates file and copies data",
-  //           "Mode switch back to user",
-  //         ],
-  //       },
-  //     },
-  //     // 13
-  //     {
-  //       group: "5",
-  //       title: "Reading a File in Python",
-  //       description: "Practice file I/O with Python’s built-in functions.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write Python code to open `data.txt`, read its contents into a string, and close the file.",
-  //       },
-  //     },
-  //     // 14
-  //     {
-  //       group: "5",
-  //       title: "File Permissions Overview",
-  //       description: "Explain how UNIX file permissions work.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Describe the three permission types (r, w, x) and who (owner, group, others) they apply to.",
-  //       },
-  //     },
-  //     // 15
-  //     {
-  //       group: "5",
-  //       title: "Caching Strategies",
-  //       description: "Select common caching strategies used by OS and hardware.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText: "Which of these are caching strategies?",
-  //         options: [
-  //           "Write-back",
-  //           "Write-through",
-  //           "Write-around",
-  //           "Write-behind",
-  //         ],
-  //         answer: ["Write-back", "Write-through", "Write-around"],
-  //       },
-  //     },
-  //     // 16
-  //     {
-  //       group: "5",
-  //       title: "Mounting Filesystems",
-  //       description: "Understand how filesystems are mounted in UNIX.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "In one sentence, explain what the `mount` command does in UNIX-like systems.",
-  //       },
-  //     },
-  //     // 17
-  //     {
-  //       group: "5",
-  //       title: "Syscall vs Library Call",
-  //       description:
-  //         "Differentiate system calls from library (user-space) calls.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What is the main difference between a system call and a standard library call?",
-  //         placeholder: "Type your answer here...",
-  //         answer:
-  //           "System calls transition to kernel mode; library calls stay in user mode",
-  //       },
-  //     },
-  //     // 18
-  //     {
-  //       group: "5",
-  //       title: "Memory Protection Mechanisms",
-  //       description: "Identify mechanisms the OS uses to protect process memory.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which features help protect one process’s memory from another?",
-  //         options: [
-  //           "Virtual memory paging",
-  //           "Segmentation",
-  //           "Address Space Layout Randomization (ASLR)",
-  //           "Process context switches",
-  //         ],
-  //         answer: [
-  //           "Virtual memory paging",
-  //           "Segmentation",
-  //           "Address Space Layout Randomization (ASLR)",
-  //         ],
-  //       },
-  //     },
-  //     // 19
-  //     {
-  //       group: "5",
-  //       title: "Journaling File Systems",
-  //       description: "Explain why journaling helps file-system reliability.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "In two sentences, describe how journaling in a file system prevents data corruption after a crash.",
-  //       },
-  //     },
-  //     // 20
-  //     {
-  //       group: "5",
-  //       title: "OS Logging Facilities",
-  //       description: "Understand how the OS logs events and errors.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Name a common operating system logging facility and what it’s used for.",
-  //       },
-  //     },
-  //     // 21
-  //     {
-  //       group: "5",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [91, 110],
-  //       },
-  //     },
-  //   ],
-  en: [
-    {
-      group: "introduction",
-      title: "Introduction To Software Development",
-      isStudyGuide: true,
-      description:
-        "Expose yourself to fundamentals to improve the quality of your learning before making progress.",
-      question: {
-        questionText: (
-          <div>
-            <p style={{ marginBottom: 12 }}>
-              {" "}
-              One of the best predictors for student success is exposure to
-              course material before studying it.
-            </p>
-
-            <p style={{ marginBottom: 12 }}>
-              Remember to fail faster and fail forward! The real education
-              happens when you push through a challenge.
-            </p>
-          </div>
-        ),
-        metaData: `### Advice
-  I know this looks like ChatGPT content... 
-
-  but it's not -_-" It's me!
-
-  It's important to remember this as a beginner:
-
-  1. Building things with software is mostly about organizing information rather than being good at math. Programming languages use logic and computation to express ideas instead of equations and algebra.
-
-  2. Like the English language, you can express things in many different ways.
-
-  3. When something challenges you, fail faster and break the problem into more understandable steps.
-
-
-  ### Exposure
-  The idea here is to expose you to concepts before you start to answer questions about it in the app so you aren't intimidated by it later. Don't worry about not understanding everything. In fact, try your best to make sense out of it at a glance or use AI to your advantage to create an understanding.
-
-  ### Code
-
-  Let's observe these lists. We can see that:
-  - \`my_custom_data && my_custom_list\` are equivalent.
-  - \`data_set && data_object\` are also fundamentally equivalent.
-
-
-  \`\`\`js
-  let my_custom_data = [1, 2, 3, 'a', 'b', 'c', null, false]
-  const my_custom_list = new Array(1,2,3,'a','b','c', null, false)
-  my_custom_data.push('new data')
-  my_custom_list.push('new data')
-
-  let data_set = {
-    introduction: "Welcome",
-    title: "Chapter 1",
-    is_live: true
-  }
-  data_set.page = 4
-  data_set['book'] = 'Coding Basics'
-
-  let data_object = new Object()
-  data_object.introduction = 'Welcome'
-  data_object.title = 'Chapter 1'
-  data_object.is_live = true
-  data_object.page = 4
-  data_object['book'] = 'Coding Basics'
-
-  \`\`\`
-
-  Additionally, in the example above, we're exposed to variable definitions, data types, arrays, functions and objects. A lot of the software that you likely operates on those concepts under the hood. This is way \`[]\` and \`new Array\` can create the same data - it translates the same way when it comes to turning your code into signals that can be sent across the internet.
-
-  Now in the example below, we take a look at creating our own custom objects. We create our own custom object, along with an interface of functions. Generally when it comes to data, you're able to create, retrieve, update or delete it in some form or another.
-
-  \`\`\`js
-  class House {
-    house_paint = null
-
-    constructor(paint){
-      this.house_paint = paint
+  en: [{
+    "group": "introduction",
+    "title": "Introduction To Software Development",
+    "isStudyGuide": true,
+    "description": "Expose yourself to fundamentals to improve the quality of your learning before making progress.",
+    "question": {
+      "questionText": "Read about the fundamentals of software in the study guide before starting."
     }
-
-    getPaint(){
-      return this.house_paint
+  }, {
+    "group": "tutorial",
+    "title": "Multiple Choice",
+    "description": "Choose one answer.",
+    "isMultipleChoice": true,
+    "question": {
+      "questionText": "Which value is a JavaScript number?",
+      "options": ["42", "'42'", "true", "null"],
+      "answer": "42"
     }
-
-    setPaint(paint) = (paint) => {
-      this.house_paint = paint
+  }, {
+    "group": "tutorial",
+    "title": "Multiple Answer",
+    "description": "Choose every correct answer.",
+    "isMultipleAnswerChoice": true,
+    "question": {
+      "questionText": "Which names can declare a JavaScript variable?",
+      "options": ["let", "const", "style", "return"],
+      "answer": ["let", "const"]
     }
-
-    deletePaint = () => {
-      this.house_paint = null
-    }
-  }
-
-  let first_home = new House("pink")
-  let next_home = new House("blue")
-
-  let first_paint = first_house.getPaint() // returns the value "pink"
-  let next_paint = new_home.house_paint // returns the value "blue"
-  next_paint = new_home['house_paint'] // still returns the value 'blue'
-
-  \`\`\`
-
-  So that's creating data and working with data. You'll find that you can usually combine ideas depending on what you need to create. For example, the above component can also be written the following way:
-
-  \`\`\`js
-  function createHouse(paint = null) {
-    return {
-      house_paint: paint,
-
-      getPaint() {
-        return this.house_paint;
-      },
-
-      setPaint(paint) {
-        this.house_paint = paint;
-      },
-
-      deletePaint() {
-        this.house_paint = null;
-      },
-    };
-  }
-
-  //what is the value of the result by the end of the program?
-  const myHouse = createHouse('blue');
-  let paint = myHouse.house_paint;
-
-  myHouse.house_paint = 'red'; 
-  paint = myHouse.getPaint()
-
-  myHouse.setPaint('green'); 
-  paint = myHouse.house_paint
-
-  myHouse.deletePaint(); 
-
-  let result = myHouse['house_paint']
-  \`\`\`
-
-
-  Finally, we combine this to work with some code that renders the following screen
-  \`\`\`jsx
-  const CelebrationMessage = ({ name }) => {
-    const styling_data = {
-      textAlign: 'center'
-    }
-    
-    return <div style={styling_data}>{name}</div>
-  }
-
-  const App = () => {
-    return (
-      <section style={{ border: '3px solid black' }}>
-        <header>
-          <h2>Good job!</h2>
-        </header>
-        
-        <CelebrationMessage name="You created a small app!" />
-      </section>
-    )
-  }
-  \`\`\`
-
-
-  And that's all! In the last example, we've used a library called React, which gives us access to special functions that are specialized for rendering elements on a screen. But it follows the same thought process as the stuff before it.
-
-  ### Conclusion
-  Remember that failing faster is in your best interest when learning new skills with software. This one pager document will be available inside of the app. There are also many other features to help your journey along the way, but I'll leave that to your exploration of the platform and everything it has to offer.
-
-  Stay focused and best of luck with the rest!
-
-          `,
-      },
-    },
-    //     {
-    //   group: "tutorial",
-    //   title: "Writing Effective Prompts",
-    //   description: "Learn to craft AI prompts that get the right answer.",
-    //   isPromptWriting: true,
-    //   question: {
-    //     questionText:
-    //       "Write a prompt that asks the AI to summarize your day in three bullet points.",
-    //     // you could optionally include a rubric or example in metadata
-    //     metaData: {
-    //       rubric: "Great prompts are clear about: task, format, length, tone.",
-    //     },
-    //   },
-    // },
-    {
-      group: "tutorial",
-      title: "Understanding Coding",
-      description: "Grasp the basic concept of coding.",
-      isMultipleChoice: true,
-      // isMultipleAnswerChoice: true,
-      question: {
-        questionText: "Which of the following best describes coding?",
-        options: [
-          "Writing instructions for computers to perform tasks",
-          "Creating physical components for computers",
-          "Designing user interfaces",
-          "Managing databases",
-        ],
-        answer: "Writing instructions for computers to perform tasks",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Sequence of Program Execution",
-      description: "Learn the correct order of program execution.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps with drag-and-drop and order how programs execute.",
-        options: [
-          "Code Compilation",
-          "Writing Code",
-          "Executing Program",
-          "Debugging",
-        ],
-        answer: [
-          "Writing Code",
-          "Code Compilation",
-          "Debugging",
-          "Executing Program",
-        ],
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Introduction to Variables",
-      description:
-        "In this step, you will learn about variables and how to use them in your code.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Select all the steps involved in correctly declaring a variable in JavaScript:",
-        options: [
-          "Use the var/let/const keyword",
-          "Choose a descriptive variable name",
-          "Assign a value using the single equals sign (=)",
-          "Initialize the variable inside curly braces {}",
-          "Declare the variable after assigning a value",
-          "Capitalize the first letter of the variable name",
-        ],
-        answer: [
-          "Use the var/let/const keyword",
-          "Choose a descriptive variable name",
-          "Assign a value using the single equals sign (=)",
-        ],
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Understanding Variable Declarations for Lists",
-      description:
-        "Complete the code by selecting the correct way to declare a array of items (array) in JavaScript.",
-      isCodeCompletion: true,
-      question: {
-        questionText: "Which code block correctly declares a list of items?",
-        options: [
-          // Option 1: Correct array declaration
-
-          // Option 2: Function returning a string
-          `const items = function() {
-  return 'apple, banana, cherry';
-};`,
-
-          // Option 3: Single string of items
-          `const items = 'apple, banana, cherry';`,
-
-          // Option 4: Object with key-value pairs
-          `const items = {
-  fruit1: 'apple',
-  fruit2: 'banana',
-  fruit3: 'cherry'
-};`,
-
-          // Option 5: Class that stores items as properties
-          `class Items {
-  constructor() {
-    this.fruit1 = 'apple';
-    this.fruit2 = 'banana';
-    this.fruit3 = 'cherry';
-  }
-}
-const items = new Items();`,
-          `const items = ['apple', 'banana', 'cherry'];`,
-        ],
-        answer: `const items = ['apple', 'banana', 'cherry'];`,
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Variable Declaration in JavaScript",
-      description: "Learn how to declare variables in JavaScript.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Declare a variable named `age` and assign it the value `25`.",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Understanding Data Types",
-      description: "Learn the basics of data types in JavaScript.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What keyword is used to declare a constant in JavaScript?",
-        placeholder: "Type your answer here...",
-        answer: "const",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Purpose of Variables",
-      description: "Understand why variables are used in programming.",
-      isText: true,
-      question: {
-        questionText:
-          "In your own words, explain the purpose of variables in programming.",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Bash Terminal Practice: Changing Directories",
-      description: "Practice changing directories in a terminal environment.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "Enter the command to change to the new_folder directory using a bash terminal",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Build Your App",
-      isConversationReview: true,
-      description: "Build an app based on your progress",
-      question: {
-        questionText: "Enter an app idea and build it as you make progress!",
-        range: [1, 8], // Indices of steps to review
-      },
-    },
-
-    // Cycle 2 (No Terminal)
-    {
-      group: "1",
-      title: "Data Types in Programming",
-      description:
-        "Identify different primitive data types used in JavaScript.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are primitive data types in JavaScript?",
-        options: [
-          "String",
-          "Function",
-          "Number",
-          "Object",
-          "Boolean",
-          "Null",
-          "Array",
-          "BigInt",
-          "Undefined",
-          "Symbol",
-        ],
-        answer: [
-          "String",
-          "Number",
-          "Boolean",
-          "Null",
-          "Undefined",
-          "Symbol",
-          "BigInt",
-        ],
-      },
-    },
-
-    {
-      group: "1",
-      title: "Steps to Create a Function",
-      description: "Understand the sequence of creating a function.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps with drag-and-drop to create and use a function.",
-        options: [
-          "Define the function",
-          "Call the function",
-          "Execute the function body",
-          "Return a value",
-        ],
-        answer: [
-          "Define the function",
-          "Call the function",
-          "Execute the function body",
-          "Return a value",
-        ],
-      },
-    },
-    {
-      group: "1",
-      title: "Writing a Simple Function",
-      description: "Practice writing functions in JavaScript.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write a function named `greet` that takes a name as a parameter and logs a greeting with the name.",
-      },
-    },
-    {
-      group: "1",
-      title: "Functions in Programming",
-      description: "Discuss the role of functions.",
-      isText: true,
-      question: {
-        questionText:
-          "What is a function, and why is it useful in programming?",
-      },
-    },
-    // Cycle 3 with Terminal
-    {
-      group: "1",
-      title: "Conditional Statements",
-      description: "Identify the purpose of conditional statements.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "What is the primary purpose of an `if` statement?",
-        options: [
-          "To repeat a block of code multiple times",
-          "To execute a block of code based on a condition",
-          "To define a variable",
-          "To import external libraries",
-        ],
-        answer: "To execute a block of code based on a condition",
-      },
-    },
-    {
-      group: "1",
-      title: "Order of Conditional Checks",
-      description: "Complete the code that evaluates an `if-else` statement.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Complete the following code to correctly implement an `if-else` statement that checks if a variable `x` is greater than 10, equal to 10, or less than 10.",
-        options: [
-          // Option 1: Partially complete if-else statement
-          "if (x > 10) { \n  console.log('x is greater than 10'); \n} else if (x === 10) { \n  console.log('x is equal to 10'); \n} else { \n  console.log('x is less than 10'); \n}",
-
-          // Option 2: Incorrect use of equality and missing else block
-          "if (x == 10) { \n  console.log('x is equal to 10'); \n} else if (x > 10) { \n  console.log('x is greater than 10'); \n}",
-
-          // Option 3: Missing else-if statement
-          "if (x > 10) { \n  console.log('x is greater than 10'); \n} else { \n  console.log('x is not greater than 10'); \n}",
-
-          // Option 4: Incorrect use of conditions
-          "if (x >= 10) { \n  console.log('x is greater than or equal to 10'); \n} else { \n  console.log('x is less than 10'); \n}",
-
-          // Option 5: Correct but over-complicated code with nested ifs
-          "if (x > 10) { \n  console.log('x is greater than 10'); \n  if (x === 10) { \n    console.log('x is equal to 10'); \n  } \n} else { \n  console.log('x is less than 10'); \n}",
-        ],
-        answer:
-          "if (x > 10) { \n  console.log('x is greater than 10'); \n} else if (x === 10) { \n  console.log('x is equal to 10'); \n} else { \n  console.log('x is less than 10'); \n}",
-      },
-    },
-    {
-      group: "1",
-      title: "Implementing Conditional Logic",
-      description: "Apply conditional logic in code.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write an `if-else` statement that checks if a number `num` is positive, negative, or zero, and logs an appropriate message.",
-      },
-    },
-
-    {
-      group: "1",
-      title: "Understanding Conditional Logic in Programming",
-      description:
-        "Learn how logical operators like AND (&&) and OR (||) control conditions in programming.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "Which logical operator is used to check if both conditions in a conditional statement are true?",
-        placeholder: "Type your answer here...",
-        answer: "&&",
-      },
-    },
-    {
-      group: "1",
-      title: "Real-world Use of Conditionals",
-      description: "Reflect on how conditionals are used.",
-      isText: true,
-      question: {
-        questionText:
-          "Provide an example of how conditional statements are used in real-world applications.",
-      },
-    },
-    {
-      group: "1",
-      title: "Terminal Practice: Help Command",
-      description: "Write the help command to observe basic commands.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "In a Bash terminal environment, enter the help command to discover basic commands.",
-      },
-    },
-    // Cycle 4 (No Terminal)
-    {
-      group: "1",
-      title: "Loops in Programming",
-      description: "Understand the purpose of loops.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which loop will continue executing as long as its condition remains true?",
-        options: ["for loop", "while loop", "do...while loop", "foreach loop"],
-        answer: "while loop",
-      },
-    },
-    {
-      group: "1",
-      title: "Sequence of Loop Execution",
-      description: "Grasp the order in which loops execute.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps of a `for` loop execution with drag-and-drop.",
-        options: [
-          "Initialization",
-          "Condition Check",
-          "Execution of Code Block",
-          "Increment/Decrement",
-        ],
-        answer: [
-          "Initialization",
-          "Condition Check",
-          "Execution of Code Block",
-          "Increment/Decrement",
-        ],
-      },
-    },
-    {
-      group: "1",
-      title: "Creating a Loop",
-      description: "Practice writing loops.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText: "Write a `for` loop that prints numbers from 1 to 5.",
-      },
-    },
-    //next lecture
-    {
-      group: "1",
-      title: "Applications of Loops",
-      description: "Discuss where loops are useful.",
-      isText: true,
-      question: {
-        questionText:
-          "Describe a scenario in software development where loops are essential.",
-      },
-    },
-    // Cycle 5 with Terminal
-    {
-      group: "1",
-      title: "Arrays in JavaScript",
-      description:
-        "Identify methods used for manipulating arrays in JavaScript.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following methods are valid for manipulating arrays in JavaScript?",
-        options: [
-          ".includes()",
-          ".push()",
-          ".pop()",
-          ".forEach()",
-          ".length()",
-          ".map()",
-          ".filter()",
-          ".join()",
-        ],
-        answer: [".push()", ".pop()", ".map()", ".filter()", ".join()"],
-      },
-    },
-    {
-      group: "1",
-      title: "Order of Array Operations",
-      description: "Understand how array operations are performed.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Complete the code to declare an array, add an element to it, remove the last element, and then access an element.",
-        options: [
-          // Option 1: Correctly completes all steps
-
-          // Option 2: Incorrect placement of push and pop
-          "let fruits = ['apple', 'banana']; \nfruits.pop(); \nfruits.push('pink'); \nconsole.log(fruits[0]);",
-
-          // Option 3: Incorrect array declaration
-          "var fruits = 'apple', 'banana'; \nfruits.push('pink'); \nfruits.pop(); \nconsole.log(fruits[0]);",
-          "let fruits = ['apple', 'banana']; \nfruits.push('pink'); \nfruits.pop(); \nconsole.log(fruits[0]);",
-
-          // Option 4: Missing access of array element
-          "let fruits = ['apple', 'banana']; \nfruits.push('pink'); \nfruits.pop();",
-
-          // Option 5: Incorrect pop usage (removes specific element instead of last)
-          "let fruits = ['apple', 'banana']; \nfruits.push('pink'); \nfruits.pop('banana'); \nconsole.log(fruits[0]);",
-        ],
-        answer:
-          "let fruits = ['apple', 'banana']; \nfruits.push('pink'); \nfruits.pop(); \nconsole.log(fruits[0]);",
-      },
-    },
-    //next lecture
-    {
-      group: "1",
-      title: "Manipulating Arrays",
-      description: "Apply array methods in code.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Create an array `fruits` with 'apple' and 'banana'. Add 'pink' to the end and remove 'apple' from the beginning.",
-      },
-    },
-    {
-      group: "1",
-      title: "Use Cases for Arrays",
-      description: "Explore scenarios where array types are used.",
-      isText: true,
-      question: {
-        questionText:
-          "Provide an example of how an array can be used to manage data in a web application.",
-      },
-    },
-    {
-      group: "1",
-      title: "Terminal Practice: Creating Directories",
-      description: "Creating directory command in a bash terminal",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "In a bash terminal environment, create a directory called app using the make directory command",
-      },
-    },
-    //next lecture
-    {
-      group: "1",
-      title: "Advanced Coding Output",
-      description:
-        "Predict the output of the following code with arrays, conditionals, logical operators, and array functions.",
-      isSingleLineText: true,
-      question: {
-        questionText: (
-          <div>
-            What will be the output of the following code?
-            <br />
-            <pre>
-              {`
-let arr = [1, 2, 3, 4];
-let x = 10;
-let y = 5;
-
-if (x > y && arr.length > 3) {
-  arr.push(x);  
-  arr = arr.filter(n => n % 2 === 0);
-}
-
-console.log(arr);
-
-             `}{" "}
-            </pre>
-          </div>
-        ),
-        placeholder: "Type your answer here...",
-        answer: "[2, 4, 10]",
-      },
-    },
-    {
-      group: "1",
-      title: "Build Your App",
-      isConversationReview: true,
-      description: "Build an app based on your progress",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [9, 17], // Indices of steps to review
-      },
-    },
-    {
-      group: "2",
-      title: "Introduction to Objects",
-      description:
-        "In this step, you will learn what an object is in programming.",
-      isSingleLineText: true, // Single line text question type
-      question: {
-        questionText:
-          "In programming, what keyword is used to create an object in JavaScript?",
-        placeholder: "Type your answer here...", // Placeholder for the input
-        answer: "new", // Expected one-word answer for object creation
-      },
-    },
-    {
-      group: "2",
-      title: "Understanding the Constructor Method",
-      description:
-        "In this step, you will learn about the purpose of the `constructor` method in a class.",
-      isCodeCompletion: true, // Correctly indicates it's a code completion problem
-      question: {
-        questionText: `Which of the following code blocks correctly defines the constructor method and uses the "new" keyword for class instantiation?`,
-
-        options: [
-          // Option 1: Correct constructor method with new keyword
-          `class Car {
-  constructor(brand) {
-    this.brand = brand;
-  }
-
-  drive() {
-    console.log('The car is driving');
-  }
-}
-
-const myCar = new Car('Toyota');`,
-
-          // Option 2: Incorrect - missing parameter
-          `class Car {
-  constructor() {
-    this.brand = 'Toyota';
-  }
-
-  drive() {
-    console.log('The car is driving');
-  }
-}
-
-const myCar = new Car();`,
-
-          // Option 3: Incorrect - wrong syntax
-          `class Car {
-  constructor = (brand) => {
-    this.brand = brand;
-  }
-
-  drive() {
-    console.log('The car is driving');
-  }
-}
-
-const myCar = new Car('Toyota');`,
-
-          // Option 4: Incorrect - uses method name instead of constructor
-          `class Car {
-  Car(brand) {
-    this.brand = brand;
-  }
-
-  drive() {
-    console.log('The car is driving');
-  }
-}
-
-const myCar = new Car('Toyota');`,
-        ],
-
-        answer: `class Car {
-  constructor(brand) {
-    this.brand = brand;
-  }
-
-  drive() {
-    console.log('The car is driving');
-  }
-}
-
-const myCar = new Car('Toyota');`, // The correct answer
-      },
-    },
-    {
-      group: "2",
-      title: "Transforming Arrays with map",
-      description:
-        "In this step, you will learn how to transform an array of objects into new values using the .map() array method.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which of the following code blocks correctly uses `.map()` to extract an array of all car brands?",
-        options: [
-          `const cars = [
-  { brand: 'Toyota', model: 'Corolla' },
-  { brand: 'Honda', model: 'Civic' }
-];
-
-const brands = cars.map(car => car.brand);`,
-          `const cars = [
-  { brand: 'Toyota', model: 'Corolla' },
-  { brand: 'Honda', model: 'Civic' }
-];
-
-const brands = cars.filter(car => car.brand);`,
-          `const cars = [
-  { brand: 'Toyota', model: 'Corolla' },
-  { brand: 'Honda', model: 'Civic' }
-];
-
-const brands = cars.forEach(car => return car.brand);`,
-          `const cars = [
-  { brand: 'Toyota', model: 'Corolla' },
-  { brand: 'Honda', model: 'Civic' }
-];
-
-const brands = cars.map(brand);`,
-        ],
-        answer: `const cars = [
-  { brand: 'Toyota', model: 'Corolla' },
-  { brand: 'Honda', model: 'Civic' }
-];
-
-const brands = cars.map(car => car.brand);`,
-      },
-    },
-    {
-      group: "2",
-      title: "Creating an Instance of a Class",
-      description:
-        "In this step, you will learn how to create an instance of a class in JavaScript.",
-      isMultipleAnswerChoice: true, // Indicates it's a multiple answer question
-      question: {
-        questionText:
-          "Select all the correct steps required to create an instance of a class in JavaScript:",
-        options: [
-          // Correct options
-          "Define a class using the `class` keyword",
-          "Define the class with the `function` keyword",
-          "Use the `new` keyword to create an instance",
-          "Declare the class instance with `const classInstance = Car()`",
-          "Pass arguments required by the constructor when calling the class",
-          "Store the new instance in a variable",
-          "Call the class directly without the `new` keyword",
-          "Instantiate the class before defining it",
-
-          // Incorrect options
-        ],
-        answer: [
-          // The 4 correct options
-          "Define a class using the `class` keyword",
-          "Use the `new` keyword to create an instance",
-          "Pass arguments required by the constructor when calling the class",
-          "Store the new instance in a variable",
-        ],
-      },
-    },
-    {
-      group: "2",
-      title: "Declaring a Method in a Class",
-      description:
-        "In this step, you will learn how to declare a method inside a class.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Declare a method named `updateModel` in the `Car` class that updates the `model` property.",
-      },
-    },
-
-    //next lecture
-    {
-      group: "2",
-      title: "Using the `this` Keyword",
-      description:
-        "Complete the code by selecting the correct way to use the `this` keyword in a class method.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which code block correctly uses the `this` keyword to refer to the object's property?",
-        options: [
-          // Option 1: Correct use of the `this` keyword
-
-          // Option 2: Incorrect use of the global object
-          `class Car {
-  constructor(brand) {
-    this.brand = brand;
-  }
-
-  showBrand() {
-    console.log(brand);
-  }
-}
-
-const myCar = new Car('Toyota');
-myCar.showBrand();`,
-          `class Car {
-  constructor(brand) {
-    this.brand = brand;
-  }
-
-  showBrand() {
-    console.log(this.brand);
-  }
-}
-
-const myCar = new Car('Toyota');
-myCar.showBrand();`,
-
-          // Option 3: Incorrect reference to class name
-          `class Car {
-  constructor(brand) {
-    brand = this.brand;
-  }
-
-  showBrand() {
-    console.log(brand);
-  }
-}
-
-const myCar = new Car('Toyota');
-myCar.showBrand();`,
-
-          // Option 4: Incorrect reference to method name
-          `class Car {
-  constructor(brand) {
-    brand = this.brand;
-  }
-
-  showBrand() {
-    console.log(this.brand);
-  }
-}
-
-const myCar = new Car('Toyota');
-myCar.showBrand();`,
-        ],
-        answer: `class Car {
-  constructor(brand) {
-    this.brand = brand;
-  }
-
-  showBrand() {
-    console.log(this.brand);
-  }
-}
-
-const myCar = new Car('Toyota');
-myCar.showBrand();`,
-      },
-    },
-    {
-      group: "2",
-      title: "Adding Properties to an Object",
-      description:
-        "In this step, you will learn how to add properties to an object in JavaScript.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText: "Add a new property `year` to the `Car` class.",
-      },
-    },
-    {
-      group: "2",
-      title: "Accessing and Modifying Object Properties",
-      description:
-        "In this step, you will learn how to get or set properties of an object in JavaScript, either by directly accessing properties or by using getter and setter functions.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are valid ways to get or set properties in a JavaScript object?",
-        options: [
-          "Use a function call to delete a property (e.g., obj.deleteProperty())",
-          "Use bracket notation to access a property (e.g., obj['property'])",
-          "Use a setter function to update a property value",
-          "Use dot notation to access a property (e.g., obj.property)",
-          "Use a getter function to return a property value",
-          "Directly call obj.property() to access a property",
-        ],
-        answer: [
-          "Use dot notation to access a property (e.g., obj.property)",
-          "Use bracket notation to access a property (e.g., obj['property'])",
-          "Use a getter function to return a property value",
-          "Use a setter function to update a property value",
-        ],
-      },
-    },
-
-    //next lecture
-    {
-      group: "2",
-      title: "Modifying Object Properties",
-      description:
-        "In this step, you will learn how to modify properties of an object in JavaScript.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Modify the `model` property of an instance of the `Car` class.",
-      },
-    },
-    {
-      group: "2",
-      title: "Understanding Inheritance",
-      description:
-        "In this step, you will learn about inheritance in object-oriented programming.",
-      isText: true,
-      question: {
-        questionText: "What is inheritance in object-oriented programming?",
-      },
-    },
-    {
-      group: "2",
-      title: "Implementing Inheritance",
-      description:
-        "In this step, you will implement inheritance in JavaScript by extending a class.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Extend the `Car` class to create an `ElectricCar` class with an additional property `batteryLife`.",
-      },
-    },
-
-    //next lecture
-    {
-      group: "2",
-      title: "Overriding Methods",
-      description:
-        "In this step, you will learn how to override methods in a subclass.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "What does it mean to override a method in a subclass?",
-        options: [
-          "To delete the method from the class",
-          "To replace a method inherited from the superclass",
-          "To inherit a method without changes",
-          "To call a method from a different class",
-          "To extend a method's functionality in the subclass",
-        ],
-        answer: "To replace a method inherited from the superclass",
-      },
-    },
-
-    {
-      group: "2",
-      title: "Understanding Encapsulation",
-      description:
-        "In this step, you will learn about encapsulation in object-oriented programming.",
-      isText: true,
-      question: {
-        questionText: "What is encapsulation in object-oriented programming?",
-      },
-    },
-    {
-      group: "2",
-      title: "Implementing Encapsulation",
-      description:
-        "In this step, you will implement encapsulation by using getter and setter methods.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Add getter and setter methods for the `batteryLife` property in the `ElectricCar` class.",
-      },
-    },
-
-    //next lecture
-    {
-      group: "2",
-      title: "Object Destructuring and Spread Syntax",
-      description:
-        "In this step, you will learn how to extract properties from objects using destructuring and create updated copies using the spread operator.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which code block correctly extracts `brand` using destructuring and creates `updatedCar` with the spread operator?",
-        options: [
-          `const car = { brand: 'Tesla', model: 'Model 3', year: 2023 };
-const { brand } = car;
-const updatedCar = { ...car, year: 2024 };`,
-          `const car = { brand: 'Tesla', model: 'Model 3', year: 2023 };
-const [ brand ] = car;
-const updatedCar = car + { year: 2024 };`,
-          `const car = { brand: 'Tesla', model: 'Model 3', year: 2023 };
-const brand = car{brand};
-const updatedCar = copy(car, year: 2024);`,
-          `const car = { brand: 'Tesla', model: 'Model 3', year: 2023 };
-const { brand } = car;
-const updatedCar = { car, year: 2024 };`,
-        ],
-        answer: `const car = { brand: 'Tesla', model: 'Model 3', year: 2023 };
-const { brand } = car;
-const updatedCar = { ...car, year: 2024 };`,
-      },
-    },
-    {
-      group: "2",
-      title: "Combining Concepts",
-      description:
-        "In this step, you will combine various concepts learned to create a small project.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Create a small project that defines a `Person` class, uses inheritance to create a `Student` class, and demonstrates encapsulation and arrays of objects.",
-      },
-    },
-    {
-      group: "2",
-      title: "Printing In The Terminal",
-      description: "In this step, you will print a message using the terminal",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "Type a command to print the message: 'I'm talking to the inside of a computer!'",
-      },
-    },
-    //next lecture
-    {
-      group: "2",
-      title: "Build Your App",
-      isConversationReview: true,
-      description: "Build an app based on your progress",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [18, 30], // Indices of steps to review
-      },
-    },
-    {
-          "group": "3",
-          "title": "Semantic HTML Elements",
-          "description": "In this step, you will match semantic HTML tags to their structural roles in modern web design.",
-          "isMatchPairs": true,
-          "showPreview": true,
-          "question": {
-                "questionText": "Match each semantic HTML tag to its primary structural role on the page:",
-                "pairs": [
-                      {
-                            "left": "<main>",
-                            "right": "The dominant content area of the webpage"
-                      },
-                      {
-                            "left": "<nav>",
-                            "right": "The container for primary navigation links"
-                      },
-                      {
-                            "left": "<article>",
-                            "right": "A self-contained composition like a post or card"
-                      },
-                      {
-                            "left": "<button>",
-                            "right": "An interactive clickable element for user actions"
-                      }
-                ],
-                "choices": [
-                      "The dominant content area of the webpage",
-                      "The container for primary navigation links",
-                      "A self-contained composition like a post or card",
-                      "An interactive clickable element for user actions"
-                ],
-                "answer": {
-                      "<main>": "The dominant content area of the webpage",
-                      "<nav>": "The container for primary navigation links",
-                      "<article>": "A self-contained composition like a post or card",
-                      "<button>": "An interactive clickable element for user actions"
-                },
-                "previewCode": "function Demo() {\n  const [tab, setTab] = useState('Home');\n  return (\n    <main style={{ padding: '12px', fontFamily: 'system-ui, sans-serif' }}>\n      <nav style={{ display: 'flex', gap: '14px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px', alignItems: 'center' }}>\n        <a href=\"#\" onClick={(e) => { e.preventDefault(); setTab('Home'); }} style={{ color: tab === 'Home' ? '#ec4899' : '#64748b', fontWeight: tab === 'Home' ? 'bold' : '500', textDecoration: tab === 'Home' ? 'underline' : 'none', cursor: 'pointer' }}>Home</a>\n        <a href=\"#\" onClick={(e) => { e.preventDefault(); setTab('Explore'); }} style={{ color: tab === 'Explore' ? '#ec4899' : '#64748b', fontWeight: tab === 'Explore' ? 'bold' : '500', textDecoration: tab === 'Explore' ? 'underline' : 'none', cursor: 'pointer' }}>Explore</a>\n      </nav>\n      <article style={{ marginTop: '12px', padding: '12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>\n        <h3 style={{ margin: '0 0 4px 0', fontSize: '15px', color: '#0f172a' }}>{tab === 'Home' ? 'Post Article' : 'Explore Feed'}</h3>\n        <p style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#64748b' }}>{tab === 'Home' ? 'Clean semantic web anatomy' : 'Discover community posts'}</p>\n        <button style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>{tab === 'Home' ? 'Action' : 'Follow'}</button>\n      </article>\n    </main>\n  );\n}\nrender(<Demo />)"
-          }
-    },
-    {
-          "group": "3",
-          "title": "HTML Attributes and Inputs",
-          "description": "In this step, you will learn how to configure input elements using HTML attributes like type, placeholder, and required.",
-          "isFillCodeBlanks": true,
-          "showPreview": true,
-          "question": {
-                "questionText": "Complete the self-closing input tag with the correct attribute names:",
-                "template": "<input {{type}}=\"email\" {{placeholder}}=\"Enter your email\" {{required}} />",
-                "blanks": [
-                      {
-                            "key": "type",
-                            "label": "Input Type",
-                            "hint": "Specifies the expected data format"
-                      },
-                      {
-                            "key": "placeholder",
-                            "label": "Hint Text",
-                            "hint": "Placeholder text shown inside the input"
-                      },
-                      {
-                            "key": "required",
-                            "label": "Requirement",
-                            "hint": "Specifies that the field must be filled"
-                      }
-                ],
-                "answer": {
-                      "type": "type",
-                      "placeholder": "placeholder",
-                      "required": "required"
-                },
-                "previewCode": "<div style={{ padding: '16px', fontFamily: 'sans-serif' }}>\n  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>Email Address</label>\n  <input type=\"email\" placeholder=\"Enter your email\" required style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} />\n</div>"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Accessible Buttons vs Divs",
-          "description": "In this step, you will compare semantic button elements with generic divs in terms of accessibility.",
-          "isBestImplementation": true,
-          "showPreview": true,
-          "question": {
-                "questionText": "Which implementation provides native keyboard accessibility, focus management, and semantic clarity?",
-                "options": [
-                      "// Option 1: Native button with semantic role\n<button onClick={handleSave} className=\"save-btn\">\n  Save Changes\n</button>",
-                      "// Option 2: Generic div without keyboard accessibility\n<div onClick={handleSave} className=\"save-btn\">\n  Save Changes\n</div>",
-                      "// Option 3: Paragraph tag used as button\n<p onClick={handleSave} className=\"save-btn\">\n  Save Changes\n</p>",
-                      "// Option 4: Heading tag used as button\n<h3 onClick={handleSave} className=\"save-btn\">\n  Save Changes\n</h3>"
-                ],
-                "answer": "// Option 1: Native button with semantic role\n<button onClick={handleSave} className=\"save-btn\">\n  Save Changes\n</button>",
-                "previewCode": "<div style={{ padding: '16px', display: 'flex', gap: '8px' }}>\n  <button style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>\n    Save Changes\n  </button>\n</div>"
-          }
-    },
-    {
-          "group": "3",
-          "title": "JSX Syntax Rules",
-          "description": "In this step, you will fix common JSX syntax errors including the class attribute and unclosed tags.",
-          "isFixBug": true,
-          "showPreview": true,
-          "question": {
-                "questionText": "Fix the JSX syntax error: change class to className and properly self-close the <img> tag.",
-                "starterCode": "<div class=\"user-card\">\n  <img src=\"avatar.png\">\n  <h2>User Profile</h2>\n</div>",
-                "acceptedAnswers": [
-                      "<div className=\"user-card\">\n  <img src=\"avatar.png\" />\n  <h2>User Profile</h2>\n</div>",
-                      "<div className=\"user-card\"><img src=\"avatar.png\" /><h2>User Profile</h2></div>"
-                ],
-                "answer": "<div className=\"user-card\">\n  <img src=\"avatar.png\" />\n  <h2>User Profile</h2>\n</div>",
-                "previewCode": "<div style={{ padding: '12px', border: '1px solid #e2e8f0', borderRadius: '8px', maxWidth: '200px', textAlign: 'center' }}>\n  <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#f472b6', margin: '0 auto 8px auto' }} />\n  <h3 style={{ margin: 0, fontSize: '14px' }}>User Profile</h3>\n</div>"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Assembling Card Markup",
-          "description": "In this step, you will assemble a structured profile card component using semantic HTML elements.",
-          "isParsonsProblem": true,
-          "showPreview": true,
-          "question": {
-                "questionText": "Reorder the lines to assemble a clean semantic profile card component:",
-                "lines": [
-                      "<article className=\"profile-card\">",
-                      "  <header>",
-                      "    <h1>Alex Rivera</h1>",
-                      "  </header>",
-                      "  <p>Software Engineer</p>",
-                      "  <button>Follow</button>",
-                      "</article>"
-                ],
-                "answer": [
-                      "<article className=\"profile-card\">",
-                      "  <header>",
-                      "    <h1>Alex Rivera</h1>",
-                      "  </header>",
-                      "  <p>Software Engineer</p>",
-                      "  <button>Follow</button>",
-                      "</article>"
-                ],
-                "previewCode": "<article style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #cbd5e1', maxWidth: '240px' }}>\n  <header><h2 style={{ margin: '0 0 4px 0', fontSize: '16px' }}>Alex Rivera</h2></header>\n  <p style={{ margin: '0 0 12px 0', fontSize: '13px', color: '#64748b' }}>Software Engineer</p>\n  <button style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>Follow</button>\n</article>"
-          }
-    },
-    {
-          "group": "3",
-          "title": "The CSS Box Model Layers",
-          "description": "In this step, you will learn the four concentric layers that make up the CSS box model.",
-          "isSelectOrder": true,
-          "question": {
-                "questionText": "Arrange the CSS Box Model layers from the innermost core to the outermost boundary:",
-                "options": [
-                      "Content (Text / Images)",
-                      "Padding (Inner spacing)",
-                      "Border (Edge boundary)",
-                      "Margin (Outer spacing)"
-                ],
-                "answer": [
-                      "Content (Text / Images)",
-                      "Padding (Inner spacing)",
-                      "Border (Edge boundary)",
-                      "Margin (Outer spacing)"
-                ]
-          }
-    },
-    {
-          "group": "3",
-          "title": "Box Sizing and Spacing Properties",
-          "description": "In this step, you will match CSS layout and box sizing properties to their visual behaviors.",
-          "isMatchPairs": true,
-          "question": {
-                "questionText": "Match each CSS property to its exact layout effect:",
-                "pairs": [
-                      {
-                            "left": "padding: 16px",
-                            "right": "Adds space between content and its border"
-                      },
-                      {
-                            "left": "margin: 0 auto",
-                            "right": "Horizontally centers a block element"
-                      },
-                      {
-                            "left": "box-sizing: border-box",
-                            "right": "Includes padding and border in total width"
-                      },
-                      {
-                            "left": "border-radius: 8px",
-                            "right": "Rounds the corners of the box"
-                      }
-                ],
-                "choices": [
-                      "Adds space between content and its border",
-                      "Horizontally centers a block element",
-                      "Includes padding and border in total width",
-                      "Rounds the corners of the box"
-                ],
-                "answer": {
-                      "padding: 16px": "Adds space between content and its border",
-                      "margin: 0 auto": "Horizontally centers a block element",
-                      "box-sizing: border-box": "Includes padding and border in total width",
-                      "border-radius: 8px": "Rounds the corners of the box"
-                }
-          }
-    },
-    {
-          "group": "3",
-          "title": "Responsive CSS Units",
-          "description": "In this step, you will learn about modern responsive units in CSS.",
-          "isCodeCompletion": true,
-          "question": {
-                "questionText": "Which CSS rule uses relative units (rem and %) to ensure responsive text and fluid layout?",
-                "options": [
-                      ".container {\n  width: 100%;\n  max-width: 60rem;\n  font-size: 1.125rem;\n  padding: 1.5rem;\n}",
-                      ".container {\n  width: 1000px;\n  max-width: 1000px;\n  font-size: 18px;\n  padding: 24px;\n}",
-                      ".container {\n  width: 100pt;\n  max-width: 60pt;\n  font-size: 1.125pt;\n  padding: 1.5pt;\n}",
-                      ".container {\n  width: 100in;\n  max-width: 60in;\n  font-size: 1.125in;\n  padding: 1.5in;\n}"
-                ],
-                "answer": ".container {\n  width: 100%;\n  max-width: 60rem;\n  font-size: 1.125rem;\n  padding: 1.5rem;\n}"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Identifying Layout Overflow",
-          "description": "In this step, you will identify CSS rules that cause unexpected horizontal scrolling.",
-          "isRelevantLine": true,
-          "question": {
-                "questionText": "Which line creates unwanted horizontal scrollbars by combining full viewport width with fixed padding?",
-                "code": ".card {\n  display: block;\n  width: 100vw;\n  padding: 40px;\n  background: #ffffff;\n}",
-                "answer": [
-                      3
-                ]
-          }
-    },
-    {
-          "group": "3",
-          "title": "Flexbox Navbar Alignment",
-          "description": "In this step, you will use flexbox layout rules to align a responsive navigation bar.",
-          "isParsonsProblem": true,
-          "showPreview": true,
-          "question": {
-                "questionText": "Reorder the CSS declarations to configure a horizontal flex container with space-between alignment and centered items:",
-                "lines": [
-                      ".navbar {",
-                      "  display: flex;",
-                      "  flex-direction: row;",
-                      "  justify-content: space-between;",
-                      "  align-items: center;",
-                      "  gap: 16px;",
-                      "}"
-                ],
-                "answer": [
-                      ".navbar {",
-                      "  display: flex;",
-                      "  flex-direction: row;",
-                      "  justify-content: space-between;",
-                      "  align-items: center;",
-                      "  gap: 16px;",
-                      "}"
-                ],
-                "previewCode": "<nav style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: '16px', padding: '12px', background: '#0f172a', color: '#fff', borderRadius: '8px' }}>\n  <span style={{ fontWeight: 'bold', color: '#ec4899' }}>BrandLogo</span>\n  <div style={{ display: 'flex', gap: '8px' }}>\n    <button style={{ background: '#334155', color: '#fff', border: 'none', padding: '4px 8px', borderRadius: '4px' }}>Docs</button>\n    <button style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '4px 8px', borderRadius: '4px' }}>Login</button>\n  </div>\n</nav>"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Controlled Input Binding",
-          "description": "In this step, you will learn how to create a controlled input using value and onChange with React state.",
-          "isCodeCompletion": true,
-          "showPreview": true,
-          "question": {
-                "questionText": "Which component correctly implements a controlled input with two-way state binding?",
-                "options": [
-                      "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      placeholder=\"Search...\"\n    />\n  );\n}",
-                      "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={setQuery(query)}\n      placeholder=\"Search...\"\n    />\n  );\n}",
-                      "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      defaultValue={query}\n      onChange={(e) => query = e.target.value}\n      placeholder=\"Search...\"\n    />\n  );\n}",
-                      "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onInput={query}\n      placeholder=\"Search...\"\n    />\n  );\n}"
-                ],
-                "answer": "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      placeholder=\"Search...\"\n    />\n  );\n}",
-                "previewCode": "function Demo() {\n  const [val, setVal] = useState('React Live');\n  return (\n    <div style={{ padding: '12px' }}>\n      <input value={val} onChange={e => setVal(e.target.value)} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1' }} />\n      <p style={{ marginTop: '8px', fontSize: '13px' }}>Typed: <b>{val}</b></p>\n    </div>\n  );\n}\nrender(<Demo />)"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Live Search Filter",
-          "description": "In this step, you will filter an array of items based on a controlled search query state.",
-          "isFillCodeBlanks": true,
-          "question": {
-                "questionText": "Complete the array filter statement to perform a case-insensitive search match:",
-                "template": "const filteredUsers = users.{{filter}}((user) => user.name.toLowerCase().{{includes}}(query.toLowerCase()));",
-                "blanks": [
-                      {
-                            "key": "filter",
-                            "label": "Array Method",
-                            "hint": "Method that returns matching elements"
-                      },
-                      {
-                            "key": "includes",
-                            "label": "String Method",
-                            "hint": "Method checking if substring is present"
-                      }
-                ],
-                "answer": {
-                      "filter": "filter",
-                      "includes": "includes"
-                }
-          }
-    },
-    {
-          "group": "3",
-          "title": "Form Submission and preventDefault",
-          "description": "In this step, you will learn how to handle form submit events without reloading the browser page.",
-          "isCodeCompletion": true,
-          "question": {
-                "questionText": "Which submit handler correctly prevents the default browser page reload and submits state?",
-                "options": [
-                      "const handleSubmit = (e) => {\n  e.preventDefault();\n  if (!text.trim()) return;\n  onAddTweet(text);\n  setText('');\n};",
-                      "const handleSubmit = (e) => {\n  e.stopImmediatePropagation();\n  onAddTweet(text);\n};",
-                      "const handleSubmit = (e) => {\n  window.reload();\n  onAddTweet(text);\n};",
-                      "const handleSubmit = (e) => {\n  return false;\n};"
-                ],
-                "answer": "const handleSubmit = (e) => {\n  e.preventDefault();\n  if (!text.trim()) return;\n  onAddTweet(text);\n  setText('');\n};"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Multi-Field Form State",
-          "description": "In this step, you will build a form component managing multiple state inputs.",
-          "isCode": true,
-          "isTerminal": false,
-          "question": {
-                "questionText": "Create a React component named ProfileForm with state for username and bio, rendering two inputs and a submit button."
-          }
-    },
-    {
-          "group": "3",
-          "title": "Resetting Input State",
-          "description": "In this step, you will fix a form bug where the input field fails to clear upon submission.",
-          "isFixBug": true,
-          "question": {
-                "questionText": "Fix the handleSubmit function so that setMessage('') is called after message dispatch:",
-                "starterCode": "const handleSubmit = (e) => {\n  e.preventDefault();\n  sendMessage(message);\n  // Bug: input is not cleared\n};",
-                "acceptedAnswers": [
-                      "const handleSubmit = (e) => {\n  e.preventDefault();\n  sendMessage(message);\n  setMessage('');\n};",
-                      "const handleSubmit = (e) => {\n  e.preventDefault();\n  sendMessage(message);\n  setMessage(\"\");\n};"
-                ],
-                "answer": "const handleSubmit = (e) => {\n  e.preventDefault();\n  sendMessage(message);\n  setMessage('');\n};"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Ternary Conditional Rendering",
-          "description": "In this step, you will learn how to render alternative UI components using the ternary operator.",
-          "isCodeCompletion": true,
-          "showPreview": true,
-          "question": {
-                "questionText": "Which JSX block correctly uses a ternary operator to conditionally render either a profile or a login button?",
-                "options": [
-                      "return (\n  <div>\n    {isLoggedIn ? <UserProfile user={user} /> : <button onClick={login}>Log In</button>}\n  </div>\n);",
-                      "return (\n  <div>\n    {if (isLoggedIn) { <UserProfile user={user} /> } else { <button onClick={login}>Log In</button> }}\n  </div>\n);",
-                      "return (\n  <div>\n    {isLoggedIn && <UserProfile user={user} /> : <button onClick={login}>Log In</button>}\n  </div>\n);",
-                      "return (\n  <div>\n    {isLoggedIn ? <UserProfile user={user} />}\n  </div>\n);"
-                ],
-                "answer": "return (\n  <div>\n    {isLoggedIn ? <UserProfile user={user} /> : <button onClick={login}>Log In</button>}\n  </div>\n);",
-                "previewCode": "function Demo() {\n  const [logged, setLogged] = useState(false);\n  return (\n    <div style={{ padding: '12px' }}>\n      {logged ? (\n        <span style={{ color: '#16a34a', fontWeight: 'bold' }}>👤 Welcome back, Alex!</span>\n      ) : (\n        <button onClick={() => setLogged(true)} style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px' }}>Log In</button>\n      )}\n    </div>\n  );\n}\nrender(<Demo />)"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Short-Circuit Logical AND Rendering",
-          "description": "In this step, you will use the logical && operator to conditionally display notifications and banners.",
-          "isCodeCompletion": true,
-          "question": {
-                "questionText": "Which JSX expression cleanly renders an error message banner only when the error state contains a value?",
-                "options": [
-                      "return (\n  <div>\n    {error && <div className=\"error-banner\">{error}</div>}\n    <TweetList tweets={tweets} />\n  </div>\n);",
-                      "return (\n  <div>\n    {error || <div className=\"error-banner\">{error}</div>}\n    <TweetList tweets={tweets} />\n  </div>\n);",
-                      "return (\n  <div>\n    {error == <div className=\"error-banner\">{error}</div>}\n    <TweetList tweets={tweets} />\n  </div>\n);",
-                      "return (\n  <div>\n    {show(error, <div className=\"error-banner\">{error}</div>)}\n    <TweetList tweets={tweets} />\n  </div>\n);"
-                ],
-                "answer": "return (\n  <div>\n    {error && <div className=\"error-banner\">{error}</div>}\n    <TweetList tweets={tweets} />\n  </div>\n);"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Loading State Hierarchy",
-          "description": "In this step, you will structure conditional rendering for loading and loaded states.",
-          "isParsonsProblem": true,
-          "question": {
-                "questionText": "Reorder the lines to handle loading state before returning the main feed:",
-                "lines": [
-                      "if (isLoading) {",
-                      "  return <div className=\"spinner\">Loading...</div>;",
-                      "}",
-                      "return (",
-                      "  <main className=\"content-card\">",
-                      "    <h1>Feed Ready</h1>",
-                      "  </main>",
-                      ");"
-                ],
-                "answer": [
-                      "if (isLoading) {",
-                      "  return <div className=\"spinner\">Loading...</div>;",
-                      "}",
-                      "return (",
-                      "  <main className=\"content-card\">",
-                      "    <h1>Feed Ready</h1>",
-                      "  </main>",
-                      ");"
-                ]
-          }
-    },
-    {
-          "group": "3",
-          "title": "Empty State Notification",
-          "description": "In this step, you will handle zero-item lists with an informative empty state message.",
-          "isCode": true,
-          "isTerminal": false,
-          "question": {
-                "questionText": "Create a React component named NotificationList that accepts an array of notifications as props and displays 'No new notifications' when notifications.length is 0."
-          }
-    },
-    {
-          "group": "3",
-          "title": "Tab Switcher Pattern",
-          "description": "In this step, you will compare patterns for toggling between multiple view views cleanly.",
-          "isBestImplementation": true,
-          "showPreview": true,
-          "question": {
-                "questionText": "Which pattern cleanly and declaratively switches between multiple view components based on activeTab state?",
-                "options": [
-                      "function AppTabs() {\n  const [tab, setTab] = useState('home');\n  return (\n    <div>\n      {tab === 'home' && <HomeView />}\n      {tab === 'explore' && <ExploreView />}\n      {tab === 'notifications' && <NotificationsView />}\n    </div>\n  );\n}",
-                      "function AppTabs() {\n  const [tab, setTab] = useState('home');\n  return (\n    <div>\n      {tab === 'home' ? <HomeView /> : tab === 'explore' ? <ExploreView /> : <NotificationsView />}\n    </div>\n  );\n}",
-                      "function AppTabs() {\n  return (\n    <div>\n      <HomeView style={{ display: 'none' }} />\n      <ExploreView style={{ display: 'none' }} />\n      <NotificationsView />\n    </div>\n  );\n}",
-                      "function AppTabs() {\n  let current = window.location.hash;\n  return <div>{current}</div>;\n}"
-                ],
-                "answer": "function AppTabs() {\n  const [tab, setTab] = useState('home');\n  return (\n    <div>\n      {tab === 'home' && <HomeView />}\n      {tab === 'explore' && <ExploreView />}\n      {tab === 'notifications' && <NotificationsView />}\n    </div>\n  );\n}",
-                "previewCode": "function DemoTabs() {\n  const [tab, setTab] = useState('home');\n  return (\n    <div style={{ padding: '12px', fontFamily: 'sans-serif' }}>\n      <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>\n        <button onClick={() => setTab('home')} style={{ background: tab === 'home' ? '#ec4899' : '#e2e8f0', color: tab === 'home' ? '#fff' : '#000', border: 'none', padding: '4px 10px', borderRadius: '6px' }}>Home</button>\n        <button onClick={() => setTab('settings')} style={{ background: tab === 'settings' ? '#ec4899' : '#e2e8f0', color: tab === 'settings' ? '#fff' : '#000', border: 'none', padding: '4px 10px', borderRadius: '6px' }}>Settings</button>\n      </div>\n      <div style={{ padding: '8px', background: '#f8fafc', borderRadius: '6px' }}>\n        {tab === 'home' ? '🏠 Home Feed Content' : '⚙️ User Preferences & Settings'}\n      </div>\n    </div>\n  );\n}\nrender(<DemoTabs />)"
-          }
-    },
-{
-      group: "3",
-      title: "Introduction to React Components",
-      description:
-        "In this step, you will learn about React components, their role in creating reusable UI elements, and how they help manage the user interface efficiently.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which of the following best describes a React component?",
-        options: [
-          "A method for handling events in JavaScript",
-          "A feature exclusive to server-side rendering in React",
-          "A reusable piece of user interface defined as a function or class that returns JSX",
-          "A built-in HTML element in React",
-        ],
-        answer:
-          "A reusable piece of user interface defined as a function or class that returns JSX",
-      },
-    },
-    {
-      group: "3",
-      title: "Key Concepts in React",
-      description:
-        "In this step, you will learn about the fundamental concepts of React, including properties (props), state, events, and styles.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText: "Which of the following are key concepts in React?",
-        options: [
-          "Managing properties to pass data between components",
-          "Manipulating the DOM directly for better performance",
-          "Using state to manage data within a component",
-          "Handling events such as clicks with event handlers",
-          "Applying inline styles or CSS classes to components",
-        ],
-        answer: [
-          "Managing properties to pass data between components",
-          "Using state to manage data within a component",
-          "Handling events such as clicks with event handlers",
-          "Applying inline styles or CSS classes to components",
-        ],
-      },
-    },
-    {
-      group: "3",
-      title: "Effect of State Changes on a Component",
-      description:
-        "In this step, you will explain what happens to a React component when its state changes.",
-      isText: true,
-      question: {
-        questionText:
-          "What happens to a React component when its state changes?",
-      },
-    },
-
-    //next lecture
-    {
-      group: "3",
-      title: "Creating a Simple React Component",
-      description:
-        "In this step, you will define a basic React component that returns some simple JSX.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which of the following code blocks correctly defines a simple React component that returns a heading and a paragraph?",
-        options: [
-          // Option 1: Correct answer
-          `function MyComponent() {
-  return (
-    <div>
-      <h1>Hello, World!</h1>
-      <p>Welcome to the thunderdome</p>
-    </div>
-  );
-}`,
-
-          // Option 2: Incorrect - missing return statement
-          `function MyComponent() {
-  <div>
-    <h1>Hello, World!</h1>
-    <p>Welcome to the thunderdome</p>
-  </div>;
-}`,
-
-          // Option 3: Incorrect - uses class instead of function
-          `class MyComponent {
-  render() {
-    return (
-      <div>
-        <h1>Hello, World!</h1>
-        <p>How are we today?</p>
-      </div>
-    );
-  }
-}`,
-
-          // Option 4: Incorrect - missing JSX inside the return
-          `function MyComponent() {
-  return (
-    <div>Hello World</div>
-    <p>How are we today?</p>
-  );
-}`,
-        ],
-        answer: `function MyComponent() {
-  return (
-    <div>
-      <h1>Hello, World!</h1>
-      <p>Welcome to the thunderdome</p>
-    </div>
-  );
-}`,
-      },
-    },
-    {
-      group: "3",
-      title: "Handling Events in React",
-      description:
-        "In this step, you will define a basic React component that handles a button click event using the `onClick` attribute.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which of the following code blocks correctly defines a React component that handles a button click event?",
-        options: [
-          // Option 2: Incorrect - no event handler function defined
-          `function MyComponent() {
-  return (
-    <div>
-      <button 
-        onClick={
-          alert('Button clicked!')
-        }
-      >
-        Click me
-      </button>
-    </div>
-  );
-}`,
-
-          // Option 3: Incorrect - inline event handler, not recommended
-          `function MyComponent() {
-return (
-  <div>
-    <button 
-      onClick= () => {
-        alert('Button clicked!')
+  }, {
+    "group": "tutorial",
+    "title": "Match the Pairs",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Match parameter, return value, and function call with the description that defines each concept.",
+      "pairs": [{
+        "left": "Parameter",
+        "right": "A value a function receives"
+      }, {
+        "left": "Return value",
+        "right": "The result a function sends back"
+      }, {
+        "left": "Function call",
+        "right": "An instruction that runs a function"
+      }],
+      "choices": ["A value a function receives", "The result a function sends back", "An instruction that runs a function"],
+      "answer": {
+        "Parameter": "A value a function receives",
+        "Return value": "The result a function sends back",
+        "Function call": "An instruction that runs a function"
       }
-    >
-      Click me
-    </button>
-  </div>
-);
-}`,
-          `function MyComponent() {
-  const handleClick = () => {
-    alert('Button clicked!');
-  };
-    
-  return (
-    <div>
-      <button 
-        onClick={handleClick}
-      >
-        Click me
-      </button>
-    </div>
-  );
-}`,
-
-          // Option 4: Incorrect - no onClick attribute
-          `function MyComponent() {
-return (
-  <div>
-    <button>
-      Click me
-    </button>
-  </div>
-);
-    }`,
-        ],
-        answer: `function MyComponent() {
-  const handleClick = () => {
-    alert('Button clicked!');
-  };
-
-  return (
-    <div>
-      <button 
-        onClick={handleClick}
-      >
-        Click me
-      </button>
-    </div>
-  );
-}`,
-      },
-    },
-
-    {
-      group: "3",
-      title: "Managing State with useState Hook",
-      description:
-        "In this step, you will learn how to use the useState hook to manage the state of a component.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText: `Modify the Tweet component to include a like button that toggles the liked state using the useState hook.`,
-      },
-    },
-
-    //next lecture
-    {
-      group: "3",
-      title: "Component Properties",
-      description:
-        "In this step, you will learn about passing properties to components in React.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What is the term used for passing data to a React component?",
-        placeholder: "Type your answer here...",
-        answer: "props",
-      },
-    },
-    {
-      group: "3",
-      title: "Rendering Dynamic Lists with map and Keys",
-      description:
-        "In this step, you will learn how to render a dynamic list of elements in React using .map() and provide unique key props.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Update the TweetFeed component to render an array of tweets using .map() and assign each Tweet a unique key prop.",
-      },
-    },
-    {
-      group: "3",
-      title: "Working with Props and State Together",
-      description:
-        "In this step, you will learn how to work with both props and state in a React component.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "What is the main difference between props and state in React?",
-        options: [
-          "Props are immutable while state is mutable",
-          "Props are managed by the component itself while state is passed down from parent components",
-          "State is used for styling while props are used for logic",
-          "There is no difference; they are the same",
-        ],
-        answer: "Props are immutable while state is mutable",
-      },
-    },
-
-    //next lecture
-    {
-      group: "3",
-      title: "Terminal Practice: Listing Files",
-      description:
-        "In this step, you will learn how to list files in a bash terminal.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText: `Use the terminal to list all the files using the list command.`,
-      },
-    },
-
-    {
-      group: "3",
-      title: "Styling React Components",
-      description:
-        "In this step, you will learn how to style React components using CSS.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText: `Add styles to the Tweet component to improve its appearance.`,
-      },
-    },
-    {
-      group: "3",
-      title: "Using Flexbox for Layouts",
-      description:
-        "In this step, you will learn how to use Flexbox to create layouts in React.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the following CSS properties in the order needed to center a basic layout with flexbox styling:",
-        options: [
-          "display: flex;",
-          "justify-content: center;",
-          "align-items: center;",
-          "flex-direction: row;",
-        ],
-        answer: [
-          "display: flex;",
-          "flex-direction: row;",
-          "justify-content: center;",
-          "align-items: center;",
-        ],
-      },
-    },
-
-    //next lecture
-    {
-      group: "3",
-      title: "Lifting State Up",
-      description:
-        "In this step, you will learn how to lift state up to a common ancestor component to share state between components.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText: `Create a parent component that manages the state for multiple Tweet components and passes the state and event handlers as props.`,
-      },
-    },
-    {
-      group: "3",
-      title: "Using useEffect for Side Effects",
-      description:
-        "In this step, you will learn how to use the useEffect hook to handle side effects in a React component.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Modify the Tweet component to use the useEffect hook to log a message to the console every time the number of retweets changes.",
-      },
-    },
-
-    {
-      group: "3",
-      title: "Understanding Component Lifecycle",
-      description:
-        "In this step, you will learn about the lifecycle of React components and how to use useEffect hook to manage side effects.",
-      isText: true,
-      question: {
-        questionText:
-          "What is the component lifecycle in React and what is the purpose of the useEffect hook?",
-      },
-    },
-
-    //next
-    {
-      group: "3",
-      title: "Fetching Data with useEffect",
-      description:
-        "In this step, you will learn how to fetch data from an API using the useEffect hook.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps with drag-and-drop to correctly fetch data using useEffect.",
-        options: [
-          "Import React and useState",
-          "Import useEffect from React",
-          "Create a component",
-          "Define the useEffect hook",
-          "Make the API call inside useEffect",
-          "Use async/await or .then() to handle the API response",
-          "Update the component state with the fetched data",
-          "Handle errors in the API call",
-          "Render the data in the component",
-        ],
-        answer: [
-          "Import React and useState",
-          "Import useEffect from React",
-          "Create a component",
-          "Define the useEffect hook",
-          "Make the API call inside useEffect",
-          "Use async/await or .then() to handle the API response",
-          "Update the component state with the fetched data",
-          "Handle errors in the API call",
-          "Render the data in the component",
-        ],
-      },
-    },
-
-    {
-      group: "3",
-      title: "Building a Complete Tweet App",
-      description:
-        "In this step, you will combine everything you have learned to build a complete Tweet app.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText: `Build a complete Tweet app that fetches tweets from an API, displays them using the Tweet component, and allows users to like and retweet.`,
-      },
-    },
-    {
-      group: "3",
-      title: "Terminal Practice: Setting Up A React App",
-      description: "In this step, you will learn how to set up a react project",
-
-      isText: true,
-      question: {
-        questionText:
-          "Enter the command to install the latest version of a react project with vite.",
-      },
-    },
-
-    //next
-    {
-      group: "3",
-      title: "Creating a New React Project with Vite",
-      description:
-        "In this step, you will learn how to create a new React project using Vite by following the correct steps and running command-line commands.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps with drag-and-drop to correctly create a new React project using Vite, including command-line commands.",
-        options: [
-          "Ensure Node.js, NPM and VSCode are installed",
-          "Run `npm create vite@latest` to create a new Vite project",
-          "Select the React template when prompted",
-          "Navigate to the project directory using `cd project-name`",
-          "Run `npm install` to install dependencies",
-          "Start the development server with `npm run dev`",
-        ],
-        answer: [
-          "Ensure Node.js, NPM and VSCode are installed",
-          "Run `npm create vite@latest` to create a new Vite project",
-          "Select the React template when prompted",
-          "Navigate to the project directory using `cd project-name`",
-          "Run `npm install` to install dependencies",
-          "Start the development server with `npm run dev`",
-        ],
-      },
-    },
-    {
-          "group": "3",
-          "title": "React State Immutability",
-          "description": "In this step, you will understand why React requires immutable state updates.",
-          "isMultipleChoice": true,
-          "question": {
-                "questionText": "Why should you never mutate React state directly with array.push or obj.prop = value?",
-                "options": [
-                      "Direct mutation does not trigger a re-render and can cause stale UI bugs",
-                      "Direct mutation causes a JavaScript syntax error in modern browsers",
-                      "React state is stored on a server that forbids modification",
-                      "Mutating state directly slows down internet speed"
-                ],
-                "answer": "Direct mutation does not trigger a re-render and can cause stale UI bugs"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Key Props and DOM Reconciliation",
-          "description": "In this step, you will understand how React uses unique keys to reconcile dynamic lists.",
-          "isBestImplementation": true,
-          "question": {
-                "questionText": "Choose the best implementation for rendering dynamic list items with stable unique keys.",
-                "options": [
-                      "// Option 1: Stable unique database ID as key\n{items.map((item) => (\n  <TodoItem key={item.id} task={item.task} />\n))}",
-                      "// Option 2: Array index as key (fragile on reorder/delete)\n{items.map((item, index) => (\n  <TodoItem key={index} task={item.task} />\n))}",
-                      "// Option 3: Math.random() as key (forces complete remount on every render)\n{items.map((item) => (\n  <TodoItem key={Math.random()} task={item.task} />\n))}",
-                      "// Option 4: Missing key prop entirely\n{items.map((item) => (\n  <TodoItem task={item.task} />\n))}"
-                ],
-                "answer": "// Option 1: Stable unique database ID as key\n{items.map((item) => (\n  <TodoItem key={item.id} task={item.task} />\n))}"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Lifting State with Callbacks",
-          "description": "In this step, you will practice lifting state to a parent and passing updater callbacks down to children.",
-          "isParsonsProblem": true,
-          "question": {
-                "questionText": "Reorder the lines to define a parent component that manages count state and passes count and onIncrement to child buttons:",
-                "lines": [
-                      "function CounterApp() {",
-                      "  const [count, setCount] = useState(0);",
-                      "  const handleIncrement = () => setCount((c) => c + 1);",
-                      "  return (",
-                      "    <div>",
-                      "      <Display count={count} />",
-                      "      <IncrementButton onIncrement={handleIncrement} />",
-                      "    </div>",
-                      "  );",
-                      "}"
-                ],
-                "answer": [
-                      "function CounterApp() {",
-                      "  const [count, setCount] = useState(0);",
-                      "  const handleIncrement = () => setCount((c) => c + 1);",
-                      "  return (",
-                      "    <div>",
-                      "      <Display count={count} />",
-                      "      <IncrementButton onIncrement={handleIncrement} />",
-                      "    </div>",
-                      "  );",
-                      "}"
-                ]
-          }
-    },
-    {
-          "group": "3",
-          "title": "Preventing Infinite Render Loops",
-          "description": "In this step, you will identify a missing dependency array causing infinite re-render loops in useEffect.",
-          "isRelevantLine": true,
-          "question": {
-                "questionText": "Click the line that causes an infinite loop by missing its dependency array in useEffect:",
-                "code": "function DataFetcher() {\n  const [count, setCount] = useState(0);\n  useEffect(() => {\n    setCount((c) => c + 1);\n  });\n  return <div>{count}</div>;\n}",
-                "answer": [
-                      5
-                ]
-          }
-    },
-    {
-          "group": "3",
-          "title": "Custom Hook Extraction",
-          "description": "In this step, you will learn how to extract reusable state logic into a custom hook.",
-          "isCodeCompletion": true,
-          "question": {
-                "questionText": "Select the code block that correctly creates a reusable custom hook named useToggle:",
-                "options": [
-                      "function useToggle(initial = false) {\n  const [value, setValue] = useState(initial);\n  const toggle = () => setValue((v) => !v);\n  return [value, toggle];\n}",
-                      "function useToggle(initial = false) {\n  let value = initial;\n  const toggle = () => { value = !value; };\n  return [value, toggle];\n}",
-                      "function useToggle(initial = false) {\n  const toggle = useState(initial);\n  return toggle;\n}",
-                      "function useToggle() {\n  return window.toggle;\n}"
-                ],
-                "answer": "function useToggle(initial = false) {\n  const [value, setValue] = useState(initial);\n  const toggle = () => setValue((v) => !v);\n  return [value, toggle];\n}"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Derived State Computation",
-          "description": "In this step, you will learn to compute derived values during render rather than keeping duplicate state.",
-          "isBestImplementation": true,
-          "question": {
-                "questionText": "Choose the best pattern to compute active todo count without maintaining redundant synchronized state variables:",
-                "options": [
-                      "// Option 1: Compute on the fly during render\nfunction TodoList({ todos }) {\n  const activeCount = todos.filter((t) => !t.done).length;\n  return <div>Active: {activeCount}</div>;\n}",
-                      "// Option 2: Redundant state variable synced via useEffect\nfunction TodoList({ todos }) {\n  const [activeCount, setActiveCount] = useState(0);\n  useEffect(() => {\n    setActiveCount(todos.filter((t) => !t.done).length);\n  }, [todos]);\n  return <div>Active: {activeCount}</div>;\n}",
-                      "// Option 3: Global variable outside component\nlet activeCount = 0;\nfunction TodoList({ todos }) {\n  activeCount = todos.length;\n  return <div>Active: {activeCount}</div>;\n}",
-                      "// Option 4: Query DOM directly\nfunction TodoList() {\n  const count = document.querySelectorAll('.active').length;\n  return <div>Active: {count}</div>;\n}"
-                ],
-                "answer": "// Option 1: Compute on the fly during render\nfunction TodoList({ todos }) {\n  const activeCount = todos.filter((t) => !t.done).length;\n  return <div>Active: {activeCount}</div>;\n}"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Component Composition with children",
-          "description": "In this step, you will use the children prop to create reusable container components.",
-          "isCodeCompletion": true,
-          "question": {
-                "questionText": "Select the code block that creates a reusable Card wrapper using the children prop:",
-                "options": [
-                      "function Card({ title, children }) {\n  return (\n    <div className=\"card-box\">\n      <h2>{title}</h2>\n      <div className=\"card-body\">{children}</div>\n    </div>\n  );\n}",
-                      "function Card({ title, content }) {\n  return (\n    <div className=\"card-box\">\n      <h2>{title}</h2>\n      <div className=\"card-body\">{content.render()}</div>\n    </div>\n  );\n}",
-                      "function Card({ title }) {\n  return (\n    <div className=\"card-box\">\n      <h2>{title}</h2>\n    </div>\n  );\n}",
-                      "function Card() {\n  return <div>{window.children}</div>;\n}"
-                ],
-                "answer": "function Card({ title, children }) {\n  return (\n    <div className=\"card-box\">\n      <h2>{title}</h2>\n      <div className=\"card-body\">{children}</div>\n    </div>\n  );\n}"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Cleanup in Async Effects",
-          "description": "In this step, you will prevent memory leaks by adding a cleanup function to an asynchronous effect.",
-          "isFixBug": true,
-          "question": {
-                "questionText": "Fix the bug in useEffect by returning a cleanup function that sets isMounted to false when the component unmounts:",
-                "starterCode": "useEffect(() => {\n  let isMounted = true;\n  fetchProfile().then((data) => {\n    if (isMounted) setProfile(data);\n  });\n  // Bug: missing cleanup return\n}, []);",
-                "acceptedAnswers": [
-                      "useEffect(() => {\n  let isMounted = true;\n  fetchProfile().then((data) => {\n    if (isMounted) setProfile(data);\n  });\n  return () => { isMounted = false; };\n}, []);",
-                      "useEffect(() => {\n  let isMounted = true;\n  fetchProfile().then((data) => {\n    if (isMounted) setProfile(data);\n  });\n  return () => {\n    isMounted = false;\n  };\n}, []);"
-                ],
-                "answer": "useEffect(() => {\n  let isMounted = true;\n  fetchProfile().then((data) => {\n    if (isMounted) setProfile(data);\n  });\n  return () => { isMounted = false; };\n}, []);"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Building a Filterable Interactive Dashboard",
-          "description": "In this step, you will assemble components, state hooks, search filtering, and list rendering into an interactive dashboard.",
-          "isCode": true,
-          "isTerminal": false,
-          "question": {
-                "questionText": "Build a complete React component named ProductDashboard that manages a search input, filters an array of products by name, and displays active results."
-          }
-    },
-    {
-          "group": "3",
-          "title": "Build Your App",
-          "isConversationReview": true,
-          "description": "Build an app based on your progress",
-          "question": {
-                "questionText": "Let's chat about the questions we've worked on so far.",
-                "range": [
-                      39,
-                      88
-                ]
-          }
-    },
-    {
-      group: "4",
-      title: "Introduction to Backend Engineering",
-      description:
-        "In this step, you will learn about what backend software engineering is and why it is important.",
-      isText: true,
-      question: {
-        questionText:
-          "What is backend software engineering and why is it important in building applications?",
-      },
-    },
-
-    {
-      group: "4",
-      title: "Main Lessons Overview",
-      description:
-        "In this step, you will identify a core responsibility of backend engineering covered in the course.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which of the following is a core responsibility in backend engineering?",
-        options: [
-          "Managing concurrency and ensuring thread safety in multi-user applications",
-          "Implementing user authentication directly in the user experience",
-          "Handling memory allocation and garbage collection in server environments",
-          "Designing scalable UI components for cross-browser compatibility",
-          "Optimizing database queries and ensuring data consistency",
-        ],
-        answer: "Optimizing database queries and ensuring data consistency",
-      },
-    },
-
-    // next
-    {
-      group: "4",
-      title: "Key Responsibilities of Backend Engineering",
-      description:
-        "In this step, you will learn about the various responsibilities involved in backend engineering.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are core responsibilities of backend engineering?",
-        options: [
-          "Managing and optimizing databases for storing and retrieving data efficiently",
-          "Designing and implementing APIs to facilitate communication between systems",
-          "Ensuring security through user authentication and authorization mechanisms",
-          "Handling server-side logic, including business operations and calculations",
-          "Maintaining server reliability and performance under high traffic",
-          "Managing data integrity and consistency across distributed systems",
-          "Implementing logging and monitoring to ensure system health and debug issues",
-        ],
-        answer: [
-          "Managing and optimizing databases for storing and retrieving data efficiently",
-          "Designing and implementing APIs to facilitate communication between systems",
-          "Ensuring security through user authentication and authorization mechanisms",
-          "Handling server-side logic, including business operations and calculations",
-          "Maintaining server reliability and performance under high traffic",
-          "Managing data integrity and consistency across distributed systems",
-          "Implementing logging and monitoring to ensure system health and debug issues",
-        ],
-      },
-    },
-    {
-      group: "4",
-      title: "Interfacing with the Terminal",
-      description:
-        "In this step, you will learn about the importance of the terminal in backend engineering and how to interact with it for various tasks.",
-      isText: true,
-      question: {
-        questionText:
-          "Why is learning to use the terminal important for operating systems, and what kinds of tasks can you perform using the terminal?",
-      },
-    },
-    {
-      group: "4",
-      title: "Asynchronous JavaScript and async/await",
-      description:
-        "In this step, you will learn how asynchronous Promises work when interacting with servers and databases.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Which code block correctly uses an `async` function with `await` and `try/catch` to fetch data safely?",
-        options: [
-          `async function loadUserData(userId) {
-  try {
-    const user = await fetchUserFromDatabase(userId);
-    console.log('User loaded:', user);
-  } catch (error) {
-    console.error('Failed to load user:', error);
-  }
-}`,
-          `function loadUserData(userId) {
-  try {
-    const user = await fetchUserFromDatabase(userId);
-    console.log('User loaded:', user);
-  } catch (error) {
-    console.error('Failed to load user:', error);
-  }
-}`,
-          `async function loadUserData(userId) {
-  const user = fetchUserFromDatabase(userId);
-  await user.catch(error);
-}`,
-          `async function loadUserData(userId) {
-  wait fetchUserFromDatabase(userId);
-}`,
-        ],
-        answer: `async function loadUserData(userId) {
-  try {
-    const user = await fetchUserFromDatabase(userId);
-    console.log('User loaded:', user);
-  } catch (error) {
-    console.error('Failed to load user:', error);
-  }
-}`,
-      },
-    },
-
-    //  next
-    {
-      group: "4",
-      title: "Installing An NPM Package",
-      description:
-        "In this step, you will use the terminal to install a package with npm.",
-      isText: true,
-      question: {
-        questionText: `Write a command to install Chakra's react component library for user interface elements.`,
-      },
-    },
-    {
-      group: "4",
-      title: "User Creation and Authentication",
-      description:
-        "In this step, you will understand the key concept related to creating users in backend systems.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What is the process called that verifies a user's identity during account creation?",
-        placeholder: "Type your answer here...",
-        answer: "authentication",
-      },
-    },
-    {
-      group: "4",
-      title: "Database Foundations",
-      description:
-        "In this step, you will learn about the foundations of databases in backend engineering.",
-      isText: true,
-      question: {
-        questionText:
-          "What are the main types of databases used in backend engineering?",
-      },
-    },
-
-    //  next
-    {
-      group: "4",
-      title: "Connecting Systems",
-      description:
-        "Write a code snippet to connect an application to a Firebase database.",
-      isCode: true,
-      question: {
-        questionText: `Write a code snippet to connect an application to a Firebase database.`,
-      },
-    },
-    {
-      group: "4",
-      title: "Initiating A Firebase Project",
-      description:
-        "In this step, you will understand how to start a Firebase project using the command line.",
-      isSingleLineText: true,
-      question: {
-        questionText: "What is the command to start a Firebase project?",
-        answer: "firebase init",
-      },
-    },
-    {
-      group: "4",
-      title: "Advanced Data Storage Practices",
-      description:
-        "In this step, you will learn advanced practices for storing data responsibly in backend systems.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are best practices for ensuring responsible data storage in a backend system?",
-        options: [
-          "Cache data in memory to reduce database access time",
-          "Use a large, centralized backup to reduce complexity and cost",
-          "Encrypt sensitive data both at rest and in transit to ensure security",
-          "Implement database replication across multiple data centers to improve fault tolerance",
-        ],
-        answer: [
-          "Cache data in memory to reduce database access time",
-          "Encrypt sensitive data both at rest and in transit to ensure security",
-          "Implement database replication across multiple data centers to improve fault tolerance",
-        ],
-      },
-    },
-
-    //next
-    {
-      group: "4",
-      title: "Initializing Firebase and Working with Firestore v9",
-      description:
-        "In this step, you will learn how to initialize Firebase and set up Firestore collections and documents in Firestore v9.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Complete the code to initialize Firebase with the provided configuration and add a unique document to a Firestore collection.",
-        options: [
-          // Option 1: Correct code for initializing Firebase and adding a document
-
-          // Option 2: Incorrect - missing Firestore initialization
-          `import { 
-  initializeApp 
-} from 'firebase/app';
-
-import { 
-  collection, 
-  setDoc 
-} from 'firebase/firestore';
-
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "progr-ai.firebaseapp.com",
-  projectId: "progr-ai",
-  storageBucket: "progr-ai.appspot.com",
-  messagingSenderId: "32042075426",
-  appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
-  measurementId: "G-0E37NCB4KB",
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Select Order",
+    "description": "Learn the correct order of program execution.",
+    "isSelectOrder": true,
+    "question": {
+      "questionText": "Arrange the steps to show how a program moves from an idea to execution.",
+      "options": ["Code Compilation", "Writing Code", "Executing Program", "Debugging"],
+      "answer": ["Writing Code", "Code Compilation", "Debugging", "Executing Program"]
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Find the Relevant Line",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Which line changes total from 1 to 3?",
+      "code": "let total = 1;\ntotal += 2;\nconsole.log(total);",
+      "answer": [2]
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Code Tracing",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "Trace the code and determine its final output.",
+      "code": "let count = 1;\ncount += 2;\nconsole.log(count);",
+      "options": ["1", "2", "3", "undefined"],
+      "answer": "3"
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Fill in the Code Blanks",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Complete the missing parts of the code.",
+      "template": "{{keyword}} age = 25;",
+      "blanks": [{
+        "key": "keyword",
+        "hint": "A variable keyword"
+      }],
+      "answer": {
+        "keyword": "const"
+      }
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Code Completion",
+    "description": "Choose a complete code solution.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "Which code declares a list?",
+      "options": ["const items = ['apple'];", "const items = 'apple';", "const items = { apple: true };"],
+      "answer": "const items = ['apple'];"
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Parsons Problem",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Reorder the lines to create a working solution.",
+      "lines": ["function greet() {", "  console.log('Hello');", "}"],
+      "answer": ["function greet() {", "  console.log('Hello');", "}"]
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Short Answer",
+    "description": "Enter a concise answer.",
+    "isSingleLineText": true,
+    "question": {
+      "questionText": "Which keyword declares a constant?",
+      "placeholder": "Type your answer",
+      "answer": "const"
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Open Response",
+    "description": "Explain an idea in your own words.",
+    "isText": true,
+    "question": {
+      "questionText": "Why are variables useful?"
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Code Writing",
+    "description": "Create code from a requirement.",
+    "isCode": true,
+    "isTerminal": false,
+    "question": {
+      "questionText": "Declare a variable named age with the value 25."
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Terminal Practice",
+    "description": "Practice a command in context.",
+    "isCode": true,
+    "isTerminal": true,
+    "question": {
+      "questionText": "Change into the new_folder directory."
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Choose the Best Implementation",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "You have an array named items and a function named printItem. Which implementation prints every item and continues to work if the array grows or shrinks?",
+      "options": ["items.forEach(printItem);", "printItem(items[0]);\nprintItem(items[1]);", "items = printItem;"],
+      "answer": "items.forEach(printItem);"
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Fix the Bug",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Repair the bug while preserving the intended behavior.",
+      "starterCode": "const score = 1;\nscore += 1;",
+      "answer": "let score = 1;\nscore += 1;",
+      "tests": ["score can be updated"]
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Refactoring Challenge",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Improve the code without changing its behavior.",
+      "starterCode": "console.log(1);\nconsole.log(2);\nconsole.log(3);",
+      "tests": ["Still prints 1, 2, and 3", "Uses a loop"]
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Build Your App",
+    "description": "Build an app with what you learned in this chapter.",
+    "isConversationReview": true,
+    "question": {
+      "questionText": "Enter an app idea and build it as you make progress!",
+      "range": [1, 16]
+    }
+  }, {
+    "group": "1",
+    "title": "Data Types in Programming",
+    "description": "Match JavaScript literal values to their corresponding primitive data types.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Match each literal value to its correct primitive data type in JavaScript:",
+      "pairs": [{
+        "left": "\"Hello World\"",
+        "right": "string"
+      }, {
+        "left": "42",
+        "right": "number"
+      }, {
+        "left": "true",
+        "right": "boolean"
+      }, {
+        "left": "undefined",
+        "right": "undefined"
+      }],
+      "choices": ["string", "number", "boolean", "undefined"],
+      "answer": {
+        "42": "number",
+        "\"Hello World\"": "string",
+        "true": "boolean",
+        "undefined": "undefined"
+      }
+    }
+  }, {
+    "group": "1",
+    "title": "Anatomy of a Function",
+    "description": "Complete the function declaration with the function name and parameter.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Complete the function definition to create a greeting for any provided name:",
+      "template": "function {{greet}}({{name}}) {\n  return \"Hello, \" + {{name}};\n}",
+      "blanks": [{
+        "key": "greet",
+        "label": "Function Name",
+        "hint": "greet"
+      }, {
+        "key": "name",
+        "label": "Parameter",
+        "hint": "name"
+      }],
+      "answer": {
+        "greet": "greet",
+        "name": "name"
+      }
+    }
+  }, {
+    "group": "1",
+    "title": "Function Return Values vs Console Output",
+    "description": "Understand the critical difference between return values and console.log.",
+    "isMultipleChoice": true,
+    "question": {
+      "questionText": "What is the primary difference between returning a value from a function and calling console.log()?",
+      "options": ["return sends data back to the caller for code to use, whereas console.log only prints text to the terminal.", "return outputs text to the web browser screen, whereas console.log stores data in memory.", "return can only output numbers, whereas console.log can output any data type.", "There is no functional difference; both pass values to subsequent statements."],
+      "answer": "return sends data back to the caller for code to use, whereas console.log only prints text to the terminal."
+    }
+  }, {
+    "group": "1",
+    "title": "Refactoring to Modern Arrow Functions",
+    "description": "Refactor a classic function declaration into a concise ES6 arrow function.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Refactor the classic add function below into a one-line arrow function:",
+      "starterCode": "function add(a, b) {\n  return a + b;\n}",
+      "answer": "const add = (a, b) => a + b;",
+      "tests": ["Returns 7 when passed (3, 4)", "Uses concise arrow function syntax"]
+    }
+  }, {
+    "group": "1",
+    "title": "Comparison & Logical Operators",
+    "description": "Match comparison and logical operators to their operational behavior.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Match each operator to its logical comparison role:",
+      "pairs": [{
+        "left": "===",
+        "right": "Strict equality (checks both value and data type)"
+      }, {
+        "left": "!==",
+        "right": "Strict inequality (checks if value or type differs)"
+      }, {
+        "left": ">=",
+        "right": "Greater than or equal to comparison"
+      }, {
+        "left": "&&",
+        "right": "Logical AND (true only if both expressions are true)"
+      }],
+      "choices": ["Strict equality (checks both value and data type)", "Strict inequality (checks if value or type differs)", "Greater than or equal to comparison", "Logical AND (true only if both expressions are true)"],
+      "answer": {
+        "===": "Strict equality (checks both value and data type)",
+        "!==": "Strict inequality (checks if value or type differs)",
+        ">=": "Greater than or equal to comparison",
+        "&&": "Logical AND (true only if both expressions are true)"
+      }
+    }
+  }, {
+    "group": "1",
+    "title": "Constructing an If-Else Tree",
+    "description": "Arrange lines to create a clean cascading grade calculation conditional structure.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Arrange the lines into a structured if / else if / else conditional chain:",
+      "lines": ["if (score >= 90) {", "  return \"A\";", "} else if (score >= 80) {", "  return \"B\";", "} else {", "  return \"C\";", "}"],
+      "answer": ["if (score >= 90) {", "  return \"A\";", "} else if (score >= 80) {", "  return \"B\";", "} else {", "  return \"C\";", "}"]
+    }
+  }, {
+    "group": "1",
+    "title": "Fixing an Off-By-One Comparison Bug",
+    "description": "Correct the condition so that age 18 is included as an adult.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Fix the condition below so that users aged 18 or older are permitted:",
+      "starterCode": "function canEnter(age) {\n  if (age > 18) {\n    return true;\n  }\n  return false;\n}",
+      "answer": "function canEnter(age) {\n  if (age >= 18) {\n    return true;\n  }\n  return false;\n}",
+      "tests": ["canEnter(18) returns true", "canEnter(17) returns false"]
+    }
+  }, {
+    "group": "1",
+    "title": "Truthy and Falsy Values",
+    "description": "Identify all values that evaluate to false when cast to a boolean in JavaScript.",
+    "isMultipleAnswerChoice": true,
+    "question": {
+      "questionText": "Select all values that are inherently 'falsy' in JavaScript:",
+      "options": ["0", "\"\"", "null", "undefined", "NaN", "false", "\"0\"", "[]", "{}"],
+      "answer": ["0", "\"\"", "null", "undefined", "NaN", "false"]
+    }
+  }, {
+    "group": "1",
+    "title": "Guard Clauses and Early Returns",
+    "description": "Locate the guard clause that halts execution when invalid input is supplied.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Select the line containing the guard clause condition that prevents invalid negative payments:",
+      "code": "function processPayment(amount) {\n  if (amount <= 0) {\n    return 'Invalid amount';\n  }\n  return 'Payment of $' + amount + ' approved';\n}",
+      "answer": 2
+    }
+  }, {
+    "group": "1",
+    "title": "Terminal Practice: Help Command",
+    "description": "Discover built-in shell assistance in a Bash terminal environment.",
+    "isCode": true,
+    "isTerminal": true,
+    "question": {
+      "questionText": "In a Bash terminal environment, enter the help command to discover basic commands."
+    }
+  }, {
+    "group": "1",
+    "title": "For Loop Syntax and Structure",
+    "description": "Fill in the loop counter initialization, condition bound, and increment step.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Complete the standard for loop to count from 0 up to (but not including) 5:",
+      "template": "for (let {{i}} = 0; i < {{5}}; {{i++}}) {\n  console.log(i);\n}",
+      "blanks": [{
+        "key": "i",
+        "label": "Counter Variable",
+        "hint": "i"
+      }, {
+        "key": "5",
+        "label": "Loop Bound",
+        "hint": "5"
+      }, {
+        "key": "i++",
+        "label": "Increment Expression",
+        "hint": "i++"
+      }],
+      "answer": {
+        "5": "5",
+        "i": "i",
+        "i++": "i++"
+      }
+    }
+  }, {
+    "group": "1",
+    "title": "Sequence of Loop Execution",
+    "description": "Order the lifecycle stages of a standard for loop during execution.",
+    "isSelectOrder": true,
+    "question": {
+      "questionText": "Arrange the chronological steps that occur during each iteration of a for loop:",
+      "options": ["1. Initialize counter variable once", "2. Evaluate loop condition", "3. Execute loop body code block", "4. Increment counter expression"],
+      "answer": ["1. Initialize counter variable once", "2. Evaluate loop condition", "3. Execute loop body code block", "4. Increment counter expression"]
+    }
+  }, {
+    "group": "1",
+    "title": "The Loop Accumulator Pattern",
+    "description": "Arrange lines to accumulate a running sum across multiple iterations.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Reorder the lines to correctly initialize an accumulator, sum numbers 1 through 4, and log the result:",
+      "lines": ["let total = 0;", "for (let i = 1; i <= 4; i++) {", "  total += i;", "}", "console.log(total);"],
+      "answer": ["let total = 0;", "for (let i = 1; i <= 4; i++) {", "  total += i;", "}", "console.log(total);"]
+    }
+  }, {
+    "group": "1",
+    "title": "Best Implementation: Summing Array Elements",
+    "description": "Select the cleanest and most idiomatic way to calculate the sum of numbers in JavaScript.",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "Which implementation provides the cleanest, most declarative approach to sum an array of numbers?",
+      "options": ["const sum = (arr) => arr.reduce(\n  (total, n) => total + n, 0\n);", "function sum(arr) {\n  let total = 0;\n  for (let i = 0; i < arr.length; i++) {\n    total = total + arr[i];\n  }\n  return total;\n}", "const sum = (arr) => {\n  let total = 0;\n  arr.forEach((n) => {\n    total += n;\n  });\n  return total;\n};", "function sum(arr) {\n  return eval(arr.join('+'));\n}"],
+      "answer": "const sum = (arr) => arr.reduce(\n  (total, n) => total + n, 0\n);"
+    }
+  }, {
+    "group": "1",
+    "title": "Code Tracing: Loop Counter Iteration",
+    "description": "Trace variable state through loop iterations.",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "What will be printed to the console after executing this loop?",
+      "code": "let count = 1;\nfor (let i = 0; i < 3; i++) {\n  count *= 2;\n}\nconsole.log(count);",
+      "options": ["8", "6", "4", "16"],
+      "answer": "8"
+    }
+  }, {
+    "group": "1",
+    "title": "Fixing an Infinite Loop Condition",
+    "description": "Fix the loop condition that causes an infinite loop.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Fix the loop counter update so it reaches the loop termination condition without freezing:",
+      "starterCode": "function countToThree() {\n  let i = 0;\n  while (i < 3) {\n    console.log(i);\n  }\n}",
+      "answer": "function countToThree() {\n  let i = 0;\n  while (i < 3) {\n    console.log(i);\n    i++;\n  }\n}",
+      "tests": ["Increments i by 1 each iteration", "Terminates after 3 iterations"]
+    }
+  }, {
+    "group": "1",
+    "title": "Refactoring String Concatenation to Template Literals",
+    "description": "Modernize string concatenation with backticks and interpolation.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Refactor the string concatenation below to use an ES6 template literal with backticks:",
+      "starterCode": "function createGreeting(name, role) {\n  return \"User \" + name + \" is a \" + role + \".\";\n}",
+      "answer": "function createGreeting(name, role) {\n  return `User ${name} is a ${role}.`;\n}",
+      "tests": ["Returns \"User Alex is a Developer.\"", "Uses template literal backticks"]
+    }
+  }, {
+    "group": "1",
+    "title": "Locating Array Mutation Bug",
+    "description": "Find the line where an unexpected mutation occurs.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Select the line where the first element of the array is removed:",
+      "code": "let fruits = ['apple', 'banana', 'cherry'];\nfruits.push('date');\nlet removed = fruits.shift();\nconsole.log(fruits);",
+      "answer": 3
+    }
+  }, {
+    "group": "1",
+    "title": "Terminal Practice: Creating Directories",
+    "description": "Practice creating a project folder in a command-line environment.",
+    "isCode": true,
+    "isTerminal": true,
+    "question": {
+      "questionText": "In a bash terminal environment, create a directory called app using the make directory command"
+    }
+  }, {
+    "group": "1",
+    "title": "Iterating Over Arrays with For...Of",
+    "description": "Select the modern, readable syntax for looping directly through array values.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "Which code snippet cleanest iterates directly over each item value in a products array?",
+      "options": ["for (const product of products) {\n  console.log(product);\n}", "for (const product in products) {\n  console.log(product);\n}", "for (let i = products; i++;) {\n  console.log(i);\n}", "while (products.length) {\n  products.each();\n}"],
+      "answer": "for (const product of products) {\n  console.log(product);\n}"
+    }
+  }, {
+    "group": "1",
+    "title": "Build Your App",
+    "isConversationReview": true,
+    "description": "Synthesize variables, functions, conditionals, loops, and arrays into your ongoing project.",
+    "question": {
+      "questionText": "Let's chat about the core programming foundations you've mastered in Chapter 1!",
+      "range": [19, 38]
+    }
+  }, {
+    "group": "2",
+    "title": "Object Literals and Property Access",
+    "description": "Match object syntax concepts to their definitions and access methods.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Match each JavaScript object concept to its description:",
+      "pairs": [{
+        "left": "Object Key",
+        "right": "The named identifier for a property in an object"
+      }, {
+        "left": "Object Value",
+        "right": "The data stored at a specific property key"
+      }, {
+        "left": "user.email",
+        "right": "Dot notation for direct property access"
+      }, {
+        "left": "user[\"role\"]",
+        "right": "Bracket notation for dynamic or string-keyed access"
+      }],
+      "choices": ["The named identifier for a property in an object", "The data stored at a specific property key", "Dot notation for direct property access", "Bracket notation for dynamic or string-keyed access"],
+      "answer": {
+        "Object Key": "The named identifier for a property in an object",
+        "Object Value": "The data stored at a specific property key",
+        "user.email": "Dot notation for direct property access",
+        "user[\"role\"]": "Bracket notation for dynamic or string-keyed access"
+      }
+    }
+  }, {
+    "group": "2",
+    "title": "Creating and Accessing Objects",
+    "description": "Complete an object literal definition and access its properties.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Complete the object definition and access the name property:",
+      "template": "const user = {\n  name: \"Alex\",\n  age: {{28}},\n  isAdmin: {{true}}\n};\nconst userName = user.{{name}};",
+      "blanks": [{
+        "key": "28",
+        "label": "Age value",
+        "hint": "28"
+      }, {
+        "key": "true",
+        "label": "Boolean value",
+        "hint": "true"
+      }, {
+        "key": "name",
+        "label": "Property key",
+        "hint": "name"
+      }],
+      "answer": {
+        "28": "28",
+        "true": "true",
+        "name": "name"
+      }
+    }
+  }, {
+    "group": "2",
+    "title": "Refactoring to Object Destructuring",
+    "description": "Refactor verbose dot-notation property reads into clean object destructuring.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Refactor the manual property assignments into a single destructuring assignment:",
+      "starterCode": "function getInfo(product) {\n  const title = product.title;\n  const price = product.price;\n  return `${title}: $${price}`;\n}",
+      "answer": "function getInfo(product) {\n  const { title, price } = product;\n  return `${title}: $${price}`;\n}",
+      "tests": ["Returns 'Laptop: $999'", "Uses object destructuring { title, price }"]
+    }
+  }, {
+    "group": "2",
+    "title": "The Object Spread Operator (Immutability)",
+    "description": "Clone and update object properties without mutating the original object.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Complete the object spread syntax to create a copy of original with an updated dark theme:",
+      "template": "const original = { id: 1, theme: \"light\" };\nconst updated = { {{...original}}, theme: {{\"dark\"}} };",
+      "blanks": [{
+        "key": "...original",
+        "label": "Spread original object",
+        "hint": "...original"
+      }, {
+        "key": "\"dark\"",
+        "label": "Updated property value",
+        "hint": "\"dark\""
+      }],
+      "answer": {
+        "...original": "...original",
+        "\"dark\"": "\"dark\""
+      }
+    }
+  }, {
+    "group": "2",
+    "title": "Fixing Class Constructor Property Assignment",
+    "description": "Correct the constructor property assignment to bind values to this.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Fix the User class constructor below so that the name and email arguments are saved to the instance:",
+      "starterCode": "class User {\n  constructor(name, email) {\n    name = name;\n    email = email;\n  }\n}",
+      "answer": "class User {\n  constructor(name, email) {\n    this.name = name;\n    this.email = email;\n  }\n}",
+      "tests": ["new User('Sam', 's@dev.io').name equals 'Sam'", "Uses this.name and this.email"]
+    }
+  }, {
+    "group": "2",
+    "title": "Class Instantiation with the new Keyword",
+    "description": "Understand the lifecycle of creating an object instance from a class blueprint.",
+    "isMultipleChoice": true,
+    "question": {
+      "questionText": "What happens when you execute const student = new User('Maya', 'maya@dev.io')?",
+      "options": ["A new object is created in memory, its constructor is executed with 'this' bound to the new instance, and the instance is returned.", "The User class definition is deleted and replaced with a plain function.", "The code compiles the class into a static JSON string on disk.", "It invokes the class without setting any internal instance properties."],
+      "answer": "A new object is created in memory, its constructor is executed with 'this' bound to the new instance, and the instance is returned."
+    }
+  }, {
+    "group": "2",
+    "title": "Defining Methods in a Class",
+    "description": "Arrange lines to create a class with an encapsulated deposit method.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Arrange the lines to define a BankAccount class with a deposit method:",
+      "lines": ["class BankAccount {", "  constructor(balance) {", "    this.balance = balance;", "  }", "  deposit(amount) {", "    this.balance += amount;", "  }", "}"],
+      "answer": ["class BankAccount {", "  constructor(balance) {", "    this.balance = balance;", "  }", "  deposit(amount) {", "    this.balance += amount;", "  }", "}"]
+    }
+  }, {
+    "group": "2",
+    "title": "Locating Context Loss in Class Methods",
+    "description": "Identify the line where this becomes undefined due to losing method binding.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Select the line where detaching the method from the instance causes 'this' context to be lost:",
+      "code": "const account = new BankAccount(100);\nconst detachedDeposit = account.deposit;\ndetachedDeposit(50);\nconsole.log(account.balance);",
+      "answer": 2
+    }
+  }, {
+    "group": "2",
+    "title": "Best Implementation: Array of Objects Transformation",
+    "description": "Choose the cleanest way to extract an array of active usernames.",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "Which method chain cleanest filters active users and maps their names?",
+      "options": ["const names = users\n  .filter((u) => u.isActive)\n  .map((u) => u.name);", "const names = [];\nfor (let i = 0; i < users.length; i++) {\n  if (users[i].isActive) {\n    names.push(users[i].name);\n  }\n}", "const names = users\n  .map((u) => (u.isActive ? u.name : null))\n  .filter(Boolean);", "const names = users.reduce((acc, u) => {\n  return u.isActive ? [...acc, u.name]\n    :\n    acc;\n}, []);"],
+      "answer": "const names = users\n  .filter((u) => u.isActive)\n  .map((u) => u.name);"
+    }
+  }, {
+    "group": "2",
+    "title": "Array of Objects Data Modeling",
+    "description": "Represent collections of records using an array of structured objects.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "Which code snippet correctly models a list of user records as an array of objects?",
+      "options": ["const users = [\n  {\n    id: 1,\n    name: \"Alice\",\n    role: \"admin\"\n  },\n  {\n    id: 2,\n    name: \"Bob\",\n    role: \"member\"\n  }\n];", "const users = {\n  id: 1,\n  name: \"Alice\",\n  role: \"admin\",\n  id: 2,\n  name: \"Bob\",\n  role: \"member\"\n};", "const users =\n  \"id: 1, name: Alice; id: 2, name: Bob\";", "const users = [\n  1, \"Alice\", \"admin\",\n  2, \"Bob\", \"member\"\n];"],
+      "answer": "const users = [\n  {\n    id: 1,\n    name: \"Alice\",\n    role: \"admin\"\n  },\n  {\n    id: 2,\n    name: \"Bob\",\n    role: \"member\"\n  }\n];"
+    }
+  }, {
+    "group": "2",
+    "title": "Object Immutability and Property Rules",
+    "description": "Select all true characteristics of JavaScript objects.",
+    "isMultipleAnswerChoice": true,
+    "question": {
+      "questionText": "Select all true statements regarding JavaScript objects and references:",
+      "options": ["Object variables hold a memory reference to the object, not the object data itself", "Mutating a nested property on a cloned object affects both if a shallow copy was made", "const prevents the variable identifier from being reassigned, but object properties can still be modified", "Objects can only store string values, never functions or arrays", "Object keys must be integer numbers starting at index 0"],
+      "answer": ["Object variables hold a memory reference to the object, not the object data itself", "Mutating a nested property on a cloned object affects both if a shallow copy was made", "const prevents the variable identifier from being reassigned, but object properties can still be modified"]
+    }
+  }, {
+    "group": "2",
+    "title": "Code Tracing: Object Reference Mutation",
+    "description": "Trace variable references pointing to the same underlying object in memory.",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "What will be printed for userA.score after running this code?",
+      "code": "let userA = { score: 10 };\nlet userB = userA;\nuserB.score = 25;\nconsole.log(userA.score);",
+      "options": ["25", "10", "undefined", "NaN"],
+      "answer": "25"
+    }
+  }, {
+    "group": "2",
+    "title": "Class Inheritance with extends and super",
+    "description": "Organize class extension and parent constructor invocation.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Arrange the lines to create an Employee class that inherits from Person:",
+      "lines": ["class Employee extends Person {", "  constructor(name, role) {", "    super(name);", "    this.role = role;", "  }", "}"],
+      "answer": ["class Employee extends Person {", "  constructor(name, role) {", "    super(name);", "    this.role = role;", "  }", "}"]
+    }
+  }, {
+    "group": "2",
+    "title": "Data Modeling Structures and Use Cases",
+    "description": "Match data representations to their primary real-world use case.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Match each data structure to its ideal development purpose:",
+      "pairs": [{
+        "left": "Object Literal {}",
+        "right": "Grouping related properties of a single entity"
+      }, {
+        "left": "Array of Objects [{}, {}]",
+        "right": "Storing a list of records like products or users"
+      }, {
+        "left": "Class Blueprint",
+        "right": "Instantiating reusable objects with shared methods"
+      }, {
+        "left": "JSON String",
+        "right": "Transmitting structured data over HTTP network requests"
+      }],
+      "choices": ["Grouping related properties of a single entity", "Storing a list of records like products or users", "Instantiating reusable objects with shared methods", "Transmitting structured data over HTTP network requests"],
+      "answer": {
+        "Object Literal {}": "Grouping related properties of a single entity",
+        "Array of Objects [{}, {}]": "Storing a list of records like products or users",
+        "Class Blueprint": "Instantiating reusable objects with shared methods",
+        "JSON String": "Transmitting structured data over HTTP network requests"
+      }
+    }
+  }, {
+    "group": "2",
+    "title": "Locating Unsafe Nested Property Access",
+    "description": "Find the line where accessing a property on undefined causes a runtime crash.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Select the line where attempting to read city from an undefined address throws a TypeError:",
+      "code": "const user = { name: 'Alex' };\nconsole.log(user.name);\nconst city = user.address.city;\nconsole.log(city);",
+      "answer": 3
+    }
+  }, {
+    "group": "2",
+    "title": "Code Tracing: Object Methods and State",
+    "description": "Trace class instantiation and method execution to compute internal instance state.",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "Predict the final logged count value after calling increment(3):",
+      "code": "class Counter {\n  constructor(start) {\n    this.count = start;\n  }\n  increment(by = 1) {\n    this.count += by;\n    return this.count;\n  }\n}\n\nconst c = new Counter(5);\nc.increment(3);\nconsole.log(c.count);",
+      "options": ["8", "5", "3", "undefined"],
+      "answer": "8"
+    }
+  }, {
+    "group": "2",
+    "title": "Terminal Practice: Echo Command",
+    "description": "Output string messages in the Bash terminal using echo.",
+    "isCode": true,
+    "isTerminal": true,
+    "question": {
+      "questionText": "In a Bash terminal environment, enter the echo command to print 'Data ready'"
+    }
+  }, {
+    "group": "2",
+    "title": "Build Your App",
+    "isConversationReview": true,
+    "description": "Apply your knowledge of objects, classes, and collection methods to your project.",
+    "question": {
+      "questionText": "Let's chat about how data structures and objects power your applications!",
+      "range": [40, 56]
+    }
+  }, {
+    "group": "3",
+    "title": "Semantic HTML Elements",
+    "description": "Match semantic HTML elements to their appropriate layout and content roles.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Match each HTML5 element to its semantic role:",
+      "pairs": [{
+        "left": "<header>",
+        "right": "Introductory content, site title, or top-level navigation"
+      }, {
+        "left": "<main>",
+        "right": "The dominant, unique content of the document body"
+      }, {
+        "left": "<section>",
+        "right": "A standalone thematic grouping of related content"
+      }, {
+        "left": "<footer>",
+        "right": "Closing information, copyright notices, or author links"
+      }],
+      "choices": ["Introductory content, site title, or top-level navigation", "The dominant, unique content of the document body", "A standalone thematic grouping of related content", "Closing information, copyright notices, or author links"],
+      "answer": {
+        "<header>": "Introductory content, site title, or top-level navigation",
+        "<main>": "The dominant, unique content of the document body",
+        "<section>": "A standalone thematic grouping of related content",
+        "<footer>": "Closing information, copyright notices, or author links"
+      }
+    }
+  }, {
+    "group": "3",
+    "title": "HTML Attributes and Inputs",
+    "description": "Complete an input element with the correct type and placeholder.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Complete the input tag to accept email addresses with a helpful placeholder:",
+      "template": "<input\n  type=\"{{email}}\"\n  placeholder=\"{{Enter your email}}\"\n  required\n/>",
+      "blanks": [{
+        "key": "email",
+        "label": "Input type",
+        "hint": "email"
+      }, {
+        "key": "Enter your email",
+        "label": "Placeholder text",
+        "hint": "Enter your email"
+      }],
+      "answer": {
+        "email": "email",
+        "Enter your email": "Enter your email"
+      }
+    }
+  }, {
+    "group": "3",
+    "title": "Best Implementation: Accessible Clickable Elements",
+    "description": "Select the accessible element for triggering interactive actions.",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "Which implementation provides native keyboard accessibility and screen reader support for a button?",
+      "options": ["<button\n  type=\"button\"\n  onClick={handleClick}\n>\n  Submit\n</button>", "<div onClick={handleClick}>\n  Submit\n</div>", "<span onClick={handleClick}>\n  Submit\n</span>", "<a\n  href=\"#\"\n  onClick={handleClick}\n>\n  Submit\n</a>"],
+      "answer": "<button\n  type=\"button\"\n  onClick={handleClick}\n>\n  Submit\n</button>"
+    }
+  }, {
+    "group": "3",
+    "title": "Fixing JSX Unclosed Tag Bug",
+    "description": "Fix the JSX syntax error caused by an unclosed image tag.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Fix the JSX below so that the self-closing image tag conforms to JSX rules:",
+      "starterCode": "function Avatar({ url }) {\n  return <img src={url} alt=\"Profile\">\n}",
+      "answer": "function Avatar({ url }) {\n  return <img src={url} alt=\"Profile\" />;\n}",
+      "tests": ["Includes self-closing slash />", "Valid JSX component"]
+    }
+  }, {
+    "group": "3",
+    "title": "Assembling Card Markup",
+    "description": "Reorder lines of JSX to form a complete, well-structured product card.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Arrange the JSX lines into a properly nested card component:",
+      "lines": ["<article className=\"card\">", "  <img src=\"item.jpg\" alt=\"Item\" />", "  <div className=\"card-body\">", "    <h3>Pro Headphones</h3>", "    <p>$199.99</p>", "  </div>", "</article>"],
+      "answer": ["<article className=\"card\">", "  <img src=\"item.jpg\" alt=\"Item\" />", "  <div className=\"card-body\">", "    <h3>Pro Headphones</h3>", "    <p>$199.99</p>", "  </div>", "</article>"]
+    }
+  }, {
+    "group": "3",
+    "title": "The CSS Box Model Layers",
+    "description": "Order the concentric layers of the CSS Box Model from innermost to outermost.",
+    "isSelectOrder": true,
+    "question": {
+      "questionText": "Arrange the CSS Box Model layers from the inside out:",
+      "options": ["1. Content area (text/image dimensions)", "2. Padding (space around content inside border)", "3. Border (line surrounding padding)", "4. Margin (space outside the border between elements)"],
+      "answer": ["1. Content area (text/image dimensions)", "2. Padding (space around content inside border)", "3. Border (line surrounding padding)", "4. Margin (space outside the border between elements)"]
+    }
+  }, {
+    "group": "3",
+    "title": "Box Sizing and Spacing Properties",
+    "description": "Match CSS spacing properties to their dimensional impact.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Match each CSS layout property to its effect on the element:",
+      "pairs": [{
+        "left": "box-sizing: border-box",
+        "right": "Includes padding and border inside declared width"
+      }, {
+        "left": "margin: 0 auto",
+        "right": "Horizontally centers a block element with defined width"
+      }, {
+        "left": "gap: 16px",
+        "right": "Sets spacing between flex/grid child elements"
+      }, {
+        "left": "overflow: hidden",
+        "right": "Clips child content that exceeds container boundary"
+      }],
+      "choices": ["Includes padding and border inside declared width", "Horizontally centers a block element with defined width", "Sets spacing between flex/grid child elements", "Clips child content that exceeds container boundary"],
+      "answer": {
+        "box-sizing: border-box": "Includes padding and border inside declared width",
+        "margin: 0 auto": "Horizontally centers a block element with defined width",
+        "gap: 16px": "Sets spacing between flex/grid child elements",
+        "overflow: hidden": "Clips child content that exceeds container boundary"
+      }
+    }
+  }, {
+    "group": "3",
+    "title": "Responsive CSS Units with clamp()",
+    "description": "Select the modern CSS snippet using responsive typography scaling.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "Which CSS block scales typography fluidly between 16px and 24px across viewport sizes?",
+      "options": ["h1 {\n  font-size: clamp(\n    1rem,\n    2.5vw,\n    1.5rem\n  );\n}", "h1 {\n  font-size: 20px;\n}", "h1 {\n  font-size: 100%;\n}", "h1 {\n  font-size: scale(1.5);\n}"],
+      "answer": "h1 {\n  font-size: clamp(\n    1rem,\n    2.5vw,\n    1.5rem\n  );\n}"
+    }
+  }, {
+    "group": "3",
+    "title": "Identifying Layout Overflow",
+    "description": "Locate the problematic fixed width causing horizontal overflow on mobile screens.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Select the line containing the rigid pixel width that breaks responsive layouts on mobile devices:",
+      "code": ".container {\n  display: flex;\n  width: 1200px;\n  padding: 16px;\n  box-sizing: border-box;\n}",
+      "answer": 3
+    }
+  }, {
+    "group": "3",
+    "title": "Flexbox Navbar Alignment",
+    "description": "Arrange CSS flexbox properties to space out a navigation bar with centered items.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Arrange the CSS flexbox rules to create a space-between horizontal navbar:",
+      "lines": [".navbar {", "  display: flex;", "  justify-content: space-between;", "  align-items: center;", "  padding: 12px 24px;", "}"],
+      "answer": [".navbar {", "  display: flex;", "  justify-content: space-between;", "  align-items: center;", "  padding: 12px 24px;", "}"]
+    }
+  }, {
+    "group": "3",
+    "title": "Controlled Input Binding",
+    "description": "Bind React state and onChange event handler to create a controlled text input.",
+    "showPreview": true,
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "Which input element correctly establishes two-way binding with React state?",
+      "previewCode": "function Demo() {\n  const [val, setVal] = React.useState('Type here...');\n  return (\n    <div style={{ padding: 16 }}>\n      <input\n        value={val}\n        onChange={e => setVal(e.target.value)}\n        style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc', width: '100%' }}\n      />\n      <p style={{ marginTop: 8, color: '#666' }}>Output: {val}</p>\n    </div>\n  );\n}",
+      "options": ["<input\n  value={query}\n  onChange={(e) =>\n    setQuery(e.target.value)\n  }\n/>", "<input\n  defaultValue={query}\n  onBlur={() => query}\n/>", "<input\n  value=\"query\"\n  onChange={setQuery}\n/>", "<input\n  state={query}\n  set={setQuery}\n/>"],
+      "answer": "<input\n  value={query}\n  onChange={(e) =>\n    setQuery(e.target.value)\n  }\n/>"
+    }
+  }, {
+    "group": "3",
+    "title": "Live Search Filter Function",
+    "description": "Complete the array filter to match search queries case-insensitively.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Complete the filter expression to search products by title:",
+      "template": "const results = products.{{filter}}((p) =>\n  p.title\n    .{{toLowerCase}}()\n    .includes(query.toLowerCase())\n);",
+      "blanks": [{
+        "key": "filter",
+        "label": "Filter method",
+        "hint": "filter"
+      }, {
+        "key": "toLowerCase",
+        "label": "String lowercase conversion",
+        "hint": "toLowerCase"
+      }],
+      "answer": {
+        "filter": "filter",
+        "toLowerCase": "toLowerCase"
+      }
+    }
+  }, {
+    "group": "3",
+    "title": "Refactoring to Controlled Component",
+    "description": "Refactor unmanaged DOM input reads to controlled React useState binding.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Refactor the imperative document.getElementById read into a controlled React input with useState:",
+      "starterCode": "function Form() {\n  const handleSubmit = () => {\n    const text = document.getElementById('name').value;\n    alert(text);\n  };\n  return <input id='name' />;\n}",
+      "answer": "function Form() {\n  const [name, setName] = useState('');\n  const handleSubmit = () => { alert(name); };\n  return <input value={name} onChange={e => setName(e.target.value)} />;\n}",
+      "tests": ["Uses useState('') for name", "Binds value and onChange to input"]
+    }
+  }, {
+    "group": "3",
+    "title": "Multi-Field Form State Handler",
+    "description": "Dynamically update an object form state using computed property names.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Complete the generic handleChange handler for multi-input forms:",
+      "template": "const handleChange = (e) => {\n  const { name, value } = e.{{target}};\n  setForm((prev) => ({\n    ...prev,\n    [{{name}}]: value\n  }));\n};",
+      "blanks": [{
+        "key": "target",
+        "label": "Event target element",
+        "hint": "target"
+      }, {
+        "key": "name",
+        "label": "Computed key variable",
+        "hint": "name"
+      }],
+      "answer": {
+        "target": "target",
+        "name": "name"
+      }
+    }
+  }, {
+    "group": "3",
+    "title": "Resetting Input State After Submission",
+    "description": "Locate the line that clears the text input back to an empty string.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Select the line that resets the input field state to an empty string after saving:",
+      "code": "const handleAddTodo = (e) => {\n  e.preventDefault();\n  if (!text.trim()) return;\n  setTodos(prev => [...prev, text]);\n  setText('');\n};",
+      "answer": 5
+    }
+  }, {
+    "group": "3",
+    "title": "Ternary Conditional Rendering",
+    "description": "Render alternative components based on a boolean authentication flag.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "Which JSX expression renders Dashboard when isLoggedIn is true and LoginView otherwise?",
+      "options": ["{\n  isLoggedIn ? (\n    <Dashboard />\n  ) : (\n    <LoginView />\n  )\n}", "{\n  if (isLoggedIn) (\n    <Dashboard />\n  ) else (\n    <LoginView />\n  )\n}", "{\n  isLoggedIn && (\n    <Dashboard />\n  ) || (\n    <LoginView />\n  )\n}", "{\n  isLoggedIn ? (\n    <Dashboard />\n  ,\n    <LoginView />\n  )\n}"],
+      "answer": "{\n  isLoggedIn ? (\n    <Dashboard />\n  ) : (\n    <LoginView />\n  )\n}"
+    }
+  }, {
+    "group": "3",
+    "title": "JSX Syntax Rules and Constraints",
+    "description": "Select all mandatory syntax rules when writing JSX in React.",
+    "isMultipleAnswerChoice": true,
+    "question": {
+      "questionText": "Select all valid syntax rules required when writing JSX:",
+      "options": ["Every tag must be explicitly closed (e.g. <img /> or <br />)", "Components must return a single root element or Fragment (<>...</>)", "Use camelCase attributes like className and htmlFor instead of class and for", "JavaScript expressions inside JSX must be enclosed in curly braces {}", "HTML class names must always be written in all-caps"],
+      "answer": ["Every tag must be explicitly closed (e.g. <img /> or <br />)", "Components must return a single root element or Fragment (<>...</>)", "Use camelCase attributes like className and htmlFor instead of class and for", "JavaScript expressions inside JSX must be enclosed in curly braces {}"]
+    }
+  }, {
+    "group": "3",
+    "title": "Loading State Hierarchy",
+    "description": "Arrange lines to handle loading, error, and content branches in order.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Arrange the conditional return hierarchy for an asynchronous view:",
+      "lines": ["if (isLoading) return <Spinner />;", "if (error) return <ErrorMessage msg={error} />;", "return <DataList items={data} />;"],
+      "answer": ["if (isLoading) return <Spinner />;", "if (error) return <ErrorMessage msg={error} />;", "return <DataList items={data} />;"]
+    }
+  }, {
+    "group": "3",
+    "title": "Code Tracing: Empty State Evaluation",
+    "description": "Predict which element renders when the items list is empty.",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "Predict what will be rendered when items = []:",
+      "code": "function List({ items }) {\n  if (items.length === 0) {\n    return <p>No items found.</p>;\n  }\n  return (\n    <ul>\n      {items.map((i) => (\n        <li key={i}>{i}</li>\n      ))}\n    </ul>\n  );\n}",
+      "options": ["<p>No items found.</p>", "<ul></ul>", "null", "Error: Cannot read empty array"],
+      "answer": "<p>No items found.</p>"
+    }
+  }, {
+    "group": "3",
+    "title": "Best Implementation: Conditional Tab Switching",
+    "description": "Select the most declarative tab switching implementation.",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "Which React tab implementation cleanly renders views based on active tab state?",
+      "options": ["<div>\n  <nav>\n    <button onClick={() => setTab('feed')}>\n      Feed\n    </button>\n    <button onClick={() => setTab('profile')}>\n      Profile\n    </button>\n  </nav>\n  {\n    tab === 'feed' ? (\n      <FeedView />\n    ) : (\n      <ProfileView />\n    )\n  }\n</div>", "<div>\n  <button onclick=\"tab='feed'\">\n    Feed\n  </button>\n  <script>render()</script>\n</div>", "<div>\n  {setTab('feed')}\n  <FeedView />\n</div>", "<div>\n  <iframe src={tab} />\n</div>"],
+      "answer": "<div>\n  <nav>\n    <button onClick={() => setTab('feed')}>\n      Feed\n    </button>\n    <button onClick={() => setTab('profile')}>\n      Profile\n    </button>\n  </nav>\n  {\n    tab === 'feed' ? (\n      <FeedView />\n    ) : (\n      <ProfileView />\n    )\n  }\n</div>"
+    }
+  }, {
+    "group": "3",
+    "title": "Understanding Functional React Components",
+    "description": "Understand the relationship between state, props, and rendered JSX.",
+    "isMultipleChoice": true,
+    "question": {
+      "questionText": "What is a functional React component in modern web development?",
+      "options": ["A JavaScript function that accepts props and returns JSX describing what should appear on screen.", "A database table stored inside the browser localStorage.", "A CSS stylesheet with animated keyframe transitions.", "A compiled C++ binary that handles HTTP networking."],
+      "answer": "A JavaScript function that accepts props and returns JSX describing what should appear on screen."
+    }
+  }, {
+    "group": "3",
+    "title": "Core React Architectural Concepts",
+    "description": "Select the foundational concepts of React component-driven architecture.",
+    "isMultipleAnswerChoice": true,
+    "question": {
+      "questionText": "Select all true statements regarding React architecture:",
+      "options": ["UI is expressed as a pure function of state and props", "React uses a Virtual DOM to minimize costly real DOM mutations", "Components can be composed hierarchically like building blocks", "Directly mutating document.getElementById is the recommended way to update React UI", "React components cannot accept any arguments"],
+      "answer": ["UI is expressed as a pure function of state and props", "React uses a Virtual DOM to minimize costly real DOM mutations", "Components can be composed hierarchically like building blocks"]
+    }
+  }, {
+    "group": "3",
+    "title": "Code Tracing: Component Re-rendering Count",
+    "description": "Trace component re-execution when state is updated.",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "How many total times will 'Render App' log if the button is clicked twice?",
+      "code": "function App() {\n  const [count, setCount] = React.useState(0);\n  console.log('Render App');\n  return (\n    <button onClick={() => setCount((c) => c + 1)}>\n      Click {count}\n    </button>\n  );\n}",
+      "options": ["3 times (1 initial mount render + 2 click re-renders)", "2 times (only clicks re-render)", "1 time (components render once)", "0 times (functions don't run console logs)"],
+      "answer": "3 times (1 initial mount render + 2 click re-renders)"
+    }
+  }, {
+    "group": "3",
+    "title": "Fixing Direct State Mutation in Handler",
+    "description": "Fix the click handler to update count immutably using the state setter function.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Fix the increment handler below so it calls setCount instead of mutating count directly:",
+      "starterCode": "function Counter() {\n  let [count, setCount] = useState(0);\n  const handleIncrement = () => {\n    count = count + 1;\n  };\n  return <button onClick={handleIncrement}>{count}</button>;\n}",
+      "answer": "function Counter() {\n  const [count, setCount] = useState(0);\n  const handleIncrement = () => {\n    setCount(c => c + 1);\n  };\n  return <button onClick={handleIncrement}>{count}</button>;\n}",
+      "tests": ["Uses setCount(c => c + 1) or setCount(count + 1)", "Triggers component re-render on click"]
+    }
+  }, {
+    "group": "3",
+    "title": "Event Handling in React (Synthetic Events)",
+    "description": "Understand how React wraps native browser events in cross-browser SyntheticEvents.",
+    "isMultipleChoice": true,
+    "question": {
+      "questionText": "Why does React wrap native browser DOM events in SyntheticEvents?",
+      "options": ["To provide consistent event behavior and properties across all web browsers.", "To prevent any keyboard events from firing in the browser.", "To automatically send every click event to a remote database.", "To convert all mouse clicks into right-click events."],
+      "answer": "To provide consistent event behavior and properties across all web browsers."
+    }
+  }, {
+    "group": "3",
+    "title": "Managing State with useState Hook",
+    "description": "Initialize state and unpack the state value and updater function.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Complete the useState declaration initialized with 0:",
+      "template": "const [count, {{setCount}}] = {{useState}}({{0}});",
+      "blanks": [{
+        "key": "setCount",
+        "label": "State setter function",
+        "hint": "setCount"
+      }, {
+        "key": "useState",
+        "label": "React hook name",
+        "hint": "useState"
+      }, {
+        "key": "0",
+        "label": "Initial value",
+        "hint": "0"
+      }],
+      "answer": {
+        "0": "0",
+        "setCount": "setCount",
+        "useState": "useState"
+      }
+    }
+  }, {
+    "group": "3",
+    "title": "Props vs State vs Children",
+    "description": "Match React data communication concepts to their architectural role.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Match each React concept to its data flow role:",
+      "pairs": [{
+        "left": "Props",
+        "right": "Read-only data passed downward from parent"
+      }, {
+        "left": "State",
+        "right": "Mutable local data managed internally by component"
+      }, {
+        "left": "props.children",
+        "right": "Nested elements passed inside component tags"
+      }, {
+        "left": "Event Callbacks",
+        "right": "Functions passed downward so children notify parents"
+      }],
+      "choices": ["Read-only data passed downward from parent", "Mutable local data managed internally by component", "Nested elements passed inside component tags", "Functions passed downward so children notify parents"],
+      "answer": {
+        "Props": "Read-only data passed downward from parent",
+        "State": "Mutable local data managed internally by component",
+        "props.children": "Nested elements passed inside component tags",
+        "Event Callbacks": "Functions passed downward so children notify parents"
+      }
+    }
+  }, {
+    "group": "3",
+    "title": "Identifying Missing Keys in List Rendering",
+    "description": "Locate the list mapping item that lacks a unique key prop.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Select the line where the mapped element is missing a unique key prop:",
+      "code": "function UserList({ users }) {\n  return (\n    <ul>\n      {users.map(u => (\n        <li>{u.name} - {u.email}</li>\n      ))}\n    </ul>\n  );\n}",
+      "answer": 5
+    }
+  }, {
+    "group": "3",
+    "title": "Code Tracing: Props Down, Events Up",
+    "description": "Trace data flowing from a parent state into a child presentation component.",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "Predict what text will display in the Child badge after clicking increment once:",
+      "code": "function Parent() {\n  const [val, setVal] = React.useState(10);\n  return (\n    <Child\n      current={val}\n      onAdd={() => setVal((v) => v + 5)}\n    />\n  );\n}\n\nfunction Child({ current, onAdd }) {\n  return (\n    <button onClick={onAdd}>\n      Count: {current}\n    </button>\n  );\n}",
+      "options": ["Count: 15", "Count: 10", "Count: 5", "Count: undefined"],
+      "answer": "Count: 15"
+    }
+  }, {
+    "group": "3",
+    "title": "Terminal Practice: Listing Files",
+    "description": "List directory contents in a Bash terminal.",
+    "isCode": true,
+    "isTerminal": true,
+    "question": {
+      "questionText": "In a Bash terminal environment, enter the command to list files in the current directory"
+    }
+  }, {
+    "group": "3",
+    "title": "Styling Paradigms in React",
+    "description": "Match React styling approaches to their syntax and scope.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Match each styling technique to its implementation style:",
+      "pairs": [{
+        "left": "Inline Style Object",
+        "right": "style={{ backgroundColor: \"#3b82f6\", padding: 12 }}"
+      }, {
+        "left": "CSS Modules",
+        "right": "import styles from \"./Button.module.css\"; className={styles.btn}"
+      }, {
+        "left": "Tailwind / Utility CSS",
+        "right": "className=\"bg-blue-500 p-3 rounded-lg text-white\""
+      }, {
+        "left": "Vanilla Global CSS",
+        "right": "className=\"custom-button\" with global style sheet"
+      }],
+      "choices": ["style={{ backgroundColor: \"#3b82f6\", padding: 12 }}", "import styles from \"./Button.module.css\"; className={styles.btn}", "className=\"bg-blue-500 p-3 rounded-lg text-white\"", "className=\"custom-button\" with global style sheet"],
+      "answer": {
+        "Inline Style Object": "style={{ backgroundColor: \"#3b82f6\", padding: 12 }}",
+        "CSS Modules": "import styles from \"./Button.module.css\"; className={styles.btn}",
+        "Tailwind / Utility CSS": "className=\"bg-blue-500 p-3 rounded-lg text-white\"",
+        "Vanilla Global CSS": "className=\"custom-button\" with global style sheet"
+      }
+    }
+  }, {
+    "group": "3",
+    "title": "Building Flexbox Card Layout",
+    "description": "Order the CSS rules to structure a centered column card container.",
+    "isSelectOrder": true,
+    "question": {
+      "questionText": "Arrange the CSS rules to center card content vertically and horizontally in a column:",
+      "options": ["1. display: flex;", "2. flex-direction: column;", "3. align-items: center;", "4. justify-content: center;"],
+      "answer": ["1. display: flex;", "2. flex-direction: column;", "3. align-items: center;", "4. justify-content: center;"]
+    }
+  }, {
+    "group": "3",
+    "title": "Refactoring State to Common Ancestor (Lifting State)",
+    "description": "Lift state from child into parent so multiple sibling components share state.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Refactor the isolated state inside SearchInput up into the parent SearchPage:",
+      "starterCode": "function SearchPage() {\n  return (\n    <div>\n      <SearchInput />\n      <SearchResults />\n    </div>\n  );\n}\n\nfunction SearchInput() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n    />\n  );\n}",
+      "answer": "function SearchPage() {\n  const [query, setQuery] = useState('');\n  return (\n    <div>\n      <SearchInput\n        query={query}\n        setQuery={setQuery}\n      />\n      <SearchResults query={query} />\n    </div>\n  );\n}\n\nfunction SearchInput({ query, setQuery }) {\n  return (\n    <input\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n    />\n  );\n}",
+      "tests": ["Defines const [query, setQuery] in SearchPage", "Passes query to SearchResults"]
+    }
+  }, {
+    "group": "3",
+    "title": "Understanding Side Effects in React",
+    "description": "Recognize what constitutes a side effect in frontend applications.",
+    "isMultipleChoice": true,
+    "question": {
+      "questionText": "Which of the following is considered a 'side effect' in a React component?",
+      "options": ["Fetching data from an external API or setting a browser timer.", "Calculating a sum of two numbers inside JSX.", "Returning an <h1> element from the component function.", "Passing a string prop to a child component."],
+      "answer": "Fetching data from an external API or setting a browser timer."
+    }
+  }, {
+    "group": "3",
+    "title": "React Component Lifecycle Order",
+    "description": "Order the chronological phases of a component from initial mount to unmount.",
+    "isSelectOrder": true,
+    "question": {
+      "questionText": "Arrange the chronological phases of a React component's lifecycle:",
+      "options": ["1. Initial component render (Mount)", "2. Execute useEffect setup functions", "3. State or prop update triggers re-render", "4. Component unmounts and executes useEffect cleanup"],
+      "answer": ["1. Initial component render (Mount)", "2. Execute useEffect setup functions", "3. State or prop update triggers re-render", "4. Component unmounts and executes useEffect cleanup"]
+    }
+  }, {
+    "group": "3",
+    "title": "Asynchronous Data Fetching Sequence in useEffect",
+    "description": "Order the stages of fetching data and managing loading/error states in an effect.",
+    "isSelectOrder": true,
+    "question": {
+      "questionText": "Arrange the steps to fetch data safely in useEffect:",
+      "options": ["1. Set loading state to true", "2. Execute await fetch(endpoint)", "3. Parse response JSON and set data state", "4. Catch potential errors and set loading to false"],
+      "answer": ["1. Set loading state to true", "2. Execute await fetch(endpoint)", "3. Parse response JSON and set data state", "4. Catch potential errors and set loading to false"]
+    }
+  }, {
+    "group": "3",
+    "title": "Best Implementation: Immutable Array Appends",
+    "description": "Select the clean React state update that appends a new item immutably.",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "Which state setter implementation correctly appends a new post to the top of the feed?",
+      "options": ["setPosts((prev) => [\n  newPost,\n  ...prev\n]);", "posts.unshift(newPost);\nsetPosts(posts);", "setPosts(posts + newPost);", "setPosts(newPost);"],
+      "answer": "setPosts((prev) => [\n  newPost,\n  ...prev\n]);"
+    }
+  }, {
+    "group": "3",
+    "title": "React 18 Concurrent Root API",
+    "description": "Understand createRoot and concurrency in React 18.",
+    "isMultipleChoice": true,
+    "question": {
+      "questionText": "Why did React 18 introduce ReactDOM.createRoot over legacy ReactDOM.render?",
+      "options": ["To enable concurrent features, automatic batching of state updates, and smoother transitions.", "To permanently disable CSS styling in components.", "To force all React apps to run without any JavaScript.", "To compile React into WebAssembly binaries."],
+      "answer": "To enable concurrent features, automatic batching of state updates, and smoother transitions."
+    }
+  }, {
+    "group": "3",
+    "title": "Refactoring State to Custom Hooks",
+    "description": "Extract reusable fetch state logic into a useFetch custom hook.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Extract the data fetching logic into a reusable useFetch custom hook:",
+      "starterCode": "function Profile({ url }) {\n  const [data, setData] = useState(null);\n  useEffect(() => {\n    fetch(url)\n      .then((r) => r.json())\n      .then(setData);\n  }, [url]);\n  return <div>{data?.name}</div>;\n}",
+      "answer": "function useFetch(url) {\n  const [data, setData] = useState(null);\n  useEffect(() => {\n    fetch(url)\n      .then((r) => r.json())\n      .then(setData);\n  }, [url]);\n  return data;\n}",
+      "tests": ["Defines function useFetch(url)", "Returns fetched data state"]
+    }
+  }, {
+    "group": "3",
+    "title": "Fixing Infinite Re-Render Loop in useEffect",
+    "description": "Add the missing dependency array to stop an infinite render loop.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Fix the useEffect hook below so it only runs once on mount instead of looping infinitely:",
+      "starterCode": "function Timer() {\n  const [seconds, setSeconds] = useState(0);\n  useEffect(() => {\n    setSeconds(s => s + 1);\n  });\n  return <div>{seconds}</div>;\n}",
+      "answer": "function Timer() {\n  const [seconds, setSeconds] = useState(0);\n  useEffect(() => {\n    setSeconds(s => s + 1);\n  }, []);\n  return <div>{seconds}</div>;\n}",
+      "tests": ["Adds empty dependency array []", "Prevents infinite re-render loop"]
+    }
+  }, {
+    "group": "3",
+    "title": "Rules of Key Props in React Lists",
+    "description": "Select all valid criteria and reasons for using key props in React.",
+    "isMultipleAnswerChoice": true,
+    "question": {
+      "questionText": "Select all true statements about key props in React list rendering:",
+      "options": ["Keys allow React to identify which items have changed, added, or removed", "Keys should be unique and stable identifiers (e.g. item.id) rather than array indices", "Using Math.random() as a key forces unnecessary remounting of elements on every render", "Keys are automatically passed into child components as regular props accessible via props.key", "Key props are only required if the list has more than 1000 items"],
+      "answer": ["Keys allow React to identify which items have changed, added, or removed", "Keys should be unique and stable identifiers (e.g. item.id) rather than array indices", "Using Math.random() as a key forces unnecessary remounting of elements on every render"]
+    }
+  }, {
+    "group": "3",
+    "title": "Lifting State with Callback Handlers",
+    "description": "Arrange lines to pass a callback from parent to child to update parent state.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Arrange the lines of a parent component managing a child item toggle:",
+      "lines": ["function TodoApp() {", "  const [todos, setTodos] = useState([]);", "  const toggle = (id) => {", "    setTodos(t => update(t, id));", "  };", "  return <TodoList items={todos} onToggle={toggle} />;", "}"],
+      "answer": ["function TodoApp() {", "  const [todos, setTodos] = useState([]);", "  const toggle = (id) => {", "    setTodos(t => update(t, id));", "  };", "  return <TodoList items={todos} onToggle={toggle} />;", "}"]
+    }
+  }, {
+    "group": "3",
+    "title": "Preventing Infinite Render Loops in useEffect",
+    "description": "Locate the missing dependency array that triggers an infinite render cycle.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Select the line where the missing dependency array causes the effect to run on every re-render:",
+      "code": "function Counter() {\n  const [count, setCount] = useState(0);\n  useEffect(() => {\n    setCount(c => c + 1);\n  });\n  return <div>{count}</div>;\n}",
+      "answer": 5
+    }
+  }, {
+    "group": "3",
+    "title": "Custom Hook Window Size Extraction",
+    "description": "Select the custom hook returning responsive window dimensions.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "Which function signature correctly defines a custom hook returning window dimensions?",
+      "options": ["function useWindowSize() {\n  const [size, setSize] =\n    useState(window.innerWidth);\n  return size;\n}", "class useWindowSize {\n  constructor() {\n    return window.innerWidth;\n  }\n}", "const useWindowSize = (width) => {\n  return <width />;\n};", "function getWindowSize() {\n  return useState(100);\n}"],
+      "answer": "function useWindowSize() {\n  const [size, setSize] =\n    useState(window.innerWidth);\n  return size;\n}"
+    }
+  }, {
+    "group": "3",
+    "title": "Code Tracing: Derived State vs Redundant State",
+    "description": "Trace computed values derived directly during render without extra setState calls.",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "Predict what will be printed for activeCount during render:",
+      "code": "const items = [\n  { id: 1, active: true },\n  { id: 2, active: false },\n  { id: 3, active: true }\n];\n\nconst activeCount = items\n  .filter((i) => i.active)\n  .length;\n\nconsole.log(activeCount);",
+      "options": ["2", "3", "1", "undefined"],
+      "answer": "2"
+    }
+  }, {
+    "group": "3",
+    "title": "Component Composition with props.children",
+    "description": "Wrap arbitrary JSX components inside a reusable Modal layout.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "Which component wrapper cleanly renders arbitrary child content inside a modal container?",
+      "options": ["function Modal({ title, children }) {\n  return (\n    <div className=\"modal-backdrop\">\n      <h2>{title}</h2>\n      <div className=\"modal-body\">\n        {children}\n      </div>\n    </div>\n  );\n}", "function Modal({ title }) {\n  return <h2>{title}</h2>;\n}", "function Modal(children) {\n  return (\n    <div>\n      {children()}\n    </div>\n  );\n}", "const Modal = (content) => (\n  <div body={content} />\n);"],
+      "answer": "function Modal({ title, children }) {\n  return (\n    <div className=\"modal-backdrop\">\n      <h2>{title}</h2>\n      <div className=\"modal-body\">\n        {children}\n      </div>\n    </div>\n  );\n}"
+    }
+  }, {
+    "group": "3",
+    "title": "Fixing State Updates on Unmounted Component",
+    "description": "Add a cleanup flag to prevent memory leak warnings in async effects.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Fix the effect cleanup below so it cancels state updates if the component unmounts before fetch completes:",
+      "starterCode": "useEffect(() => {\n  fetchData()\n    .then((data) => setData(data));\n}, []);",
+      "answer": "useEffect(() => {\n  let isMounted = true;\n  fetchData().then((data) => {\n    if (isMounted) setData(data);\n  });\n  return () => {\n    isMounted = false;\n  };\n}, []);",
+      "tests": ["Uses let isMounted = true flag", "Cleans up with isMounted = false"]
+    }
+  }, {
+    "group": "3",
+    "title": "Building a Filterable Interactive Dashboard",
+    "description": "Assemble a responsive filterable dashboard with reactive state.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "Which pattern combines search input, category filtering, and count display cleanly?",
+      "options": ["const filtered = items\n  .filter((i) =>\n    category === 'all' ||\n    i.category === category\n  )\n  .filter((i) =>\n    i.title\n      .toLowerCase()\n      .includes(query.toLowerCase())\n  );", "const filtered = items.push(query);", "const filtered = items.sort(category);", "const filtered = items.map(query);"],
+      "answer": "const filtered = items\n  .filter((i) =>\n    category === 'all' ||\n    i.category === category\n  )\n  .filter((i) =>\n    i.title\n      .toLowerCase()\n      .includes(query.toLowerCase())\n  );"
+    }
+  }, {
+    "group": "3",
+    "title": "Interval Timers and useEffect Cleanup",
+    "description": "Understand how returning a cleanup function from useEffect clears active timers and prevents memory leaks.",
+    "showPreview": true,
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "Which useEffect implementation correctly starts an interval timer and clears it in the cleanup function?",
+      "previewCode": "function TimerWidget() {\n  const [seconds, setSeconds] = React.useState(0);\n  const [isActive, setIsActive] = React.useState(true);\n\n  React.useEffect(() => {\n    if (!isActive) return;\n    const interval = setInterval(() => {\n      setSeconds(s => s + 1);\n    }, 1000);\n    return () => clearInterval(interval);\n  }, [isActive]);\n\n  return (\n    <div style={{ padding: 16, textAlign: 'center', background: '#f8fafc', borderRadius: 12, border: '1px solid #e2e8f0' }}>\n      <h3 style={{ fontSize: 24, margin: '0 0 8px', color: '#0f172a' }}>{seconds}s</h3>\n      <button\n        onClick={() => setIsActive(!isActive)}\n        style={{ padding: '6px 16px', background: isActive ? '#ef4444' : '#10b981', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}\n      >\n        {isActive ? 'Pause Timer' : 'Resume Timer'}\n      </button>\n    </div>\n  );\n}",
+      "options": ["useEffect(() => {\n  const timer = setInterval(() => {\n    setSeconds(s => s + 1);\n  }, 1000);\n  return () => clearInterval(timer);\n}, []);", "useEffect(() => {\n  setInterval(() => {\n    setSeconds(s => s + 1);\n  }, 1000);\n}, []);", "useEffect(() => {\n  const timer = setInterval(() => {\n    setSeconds(s => s + 1);\n  }, 1000);\n  clearInterval(timer);\n}, []);", "useEffect(() => {\n  return setInterval(() => {\n    setSeconds(s => s + 1);\n  }, 1000);\n}, []);"],
+      "answer": "useEffect(() => {\n  const timer = setInterval(() => {\n    setSeconds(s => s + 1);\n  }, 1000);\n  return () => clearInterval(timer);\n}, []);"
+    }
+  }, {
+    "group": "3",
+    "title": "Build Your App",
+    "isConversationReview": true,
+    "description": "Synthesize HTML, CSS flexbox, React state, hooks, and responsive components.",
+    "question": {
+      "questionText": "Let's review everything you've built across modern frontend and React architecture!",
+      "range": [58, 106]
+    }
+  }, {
+    "group": "4",
+    "title": "HTTP Methods and RESTful Actions",
+    "description": "Match core HTTP verbs to standard CRUD database operations.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Match each HTTP request method to its primary API role:",
+      "pairs": [{
+        "left": "GET",
+        "right": "Retrieve data or read resources from the server"
+      }, {
+        "left": "POST",
+        "right": "Create a new resource with a request payload"
+      }, {
+        "left": "PUT / PATCH",
+        "right": "Update or modify an existing resource"
+      }, {
+        "left": "DELETE",
+        "right": "Remove a specified resource from the database"
+      }],
+      "choices": ["Retrieve data or read resources from the server", "Create a new resource with a request payload", "Update or modify an existing resource", "Remove a specified resource from the database"],
+      "answer": {
+        "GET": "Retrieve data or read resources from the server",
+        "POST": "Create a new resource with a request payload",
+        "PUT / PATCH": "Update or modify an existing resource",
+        "DELETE": "Remove a specified resource from the database"
+      }
+    }
+  }, {
+    "group": "4",
+    "title": "HTTP Status Code Categorization",
+    "description": "Match HTTP response status codes to their meanings.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Match each HTTP status code to its standard meaning:",
+      "pairs": [{
+        "left": "200 OK / 201 Created",
+        "right": "Request succeeded and resource was retrieved or created"
+      }, {
+        "left": "400 Bad Request",
+        "right": "Client sent invalid parameters or malformed JSON"
+      }, {
+        "left": "401 Unauthorized / 403 Forbidden",
+        "right": "Authentication required or permissions denied"
+      }, {
+        "left": "404 Not Found",
+        "right": "The requested endpoint or resource does not exist"
+      }, {
+        "left": "500 Internal Server Error",
+        "right": "Uncaught server-side exception occurred"
+      }],
+      "choices": ["Request succeeded and resource was retrieved or created", "Client sent invalid parameters or malformed JSON", "Authentication required or permissions denied", "The requested endpoint or resource does not exist", "Uncaught server-side exception occurred"],
+      "answer": {
+        "200 OK / 201 Created": "Request succeeded and resource was retrieved or created",
+        "400 Bad Request": "Client sent invalid parameters or malformed JSON",
+        "401 Unauthorized / 403 Forbidden": "Authentication required or permissions denied",
+        "404 Not Found": "The requested endpoint or resource does not exist",
+        "500 Internal Server Error": "Uncaught server-side exception occurred"
+      }
+    }
+  }, {
+    "group": "4",
+    "title": "Asynchronous JavaScript and the Event Loop",
+    "description": "Understand non-blocking I/O and how promises resolve in JavaScript.",
+    "isMultipleChoice": true,
+    "question": {
+      "questionText": "Why does Node.js use non-blocking asynchronous I/O for network and database operations?",
+      "options": ["To handle thousands of concurrent client requests on a single thread without freezing the server.", "To compile JavaScript into machine code before running.", "To force database queries to execute synchronously one by one.", "To automatically restart the server whenever an error is thrown."],
+      "answer": "To handle thousands of concurrent client requests on a single thread without freezing the server."
+    }
+  }, {
+    "group": "4",
+    "title": "Async / Await Promise Consumption",
+    "description": "Arrange lines to asynchronously fetch and parse JSON data from an endpoint.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Arrange the lines into a complete async data fetching function:",
+      "lines": ["async function getUser(id) {", "  const res = await fetch(`/users/${id}`);", "  if (!res.ok) throw new Error('Error');", "  const data = await res.json();", "  return data;", "}"],
+      "answer": ["async function getUser(id) {", "  const res = await fetch(`/users/${id}`);", "  if (!res.ok) throw new Error('Error');", "  const data = await res.json();", "  return data;", "}"]
+    }
+  }, {
+    "group": "4",
+    "title": "Express.js RESTful Route Definitions",
+    "description": "Complete an Express route definition that sends a JSON response.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Complete the Express route to handle GET requests at '/api/posts':",
+      "template": "app.{{get}}(\"/api/posts\", async (req, res) => {\n  res.{{json}}({\n    posts: []\n  });\n});",
+      "blanks": [{
+        "key": "get",
+        "label": "HTTP Method",
+        "hint": "get"
+      }, {
+        "key": "json",
+        "label": "JSON response method",
+        "hint": "json"
+      }],
+      "answer": {
+        "get": "get",
+        "json": "json"
+      }
+    }
+  }, {
+    "group": "4",
+    "title": "Handling Request Bodies and JSON Payloads",
+    "description": "Extract incoming body data and return a 201 Created response.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Complete the POST handler to parse req.body and respond with status 201:",
+      "template": "app.post(\"/api/users\", (req, res) => {\n  const data = req.{{body}};\n  res.status({{201}}).json({\n    success: true,\n    user: data\n  });\n});",
+      "blanks": [{
+        "key": "body",
+        "label": "Request payload property",
+        "hint": "body"
+      }, {
+        "key": "201",
+        "label": "Created status code",
+        "hint": "201"
+      }],
+      "answer": {
+        "201": "201",
+        "body": "body"
+      }
+    }
+  }, {
+    "group": "4",
+    "title": "Fixing Unhandled Promise Rejection",
+    "description": "Add missing await to prevent sending unresolved promises in API response.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Fix the async handler below so it awaits the database query before sending JSON response:",
+      "starterCode": "app.get('/api/users', async (req, res) => {\n  const users = db.getUsers();\n  res.json(users);\n});",
+      "answer": "app.get('/api/users', async (req, res) => {\n  const users = await db.getUsers();\n  res.json(users);\n});",
+      "tests": ["Awaits db.getUsers() before sending response", "Sends resolved user records"]
+    }
+  }, {
+    "group": "4",
+    "title": "Refactoring Nested Callbacks to Async/Await",
+    "description": "Refactor deeply nested error-first callbacks into clean async/await.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Refactor the callback-based query into a modern async/await function:",
+      "starterCode": "function getUser(id, callback) {\n  db.find(id, (err, user) => {\n    if (err) return callback(err);\n    callback(null, user);\n  });\n}",
+      "answer": "async function getUser(id) {\n  const user = await db.find(id);\n  return user;\n}",
+      "tests": ["Uses async/await syntax", "Returns resolved user object directly"]
+    }
+  }, {
+    "group": "4",
+    "title": "Relational (SQL) vs Document (NoSQL) Databases",
+    "description": "Match database paradigms to their architectural characteristics.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Match each database paradigm to its architectural model:",
+      "pairs": [{
+        "left": "Relational (SQL)",
+        "right": "Strict schemas with tables, rows, foreign keys, and JOINs"
+      }, {
+        "left": "Document (NoSQL)",
+        "right": "Flexible JSON-like documents grouped into collections"
+      }, {
+        "left": "Primary Key",
+        "right": "Unique identifier for a record in a table"
+      }, {
+        "left": "Foreign Key",
+        "right": "Reference linking a child row to a parent table"
+      }],
+      "choices": ["Strict schemas with tables, rows, foreign keys, and JOINs", "Flexible JSON-like documents grouped into collections", "Unique identifier for a record in a table", "Reference linking a child row to a parent table"],
+      "answer": {
+        "Relational (SQL)": "Strict schemas with tables, rows, foreign keys, and JOINs",
+        "Document (NoSQL)": "Flexible JSON-like documents grouped into collections",
+        "Primary Key": "Unique identifier for a record in a table",
+        "Foreign Key": "Reference linking a child row to a parent table"
+      }
+    }
+  }, {
+    "group": "4",
+    "title": "Best Implementation: Safe Database Queries",
+    "description": "Select the parameterized query implementation that prevents SQL injection.",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "Which database query implementation safely uses parameterized inputs to prevent SQL injection attacks?",
+      "options": ["const result = await db.query(\n  'SELECT * FROM users WHERE email = $1',\n  [email]\n);", "const result = await db.query(\n  `SELECT * FROM users WHERE email = '${email}'`\n);", "const result = await db.query(\n  'SELECT * FROM users WHERE email = ' + email\n);", "const result = await db.query(\n  eval(`SELECT * FROM users WHERE email = ${email}`)\n);"],
+      "answer": "const result = await db.query(\n  'SELECT * FROM users WHERE email = $1',\n  [email]\n);"
+    }
+  }, {
+    "group": "4",
+    "title": "JSON Web Token (JWT) Authentication Flow",
+    "description": "Order the standard lifecycle steps of token-based API authentication.",
+    "isSelectOrder": true,
+    "question": {
+      "questionText": "Arrange the chronological steps in a token-based authentication flow:",
+      "options": ["1. Client sends login credentials to /auth/login", "2. Server validates credentials and signs a JWT", "3. Client stores token in memory or secure storage", "4. Client sends token in Authorization Bearer header for API requests"],
+      "answer": ["1. Client sends login credentials to /auth/login", "2. Server validates credentials and signs a JWT", "3. Client stores token in memory or secure storage", "4. Client sends token in Authorization Bearer header for API requests"]
+    }
+  }, {
+    "group": "4",
+    "title": "Modeling Database Relationships",
+    "description": "Identify how parent-child records are linked in a relational model.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "Which schema definition correctly links a 'comments' table to an author in the 'users' table?",
+      "options": ["CREATE TABLE comments (\n  id SERIAL PRIMARY KEY,\n  text TEXT,\n  user_id INT REFERENCES users(id)\n);", "CREATE TABLE comments (\n  id SERIAL PRIMARY KEY,\n  text TEXT,\n  user_name TEXT\n);", "CREATE TABLE comments (\n  users JSON\n);", "CREATE TABLE comments (\n  link TABLE users\n);"],
+      "answer": "CREATE TABLE comments (\n  id SERIAL PRIMARY KEY,\n  text TEXT,\n  user_id INT REFERENCES users(id)\n);"
+    }
+  }, {
+    "group": "4",
+    "title": "Fixing Broken Status Code in Error Response",
+    "description": "Correct the HTTP status code sent when a requested resource is not found.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Fix the status code below so that a missing user returns 404 instead of 200:",
+      "starterCode": "app.get('/api/users/:id', async (req, res) => {\n  const user = await db.find(req.params.id);\n  if (!user) {\n    return res.status(200).json({\n      error: 'User not found'\n    });\n  }\n  res.json(user);\n});",
+      "answer": "app.get('/api/users/:id', async (req, res) => {\n  const user = await db.find(req.params.id);\n  if (!user) {\n    return res.status(404).json({\n      error: 'User not found'\n    });\n  }\n  res.json(user);\n});",
+      "tests": ["Returns status 404 when user is null", "Returns error message payload"]
+    }
+  }, {
+    "group": "4",
+    "title": "Refactoring Hardcoded Secrets to Environment Variables",
+    "description": "Replace hardcoded API keys with process.env references.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Refactor the hardcoded JWT secret below to read from process.env.JWT_SECRET:",
+      "starterCode": "function generateToken(user) {\n  return jwt.sign(\n    user,\n    'super-secret-key-12345'\n  );\n}",
+      "answer": "function generateToken(user) {\n  return jwt.sign(\n    user,\n    process.env.JWT_SECRET\n  );\n}",
+      "tests": ["Uses process.env.JWT_SECRET", "Removes hardcoded secret string"]
+    }
+  }, {
+    "group": "4",
+    "title": "Best Implementation: Authentication Middleware",
+    "description": "Select the most robust Express authentication guard middleware.",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "Which middleware correctly validates Bearer tokens from authorization headers?",
+      "options": ["const authGuard = (req, res, next) => {\n  const token =\n    req.headers.authorization?.split(' ')[1];\n  if (!token) {\n    return res.status(401).json({\n      error: 'Unauthorized'\n    });\n  }\n  try {\n    req.user = jwt.verify(\n      token,\n      process.env.JWT_SECRET\n    );\n    next();\n  } catch (err) {\n    res.status(403).json({\n      error: 'Invalid token'\n    });\n  }\n};", "const authGuard = (req, res, next) => {\n  next();\n};", "const authGuard = (req, res, next) => {\n  if (req.url) next();\n};", "const authGuard = (req, res, next) => {\n  res.send(req.token);\n};"],
+      "answer": "const authGuard = (req, res, next) => {\n  const token =\n    req.headers.authorization?.split(' ')[1];\n  if (!token) {\n    return res.status(401).json({\n      error: 'Unauthorized'\n    });\n  }\n  try {\n    req.user = jwt.verify(\n      token,\n      process.env.JWT_SECRET\n    );\n    next();\n  } catch (err) {\n    res.status(403).json({\n      error: 'Invalid token'\n    });\n  }\n};"
+    }
+  }, {
+    "group": "4",
+    "title": "Express Middleware Pipeline",
+    "description": "Arrange lines to configure Express middleware and protected route handlers.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Arrange the lines to configure JSON parsing middleware before the API route:",
+      "lines": ["const app = express();", "app.use(express.json());", "app.get(\"/api/health\", (req, res) => {", "  res.json({ status: \"healthy\" });", "});", "app.listen(3000);"],
+      "answer": ["const app = express();", "app.use(express.json());", "app.get(\"/api/health\", (req, res) => {", "  res.json({ status: \"healthy\" });", "});", "app.listen(3000);"]
+    }
+  }, {
+    "group": "4",
+    "title": "API Security and Rate Limiting Best Practices",
+    "description": "Select all critical security measures for production API servers.",
+    "isMultipleAnswerChoice": true,
+    "question": {
+      "questionText": "Select all essential security best practices for backend API servers:",
+      "options": ["Sanitize and validate all incoming user input", "Implement rate limiting to prevent brute-force attacks", "Store passwords using salted cryptographic hashes (e.g. bcrypt)", "Use HTTPS / TLS to encrypt all traffic in transit", "Expose database credentials directly in client-side bundles", "Disable CORS checks for all domains with wildcard *"],
+      "answer": ["Sanitize and validate all incoming user input", "Implement rate limiting to prevent brute-force attacks", "Store passwords using salted cryptographic hashes (e.g. bcrypt)", "Use HTTPS / TLS to encrypt all traffic in transit"]
+    }
+  }, {
+    "group": "4",
+    "title": "Error Handling in Async Route Handlers",
+    "description": "Identify the line where error handling catches rejected promises.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Select the line where the catch block intercepts database errors to prevent server crashes:",
+      "code": "app.get('/api/users', async (req, res) => {\n  try {\n    const users = await db.query('SELECT * FROM users');\n    res.json(users);\n  } catch (error) {\n    res.status(500).json({ error: 'Database failed' });\n  }\n});",
+      "answer": 5
+    }
+  }, {
+    "group": "4",
+    "title": "Code Tracing: Async / Await Execution Order",
+    "description": "Trace asynchronous microtasks vs synchronous logs in Node.js.",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "Predict the exact order of console logs printed when running this program:",
+      "code": "console.log('1');\n\nsetTimeout(() => {\n  console.log('2');\n}, 0);\n\nPromise.resolve().then(() => {\n  console.log('3');\n});\n\nconsole.log('4');",
+      "options": ["1, 4, 3, 2", "1, 2, 3, 4", "1, 3, 4, 2", "4, 3, 2, 1"],
+      "answer": "1, 4, 3, 2"
+    }
+  }, {
+    "group": "4",
+    "title": "Terminal Practice: Testing API Endpoints with Curl",
+    "description": "Execute a command to test a backend endpoint from the terminal.",
+    "isCode": true,
+    "isTerminal": true,
+    "question": {
+      "questionText": "In a Bash terminal, use curl to perform a GET request to 'https://api.example.com/health'"
+    }
+  }, {
+    "group": "4",
+    "title": "Locating Missing CORS Headers",
+    "description": "Locate the line where missing CORS configuration blocks browser requests.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Select the line where CORS origin permission is configured:",
+      "code": "const app = express();\nconst cors = require('cors');\napp.use(cors({ origin: 'https://myapp.com' }));\napp.listen(8080);",
+      "answer": 3
+    }
+  }, {
+    "group": "4",
+    "title": "Build Your App",
+    "isConversationReview": true,
+    "description": "Review backend engineering, API routes, database modeling, and authentication.",
+    "question": {
+      "questionText": "Let's chat about backend architecture, databases, and APIs for your project!",
+      "range": [108, 128]
+    }
+  }, {
+    "group": "5",
+    "title": "Serverless Cloud Platforms and Infrastructure",
+    "description": "Understand modern serverless architectures vs traditional hosting.",
+    "isMultipleChoice": true,
+    "question": {
+      "questionText": "What distinguishes a modern serverless backend (like Firebase/Supabase) from traditional VPS servers?",
+      "options": ["Serverless abstracts away server provisioning, load balancing, and OS patches while scaling automatically per request.", "Serverless cannot run database queries or authenticate users.", "Serverless requires you to install Linux kernel updates manually.", "Serverless only runs HTML files without JavaScript logic."],
+      "answer": "Serverless abstracts away server provisioning, load balancing, and OS patches while scaling automatically per request."
+    }
+  }, {
+    "group": "5",
+    "title": "Configuring package.json Scripts",
+    "description": "Configure build and dev runner scripts inside package.json.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Complete the npm scripts block for a modern Vite + React application:",
+      "template": "{\n  \"scripts\": {\n    \"dev\": \"{{vite}}\",\n    \"build\": \"{{vite build}}\"\n  }\n}",
+      "blanks": [{
+        "key": "vite",
+        "label": "Dev server command",
+        "hint": "vite"
+      }, {
+        "key": "vite build",
+        "label": "Build production bundle",
+        "hint": "vite build"
+      }],
+      "answer": {
+        "vite": "vite",
+        "vite build": "vite build"
+      }
+    }
+  }, {
+    "group": "5",
+    "title": "Git Core Version Control Commands",
+    "description": "Match Git commands to their exact repository operations.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Match each Git command to its repository action:",
+      "pairs": [{
+        "left": "git status",
+        "right": "Displays modified, staged, and untracked files"
+      }, {
+        "left": "git add .",
+        "right": "Stages all changed files for the next commit"
+      }, {
+        "left": "git commit -m \"msg\"",
+        "right": "Snapshots staged changes into project history"
+      }, {
+        "left": "git push origin main",
+        "right": "Uploads local commits to the remote GitHub repository"
+      }],
+      "choices": ["Displays modified, staged, and untracked files", "Stages all changed files for the next commit", "Snapshots staged changes into project history", "Uploads local commits to the remote GitHub repository"],
+      "answer": {
+        "git status": "Displays modified, staged, and untracked files",
+        "git add .": "Stages all changed files for the next commit",
+        "git commit -m \"msg\"": "Snapshots staged changes into project history",
+        "git push origin main": "Uploads local commits to the remote GitHub repository"
+      }
+    }
+  }, {
+    "group": "5",
+    "title": "Git Daily Development Lifecycle",
+    "description": "Arrange lines to create a clean commit and sync it with GitHub.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Arrange the chronological Git workflow commands to stage, commit, and push:",
+      "lines": ["git status", "git add .", "git commit -m \"feat: add real-time message stream\"", "git push origin main"],
+      "answer": ["git status", "git add .", "git commit -m \"feat: add real-time message stream\"", "git push origin main"]
+    }
+  }, {
+    "group": "5",
+    "title": "Terminal Practice: Cloning a GitHub Repository",
+    "description": "Clone a remote repository to your local computer in the terminal.",
+    "isCode": true,
+    "isTerminal": true,
+    "question": {
+      "questionText": "In a Bash terminal environment, enter the command to clone https://github.com/example/web-app.git"
+    }
+  }, {
+    "group": "5",
+    "title": "Fixing Missing Firebase Configuration Properties",
+    "description": "Correct the Firebase config object so that the projectId property is passed correctly.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Fix the Firebase initialization config below so that projectId is included:",
+      "starterCode": "const firebaseConfig = {\n  apiKey: process.env.VITE_API_KEY,\n  authDomain: 'app.firebaseapp.com'\n};\nconst app = initializeApp(firebaseConfig);",
+      "answer": "const firebaseConfig = {\n  apiKey: process.env.VITE_API_KEY,\n  authDomain: 'app.firebaseapp.com',\n  projectId: process.env.VITE_PROJECT_ID\n};\nconst app = initializeApp(firebaseConfig);",
+      "tests": ["Includes projectId property", "Passes valid config to initializeApp"]
+    }
+  }, {
+    "group": "5",
+    "title": "Refactoring to Modular Firebase v9 SDK",
+    "description": "Refactor legacy v8 namespaced Firebase calls into tree-shakeable modular functions.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Refactor the legacy firebase.auth().signInWithPopup(provider) call to the modular v9 syntax:",
+      "starterCode": "function login(provider) {\n  return firebase.auth().signInWithPopup(provider);\n}",
+      "answer": "function login(provider) {\n  return signInWithPopup(auth, provider);\n}",
+      "tests": ["Uses signInWithPopup(auth, provider)", "Removes legacy namespaced syntax"]
+    }
+  }, {
+    "group": "5",
+    "title": "Subscribing to Auth State (onAuthStateChanged)",
+    "description": "Keep client state in sync with login/logout status across page reloads.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Complete the auth observer subscription:",
+      "template": "const unsubscribe = {{onAuthStateChanged}}(\n  auth,\n  (currentUser) => {\n    {{setUser}}(currentUser);\n  }\n);",
+      "blanks": [{
+        "key": "onAuthStateChanged",
+        "label": "Auth listener function",
+        "hint": "onAuthStateChanged"
+      }, {
+        "key": "setUser",
+        "label": "React state setter",
+        "hint": "setUser"
+      }],
+      "answer": {
+        "onAuthStateChanged": "onAuthStateChanged",
+        "setUser": "setUser"
+      }
+    }
+  }, {
+    "group": "5",
+    "title": "Best Implementation: Real-Time Firestore Subscription",
+    "description": "Select the implementation that properly subscribes to real-time updates and unmounts cleanly.",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "Which React useEffect pattern subscribes to Firestore real-time snapshots and cleans up on unmount?",
+      "options": ["useEffect(() => {\n  const q = query(\n    collection(db, 'messages'),\n    orderBy('createdAt')\n  );\n\n  const unsubscribe = onSnapshot(\n    q,\n    (snapshot) => {\n      setMessages(\n        snapshot.docs.map((d) => ({\n          id: d.id,\n          ...d.data()\n        }))\n      );\n    }\n  );\n\n  return () => unsubscribe();\n}, []);", "useEffect(() => {\n  onSnapshot(\n    collection(db, 'messages'),\n    (s) => setMessages(s.docs)\n  );\n}, []);", "useEffect(() => {\n  const data = getDocs(\n    collection(db, 'messages')\n  );\n  setMessages(data);\n});", "useEffect(() => {\n  setInterval(\n    () => onSnapshot(db, setMessages),\n    1000\n  );\n}, []);"],
+      "answer": "useEffect(() => {\n  const q = query(\n    collection(db, 'messages'),\n    orderBy('createdAt')\n  );\n\n  const unsubscribe = onSnapshot(\n    q,\n    (snapshot) => {\n      setMessages(\n        snapshot.docs.map((d) => ({\n          id: d.id,\n          ...d.data()\n        }))\n      );\n    }\n  );\n\n  return () => unsubscribe();\n}, []);"
+    }
+  }, {
+    "group": "5",
+    "title": "Firestore Security Rules Configuration",
+    "description": "Enforce that users can only read and write their own documents.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "Which Firestore security rule ensures that authenticated users can only write to their own user profile document?",
+      "options": ["match /users/{userId} {\n  allow read, write:\n    if request.auth != null &&\n       request.auth.uid == userId;\n}", "match /users/{userId} {\n  allow read, write: if true;\n}", "match /users/{userId} {\n  allow read, write:\n    if request.time > 0;\n}", "match /users/{userId} {\n  allow read: false;\n  allow write: false;\n}"],
+      "answer": "match /users/{userId} {\n  allow read, write:\n    if request.auth != null &&\n       request.auth.uid == userId;\n}"
+    }
+  }, {
+    "group": "5",
+    "title": "Cloud Ecosystem Architecture Components",
+    "description": "Match Firebase and cloud platform services to their architectural responsibilities.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Match each cloud service to its infrastructure role:",
+      "pairs": [{
+        "left": "Firebase Authentication",
+        "right": "User identity, session management, and OAuth"
+      }, {
+        "left": "Cloud Firestore",
+        "right": "Real-time, scalable NoSQL document database"
+      }, {
+        "left": "Cloud Storage",
+        "right": "Binary media storage for photos, audio, and videos"
+      }, {
+        "left": "Firebase Hosting",
+        "right": "Global edge CDN for fast static asset delivery"
+      }],
+      "choices": ["User identity, session management, and OAuth", "Real-time, scalable NoSQL document database", "Binary media storage for photos, audio, and videos", "Global edge CDN for fast static asset delivery"],
+      "answer": {
+        "Firebase Authentication": "User identity, session management, and OAuth",
+        "Cloud Firestore": "Real-time, scalable NoSQL document database",
+        "Cloud Storage": "Binary media storage for photos, audio, and videos",
+        "Firebase Hosting": "Global edge CDN for fast static asset delivery"
+      }
+    }
+  }, {
+    "group": "5",
+    "title": "Best Implementation: Client Environment Variables",
+    "description": "Select the secure way to load Vite public environment variables.",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "Which code snippet correctly reads client-side environment variables in a Vite project without leaking private server keys?",
+      "options": ["const firebaseConfig = {\n  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,\n  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID\n};", "const firebaseConfig = {\n  apiKey: process.env.SECRET_PRIVATE_KEY\n};", "const firebaseConfig = window.env;", "const firebaseConfig = {\n  apiKey: document.cookie\n};"],
+      "answer": "const firebaseConfig = {\n  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,\n  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID\n};"
+    }
+  }, {
+    "group": "5",
+    "title": "Locating Unhandled Auth Popup Error",
+    "description": "Identify the line where a popup error is logged when the user closes the login window.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Select the line where the catch block intercepts user popup cancellation:",
+      "code": "const handleLogin = async () => {\n  try {\n    await signInWithPopup(auth, provider);\n  } catch (error) {\n    console.warn('Login failed:', error.message);\n  }\n};",
+      "answer": 5
+    }
+  }, {
+    "group": "5",
+    "title": "Git Feature Branching and Merge Workflow",
+    "description": "Arrange lines to create a feature branch, commit changes, and merge back to main.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Arrange the Git branching commands in correct workflow order:",
+      "lines": ["git checkout -b feature/auth-flow", "git commit -am 'feat: implement OAuth login'", "git checkout main", "git merge feature/auth-flow"],
+      "answer": ["git checkout -b feature/auth-flow", "git commit -am 'feat: implement OAuth login'", "git checkout main", "git merge feature/auth-flow"]
+    }
+  }, {
+    "group": "5",
+    "title": "Fixing Memory Leak in Firebase Auth Listener",
+    "description": "Return the unsubscribe callback from useEffect to stop listening on unmount.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Fix the useEffect hook below so it cleans up the auth state listener when the component unmounts:",
+      "starterCode": "useEffect(() => {\n  const unsubscribe = onAuthStateChanged(auth, setUser);\n}, []);",
+      "answer": "useEffect(() => {\n  const unsubscribe = onAuthStateChanged(auth, setUser);\n  return () => unsubscribe();\n}, []);",
+      "tests": ["Returns cleanup function () => unsubscribe()", "Prevents memory leak on unmount"]
+    }
+  }, {
+    "group": "5",
+    "title": "Terminal Practice: Starting Local Dev Server",
+    "description": "Start the local development server using npm run dev.",
+    "isCode": true,
+    "isTerminal": true,
+    "question": {
+      "questionText": "In a Bash terminal, enter the command to start your local project dev server using npm"
+    }
+  }, {
+    "group": "5",
+    "title": "CI/CD Deployment Pipeline Stages",
+    "description": "Order the standard automated stages of Continuous Integration and Deployment.",
+    "isSelectOrder": true,
+    "question": {
+      "questionText": "Arrange the chronological order of automated CI/CD pipeline steps:",
+      "options": ["1. Developer pushes commit to GitHub", "2. CI pipeline runs automated test suite", "3. Build tool compiles optimized production bundle", "4. CD pipeline deploys artifacts to global CDN hosting edge"],
+      "answer": ["1. Developer pushes commit to GitHub", "2. CI pipeline runs automated test suite", "3. Build tool compiles optimized production bundle", "4. CD pipeline deploys artifacts to global CDN hosting edge"]
+    }
+  }, {
+    "group": "5",
+    "title": "Refactoring Firebase Calls to Dedicated Service Layer",
+    "description": "Extract inline database operations into an isolated reusable service function.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Refactor the inline Firestore write into an isolated addPost service function:",
+      "starterCode": "function handleSave(text) {\n  addDoc(\n    collection(db, 'posts'),\n    { text, date: Date.now() }\n  );\n}",
+      "answer": "export const addPost = (text) => {\n  return addDoc(\n    collection(db, 'posts'),\n    { text, date: Date.now() }\n  );\n};",
+      "tests": ["Exports standalone addPost function", "Returns promise from addDoc"]
+    }
+  }, {
+    "group": "5",
+    "title": "Production Monitoring and Crash Reporting",
+    "description": "Select key operational metrics to monitor after deploying a web app.",
+    "isMultipleAnswerChoice": true,
+    "question": {
+      "questionText": "Select all vital metrics and tools used to monitor live web applications:",
+      "options": ["Real-time client-side JavaScript error tracking (e.g. Sentry)", "API latency and response time percentiles (p95 / p99)", "Core Web Vitals and Largest Contentful Paint (LCP)", "Database read/write quotas and query execution times", "Physical temperature of the user's laptop screen"],
+      "answer": ["Real-time client-side JavaScript error tracking (e.g. Sentry)", "API latency and response time percentiles (p95 / p99)", "Core Web Vitals and Largest Contentful Paint (LCP)", "Database read/write quotas and query execution times"]
+    }
+  }, {
+    "group": "5",
+    "title": "Code Tracing: Full-Stack Auth and Query Sequence",
+    "description": "Trace client authentication checking before querying protected documents.",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "Predict what this client auth check will log when no user is signed in:",
+      "code": "const user = null;\nconst status = user ? 'Authenticated' : 'Guest';\nconst canPost = user && user.verified;\nconsole.log(`${status} - ${Boolean(canPost)}`);",
+      "options": ["Guest - false", "Authenticated - true", "Guest - null", "Guest - true"],
+      "answer": "Guest - false"
+    }
+  }, {
+    "group": "5",
+    "title": "Build Your App",
+    "isConversationReview": true,
+    "description": "Celebrate the completion of your full-stack journey and synthesize all 5 chapters!",
+    "question": {
+      "questionText": "Congratulations on reaching the final capstone! Let's review your complete full-stack app architecture.",
+      "range": [130, 149]
+    }
+  }],
+  es: [{
+    "group": "introducción",
+    "title": "Introducción al Desarrollo de Software",
+    "isStudyGuide": true,
+    "description": "Familiarízate con los fundamentos para mejorar la calidad de tu aprendizaje antes de avanzar.",
+    "question": {
+      "questionText": "Lee sobre los fundamentos del software en la guía de estudio antes de comenzar."
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Opción Múltiple",
+    "description": "Elige una respuesta.",
+    "isMultipleChoice": true,
+    "question": {
+      "questionText": "¿Qué valor es un número de JavaScript?",
+      "options": ["42", "'42'", "true", "null"],
+      "answer": "42"
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Respuesta Múltiple",
+    "description": "Elige todas las respuestas correctas.",
+    "isMultipleAnswerChoice": true,
+    "question": {
+      "questionText": "¿Qué palabras pueden declarar una variable de JavaScript?",
+      "options": ["let", "const", "style", "return"],
+      "answer": ["let", "const"]
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Relacionar Pares",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Relaciona parámetro, valor de retorno y llamada de función con la definición de cada concepto.",
+      "pairs": [{
+        "left": "Parámetro",
+        "right": "Valor que recibe una función"
+      }, {
+        "left": "Valor de retorno",
+        "right": "Resultado que devuelve una función"
+      }, {
+        "left": "Llamada",
+        "right": "Instrucción que ejecuta una función"
+      }],
+      "choices": ["Valor que recibe una función", "Resultado que devuelve una función", "Instrucción que ejecuta una función"],
+      "answer": {
+        "Parámetro": "Valor que recibe una función",
+        "Valor de retorno": "Resultado que devuelve una función",
+        "Llamada": "Instrucción que ejecuta una función"
+      }
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Ordenar Pasos",
+    "description": "Aprende el orden correcto de la ejecución de programas.",
+    "isSelectOrder": true,
+    "question": {
+      "questionText": "Ordena los pasos para mostrar cómo un programa pasa de una idea a su ejecución.",
+      "options": ["Compilación del Código", "Escritura del Código", "Ejecución del Programa", "Depuración"],
+      "answer": ["Escritura del Código", "Compilación del Código", "Depuración", "Ejecución del Programa"]
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Encontrar la Línea Relevante",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "¿Qué línea cambia total de 1 a 3?",
+      "code": "let total = 1;\ntotal += 2;\nconsole.log(total);",
+      "answer": [2]
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Seguimiento de Código",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "Sigue la ejecución del código y determina su resultado final.",
+      "code": "let count = 1;\ncount += 2;\nconsole.log(count);",
+      "options": ["1", "2", "3", "undefined"],
+      "answer": "3"
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Completar el Código",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Completa las partes faltantes del código.",
+      "template": "{{keyword}} age = 25;",
+      "blanks": [{
+        "key": "keyword",
+        "hint": "Una palabra para declarar variables"
+      }],
+      "answer": {
+        "keyword": "const"
+      }
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Finalización de Código",
+    "description": "Elige una solución de código completa.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "¿Qué código declara una lista?",
+      "options": ["const items = ['apple'];", "const items = 'apple';", "const items = { apple: true };"],
+      "answer": "const items = ['apple'];"
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Problema Parsons",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Ordena las líneas para crear una solución funcional.",
+      "lines": ["function greet() {", "  console.log('Hello');", "}"],
+      "answer": ["function greet() {", "  console.log('Hello');", "}"]
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Respuesta Corta",
+    "description": "Escribe una respuesta breve.",
+    "isSingleLineText": true,
+    "question": {
+      "questionText": "¿Qué palabra declara una constante?",
+      "placeholder": "Escribe tu respuesta",
+      "answer": "const"
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Respuesta Abierta",
+    "description": "Explica una idea con tus propias palabras.",
+    "isText": true,
+    "question": {
+      "questionText": "¿Por qué son útiles las variables?"
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Escritura de Código",
+    "description": "Crea código a partir de un requisito.",
+    "isCode": true,
+    "isTerminal": false,
+    "question": {
+      "questionText": "Declara una variable llamada age con el valor 25."
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Práctica de Terminal",
+    "description": "Practica un comando en contexto.",
+    "isCode": true,
+    "isTerminal": true,
+    "question": {
+      "questionText": "Cambia al directorio new_folder."
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Elegir la Mejor Implementación",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "Tienes un arreglo llamado items y una función llamada printItem. ¿Qué implementación imprime cada elemento y sigue funcionando si el arreglo crece o se reduce?",
+      "options": ["items.forEach(printItem);", "printItem(items[0]);\nprintItem(items[1]);", "items = printItem;"],
+      "answer": "items.forEach(printItem);"
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Corregir el Error",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Corrige el error sin cambiar el comportamiento esperado.",
+      "starterCode": "const score = 1;\nscore += 1;",
+      "answer": "let score = 1;\nscore += 1;",
+      "tests": ["score se puede actualizar"]
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Reto de Refactorización",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Mejora el código sin cambiar su comportamiento.",
+      "starterCode": "console.log(1);\nconsole.log(2);\nconsole.log(3);",
+      "tests": ["Aún imprime 1, 2 y 3", "Usa un ciclo"]
+    }
+  }, {
+    "group": "tutorial",
+    "title": "Construye tu Aplicación",
+    "description": "Construye una aplicación con lo aprendido en este capítulo.",
+    "isConversationReview": true,
+    "question": {
+      "questionText": "¡Ingresa una idea de aplicación y constrúyela a medida que avanzas!",
+      "range": [1, 16]
+    }
+  }, {
+    "group": "1",
+    "title": "Tipos de Datos en Programación",
+    "description": "Relaciona los valores literales de JavaScript con sus tipos de datos primitivos.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Relaciona cada valor literal con su tipo de dato primitivo correcto en JavaScript:",
+      "pairs": [{
+        "left": "\"Hola Mundo\"",
+        "right": "string"
+      }, {
+        "left": "42",
+        "right": "number"
+      }, {
+        "left": "true",
+        "right": "boolean"
+      }, {
+        "left": "undefined",
+        "right": "undefined"
+      }],
+      "choices": ["string", "number", "boolean", "undefined"],
+      "answer": {
+        "42": "number",
+        "\"Hola Mundo\"": "string",
+        "true": "boolean",
+        "undefined": "undefined"
+      }
+    }
+  }, {
+    "group": "1",
+    "title": "Anatomía de una Función",
+    "description": "Completa la declaración de función con el nombre de la función y su parámetro.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Completa la definición de la función para saludar a cualquier nombre recibido:",
+      "template": "function {{saludar}}({{nombre}}) {\n  return \"Hola, \" + {{nombre}};\n}",
+      "blanks": [{
+        "key": "saludar",
+        "label": "Nombre de Función",
+        "hint": "saludar"
+      }, {
+        "key": "nombre",
+        "label": "Parámetro",
+        "hint": "nombre"
+      }],
+      "answer": {
+        "saludar": "saludar",
+        "nombre": "nombre"
+      }
+    }
+  }, {
+    "group": "1",
+    "title": "Retorno de Función vs Salida de Consola",
+    "description": "Comprende la diferencia fundamental entre los valores de retorno y console.log.",
+    "isMultipleChoice": true,
+    "question": {
+      "questionText": "¿Cuál es la diferencia principal entre retornar un valor desde una función y llamar a console.log()?",
+      "options": ["return devuelve datos al invocador para usarlos en el código, mientras que console.log solo imprime texto en la terminal.", "return muestra texto en la pantalla del navegador, mientras que console.log almacena datos en memoria.", "return solo puede devolver números, mientras que console.log puede mostrar cualquier tipo de dato.", "No hay diferencia funcional; ambos pasan valores a las siguientes instrucciones."],
+      "answer": "return devuelve datos al invocador para usarlos en el código, mientras que console.log solo imprime texto en la terminal."
+    }
+  }, {
+    "group": "1",
+    "title": "Refactorización a Funciones Flecha Modernas",
+    "description": "Refactoriza una declaración de función clásica a una función flecha concisa de ES6.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Refactoriza la función clásica sumar a una función flecha concisa en una sola línea:",
+      "starterCode": "function sumar(a, b) {\n  return a + b;\n}",
+      "answer": "const sumar = (a, b) => a + b;",
+      "tests": ["Devuelve 7 al pasar (3, 4)", "Utiliza la sintaxis concisa de función flecha"]
+    }
+  }, {
+    "group": "1",
+    "title": "Operadores de Comparación y Lógicos",
+    "description": "Relaciona los operadores de comparación y lógicos con su comportamiento.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Relaciona cada operador con su función de comparación lógica:",
+      "pairs": [{
+        "left": "===",
+        "right": "Igualdad estricta (comprueba valor y tipo de dato)"
+      }, {
+        "left": "!==",
+        "right": "Desigualdad estricta (comprueba si el valor o tipo difiere)"
+      }, {
+        "left": ">=",
+        "right": "Comparación mayor o igual que"
+      }, {
+        "left": "&&",
+        "right": "AND lógico (verdadero solo si ambas expresiones son verdaderas)"
+      }],
+      "choices": ["Igualdad estricta (comprueba valor y tipo de dato)", "Desigualdad estricta (comprueba si el valor o tipo difiere)", "Comparación mayor o igual que", "AND lógico (verdadero solo si ambas expresiones son verdaderas)"],
+      "answer": {
+        "===": "Igualdad estricta (comprueba valor y tipo de dato)",
+        "!==": "Desigualdad estricta (comprueba si el valor o tipo difiere)",
+        ">=": "Comparación mayor o igual que",
+        "&&": "AND lógico (verdadero solo si ambas expresiones son verdaderas)"
+      }
+    }
+  }, {
+    "group": "1",
+    "title": "Construyendo un Árbol If-Else",
+    "description": "Ordena las líneas para crear una estructura condicional en cascada para calcular calificaciones.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Ordena las líneas en una cadena condicional estructurada if / else if / else:",
+      "lines": ["if (puntaje >= 90) {", "  return \"A\";", "} else if (puntaje >= 80) {", "  return \"B\";", "} else {", "  return \"C\";", "}"],
+      "answer": ["if (puntaje >= 90) {", "  return \"A\";", "} else if (puntaje >= 80) {", "  return \"B\";", "} else {", "  return \"C\";", "}"]
+    }
+  }, {
+    "group": "1",
+    "title": "Corrigiendo un Error de Límite en Comparación",
+    "description": "Corrige la condición para que los 18 años se incluyan como mayor de edad.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Corrige la condición abajo para permitir el acceso a usuarios de 18 años o más:",
+      "starterCode": "function puedeIngresar(edad) {\n  if (edad > 18) {\n    return true;\n  }\n  return false;\n}",
+      "answer": "function puedeIngresar(edad) {\n  if (edad >= 18) {\n    return true;\n  }\n  return false;\n}",
+      "tests": ["puedeIngresar(18) devuelve true", "puedeIngresar(17) devuelve false"]
+    }
+  }, {
+    "group": "1",
+    "title": "Valores Truthy y Falsy",
+    "description": "Identifica todos los valores que se evalúan como falsos al convertirse a booleano en JavaScript.",
+    "isMultipleAnswerChoice": true,
+    "question": {
+      "questionText": "Selecciona todos los valores que son inherentemente 'falsy' (falsos) en JavaScript:",
+      "options": ["0", "\"\"", "null", "undefined", "NaN", "false", "\"0\"", "[]", "{}"],
+      "answer": ["0", "\"\"", "null", "undefined", "NaN", "false"]
+    }
+  }, {
+    "group": "1",
+    "title": "Cláusulas de Guarda y Retornos Tempranos",
+    "description": "Localiza la cláusula de guarda que detiene la ejecución ante una entrada inválida.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Selecciona la línea que contiene la condición de guarda que evita pagos negativos inválidos:",
+      "code": "function procesarPago(monto) {\n  if (monto <= 0) {\n    return 'Monto inválido';\n  }\n  return 'Pago de $' + monto + ' aprobado';\n}",
+      "answer": 2
+    }
+  }, {
+    "group": "1",
+    "title": "Práctica de Terminal: Comando Help",
+    "description": "Descubre la ayuda integrada en un entorno de terminal Bash.",
+    "isCode": true,
+    "isTerminal": true,
+    "question": {
+      "questionText": "En un entorno de terminal Bash, ingresa el comando help para descubrir comandos básicos."
+    }
+  }, {
+    "group": "1",
+    "title": "Sintaxis y Estructura del Bucle For",
+    "description": "Completa la inicialización del contador, el límite y el incremento del bucle.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Completa el bucle for estándar para contar de 0 hasta (sin incluir) 5:",
+      "template": "for (let {{i}} = 0; i < {{5}}; {{i++}}) {\n  console.log(i);\n}",
+      "blanks": [{
+        "key": "i",
+        "label": "Variable Contador",
+        "hint": "i"
+      }, {
+        "key": "5",
+        "label": "Límite del Bucle",
+        "hint": "5"
+      }, {
+        "key": "i++",
+        "label": "Expresión de Incremento",
+        "hint": "i++"
+      }],
+      "answer": {
+        "5": "5",
+        "i": "i",
+        "i++": "i++"
+      }
+    }
+  }, {
+    "group": "1",
+    "title": "Secuencia de Ejecución de Bucles",
+    "description": "Ordena las fases del ciclo de vida de un bucle for durante la ejecución.",
+    "isSelectOrder": true,
+    "question": {
+      "questionText": "Ordena los pasos cronológicos que ocurren durante cada iteración de un bucle for:",
+      "options": ["1. Inicializar la variable contador una sola vez", "2. Evaluar la condición del bucle", "3. Ejecutar el bloque de código del cuerpo", "4. Incrementar la expresión del contador"],
+      "answer": ["1. Inicializar la variable contador una sola vez", "2. Evaluar la condición del bucle", "3. Ejecutar el bloque de código del cuerpo", "4. Incrementar la expresión del contador"]
+    }
+  }, {
+    "group": "1",
+    "title": "Patrón Acumulador en Bucles",
+    "description": "Ordena las líneas para acumular una suma a lo largo de varias iteraciones.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Reordena las líneas para inicializar correctamente un acumulador, sumar los números del 1 al 4 y registrar el resultado:",
+      "lines": ["let total = 0;", "for (let i = 1; i <= 4; i++) {", "  total += i;", "}", "console.log(total);"],
+      "answer": ["let total = 0;", "for (let i = 1; i <= 4; i++) {", "  total += i;", "}", "console.log(total);"]
+    }
+  }, {
+    "group": "1",
+    "title": "Mejor Implementación: Sumar Elementos de un Arreglo",
+    "description": "Selecciona la forma más limpia y declarativa de sumar números en JavaScript.",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "¿Qué implementación proporciona el enfoque más limpio y declarativo para sumar un arreglo de números?",
+      "options": ["const sumar = (arr) => arr.reduce((total, n) => total + n, 0);", "function sumar(arr) {\n  let total = 0;\n  for (let i = 0; i < arr.length; i++) {\n    total = total + arr[i];\n  }\n  return total;\n}", "const sumar = (arr) => {\n  let total = 0;\n  arr.forEach(n => { total += n; });\n  return total;\n};", "function sumar(arr) { return eval(arr.join('+')); }"],
+      "answer": "const sumar = (arr) => arr.reduce((total, n) => total + n, 0);"
+    }
+  }, {
+    "group": "1",
+    "title": "Seguimiento de Código: Contador en Bucles",
+    "description": "Rastrea el valor de la variable a través de las iteraciones.",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "¿Qué valor se imprimirá en la consola tras ejecutar este bucle?",
+      "code": "let conteo = 1;\nfor (let i = 0; i < 3; i++) {\n  conteo *= 2;\n}\nconsole.log(conteo);",
+      "options": ["8", "6", "4", "16"],
+      "answer": "8"
+    }
+  }, {
+    "group": "1",
+    "title": "Corrigiendo un Bucle Infinito",
+    "description": "Corrige el avance del contador para que el bucle termine adecuadamente.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Corrige la actualización del contador para que el bucle while no se congele indefinidamente:",
+      "starterCode": "function contarHastaTres() {\n  let i = 0;\n  while (i < 3) {\n    console.log(i);\n  }\n}",
+      "answer": "function contarHastaTres() {\n  let i = 0;\n  while (i < 3) {\n    console.log(i);\n    i++;\n  }\n}",
+      "tests": ["Incrementa i en 1 en cada iteración", "Termina tras 3 iteraciones"]
+    }
+  }, {
+    "group": "1",
+    "title": "Refactorizando Concatenación a Plantillas Literales",
+    "description": "Moderniza la unión de cadenas con comillas invertidas e interpolación.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Refactoriza la concatenación abajo para usar una plantilla literal de ES6 con comillas invertidas:",
+      "starterCode": "function crearSaludo(nombre, rol) {\n  return \"Usuario \" + nombre + \" es un \" + rol + \".\";\n}",
+      "answer": "function crearSaludo(nombre, rol) {\n  return `Usuario ${nombre} es un ${rol}.`;\n}",
+      "tests": ["Devuelve \"Usuario Alex es un Desarrollador.\"", "Utiliza comillas invertidas de plantilla literal"]
+    }
+  }, {
+    "group": "1",
+    "title": "Localizando Mutación de Arreglo",
+    "description": "Encuentra la línea donde ocurre la mutación no deseada.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Selecciona la línea donde se elimina el primer elemento del arreglo:",
+      "code": "let frutas = ['manzana', 'platano', 'cereza'];\nfrutas.push('datil');\nlet eliminado = frutas.shift();\nconsole.log(frutas);",
+      "answer": 3
+    }
+  }, {
+    "group": "1",
+    "title": "Práctica de Terminal: Creación de Directorios",
+    "description": "Practica la creación de una carpeta de proyecto en un entorno de línea de comandos.",
+    "isCode": true,
+    "isTerminal": true,
+    "question": {
+      "questionText": "En un entorno de terminal bash, crea un directorio llamado app usando el comando make directory."
+    }
+  }, {
+    "group": "1",
+    "title": "Iterando sobre Arreglos con For...Of",
+    "description": "Selecciona la sintaxis moderna y legible para recorrer directamente los valores de un arreglo.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "¿Qué fragmento de código itera más limpiamente sobre cada elemento de un arreglo productos?",
+      "options": ["for (const producto of productos) {\n  console.log(producto);\n}", "for (const producto in productos) {\n  console.log(producto);\n}", "for (let i = productos; i++;) {\n  console.log(i);\n}", "while (productos.length) {\n  productos.each();\n}"],
+      "answer": "for (const producto of productos) {\n  console.log(producto);\n}"
+    }
+  }, {
+    "group": "1",
+    "title": "Construye tu Aplicación",
+    "isConversationReview": true,
+    "description": "Sintetiza variables, funciones, condicionales, bucles y arreglos en tu proyecto en curso.",
+    "question": {
+      "questionText": "¡Hablemos de los fundamentos de programación que has dominado en el Capítulo 1!",
+      "range": [19, 38]
+    }
+  }, {
+    "group": "2",
+    "title": "Literales de Objetos y Acceso a Propiedades",
+    "description": "Relaciona los conceptos de objetos con sus definiciones y formas de acceso.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Relaciona cada concepto de objetos en JavaScript con su descripción:",
+      "pairs": [{
+        "left": "Clave del Objeto",
+        "right": "El identificador con nombre para una propiedad en un objeto"
+      }, {
+        "left": "Valor del Objeto",
+        "right": "Los datos almacenados en una clave de propiedad específica"
+      }, {
+        "left": "usuario.correo",
+        "right": "Notación de punto para acceso directo a propiedades"
+      }, {
+        "left": "usuario[\"rol\"]",
+        "right": "Notación de corchetes para acceso dinámico o con cadenas"
+      }],
+      "choices": ["El identificador con nombre para una propiedad en un objeto", "Los datos almacenados en una clave de propiedad específica", "Notación de punto para acceso directo a propiedades", "Notación de corchetes para acceso dinámico o con cadenas"],
+      "answer": {
+        "Clave del Objeto": "El identificador con nombre para una propiedad en un objeto",
+        "Valor del Objeto": "Los datos almacenados en una clave de propiedad específica",
+        "usuario.correo": "Notación de punto para acceso directo a propiedades",
+        "usuario[\"rol\"]": "Notación de corchetes para acceso dinámico o con cadenas"
+      }
+    }
+  }, {
+    "group": "2",
+    "title": "Creación y Acceso a Objetos",
+    "description": "Completa la definición de un objeto y accede a sus propiedades.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Completa la definición del objeto y accede a la propiedad nombre:",
+      "template": "const usuario = {\n  nombre: \"Alex\",\n  edad: {{28}},\n  esAdmin: {{true}}\n};\nconst nombreUsuario = usuario.{{nombre}};",
+      "blanks": [{
+        "key": "28",
+        "label": "Valor de edad",
+        "hint": "28"
+      }, {
+        "key": "true",
+        "label": "Valor booleano",
+        "hint": "true"
+      }, {
+        "key": "nombre",
+        "label": "Clave de propiedad",
+        "hint": "nombre"
+      }],
+      "answer": {
+        "28": "28",
+        "true": "true",
+        "nombre": "nombre"
+      }
+    }
+  }, {
+    "group": "2",
+    "title": "Refactorización a Desestructuración de Objetos",
+    "description": "Refactoriza lecturas con notación de punto a desestructuración limpia de objetos.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Refactoriza las asignaciones manuales en una sola instrucción de desestructuración:",
+      "starterCode": "function obtenerInfo(producto) {\n  const titulo = producto.titulo;\n  const precio = producto.precio;\n  return `${titulo}: $${precio}`;\n}",
+      "answer": "function obtenerInfo(producto) {\n  const { titulo, precio } = producto;\n  return `${titulo}: $${precio}`;\n}",
+      "tests": ["Devuelve 'Laptop: $999'", "Utiliza la desestructuración de objetos { titulo, precio }"]
+    }
+  }, {
+    "group": "2",
+    "title": "El Operador Spread en Objetos (Inmutabilidad)",
+    "description": "Clona y actualiza propiedades sin mutar el objeto original.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Completa la sintaxis spread para crear una copia de original con tema oscuro actualizado:",
+      "template": "const original = { id: 1, tema: \"claro\" };\nconst actualizado = { {{...original}}, tema: {{\"oscuro\"}} };",
+      "blanks": [{
+        "key": "...original",
+        "label": "Propagar objeto original",
+        "hint": "...original"
+      }, {
+        "key": "\"oscuro\"",
+        "label": "Valor actualizado",
+        "hint": "\"oscuro\""
+      }],
+      "answer": {
+        "...original": "...original",
+        "\"oscuro\"": "\"oscuro\""
+      }
+    }
+  }, {
+    "group": "2",
+    "title": "Corrigiendo Asignación en el Constructor",
+    "description": "Corrige la asignación en el constructor para vincular los valores a this.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Corrige el constructor de la clase Usuario para que los argumentos nombre y correo se guarden en la instancia:",
+      "starterCode": "class Usuario {\n  constructor(nombre, correo) {\n    nombre = nombre;\n    correo = correo;\n  }\n}",
+      "answer": "class Usuario {\n  constructor(nombre, correo) {\n    this.nombre = nombre;\n    this.correo = correo;\n  }\n}",
+      "tests": ["new Usuario('Sam', 's@dev.io').nombre es igual a 'Sam'", "Utiliza this.nombre y this.correo"]
+    }
+  }, {
+    "group": "2",
+    "title": "Instanciación de Clases con new",
+    "description": "Comprende el ciclo de vida de crear una instancia a partir de una clase.",
+    "isMultipleChoice": true,
+    "question": {
+      "questionText": "¿Qué sucede al ejecutar const estudiante = new Usuario('Maya', 'maya@dev.io')?",
+      "options": ["Se crea un nuevo objeto en memoria, se ejecuta su constructor con 'this' vinculado a la instancia y se devuelve el objeto.", "La clase Usuario se elimina y se reemplaza por una función básica.", "El código compila la clase a una cadena JSON estática en disco.", "Se invoca la clase sin asignar propiedades internas."],
+      "answer": "Se crea un nuevo objeto en memoria, se ejecuta su constructor con 'this' vinculado a la instancia y se devuelve el objeto."
+    }
+  }, {
+    "group": "2",
+    "title": "Definiendo Métodos en una Clase",
+    "description": "Ordena las líneas para crear una clase con un método de depósito encapsulado.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Ordena las líneas para definir la clase CuentaBancaria con el método depositar:",
+      "lines": ["class CuentaBancaria {", "  constructor(saldo) {", "    this.saldo = saldo;", "  }", "  depositar(monto) {", "    this.saldo += monto;", "  }", "}"],
+      "answer": ["class CuentaBancaria {", "  constructor(saldo) {", "    this.saldo = saldo;", "  }", "  depositar(monto) {", "    this.saldo += monto;", "  }", "}"]
+    }
+  }, {
+    "group": "2",
+    "title": "Localizando Pérdida de Contexto en Métodos",
+    "description": "Identifica la línea donde this se convierte en undefined al desacoplar el método.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Selecciona la línea donde desacoplar el método de la instancia provoca la pérdida del contexto 'this':",
+      "code": "const cuenta = new CuentaBancaria(100);\nconst depositoDesacoplado = cuenta.depositar;\ndepositoDesacoplado(50);\nconsole.log(cuenta.saldo);",
+      "answer": 2
+    }
+  }, {
+    "group": "2",
+    "title": "Mejor Implementación: Transformación de Arreglos de Objetos",
+    "description": "Elige la forma más limpia de filtrar usuarios activos y extraer sus nombres.",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "¿Qué encadenamiento de métodos filtra más limpiamente los usuarios activos y extrae sus nombres?",
+      "options": ["const nombres = usuarios\n  .filter((u) => u.estaActivo)\n  .map((u) => u.nombre);", "const nombres = [];\nfor (let i = 0; i < usuarios.length; i++) {\n  if (usuarios[i].estaActivo) {\n    nombres.push(usuarios[i].nombre);\n  }\n}", "const nombres = usuarios\n  .map((u) => (u.estaActivo ? u.nombre : null))\n  .filter(Boolean);", "const nombres = usuarios.reduce((acc, u) => {\n  return u.estaActivo ? [...acc, u.nombre]\n    :\n    acc;\n}, []);"],
+      "answer": "const nombres = usuarios\n  .filter((u) => u.estaActivo)\n  .map((u) => u.nombre);"
+    }
+  }, {
+    "group": "2",
+    "title": "Modelado de Datos con Arreglos de Objetos",
+    "description": "Representa listas de registros utilizando un arreglo de objetos estructurados.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "¿Qué fragmento de código modela correctamente una lista de usuarios como un arreglo de objetos?",
+      "options": ["const usuarios = [\n  {\n    id: 1,\n    nombre: \"Alice\",\n    rol: \"admin\"\n  },\n  {\n    id: 2,\n    nombre: \"Bob\",\n    rol: \"miembro\"\n  }\n];", "const usuarios = {\n  id: 1,\n  nombre: \"Alice\",\n  rol: \"admin\",\n  id: 2,\n  nombre: \"Bob\",\n  rol: \"miembro\"\n};", "const usuarios =\n  \"id: 1, nombre: Alice; id: 2, nombre: Bob\";", "const usuarios = [\n  1, \"Alice\", \"admin\",\n  2, \"Bob\", \"miembro\"\n];"],
+      "answer": "const usuarios = [\n  {\n    id: 1,\n    nombre: \"Alice\",\n    rol: \"admin\"\n  },\n  {\n    id: 2,\n    nombre: \"Bob\",\n    rol: \"miembro\"\n  }\n];"
+    }
+  }, {
+    "group": "2",
+    "title": "Inmutabilidad de Objetos y Reglas de Propiedades",
+    "description": "Selecciona todas las características verdaderas de los objetos en JavaScript.",
+    "isMultipleAnswerChoice": true,
+    "question": {
+      "questionText": "Selecciona todas las afirmaciones verdaderas sobre objetos y referencias en JavaScript:",
+      "options": ["Las variables de objetos guardan una referencia de memoria hacia el objeto, no los datos en sí", "Modificar una propiedad anidada en un objeto clonado superficialmente afecta a ambos", "const evita que la variable sea reasignada, pero las propiedades del objeto aún pueden modificarse", "Los objetos solo pueden almacenar valores de cadena, nunca funciones ni arreglos", "Las claves de objeto deben ser números enteros comenzando en el índice 0"],
+      "answer": ["Las variables de objetos guardan una referencia de memoria hacia el objeto, no los datos en sí", "Modificar una propiedad anidada en un objeto clonado superficialmente afecta a ambos", "const evita que la variable sea reasignada, pero las propiedades del objeto aún pueden modificarse"]
+    }
+  }, {
+    "group": "2",
+    "title": "Seguimiento de Código: Mutación por Referencia de Objetos",
+    "description": "Rastrea las referencias que apuntan al mismo objeto en memoria.",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "¿Qué se imprimirá para usuarioA.puntaje tras ejecutar este código?",
+      "code": "let usuarioA = { puntaje: 10 };\nlet usuarioB = usuarioA;\nusuarioB.puntaje = 25;\nconsole.log(usuarioA.puntaje);",
+      "options": ["25", "10", "undefined", "NaN"],
+      "answer": "25"
+    }
+  }, {
+    "group": "2",
+    "title": "Herencia de Clases con extends y super",
+    "description": "Organiza la extensión de clases y la llamada al constructor padre.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Ordena las líneas para crear una clase Empleado que herede de Persona:",
+      "lines": ["class Empleado extends Persona {", "  constructor(nombre, puesto) {", "    super(nombre);", "    this.puesto = puesto;", "  }", "}"],
+      "answer": ["class Empleado extends Persona {", "  constructor(nombre, puesto) {", "    super(nombre);", "    this.puesto = puesto;", "  }", "}"]
+    }
+  }, {
+    "group": "2",
+    "title": "Estructuras de Modelado y Casos de Uso",
+    "description": "Relaciona cada estructura de datos con su propósito principal.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Relaciona cada estructura de datos con su caso de uso ideal:",
+      "pairs": [{
+        "left": "Literal de Objeto {}",
+        "right": "Agrupar propiedades relacionadas de una sola entidad"
+      }, {
+        "left": "Arreglo de Objetos [{}, {}]",
+        "right": "Almacenar listas de registros como productos o usuarios"
+      }, {
+        "left": "Plano de Clase",
+        "right": "Instanciar objetos reutilizables con métodos compartidos"
+      }, {
+        "left": "Cadena JSON",
+        "right": "Transmitir datos estructurados a través de solicitudes de red HTTP"
+      }],
+      "choices": ["Agrupar propiedades relacionadas de una sola entidad", "Almacenar listas de registros como productos o usuarios", "Instanciar objetos reutilizables con métodos compartidos", "Transmitir datos estructurados a través de solicitudes de red HTTP"],
+      "answer": {
+        "Literal de Objeto {}": "Agrupar propiedades relacionadas de una sola entidad",
+        "Arreglo de Objetos [{}, {}]": "Almacenar listas de registros como productos o usuarios",
+        "Plano de Clase": "Instanciar objetos reutilizables con métodos compartidos",
+        "Cadena JSON": "Transmitir datos estructurados a través de solicitudes de red HTTP"
+      }
+    }
+  }, {
+    "group": "2",
+    "title": "Localizando Acceso Anidado No Seguro",
+    "description": "Encuentra la línea donde acceder a una propiedad de undefined provoca un error en tiempo de ejecución.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Selecciona la línea donde intentar leer ciudad desde una direccion indefinida lanza un TypeError:",
+      "code": "const usuario = { nombre: 'Alex' };\nconsole.log(usuario.nombre);\nconst ciudad = usuario.direccion.ciudad;\nconsole.log(ciudad);",
+      "answer": 3
+    }
+  }, {
+    "group": "2",
+    "title": "Seguimiento de Código: Métodos de Objeto y Estado",
+    "description": "Rastrea la instanciación de clases y métodos para calcular el estado interno.",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "Predice el valor final de count tras llamar a increment(3):",
+      "code": "class Contador {\n  constructor(inicio) {\n    this.count = inicio;\n  }\n  increment(en = 1) {\n    this.count += en;\n    return this.count;\n  }\n}\n\nconst c = new Contador(5);\nc.increment(3);\nconsole.log(c.count);",
+      "options": ["8", "5", "3", "undefined"],
+      "answer": "8"
+    }
+  }, {
+    "group": "2",
+    "title": "Práctica de Terminal: Comando Echo",
+    "description": "Emite mensajes en el terminal Bash usando el comando echo.",
+    "isCode": true,
+    "isTerminal": true,
+    "question": {
+      "questionText": "En un entorno de terminal Bash, ingresa el comando echo para imprimir 'Data ready'"
+    }
+  }, {
+    "group": "2",
+    "title": "Construye tu Aplicación",
+    "isConversationReview": true,
+    "description": "Aplica tus conocimientos sobre objetos, clases y colecciones a tu proyecto.",
+    "question": {
+      "questionText": "¡Hablemos sobre cómo las estructuras de datos y objetos potencian tus aplicaciones!",
+      "range": [40, 56]
+    }
+  }, {
+    "group": "3",
+    "title": "Elementos Semánticos en HTML",
+    "description": "Relaciona los elementos HTML semánticos con sus funciones de diseño y contenido.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Relaciona cada elemento HTML5 con su función semántica:",
+      "pairs": [{
+        "left": "<header>",
+        "right": "Contenido introductorio, título del sitio o navegación superior"
+      }, {
+        "left": "<main>",
+        "right": "El contenido principal y único del cuerpo del documento"
+      }, {
+        "left": "<section>",
+        "right": "Una agrupación temática independiente de contenido relacionado"
+      }, {
+        "left": "<footer>",
+        "right": "Información de cierre, avisos de copyright o enlaces del autor"
+      }],
+      "choices": ["Contenido introductorio, título del sitio o navegación superior", "El contenido principal y único del cuerpo del documento", "Una agrupación temática independiente de contenido relacionado", "Información de cierre, avisos de copyright o enlaces del autor"],
+      "answer": {
+        "<header>": "Contenido introductorio, título del sitio o navegación superior",
+        "<main>": "El contenido principal y único del cuerpo del documento",
+        "<section>": "Una agrupación temática independiente de contenido relacionado",
+        "<footer>": "Información de cierre, avisos de copyright o enlaces del autor"
+      }
+    }
+  }, {
+    "group": "3",
+    "title": "Atributos y Entradas en HTML",
+    "description": "Completa un elemento input con el tipo y texto de marcador de posición correctos.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Completa la etiqueta input para aceptar correos electrónicos con un texto de ayuda:",
+      "template": "<input\n  type=\"{{email}}\"\n  placeholder=\"{{Ingresa tu correo}}\"\n  required\n/>",
+      "blanks": [{
+        "key": "email",
+        "label": "Tipo de entrada",
+        "hint": "email"
+      }, {
+        "key": "Ingresa tu correo",
+        "label": "Texto de marcador de posición",
+        "hint": "Ingresa tu correo"
+      }],
+      "answer": {
+        "email": "email",
+        "Ingresa tu correo": "Ingresa tu correo"
+      }
+    }
+  }, {
+    "group": "3",
+    "title": "Mejor Implementación: Elementos Interactivos Accesibles",
+    "description": "Selecciona el elemento accesible para activar acciones interactivas.",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "¿Qué implementación proporciona soporte nativo de accesibilidad por teclado y lectores de pantalla para un botón?",
+      "options": ["<button\n  type=\"button\"\n  onClick={handleClick}\n>\n  Enviar\n</button>", "<div onClick={handleClick}>\n  Enviar\n</div>", "<span onClick={handleClick}>\n  Enviar\n</span>", "<a\n  href=\"#\"\n  onClick={handleClick}\n>\n  Enviar\n</a>"],
+      "answer": "<button\n  type=\"button\"\n  onClick={handleClick}\n>\n  Enviar\n</button>"
+    }
+  }, {
+    "group": "3",
+    "title": "Corrigiendo Etiqueta No Cerrada en JSX",
+    "description": "Corrige el error de sintaxis en JSX provocado por una etiqueta de imagen sin cerrar.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Corrige el JSX abajo para que la etiqueta de imagen se cierre automáticamente:",
+      "starterCode": "function Avatar({ url }) {\n  return <img src={url} alt=\"Perfil\">\n}",
+      "answer": "function Avatar({ url }) {\n  return <img src={url} alt=\"Perfil\" />;\n}",
+      "tests": ["Incluye la barra de autocierre />", "Componente JSX válido"]
+    }
+  }, {
+    "group": "3",
+    "title": "Ensamblando Marcado de Tarjeta",
+    "description": "Reordena las líneas de JSX para formar una tarjeta de producto estructurada.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Ordena las líneas de JSX en un componente de tarjeta adecuadamente anidado:",
+      "lines": ["<article className=\"card\">", "  <img src=\"item.jpg\" alt=\"Item\" />", "  <div className=\"card-body\">", "    <h3>Audífonos Pro</h3>", "    <p>$199.99</p>", "  </div>", "</article>"],
+      "answer": ["<article className=\"card\">", "  <img src=\"item.jpg\" alt=\"Item\" />", "  <div className=\"card-body\">", "    <h3>Audífonos Pro</h3>", "    <p>$199.99</p>", "  </div>", "</article>"]
+    }
+  }, {
+    "group": "3",
+    "title": "Capas del Modelo de Caja en CSS",
+    "description": "Ordena las capas concéntricas del modelo de caja desde el interior hacia el exterior.",
+    "isSelectOrder": true,
+    "question": {
+      "questionText": "Ordena las capas del modelo de caja en CSS de adentro hacia afuera:",
+      "options": ["1. Área de contenido (dimensiones de texto o imagen)", "2. Padding (espacio alrededor del contenido dentro del borde)", "3. Border (línea que rodea el padding)", "4. Margin (espacio exterior fuera del borde entre elementos)"],
+      "answer": ["1. Área de contenido (dimensiones de texto o imagen)", "2. Padding (espacio alrededor del contenido dentro del borde)", "3. Border (línea que rodea el padding)", "4. Margin (espacio exterior fuera del borde entre elementos)"]
+    }
+  }, {
+    "group": "3",
+    "title": "Propiedades de Tamaño y Espaciado en CSS",
+    "description": "Relaciona las propiedades de espaciado en CSS con su impacto dimensional.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Relaciona cada propiedad de diseño en CSS con su efecto en el elemento:",
+      "pairs": [{
+        "left": "box-sizing: border-box",
+        "right": "Incluye padding y borde dentro del ancho declarado"
+      }, {
+        "left": "margin: 0 auto",
+        "right": "Centra horizontalmente un elemento de bloque con ancho definido"
+      }, {
+        "left": "gap: 16px",
+        "right": "Define el espacio entre elementos hijos dentro de flex o grid"
+      }, {
+        "left": "overflow: hidden",
+        "right": "Recorta el contenido hijo que exceda los límites del contenedor"
+      }],
+      "choices": ["Incluye padding y borde dentro del ancho declarado", "Centra horizontalmente un elemento de bloque con ancho definido", "Define el espacio entre elementos hijos dentro de flex o grid", "Recorta el contenido hijo que exceda los límites del contenedor"],
+      "answer": {
+        "box-sizing: border-box": "Incluye padding y borde dentro del ancho declarado",
+        "margin: 0 auto": "Centra horizontalmente un elemento de bloque con ancho definido",
+        "gap: 16px": "Define el espacio entre elementos hijos dentro de flex o grid",
+        "overflow: hidden": "Recorta el contenido hijo que exceda los límites del contenedor"
+      }
+    }
+  }, {
+    "group": "3",
+    "title": "Unidades Responsivas en CSS con clamp()",
+    "description": "Selecciona el bloque CSS que escala la tipografía de forma fluida.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "¿Qué bloque CSS escala la tipografía de forma fluida entre 16px y 24px según la pantalla?",
+      "options": ["h1 {\n  font-size: clamp(\n    1rem,\n    2.5vw,\n    1.5rem\n  );\n}", "h1 {\n  font-size: 20px;\n}", "h1 {\n  font-size: 100%;\n}", "h1 {\n  font-size: scale(1.5);\n}"],
+      "answer": "h1 {\n  font-size: clamp(\n    1rem,\n    2.5vw,\n    1.5rem\n  );\n}"
+    }
+  }, {
+    "group": "3",
+    "title": "Identificando Desbordamiento de Diseño",
+    "description": "Localiza el ancho fijo que provoca desbordamiento horizontal en móviles.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Selecciona la línea con el ancho rígido en píxeles que rompe el diseño responsivo en móviles:",
+      "code": ".container {\n  display: flex;\n  width: 1200px;\n  padding: 16px;\n  box-sizing: border-box;\n}",
+      "answer": 3
+    }
+  }, {
+    "group": "3",
+    "title": "Alineación de Barra de Navegación con Flexbox",
+    "description": "Ordena las reglas de flexbox para crear una barra de navegación horizontal espaciada.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Ordena las reglas de CSS flexbox para crear una barra de navegación con espacio entre elementos:",
+      "lines": [".navbar {", "  display: flex;", "  justify-content: space-between;", "  align-items: center;", "  padding: 12px 24px;", "}"],
+      "answer": [".navbar {", "  display: flex;", "  justify-content: space-between;", "  align-items: center;", "  padding: 12px 24px;", "}"]
+    }
+  }, {
+    "group": "3",
+    "title": "Vinculación de Entrada Controlada",
+    "description": "Vincula el estado de React y el evento onChange para crear un campo de texto controlado.",
+    "showPreview": true,
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "¿Qué elemento input establece correctamente un enlace bidireccional con el estado de React?",
+      "previewCode": "function Demo() {\n  const [val, setVal] = React.useState('Escribe aquí...');\n  return (\n    <div style={{ padding: 16 }}>\n      <input\n        value={val}\n        onChange={e => setVal(e.target.value)}\n        style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc', width: '100%' }}\n      />\n      <p style={{ marginTop: 8, color: '#666' }}>Salida: {val}</p>\n    </div>\n  );\n}",
+      "options": ["<input\n  value={query}\n  onChange={(e) =>\n    setQuery(e.target.value)\n  }\n/>", "<input\n  defaultValue={query}\n  onBlur={() => query}\n/>", "<input\n  value=\"query\"\n  onChange={setQuery}\n/>", "<input\n  state={query}\n  set={setQuery}\n/>"],
+      "answer": "<input\n  value={query}\n  onChange={(e) =>\n    setQuery(e.target.value)\n  }\n/>"
+    }
+  }, {
+    "group": "3",
+    "title": "Función de Búsqueda en Vivo",
+    "description": "Completa el filtro para buscar productos por título sin distinción de mayúsculas.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Completa el filtro para buscar productos por título:",
+      "template": "const resultados = productos.{{filter}}((p) =>\n  p.titulo\n    .{{toLowerCase}}()\n    .includes(query.toLowerCase())\n);",
+      "blanks": [{
+        "key": "filter",
+        "label": "Método de filtrado",
+        "hint": "filter"
+      }, {
+        "key": "toLowerCase",
+        "label": "Conversión a minúsculas",
+        "hint": "toLowerCase"
+      }],
+      "answer": {
+        "filter": "filter",
+        "toLowerCase": "toLowerCase"
+      }
+    }
+  }, {
+    "group": "3",
+    "title": "Refactorizando a Componente Controlado",
+    "description": "Refactoriza lecturas directas del DOM a vinculación controlada con useState.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Refactoriza la lectura imperativa de document.getElementById a un input controlado con useState:",
+      "starterCode": "function Formulario() {\n  const handleSubmit = () => {\n    const texto = document.getElementById('nombre').value;\n    alert(texto);\n  };\n  return <input id='nombre' />;\n}",
+      "answer": "function Formulario() {\n  const [nombre, setNombre] = useState('');\n  const handleSubmit = () => { alert(nombre); };\n  return <input value={nombre} onChange={e => setNombre(e.target.value)} />;\n}",
+      "tests": ["Utiliza useState('') para el nombre", "Vincula value y onChange al input"]
+    }
+  }, {
+    "group": "3",
+    "title": "Manejo de Formularios con Múltiples Campos",
+    "description": "Actualiza dinámicamente un objeto de estado usando nombres de propiedades computados.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Completa el controlador handleChange genérico para formularios con varios campos:",
+      "template": "const handleChange = (e) => {\n  const { name, value } = e.{{target}};\n  setForm(prev => ({ ...prev, [{{name}}]: value }));\n};",
+      "blanks": [{
+        "key": "target",
+        "label": "Elemento objetivo del evento",
+        "hint": "target"
+      }, {
+        "key": "name",
+        "label": "Variable de clave computada",
+        "hint": "name"
+      }],
+      "answer": {
+        "target": "target",
+        "name": "name"
+      }
+    }
+  }, {
+    "group": "3",
+    "title": "Restablecimiento del Estado del Input tras el Envío",
+    "description": "Localiza la línea que limpia el campo de texto a una cadena vacía.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Selecciona la línea que restablece el campo a una cadena vacía tras guardar:",
+      "code": "const handleAddTodo = (e) => {\n  e.preventDefault();\n  if (!text.trim()) return;\n  setTodos(prev => [...prev, text]);\n  setText('');\n};",
+      "answer": 5
+    }
+  }, {
+    "group": "3",
+    "title": "Renderizado Condicional Ternario",
+    "description": "Renderiza componentes alternativos según una bandera booleana de autenticación.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "¿Qué expresión JSX renderiza Dashboard cuando estaConectado es verdadero y LoginView en caso contrario?",
+      "options": ["{estaConectado ? <Dashboard /> : <LoginView />}", "{if (estaConectado) <Dashboard /> else <LoginView />}", "{estaConectado && <Dashboard /> || <LoginView />}", "{estaConectado ? <Dashboard /> , <LoginView />}"],
+      "answer": "{estaConectado ? <Dashboard /> : <LoginView />}"
+    }
+  }, {
+    "group": "3",
+    "title": "Reglas de Sintaxis en JSX",
+    "description": "Identifica las reglas sintácticas obligatorias al escribir JSX en React.",
+    "isMultipleAnswerChoice": true,
+    "question": {
+      "questionText": "Selecciona todas las reglas de sintaxis válidas requeridas al escribir JSX:",
+      "options": ["Todas las etiquetas deben cerrarse explícitamente (p. ej. <img /> o <br />)", "Los componentes deben devolver un único elemento raíz o Fragment (<>...</>)", "Usar atributos en camelCase como className y htmlFor en lugar de class y for", "Las expresiones JavaScript en JSX deben encerrarse entre llaves {}", "Los nombres de clase en HTML deben escribirse siempre en mayúsculas"],
+      "answer": ["Todas las etiquetas deben cerrarse explícitamente (p. ej. <img /> o <br />)", "Los componentes deben devolver un único elemento raíz o Fragment (<>...</>)", "Usar atributos en camelCase como className y htmlFor en lugar de class y for", "Las expresiones JavaScript en JSX deben encerrarse entre llaves {}"]
+    }
+  }, {
+    "group": "3",
+    "title": "Jerarquía de Estados de Carga",
+    "description": "Ordena las líneas para gestionar carga, error y contenido.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Ordena la jerarquía de retornos condicionales para una vista asíncrona:",
+      "lines": ["if (cargando) return <Spinner />;", "if (error) return <MensajeError msg={error} />;", "return <ListaDatos items={datos} />;"],
+      "answer": ["if (cargando) return <Spinner />;", "if (error) return <MensajeError msg={error} />;", "return <ListaDatos items={datos} />;"]
+    }
+  }, {
+    "group": "3",
+    "title": "Seguimiento de Código: Evaluación de Estado Vacío",
+    "description": "Predice qué elemento se renderiza cuando la lista de elementos está vacía.",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "Predice qué se mostrará cuando items = []:",
+      "code": "function Lista({ items }) {\n  if (items.length === 0) {\n    return <p>No se encontraron elementos.</p>;\n  }\n  return <ul>{items.map(i => <li key={i}>{i}</li>)}</ul>;\n}",
+      "options": ["<p>No se encontraron elementos.</p>", "<ul></ul>", "null", "Error: Cannot read empty array"],
+      "answer": "<p>No se encontraron elementos.</p>"
+    }
+  }, {
+    "group": "3",
+    "title": "Mejor Implementación: Cambio Declarativo de Pestañas",
+    "description": "Selecciona la implementación más declarativa para alternar vistas.",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "¿Qué implementación de pestañas renderiza limpiamente las vistas según el estado activo?",
+      "options": ["<div>\n  <nav>\n    <button onClick={() => setTab('feed')}>Publicaciones</button>\n    <button onClick={() => setTab('profile')}>Perfil</button>\n  </nav>\n  {tab === 'feed' ? <FeedView /> : <ProfileView />}\n</div>", "<div>\n  <button onclick='tab=\"feed\"'>Feed</button>\n  <script>render()</script>\n</div>", "<div>\n  {setTab('feed')}\n  <FeedView />\n</div>", "<div>\n  <iframe src={tab} />\n</div>"],
+      "answer": "<div>\n  <nav>\n    <button onClick={() => setTab('feed')}>Publicaciones</button>\n    <button onClick={() => setTab('profile')}>Perfil</button>\n  </nav>\n  {tab === 'feed' ? <FeedView /> : <ProfileView />}\n</div>"
+    }
+  }, {
+    "group": "3",
+    "title": "Entendiendo Componentes Funcionales en React",
+    "description": "Comprende la relación entre estado, props y el JSX renderizado.",
+    "isMultipleChoice": true,
+    "question": {
+      "questionText": "¿Qué es un componente funcional de React en el desarrollo web moderno?",
+      "options": ["Una función JavaScript que acepta props y devuelve JSX describiendo lo que debe aparecer en pantalla.", "Una tabla de base de datos almacenada en el localStorage del navegador.", "Una hoja de estilos CSS con animaciones de fotogramas clave.", "Un binario compilado en C++ que gestiona la red HTTP."],
+      "answer": "Una función JavaScript que acepta props y devuelve JSX describiendo lo que debe aparecer en pantalla."
+    }
+  }, {
+    "group": "3",
+    "title": "Conceptos Fundamentales de React",
+    "description": "Selecciona los principios fundamentales de la arquitectura basada en componentes.",
+    "isMultipleAnswerChoice": true,
+    "question": {
+      "questionText": "Selecciona todas las afirmaciones verdaderas sobre la arquitectura de React:",
+      "options": ["La interfaz de usuario se expresa como una función pura de estado y props", "React utiliza un Virtual DOM para minimizar mutaciones costosas en el DOM real", "Los componentes pueden componerse jerárquicamente como bloques de construcción", "Mutar directamente document.getElementById es la forma recomendada de actualizar la UI", "Los componentes de React no pueden aceptar ningún argumento"],
+      "answer": ["La interfaz de usuario se expresa como una función pura de estado y props", "React utiliza un Virtual DOM para minimizar mutaciones costosas en el DOM real", "Los componentes pueden componerse jerárquicamente como bloques de construcción"]
+    }
+  }, {
+    "group": "3",
+    "title": "Seguimiento de Código: Re-renderizado de Componentes",
+    "description": "Rastrea la reejecución de un componente cuando se actualiza el estado.",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "¿Cuántas veces se imprimirá 'Render App' si el botón se presiona dos veces?",
+      "code": "function App() {\n  const [count, setCount] = React.useState(0);\n  console.log('Render App');\n  return <button onClick={() => setCount(c => c + 1)}>Click {count}</button>;\n}",
+      "options": ["3 veces (1 renderizado inicial de montaje + 2 re-renderizados por clic)", "2 veces (solo los clics re-renderizan)", "1 vez (los componentes se ejecutan una sola vez)", "0 veces (las funciones no ejecutan registros de consola)"],
+      "answer": "3 veces (1 renderizado inicial de montaje + 2 re-renderizados por clic)"
+    }
+  }, {
+    "group": "3",
+    "title": "Corrigiendo Mutación Directa de Estado en Controlador",
+    "description": "Corrige el controlador para actualizar el contador de forma inmutable usando setCount.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Corrige el controlador para llamar a setCount en lugar de reasignar count directamente:",
+      "starterCode": "function Contador() {\n  let [count, setCount] = useState(0);\n  const handleIncrement = () => {\n    count = count + 1;\n  };\n  return <button onClick={handleIncrement}>{count}</button>;\n}",
+      "answer": "function Contador() {\n  const [count, setCount] = useState(0);\n  const handleIncrement = () => {\n    setCount(c => c + 1);\n  };\n  return <button onClick={handleIncrement}>{count}</button>;\n}",
+      "tests": ["Utiliza setCount(c => c + 1) o setCount(count + 1)", "Provoca el re-renderizado del componente al hacer clic"]
+    }
+  }, {
+    "group": "3",
+    "title": "Eventos Sintéticos en React",
+    "description": "Comprende cómo React envuelve eventos nativos en SyntheticEvents compatibles.",
+    "isMultipleChoice": true,
+    "question": {
+      "questionText": "¿Por qué React envuelve los eventos del DOM nativo en SyntheticEvents?",
+      "options": ["Para proporcionar un comportamiento y propiedades coherentes en todos los navegadores web.", "Para evitar que se disparen eventos de teclado en el navegador.", "Para enviar automáticamente cada clic a una base de datos remota.", "Para convertir todos los clics izquierdos en clics derechos."],
+      "answer": "Para proporcionar un comportamiento y propiedades coherentes en todos los navegadores web."
+    }
+  }, {
+    "group": "3",
+    "title": "Gestión de Estado con el Hook useState",
+    "description": "Inicializa el estado y desempaqueta el valor y la función actualizadora.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Completa la declaración de useState inicializada en 0:",
+      "template": "const [contador, {{setContador}}] = {{useState}}({{0}});",
+      "blanks": [{
+        "key": "setContador",
+        "label": "Función actualizadora de estado",
+        "hint": "setContador"
+      }, {
+        "key": "useState",
+        "label": "Nombre del hook de React",
+        "hint": "useState"
+      }, {
+        "key": "0",
+        "label": "Valor inicial",
+        "hint": "0"
+      }],
+      "answer": {
+        "0": "0",
+        "setContador": "setContador",
+        "useState": "useState"
+      }
+    }
+  }, {
+    "group": "3",
+    "title": "Props vs Estado vs Children",
+    "description": "Relaciona los conceptos de comunicación de datos en React con su función arquitectónica.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Relaciona cada concepto de React con su rol en el flujo de datos:",
+      "pairs": [{
+        "left": "Props",
+        "right": "Datos de solo lectura pasados hacia abajo desde un componente padre"
+      }, {
+        "left": "Estado",
+        "right": "Datos locales mutables gestionados internamente por el componente"
+      }, {
+        "left": "props.children",
+        "right": "Elementos anidados pasados dentro de las etiquetas de apertura y cierre"
+      }, {
+        "left": "Callbacks de Eventos",
+        "right": "Funciones pasadas hacia abajo para que los hijos notifiquen acciones al padre"
+      }],
+      "choices": ["Datos de solo lectura pasados hacia abajo desde un componente padre", "Datos locales mutables gestionados internamente por el componente", "Elementos anidados pasados dentro de las etiquetas de apertura y cierre", "Funciones pasadas hacia abajo para que los hijos notifiquen acciones al padre"],
+      "answer": {
+        "Props": "Datos de solo lectura pasados hacia abajo desde un componente padre",
+        "Estado": "Datos locales mutables gestionados internamente por el componente",
+        "props.children": "Elementos anidados pasados dentro de las etiquetas de apertura y cierre",
+        "Callbacks de Eventos": "Funciones pasadas hacia abajo para que los hijos notifiquen acciones al padre"
+      }
+    }
+  }, {
+    "group": "3",
+    "title": "Identificando Claves Faltantes en Listas",
+    "description": "Localiza el elemento mapeado que carece de la propiedad única key.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Selecciona la línea donde el elemento mapeado carece de la propiedad única key:",
+      "code": "function ListaUsuarios({ usuarios }) {\n  return (\n    <ul>\n      {usuarios.map(u => (\n        <li>{u.nombre} - {u.correo}</li>\n      ))}\n    </ul>\n  );\n}",
+      "answer": 5
+    }
+  }, {
+    "group": "3",
+    "title": "Seguimiento de Código: Props Hacia Abajo, Eventos Hacia Arriba",
+    "description": "Rastrea el flujo de datos desde el estado del padre hacia un componente hijo.",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "Predice qué texto se mostrará en el botón hijo tras hacer clic una vez:",
+      "code": "function Padre() {\n  const [val, setVal] = React.useState(10);\n  return <Hijo actual={val} onSumar={() => setVal(v => v + 5)} />;\n}\nfunction Hijo({ actual, onSumar }) {\n  return <button onClick={onSumar}>Total: {actual}</button>;\n}",
+      "options": ["Total: 15", "Total: 10", "Total: 5", "Total: undefined"],
+      "answer": "Total: 15"
+    }
+  }, {
+    "group": "3",
+    "title": "Práctica de Terminal: Listar Archivos",
+    "description": "Lista el contenido del directorio en un terminal Bash.",
+    "isCode": true,
+    "isTerminal": true,
+    "question": {
+      "questionText": "En un entorno de terminal Bash, ingresa el comando para listar los archivos del directorio actual"
+    }
+  }, {
+    "group": "3",
+    "title": "Paradigmas de Estilo en React",
+    "description": "Relaciona las técnicas de estilo en React con su sintaxis.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Relaciona cada técnica de estilo con su sintaxis de implementación:",
+      "pairs": [{
+        "left": "Objeto de Estilo en Línea",
+        "right": "style={{ backgroundColor: \"#3b82f6\", padding: 12 }}"
+      }, {
+        "left": "Módulos CSS",
+        "right": "import styles from \"./Boton.module.css\"; className={styles.btn}"
+      }, {
+        "left": "Tailwind / CSS Utilitario",
+        "right": "className=\"bg-blue-500 p-3 rounded-lg text-white\""
+      }, {
+        "left": "CSS Global Vainilla",
+        "right": "className=\"boton-personalizado\" con hoja de estilos global"
+      }],
+      "choices": ["style={{ backgroundColor: \"#3b82f6\", padding: 12 }}", "import styles from \"./Boton.module.css\"; className={styles.btn}", "className=\"bg-blue-500 p-3 rounded-lg text-white\"", "className=\"boton-personalizado\" con hoja de estilos global"],
+      "answer": {
+        "Objeto de Estilo en Línea": "style={{ backgroundColor: \"#3b82f6\", padding: 12 }}",
+        "Módulos CSS": "import styles from \"./Boton.module.css\"; className={styles.btn}",
+        "Tailwind / CSS Utilitario": "className=\"bg-blue-500 p-3 rounded-lg text-white\"",
+        "CSS Global Vainilla": "className=\"boton-personalizado\" con hoja de estilos global"
+      }
+    }
+  }, {
+    "group": "3",
+    "title": "Construyendo Diseños con Flexbox",
+    "description": "Ordena las reglas de CSS para centrar vertical y horizontalmente el contenido de una tarjeta.",
+    "isSelectOrder": true,
+    "question": {
+      "questionText": "Ordena las reglas de CSS para centrar el contenido de la tarjeta en una columna:",
+      "options": ["1. display: flex;", "2. flex-direction: column;", "3. align-items: center;", "4. justify-content: center;"],
+      "answer": ["1. display: flex;", "2. flex-direction: column;", "3. align-items: center;", "4. justify-content: center;"]
+    }
+  }, {
+    "group": "3",
+    "title": "Elevando Estado al Ancestro Común",
+    "description": "Eleva el estado del hijo al padre para que múltiples componentes compartan datos.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Refactoriza el estado dentro de InputBusqueda hacia el componente padre PaginaBusqueda:",
+      "starterCode": "function PaginaBusqueda() {\n  return (\n    <div>\n      <InputBusqueda />\n      <ResultadosBusqueda />\n    </div>\n  );\n}\n\nfunction InputBusqueda() {\n  const [consulta, setConsulta] = useState('');\n  return (\n    <input\n      value={consulta}\n      onChange={(e) => setConsulta(e.target.value)}\n    />\n  );\n}",
+      "answer": "function PaginaBusqueda() {\n  const [consulta, setConsulta] = useState('');\n  return (\n    <div>\n      <InputBusqueda\n        consulta={consulta}\n        setConsulta={setConsulta}\n      />\n      <ResultadosBusqueda consulta={consulta} />\n    </div>\n  );\n}\n\nfunction InputBusqueda({ consulta, setConsulta }) {\n  return (\n    <input\n      value={consulta}\n      onChange={(e) => setConsulta(e.target.value)}\n    />\n  );\n}",
+      "tests": ["Define const [consulta, setConsulta] en PaginaBusqueda", "Pasa la consulta a ResultadosBusqueda"]
+    }
+  }, {
+    "group": "3",
+    "title": "Efectos Secundarios en React",
+    "description": "Reconoce qué constituye un efecto secundario en aplicaciones frontend.",
+    "isMultipleChoice": true,
+    "question": {
+      "questionText": "¿Cuál de los siguientes es considerado un 'efecto secundario' en un componente de React?",
+      "options": ["Obtener datos de una API externa o configurar un temporizador en el navegador.", "Calcular la suma de dos números dentro de JSX.", "Devolver un elemento <h1> desde la función del componente.", "Pasar una prop de texto a un componente hijo."],
+      "answer": "Obtener datos de una API externa o configurar un temporizador en el navegador."
+    }
+  }, {
+    "group": "3",
+    "title": "Ciclo de Vida de Componentes en React",
+    "description": "Ordena las fases cronológicas desde el montaje inicial hasta el desmontaje.",
+    "isSelectOrder": true,
+    "question": {
+      "questionText": "Ordena cronológicamente las fases del ciclo de vida de un componente en React:",
+      "options": ["1. Renderizado inicial del componente (Montaje)", "2. Ejecución de funciones de configuración en useEffect", "3. Actualización de estado o prop provoca re-renderizado", "4. El componente se desmonta y ejecuta la limpieza de useEffect"],
+      "answer": ["1. Renderizado inicial del componente (Montaje)", "2. Ejecución de funciones de configuración en useEffect", "3. Actualización de estado o prop provoca re-renderizado", "4. El componente se desmonta y ejecuta la limpieza de useEffect"]
+    }
+  }, {
+    "group": "3",
+    "title": "Secuencia de Obtención de Datos en useEffect",
+    "description": "Ordena las etapas para obtener datos de forma asíncrona y gestionar estados de carga.",
+    "isSelectOrder": true,
+    "question": {
+      "questionText": "Ordena los pasos para obtener datos de forma segura en useEffect:",
+      "options": ["1. Establecer el estado de carga en verdadero", "2. Ejecutar await fetch(endpoint)", "3. Parsear el JSON de respuesta y actualizar el estado de datos", "4. Capturar posibles errores y establecer la carga en falso"],
+      "answer": ["1. Establecer el estado de carga en verdadero", "2. Ejecutar await fetch(endpoint)", "3. Parsear el JSON de respuesta y actualizar el estado de datos", "4. Capturar posibles errores y establecer la carga en falso"]
+    }
+  }, {
+    "group": "3",
+    "title": "Mejor Implementación: Inserciones Inmutables en Arreglos",
+    "description": "Selecciona la actualización de estado que añade un nuevo elemento sin mutar.",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "¿Qué implementación de setter añade correctamente una publicación al inicio del feed?",
+      "options": ["setPosts((prev) => [\n  newPost,\n  ...prev\n]);", "posts.unshift(newPost);\nsetPosts(posts);", "setPosts(posts + newPost);", "setPosts(newPost);"],
+      "answer": "setPosts((prev) => [\n  newPost,\n  ...prev\n]);"
+    }
+  }, {
+    "group": "3",
+    "title": "API Concurrent Root de React 18",
+    "description": "Comprende createRoot y la concurrencia en React 18.",
+    "isMultipleChoice": true,
+    "question": {
+      "questionText": "¿Por qué React 18 introdujo ReactDOM.createRoot en lugar del método heredado ReactDOM.render?",
+      "options": ["Para habilitar funciones concurrentes, agrupación automática de actualizaciones y transiciones más fluidas.", "Para deshabilitar permanentemente los estilos CSS en los componentes.", "Para forzar a todas las aplicaciones a ejecutarse sin JavaScript.", "Para compilar React a binarios de WebAssembly."],
+      "answer": "Para habilitar funciones concurrentes, agrupación automática de actualizaciones y transiciones más fluidas."
+    }
+  }, {
+    "group": "3",
+    "title": "Refactorizando Estado a Custom Hooks",
+    "description": "Extrae la lógica de obtención de datos a un hook personalizado useFetch.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Extrae la lógica de obtención de datos a un custom hook useFetch reutilizable:",
+      "starterCode": "function Perfil({ url }) {\n  const [data, setData] = useState(null);\n  useEffect(() => {\n    fetch(url)\n      .then((r) => r.json())\n      .then(setData);\n  }, [url]);\n  return <div>{data?.nombre}</div>;\n}",
+      "answer": "function useFetch(url) {\n  const [data, setData] = useState(null);\n  useEffect(() => {\n    fetch(url)\n      .then((r) => r.json())\n      .then(setData);\n  }, [url]);\n  return data;\n}",
+      "tests": ["Define la función useFetch(url)", "Devuelve el estado de datos obtenidos"]
+    }
+  }, {
+    "group": "3",
+    "title": "Corrigiendo Bucle Infinito de Renderizado en useEffect",
+    "description": "Agrega el arreglo de dependencias para evitar que el efecto se ejecute en cada render.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Corrige el hook useEffect para que solo se ejecute una vez en el montaje en lugar de ciclar infinitamente:",
+      "starterCode": "function Temporizador() {\n  const [segundos, setSegundos] = useState(0);\n  useEffect(() => {\n    setSegundos(s => s + 1);\n  });\n  return <div>{segundos}</div>;\n}",
+      "answer": "function Temporizador() {\n  const [segundos, setSegundos] = useState(0);\n  useEffect(() => {\n    setSegundos(s => s + 1);\n  }, []);\n  return <div>{segundos}</div>;\n}",
+      "tests": ["Agrega el arreglo de dependencias vacío []", "Evita el bucle infinito de re-renderizado"]
+    }
+  }, {
+    "group": "3",
+    "title": "Reglas de la Propiedad Key en Listas",
+    "description": "Selecciona todos los criterios válidos para el uso de la propiedad key en React.",
+    "isMultipleAnswerChoice": true,
+    "question": {
+      "questionText": "Selecciona todas las afirmaciones verdaderas sobre la propiedad key en listas de React:",
+      "options": ["Las keys permiten a React identificar qué elementos han cambiado, agregado o eliminado", "Las keys deben ser identificadores únicos y estables (p. ej. item.id) en lugar de índices", "Usar Math.random() como key fuerza el re-montaje innecesario de elementos en cada render", "Las keys se pasan automáticamente a componentes hijos como props regulares accesibles por props.key", "Las keys solo se requieren si la lista supera los 1000 elementos"],
+      "answer": ["Las keys permiten a React identificar qué elementos han cambiado, agregado o eliminado", "Las keys deben ser identificadores únicos y estables (p. ej. item.id) en lugar de índices", "Usar Math.random() como key fuerza el re-montaje innecesario de elementos en cada render"]
+    }
+  }, {
+    "group": "3",
+    "title": "Elevando Estado con Controladores Callback",
+    "description": "Ordena las líneas para pasar un callback desde el padre al hijo para actualizar el estado.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Ordena las líneas de un componente padre que gestiona el cambio de estado de un elemento hijo:",
+      "lines": ["function AppTareas() {", "  const [tareas, setTareas] = useState([]);", "  const toggle = (id) => {", "    setTareas(t => update(t, id));", "  };", "  return <ListaTareas items={tareas} onToggle={toggle} />;", "}"],
+      "answer": ["function AppTareas() {", "  const [tareas, setTareas] = useState([]);", "  const toggle = (id) => {", "    setTareas(t => update(t, id));", "  };", "  return <ListaTareas items={tareas} onToggle={toggle} />;", "}"]
+    }
+  }, {
+    "group": "3",
+    "title": "Previniendo Bucles Infinitos de Renderizado en useEffect",
+    "description": "Localiza la falta de arreglo de dependencias que desencadena un bucle infinito.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Selecciona la línea donde la falta del arreglo de dependencias causa que el efecto se ejecute en cada re-render:",
+      "code": "function Contador() {\n  const [count, setCount] = useState(0);\n  useEffect(() => {\n    setCount(c => c + 1);\n  });\n  return <div>{count}</div>;\n}",
+      "answer": 5
+    }
+  }, {
+    "group": "3",
+    "title": "Patrón de Extracción de Custom Hooks",
+    "description": "Extrae lógica de estado reutilizable del ancho de ventana en un hook personalizado.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "¿Qué firma define correctamente un custom hook que devuelve las dimensiones de la ventana?",
+      "options": ["function useWindowSize() {\n  const [size, setSize] = useState(window.innerWidth);\n  return size;\n}", "class useWindowSize {\n  constructor() { return window.innerWidth; }\n}", "const useWindowSize = (width) => {\n  return <width />;\n};", "function getWindowSize() {\n  return useState(100);\n}"],
+      "answer": "function useWindowSize() {\n  const [size, setSize] = useState(window.innerWidth);\n  return size;\n}"
+    }
+  }, {
+    "group": "3",
+    "title": "Seguimiento de Código: Estado Derivado vs Redundante",
+    "description": "Rastrea valores computados directamente durante el render sin llamadas adicionales a setState.",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "Predice qué se imprimirá para totalActivos durante el renderizado:",
+      "code": "const items = [\n  { id: 1, activo: true },\n  { id: 2, activo: false },\n  { id: 3, activo: true }\n];\nconst totalActivos = items.filter(i => i.activo).length;\nconsole.log(totalActivos);",
+      "options": ["2", "3", "1", "undefined"],
+      "answer": "2"
+    }
+  }, {
+    "group": "3",
+    "title": "Composición de Componentes con props.children",
+    "description": "Envuelve componentes JSX arbitrarios dentro de un diseño Modal reutilizable.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "¿Qué componente modal renderiza limpiamente contenido hijo dentro de su contenedor?",
+      "options": ["function Modal({ title, children }) {\n  return (\n    <div className=\"modal-backdrop\">\n      <h2>{title}</h2>\n      <div className=\"modal-body\">\n        {children}\n      </div>\n    </div>\n  );\n}", "function Modal({ title }) {\n  return <h2>{title}</h2>;\n}", "function Modal(children) {\n  return (\n    <div>\n      {children()}\n    </div>\n  );\n}", "const Modal = (content) => (\n  <div body={content} />\n);"],
+      "answer": "function Modal({ title, children }) {\n  return (\n    <div className=\"modal-backdrop\">\n      <h2>{title}</h2>\n      <div className=\"modal-body\">\n        {children}\n      </div>\n    </div>\n  );\n}"
+    }
+  }, {
+    "group": "3",
+    "title": "Corrigiendo Actualizaciones en Componente Desmontado",
+    "description": "Agrega una bandera de limpieza para evitar fugas de memoria en efectos asíncronos.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Corrige la limpieza del efecto para cancelar actualizaciones de estado si el componente se desmonta antes de finalizar el fetch:",
+      "starterCode": "useEffect(() => {\n  fetchData().then(data => setData(data));\n}, []);",
+      "answer": "useEffect(() => {\n  let isMounted = true;\n  fetchData().then(data => { if (isMounted) setData(data); });\n  return () => { isMounted = false; };\n}, []);",
+      "tests": ["Utiliza la bandera let isMounted = true", "Limpia con isMounted = false"]
+    }
+  }, {
+    "group": "3",
+    "title": "Construyendo un Panel Interactivo con Filtros",
+    "description": "Ensambla un panel reactivo con filtros de búsqueda y categoría.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "¿Qué patrón combina búsqueda, filtrado por categoría y conteo reactivo?",
+      "options": ["const filtrados = items\n  .filter(i => categoria === 'todos' || i.categoria === categoria)\n  .filter(i => i.titulo.toLowerCase().includes(query.toLowerCase()));", "const filtrados = items.push(query);", "const filtrados = items.sort(categoria);", "const filtrados = items.map(query);"],
+      "answer": "const filtrados = items\n  .filter(i => categoria === 'todos' || i.categoria === categoria)\n  .filter(i => i.titulo.toLowerCase().includes(query.toLowerCase()));"
+    }
+  }, {
+    "group": "3",
+    "title": "Temporizadores de Intervalo y Limpieza en useEffect",
+    "description": "Comprende cómo devolver una función de limpieza desde useEffect para cancelar temporizadores y evitar fugas de memoria.",
+    "showPreview": true,
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "¿Qué implementación de useEffect inicia correctamente un temporizador de intervalo y lo limpia en la función de retorno?",
+      "previewCode": "function TimerWidget() {\n  const [segundos, setSegundos] = React.useState(0);\n  const [estaActivo, setEstaActivo] = React.useState(true);\n\n  React.useEffect(() => {\n    if (!estaActivo) return;\n    const intervalo = setInterval(() => {\n      setSegundos(s => s + 1);\n    }, 1000);\n    return () => clearInterval(intervalo);\n  }, [estaActivo]);\n\n  return (\n    <div style={{ padding: 16, textAlign: 'center', background: '#f8fafc', borderRadius: 12, border: '1px solid #e2e8f0' }}>\n      <h3 style={{ fontSize: 24, margin: '0 0 8px', color: '#0f172a' }}>{segundos}s</h3>\n      <button\n        onClick={() => setEstaActivo(!estaActivo)}\n        style={{ padding: '6px 16px', background: estaActivo ? '#ef4444' : '#10b981', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}\n      >\n        {estaActivo ? 'Pausar' : 'Reanudar'}\n      </button>\n    </div>\n  );\n}",
+      "options": ["useEffect(() => {\n  const timer = setInterval(() => {\n    setSegundos(s => s + 1);\n  }, 1000);\n  return () => clearInterval(timer);\n}, []);", "useEffect(() => {\n  setInterval(() => {\n    setSegundos(s => s + 1);\n  }, 1000);\n}, []);", "useEffect(() => {\n  const timer = setInterval(() => {\n    setSegundos(s => s + 1);\n  }, 1000);\n  clearInterval(timer);\n}, []);", "useEffect(() => {\n  return setInterval(() => {\n    setSegundos(s => s + 1);\n  }, 1000);\n}, []);"],
+      "answer": "useEffect(() => {\n  const timer = setInterval(() => {\n    setSegundos(s => s + 1);\n  }, 1000);\n  return () => clearInterval(timer);\n}, []);"
+    }
+  }, {
+    "group": "3",
+    "title": "Construye tu Aplicación",
+    "isConversationReview": true,
+    "description": "Sintetiza HTML, CSS flexbox, estado en React, hooks y componentes responsivos.",
+    "question": {
+      "questionText": "¡Revisemos todo lo que has construido en la arquitectura frontend moderna con React!",
+      "range": [58, 106]
+    }
+  }, {
+    "group": "4",
+    "title": "Métodos HTTP y Acciones REST",
+    "description": "Relaciona los verbos HTTP principales con las operaciones CRUD de base de datos.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Relaciona cada método de solicitud HTTP con su función principal en la API:",
+      "pairs": [{
+        "left": "GET",
+        "right": "Recuperar datos o leer recursos desde el servidor"
+      }, {
+        "left": "POST",
+        "right": "Crear un nuevo recurso con un cuerpo de solicitud"
+      }, {
+        "left": "PUT / PATCH",
+        "right": "Actualizar o modificar un recurso existente"
+      }, {
+        "left": "DELETE",
+        "right": "Eliminar un recurso especificado de la base de datos"
+      }],
+      "choices": ["Recuperar datos o leer recursos desde el servidor", "Crear un nuevo recurso con un cuerpo de solicitud", "Actualizar o modificar un recurso existente", "Eliminar un recurso especificado de la base de datos"],
+      "answer": {
+        "GET": "Recuperar datos o leer recursos desde el servidor",
+        "POST": "Crear un nuevo recurso con un cuerpo de solicitud",
+        "PUT / PATCH": "Actualizar o modificar un recurso existente",
+        "DELETE": "Eliminar un recurso especificado de la base de datos"
+      }
+    }
+  }, {
+    "group": "4",
+    "title": "Categorización de Códigos de Estado HTTP",
+    "description": "Relaciona los códigos de estado de respuesta HTTP con sus significados.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Relaciona cada código de estado HTTP con su significado estándar:",
+      "pairs": [{
+        "left": "200 OK / 201 Created",
+        "right": "La solicitud tuvo éxito y el recurso fue recuperado o creado"
+      }, {
+        "left": "400 Bad Request",
+        "right": "El cliente envió parámetros inválidos o JSON mal formado"
+      }, {
+        "left": "401 Unauthorized / 403 Forbidden",
+        "right": "Se requiere autenticación o permisos denegados"
+      }, {
+        "left": "404 Not Found",
+        "right": "El endpoint o recurso solicitado no existe"
+      }, {
+        "left": "500 Internal Server Error",
+        "right": "Ocurrió una excepción no controlada en el servidor"
+      }],
+      "choices": ["La solicitud tuvo éxito y el recurso fue recuperado o creado", "El cliente envió parámetros inválidos o JSON mal formado", "Se requiere autenticación o permisos denegados", "El endpoint o recurso solicitado no existe", "Ocurrió una excepción no controlada en el servidor"],
+      "answer": {
+        "200 OK / 201 Created": "La solicitud tuvo éxito y el recurso fue recuperado o creado",
+        "400 Bad Request": "El cliente envió parámetros inválidos o JSON mal formado",
+        "401 Unauthorized / 403 Forbidden": "Se requiere autenticación o permisos denegados",
+        "404 Not Found": "El endpoint o recurso solicitado no existe",
+        "500 Internal Server Error": "Ocurrió una excepción no controlada en el servidor"
+      }
+    }
+  }, {
+    "group": "4",
+    "title": "JavaScript Asíncrono y el Event Loop",
+    "description": "Comprende la E/S sin bloqueo y cómo se resuelven las promesas en JavaScript.",
+    "isMultipleChoice": true,
+    "question": {
+      "questionText": "¿Por qué Node.js utiliza E/S asíncrona y sin bloqueo para operaciones de red y base de datos?",
+      "options": ["Para gestionar miles de solicitudes concurrentes en un solo hilo sin congelar el servidor.", "Para compilar JavaScript a código de máquina antes de ejecutarlo.", "Para forzar a las consultas de base de datos a ejecutarse de forma sincrónica una por una.", "Para reiniciar automáticamente el servidor cuando ocurre un error."],
+      "answer": "Para gestionar miles de solicitudes concurrentes en un solo hilo sin congelar el servidor."
+    }
+  }, {
+    "group": "4",
+    "title": "Consumo de Promesas con Async / Await",
+    "description": "Ordena las líneas para obtener y parsear datos JSON de un endpoint de forma asíncrona.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Ordena las líneas en una función completa de obtención de datos asíncrona:",
+      "lines": ["async function getUsuario(id) {", "  const res = await fetch(`/usuarios/${id}`);", "  if (!res.ok) throw new Error('Error');", "  const data = await res.json();", "  return data;", "}"],
+      "answer": ["async function getUsuario(id) {", "  const res = await fetch(`/usuarios/${id}`);", "  if (!res.ok) throw new Error('Error');", "  const data = await res.json();", "  return data;", "}"]
+    }
+  }, {
+    "group": "4",
+    "title": "Definición de Rutas RESTful en Express.js",
+    "description": "Completa una ruta en Express que responda con un JSON.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Completa la ruta en Express para manejar solicitudes GET en '/api/publicaciones':",
+      "template": "app.{{get}}(\"/api/publicaciones\", async (req, res) => {\n  res.{{json}}({\n    publicaciones: []\n  });\n});",
+      "blanks": [{
+        "key": "get",
+        "label": "Método HTTP",
+        "hint": "get"
+      }, {
+        "key": "json",
+        "label": "Método de respuesta JSON",
+        "hint": "json"
+      }],
+      "answer": {
+        "get": "get",
+        "json": "json"
+      }
+    }
+  }, {
+    "group": "4",
+    "title": "Manejo del Cuerpo de Solicitudes y Cargas JSON",
+    "description": "Extrae los datos entrantes y responde con el estado 201 Created.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Completa el controlador POST para parsear req.body y responder con estado 201:",
+      "template": "app.post(\"/api/usuarios\", (req, res) => {\n  const datos = req.{{body}};\n  res.status({{201}}).json({\n    exito: true,\n    usuario: datos\n  });\n});",
+      "blanks": [{
+        "key": "body",
+        "label": "Propiedad del cuerpo de solicitud",
+        "hint": "body"
+      }, {
+        "key": "201",
+        "label": "Código de estado Creado",
+        "hint": "201"
+      }],
+      "answer": {
+        "201": "201",
+        "body": "body"
+      }
+    }
+  }, {
+    "group": "4",
+    "title": "Corrigiendo Promesa No Esperada en Ruta Asíncrona",
+    "description": "Agrega el await faltante para no enviar promesas sin resolver en la respuesta.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Corrige el controlador asíncrono para esperar la consulta antes de enviar la respuesta JSON:",
+      "starterCode": "app.get('/api/usuarios', async (req, res) => {\n  const usuarios = db.getUsuarios();\n  res.json(usuarios);\n});",
+      "answer": "app.get('/api/usuarios', async (req, res) => {\n  const usuarios = await db.getUsuarios();\n  res.json(usuarios);\n});",
+      "tests": ["Espera a db.getUsuarios() antes de responder", "Envía los registros resueltos de usuarios"]
+    }
+  }, {
+    "group": "4",
+    "title": "Refactorizando Callbacks Anidados a Async/Await",
+    "description": "Refactoriza callbacks a una función asíncrona moderna con async/await.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Refactoriza la consulta basada en callbacks a una función moderna con async/await:",
+      "starterCode": "function obtenerUsuario(id, callback) {\n  db.find(id, (err, usuario) => {\n    if (err) return callback(err);\n    callback(null, usuario);\n  });\n}",
+      "answer": "async function obtenerUsuario(id) {\n  const usuario = await db.find(id);\n  return usuario;\n}",
+      "tests": ["Utiliza la sintaxis async/await", "Devuelve directamente el objeto usuario resuelto"]
+    }
+  }, {
+    "group": "4",
+    "title": "Bases de Datos Relacionales (SQL) vs Documentales (NoSQL)",
+    "description": "Relaciona los paradigmas de bases de datos con sus modelos arquitectónicos.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Relaciona cada paradigma de base de datos con su modelo arquitectónico:",
+      "pairs": [{
+        "left": "Relacional (SQL)",
+        "right": "Esquemas estrictos con tablas, filas, claves foráneas y JOINs"
+      }, {
+        "left": "Documental (NoSQL)",
+        "right": "Documentos flexibles tipo JSON agrupados en colecciones"
+      }, {
+        "left": "Clave Primaria",
+        "right": "Identificador único para un registro en una tabla"
+      }, {
+        "left": "Clave Foránea",
+        "right": "Referencia que vincula una fila hija con una tabla padre"
+      }],
+      "choices": ["Esquemas estrictos con tablas, filas, claves foráneas y JOINs", "Documentos flexibles tipo JSON agrupados en colecciones", "Identificador único para un registro en una tabla", "Referencia que vincula una fila hija con una tabla padre"],
+      "answer": {
+        "Relacional (SQL)": "Esquemas estrictos con tablas, filas, claves foráneas y JOINs",
+        "Documental (NoSQL)": "Documentos flexibles tipo JSON agrupados en colecciones",
+        "Primary Key": "Identificador único para un registro en una tabla",
+        "Clave Foránea": "Referencia que vincula una fila hija con una tabla padre"
+      }
+    }
+  }, {
+    "group": "4",
+    "title": "Mejor Implementación: Consultas Seguras a Base de Datos",
+    "description": "Selecciona la consulta parametrizada que previene inyecciones SQL.",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "¿Qué implementación utiliza parámetros seguros para prevenir ataques de inyección SQL?",
+      "options": ["const resultado = await db.query('SELECT * FROM usuarios WHERE correo = $1', [correo]);", "const resultado = await db.query(`SELECT * FROM usuarios WHERE correo = '${correo}'`);", "const resultado = await db.query('SELECT * FROM usuarios WHERE correo = ' + correo);", "const resultado = await db.query(eval(`SELECT * FROM usuarios WHERE correo = ${correo}`));"],
+      "answer": "const resultado = await db.query('SELECT * FROM usuarios WHERE correo = $1', [correo]);"
+    }
+  }, {
+    "group": "4",
+    "title": "Flujo de Autenticación con JSON Web Tokens (JWT)",
+    "description": "Ordena los pasos del ciclo de vida de autenticación basada en tokens.",
+    "isSelectOrder": true,
+    "question": {
+      "questionText": "Ordena los pasos cronológicos en un flujo de autenticación basado en tokens:",
+      "options": ["1. El cliente envía las credenciales a /auth/login", "2. El servidor valida las credenciales y firma un JWT", "3. El cliente almacena el token en memoria o almacenamiento seguro", "4. El cliente envía el token en el encabezado Authorization Bearer en las solicitudes API"],
+      "answer": ["1. El cliente envía las credenciales a /auth/login", "2. El servidor valida las credenciales y firma un JWT", "3. El cliente almacena el token en memoria o almacenamiento seguro", "4. El cliente envía el token en el encabezado Authorization Bearer en las solicitudes API"]
+    }
+  }, {
+    "group": "4",
+    "title": "Modelado de Relaciones en Bases de Datos",
+    "description": "Identifica cómo se vinculan los registros padre e hijo en un modelo relacional.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "¿Qué esquema vincula correctamente la tabla 'comentarios' con un autor en la tabla 'usuarios'?",
+      "options": ["CREATE TABLE comentarios (\n  id SERIAL PRIMARY KEY,\n  texto TEXT,\n  usuario_id INT REFERENCES usuarios(id)\n);", "CREATE TABLE comentarios (\n  id SERIAL PRIMARY KEY,\n  texto TEXT,\n  nombre_usuario TEXT\n);", "CREATE TABLE comentarios (\n  usuarios JSON\n);", "CREATE TABLE comentarios (\n  link TABLE usuarios\n);"],
+      "answer": "CREATE TABLE comentarios (\n  id SERIAL PRIMARY KEY,\n  texto TEXT,\n  usuario_id INT REFERENCES usuarios(id)\n);"
+    }
+  }, {
+    "group": "4",
+    "title": "Corrigiendo Código de Estado en Respuesta de Error",
+    "description": "Corrige el código HTTP para devolver 404 cuando un usuario no existe.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Corrige el código de estado para devolver 404 cuando no se encuentre el usuario:",
+      "starterCode": "app.get('/api/usuarios/:id', async (req, res) => {\n  const usuario = await db.find(req.params.id);\n  if (!usuario) {\n    return res.status(200).json({\n      error: 'Usuario no encontrado'\n    });\n  }\n  res.json(usuario);\n});",
+      "answer": "app.get('/api/usuarios/:id', async (req, res) => {\n  const usuario = await db.find(req.params.id);\n  if (!usuario) {\n    return res.status(404).json({\n      error: 'Usuario no encontrado'\n    });\n  }\n  res.json(usuario);\n});",
+      "tests": ["Devuelve estado 404 cuando usuario es null", "Envía el mensaje de error correspondiente"]
+    }
+  }, {
+    "group": "4",
+    "title": "Refactorizando Secretos a Variables de Entorno",
+    "description": "Reemplaza claves API hardcodeadas por referencias a process.env.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Refactoriza el secreto JWT para leerlo desde process.env.JWT_SECRET:",
+      "starterCode": "function generarToken(usuario) {\n  return jwt.sign(\n    usuario,\n    'clave-super-secreta-12345'\n  );\n}",
+      "answer": "function generarToken(usuario) {\n  return jwt.sign(\n    usuario,\n    process.env.JWT_SECRET\n  );\n}",
+      "tests": ["Utiliza process.env.JWT_SECRET", "Elimina la clave hardcodeada"]
+    }
+  }, {
+    "group": "4",
+    "title": "Mejor Implementación: Middleware de Autenticación",
+    "description": "Selecciona el middleware de verificación de tokens más robusto en Express.",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "¿Qué middleware valida correctamente los tokens Bearer del encabezado de autorización?",
+      "options": ["const authGuard = (req, res, next) => {\n  const token =\n    req.headers.authorization?.split(' ')[1];\n  if (!token) {\n    return res.status(401).json({\n      error: 'Unauthorized'\n    });\n  }\n  try {\n    req.user = jwt.verify(\n      token,\n      process.env.JWT_SECRET\n    );\n    next();\n  } catch (err) {\n    res.status(403).json({\n      error: 'Invalid token'\n    });\n  }\n};", "const authGuard = (req, res, next) => {\n  next();\n};", "const authGuard = (req, res, next) => {\n  if (req.url) next();\n};", "const authGuard = (req, res, next) => {\n  res.send(req.token);\n};"],
+      "answer": "const authGuard = (req, res, next) => {\n  const token =\n    req.headers.authorization?.split(' ')[1];\n  if (!token) {\n    return res.status(401).json({\n      error: 'Unauthorized'\n    });\n  }\n  try {\n    req.user = jwt.verify(\n      token,\n      process.env.JWT_SECRET\n    );\n    next();\n  } catch (err) {\n    res.status(403).json({\n      error: 'Invalid token'\n    });\n  }\n};"
+    }
+  }, {
+    "group": "4",
+    "title": "Canalización de Middleware en Express",
+    "description": "Ordena las líneas para configurar middleware y rutas en Express.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Ordena las líneas para configurar el middleware express.json antes de la ruta de la API:",
+      "lines": ["const app = express();", "app.use(express.json());", "app.get(\"/api/salud\", (req, res) => {", "  res.json({ estado: \"saludable\" });", "});", "app.listen(3000);"],
+      "answer": ["const app = express();", "app.use(express.json());", "app.get(\"/api/salud\", (req, res) => {", "  res.json({ estado: \"saludable\" });", "});", "app.listen(3000);"]
+    }
+  }, {
+    "group": "4",
+    "title": "Seguridad de APIs y Limitación de Tasa",
+    "description": "Selecciona todas las medidas de seguridad críticas para servidores de producción.",
+    "isMultipleAnswerChoice": true,
+    "question": {
+      "questionText": "Selecciona todas las mejores prácticas de seguridad para servidores API:",
+      "options": ["Sanitizar y validar toda la entrada entrante del usuario", "Implementar limitación de tasa para prevenir ataques de fuerza bruta", "Almacenar contraseñas usando hashes criptográficos con sal (p. ej. bcrypt)", "Usar HTTPS / TLS para cifrar todo el tráfico en tránsito", "Exponer credenciales de base de datos directamente en paquetes del cliente", "Deshabilitar comprobaciones CORS para todos los dominios con comodín *"],
+      "answer": ["Sanitizar y validar toda la entrada entrante del usuario", "Implementar limitación de tasa para prevenir ataques de fuerza bruta", "Almacenar contraseñas usando hashes criptográficos con sal (p. ej. bcrypt)", "Usar HTTPS / TLS para cifrar todo el tráfico en tránsito"]
+    }
+  }, {
+    "group": "4",
+    "title": "Manejo de Errores en Rutas Asíncronas",
+    "description": "Identifica la línea donde el bloque catch intercepta errores de base de datos.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Selecciona la línea donde el bloque catch intercepta errores para evitar caídas del servidor:",
+      "code": "app.get('/api/usuarios', async (req, res) => {\n  try {\n    const usuarios = await db.query('SELECT * FROM usuarios');\n    res.json(usuarios);\n  } catch (error) {\n    res.status(500).json({ error: 'Error en la base de datos' });\n  }\n});",
+      "answer": 5
+    }
+  }, {
+    "group": "4",
+    "title": "Seguimiento de Código: Orden de Ejecución Asíncrona",
+    "description": "Rastrea microtareas asíncronas vs salidas síncronas en Node.js.",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "Predice el orden exacto de los mensajes registrados en consola al ejecutar este programa:",
+      "code": "console.log('1');\nsetTimeout(() => console.log('2'), 0);\nPromise.resolve().then(() => console.log('3'));\nconsole.log('4');",
+      "options": ["1, 4, 3, 2", "1, 2, 3, 4", "1, 3, 4, 2", "4, 3, 2, 1"],
+      "answer": "1, 4, 3, 2"
+    }
+  }, {
+    "group": "4",
+    "title": "Práctica de Terminal: Pruebas de Endpoints con Curl",
+    "description": "Ejecuta un comando para probar un endpoint desde la terminal.",
+    "isCode": true,
+    "isTerminal": true,
+    "question": {
+      "questionText": "En un terminal Bash, usa curl para realizar una solicitud GET a 'https://api.example.com/health'"
+    }
+  }, {
+    "group": "4",
+    "title": "Localizando Configuración de CORS",
+    "description": "Localiza la línea donde se configura el permiso de origen en CORS.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Selecciona la línea donde se configura el origen permitido en CORS:",
+      "code": "const app = express();\nconst cors = require('cors');\napp.use(cors({ origin: 'https://miapp.com' }));\napp.listen(8080);",
+      "answer": 3
+    }
+  }, {
+    "group": "4",
+    "title": "Construye tu Aplicación",
+    "isConversationReview": true,
+    "description": "Revisa arquitectura backend, rutas de API, modelos de base de datos y autenticación.",
+    "question": {
+      "questionText": "¡Hablemos de arquitectura backend, bases de datos y APIs para tu proyecto!",
+      "range": [108, 128]
+    }
+  }, {
+    "group": "5",
+    "title": "Plataformas Serverless en la Nube e Infraestructura",
+    "description": "Comprende las arquitecturas serverless modernas frente al hosting tradicional.",
+    "isMultipleChoice": true,
+    "question": {
+      "questionText": "¿Qué distingue a un backend serverless moderno (como Firebase/Supabase) de los servidores VPS tradicionales?",
+      "options": ["Serverless abstrae el aprovisionamiento de servidores, el balanceo de carga y parches del SO, escalando automáticamente por solicitud.", "Serverless no puede ejecutar consultas a bases de datos ni autenticar usuarios.", "Serverless requiere instalar actualizaciones del kernel de Linux manualmente.", "Serverless solo ejecuta archivos HTML sin lógica en JavaScript."],
+      "answer": "Serverless abstrae el aprovisionamiento de servidores, el balanceo de carga y parches del SO, escalando automáticamente por solicitud."
+    }
+  }, {
+    "group": "5",
+    "title": "Configuración de Scripts en package.json",
+    "description": "Configura los scripts de compilación y servidor dev en package.json.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Completa el bloque de scripts npm para una aplicación moderna con Vite + React:",
+      "template": "{\n  \"scripts\": {\n    \"dev\": \"{{vite}}\",\n    \"build\": \"{{vite build}}\"\n  }\n}",
+      "blanks": [{
+        "key": "vite",
+        "label": "Comando del servidor dev",
+        "hint": "vite"
+      }, {
+        "key": "vite build",
+        "label": "Comando de compilación",
+        "hint": "vite build"
+      }],
+      "answer": {
+        "vite": "vite",
+        "vite build": "vite build"
+      }
+    }
+  }, {
+    "group": "5",
+    "title": "Comandos Principales de Control de Versiones con Git",
+    "description": "Relaciona los comandos de Git con sus operaciones de repositorio.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Relaciona cada comando de Git con su acción en el repositorio:",
+      "pairs": [{
+        "left": "git status",
+        "right": "Muestra archivos modificados, preparados y sin seguimiento"
+      }, {
+        "left": "git add .",
+        "right": "Prepara todos los archivos modificados para el siguiente commit"
+      }, {
+        "left": "git commit -m \"msg\"",
+        "right": "Guarda una instantánea de los cambios en el historial"
+      }, {
+        "left": "git push origin main",
+        "right": "Sube los commits locales al repositorio remoto de GitHub"
+      }],
+      "choices": ["Muestra archivos modificados, preparados y sin seguimiento", "Prepara todos los archivos modificados para el siguiente commit", "Guarda una instantánea de los cambios en el historial", "Sube los commits locales al repositorio remoto de GitHub"],
+      "answer": {
+        "git status": "Muestra archivos modificados, preparados y sin seguimiento",
+        "git add .": "Prepara todos los archivos modificados para el siguiente commit",
+        "git commit -m \"msg\"": "Guarda una instantánea de los cambios en el historial",
+        "git push origin main": "Sube los commits locales al repositorio remoto de GitHub"
+      }
+    }
+  }, {
+    "group": "5",
+    "title": "Ciclo Diario de Desarrollo con Git",
+    "description": "Ordena las líneas para crear un commit y sincronizarlo con GitHub.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Ordena los comandos cronológicos de Git para preparar, confirmar y subir cambios:",
+      "lines": ["git status", "git add .", "git commit -m \"feat: agregar flujo de mensajes en tiempo real\"", "git push origin main"],
+      "answer": ["git status", "git add .", "git commit -m \"feat: agregar flujo de mensajes en tiempo real\"", "git push origin main"]
+    }
+  }, {
+    "group": "5",
+    "title": "Práctica de Terminal: Clonar un Repositorio de GitHub",
+    "description": "Clona un repositorio remoto en tu computadora desde la terminal.",
+    "isCode": true,
+    "isTerminal": true,
+    "question": {
+      "questionText": "En un entorno de terminal Bash, ingresa el comando para clonar https://github.com/example/web-app.git"
+    }
+  }, {
+    "group": "5",
+    "title": "Corrigiendo Configuración de Firebase Incompleta",
+    "description": "Corrige el objeto de configuración de Firebase para incluir projectId.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Corrige la configuración de Firebase abajo para incluir projectId:",
+      "starterCode": "const firebaseConfig = {\n  apiKey: process.env.VITE_API_KEY,\n  authDomain: 'app.firebaseapp.com'\n};\nconst app = initializeApp(firebaseConfig);",
+      "answer": "const firebaseConfig = {\n  apiKey: process.env.VITE_API_KEY,\n  authDomain: 'app.firebaseapp.com',\n  projectId: process.env.VITE_PROJECT_ID\n};\nconst app = initializeApp(firebaseConfig);",
+      "tests": ["Incluye la propiedad projectId", "Pasa una configuración válida a initializeApp"]
+    }
+  }, {
+    "group": "5",
+    "title": "Refactorizando a SDK Modular de Firebase v9",
+    "description": "Refactoriza llamadas heredadas de Firebase v8 a funciones modulares de v9.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Refactoriza la llamada heredada a la sintaxis modular v9 de signInWithPopup:",
+      "starterCode": "function login(provider) {\n  return firebase.auth().signInWithPopup(provider);\n}",
+      "answer": "function login(provider) {\n  return signInWithPopup(auth, provider);\n}",
+      "tests": ["Utiliza signInWithPopup(auth, provider)", "Elimina la sintaxis de espacio de nombres heredada"]
+    }
+  }, {
+    "group": "5",
+    "title": "Suscripción al Estado de Autenticación (onAuthStateChanged)",
+    "description": "Mantén el estado del cliente sincronizado con el inicio/cierre de sesión.",
+    "isFillCodeBlanks": true,
+    "question": {
+      "questionText": "Completa la suscripción al observador de autenticación:",
+      "template": "const cancelar = {{onAuthStateChanged}}(\n  auth,\n  (usuarioActual) => {\n    {{setUser}}(usuarioActual);\n  }\n);",
+      "blanks": [{
+        "key": "onAuthStateChanged",
+        "label": "Función observadora de Auth",
+        "hint": "onAuthStateChanged"
+      }, {
+        "key": "setUsuario",
+        "label": "Setter de estado en React",
+        "hint": "setUsuario"
+      }],
+      "answer": {
+        "onAuthStateChanged": "onAuthStateChanged",
+        "setUsuario": "setUsuario"
+      }
+    }
+  }, {
+    "group": "5",
+    "title": "Mejor Implementación: Suscripción en Tiempo Real a Firestore",
+    "description": "Selecciona la implementación que se suscribe a Firestore y se limpia en el desmontaje.",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "¿Qué patrón de useEffect se suscribe a Firestore en tiempo real y cancela la suscripción al desmontar?",
+      "options": ["useEffect(() => {\n  const q = query(\n    collection(db, 'messages'),\n    orderBy('createdAt')\n  );\n\n  const unsubscribe = onSnapshot(\n    q,\n    (snapshot) => {\n      setMessages(\n        snapshot.docs.map((d) => ({\n          id: d.id,\n          ...d.data()\n        }))\n      );\n    }\n  );\n\n  return () => unsubscribe();\n}, []);", "useEffect(() => {\n  onSnapshot(\n    collection(db, 'messages'),\n    (s) => setMessages(s.docs)\n  );\n}, []);", "useEffect(() => {\n  const data = getDocs(\n    collection(db, 'messages')\n  );\n  setMessages(data);\n});", "useEffect(() => {\n  setInterval(\n    () => onSnapshot(db, setMessages),\n    1000\n  );\n}, []);"],
+      "answer": "useEffect(() => {\n  const q = query(\n    collection(db, 'messages'),\n    orderBy('createdAt')\n  );\n\n  const unsubscribe = onSnapshot(\n    q,\n    (snapshot) => {\n      setMessages(\n        snapshot.docs.map((d) => ({\n          id: d.id,\n          ...d.data()\n        }))\n      );\n    }\n  );\n\n  return () => unsubscribe();\n}, []);"
+    }
+  }, {
+    "group": "5",
+    "title": "Reglas de Seguridad en Cloud Firestore",
+    "description": "Garantiza que los usuarios autenticados solo puedan leer y escribir su propio perfil.",
+    "isCodeCompletion": true,
+    "question": {
+      "questionText": "¿Qué regla de seguridad de Firestore garantiza que los usuarios solo escriban en su propio documento?",
+      "options": ["match /usuarios/{usuarioId} {\n  allow read, write: if request.auth != null && request.auth.uid == usuarioId;\n}", "match /usuarios/{usuarioId} {\n  allow read, write: if true;\n}", "match /usuarios/{usuarioId} {\n  allow read, write: if request.time > 0;\n}", "match /usuarios/{usuarioId} {\n  allow read: false; allow write: false;\n}"],
+      "answer": "match /usuarios/{usuarioId} {\n  allow read, write: if request.auth != null && request.auth.uid == usuarioId;\n}"
+    }
+  }, {
+    "group": "5",
+    "title": "Componentes Arquitectónicos del Ecosistema Cloud",
+    "description": "Relaciona los servicios cloud con sus responsabilidades en la infraestructura.",
+    "isMatchPairs": true,
+    "question": {
+      "questionText": "Relaciona cada servicio cloud con su función:",
+      "pairs": [{
+        "left": "Firebase Authentication",
+        "right": "Identidad de usuario, gestión de sesiones y OAuth"
+      }, {
+        "left": "Cloud Firestore",
+        "right": "Base de datos documental NoSQL escalable en tiempo real"
+      }, {
+        "left": "Cloud Storage",
+        "right": "Almacenamiento binario para fotos, audio y videos"
+      }, {
+        "left": "Firebase Hosting",
+        "right": "CDN global para entrega ultrarrápida de contenido web"
+      }],
+      "choices": ["Identidad de usuario, gestión de sesiones y OAuth", "Base de datos documental NoSQL escalable en tiempo real", "Almacenamiento binario para fotos, audio y videos", "CDN global para entrega ultrarrápida de contenido web"],
+      "answer": {
+        "Firebase Authentication": "Identidad de usuario, gestión de sesiones y OAuth",
+        "Cloud Firestore": "Base de datos documental NoSQL escalable en tiempo real",
+        "Cloud Storage": "Almacenamiento binario para fotos, audio y videos",
+        "Firebase Hosting": "CDN global para entrega ultrarrápida de contenido web"
+      }
+    }
+  }, {
+    "group": "5",
+    "title": "Mejor Implementación: Variables de Entorno en el Cliente",
+    "description": "Selecciona la forma segura de cargar variables de entorno en Vite.",
+    "isBestImplementation": true,
+    "question": {
+      "questionText": "¿Qué fragmento lee variables de entorno de Vite en el cliente de forma segura?",
+      "options": ["const firebaseConfig = {\n  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,\n  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID\n};", "const firebaseConfig = {\n  apiKey: process.env.SECRET_PRIVATE_KEY\n};", "const firebaseConfig = window.env;", "const firebaseConfig = {\n  apiKey: document.cookie\n};"],
+      "answer": "const firebaseConfig = {\n  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,\n  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID\n};"
+    }
+  }, {
+    "group": "5",
+    "title": "Localizando Error de Cancelación de Inicio de Sesión",
+    "description": "Identifica la línea donde el bloque catch intercepta cuando el usuario cierra la ventana de login.",
+    "isRelevantLine": true,
+    "question": {
+      "questionText": "Selecciona la línea donde el bloque catch maneja la cancelación del popup:",
+      "code": "const handleLogin = async () => {\n  try {\n    await signInWithPopup(auth, provider);\n  } catch (error) {\n    console.warn('Inicio de sesión cancelado:', error.message);\n  }\n};",
+      "answer": 5
+    }
+  }, {
+    "group": "5",
+    "title": "Flujo de Ramas y Fusión en Git",
+    "description": "Ordena las líneas para crear una rama, confirmar cambios y fusionar en main.",
+    "isParsonsProblem": true,
+    "question": {
+      "questionText": "Ordena los comandos de ramas en Git en el orden correcto:",
+      "lines": ["git checkout -b feature/auth-flow", "git commit -am 'feat: implement OAuth login'", "git checkout main", "git merge feature/auth-flow"],
+      "answer": ["git checkout -b feature/auth-flow", "git commit -am 'feat: implement OAuth login'", "git checkout main", "git merge feature/auth-flow"]
+    }
+  }, {
+    "group": "5",
+    "title": "Corrigiendo Fuga de Memoria en Escuchador de Auth",
+    "description": "Devuelve la función de limpieza desde useEffect para detener el listener al desmontar.",
+    "isFixBug": true,
+    "question": {
+      "questionText": "Corrige el hook useEffect para limpiar el escuchador de auth al desmontar:",
+      "starterCode": "useEffect(() => {\n  const unsubscribe = onAuthStateChanged(auth, setUser);\n}, []);",
+      "answer": "useEffect(() => {\n  const unsubscribe = onAuthStateChanged(auth, setUser);\n  return () => unsubscribe();\n}, []);",
+      "tests": ["Devuelve función de limpieza () => unsubscribe()", "Evita fugas de memoria al desmontar"]
+    }
+  }, {
+    "group": "5",
+    "title": "Práctica de Terminal: Iniciar Servidor de Desarrollo Local",
+    "description": "Inicia el servidor local de desarrollo utilizando npm run dev.",
+    "isCode": true,
+    "isTerminal": true,
+    "question": {
+      "questionText": "En un terminal Bash, ingresa el comando para iniciar el servidor de desarrollo local usando npm"
+    }
+  }, {
+    "group": "5",
+    "title": "Fases del Pipeline de Despliegue CI/CD",
+    "description": "Ordena las fases automatizadas estándar de Integración y Despliegue Continuos.",
+    "isSelectOrder": true,
+    "question": {
+      "questionText": "Ordena cronológicamente las fases de un pipeline CI/CD automatizado:",
+      "options": ["1. El desarrollador sube un commit a GitHub", "2. El pipeline de CI ejecuta la suite de pruebas automatizadas", "3. La herramienta de compilación genera el paquete optimizado de producción", "4. El pipeline de CD despliega los artefactos en el CDN global"],
+      "answer": ["1. El desarrollador sube un commit a GitHub", "2. El pipeline de CI ejecuta la suite de pruebas automatizadas", "3. La herramienta de compilación genera el paquete optimizado de producción", "4. El pipeline de CD despliega los artefactos en el CDN global"]
+    }
+  }, {
+    "group": "5",
+    "title": "Refactorizando Llamadas de Firebase a Capa de Servicios",
+    "description": "Extrae operaciones de base de datos en una función de servicio reutilizable.",
+    "isRefactoringChallenge": true,
+    "question": {
+      "questionText": "Refactoriza la escritura en Firestore en una función de servicio crearPublicacion aislada:",
+      "starterCode": "function handleGuardar(texto) {\n  addDoc(collection(db, 'publicaciones'), { texto, fecha: Date.now() });\n}",
+      "answer": "export const crearPublicacion = (texto) => {\n  return addDoc(collection(db, 'publicaciones'), { texto, fecha: Date.now() });\n};",
+      "tests": ["Exporta la función independiente crearPublicacion", "Devuelve la promesa de addDoc"]
+    }
+  }, {
+    "group": "5",
+    "title": "Monitoreo en Producción y Reporte de Errores",
+    "description": "Selecciona las métricas clave para supervisar aplicaciones web en vivo.",
+    "isMultipleAnswerChoice": true,
+    "question": {
+      "questionText": "Selecciona todas las métricas y herramientas vitales para monitorear aplicaciones web en producción:",
+      "options": ["Rastreo de errores en tiempo real en el cliente JS (p. ej. Sentry)", "Latencia de API y percentiles de tiempo de respuesta (p95 / p99)", "Core Web Vitals y Largest Contentful Paint (LCP)", "Cuotas de lectura/escritura en base de datos y tiempos de consulta", "Temperatura física de la pantalla del usuario"],
+      "answer": ["Rastreo de errores en tiempo real en el cliente JS (p. ej. Sentry)", "Latencia de API y percentiles de tiempo de respuesta (p95 / p99)", "Core Web Vitals y Largest Contentful Paint (LCP)", "Cuotas de lectura/escritura en base de datos y tiempos de consulta"]
+    }
+  }, {
+    "group": "5",
+    "title": "Seguimiento de Código: Flujo Completo de Auth y Consultas",
+    "description": "Rastrea la verificación de sesión antes de consultar documentos protegidos.",
+    "isCodeTracing": true,
+    "question": {
+      "questionText": "Predice lo que registrará esta verificación de autenticación cuando no haya ningún usuario con sesión activa:",
+      "code": "const usuario = null;\nconst estado = usuario ? 'Autenticado' : 'Invitado';\nconst puedePublicar = usuario && usuario.verificado;\nconsole.log(`${estado} - ${Boolean(puedePublicar)}`);",
+      "options": ["Invitado - false", "Autenticado - true", "Invitado - null", "Invitado - true"],
+      "answer": "Invitado - false"
+    }
+  }, {
+    "group": "5",
+    "title": "Construye tu Aplicación",
+    "isConversationReview": true,
+    "description": "¡Celebra la culminación de tu viaje full-stack y sintetiza los 5 capítulos!",
+    "question": {
+      "questionText": "¡Felicitaciones por llegar al proyecto final! Revisemos la arquitectura de tu aplicación full-stack.",
+      "range": [130, 149]
+    }
+  }]
 };
-
-initializeApp(firebaseConfig);
-await setDoc(collection(db, 'users'), {
-  name: 'John Doe',
-  email: 'john@example.com'
-});`,
-
-          // Option 3: Incorrect - missing document ID in Firestore
-          `import { 
-  initializeApp 
-} from 'firebase/app';
-
-import { 
-  getFirestore, 
-  doc, 
-  setDoc 
-} from 'firebase/firestore';
-
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "progr-ai.firebaseapp.com",
-  projectId: "progr-ai",
-  storageBucket: "progr-ai.appspot.com",
-  messagingSenderId: "32042075426",
-  appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
-  measurementId: "G-0E37NCB4KB",
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// Add document
-await setDoc(doc(db, 'users'), {
-  name: 'John Doe',
-  email: 'john@example.com'
-});`,
-          `import { 
-  initializeApp 
-} from 'firebase/app';
-
-import { 
-  getFirestore,
-  collection, 
-  doc, 
-  addDoc
-} from 'firebase/firestore';
-
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "progr-ai.firebaseapp.com",
-  projectId: "progr-ai",
-  storageBucket: "progr-ai.appspot.com",
-  messagingSenderId: "32042075426",
-  appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
-  measurementId: "G-0E37NCB4KB",
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// Add document
-await addDoc(collection(db, 'users'), {
-  name: 'John Doe',
-  email: 'john@example.com'
-});`,
-
-          // Option 4: Incorrect - missing import for Firestore methods
-          `import { 
-  initializeApp 
-} from 'firebase/app';
-    
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "progr-ai.firebaseapp.com",
-  projectId: "progr-ai",
-  storageBucket: "progr-ai.appspot.com",
-  messagingSenderId: "32042075426",
-  appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
-  measurementId: "G-0E37NCB4KB",
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-// Add document
-await addDoc(doc(db, 'users', 'user123'), {
-  name: 'John Doe',
-  email: 'john@example.com'
-});`,
-        ],
-        answer: `import { 
-  initializeApp 
-} from 'firebase/app';
-
-import { 
-  getFirestore,
-  collection, 
-  doc, 
-  addDoc
-} from 'firebase/firestore';
-
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "progr-ai.firebaseapp.com",
-  projectId: "progr-ai",
-  storageBucket: "progr-ai.appspot.com",
-  messagingSenderId: "32042075426",
-  appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
-  measurementId: "G-0E37NCB4KB",
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// Add document
-await addDoc(collection(db, 'users'), {
-  name: 'John Doe',
-  email: 'john@example.com'
-});`,
-      },
-    },
-    {
-      group: "4",
-      title: "Handling User Data",
-      description:
-        "In this step, you will learn how to handle user data in backend systems.",
-      isCode: true,
-      question: {
-        questionText: `Write a code snippet to get a user object with properties for username and email using firebase auth.`,
-      },
-    },
-    {
-      group: "4",
-      title: "Retrieving a User Document After Authentication",
-      description:
-        "In this step, you will learn how to retrieve a user document from Firestore using authentication data.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write code to retrieve a user document from the `users` collection in Firestore using the authenticated user's ID.",
-      },
-    },
-
-    //next
-    {
-      group: "4",
-      title: "Understanding the Authentication Flow",
-      description:
-        "In this step, you will learn about the typical flow of authentication in backend systems.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the following steps in the correct order for a typical authentication flow in a backend system.",
-        options: [
-          "User enters credentials (email and password) on the login form",
-          "The backend verifies the credentials with the authentication service",
-          "Identity tokens or sessions are created for the authenticated user",
-          "The system retrieves user data from your database based on your tokens",
-          "The user is granted access to the protected resources",
-        ],
-        answer: [
-          "User enters credentials (email and password) on the login form",
-          "The backend verifies the credentials with the authentication service",
-          "Identity tokens or sessions are created for the authenticated user",
-          "The system retrieves user data from your database based on your tokens",
-          "The user is granted access to the protected resources",
-        ],
-      },
-    },
-    {
-      group: "4",
-      title: "OAuth Authentication",
-      description:
-        "In this step, you will learn about OAuth-style authentication systems.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "What is the widely used protocol for authorization that allows third-party services to access user data without exposing credentials?",
-        placeholder: "Type your answer here...",
-        answer: "OAuth",
-      },
-    },
-    {
-      group: "4",
-      title: "Using Environment Variables",
-      description:
-        "In this step, you will learn about using environment variables in backend development.",
-      isText: true,
-      question: {
-        questionText: "What role do environment variables have in a codebase?",
-      },
-    },
-
-    //next
-    {
-      group: "4",
-      title: "Database Relationships",
-      description:
-        "In this step, you will learn about relationships in databases.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write a code snippet to define a one-to-many relationship between users and posts in a database.",
-      },
-    },
-    {
-      group: "4",
-      title: "Interfacing with an API",
-      description:
-        "In this step, you will learn the common HTTP methods used to interface with an API and some less common methods.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following HTTP methods are commonly used to interface with an API, and what do they do?",
-        options: [
-          "GET (Retrieves data from the server)",
-          "POST (Creates a new resource on the server)",
-          "SEND (Sends data to the server for processing)",
-          "FETCH (Used to fetch data from a resource)",
-          "PATCH (Partially updates a resource on the server)",
-          "REMOVE (Removes data from a server)",
-          "PUT (Updates an existing resource on the server)",
-          "DELETE (Deletes a resource from the server)",
-        ],
-        answer: [
-          "GET (Retrieves data from the server)",
-          "POST (Creates a new resource on the server)",
-          "PUT (Updates an existing resource on the server)",
-          "DELETE (Deletes a resource from the server)",
-          "PATCH (Partially updates a resource on the server)",
-        ],
-      },
-    },
-    {
-      group: "4",
-      title: "Creating A User Authentication System",
-      description:
-        "In this step, you will create a simple user authentication system.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps with drag-and-drop to implement user authentication using JSON Web Tokens.",
-        options: [
-          "Install JWT library",
-          "Set up a user model in the database",
-          "Create a register route for new users",
-          "Hash user password before storing",
-          "Create a login route",
-          "Verify user credentials",
-          "Generate a JWT token",
-          "Send JWT token back to the client",
-          "Create a protected route that requires authentication",
-          "Verify JWT token on protected routes",
-        ],
-        answer: [
-          "Install JWT library",
-          "Set up a user model in the database",
-          "Create a register route for new users",
-          "Hash user password before storing",
-          "Create a login route",
-          "Verify user credentials",
-          "Generate a JWT token",
-          "Send JWT token back to the client",
-          "Create a protected route that requires authentication",
-          "Verify JWT token on protected routes",
-        ],
-      },
-    },
-    {
-      group: "4",
-      title: "Deploying a Firebase Application",
-      description:
-        "In this step, you will learn how to deploy a backend firebase application to a cloud service.",
-
-      isText: true,
-      question: {
-        questionText:
-          "Write a command to deploy a Firebase application in the command line.",
-      },
-    },
-    {
-      group: "4",
-      title: "Build Your App",
-      isConversationReview: true,
-      description: "Build an app based on your progress",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [49, 68], // Indices of steps to review
-      },
-    },
-    {
-      group: "5",
-      title: "Benefits of Serverless Cloud Platforms",
-      description:
-        "In this step, you will explore the advantages of using serverless cloud platforms like Firebase or Vercel in software development.",
-      isText: true,
-      question: {
-        questionText:
-          "What are the key benefits of using serverless cloud platforms like Firebase or Vercel in software development, and how do they differ from traditional server-based models?",
-      },
-    },
-    {
-      group: "5",
-      title: "Understanding VSCode",
-      description:
-        "In this step, you will explore what Visual Studio Code (VSCode) is and why it is a popular code editor.",
-      isText: true,
-      question: {
-        questionText:
-          "What is Visual Studio Code (VSCode) and why is it one of the most popular code editors among developers?",
-      },
-    },
-    {
-      group: "5",
-      title: "Installing Node.js and NPM",
-      description:
-        "Install Node.js, which lets you build JavaScript applications.",
-      isText: true,
-      question: {
-        questionText:
-          "What is the purpose of Node.js and npm in JavaScript development in simple terms?",
-      },
-    },
-    {
-      group: "5",
-      title: "Installing 'package.json' Packages.",
-      description: "Installing the files found in package.json.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "Enter the command to install the packages found in a react project using npm.",
-        answer: "npm install",
-      },
-    },
-    {
-      group: "5",
-      title: "Install Firebase Tools Globally",
-      description: "Install Firebase tools globally using the command line.",
-
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "Use the terminal to install firebase-tools globally. What command do you use?",
-        answer: "npm install -g firebase-tools.",
-      },
-    },
-    {
-      group: "5",
-      title: "Setting Up a React and Firebase Project with VSCode",
-      description:
-        "In this step, you will arrange the steps required to set up a React project using Vite, connect Firebase services, and install the necessary tools using Visual Studio Code (VSCode).",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the following steps in the correct order to set up a React project using Vite, install Node.js and npm, and connect Firebase services using VSCode.",
-        options: [
-          "Install Node.js and npm on your machine",
-          "Install Visual Studio Code (VSCode)",
-          "Open VSCode and navigate to the terminal",
-          "Run `npm create vite@latest` to create a new React project",
-          "Navigate to the project folder using `cd project-name`",
-          "Run `npm install` to install dependencies",
-          "Install Firebase CLI using `npm install -g firebase-tools`",
-          "Log into Firebase using `firebase login`",
-          "Initialize Firebase in the project using `firebase init`",
-          "Enable Firebase services such as Firestore or Authentication",
-          "Connect Firebase to your React project by adding Firebase config",
-          "Start the development server using `npm run dev`",
-        ],
-        answer: [
-          "Install Node.js and npm on your machine",
-          "Install Visual Studio Code (VSCode)",
-          "Open VSCode and navigate to the terminal",
-          "Run `npm create vite@latest` to create a new React project",
-          "Navigate to the project folder using `cd project-name`",
-          "Run `npm install` to install dependencies",
-          "Install Firebase CLI using `npm install -g firebase-tools`",
-          "Log into Firebase using `firebase login`",
-          "Initialize Firebase in the project using `firebase init`",
-          "Enable Firebase services such as Firestore or Authentication",
-          "Connect Firebase to your React project by adding Firebase config",
-          "Start the development server using `npm run dev`",
-        ],
-      },
-    },
-
-    {
-      group: "5",
-      title: "Setting Up Firebase",
-      description:
-        "In this step, you will set up Firebase for your project, including Authentication, Firestore, and Analytics.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Write the JavaScript code to initialize Firebase in your project, and connect Authentication, Firestore, and Analytics services.",
-      },
-    },
-    {
-      group: "5",
-      title: "Introduction to GitHub",
-      description:
-        "Learn about using GitHub to collaborate with other developers.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "What is GitHub primarily used for?",
-        options: [
-          "Hosting websites",
-          "Managing code repositories",
-          "Decentralizing software",
-          "Collecting data",
-        ],
-        answer: "Managing code repositories",
-      },
-    },
-    {
-      group: "5",
-      title: "Cloning Github Projects",
-      description: "Cloning Github projects in the command line.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "Use the terminal to clone the embedded-sunset Github project by Robots Building Education using git commands.",
-        answer:
-          "git clone https://github.com/RobotsBuildingEducation/embedded-sunset.git",
-      },
-    },
-    {
-      group: "5",
-      title: "Popular Alternatives to Firebase",
-      description:
-        "In this step, you will explore some popular alternatives to Firebase for various backend services such as database management, authentication, and hosting.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are popular alternatives to Firebase for building full-stack applications?",
-        options: [
-          "Supabase", // Correct
-          "AWS Amplify", // Correct
-          "MongoDB Realm", // Correct
-          "HerokuDB", // Incorrect
-          "AngularJS", // Incorrect
-          "Vercel", // Incorrect
-          "Cloudflare", // Incorrect
-        ],
-        answer: ["Supabase", "AWS Amplify", "MongoDB Realm", "Cloudflare"], // Incorrect],
-      },
-    },
-    {
-      group: "5",
-      title: "Most Common Firebase Products",
-      description:
-        "In this step, you will identify the core Firebase products commonly used in web and mobile app development.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Which of the following are commonly used Firebase products?",
-        options: [
-          "Firestore: Cloud NoSQL database for storing and syncing data", // Correct
-          "Firebase Ads: Platform for integrating advertising", // Incorrect
-          "Authentication: User sign-in and identity management", // Correct
-          "Firebase Functions: Serverless backend for running code", // Correct
-          "Firebase Storage: File storage for user-generated content", // Correct
-          "Firebase Machine Learning: ML tools for app features", // Correct
-          "Firebase Builder: Tool for creating Firebase services", // Incorrect
-          "Firebase Hosting: Web hosting for deploying static content", // Correct
-          "Firebase Cache: Caching service for high-performance storage", // Incorrect
-          "Firebase Realtime Database: Real-time syncing database", // Correct
-          "Firebase Firestore: A document-collection database", // Co
-          "Firebase Analytics: Tracks user engagement and events in your app", // Correct
-        ],
-        answer: [
-          "Firestore: Cloud NoSQL database for storing and syncing data",
-          "Authentication: User sign-in and identity management",
-          "Firebase Realtime Database: Real-time syncing database",
-          "Firebase Hosting: Web hosting for deploying static content",
-          "Firebase Functions: Serverless backend for running code",
-          "Firebase Storage: File storage for user-generated content",
-          "Firebase Analytics: Tracks user engagement and events in your app",
-          "Firebase Firestore: A document-collection database", // Co
-          "Firebase Machine Learning: ML tools for app features",
-        ],
-      },
-    },
-
-    {
-      group: "5",
-      title: "Pulling Updates With Github",
-      description: "Update your version of code by pulling with Github.",
-
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "Use the terminal to update your local Github project with the latest version available on Github",
-      },
-    },
-    {
-      group: "5",
-      title: "Authenticating Users",
-      description:
-        "Install Firebase and react-firebaseui to create users in your application.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which package do you use to handle the user experience for authentication with Firebase?",
-        options: [
-          "firebase",
-          "firebase-auth",
-          "firebase-hooks",
-          "react-firebaseui",
-          "firebase-admin",
-          "firebase-functions",
-          "firebase-storage",
-          "firebase-database",
-        ],
-        answer: "react-firebaseui",
-      },
-    },
-    {
-      group: "5",
-      title: "Enabling Google Sign-In",
-      description:
-        "Enable Google Sign-In method in your Firebase authentication settings.",
-      isText: true,
-      question: {
-        questionText:
-          "What steps do you follow to enable Google Sign-In in Firebase authentication settings?",
-      },
-    },
-    {
-      group: "5",
-      title: "Connecting Firebase to Your Code",
-      description:
-        "Retrieve Firebase configuration keys and connect them to your code.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write the code to initialize Firebase in your project using the configuration keys.",
-      },
-    },
-    {
-      group: "5",
-      title:
-        "Rendering Sign-In Button in React with Firebase and react-firebaseui",
-      description:
-        "In this step, you will render a sign-in button in your React application using Firebase Authentication and the react-firebaseui library.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write the code to render a Firebase sign-in button in a React component using Firebase Authentication and react-firebaseui.",
-      },
-    },
-    {
-      group: "5",
-      title: "Displaying User Data",
-      description: "Use useEffect to display user data when they log in.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write the code to display user data using the useEffect hook when they log in with firebase.",
-      },
-    },
-    {
-      group: "5",
-      title: "Updating User Profile",
-      description:
-        "Update the user profile information in your Firebase database after they have logged in.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write the code to update user profile information in Firebase Firestore.",
-      },
-    },
-    {
-      group: "5",
-      title: "Updating A Github Project",
-      description: "Chaining git commands to update a Github project.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "Enter the combination of github commands to write and update a codebase with a message.",
-        answer: `git add . && git commit -m "your_message" && git push origin main`,
-      },
-    },
-    {
-      group: "5",
-      title: "Using GitHub Commands",
-      description: "Learn the basic GitHub commands for managing your code.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the following Git commands in the correct order to programmatically create a new repository and push to your GitHub account:",
-        options: [
-          "git init",
-          "git add .",
-          "git commit -m 'Initial commit'",
-          "git remote add origin <repository-url>",
-          "git branch -M main",
-          "git push -u origin main",
-        ],
-        answer: [
-          "git init",
-          "git add .",
-          "git commit -m 'Initial commit'",
-          "git remote add origin <repository-url>",
-          "git branch -M main",
-          "git push -u origin main",
-        ],
-      },
-    },
-    {
-      group: "5",
-      title: "Build Your App",
-      isConversationReview: true,
-      description: "Build an app based on your progress",
-      question: {
-        questionText: "Let's chat about the questions we've worked on so far.",
-        range: [91, 110], // Indices of steps to review
-      },
-    },
-  ],
-  es: [
-    {
-      group: "introducción",
-      title: "Introducción al Desarrollo de Software",
-      isStudyGuide: true,
-      description:
-        "Expóngase a los fundamentos para mejorar la calidad de su aprendizaje antes de avanzar.",
-      question: {
-        questionText: (
-          <div>
-            <p style={{ marginBottom: 12 }}>
-              Uno de los mejores predictores del éxito estudiantil es exponerse
-              al material del curso antes de estudiarlo.
-            </p>
-
-            <p style={{ marginBottom: 12 }}>
-              ¡Recuerda fallar rápido y avanzar con cada error! El verdadero
-              aprendizaje ocurre cuando superas un reto.
-            </p>
-          </div>
-        ),
-
-        metaData: `### Consejos
-Sé que esto parece contenido de ChatGPT... 
-
-pero no lo es -_-"!
-
-Es importante recordar esto como principiante:
-
-1. Construir cosas con software se trata principalmente de organizar información en lugar de ser bueno en matemáticas. Los lenguajes de programación usan lógica y computación para expresar ideas en lugar de ecuaciones y álgebra.
-
-2. Al igual que el idioma inglés, puedes expresar las cosas de muchas maneras diferentes.
-
-3. Cuando algo te desafíe, falla más rápido y divide el problema en pasos más comprensibles.
-
-### Exposición
-La idea aquí es exponerte a conceptos antes de que empieces a responder preguntas al respecto en la aplicación para que no te intimide más tarde. No te preocupes por no entender todo. De hecho, haz tu mejor esfuerzo para darle sentido de un vistazo o usa la IA a tu favor para crear una comprensión.
-
-### Código
-
-Observemos estas listas. Podemos ver que:
-- \`mis_datos_personalizados && mi_lista_personalizada\` son equivalentes.
-- \`conjunto_de_datos && objeto_de_datos\` también son fundamentalmente equivalentes.
-
-\`\`\`js
-let mis_datos_personalizados = [1, 2, 3, 'a', 'b', 'c', null, false]
-const mi_lista_personalizada = new Array(1, 2, 3, 'a', 'b', 'c', null, false)
-mis_datos_personalizados.push('nuevos datos')
-mi_lista_personalizada.push('nuevos datos')
-
-let conjunto_de_datos = {
-introduccion: "Bienvenido",
-titulo: "Capítulo 1",
-esta_en_vivo: true
-}
-conjunto_de_datos.pagina = 4
-conjunto_de_datos['libro'] = 'Conceptos Básicos de Programación'
-
-let objeto_de_datos = new Object()
-objeto_de_datos.introduccion = 'Bienvenido'
-objeto_de_datos.titulo = 'Capítulo 1'
-objeto_de_datos.esta_en_vivo = true
-objeto_de_datos.pagina = 4
-objeto_de_datos['libro'] = 'Conceptos Básicos de Programación'
-
-\`\`\`
-
-Además, en el ejemplo anterior, estamos expuestos a definiciones de variables, tipos de datos, arrays, funciones y objetos. Gran parte del software que probablemente utilizas opera con esos conceptos bajo el capó. Es por eso que \`[]\` y \`new Array\` pueden crear los mismos datos: se traduce de la misma manera cuando se trata de convertir tu código en señales que pueden enviarse a través de Internet.
-
-Ahora, en el ejemplo a continuación, echamos un vistazo a crear nuestros propios objetos personalizados. Creamos nuestro propio objeto personalizado, junto con una interfaz de funciones. Generalmente, cuando se trata de datos, puedes crearlos, recuperarlos, actualizarlos o eliminarlos de una forma u otra.
-
-\`\`\`js
-class Casa {
-pintura_casa = null
-
-constructor(pintura){
-  this.pintura_casa = pintura
-}
-
-obtenerPintura(){
-  return this.pintura_casa
-}
-
-establecerPintura(pintura){
-  this.pintura_casa = pintura
-}
-
-eliminarPintura(){
-  this.pintura_casa = null
-}
-}
-
-let primera_casa = new Casa("rosa")
-let siguiente_casa = new Casa("azul")
-
-let primera_pintura = primera_casa.obtenerPintura() // devuelve el valor "rosa"
-let siguiente_pintura = siguiente_casa.pintura_casa // devuelve el valor "azul"
-siguiente_pintura = siguiente_casa['pintura_casa'] // aún devuelve el valor 'azul'
-
-\`\`\`
-
-Entonces, eso es crear datos y trabajar con datos. Descubrirás que generalmente puedes combinar ideas dependiendo de lo que necesites crear. Por ejemplo, el componente anterior también puede escribirse de la siguiente manera:
-
-\`\`\`js
-function crearCasa(pintura = null) {
-return {
-  pintura_casa: pintura,
-
-  obtenerPintura() {
-    return this.pintura_casa;
-  },
-
-  establecerPintura(pintura) {
-    this.pintura_casa = pintura;
-  },
-
-  eliminarPintura() {
-    this.pintura_casa = null;
-  },
-};
-}
-
-//¿cuál es el valor del resultado al final del programa?
-const miCasa = crearCasa('azul');
-let pintura = miCasa.pintura_casa;
-
-miCasa.pintura_casa = 'rojo'; 
-pintura = miCasa.obtenerPintura();
-
-miCasa.establecerPintura('verde'); 
-pintura = miCasa.pintura_casa;
-
-miCasa.eliminarPintura(); 
-
-let resultado = miCasa['pintura_casa'];
-\`\`\`
-
-Finalmente, combinamos esto para trabajar con algún código que renderiza la siguiente pantalla:
-
-\`\`\`jsx
-const MensajeDeCelebracion = ({ nombre }) => {
-const datos_de_estilo = {
-  textAlign: 'center'
-}
-
-return <div style={datos_de_estilo}>{nombre}</div>
-}
-
-const Aplicacion = () => {
-return (
-  <section style={{ border: '3px solid black' }}>
-    <header>
-      <h2>¡Buen trabajo!</h2>
-    </header>
-    
-    <MensajeDeCelebracion nombre="¡Creaste una pequeña aplicación!" />
-    </section>
-)
-}
-\`\`\`
-
-And that's it. In the last example, we have used a library called React, which gives us access to special functions specialized for rendering elements on a screen. But it follows the same thought process as above.
-
-### Conclusion
-Remember that failing faster is in your best interest when learning new software skills. This one-page document will be available within the application. There are also many other features to help on your journey, but I will leave that to your exploration of the platform and everything it has to offer.
-
-Stay focused and good luck with the rest!
-    
-                `,
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Entendiendo la Programación",
-      description: "Comprende el concepto básico de la programación.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "¿Cuál de las siguientes describe mejor la programación?",
-        options: [
-          "Escribir instrucciones para que las computadoras realicen tareas",
-          "Crear componentes físicos para computadoras",
-          "Diseñar interfaces de usuario",
-          "Gestionar bases de datos",
-        ],
-        answer:
-          "Escribir instrucciones para que las computadoras realicen tareas",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Secuencia de Ejecución de Programas",
-      description: "Aprende el orden correcto de la ejecución de programas.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Organiza los pasos arrastrando y soltando el orden en que se ejecutan los programas.",
-        options: [
-          "Compilación del Código",
-          "Escritura del Código",
-          "Ejecución del Programa",
-          "Depuración",
-        ],
-        answer: [
-          "Escritura del Código",
-          "Compilación del Código",
-          "Depuración",
-          "Ejecución del Programa",
-        ],
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Introducción a las Variables",
-      description:
-        "En este paso, aprenderás sobre las variables y cómo usarlas en tu código.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Selecciona todos los pasos involucrados en declarar correctamente una variable en JavaScript:",
-        options: [
-          "Usar la palabra clave var/let/const",
-          "Elegir un nombre descriptivo para la variable",
-          "Asignar un valor usando el signo igual (=)",
-          "Inicializar la variable dentro de llaves {}",
-          "Declarar la variable después de asignar un valor",
-          "Capitalizar la primera letra del nombre de la variable",
-        ],
-        answer: [
-          "Usar la palabra clave var/let/const",
-          "Elegir un nombre descriptivo para la variable",
-          "Asignar un valor usando el signo igual (=)",
-        ],
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Entendiendo la Declaración de Variables para Listas",
-      description:
-        "Completa el código seleccionando la manera correcta de declarar un arreglo de elementos (array) en JavaScript.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "¿Qué bloque de código declara correctamente una lista de elementos?",
-        options: [
-          `const frutas = ['manzana', 'plátano', 'cereza'];`,
-          `const frutas = function() { return 'manzana, plátano, cereza'; };`,
-          `const frutas = 'manzana, plátano, cereza';`,
-          `const frutas = { fruta1: 'manzana', fruta2: 'plátano', fruta3: 'cereza' };`,
-          `class Frutas { constructor() { this.fruta1 = 'manzana'; this.fruta2 = 'plátano'; this.fruta3 = 'cereza'; } } const frutas = new Frutas();`,
-        ],
-        answer: `const frutas = ['manzana', 'plátano', 'cereza'];`,
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Declaración de Variables en JavaScript",
-      description: "Aprende cómo declarar variables en JavaScript.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Declara una variable llamada `edad` y asígnale el valor `25`.",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Entendiendo los Tipos de Datos",
-      description:
-        "Aprende los conceptos básicos de los tipos de datos en JavaScript.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "¿Qué palabra clave se usa para declarar una constante en JavaScript?",
-        placeholder: "Escribe tu respuesta aquí...",
-        answer: "const",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Propósito de las Variables",
-      description:
-        "Comprende por qué se utilizan las variables en la programación.",
-      isText: true,
-      question: {
-        questionText:
-          "En tus propias palabras, explica el propósito de las variables en la programación.",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Práctica del Terminal Bash: Cambiar Directorios",
-      description: "Practica cambiar directorios en un entorno de terminal.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "Ingresa el comando para cambiar al directorio new_folder usando un terminal bash.",
-      },
-    },
-    {
-      group: "tutorial",
-      title: "Construye tu Aplicación",
-      isConversationReview: true,
-      description: "Construye una aplicación según tu progreso",
-      question: {
-        questionText:
-          "¡Ingresa una idea de aplicación y constrúyela a medida que avanzas!",
-        range: [1, 8],
-      },
-    },
-    {
-      group: "1",
-      title: "Tipos de Datos en Programación",
-      description:
-        "Identifica los diferentes tipos de datos primitivos utilizados en JavaScript.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "¿Cuáles de los siguientes son tipos de datos primitivos en JavaScript?",
-        options: [
-          "Cadena (String)",
-          "Función (Function)",
-          "Número (Number)",
-          "Objeto (Object)",
-          "Booleano (Boolean)",
-          "Nulo (Null)",
-          "Arreglo (Array)",
-          "BigInt",
-          "Indefinido (Undefined)",
-          "Símbolo (Symbol)",
-        ],
-        answer: [
-          "Cadena (String)",
-          "Número (Number)",
-          "Booleano (Boolean)",
-          "Nulo (Null)",
-          "Indefinido (Undefined)",
-          "Símbolo (Symbol)",
-          "BigInt",
-        ],
-      },
-    },
-    {
-      group: "1",
-      title: "Pasos para Crear una Función",
-      description: "Comprende la secuencia para crear una función.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Organiza los pasos arrastrando y soltando para crear y usar una función.",
-        options: [
-          "Definir la función",
-          "Llamar a la función",
-          "Ejecutar el cuerpo de la función",
-          "Devolver un valor",
-        ],
-        answer: [
-          "Definir la función",
-          "Llamar a la función",
-          "Ejecutar el cuerpo de la función",
-          "Devolver un valor",
-        ],
-      },
-    },
-    {
-      group: "1",
-      title: "Escribir una Función Simple",
-      description: "Practica escribiendo funciones en JavaScript.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Escribe una función llamada `saludo` que tome un nombre como parámetro y registre un saludo con ese nombre.",
-      },
-    },
-    {
-      group: "1",
-      title: "Funciones en Programación",
-      description: "Discute el papel de las funciones.",
-      isText: true,
-      question: {
-        questionText:
-          "¿Qué es una función y por qué es útil en la programación?",
-      },
-    },
-    {
-      group: "1",
-      title: "Sentencias Condicionales",
-      description: "Identifica el propósito de las sentencias condicionales.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "¿Cuál es el propósito principal de una declaración `if`?",
-        options: [
-          "Repetir un bloque de código varias veces",
-          "Ejecutar un bloque de código basado en una condición",
-          "Definir una variable",
-          "Importar bibliotecas externas",
-        ],
-        answer: "Ejecutar un bloque de código basado en una condición",
-      },
-    },
-    {
-      group: "1",
-      title: "Orden de las Verificaciones Condicionales",
-      description: "Completa el código que evalúa una sentencia `if-else`.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Completa el siguiente código para implementar correctamente una declaración `if-else` que verifique si una variable `x` es mayor que 10, igual a 10 o menor que 10.",
-        options: [
-          "if (x > 10) { \n  console.log('x es mayor que 10'); \n} else if (x === 10) { \n  console.log('x es igual a 10'); \n} else { \n  console.log('x es menor que 10'); \n}",
-          "if (x == 10) { \n  console.log('x es igual a 10'); \n} else if (x > 10) { \n  console.log('x es mayor que 10'); \n}",
-          "if (x > 10) { \n  console.log('x es mayor que 10'); \n} else { \n  console.log('x no es mayor que 10'); \n}",
-          "if (x >= 10) { \n  console.log('x es mayor o igual a 10'); \n} else { \n  console.log('x es menor que 10'); \n}",
-          "if (x > 10) { \n  console.log('x es mayor que 10'); \n  if (x === 10) { \n    console.log('x es igual a 10'); \n  } \n} else { \n  console.log('x es menor que 10'); \n}",
-        ],
-        answer:
-          "if (x > 10) { \n  console.log('x es mayor que 10'); \n} else if (x === 10) { \n  console.log('x es igual a 10'); \n} else { \n  console.log('x es menor que 10'); \n}",
-      },
-    },
-    {
-      group: "1",
-      title: "Implementando Lógica Condicional",
-      description: "Aplica lógica condicional en código.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Escribe una declaración `if-else` que verifique si un número `num` es positivo, negativo o cero, y registre un mensaje apropiado.",
-      },
-    },
-    {
-      group: "1",
-      title: "Entendiendo la Lógica Condicional en Programación",
-      description:
-        "Aprende cómo los operadores lógicos como AND (&&) y OR (||) controlan condiciones en programación.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "¿Qué operador lógico se usa para verificar si ambas condiciones en una declaración condicional son verdaderas?",
-        placeholder: "Escribe tu respuesta aquí...",
-        answer: "&&",
-      },
-    },
-    {
-      group: "1",
-      title: "Uso de Condicionales en el Mundo Real",
-      description: "Reflexiona sobre cómo se utilizan los condicionales.",
-      isText: true,
-      question: {
-        questionText:
-          "Proporciona un ejemplo de cómo se utilizan las declaraciones condicionales en aplicaciones del mundo real.",
-      },
-    },
-    {
-      group: "1",
-      title: "Práctica de Terminal: Comando de Ayuda",
-      description:
-        "Escribe el comando de ayuda para observar los comandos básicos.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "En un entorno de terminal Bash, ingresa el comando de ayuda para descubrir los comandos básicos.",
-      },
-    },
-    {
-      group: "1",
-      title: "Bucles en Programación",
-      description: "Comprende el propósito de los bucles.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "¿Qué bucle continuará ejecutándose mientras su condición sea verdadera?",
-        options: [
-          "bucle for",
-          "bucle while",
-          "bucle do...while",
-          "bucle foreach",
-        ],
-        answer: "bucle while",
-      },
-    },
-    {
-      group: "1",
-      title: "Secuencia de Ejecución de Bucles",
-      description: "Comprende el orden en que se ejecutan los bucles.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Organiza los pasos de la ejecución de un bucle `for` arrastrando y soltando.",
-        options: [
-          "Inicialización",
-          "Verificación de Condición",
-          "Ejecución del Bloque de Código",
-          "Incremento/Decremento",
-        ],
-        answer: [
-          "Inicialización",
-          "Verificación de Condición",
-          "Ejecución del Bloque de Código",
-          "Incremento/Decremento",
-        ],
-      },
-    },
-    {
-      group: "1",
-      title: "Creando un Bucle",
-      description: "Practica escribiendo bucles.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Escribe un bucle `for` que imprima los números del 1 al 5.",
-      },
-    },
-    {
-      group: "1",
-      title: "Aplicaciones de los Bucles",
-      description: "Discute dónde son útiles los bucles.",
-      isText: true,
-      question: {
-        questionText:
-          "Describe un escenario en el desarrollo de software donde los bucles son esenciales.",
-      },
-    },
-    {
-      group: "1",
-      title: "Arreglos en JavaScript",
-      description:
-        "Identifica métodos utilizados para manipular arreglos en JavaScript.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "¿Cuáles de los siguientes métodos son válidos para manipular arreglos en JavaScript?",
-        options: [
-          ".includes()",
-          ".push()",
-          ".pop()",
-          ".forEach()",
-          ".length()",
-          ".map()",
-          ".filter()",
-          ".join()",
-        ],
-        answer: [".push()", ".pop()", ".map()", ".filter()", ".join()"],
-      },
-    },
-    {
-      group: "1",
-      title: "Orden de las Operaciones en Arreglos",
-      description: "Comprende cómo se realizan las operaciones en arreglos.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Completa el código para declarar un arreglo, agregar un elemento, eliminar el último elemento y luego acceder a un elemento.",
-        options: [
-          "let frutas = ['manzana', 'plátano']; \nfrutas.push('naranja'); \nfrutas.pop(); \nconsole.log(frutas[0]);",
-          "let frutas = ['manzana', 'plátano']; \nfrutas.pop(); \nfrutas.push('naranja'); \nconsole.log(frutas[0]);",
-          "var frutas = 'manzana', 'plátano'; \nfrutas.push('naranja'); \nfrutas.pop(); \nconsole.log(frutas[0]);",
-          "let frutas = ['manzana', 'plátano']; \nfrutas.push('naranja'); \nfrutas.pop();",
-          "let frutas = ['manzana', 'plátano']; \nfrutas.push('naranja'); \nfrutas.pop('plátano'); \nconsole.log(frutas[0]);",
-        ],
-        answer:
-          "let frutas = ['manzana', 'plátano']; \nfrutas.push('naranja'); \nfrutas.pop(); \nconsole.log(frutas[0]);",
-      },
-    },
-    {
-      group: "1",
-      title: "Manipulando Arreglos",
-      description: "Aplica métodos de arreglos en código.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Crea un arreglo `frutas` con 'manzana' y 'plátano'. Agrega 'naranja' al final y elimina 'manzana' del principio.",
-      },
-    },
-    {
-      group: "1",
-      title: "Casos de Uso para Arreglos",
-      description: "Explora escenarios donde se utilizan los tipos de arreglo.",
-      isText: true,
-      question: {
-        questionText:
-          "Proporciona un ejemplo de cómo se puede usar un arreglo para gestionar datos en una aplicación web.",
-      },
-    },
-    {
-      group: "1",
-      title: "Práctica de Terminal: Crear Directorios",
-      description: "Comando para crear directorios en un terminal bash.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "En un entorno de terminal bash, crea un directorio llamado app usando el comando para crear directorios.",
-      },
-    },
-    {
-      group: "1",
-      title: "Resultado Avanzado de Codificación",
-      description:
-        "Predice el resultado del siguiente código con arreglos, condicionales, operadores lógicos y funciones de arreglos.",
-      isSingleLineText: true,
-      question: {
-        questionText: (
-          <div>
-            ¿Cuál será el resultado del siguiente código?
-            <br />
-            <pre>
-              {`
-let arr = [1, 2, 3, 4];
-let x = 10;
-let y = 5;
-
-if (x > y && arr.length > 3) {
-  arr.push(x);  
-  arr = arr.filter(n => n % 2 === 0);
-}
-
-console.log(arr);
-    
-               `}{" "}
-            </pre>
-          </div>
-        ),
-        placeholder: "Escribe tu respuesta aquí...",
-        answer: "[2, 4, 10]",
-      },
-    },
-    {
-      group: "1",
-      title: "Construye tu Aplicación",
-      isConversationReview: true,
-      description: "Construye una aplicación según tu progreso",
-      question: {
-        questionText:
-          "¡Ingresa una idea de aplicación y constrúyela a medida que avanzas!",
-        range: [10, 29],
-      },
-    },
-    {
-      group: "2",
-      title: "Introducción a los Objetos",
-      description:
-        "En este paso, aprenderás qué es un objeto en la programación.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "En programación, ¿qué palabra clave se usa para crear un objeto en JavaScript?",
-        placeholder: "Escribe tu respuesta aquí...",
-        answer: "new",
-      },
-    },
-    {
-      group: "2",
-      title: "Entendiendo el Método Constructor",
-      description:
-        "En este paso, aprenderás sobre el propósito del método `constructor` en una clase.",
-      isCodeCompletion: true,
-      question: {
-        questionText: `¿Cuál de los siguientes bloques de código define correctamente el método constructor y usa la palabra clave "new" para instanciar una clase?`,
-        options: [
-          `class Coche {
-      constructor(marca) {
-        this.marca = marca;
-      }
-    
-      conducir() {
-        console.log('El coche está conduciendo');
-      }
-    }
-    
-    const miCoche = new Coche('Toyota');`,
-
-          `class Coche {
-      constructor() {
-        this.marca = 'Toyota';
-      }
-    
-      conducir() {
-        console.log('El coche está conduciendo');
-      }
-    }
-    
-    const miCoche = new Coche();`,
-
-          `class Coche {
-      constructor = (marca) => {
-        this.marca = marca;
-      }
-    
-      conducir() {
-        console.log('El coche está conduciendo');
-      }
-    }
-    
-    const miCoche = new Coche('Toyota');`,
-
-          `class Coche {
-      Coche(marca) {
-        this.marca = marca;
-      }
-    
-      conducir() {
-        console.log('El coche está conduciendo');
-      }
-    }
-    
-    const miCoche = new Coche('Toyota');`,
-        ],
-        answer: `class Coche {
-      constructor(marca) {
-        this.marca = marca;
-      }
-    
-      conducir() {
-        console.log('El coche está conduciendo');
-      }
-    }
-    
-    const miCoche = new Coche('Toyota');`,
-      },
-    },
-    {
-      group: "2",
-      title: "Transformando Arreglos con map",
-      description:
-        "En este paso, aprenderás cómo transformar un arreglo de objetos en nuevos valores usando el método .map().",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "¿Cuál de los siguientes bloques de código usa correctamente `.map()` para extraer un arreglo con todas las marcas de coches?",
-        options: [
-          `const coches = [
-  { marca: 'Toyota', modelo: 'Corolla' },
-  { marca: 'Honda', modelo: 'Civic' }
-];
-
-const marcas = coches.map(coche => coche.marca);`,
-          `const coches = [
-  { marca: 'Toyota', modelo: 'Corolla' },
-  { marca: 'Honda', modelo: 'Civic' }
-];
-
-const marcas = coches.filter(coche => coche.marca);`,
-          `const coches = [
-  { marca: 'Toyota', modelo: 'Corolla' },
-  { marca: 'Honda', modelo: 'Civic' }
-];
-
-const marcas = coches.forEach(coche => return coche.marca);`,
-          `const coches = [
-  { marca: 'Toyota', modelo: 'Corolla' },
-  { marca: 'Honda', modelo: 'Civic' }
-];
-
-const marcas = coches.map(marca);`,
-        ],
-        answer: `const coches = [
-  { marca: 'Toyota', modelo: 'Corolla' },
-  { marca: 'Honda', modelo: 'Civic' }
-];
-
-const marcas = coches.map(coche => coche.marca);`,
-      },
-    },
-    {
-      group: "2",
-      title: "Creando una Instancia de una Clase",
-      description:
-        "En este paso, aprenderás cómo crear una instancia de una clase en JavaScript.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "Selecciona todos los pasos correctos necesarios para crear una instancia de una clase en JavaScript:",
-        options: [
-          "Definir una clase usando la palabra clave `class`",
-          "Definir la clase con la palabra clave `function`",
-          "Usar la palabra clave `new` para crear una instancia",
-          "Declarar la instancia de la clase con `const instanciaClase = Coche()`",
-          "Pasar los argumentos requeridos por el constructor al llamar a la clase",
-          "Almacenar la nueva instancia en una variable",
-          "Llamar a la clase directamente sin la palabra clave `new`",
-          "Instanciar la clase antes de definirla",
-        ],
-        answer: [
-          "Definir una clase usando la palabra clave `class`",
-          "Usar la palabra clave `new` para crear una instancia",
-          "Pasar los argumentos requeridos por el constructor al llamar a la clase",
-          "Almacenar la nueva instancia en una variable",
-        ],
-      },
-    },
-    {
-      group: "2",
-      title: "Declarando un Método en una Clase",
-      description:
-        "En este paso, aprenderás cómo declarar un método dentro de una clase.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Declara un método llamado `actualizarModelo` en la clase `Coche` que actualice la propiedad `modelo`.",
-      },
-    },
-    {
-      group: "2",
-      title: "Usando la Palabra Clave `this`",
-      description:
-        "Completa el código seleccionando la forma correcta de usar la palabra clave `this` en un método de clase.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "¿Cuál bloque de código usa correctamente la palabra clave `this` para referirse a la propiedad del objeto?",
-        options: [
-          `class Coche {
-      constructor(marca) {
-        this.marca = marca;
-      }
-    
-      mostrarMarca() {
-        console.log(this.marca);
-      }
-    }
-    
-    const miCoche = new Coche('Toyota');
-    miCoche.mostrarMarca();`,
-
-          `class Coche {
-      constructor(marca) {
-        this.marca = marca;
-      }
-    
-      mostrarMarca() {
-        console.log(marca);
-      }
-    }
-    
-    const miCoche = new Coche('Toyota');
-    miCoche.mostrarMarca();`,
-
-          `class Coche {
-      constructor(marca) {
-        marca = this.marca;
-      }
-    
-      mostrarMarca() {
-        console.log(marca);
-      }
-    }
-    
-    const miCoche = new Coche('Toyota');
-    miCoche.mostrarMarca();`,
-
-          `class Coche {
-      constructor(marca) {
-        marca = this.marca;
-      }
-    
-      mostrarMarca() {
-        console.log(this.marca);
-      }
-    }
-    
-    const miCoche = new Coche('Toyota');
-    miCoche.mostrarMarca();`,
-        ],
-        answer: `class Coche {
-      constructor(marca) {
-        this.marca = marca;
-      }
-    
-      mostrarMarca() {
-        console.log(this.marca);
-      }
-    }
-    
-    const miCoche = new Coche('Toyota');
-    miCoche.mostrarMarca();`,
-      },
-    },
-    {
-      group: "2",
-      title: "Añadiendo Propiedades a un Objeto",
-      description:
-        "En este paso, aprenderás cómo añadir propiedades a un objeto en JavaScript.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText: "Añade una nueva propiedad `año` a la clase `Coche`.",
-      },
-    },
-    {
-      group: "2",
-      title: "Accediendo y Modificando Propiedades de un Objeto",
-      description:
-        "En este paso, aprenderás cómo obtener o modificar propiedades de un objeto en JavaScript, ya sea accediendo directamente a las propiedades o usando funciones getter y setter.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "¿Cuáles de las siguientes son formas válidas de obtener o modificar propiedades en un objeto de JavaScript?",
-        options: [
-          "Usar una llamada a función para eliminar una propiedad (por ejemplo, obj.deleteProperty())",
-          "Usar notación de corchetes para acceder a una propiedad (por ejemplo, obj['propiedad'])",
-          "Usar una función setter para actualizar el valor de una propiedad",
-          "Usar notación de puntos para acceder a una propiedad (por ejemplo, obj.propiedad)",
-          "Usar una función getter para devolver el valor de una propiedad",
-          "Llamar directamente a obj.propiedad() para acceder a una propiedad",
-        ],
-        answer: [
-          "Usar notación de puntos para acceder a una propiedad (por ejemplo, obj.propiedad)",
-          "Usar notación de corchetes para acceder a una propiedad (por ejemplo, obj['propiedad'])",
-          "Usar una función getter para devolver el valor de una propiedad",
-          "Usar una función setter para actualizar el valor de una propiedad",
-        ],
-      },
-    },
-    {
-      group: "2",
-      title: "Modificando Propiedades de un Objeto",
-      description:
-        "En este paso, aprenderás cómo modificar propiedades de un objeto en JavaScript.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Modifica la propiedad `modelo` de una instancia de la clase `Coche`.",
-      },
-    },
-    {
-      group: "2",
-      title: "Entendiendo la Herencia",
-      description:
-        "En este paso, aprenderás sobre la herencia en la programación orientada a objetos.",
-      isText: true,
-      question: {
-        questionText:
-          "¿Qué es la herencia en la programación orientada a objetos?",
-      },
-    },
-    {
-      group: "2",
-      title: "Implementando la Herencia",
-      description:
-        "En este paso, implementarás la herencia en JavaScript extendiendo una clase.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Extiende la clase `Coche` para crear una clase `CocheEléctrico` con una propiedad adicional `vidaBatería`.",
-      },
-    },
-    {
-      group: "2",
-      title: "Sobrescribiendo Métodos",
-      description:
-        "En este paso, aprenderás cómo sobrescribir métodos en una subclase.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "¿Qué significa sobrescribir un método en una subclase?",
-        options: [
-          "Eliminar el método de la clase",
-          "Reemplazar un método heredado de la superclase",
-          "Heredar un método sin cambios",
-          "Llamar a un método de otra clase",
-          "Extender la funcionalidad de un método en la subclase",
-        ],
-        answer: "Reemplazar un método heredado de la superclase",
-      },
-    },
-    {
-      group: "2",
-      title: "Entendiendo la Encapsulación",
-      description:
-        "En este paso, aprenderás sobre la encapsulación en la programación orientada a objetos.",
-      isText: true,
-      question: {
-        questionText:
-          "¿Qué es la encapsulación en la programación orientada a objetos?",
-      },
-    },
-    {
-      group: "2",
-      title: "Implementando la Encapsulación",
-      description:
-        "En este paso, implementarás la encapsulación usando métodos getter y setter.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Añade métodos getter y setter para la propiedad `vidaBatería` en la clase `CocheEléctrico`.",
-      },
-    },
-    {
-      group: "2",
-      title: "Desestructuración de Objetos y Operador Spread",
-      description:
-        "En este paso, aprenderás cómo extraer propiedades de objetos mediante desestructuración y crear copias actualizadas con el operador spread.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "¿Cuál bloque de código extrae correctamente `marca` con desestructuración y crea `cocheActualizado` con el operador spread?",
-        options: [
-          `const coche = { marca: 'Tesla', modelo: 'Model 3', año: 2023 };
-const { marca } = coche;
-const cocheActualizado = { ...coche, año: 2024 };`,
-          `const coche = { marca: 'Tesla', modelo: 'Model 3', año: 2023 };
-const [ marca ] = coche;
-const cocheActualizado = coche + { año: 2024 };`,
-          `const coche = { marca: 'Tesla', modelo: 'Model 3', año: 2023 };
-const marca = coche{marca};
-const cocheActualizado = copy(coche, año: 2024);`,
-          `const coche = { marca: 'Tesla', modelo: 'Model 3', año: 2023 };
-const { marca } = coche;
-const cocheActualizado = { coche, año: 2024 };`,
-        ],
-        answer: `const coche = { marca: 'Tesla', modelo: 'Model 3', año: 2023 };
-const { marca } = coche;
-const cocheActualizado = { ...coche, año: 2024 };`,
-      },
-    },
-    {
-      group: "2",
-      title: "Combinando Conceptos",
-      description:
-        "En este paso, combinarás varios conceptos aprendidos para crear un pequeño proyecto.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Crea un pequeño proyecto que defina una clase `Persona`, use la herencia para crear una clase `Estudiante` y demuestre encapsulación y arreglos de objetos.",
-      },
-    },
-    {
-      group: "2",
-      title: "Imprimiendo en la Terminal",
-      description: "En este paso, imprimirás un mensaje usando la terminal.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "Escribe un comando para imprimir el mensaje: '¡Estoy hablando dentro de una computadora!'",
-      },
-    },
-    {
-      group: "2",
-      title: "Construye tu Aplicación",
-      isConversationReview: true,
-      description: "Construye una aplicación según tu progreso",
-      question: {
-        questionText:
-          "¡Ingresa una idea de aplicación y constrúyela a medida que avanzas!",
-        range: [31, 47],
-      },
-    },
-    {
-          "group": "3",
-          "title": "Elementos HTML Semánticos",
-          "description": "En este paso, relacionarás las etiquetas HTML semánticas con sus roles estructurales en el diseño web moderno.",
-          "isMatchPairs": true,
-          "showPreview": true,
-          "question": {
-                "questionText": "Relaciona cada etiqueta HTML semántica con su rol estructural principal en la página:",
-                "pairs": [
-                      {
-                            "left": "<main>",
-                            "right": "El área de contenido principal de la página web"
-                      },
-                      {
-                            "left": "<nav>",
-                            "right": "El contenedor para los enlaces de navegación principales"
-                      },
-                      {
-                            "left": "<article>",
-                            "right": "Una composición independiente como una publicación o tarjeta"
-                      },
-                      {
-                            "left": "<button>",
-                            "right": "Un elemento interactivo cliqueable para acciones del usuario"
-                      }
-                ],
-                "choices": [
-                      "El área de contenido principal de la página web",
-                      "El contenedor para los enlaces de navegación principales",
-                      "Una composición independiente como una publicación o tarjeta",
-                      "Un elemento interactivo cliqueable para acciones del usuario"
-                ],
-                "answer": {
-                      "<main>": "El área de contenido principal de la página web",
-                      "<nav>": "El contenedor para los enlaces de navegación principales",
-                      "<article>": "Una composición independiente como una publicación o tarjeta",
-                      "<button>": "Un elemento interactivo cliqueable para acciones del usuario"
-                },
-                "previewCode": "function Demo() {\n  const [tab, setTab] = useState('Inicio');\n  return (\n    <main style={{ padding: '12px', fontFamily: 'system-ui, sans-serif' }}>\n      <nav style={{ display: 'flex', gap: '14px', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px', alignItems: 'center' }}>\n        <a href=\"#\" onClick={(e) => { e.preventDefault(); setTab('Inicio'); }} style={{ color: tab === 'Inicio' ? '#ec4899' : '#64748b', fontWeight: tab === 'Inicio' ? 'bold' : '500', textDecoration: tab === 'Inicio' ? 'underline' : 'none', cursor: 'pointer' }}>Inicio</a>\n        <a href=\"#\" onClick={(e) => { e.preventDefault(); setTab('Explorar'); }} style={{ color: tab === 'Explorar' ? '#ec4899' : '#64748b', fontWeight: tab === 'Explorar' ? 'bold' : '500', textDecoration: tab === 'Explorar' ? 'underline' : 'none', cursor: 'pointer' }}>Explorar</a>\n      </nav>\n      <article style={{ marginTop: '12px', padding: '12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>\n        <h3 style={{ margin: '0 0 4px 0', fontSize: '15px', color: '#0f172a' }}>{tab === 'Inicio' ? 'Artículo Publicado' : 'Feed de Exploración'}</h3>\n        <p style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#64748b' }}>{tab === 'Inicio' ? 'Anatomía web semántica limpia' : 'Descubre publicaciones de la comunidad'}</p>\n        <button style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>{tab === 'Inicio' ? 'Acción' : 'Seguir'}</button>\n      </article>\n    </main>\n  );\n}\nrender(<Demo />)"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Atributos HTML y Entradas",
-          "description": "En este paso, aprenderás a configurar elementos de entrada usando atributos HTML como type, placeholder y required.",
-          "isFillCodeBlanks": true,
-          "showPreview": true,
-          "question": {
-                "questionText": "Completa la etiqueta de entrada autocerrada con los nombres de atributos correctos:",
-                "template": "<input {{type}}=\"email\" {{placeholder}}=\"Ingresa tu correo\" {{required}} />",
-                "blanks": [
-                      {
-                            "key": "type",
-                            "label": "Tipo de Entrada",
-                            "hint": "Especifica el formato de datos esperado"
-                      },
-                      {
-                            "key": "placeholder",
-                            "label": "Texto de Sugerencia",
-                            "hint": "Texto mostrado dentro de la entrada"
-                      },
-                      {
-                            "key": "required",
-                            "label": "Obligatorio",
-                            "hint": "Especifica que el campo es obligatorio"
-                      }
-                ],
-                "answer": {
-                      "type": "type",
-                      "placeholder": "placeholder",
-                      "required": "required"
-                },
-                "previewCode": "<div style={{ padding: '16px', fontFamily: 'sans-serif' }}>\n  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px' }}>Correo Electrónico</label>\n  <input type=\"email\" placeholder=\"Ingresa tu correo\" required style={{ width: '100%', padding: '8px 12px', borderRadius: '6px', border: '1px solid #cbd5e1' }} />\n</div>"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Botones Accesibles vs Divs",
-          "description": "En este paso, compararás botones semánticos con divs genéricos en términos de accesibilidad.",
-          "isBestImplementation": true,
-          "showPreview": true,
-          "question": {
-                "questionText": "¿Cuál implementación proporciona accesibilidad por teclado nativa, gestión del foco y claridad semántica?",
-                "options": [
-                      "// Opción 1: Botón nativo con rol semántico\n<button onClick={handleSave} className=\"save-btn\">\n  Guardar Cambios\n</button>",
-                      "// Opción 2: Div genérico sin accesibilidad por teclado\n<div onClick={handleSave} className=\"save-btn\">\n  Guardar Cambios\n</div>",
-                      "// Opción 3: Etiqueta de párrafo usada como botón\n<p onClick={handleSave} className=\"save-btn\">\n  Guardar Cambios\n</p>",
-                      "// Opción 4: Etiqueta de encabezado usada como botón\n<h3 onClick={handleSave} className=\"save-btn\">\n  Guardar Cambios\n</h3>"
-                ],
-                "answer": "// Opción 1: Botón nativo con rol semántico\n<button onClick={handleSave} className=\"save-btn\">\n  Guardar Cambios\n</button>",
-                "previewCode": "<div style={{ padding: '16px', display: 'flex', gap: '8px' }}>\n  <button style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>\n    Guardar Cambios\n  </button>\n</div>"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Reglas de Sintaxis JSX",
-          "description": "En este paso, corregirás errores comunes de sintaxis JSX incluyendo el atributo class y etiquetas no cerradas.",
-          "isFixBug": true,
-          "showPreview": true,
-          "question": {
-                "questionText": "Corrige el error de sintaxis JSX: cambia class a className y autocierra correctamente la etiqueta <img>.",
-                "starterCode": "<div class=\"user-card\">\n  <img src=\"avatar.png\">\n  <h2>Perfil de Usuario</h2>\n</div>",
-                "acceptedAnswers": [
-                      "<div className=\"user-card\">\n  <img src=\"avatar.png\" />\n  <h2>Perfil de Usuario</h2>\n</div>",
-                      "<div className=\"user-card\"><img src=\"avatar.png\" /><h2>Perfil de Usuario</h2></div>"
-                ],
-                "answer": "<div className=\"user-card\">\n  <img src=\"avatar.png\" />\n  <h2>Perfil de Usuario</h2>\n</div>",
-                "previewCode": "<div style={{ padding: '12px', border: '1px solid #e2e8f0', borderRadius: '8px', maxWidth: '200px', textAlign: 'center' }}>\n  <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#f472b6', margin: '0 auto 8px auto' }} />\n  <h3 style={{ margin: 0, fontSize: '14px' }}>Perfil de Usuario</h3>\n</div>"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Ensamblando la Estructura de Tarjeta",
-          "description": "En este paso, ensamblarás un componente de tarjeta de perfil estructurado usando elementos HTML semánticos.",
-          "isParsonsProblem": true,
-          "showPreview": true,
-          "question": {
-                "questionText": "Ordena las líneas para ensamblar un componente semántico limpio de tarjeta de perfil:",
-                "lines": [
-                      "<article className=\"profile-card\">",
-                      "  <header>",
-                      "    <h1>Alex Rivera</h1>",
-                      "  </header>",
-                      "  <p>Ingeniero de Software</p>",
-                      "  <button>Seguir</button>",
-                      "</article>"
-                ],
-                "answer": [
-                      "<article className=\"profile-card\">",
-                      "  <header>",
-                      "    <h1>Alex Rivera</h1>",
-                      "  </header>",
-                      "  <p>Ingeniero de Software</p>",
-                      "  <button>Seguir</button>",
-                      "</article>"
-                ],
-                "previewCode": "<article style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #cbd5e1', maxWidth: '240px' }}>\n  <header><h2 style={{ margin: '0 0 4px 0', fontSize: '16px' }}>Alex Rivera</h2></header>\n  <p style={{ margin: '0 0 12px 0', fontSize: '13px', color: '#64748b' }}>Ingeniero de Software</p>\n  <button style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>Seguir</button>\n</article>"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Capas del Modelo de Caja CSS",
-          "description": "En este paso, aprenderás las cuatro capas concéntricas que componen el modelo de caja CSS.",
-          "isSelectOrder": true,
-          "question": {
-                "questionText": "Ordena las capas del modelo de caja CSS desde el núcleo interno hasta el límite exterior:",
-                "options": [
-                      "Contenido (Texto / Imágenes)",
-                      "Padding (Espaciado interior)",
-                      "Borde (Límite exterior)",
-                      "Margen (Espaciado exterior)"
-                ],
-                "answer": [
-                      "Contenido (Texto / Imágenes)",
-                      "Padding (Espaciado interior)",
-                      "Borde (Límite exterior)",
-                      "Margen (Espaciado exterior)"
-                ]
-          }
-    },
-    {
-          "group": "3",
-          "title": "Propiedades de Dimensiones y Espaciado",
-          "description": "En este paso, relacionarás propiedades de espaciado y modelo de caja CSS con sus comportamientos visuales.",
-          "isMatchPairs": true,
-          "question": {
-                "questionText": "Relaciona cada propiedad CSS con su efecto exacto en el diseño:",
-                "pairs": [
-                      {
-                            "left": "padding: 16px",
-                            "right": "Añade espacio entre el contenido y su borde"
-                      },
-                      {
-                            "left": "margin: 0 auto",
-                            "right": "Centra horizontalmente un elemento de bloque"
-                      },
-                      {
-                            "left": "box-sizing: border-box",
-                            "right": "Incluye padding y borde en el ancho total"
-                      },
-                      {
-                            "left": "border-radius: 8px",
-                            "right": "Redondea las esquinas de la caja"
-                      }
-                ],
-                "choices": [
-                      "Añade espacio entre el contenido y su borde",
-                      "Centra horizontalmente un elemento de bloque",
-                      "Incluye padding y borde en el ancho total",
-                      "Redondea las esquinas de la caja"
-                ],
-                "answer": {
-                      "padding: 16px": "Añade espacio entre el contenido y su borde",
-                      "margin: 0 auto": "Centra horizontalmente un elemento de bloque",
-                      "box-sizing: border-box": "Incluye padding y borde en el ancho total",
-                      "border-radius: 8px": "Redondea las esquinas de la caja"
-                }
-          }
-    },
-    {
-          "group": "3",
-          "title": "Unidades CSS Responsivas",
-          "description": "En este paso, aprenderás sobre las unidades relativas modernas en CSS.",
-          "isCodeCompletion": true,
-          "question": {
-                "questionText": "¿Qué regla CSS usa unidades relativas (rem y %) para asegurar texto responsivo y diseño fluido?",
-                "options": [
-                      ".container {\n  width: 100%;\n  max-width: 60rem;\n  font-size: 1.125rem;\n  padding: 1.5rem;\n}",
-                      ".container {\n  width: 1000px;\n  max-width: 1000px;\n  font-size: 18px;\n  padding: 24px;\n}",
-                      ".container {\n  width: 100pt;\n  max-width: 60pt;\n  font-size: 1.125pt;\n  padding: 1.5pt;\n}",
-                      ".container {\n  width: 100in;\n  max-width: 60in;\n  font-size: 1.125in;\n  padding: 1.5in;\n}"
-                ],
-                "answer": ".container {\n  width: 100%;\n  max-width: 60rem;\n  font-size: 1.125rem;\n  padding: 1.5rem;\n}"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Identificando Desbordamiento de Diseño",
-          "description": "En este paso, identificarás reglas CSS que provocan desplazamiento horizontal inesperado.",
-          "isRelevantLine": true,
-          "question": {
-                "questionText": "¿Qué línea crea barras de desplazamiento horizontal no deseadas al combinar el ancho total de la ventana con padding fijo?",
-                "code": ".card {\n  display: block;\n  width: 100vw;\n  padding: 40px;\n  background: #ffffff;\n}",
-                "answer": [
-                      3
-                ]
-          }
-    },
-    {
-          "group": "3",
-          "title": "Alineación de Barra de Navegación con Flexbox",
-          "description": "En este paso, usarás reglas de flexbox para alinear una barra de navegación responsiva.",
-          "isParsonsProblem": true,
-          "showPreview": true,
-          "question": {
-                "questionText": "Ordena las declaraciones CSS para configurar un contenedor flex horizontal con alineación space-between y elementos centrados:",
-                "lines": [
-                      ".navbar {",
-                      "  display: flex;",
-                      "  flex-direction: row;",
-                      "  justify-content: space-between;",
-                      "  align-items: center;",
-                      "  gap: 16px;",
-                      "}"
-                ],
-                "answer": [
-                      ".navbar {",
-                      "  display: flex;",
-                      "  flex-direction: row;",
-                      "  justify-content: space-between;",
-                      "  align-items: center;",
-                      "  gap: 16px;",
-                      "}"
-                ],
-                "previewCode": "<nav style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: '16px', padding: '12px', background: '#0f172a', color: '#fff', borderRadius: '8px' }}>\n  <span style={{ fontWeight: 'bold', color: '#ec4899' }}>LogoMarca</span>\n  <div style={{ display: 'flex', gap: '8px' }}>\n    <button style={{ background: '#334155', color: '#fff', border: 'none', padding: '4px 8px', borderRadius: '4px' }}>Docs</button>\n    <button style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '4px 8px', borderRadius: '4px' }}>Ingresar</button>\n  </div>\n</nav>"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Vinculación de Entrada Controlada",
-          "description": "En este paso, aprenderás a crear una entrada controlada usando value y onChange con el estado de React.",
-          "isCodeCompletion": true,
-          "showPreview": true,
-          "question": {
-                "questionText": "¿Cuál componente implementa correctamente una entrada controlada con vinculación bidireccional de estado?",
-                "options": [
-                      "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      placeholder=\"Buscar...\"\n    />\n  );\n}",
-                      "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={setQuery(query)}\n      placeholder=\"Buscar...\"\n    />\n  );\n}",
-                      "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      defaultValue={query}\n      onChange={(e) => query = e.target.value}\n      placeholder=\"Buscar...\"\n    />\n  );\n}",
-                      "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onInput={query}\n      placeholder=\"Buscar...\"\n    />\n  );\n}"
-                ],
-                "answer": "function SearchBar() {\n  const [query, setQuery] = useState('');\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      placeholder=\"Buscar...\"\n    />\n  );\n}",
-                "previewCode": "function Demo() {\n  const [val, setVal] = useState('React en Vivo');\n  return (\n    <div style={{ padding: '12px' }}>\n      <input value={val} onChange={e => setVal(e.target.value)} style={{ padding: '6px 10px', borderRadius: '6px', border: '1px solid #cbd5e1' }} />\n      <p style={{ marginTop: '8px', fontSize: '13px' }}>Escrito: <b>{val}</b></p>\n    </div>\n  );\n}\nrender(<Demo />)"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Filtro de Búsqueda en Vivo",
-          "description": "En este paso, filtrarás un arreglo de elementos según el estado de una consulta de búsqueda controlada.",
-          "isFillCodeBlanks": true,
-          "question": {
-                "questionText": "Completa la sentencia de filtrado de arreglo para realizar una búsqueda insensible a mayúsculas:",
-                "template": "const filteredUsers = users.{{filter}}((user) => user.name.toLowerCase().{{includes}}(query.toLowerCase()));",
-                "blanks": [
-                      {
-                            "key": "filter",
-                            "label": "Método de Arreglo",
-                            "hint": "Método que devuelve elementos coincidentes"
-                      },
-                      {
-                            "key": "includes",
-                            "label": "Método de Cadena",
-                            "hint": "Método que verifica si una subcadena está presente"
-                      }
-                ],
-                "answer": {
-                      "filter": "filter",
-                      "includes": "includes"
-                }
-          }
-    },
-    {
-          "group": "3",
-          "title": "Envío de Formularios y preventDefault",
-          "description": "En este paso, aprenderás a manejar eventos de envío de formulario sin recargar la página del navegador.",
-          "isCodeCompletion": true,
-          "question": {
-                "questionText": "¿Cuál controlador de envío evita correctamente la recarga predeterminada del navegador y envía el estado?",
-                "options": [
-                      "const handleSubmit = (e) => {\n  e.preventDefault();\n  if (!text.trim()) return;\n  onAddTweet(text);\n  setText('');\n};",
-                      "const handleSubmit = (e) => {\n  e.stopImmediatePropagation();\n  onAddTweet(text);\n};",
-                      "const handleSubmit = (e) => {\n  window.reload();\n  onAddTweet(text);\n};",
-                      "const handleSubmit = (e) => {\n  return false;\n};"
-                ],
-                "answer": "const handleSubmit = (e) => {\n  e.preventDefault();\n  if (!text.trim()) return;\n  onAddTweet(text);\n  setText('');\n};"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Estado de Formulario Multicampo",
-          "description": "En este paso, construirás un componente de formulario que gestione múltiples entradas de estado.",
-          "isCode": true,
-          "isTerminal": false,
-          "question": {
-                "questionText": "Crea un componente de React llamado ProfileForm con estado para username y bio, renderizando dos entradas y un botón de envío."
-          }
-    },
-    {
-          "group": "3",
-          "title": "Restableciendo Estado de Entrada",
-          "description": "En este paso, corregirás un error de formulario donde el campo de entrada no se limpia al enviar.",
-          "isFixBug": true,
-          "question": {
-                "questionText": "Corrige la función handleSubmit para que setMessage('') sea llamada tras despachar el mensaje:",
-                "starterCode": "const handleSubmit = (e) => {\n  e.preventDefault();\n  sendMessage(message);\n  // Bug: la entrada no se limpia\n};",
-                "acceptedAnswers": [
-                      "const handleSubmit = (e) => {\n  e.preventDefault();\n  sendMessage(message);\n  setMessage('');\n};",
-                      "const handleSubmit = (e) => {\n  e.preventDefault();\n  sendMessage(message);\n  setMessage(\"\");\n};"
-                ],
-                "answer": "const handleSubmit = (e) => {\n  e.preventDefault();\n  sendMessage(message);\n  setMessage('');\n};"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Renderizado Condicional Ternario",
-          "description": "En este paso, aprenderás a renderizar componentes alternativos de interfaz usando el operador ternario.",
-          "isCodeCompletion": true,
-          "showPreview": true,
-          "question": {
-                "questionText": "¿Cuál bloque JSX usa correctamente un operador ternario para renderizar condicionalmente un perfil o un botón de inicio de sesión?",
-                "options": [
-                      "return (\n  <div>\n    {isLoggedIn ? <UserProfile user={user} /> : <button onClick={login}>Iniciar Sesión</button>}\n  </div>\n);",
-                      "return (\n  <div>\n    {if (isLoggedIn) { <UserProfile user={user} /> } else { <button onClick={login}>Iniciar Sesión</button> }}\n  </div>\n);",
-                      "return (\n  <div>\n    {isLoggedIn && <UserProfile user={user} /> : <button onClick={login}>Iniciar Sesión</button>}\n  </div>\n);",
-                      "return (\n  <div>\n    {isLoggedIn ? <UserProfile user={user} />}\n  </div>\n);"
-                ],
-                "answer": "return (\n  <div>\n    {isLoggedIn ? <UserProfile user={user} /> : <button onClick={login}>Iniciar Sesión</button>}\n  </div>\n);",
-                "previewCode": "function Demo() {\n  const [logged, setLogged] = useState(false);\n  return (\n    <div style={{ padding: '12px' }}>\n      {logged ? (\n        <span style={{ color: '#16a34a', fontWeight: 'bold' }}>👤 ¡Bienvenido de nuevo, Alex!</span>\n      ) : (\n        <button onClick={() => setLogged(true)} style={{ background: '#ec4899', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '6px' }}>Iniciar Sesión</button>\n      )}\n    </div>\n  );\n}\nrender(<Demo />)"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Renderizado Lógico AND de Cortocircuito",
-          "description": "En este paso, usarás el operador lógico && para mostrar condicionalmente notificaciones y banners.",
-          "isCodeCompletion": true,
-          "question": {
-                "questionText": "¿Qué expresión JSX renderiza limpiamente un banner de mensaje de error solo cuando el estado error contiene un valor?",
-                "options": [
-                      "return (\n  <div>\n    {error && <div className=\"error-banner\">{error}</div>}\n    <TweetList tweets={tweets} />\n  </div>\n);",
-                      "return (\n  <div>\n    {error || <div className=\"error-banner\">{error}</div>}\n    <TweetList tweets={tweets} />\n  </div>\n);",
-                      "return (\n  <div>\n    {error == <div className=\"error-banner\">{error}</div>}\n    <TweetList tweets={tweets} />\n  </div>\n);",
-                      "return (\n  <div>\n    {show(error, <div className=\"error-banner\">{error}</div>)}\n    <TweetList tweets={tweets} />\n  </div>\n);"
-                ],
-                "answer": "return (\n  <div>\n    {error && <div className=\"error-banner\">{error}</div>}\n    <TweetList tweets={tweets} />\n  </div>\n);"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Jerarquía de Estado de Carga",
-          "description": "En este paso, estructurarás el renderizado condicional para estados de carga y datos listos.",
-          "isParsonsProblem": true,
-          "question": {
-                "questionText": "Ordena las líneas para manejar el estado de carga antes de devolver el feed principal:",
-                "lines": [
-                      "if (isLoading) {",
-                      "  return <div className=\"spinner\">Cargando...</div>;",
-                      "}",
-                      "return (",
-                      "  <main className=\"content-card\">",
-                      "    <h1>Feed Listo</h1>",
-                      "  </main>",
-                      ");"
-                ],
-                "answer": [
-                      "if (isLoading) {",
-                      "  return <div className=\"spinner\">Cargando...</div>;",
-                      "}",
-                      "return (",
-                      "  <main className=\"content-card\">",
-                      "    <h1>Feed Listo</h1>",
-                      "  </main>",
-                      ");"
-                ]
-          }
-    },
-    {
-          "group": "3",
-          "title": "Notificación de Lista Vacía",
-          "description": "En este paso, manejarás listas con cero elementos mostrando un mensaje informativo de estado vacío.",
-          "isCode": true,
-          "isTerminal": false,
-          "question": {
-                "questionText": "Crea un componente de React llamado NotificationList que acepte un arreglo de notificaciones como prop y muestre 'No hay notificaciones' cuando notifications.length sea 0."
-          }
-    },
-    {
-          "group": "3",
-          "title": "Patrón de Selector de Pestañas",
-          "description": "En este paso, compararás patrones para alternar entre múltiples vistas de forma limpia.",
-          "isBestImplementation": true,
-          "showPreview": true,
-          "question": {
-                "questionText": "¿Qué patrón alterna de forma limpia y declarativa entre múltiples vistas según el estado activeTab?",
-                "options": [
-                      "function AppTabs() {\n  const [tab, setTab] = useState('home');\n  return (\n    <div>\n      {tab === 'home' && <HomeView />}\n      {tab === 'explore' && <ExploreView />}\n      {tab === 'notifications' && <NotificationsView />}\n    </div>\n  );\n}",
-                      "function AppTabs() {\n  const [tab, setTab] = useState('home');\n  return (\n    <div>\n      {tab === 'home' ? <HomeView /> : tab === 'explore' ? <ExploreView /> : <NotificationsView />}\n    </div>\n  );\n}",
-                      "function AppTabs() {\n  return (\n    <div>\n      <HomeView style={{ display: 'none' }} />\n      <ExploreView style={{ display: 'none' }} />\n      <NotificationsView />\n    </div>\n  );\n}",
-                      "function AppTabs() {\n  let current = window.location.hash;\n  return <div>{current}</div>;\n}"
-                ],
-                "answer": "function AppTabs() {\n  const [tab, setTab] = useState('home');\n  return (\n    <div>\n      {tab === 'home' && <HomeView />}\n      {tab === 'explore' && <ExploreView />}\n      {tab === 'notifications' && <NotificationsView />}\n    </div>\n  );\n}",
-                "previewCode": "function DemoTabs() {\n  const [tab, setTab] = useState('home');\n  return (\n    <div style={{ padding: '12px', fontFamily: 'sans-serif' }}>\n      <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>\n        <button onClick={() => setTab('home')} style={{ background: tab === 'home' ? '#ec4899' : '#e2e8f0', color: tab === 'home' ? '#fff' : '#000', border: 'none', padding: '4px 10px', borderRadius: '6px' }}>Inicio</button>\n        <button onClick={() => setTab('settings')} style={{ background: tab === 'settings' ? '#ec4899' : '#e2e8f0', color: tab === 'settings' ? '#fff' : '#000', border: 'none', padding: '4px 10px', borderRadius: '6px' }}>Ajustes</button>\n      </div>\n      <div style={{ padding: '8px', background: '#f8fafc', borderRadius: '6px' }}>\n        {tab === 'home' ? '🏠 Contenido del Feed de Inicio' : '⚙️ Preferencias y Ajustes de Usuario'}\n      </div>\n    </div>\n  );\n}\nrender(<DemoTabs />)"
-          }
-    },
-{
-      group: "3",
-      title: "Introducción a los Componentes de React",
-      description:
-        "En este paso, aprenderás sobre los componentes de React, su papel en la creación de elementos de interfaz de usuario reutilizables y cómo ayudan a gestionar la interfaz de usuario de manera eficiente.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "¿Cuál de las siguientes opciones describe mejor un componente de React?",
-        options: [
-          "Un método para manejar eventos en JavaScript",
-          "Una característica exclusiva del renderizado del lado del servidor en React",
-          "Un elemento reutilizable de la interfaz de usuario definido como una función o clase que devuelve JSX",
-          "Un elemento HTML incorporado en React",
-        ],
-        answer:
-          "Un elemento reutilizable de la interfaz de usuario definido como una función o clase que devuelve JSX",
-      },
-    },
-    {
-      group: "3",
-      title: "Conceptos Clave en React",
-      description:
-        "En este paso, aprenderás sobre los conceptos fundamentales de React, incluidas las propiedades (props), el estado, los eventos y los estilos.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText: "¿Cuáles de los siguientes son conceptos clave en React?",
-        options: [
-          "Gestionar propiedades para pasar datos entre componentes",
-          "Manipular directamente el DOM para mejorar el rendimiento",
-          "Usar el estado para gestionar datos dentro de un componente",
-          "Manejar eventos como clics con controladores de eventos",
-          "Aplicar estilos en línea o clases CSS a los componentes",
-        ],
-        answer: [
-          "Gestionar propiedades para pasar datos entre componentes",
-          "Usar el estado para gestionar datos dentro de un componente",
-          "Manejar eventos como clics con controladores de eventos",
-          "Aplicar estilos en línea o clases CSS a los componentes",
-        ],
-      },
-    },
-    {
-      group: "3",
-      title: "Efecto de los Cambios en el Estado de un Componente",
-      description:
-        "En este paso, explicarás qué sucede con un componente de React cuando su estado cambia.",
-      isText: true,
-      question: {
-        questionText:
-          "¿Qué sucede con un componente de React cuando su estado cambia?",
-      },
-    },
-    {
-      group: "3",
-      title: "Creando un Componente Simple de React",
-      description:
-        "En este paso, definirás un componente básico de React que devuelve un simple JSX.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "¿Cuál de los siguientes bloques de código define correctamente un componente simple de React que devuelve un encabezado y un párrafo?",
-        options: [
-          `function MiComponente() {
-      return (
-        <div>
-          <h1>¡Hola, Mundo!</h1>
-        </div>
-      );
-    }`,
-          `function MiComponente() {
-      <div>
-        <h1>¡Hola, Mundo!</h1>
-      </div>;
-    }`,
-          `class MiComponente {
-      render() {
-        return (
-          <div>
-            <h1>¡Hola, Mundo!</h1>
-          </div>
-        );
-      }
-    }`,
-          `function MiComponente() {
-      return (
-        <div>Hola</div>
-        <div>Mundo</div>
-      );
-    }`,
-        ],
-        answer: `function MiComponente() {
-      return (
-        <div>
-          <h1>¡Hola, Mundo!</h1>
-        </div>
-      );
-    }`,
-      },
-    },
-    {
-      group: "3",
-      title: "Manejo de Eventos en React",
-      description:
-        "En este paso, definirás un componente básico de React que maneja un evento de clic en un botón usando el atributo `onClick`.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "¿Cuál de los siguientes bloques de código define correctamente un componente de React que maneja un evento de clic en un botón?",
-        options: [
-          `function MiComponente() {
-      return (
-        <div>
-          <button 
-            onClick={
-              alert('¡Botón clicado!')
-            }
-          >
-            Haz clic
-          </button>
-        </div>
-      );
-    }`,
-          `function MiComponente() {
-    return (
-      <div>
-        <button 
-          onClick={() => {
-            alert('¡Botón clicado!')
-          }}
-        >
-          Haz clic
-        </button>
-      </div>
-    );
-    }`,
-          `function MiComponente() {
-      const manejarClick = () => {
-        alert('¡Botón clicado!');
-      };
-        
-      return (
-        <div>
-          <button 
-            onClick={manejarClick}
-          >
-            Haz clic
-          </button>
-        </div>
-      );
-    }`,
-          `function MiComponente() {
-    return (
-      <div>
-        <button>
-          Haz clic
-        </button>
-      </div>
-    );
-        }`,
-        ],
-        answer: `function MiComponente() {
-      const manejarClick = () => {
-        alert('¡Botón clicado!');
-      };
-    
-      return (
-        <div>
-          <button 
-            onClick={manejarClick}
-          >
-            Haz clic
-          </button>
-        </div>
-      );
-    }`,
-      },
-    },
-    {
-      group: "3",
-      title: "Gestionando el Estado con el Hook useState",
-      description:
-        "En este paso, aprenderás cómo usar el hook useState para gestionar el estado de un componente.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Modifica el componente Tweet para incluir un botón de 'me gusta' que cambie el estado usando el hook useState.",
-      },
-    },
-    {
-      group: "3",
-      title: "Propiedades del Componente",
-      description:
-        "En este paso, aprenderás cómo pasar propiedades a los componentes en React.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "¿Cuál es el término utilizado para pasar datos a un componente de React?",
-        placeholder: "Escribe tu respuesta aquí...",
-        answer: "props",
-      },
-    },
-    {
-      group: "3",
-      title: "Renderizando Listas Dinámicas con map y Keys",
-      description:
-        "En este paso, aprenderás cómo renderizar una lista dinámica de elementos en React usando .map() y asignar props key únicas.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Actualiza el componente TweetFeed para renderizar un arreglo de tweets usando .map() y asigna a cada Tweet una prop key única.",
-      },
-    },
-    {
-      group: "3",
-      title: "Trabajando con Props y Estado Juntos",
-      description:
-        "En este paso, aprenderás cómo trabajar con tanto props como estado en un componente de React.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "¿Cuál es la principal diferencia entre props y estado en React?",
-        options: [
-          "Las props son inmutables mientras que el estado es mutable",
-          "Las props son gestionadas por el propio componente mientras que el estado se pasa desde componentes padres",
-          "El estado se usa para estilos mientras que las props se usan para la lógica",
-          "No hay diferencia; son lo mismo",
-        ],
-        answer: "Las props son inmutables mientras que el estado es mutable",
-      },
-    },
-    {
-      group: "3",
-      title: "Práctica en la Terminal: Listando Archivos",
-      description:
-        "En este paso, aprenderás cómo listar archivos en una terminal bash.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "Usa la terminal para listar todos los archivos usando el comando list.",
-      },
-    },
-    {
-      group: "3",
-      title: "Estilizando Componentes de React",
-      description:
-        "En este paso, aprenderás cómo aplicar estilos a los componentes de React usando CSS.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Agrega estilos al componente Tweet para mejorar su apariencia.",
-      },
-    },
-    {
-      group: "3",
-      title: "Usando Flexbox para Diseños",
-      description:
-        "En este paso, aprenderás cómo usar Flexbox para crear diseños en React.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Ordena las siguientes propiedades de CSS en el orden necesario para centrar un diseño básico con estilos de flexbox:",
-        options: [
-          "display: flex;",
-          "justify-content: center;",
-          "align-items: center;",
-          "flex-direction: row;",
-        ],
-        answer: [
-          "display: flex;",
-          "flex-direction: row;",
-          "justify-content: center;",
-          "align-items: center;",
-        ],
-      },
-    },
-    {
-      group: "3",
-      title: "Elevando el Estado",
-      description:
-        "En este paso, aprenderás cómo elevar el estado a un componente ancestro común para compartir estado entre componentes.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Crea un componente padre que gestione el estado para múltiples componentes Tweet y pase el estado y los controladores de eventos como props.",
-      },
-    },
-    {
-      group: "3",
-      title: "Usando useEffect para Efectos Secundarios",
-      description:
-        "En este paso, aprenderás cómo usar el hook useEffect para manejar efectos secundarios en un componente de React.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Modifica el componente Tweet para usar el hook useEffect y registrar un mensaje en la consola cada vez que cambie el número de retweets.",
-      },
-    },
-    {
-      group: "3",
-      title: "Comprendiendo el Ciclo de Vida del Componente",
-      description:
-        "En este paso, aprenderás sobre el ciclo de vida de los componentes de React y cómo usar el hook useEffect para gestionar efectos secundarios.",
-      isText: true,
-      question: {
-        questionText:
-          "¿Qué es el ciclo de vida del componente en React y cuál es el propósito del hook useEffect?",
-      },
-    },
-    {
-      group: "3",
-      title: "Obteniendo Datos con useEffect",
-      description:
-        "En este paso, aprenderás cómo obtener datos de una API usando el hook useEffect.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Ordena los pasos con arrastrar y soltar para obtener datos correctamente usando useEffect.",
-        options: [
-          "Importa React y useState",
-          "Importa useEffect de React",
-          "Crea un componente",
-          "Define el hook useEffect",
-          "Haz la llamada a la API dentro de useEffect",
-          "Usa async/await o .then() para manejar la respuesta de la API",
-          "Actualiza el estado del componente con los datos obtenidos",
-          "Maneja los errores en la llamada a la API",
-          "Renderiza los datos en el componente",
-        ],
-        answer: [
-          "Importa React y useState",
-          "Importa useEffect de React",
-          "Crea un componente",
-          "Define el hook useEffect",
-          "Haz la llamada a la API dentro de useEffect",
-          "Usa async/await o .then() para manejar la respuesta de la API",
-          "Actualiza el estado del componente con los datos obtenidos",
-          "Maneja los errores en la llamada a la API",
-          "Renderiza los datos en el componente",
-        ],
-      },
-    },
-    {
-      group: "3",
-      title: "Construyendo una App Completa de Tweets",
-      description:
-        "En este paso, combinarás todo lo que has aprendido para construir una app completa de tweets.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Construye una app completa de tweets que obtenga tweets de una API, los muestre usando el componente Tweet y permita a los usuarios dar 'me gusta' y retweetear.",
-      },
-    },
-    {
-      group: "3",
-      title: "Práctica en la Terminal: Configurando una App de React",
-      description:
-        "En este paso, aprenderás cómo configurar un proyecto de React.",
-      isText: true,
-      question: {
-        questionText:
-          "Escribe el comando para instalar la versión más reciente de un proyecto de React con Vite.",
-      },
-    },
-    {
-      group: "3",
-      title: "Creando un Nuevo Proyecto de React con Vite",
-      description:
-        "En este paso, aprenderás cómo crear un nuevo proyecto de React usando Vite siguiendo los pasos correctos y ejecutando comandos de línea de comandos.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Ordena los pasos con arrastrar y soltar para crear correctamente un nuevo proyecto de React usando Vite, incluidos los comandos de línea.",
-        options: [
-          "Asegúrate de que Node.js esté instalado ejecutando `node -v`",
-          "Ejecuta `npm create vite@latest` para crear un nuevo proyecto de Vite",
-          "Selecciona la plantilla de React cuando se te solicite",
-          "Navega al directorio del proyecto usando `cd nombre-del-proyecto`",
-          "Ejecuta `npm install` para instalar las dependencias",
-          "Inicia el servidor de desarrollo con `npm run dev`",
-        ],
-        answer: [
-          "Asegúrate de que Node.js esté instalado ejecutando `node -v`",
-          "Ejecuta `npm create vite@latest` para crear un nuevo proyecto de Vite",
-          "Selecciona la plantilla de React cuando se te solicite",
-          "Navega al directorio del proyecto usando `cd nombre-del-proyecto`",
-          "Ejecuta `npm install` para instalar las dependencias",
-          "Inicia el servidor de desarrollo con `npm run dev`",
-        ],
-      },
-    },
-    {
-          "group": "3",
-          "title": "Inmutabilidad del Estado en React",
-          "description": "En este paso, entenderás por qué React requiere actualizaciones inmutables del estado.",
-          "isMultipleChoice": true,
-          "question": {
-                "questionText": "¿Por qué nunca debes mutar el estado de React directamente con array.push u obj.prop = valor?",
-                "options": [
-                      "La mutación directa no activa una nueva renderización y puede causar errores de interfaz desactualizada",
-                      "La mutación directa causa un error de sintaxis de JavaScript en navegadores modernos",
-                      "El estado de React se almacena en un servidor que prohíbe modificaciones",
-                      "Mutar el estado directamente ralentiza la velocidad de internet"
-                ],
-                "answer": "La mutación directa no activa una nueva renderización y puede causar errores de interfaz desactualizada"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Props Key y Reconciliación del DOM",
-          "description": "En este paso, comprenderás cómo React usa keys únicas para reconciliar listas dinámicas.",
-          "isBestImplementation": true,
-          "question": {
-                "questionText": "Elige la mejor implementación para renderizar elementos de listas dinámicas con keys únicas estables.",
-                "options": [
-                      "// Opción 1: ID único y estable de base de datos como key\n{items.map((item) => (\n  <TodoItem key={item.id} task={item.task} />\n))}",
-                      "// Opción 2: Índice del arreglo como key (frágil al reordenar o eliminar)\n{items.map((item, index) => (\n  <TodoItem key={index} task={item.task} />\n))}",
-                      "// Opción 3: Math.random() como key (fuerza desmontaje completo en cada render)\n{items.map((item) => (\n  <TodoItem key={Math.random()} task={item.task} />\n))}",
-                      "// Opción 4: Sin prop key en absoluto\n{items.map((item) => (\n  <TodoItem task={item.task} />\n))}"
-                ],
-                "answer": "// Opción 1: ID único y estable de base de datos como key\n{items.map((item) => (\n  <TodoItem key={item.id} task={item.task} />\n))}"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Elevando Estado con Callbacks",
-          "description": "En este paso, practicarás elevar el estado a un componente padre y pasar callbacks actualizadores a los hijos.",
-          "isParsonsProblem": true,
-          "question": {
-                "questionText": "Ordena las líneas para definir un componente padre que gestione el estado count y pase count y onIncrement a botones hijos:",
-                "lines": [
-                      "function CounterApp() {",
-                      "  const [count, setCount] = useState(0);",
-                      "  const handleIncrement = () => setCount((c) => c + 1);",
-                      "  return (",
-                      "    <div>",
-                      "      <Display count={count} />",
-                      "      <IncrementButton onIncrement={handleIncrement} />",
-                      "    </div>",
-                      "  );",
-                      "}"
-                ],
-                "answer": [
-                      "function CounterApp() {",
-                      "  const [count, setCount] = useState(0);",
-                      "  const handleIncrement = () => setCount((c) => c + 1);",
-                      "  return (",
-                      "    <div>",
-                      "      <Display count={count} />",
-                      "      <IncrementButton onIncrement={handleIncrement} />",
-                      "    </div>",
-                      "  );",
-                      "}"
-                ]
-          }
-    },
-    {
-          "group": "3",
-          "title": "Previniendo Bucles de Renderizado Infinito",
-          "description": "En este paso, identificarás un arreglo de dependencias faltante que causa bucles de renderizado infinito en useEffect.",
-          "isRelevantLine": true,
-          "question": {
-                "questionText": "Haz clic en la línea que causa un bucle infinito al omitir su arreglo de dependencias en useEffect:",
-                "code": "function DataFetcher() {\n  const [count, setCount] = useState(0);\n  useEffect(() => {\n    setCount((c) => c + 1);\n  });\n  return <div>{count}</div>;\n}",
-                "answer": [
-                      5
-                ]
-          }
-    },
-    {
-          "group": "3",
-          "title": "Extracción de Custom Hook",
-          "description": "En este paso, aprenderás a extraer lógica de estado reutilizable en un custom hook.",
-          "isCodeCompletion": true,
-          "question": {
-                "questionText": "Selecciona el bloque de código que crea correctamente un custom hook reutilizable llamado useToggle:",
-                "options": [
-                      "function useToggle(initial = false) {\n  const [value, setValue] = useState(initial);\n  const toggle = () => setValue((v) => !v);\n  return [value, toggle];\n}",
-                      "function useToggle(initial = false) {\n  let value = initial;\n  const toggle = () => { value = !value; };\n  return [value, toggle];\n}",
-                      "function useToggle(initial = false) {\n  const toggle = useState(initial);\n  return toggle;\n}",
-                      "function useToggle() {\n  return window.toggle;\n}"
-                ],
-                "answer": "function useToggle(initial = false) {\n  const [value, setValue] = useState(initial);\n  const toggle = () => setValue((v) => !v);\n  return [value, toggle];\n}"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Cálculo de Estado Derivado",
-          "description": "En este paso, aprenderás a calcular valores derivados durante el render en lugar de mantener estado duplicado.",
-          "isBestImplementation": true,
-          "question": {
-                "questionText": "Elige el mejor patrón para calcular el conteo de tareas activas sin mantener variables de estado redundantes y sincronizadas:",
-                "options": [
-                      "// Opción 1: Calcular sobre la marcha durante el render\nfunction TodoList({ todos }) {\n  const activeCount = todos.filter((t) => !t.done).length;\n  return <div>Activas: {activeCount}</div>;\n}",
-                      "// Opción 2: Variable de estado redundante sincronizada con useEffect\nfunction TodoList({ todos }) {\n  const [activeCount, setActiveCount] = useState(0);\n  useEffect(() => {\n    setActiveCount(todos.filter((t) => !t.done).length);\n  }, [todos]);\n  return <div>Activas: {activeCount}</div>;\n}",
-                      "// Opción 3: Variable global fuera del componente\nlet activeCount = 0;\nfunction TodoList({ todos }) {\n  activeCount = todos.length;\n  return <div>Activas: {activeCount}</div>;\n}",
-                      "// Opción 4: Consultar el DOM directamente\nfunction TodoList() {\n  const count = document.querySelectorAll('.active').length;\n  return <div>Activas: {count}</div>;\n}"
-                ],
-                "answer": "// Opción 1: Calcular sobre la marcha durante el render\nfunction TodoList({ todos }) {\n  const activeCount = todos.filter((t) => !t.done).length;\n  return <div>Activas: {activeCount}</div>;\n}"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Composición de Componentes con children",
-          "description": "En este paso, usarás la prop children para crear componentes contenedores reutilizables.",
-          "isCodeCompletion": true,
-          "question": {
-                "questionText": "Selecciona el bloque de código que crea un contenedor Card reutilizable usando la prop children:",
-                "options": [
-                      "function Card({ title, children }) {\n  return (\n    <div className=\"card-box\">\n      <h2>{title}</h2>\n      <div className=\"card-body\">{children}</div>\n    </div>\n  );\n}",
-                      "function Card({ title, content }) {\n  return (\n    <div className=\"card-box\">\n      <h2>{title}</h2>\n      <div className=\"card-body\">{content.render()}</div>\n    </div>\n  );\n}",
-                      "function Card({ title }) {\n  return (\n    <div className=\"card-box\">\n      <h2>{title}</h2>\n    </div>\n  );\n}",
-                      "function Card() {\n  return <div>{window.children}</div>;\n}"
-                ],
-                "answer": "function Card({ title, children }) {\n  return (\n    <div className=\"card-box\">\n      <h2>{title}</h2>\n      <div className=\"card-body\">{children}</div>\n    </div>\n  );\n}"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Limpieza en Efectos Asíncronos",
-          "description": "En este paso, evitarás fugas de memoria añadiendo una función de limpieza a un efecto asíncrono.",
-          "isFixBug": true,
-          "question": {
-                "questionText": "Corrige el error en useEffect devolviendo una función de limpieza que establezca isMounted en false al desmontar el componente:",
-                "starterCode": "useEffect(() => {\n  let isMounted = true;\n  fetchProfile().then((data) => {\n    if (isMounted) setProfile(data);\n  });\n  // Bug: falta retorno de limpieza\n}, []);",
-                "acceptedAnswers": [
-                      "useEffect(() => {\n  let isMounted = true;\n  fetchProfile().then((data) => {\n    if (isMounted) setProfile(data);\n  });\n  return () => { isMounted = false; };\n}, []);",
-                      "useEffect(() => {\n  let isMounted = true;\n  fetchProfile().then((data) => {\n    if (isMounted) setProfile(data);\n  });\n  return () => {\n    isMounted = false;\n  };\n}, []);"
-                ],
-                "answer": "useEffect(() => {\n  let isMounted = true;\n  fetchProfile().then((data) => {\n    if (isMounted) setProfile(data);\n  });\n  return () => { isMounted = false; };\n}, []);"
-          }
-    },
-    {
-          "group": "3",
-          "title": "Construyendo un Panel Interactivo con Filtros",
-          "description": "En este paso, ensamblarás componentes, hooks de estado, filtrado de búsqueda y renderizado de listas en un panel interactivo.",
-          "isCode": true,
-          "isTerminal": false,
-          "question": {
-                "questionText": "Crea un componente de React completo llamado ProductDashboard que gestione una entrada de búsqueda, filtre un arreglo de productos por nombre y muestre los resultados activos."
-          }
-    },
-    {
-          "group": "3",
-          "title": "Construye tu Aplicación",
-          "isConversationReview": true,
-          "description": "Construye una aplicación según tu progreso",
-          "question": {
-                "questionText": "¡Ingresa una idea de aplicación y constrúyela a medida que avanzas!",
-                "range": [
-                      39,
-                      88
-                ]
-          }
-    },
-    {
-      group: "4",
-      title: "Introducción a la Ingeniería de Backend",
-      description:
-        "En este paso, aprenderás qué es la ingeniería de software backend y por qué es importante.",
-      isText: true,
-      question: {
-        questionText:
-          "¿Qué es la ingeniería de software backend y por qué es importante en la construcción de aplicaciones?",
-      },
-    },
-    {
-      group: "4",
-      title: "Descripción General de las Lecciones Principales",
-      description:
-        "En este paso, identificarás una responsabilidad clave de la ingeniería de backend cubierta en el curso.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "¿Cuál de las siguientes es una responsabilidad clave en la ingeniería de backend?",
-        options: [
-          "Gestionar la concurrencia y garantizar la seguridad de los hilos en aplicaciones multiusuario",
-          "Implementar la autenticación de usuarios directamente en la experiencia del usuario",
-          "Manejar la asignación de memoria y la recolección de basura en entornos de servidor",
-          "Diseñar componentes de interfaz de usuario escalables para compatibilidad entre navegadores",
-          "Optimizar consultas a la base de datos y garantizar la consistencia de los datos",
-        ],
-        answer:
-          "Optimizar consultas a la base de datos y garantizar la consistencia de los datos",
-      },
-    },
-    {
-      group: "4",
-      title: "Responsabilidades Clave de la Ingeniería de Backend",
-      description:
-        "En este paso, aprenderás sobre las diversas responsabilidades involucradas en la ingeniería de backend.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "¿Cuáles de las siguientes son responsabilidades clave de la ingeniería de backend?",
-        options: [
-          "Gestionar y optimizar bases de datos para almacenar y recuperar datos de manera eficiente",
-          "Diseñar e implementar APIs para facilitar la comunicación entre sistemas",
-          "Garantizar la seguridad mediante mecanismos de autenticación y autorización de usuarios",
-          "Manejar la lógica del lado del servidor, incluidas las operaciones comerciales y cálculos",
-          "Mantener la confiabilidad y el rendimiento del servidor bajo alto tráfico",
-          "Gestionar la integridad y consistencia de los datos en sistemas distribuidos",
-          "Implementar registro y monitoreo para asegurar la salud del sistema y depurar problemas",
-        ],
-        answer: [
-          "Gestionar y optimizar bases de datos para almacenar y recuperar datos de manera eficiente",
-          "Diseñar e implementar APIs para facilitar la comunicación entre sistemas",
-          "Garantizar la seguridad mediante mecanismos de autenticación y autorización de usuarios",
-          "Manejar la lógica del lado del servidor, incluidas las operaciones comerciales y cálculos",
-          "Mantener la confiabilidad y el rendimiento del servidor bajo alto tráfico",
-          "Gestionar la integridad y consistencia de los datos en sistemas distribuidos",
-          "Implementar registro y monitoreo para asegurar la salud del sistema y depurar problemas",
-        ],
-      },
-    },
-    {
-      group: "4",
-      title: "Interactuando con la Terminal",
-      description:
-        "En este paso, aprenderás sobre la importancia de la terminal en la ingeniería de backend y cómo interactuar con ella para diversas tareas.",
-      isText: true,
-      question: {
-        questionText:
-          "¿Por qué es importante aprender a usar la terminal para los sistemas operativos y qué tipo de tareas se pueden realizar con ella?",
-      },
-    },
-    {
-      group: "4",
-      title: "JavaScript Asíncrono y async/await",
-      description:
-        "En este paso, aprenderás cómo funcionan las Promesas asíncronas al interactuar con servidores y bases de datos.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "¿Cuál bloque de código usa correctamente una función `async` con `await` y `try/catch` para obtener datos de forma segura?",
-        options: [
-          `async function cargarUsuario(idUsuario) {
-  try {
-    const usuario = await obtenerUsuarioDeBaseDatos(idUsuario);
-    console.log('Usuario cargado:', usuario);
-  } catch (error) {
-    console.error('Error al cargar usuario:', error);
-  }
-}`,
-          `function cargarUsuario(idUsuario) {
-  try {
-    const usuario = await obtenerUsuarioDeBaseDatos(idUsuario);
-    console.log('Usuario cargado:', usuario);
-  } catch (error) {
-    console.error('Error al cargar usuario:', error);
-  }
-}`,
-          `async function cargarUsuario(idUsuario) {
-  const usuario = obtenerUsuarioDeBaseDatos(idUsuario);
-  await usuario.catch(error);
-}`,
-          `async function cargarUsuario(idUsuario) {
-  wait obtenerUsuarioDeBaseDatos(idUsuario);
-}`,
-        ],
-        answer: `async function cargarUsuario(idUsuario) {
-  try {
-    const usuario = await obtenerUsuarioDeBaseDatos(idUsuario);
-    console.log('Usuario cargado:', usuario);
-  } catch (error) {
-    console.error('Error al cargar usuario:', error);
-  }
-}`,
-      },
-    },
-    {
-      group: "4",
-      title: "Instalación de un Paquete NPM",
-      description:
-        "En este paso, utilizarás la terminal para instalar un paquete con npm.",
-      isText: true,
-      question: {
-        questionText:
-          "Escribe un comando para instalar la biblioteca de componentes de Chakra para interfaces de usuario en React.",
-      },
-    },
-    {
-      group: "4",
-      title: "Creación de Usuarios y Autenticación",
-      description:
-        "En este paso, entenderás el concepto clave relacionado con la creación de usuarios en sistemas backend.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "¿Cómo se llama el proceso que verifica la identidad de un usuario durante la creación de una cuenta?",
-        placeholder: "Escribe tu respuesta aquí...",
-        answer: "autenticación",
-      },
-    },
-    {
-      group: "4",
-      title: "Fundamentos de Bases de Datos",
-      description:
-        "En este paso, aprenderás sobre los fundamentos de las bases de datos en la ingeniería de backend.",
-      isText: true,
-      question: {
-        questionText:
-          "¿Cuáles son los principales tipos de bases de datos utilizados en la ingeniería de backend?",
-      },
-    },
-    {
-      group: "4",
-      title: "Conectando Sistemas",
-      description:
-        "Escribe un fragmento de código para conectar una aplicación a una base de datos Firebase.",
-      isCode: true,
-      question: {
-        questionText:
-          "Escribe un fragmento de código para conectar una aplicación a una base de datos Firebase.",
-      },
-    },
-    {
-      group: "4",
-      title: "Iniciar un Proyecto de Firebase",
-      description:
-        "En este paso, entenderás cómo iniciar un proyecto de Firebase desde la línea de comandos.",
-      isText: true,
-      question: {
-        questionText:
-          "Escribe el comando para iniciar un proyecto de Firebase.",
-      },
-    },
-    {
-      group: "4",
-      title: "Prácticas Avanzadas de Almacenamiento de Datos",
-      description:
-        "En este paso, aprenderás prácticas avanzadas para almacenar datos de manera responsable en sistemas backend.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "¿Cuáles de las siguientes son mejores prácticas para garantizar el almacenamiento responsable de datos en un sistema backend?",
-        options: [
-          "Almacenar en caché los datos en memoria para reducir el tiempo de acceso a la base de datos",
-          "Cifrar datos sensibles tanto en reposo como en tránsito para garantizar la seguridad",
-          "Implementar replicación de bases de datos a través de múltiples centros de datos para mejorar la tolerancia a fallos",
-        ],
-        answer: [
-          "Almacenar en caché los datos en memoria para reducir el tiempo de acceso a la base de datos",
-          "Cifrar datos sensibles tanto en reposo como en tránsito para garantizar la seguridad",
-          "Implementar replicación de bases de datos a través de múltiples centros de datos para mejorar la tolerancia a fallos",
-        ],
-      },
-    },
-    {
-      group: "4",
-      title: "Inicializando Firebase y Trabajando con Firestore v9",
-      description:
-        "En este paso, aprenderás cómo inicializar Firebase y configurar colecciones y documentos en Firestore v9.",
-      isCodeCompletion: true,
-      question: {
-        questionText:
-          "Completa el código para inicializar Firebase con la configuración proporcionada y agregar un documento único a una colección en Firestore.",
-        options: [
-          // Opción 1: Código correcto para inicializar Firebase y agregar un documento
-
-          // Opción 2: Incorrecto - falta la inicialización de Firestore
-          `import { 
-      initializeApp 
-    } from 'firebase/app';
-    
-    import { 
-      collection, 
-      setDoc 
-    } from 'firebase/firestore';
-    
-    const firebaseConfig = {
-      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-      authDomain: "progr-ai.firebaseapp.com",
-      projectId: "progr-ai",
-      storageBucket: "progr-ai.appspot.com",
-      messagingSenderId: "32042075426",
-      appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
-      measurementId: "G-0E37NCB4KB",
-    };
-    
-    initializeApp(firebaseConfig);
-    await setDoc(collection(db, 'usuarios'), {
-      name: 'John Doe',
-      email: 'john@example.com'
-    });`,
-
-          // Opción 3: Incorrecto - falta el ID del documento en Firestore
-          `import { 
-      initializeApp 
-    } from 'firebase/app';
-    
-    import { 
-      getFirestore, 
-      doc, 
-      setDoc 
-    } from 'firebase/firestore';
-    
-    const firebaseConfig = {
-      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-      authDomain: "progr-ai.firebaseapp.com",
-      projectId: "progr-ai",
-      storageBucket: "progr-ai.appspot.com",
-      messagingSenderId: "32042075426",
-      appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
-      measurementId: "G-0E37NCB4KB",
-    };
-    
-    // Inicializar Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    
-    // Agregar documento
-    await setDoc(doc(db, 'usuarios'), {
-      name: 'John Doe',
-      email: 'john@example.com'
-    });`,
-          `import { 
-      initializeApp 
-    } from 'firebase/app';
-    
-    import { 
-      getFirestore, 
-      doc, 
-      setDoc
-    } from 'firebase/firestore';
-    
-    const firebaseConfig = {
-      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-      authDomain: "progr-ai.firebaseapp.com",
-      projectId: "progr-ai",
-      storageBucket: "progr-ai.appspot.com",
-      messagingSenderId: "32042075426",
-      appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
-      measurementId: "G-0E37NCB4KB",
-    };
-    
-    // Inicializar Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    
-    // Agregar documento
-    await addDoc(doc(db, 'usuarios'), {
-      name: 'John Doe',
-      email: 'john@example.com'
-    });`,
-
-          // Opción 4: Incorrecto - falta importar los métodos de Firestore
-          `import { 
-      initializeApp 
-    } from 'firebase/app';
-        
-    const firebaseConfig = {
-      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-      authDomain: "progr-ai.firebaseapp.com",
-      projectId: "progr-ai",
-      storageBucket: "progr-ai.appspot.com",
-      messagingSenderId: "32042075426",
-      appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
-      measurementId: "G-0E37NCB4KB",
-    };
-    
-    // Inicializar Firebase
-    const app = initializeApp(firebaseConfig);
-    
-    // Agregar documento
-    await addDoc(doc(db, 'usuarios', 'user123'), {
-      name: 'John Doe',
-      email: 'john@example.com'
-    });`,
-        ],
-        answer: `import { 
-      initializeApp 
-    } from 'firebase/app';
-    
-    import { 
-      getFirestore, 
-      doc, 
-      setDoc 
-    } from 'firebase/firestore';
-    
-    const firebaseConfig = {
-      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-      authDomain: "progr-ai.firebaseapp.com",
-      projectId: "progr-ai",
-      storageBucket: "progr-ai.appspot.com",
-      messagingSenderId: "32042075426",
-      appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
-      measurementId: "G-0E37NCB4KB",
-    };
-    
-    // Inicializar Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    
-    // Agregar documento
-    await setDoc(doc(db, 'usuarios'), {
-      name: 'John Doe',
-      email: 'john@example.com'
-    });`,
-      },
-    },
-    {
-      group: "4",
-      title: "Manejo de Datos de Usuarios",
-      description:
-        "En este paso, aprenderás cómo manejar los datos de los usuarios en sistemas backend.",
-      isCode: true,
-      question: {
-        questionText:
-          "Escribe un fragmento de código para obtener un objeto de usuario con las propiedades de nombre de usuario y correo electrónico usando Firebase Auth.",
-      },
-    },
-    {
-      group: "4",
-      title: "Recuperar un Documento de Usuario Después de la Autenticación",
-      description:
-        "En este paso, aprenderás cómo recuperar un documento de usuario desde Firestore usando los datos de autenticación.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Escribe un código para recuperar un documento de usuario de la colección `users` en Firestore usando el ID de usuario autenticado.",
-      },
-    },
-    {
-      group: "4",
-      title: "Comprendiendo el Flujo de Autenticación",
-      description:
-        "En este paso, aprenderás sobre el flujo típico de autenticación en sistemas backend.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Organiza los siguientes pasos en el orden correcto para un flujo típico de autenticación en un sistema backend.",
-        options: [
-          "El usuario ingresa credenciales (correo electrónico y contraseña) en el formulario de inicio de sesión",
-          "El backend verifica las credenciales con el servicio de autenticación",
-          "Se crean tokens de identidad o sesiones para el usuario autenticado",
-          "El sistema recupera datos del usuario de la base de datos utilizando los tokens",
-          "El usuario obtiene acceso a los recursos protegidos",
-        ],
-        answer: [
-          "El usuario ingresa credenciales (correo electrónico y contraseña) en el formulario de inicio de sesión",
-          "El backend verifica las credenciales con el servicio de autenticación",
-          "Se crean tokens de identidad o sesiones para el usuario autenticado",
-          "El sistema recupera datos del usuario de la base de datos utilizando los tokens",
-          "El usuario obtiene acceso a los recursos protegidos",
-        ],
-      },
-    },
-    {
-      group: "4",
-      title: "Autenticación OAuth",
-      description:
-        "En este paso, aprenderás sobre los sistemas de autenticación estilo OAuth.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "¿Cuál es el protocolo ampliamente utilizado para la autorización que permite a servicios de terceros acceder a datos de usuario sin exponer credenciales?",
-        placeholder: "Escribe tu respuesta aquí...",
-        answer: "OAuth",
-      },
-    },
-    {
-      group: "4",
-      title: "Uso de Variables de Entorno",
-      description:
-        "En este paso, aprenderás sobre el uso de variables de entorno en el desarrollo backend.",
-      isText: true,
-      question: {
-        questionText:
-          "¿Qué papel juegan las variables de entorno en una base de código?",
-      },
-    },
-    {
-      group: "4",
-      title: "Relaciones en Bases de Datos",
-      description:
-        "En este paso, aprenderás sobre las relaciones en las bases de datos.",
-      isCode: true,
-      question: {
-        questionText:
-          "Escribe un fragmento de código para definir una relación uno a muchos entre usuarios y publicaciones en una base de datos.",
-      },
-    },
-    {
-      group: "4",
-      title: "Interfaz con una API",
-      description:
-        "En este paso, aprenderás los métodos HTTP comunes utilizados para interactuar con una API y algunos métodos menos comunes.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "¿Cuáles de los siguientes métodos HTTP son comúnmente utilizados para interactuar con una API y qué hacen?",
-        options: [
-          "GET (Recupera datos del servidor)",
-          "POST (Crea un nuevo recurso en el servidor)",
-          "SEND (Envía datos al servidor para su procesamiento)",
-          "FETCH (Se utiliza para recuperar datos de un recurso)",
-          "PATCH (Actualiza parcialmente un recurso en el servidor)",
-          "REMOVE (Elimina datos de un servidor)",
-          "PUT (Actualiza un recurso existente en el servidor)",
-          "DELETE (Elimina un recurso del servidor)",
-        ],
-        answer: [
-          "GET (Recupera datos del servidor)",
-          "POST (Crea un nuevo recurso en el servidor)",
-          "PUT (Actualiza un recurso existente en el servidor)",
-          "DELETE (Elimina un recurso del servidor)",
-          "PATCH (Actualiza parcialmente un recurso en el servidor)",
-        ],
-      },
-    },
-    {
-      group: "4",
-      title: "Creación de un Sistema de Autenticación de Usuarios",
-      description:
-        "En este paso, crearás un sistema de autenticación de usuarios simple.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Organiza los pasos para implementar la autenticación de usuarios usando JSON Web Tokens.",
-        options: [
-          "Instalar la biblioteca JWT",
-          "Configurar un modelo de usuario en la base de datos",
-          "Crear una ruta de registro para nuevos usuarios",
-          "Cifrar la contraseña del usuario antes de almacenarla",
-          "Crear una ruta de inicio de sesión",
-          "Verificar las credenciales del usuario",
-          "Generar un token JWT",
-          "Enviar el token JWT de vuelta al cliente",
-          "Crear una ruta protegida que requiera autenticación",
-          "Verificar el token JWT en rutas protegidas",
-        ],
-        answer: [
-          "Instalar la biblioteca JWT",
-          "Configurar un modelo de usuario en la base de datos",
-          "Crear una ruta de registro para nuevos usuarios",
-          "Cifrar la contraseña del usuario antes de almacenarla",
-          "Crear una ruta de inicio de sesión",
-          "Verificar las credenciales del usuario",
-          "Generar un token JWT",
-          "Enviar el token JWT de vuelta al cliente",
-          "Crear una ruta protegida que requiera autenticación",
-          "Verificar el token JWT en rutas protegidas",
-        ],
-      },
-    },
-    {
-      group: "4",
-      title: "Desplegar una Aplicación de Firebase",
-      description:
-        "En este paso, aprenderás cómo desplegar una aplicación backend de Firebase en un servicio en la nube.",
-      isText: true,
-      question: {
-        questionText:
-          "Escribe un comando para desplegar una aplicación de Firebase en la línea de comandos.",
-      },
-    },
-    {
-      group: "4",
-      title: "Construye tu Aplicación",
-      isConversationReview: true,
-      description: "Construye una aplicación según tu progreso",
-      question: {
-        questionText:
-          "¡Ingresa una idea de aplicación y constrúyela a medida que avanzas!",
-        range: [69, 89],
-      },
-    },
-    {
-      group: "5",
-      title: "Beneficios de las Plataformas en la Nube Sin Servidor",
-      description:
-        "En este paso, explorarás las ventajas de usar plataformas en la nube sin servidor como Firebase o Vercel en el desarrollo de software.",
-      isText: true,
-      question: {
-        questionText:
-          "¿Cuáles son los principales beneficios de usar plataformas en la nube sin servidor como Firebase o Vercel en el desarrollo de software, y en qué se diferencian de los modelos tradicionales basados en servidores?",
-      },
-    },
-    {
-      group: "5",
-      title: "Comprender VSCode",
-      description:
-        "En este paso, explorarás qué es Visual Studio Code (VSCode) y por qué es un editor de código popular.",
-      isText: true,
-      question: {
-        questionText:
-          "¿Qué es Visual Studio Code (VSCode) y por qué es uno de los editores de código más populares entre los desarrolladores?",
-      },
-    },
-    {
-      group: "5",
-      title: "Instalar Node.js y NPM",
-      description:
-        "Instala Node.js, lo que te permitirá crear aplicaciones en JavaScript.",
-      isText: true,
-      question: {
-        questionText:
-          "¿Cuál es el propósito de Node.js y npm en el desarrollo de JavaScript en términos simples?",
-      },
-    },
-    {
-      group: "5",
-      title: "Instalar Paquetes de 'package.json'.",
-      description: "Instalar los archivos encontrados en package.json.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "Introduce el comando para instalar los paquetes en un proyecto de React usando npm.",
-        answer: "npm install",
-      },
-    },
-    {
-      group: "5",
-      title: "Instalar Herramientas de Firebase Globalmente",
-      description:
-        "Instala las herramientas de Firebase globalmente usando la línea de comandos.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "Usa el terminal para instalar firebase-tools globalmente. ¿Qué comando utilizas?",
-        answer: "npm install -g firebase-tools",
-      },
-    },
-    {
-      group: "5",
-      title: "Configurar un Proyecto de React y Firebase con VSCode",
-      description:
-        "En este paso, organizarás los pasos necesarios para configurar un proyecto de React usando Vite, conectar los servicios de Firebase e instalar las herramientas necesarias utilizando Visual Studio Code (VSCode).",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Organiza los siguientes pasos en el orden correcto para configurar un proyecto de React usando Vite, instalar Node.js y npm, y conectar los servicios de Firebase usando VSCode.",
-        options: [
-          "Instalar Node.js y npm en tu máquina",
-          "Instalar Visual Studio Code (VSCode)",
-          "Abrir VSCode y navegar al terminal",
-          "Ejecutar `npm create vite@latest` para crear un nuevo proyecto de React",
-          "Navegar a la carpeta del proyecto usando `cd nombre-del-proyecto`",
-          "Ejecutar `npm install` para instalar dependencias",
-          "Instalar Firebase CLI usando `npm install -g firebase-tools`",
-          "Iniciar sesión en Firebase usando `firebase login`",
-          "Inicializar Firebase en el proyecto usando `firebase init`",
-          "Habilitar servicios de Firebase como Firestore o Authentication",
-          "Conectar Firebase a tu proyecto de React agregando la configuración de Firebase",
-          "Iniciar el servidor de desarrollo usando `npm run dev`",
-        ],
-        answer: [
-          "Instalar Node.js y npm en tu máquina",
-          "Instalar Visual Studio Code (VSCode)",
-          "Abrir VSCode y navegar al terminal",
-          "Ejecutar `npm create vite@latest` para crear un nuevo proyecto de React",
-          "Navegar a la carpeta del proyecto usando `cd nombre-del-proyecto`",
-          "Ejecutar `npm install` para instalar dependencias",
-          "Instalar Firebase CLI usando `npm install -g firebase-tools`",
-          "Iniciar sesión en Firebase usando `firebase login`",
-          "Inicializar Firebase en el proyecto usando `firebase init`",
-          "Habilitar servicios de Firebase como Firestore o Authentication",
-          "Conectar Firebase a tu proyecto de React agregando la configuración de Firebase",
-          "Iniciar el servidor de desarrollo usando `npm run dev`",
-        ],
-      },
-    },
-    {
-      group: "5",
-      title: "Configurar Firebase",
-      description:
-        "En este paso, configurarás Firebase para tu proyecto, incluyendo Authentication, Firestore y Analytics.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Escribe el código en JavaScript para inicializar Firebase en tu proyecto, y conectar los servicios de Authentication, Firestore y Analytics.",
-      },
-    },
-    {
-      group: "5",
-      title: "Introducción a GitHub",
-      description:
-        "Aprende sobre el uso de GitHub para colaborar con otros desarrolladores.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "¿Para qué se usa principalmente GitHub?",
-        options: [
-          "Alojar sitios web",
-          "Gestionar repositorios de código",
-          "Descentralizar software",
-          "Recopilar datos",
-        ],
-        answer: "Gestionar repositorios de código",
-      },
-    },
-    {
-      group: "5",
-      title: "Clonar Proyectos de Github",
-      description: "Clonar proyectos de Github en la línea de comandos.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText:
-          "Usa el terminal para clonar un proyecto de progr.ai de Github por Robots Building Education utilizando comandos de git.",
-        answer:
-          "git clone https://github.com/RobotsBuildingEducation/progr.ai.git",
-      },
-    },
-    {
-      group: "5",
-      title: "Alternativas Populares a Firebase",
-      description:
-        "En este paso, explorarás algunas alternativas populares a Firebase para varios servicios backend como la gestión de bases de datos, autenticación y hosting.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "¿Cuáles de las siguientes son alternativas populares a Firebase para construir aplicaciones full-stack?",
-        options: [
-          "Supabase",
-          "AWS Amplify",
-          "MongoDB Realm",
-          "HerokuDB",
-          "AngularJS",
-          "Vercel",
-          "Cloudflare",
-        ],
-        answer: ["Supabase", "AWS Amplify", "MongoDB Realm", "Cloudflare"],
-      },
-    },
-    {
-      group: "5",
-      title: "Productos Más Comunes de Firebase",
-      description:
-        "En este paso, identificarás los productos centrales de Firebase comúnmente utilizados en el desarrollo de aplicaciones web y móviles.",
-      isMultipleAnswerChoice: true,
-      question: {
-        questionText:
-          "¿Cuáles de los siguientes son productos comúnmente utilizados de Firebase?",
-        options: [
-          "Firestore: Base de datos NoSQL en la nube para almacenar y sincronizar datos",
-          "Firebase Ads: Plataforma para integrar publicidad",
-          "Authentication: Gestión de inicio de sesión e identidad de usuario",
-          "Firebase Functions: Backend sin servidor para ejecutar código",
-          "Firebase Storage: Almacenamiento de archivos para contenido generado por usuarios",
-          "Firebase Machine Learning: Herramientas de ML para características de la app",
-          "Firebase Builder: Herramienta para crear servicios de Firebase",
-          "Firebase Hosting: Alojamiento web para desplegar contenido estático",
-          "Firebase Cache: Servicio de caché para almacenamiento de alto rendimiento",
-          "Firebase Realtime Database: Base de datos de sincronización en tiempo real",
-          "Firebase Firestore: Base de datos de documentos y colecciones",
-          "Firebase Analytics: Rastrea el compromiso de usuarios y eventos en tu app",
-        ],
-        answer: [
-          "Firestore: Base de datos NoSQL en la nube para almacenar y sincronizar datos",
-          "Authentication: Gestión de inicio de sesión e identidad de usuario",
-          "Firebase Realtime Database: Base de datos de sincronización en tiempo real",
-          "Firebase Hosting: Alojamiento web para desplegar contenido estático",
-          "Firebase Functions: Backend sin servidor para ejecutar código",
-          "Firebase Storage: Almacenamiento de archivos para contenido generado por usuarios",
-          "Firebase Analytics: Rastrea el compromiso de usuarios y eventos en tu app",
-          "Firebase Firestore: Base de datos de documentos y colecciones",
-          "Firebase Machine Learning: Herramientas de ML para características de la app",
-        ],
-      },
-    },
-    {
-      group: "5",
-      title: "Actualizar un Proyecto con Github",
-      description: "Actualiza tu versión de código haciendo pull con Github.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "Usa el terminal para actualizar tu proyecto local de Github con la última versión disponible en Github.",
-      },
-    },
-    {
-      group: "5",
-      title: "Autenticando Usuarios",
-      description:
-        "Instala Firebase y react-firebaseui para crear usuarios en tu aplicación.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "¿Qué paquete utilizas para gestionar la experiencia del usuario para la autenticación con Firebase?",
-        options: [
-          "firebase",
-          "firebase-auth",
-          "firebase-hooks",
-          "react-firebaseui",
-          "firebase-admin",
-          "firebase-functions",
-          "firebase-storage",
-          "firebase-database",
-        ],
-        answer: "react-firebaseui",
-      },
-    },
-    {
-      group: "5",
-      title: "Habilitar Inicio de Sesión con Google",
-      description:
-        "Habilita el método de inicio de sesión con Google en la configuración de autenticación de Firebase.",
-      isText: true,
-      question: {
-        questionText:
-          "¿Qué pasos sigues para habilitar el inicio de sesión con Google en la configuración de autenticación de Firebase?",
-      },
-    },
-    {
-      group: "5",
-      title: "Conectar Firebase a Tu Código",
-      description:
-        "Recupera las claves de configuración de Firebase y conéctalas a tu código.",
-      isCode: true,
-      question: {
-        questionText:
-          "Escribe el código para inicializar Firebase en tu proyecto utilizando las claves de configuración.",
-      },
-    },
-    {
-      group: "5",
-      title:
-        "Renderizando Botón de Inicio de Sesión en React con Firebase y react-firebaseui",
-      description:
-        "En este paso, renderizarás un botón de inicio de sesión en tu aplicación de React usando Firebase Authentication y la biblioteca react-firebaseui.",
-      isCode: true,
-      question: {
-        questionText:
-          "Escribe el código para renderizar un botón de inicio de sesión de Firebase en un componente de React utilizando Firebase Authentication y react-firebaseui.",
-      },
-    },
-    {
-      group: "5",
-      title: "Mostrando Datos de Usuario",
-      description:
-        "Utiliza useEffect para mostrar los datos de usuario cuando inician sesión.",
-      isCode: true,
-      question: {
-        questionText:
-          "Escribe el código para mostrar los datos del usuario utilizando el hook useEffect cuando inician sesión con Firebase.",
-      },
-    },
-    {
-      group: "5",
-      title: "Actualizando el Perfil de Usuario",
-      description:
-        "Actualiza la información del perfil de usuario en tu base de datos de Firebase después de que hayan iniciado sesión.",
-      isCode: true,
-      question: {
-        questionText:
-          "Escribe el código para actualizar la información del perfil de usuario en Firebase Firestore.",
-      },
-    },
-    {
-      group: "5",
-      title: "Actualizando un Proyecto de Github",
-      description:
-        "Encadenando comandos de git para actualizar un proyecto en Github.",
-      isSingleLineText: true,
-      question: {
-        questionText:
-          "Introduce la combinación de comandos de github para escribir y actualizar una base de código con un mensaje.",
-        answer:
-          'git add . && git commit -m "your_message" && git push origin main',
-      },
-    },
-    {
-      group: "5",
-      title: "Usando Comandos de GitHub",
-      description:
-        "Aprende los comandos básicos de GitHub para gestionar tu código.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Organiza los siguientes comandos de Git en el orden correcto para programáticamente crear un nuevo repositorio y hacer push a tu cuenta de GitHub:",
-        options: [
-          "git init",
-          "git add .",
-          "git commit -m 'Initial commit'",
-          "git remote add origin <repository-url>",
-          "git branch -M main",
-          "git push -u origin main",
-        ],
-        answer: [
-          "git init",
-          "git add .",
-          "git commit -m 'Initial commit'",
-          "git remote add origin <repository-url>",
-          "git branch -M main",
-          "git push -u origin main",
-        ],
-      },
-    },
-    {
-      group: "5",
-      title: "Construye tu Aplicación",
-      isConversationReview: true,
-      description: "Construye una aplicación según tu progreso",
-      question: {
-        questionText:
-          "¡Ingresa una idea de aplicación y constrúyela a medida que avanzas!",
-        range: [91, 110],
-      },
-    },
-  ],
-
-  //   "py-en": [
-  //     {
-  //       group: "introduction",
-  //       title: "Introduction To Python Development",
-  //       isStudyGuide: true,
-  //       description:
-  //         "Expose yourself to Python fundamentals to improve the quality of your learning before making progress.",
-
-  //       question: {
-  //         questionText: (
-  //           <div>
-  //             <p style={{ marginBottom: 12 }}>
-  //               {" "}
-  //               One of the best predictors for student success is exposure to
-  //               course material before studying it.
-  //             </p>
-
-  //             <p style={{ marginBottom: 12 }}>
-  //               Remember to fail faster and fail forward! The real education
-  //               happens when you push through a challenge.
-  //             </p>
-  //           </div>
-  //         ),
-  //         metaData: `### Advice
-  // I know this looks like ChatGPT content…but it's not—it's me!
-
-  // As a beginner, remember:
-  // 1. Programming is mostly about organizing information rather than complex math. Code uses logic and control flow instead of algebraic equations.
-  // 2. Like natural languages, you can express the same idea in many ways.
-  // 3. When something challenges you, fail faster and break the problem into smaller, understandable steps.
-
-  // ### Exposure
-  // This guide exposes you to concepts before you answer questions, so you aren’t intimidated later. Don’t worry if you don’t grasp everything—skim it, then dive in.
-
-  // ### Core Concepts in Python
-
-  // \`\`\`py
-  // # Lists vs constructors
-  // my_list = [1, 2, 3, 'a', 'b', 'c', None, False]
-  // my_list.append('new data')
-
-  // # Dictionaries (key/value objects)
-  // data_set = {
-  //     "introduction": "Welcome",
-  //     "title": "Chapter 1",
-  //     "is_live": True
-  // }
-  // data_set["page"] = 4
-  // data_set["book"] = "Coding Basics"
-  // \`\`\`
-
-  // \`\`\`py
-  // # Custom classes
-  // class House:
-  //     def __init__(self, paint=None):
-  //         self.house_paint = paint
-
-  //     def get_paint(self):
-  //         return self.house_paint
-
-  //     def set_paint(self, paint):
-  //         self.house_paint = paint
-
-  //     def delete_paint(self):
-  //         self.house_paint = None
-  // \`\`\`
-
-  // ### Data Analysis with pandas
-
-  // \`\`\`py
-  // import pandas as pd
-
-  // # Create a DataFrame
-  // df = pd.DataFrame({
-  //     "house_paint": ["pink", "blue", "green"],
-  //     "rooms": [3, 4, 2]
-  // })
-
-  // # Inspect your data
-  // print(df.head())      # first rows
-  // print(df.describe())  # summary statistics
-
-  // # Filter and group
-  // filtered = df[df["rooms"] >= 3]
-  // grouped = df.groupby("house_paint").rooms.mean()
-  // \`\`\`
-
-  // ### Conclusion
-  // Failing fast is in your best interest when learning a new language. This one-pager will be available inside the app. Good luck, and happy coding!
-  // `,
-  //       },
-  //     },
-
-  //     {
-  //       group: "tutorial",
-  //       title: "Understanding Coding",
-  //       description: "Grasp the basic concept of coding in Python.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "Which of the following best describes coding?",
-  //         options: [
-  //           "Writing instructions for computers to perform tasks",
-  //           "Creating physical components for computers",
-  //           "Designing user interfaces",
-  //           "Managing databases",
-  //         ],
-  //         answer: "Writing instructions for computers to perform tasks",
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Sequence of Program Execution",
-  //       description: "Learn the correct order of program execution.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the steps with drag-and-drop to order how a Python program executes.",
-  //         options: [
-  //           "Writing Code",
-  //           "Code Interpretation",
-  //           "Debugging",
-  //           "Program Execution",
-  //         ],
-  //         answer: [
-  //           "Writing Code",
-  //           "Code Interpretation",
-  //           "Debugging",
-  //           "Program Execution",
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Introduction to Variables",
-  //       description:
-  //         "In this step, you will learn about variables and how to use them in your code.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Select all the steps involved in correctly declaring a variable in Python:",
-  //         options: [
-  //           "Choose a descriptive variable name",
-  //           "Start the name with a letter or underscore",
-  //           "Assign a value using the equals sign (=)",
-  //           "End the name with a semicolon (;)",
-  //           "Use uppercase letters for all variable names",
-  //           "Include type annotations for static typing",
-  //         ],
-  //         answer: [
-  //           "Choose a descriptive variable name",
-  //           "Start the name with a letter or underscore",
-  //           "Assign a value using the equals sign (=)",
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Understanding List Declarations",
-  //       description:
-  //         "Complete the code by selecting the correct way to declare a list of items in Python.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Which code block correctly declares a list of items in Python?",
-  //         options: [
-  //           `items = ['apple', 'banana', 'cherry']`,
-  //           `items = {'apple': 1, 'banana': 2, 'cherry': 3}`,
-  //           `def items():\n    return 'apple, banana, cherry'`,
-  //           `items = 'apple, banana, cherry'`,
-  //           `class Items:\n    pass`,
-  //         ],
-  //         answer: `items = ['apple', 'banana', 'cherry']`,
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Variable Assignment in Python",
-  //       description: "Learn how to assign values to variables in Python.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Declare a variable named `age` and assign it the value 25.",
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Understanding Data Types",
-  //       description: "Learn the basics of data types in Python.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "By convention, how should you name a constant in Python?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "UPPERCASE_WITH_UNDERSCORES",
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Purpose of Variables",
-  //       description: "Understand why variables are used in programming.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "In your own words, explain the purpose of variables in programming.",
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Bash Terminal Practice: Changing Directories",
-  //       description: "Practice changing directories in a terminal environment.",
-  //       isCode: true,
-  //       isTerminal: true,
-  //       question: {
-  //         questionText:
-  //           "Enter the command to change to the `new_folder` directory using a Bash terminal.",
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [1, 8],
-  //       },
-  //     },
-  //     // 1
-  //     {
-  //       group: "1",
-  //       title: "Data Types in Programming",
-  //       description: "Identify different primitive data types used in Python.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following are primitive data types in Python?",
-  //         options: [
-  //           "str",
-  //           "int",
-  //           "float",
-  //           "bool",
-  //           "NoneType",
-  //           "list",
-  //           "dict",
-  //           "complex",
-  //         ],
-  //         answer: ["str", "int", "float", "bool", "NoneType", "complex"],
-  //       },
-  //     },
-  //     // 2
-  //     {
-  //       group: "1",
-  //       title: "Steps to Create a Function",
-  //       description: "Understand the sequence of creating and using a function.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the steps with drag-and-drop to create and use a Python function.",
-  //         options: [
-  //           "Define the function",
-  //           "Call the function",
-  //           "Execute the function body",
-  //           "Return a value",
-  //         ],
-  //         answer: [
-  //           "Define the function",
-  //           "Call the function",
-  //           "Execute the function body",
-  //           "Return a value",
-  //         ],
-  //       },
-  //     },
-  //     // 3
-  //     {
-  //       group: "1",
-  //       title: "Writing a Simple Function",
-  //       description: "Practice writing functions in Python.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write a function named `greet` that takes a name as a parameter and prints a greeting with that name.",
-  //       },
-  //     },
-  //     // 4
-  //     {
-  //       group: "1",
-  //       title: "Functions in Programming",
-  //       description: "Discuss the role of functions.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What is a function, and why is it useful in programming?",
-  //       },
-  //     },
-  //     // 5
-  //     {
-  //       group: "1",
-  //       title: "Conditional Statements",
-  //       description: "Identify the purpose of conditional statements.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "What is the primary purpose of an `if` statement?",
-  //         options: [
-  //           "To repeat a block of code multiple times",
-  //           "To execute a block of code based on a condition",
-  //           "To define a variable",
-  //           "To import external libraries",
-  //         ],
-  //         answer: "To execute a block of code based on a condition",
-  //       },
-  //     },
-  //     // 6
-  //     {
-  //       group: "1",
-  //       title: "Order of Conditional Checks",
-  //       description:
-  //         "Complete the code that evaluates an `if`/`elif`/`else` statement.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Complete the following code to correctly implement an `if`/`elif`/`else` statement that checks if `x` is greater than 10, equal to 10, or less than 10.",
-  //         options: [
-  //           `if x > 10:\n    print("x is greater than 10")\nelif x == 10:\n    print("x is equal to 10")\nelse:\n    print("x is less than 10")`,
-  //           `if x == 10:\n    print("x is equal to 10")\nelif x > 10:\n    print("x is greater than 10")`,
-  //           `if x > 10:\n    print("x is greater than 10")\nelse:\n    print("x is not greater than 10")`,
-  //           `if x >= 10:\n    print("x is greater than or equal to 10")\nelse:\n    print("x is less than 10")`,
-  //         ],
-  //         answer: `if x > 10:\n    print("x is greater than 10")\nelif x == 10:\n    print("x is equal to 10")\nelse:\n    print("x is less than 10")`,
-  //       },
-  //     },
-  //     // 7
-  //     {
-  //       group: "1",
-  //       title: "Implementing Conditional Logic",
-  //       description: "Apply conditional logic in code.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write an `if`/`elif`/`else` statement that checks if a number `num` is positive, negative, or zero, and prints an appropriate message.",
-  //       },
-  //     },
-  //     // 8
-  //     {
-  //       group: "1",
-  //       title: "Understanding Conditional Logic in Programming",
-  //       description:
-  //         "Learn how logical operators like AND and OR control conditions in programming.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "Which logical operator is used to check if both conditions in a conditional statement are true in Python?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "and",
-  //       },
-  //     },
-  //     // 9
-  //     {
-  //       group: "1",
-  //       title: "Real-world Use of Conditionals",
-  //       description: "Reflect on how conditionals are used.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Provide an example of how conditional statements are used in real-world applications.",
-  //       },
-  //     },
-  //     // 10
-  //     {
-  //       group: "1",
-  //       title: "Terminal Practice: Help Command",
-  //       description: "Write the help command to observe basic commands.",
-  //       isCode: true,
-  //       isTerminal: true,
-  //       question: {
-  //         questionText:
-  //           "In a Bash terminal environment, enter the help command to discover basic commands.",
-  //       },
-  //     },
-  //     // 11
-  //     {
-  //       group: "1",
-  //       title: "Loops in Programming",
-  //       description: "Understand the purpose of loops.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which loop will continue executing as long as its condition remains true in Python?",
-  //         options: ["for loop", "while loop", "do...while loop", "foreach loop"],
-  //         answer: "while loop",
-  //       },
-  //     },
-  //     // 12
-  //     {
-  //       group: "1",
-  //       title: "Sequence of Loop Execution",
-  //       description: "Grasp the order in which loops execute.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the steps of a Python `for` loop execution with drag-and-drop.",
-  //         options: [
-  //           "Initialize iterator",
-  //           "Check condition",
-  //           "Execute code block",
-  //           "Advance iterator",
-  //         ],
-  //         answer: [
-  //           "Initialize iterator",
-  //           "Check condition",
-  //           "Execute code block",
-  //           "Advance iterator",
-  //         ],
-  //       },
-  //     },
-  //     // 13
-  //     {
-  //       group: "1",
-  //       title: "Creating a Loop",
-  //       description: "Practice writing loops.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write a `for` loop that prints numbers from 1 to 5 in Python.",
-  //       },
-  //     },
-  //     // 14
-  //     {
-  //       group: "1",
-  //       title: "Applications of Loops",
-  //       description: "Discuss where loops are useful.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Describe a scenario in software development where loops are essential.",
-  //       },
-  //     },
-  //     // 15
-  //     {
-  //       group: "1",
-  //       title: "Lists in Python",
-  //       description: "Identify methods used for manipulating lists in Python.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following methods are valid for manipulating lists in Python?",
-  //         options: [
-  //           ".append()",
-  //           ".pop()",
-  //           ".remove()",
-  //           ".extend()",
-  //           ".sort()",
-  //           ".reverse()",
-  //           ".map()", // map is a built-in function, not a list method
-  //           ".join()", // join is a string method
-  //         ],
-  //         answer: [
-  //           ".append()",
-  //           ".pop()",
-  //           ".remove()",
-  //           ".extend()",
-  //           ".sort()",
-  //           ".reverse()",
-  //         ],
-  //       },
-  //     },
-  //     // 16
-  //     {
-  //       group: "1",
-  //       title: "Order of List Operations",
-  //       description: "Understand how list operations are performed.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Complete the code to declare a list, add an element to it, remove the last element, and then access an element.",
-  //         options: [
-  //           `fruits = ['apple', 'banana']\nfruits.append('pink')\nfruits.pop()\nprint(fruits[0])`,
-  //           `fruits = 'apple, banana'\nfruits.append('pink')\nfruits.pop()\nprint(fruits[0])`,
-  //           `fruits = {'apple':1, 'banana':2}\nfruits.append('pink')\nfruits.pop()\nprint(list(fruits)[0])`,
-  //         ],
-  //         answer: `fruits = ['apple', 'banana']\nfruits.append('pink')\nfruits.pop()\nprint(fruits[0])`,
-  //       },
-  //     },
-  //     // 17
-  //     {
-  //       group: "1",
-  //       title: "Manipulating Lists",
-  //       description: "Apply list methods in code.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Create a list `fruits` with 'apple' and 'banana'. Add 'pink' to the end and remove 'apple' from the beginning.",
-  //       },
-  //     },
-  //     // 18
-  //     {
-  //       group: "1",
-  //       title: "Use Cases for Lists",
-  //       description: "Explore scenarios where lists are used.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Provide an example of how a list can be used to manage data in a Python application.",
-  //       },
-  //     },
-  //     // 19
-  //     {
-  //       group: "1",
-  //       title: "Terminal Practice: Creating Directories",
-  //       description: "Creating a directory command in a bash terminal",
-  //       isCode: true,
-  //       isTerminal: true,
-  //       question: {
-  //         questionText:
-  //           "In a Bash terminal environment, create a directory called `app` using the mkdir command.",
-  //       },
-  //     },
-  //     // 20
-  //     {
-  //       group: "1",
-  //       title: "Advanced Coding Output",
-  //       description:
-  //         "Predict the output of the following code with lists, conditionals, logical operators, and list comprehensions.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText: (
-  //           <div>
-  //             What will be the output of the following code?
-  //             <br />
-  //             <pre>
-  //               {`
-  // arr = [1, 2, 3, 4]
-  // x = 10
-  // y = 5
-
-  // if x > y and len(arr) > 3:
-  //     arr.append(x)
-  //     arr = [n for n in arr if n % 2 == 0]
-
-  // print(arr)
-  // `}
-  //             </pre>
-  //           </div>
-  //         ),
-  //         placeholder: "Type your answer here...",
-  //         answer: "[2, 4, 10]",
-  //       },
-  //     },
-  //     // 21
-  //     {
-  //       group: "1",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [10, 29], // Indices of steps to review
-  //       },
-  //     },
-  //     // 1
-  //     {
-  //       group: "2",
-  //       title: "Introduction to Objects",
-  //       description:
-  //         "In this step, you will learn what an object is in programming.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "In programming, which keyword creates a new object instance in Python?",
-  //         placeholder: "Type your answer here...",
-  //         answer:
-  //           "None (Python uses class instantiation without a specific keyword)",
-  //       },
-  //     },
-  //     // 2
-  //     {
-  //       group: "2",
-  //       title: "Understanding the __init__ Method",
-  //       description:
-  //         "In this step, you will learn about the purpose of the `__init__` method in a Python class.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following code blocks correctly defines the `__init__` method for class instantiation in Python?",
-  //         options: [
-  //           `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\nmy_car = Car("Toyota")`,
-  //           `class Car:\n    def init(self, brand):\n        self.brand = brand\n\nmy_car = Car("Toyota")`,
-  //           `class Car:\n    def __init__(brand):\n        self.brand = brand\n\nmy_car = Car("Toyota")`,
-  //           `class Car:\n    def __init__(self, brand):\n        brand = self.brand\n\nmy_car = Car("Toyota")`,
-  //         ],
-  //         answer: `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\nmy_car = Car("Toyota")`,
-  //       },
-  //     },
-  //     // 3
-  //     {
-  //       group: "2",
-  //       title: "Purpose of the __init__ Method",
-  //       description:
-  //         "In this step, you will learn about the purpose of the `__init__` method in a class.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Explain the purpose of the `__init__` method in a Python class.",
-  //       },
-  //     },
-  //     // 4
-  //     {
-  //       group: "2",
-  //       title: "Creating an Instance of a Class",
-  //       description:
-  //         "In this step, you will learn how to create an instance of a class in Python.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Select all correct steps required to create an instance of a class in Python:",
-  //         options: [
-  //           `Define class using class keyword`,
-  //           `Call constructor with parentheses`,
-  //           `Pass required arguments to constructor`,
-  //           `Store returned instance in a variable`,
-  //           `Use new keyword`,
-  //           `Define class with function keyword`,
-  //           `Call class directly without parentheses`,
-  //         ],
-  //         answer: [
-  //           `Define class using class keyword`,
-  //           `Call constructor with parentheses`,
-  //           `Pass required arguments to constructor`,
-  //           `Store returned instance in a variable`,
-  //         ],
-  //       },
-  //     },
-  //     // 5
-  //     {
-  //       group: "2",
-  //       title: "Declaring a Method in a Class",
-  //       description:
-  //         "In this step, you will learn how to declare a method inside a class.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Declare a method named `update_model` in the `Car` class that updates the `model` attribute.",
-  //       },
-  //     },
-  //     // 6
-  //     {
-  //       group: "2",
-  //       title: "Using self",
-  //       description:
-  //         "Complete the code by selecting the correct way to use `self` to refer to the instance property.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Which code block correctly uses `self` to refer to the object's property?",
-  //         options: [
-  //           `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\n    def show_brand(self):\n        print(brand)`,
-  //           `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\n    def show_brand(self):\n        print(self.brand)`,
-  //           `class Car:\n    def __init__(self, brand):\n        brand = self.brand\n\n    def show_brand(self):\n        print(brand)`,
-  //           `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\n    def show_brand(self):\n        print(self.brand())`,
-  //         ],
-  //         answer: `class Car:\n    def __init__(self, brand):\n        self.brand = brand\n\n    def show_brand(self):\n        print(self.brand)`,
-  //       },
-  //     },
-  //     // 7
-  //     {
-  //       group: "2",
-  //       title: "Adding Attributes to an Object",
-  //       description:
-  //         "In this step, you will learn how to add attributes to a Python class.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText: "Add a new attribute `year` to the `Car` class.",
-  //       },
-  //     },
-  //     // 8
-  //     {
-  //       group: "2",
-  //       title: "Accessing and Modifying Attributes",
-  //       description:
-  //         "In this step, you will learn how to get or set attributes of an object.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following are valid ways to get or set properties in Python?",
-  //         options: [
-  //           `Use dot notation (e.g., obj.property)`,
-  //           `Use getattr(obj, 'property')`,
-  //           `Use setter method if defined`,
-  //           `Use obj['property']`,
-  //           `Call obj.property() without defining method`,
-  //         ],
-  //         answer: [
-  //           `Use dot notation (e.g., obj.property)`,
-  //           `Use getattr(obj, 'property')`,
-  //           `Use setter method if defined`,
-  //         ],
-  //       },
-  //     },
-  //     // 9
-  //     {
-  //       group: "2",
-  //       title: "Modifying Object Attributes",
-  //       description:
-  //         "In this step, you will learn how to modify attributes of an object.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Modify the `model` attribute of an instance of the `Car` class.",
-  //       },
-  //     },
-  //     // 10
-  //     {
-  //       group: "2",
-  //       title: "Understanding Inheritance",
-  //       description:
-  //         "In this step, you will learn about inheritance in object-oriented programming.",
-  //       isText: true,
-  //       question: {
-  //         questionText: "What is inheritance in object-oriented programming?",
-  //       },
-  //     },
-  //     // 11
-  //     {
-  //       group: "2",
-  //       title: "Implementing Inheritance",
-  //       description:
-  //         "In this step, you will implement inheritance in Python by subclassing.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Extend the `Car` class to create an `ElectricCar` class with an additional attribute `battery_life`.",
-  //       },
-  //     },
-  //     // 12
-  //     {
-  //       group: "2",
-  //       title: "Overriding Methods",
-  //       description:
-  //         "In this step, you will learn how to override methods in a subclass.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "What does it mean to override a method in a subclass?",
-  //         options: [
-  //           `Replace superclass method with new implementation`,
-  //           `Delete method from superclass`,
-  //           `Inherit method without changes`,
-  //           `Call method from a different class`,
-  //           `Extend method functionality via super()`,
-  //         ],
-  //         answer: [
-  //           `Replace superclass method with new implementation`,
-  //           `Extend method functionality via super()`,
-  //         ],
-  //       },
-  //     },
-  //     // 13
-  //     {
-  //       group: "2",
-  //       title: "Understanding Encapsulation",
-  //       description:
-  //         "In this step, you will learn about encapsulation in object-oriented programming.",
-  //       isText: true,
-  //       question: {
-  //         questionText: "What is encapsulation in object-oriented programming?",
-  //       },
-  //     },
-  //     // 14
-  //     {
-  //       group: "2",
-  //       title: "Implementing Encapsulation",
-  //       description:
-  //         "In this step, you will implement encapsulation by using getter and setter methods.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Add getter and setter methods for the `battery_life` attribute in the `ElectricCar` class.",
-  //       },
-  //     },
-  //     // 15
-  //     {
-  //       group: "2",
-  //       title: "Encapsulation Concept",
-  //       description:
-  //         "In this step, you will define the core concept of encapsulation in one word.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What is the primary concept encapsulation ensures in object-oriented programming?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "Abstraction",
-  //       },
-  //     },
-  //     // 16
-  //     {
-  //       group: "2",
-  //       title: "Combining Concepts",
-  //       description:
-  //         "In this step, you will combine various concepts learned to create a small project.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Create a small project that defines a `Person` class, uses inheritance to create a `Student` subclass, and demonstrates encapsulation and lists of objects.",
-  //       },
-  //     },
-  //     // 17
-  //     {
-  //       group: "2",
-  //       title: "Printing in the Terminal",
-  //       description: "In this step, you will print a message using the terminal",
-  //       isCode: true,
-  //       isTerminal: true,
-  //       question: {
-  //         questionText:
-  //           "Type a command to print: 'I'm talking to the inside of a computer!'",
-  //       },
-  //     },
-  //     // 18
-  //     {
-  //       group: "2",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [31, 47],
-  //       },
-  //     },
-
-  //     {
-  //       group: "3",
-  //       title: "Introduction to React Components",
-  //       description:
-  //         "In this step, you will learn about React components, their role in creating reusable UI elements, and how they help manage the user interface efficiently.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following best describes a React component?",
-  //         options: [
-  //           "A method for handling events in JavaScript",
-  //           "A feature exclusive to server-side rendering in React",
-  //           "A reusable piece of user interface defined as a function or class that returns JSX",
-  //           "A built-in HTML element in React",
-  //         ],
-  //         answer:
-  //           "A reusable piece of user interface defined as a function or class that returns JSX",
-  //       },
-  //     },
-  //     {
-  //       group: "3",
-  //       title: "Key Concepts in React",
-  //       description:
-  //         "In this step, you will learn about the fundamental concepts of React, including properties (props), state, events, and styles.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText: "Which of the following are key concepts in React?",
-  //         options: [
-  //           "Managing properties to pass data between components",
-  //           "Manipulating the DOM directly for better performance",
-  //           "Using state to manage data within a component",
-  //           "Handling events such as clicks with event handlers",
-  //           "Applying inline styles or CSS classes to components",
-  //         ],
-  //         answer: [
-  //           "Managing properties to pass data between components",
-  //           "Using state to manage data within a component",
-  //           "Handling events such as clicks with event handlers",
-  //           "Applying inline styles or CSS classes to components",
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       group: "3",
-  //       title: "Effect of State Changes on a Component",
-  //       description:
-  //         "In this step, you will explain what happens to a React component when its state changes.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What happens to a React component when its state changes?",
-  //       },
-  //     },
-
-  //     //next lecture
-  //     {
-  //       group: "3",
-  //       title: "Creating a Simple React Component",
-  //       description:
-  //         "In this step, you will define a basic React component that returns some simple JSX.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following code blocks correctly defines a simple React component that returns a heading and a paragraph?",
-  //         options: [
-  //           // Option 1: Correct answer
-  //           `function MyComponent() {
-  //   return (
-  //     <div>
-  //       <h1>Hello, World!</h1>
-  //       <p>Welcome to the thunderdome</p>
-  //     </div>
-  //   );
-  // }`,
-
-  //           // Option 2: Incorrect - missing return statement
-  //           `function MyComponent() {
-  //   <div>
-  //     <h1>Hello, World!</h1>
-  //     <p>Welcome to the thunderdome</p>
-  //   </div>;
-  // }`,
-
-  //           // Option 3: Incorrect - uses class instead of function
-  //           `class MyComponent {
-  //   render() {
-  //     return (
-  //       <div>
-  //         <h1>Hello, World!</h1>
-  //         <p>How are we today?</p>
-  //       </div>
-  //     );
-  //   }
-  // }`,
-
-  //           // Option 4: Incorrect - missing JSX inside the return
-  //           `function MyComponent() {
-  //   return (
-  //     <div>Hello World</div>
-  //     <p>How are we today?</p>
-  //   );
-  // }`,
-  //         ],
-  //         answer: `function MyComponent() {
-  //   return (
-  //     <div>
-  //       <h1>Hello, World!</h1>
-  //       <p>Welcome to the thunderdome</p>
-  //     </div>
-  //   );
-  // }`,
-  //       },
-  //     },
-  //     {
-  //       group: "3",
-  //       title: "Handling Events in React",
-  //       description:
-  //         "In this step, you will define a basic React component that handles a button click event using the `onClick` attribute.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following code blocks correctly defines a React component that handles a button click event?",
-  //         options: [
-  //           // Option 2: Incorrect - no event handler function defined
-  //           `function MyComponent() {
-  //   return (
-  //     <div>
-  //       <button
-  //         onClick={
-  //           alert('Button clicked!')
-  //         }
-  //       >
-  //         Click me
-  //       </button>
-  //     </div>
-  //   );
-  // }`,
-
-  //           // Option 3: Incorrect - inline event handler, not recommended
-  //           `function MyComponent() {
-  // return (
-  //   <div>
-  //     <button
-  //       onClick= () => {
-  //         alert('Button clicked!')
-  //       }
-  //     >
-  //       Click me
-  //     </button>
-  //   </div>
-  // );
-  // }`,
-  //           `function MyComponent() {
-  //   const handleClick = () => {
-  //     alert('Button clicked!');
-  //   };
-
-  //   return (
-  //     <div>
-  //       <button
-  //         onClick={handleClick}
-  //       >
-  //         Click me
-  //       </button>
-  //     </div>
-  //   );
-  // }`,
-
-  //           // Option 4: Incorrect - no onClick attribute
-  //           `function MyComponent() {
-  // return (
-  //   <div>
-  //     <button>
-  //       Click me
-  //     </button>
-  //   </div>
-  // );
-  //     }`,
-  //         ],
-  //         answer: `function MyComponent() {
-  //   const handleClick = () => {
-  //     alert('Button clicked!');
-  //   };
-
-  //   return (
-  //     <div>
-  //       <button
-  //         onClick={handleClick}
-  //       >
-  //         Click me
-  //       </button>
-  //     </div>
-  //   );
-  // }`,
-  //       },
-  //     },
-
-  //     {
-  //       group: "3",
-  //       title: "Managing State with useState Hook",
-  //       description:
-  //         "In this step, you will learn how to use the useState hook to manage the state of a component.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText: `Modify the Tweet component to include a like button that toggles the liked state using the useState hook.`,
-  //       },
-  //     },
-
-  //     //next lecture
-  //     {
-  //       group: "3",
-  //       title: "Component Properties",
-  //       description:
-  //         "In this step, you will learn about passing properties to components in React.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What is the term used for passing data to a React component?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "props",
-  //       },
-  //     },
-  //     {
-  //       group: "3",
-  //       title: "Passing and Using Props",
-  //       description:
-  //         "In this step, you will learn how to pass and use props in a React component.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Update the Tweet component to accept and display the user's name, handle, and tweet content as props.",
-  //       },
-  //     },
-  //     {
-  //       group: "3",
-  //       title: "Working with Props and State Together",
-  //       description:
-  //         "In this step, you will learn how to work with both props and state in a React component.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText:
-  //           "What is the main difference between props and state in React?",
-  //         options: [
-  //           "Props are immutable while state is mutable",
-  //           "Props are managed by the component itself while state is passed down from parent components",
-  //           "State is used for styling while props are used for logic",
-  //           "There is no difference; they are the same",
-  //         ],
-  //         answer: "Props are immutable while state is mutable",
-  //       },
-  //     },
-
-  //     //next lecture
-  //     {
-  //       group: "3",
-  //       title: "Terminal Practice: Listing Files",
-  //       description:
-  //         "In this step, you will learn how to list files in a bash terminal.",
-  //       isCode: true,
-  //       isTerminal: true,
-  //       question: {
-  //         questionText: `Use the terminal to list all the files using the list command.`,
-  //       },
-  //     },
-
-  //     {
-  //       group: "3",
-  //       title: "Styling React Components",
-  //       description:
-  //         "In this step, you will learn how to style React components using CSS.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText: `Add styles to the Tweet component to improve its appearance.`,
-  //       },
-  //     },
-  //     {
-  //       group: "3",
-  //       title: "Using Flexbox for Layouts",
-  //       description:
-  //         "In this step, you will learn how to use Flexbox to create layouts in React.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the following CSS properties in the order needed to center a basic layout with flexbox styling:",
-  //         options: [
-  //           "display: flex;",
-  //           "justify-content: center;",
-  //           "align-items: center;",
-  //           "flex-direction: row;",
-  //         ],
-  //         answer: [
-  //           "display: flex;",
-  //           "flex-direction: row;",
-  //           "justify-content: center;",
-  //           "align-items: center;",
-  //         ],
-  //       },
-  //     },
-
-  //     //next lecture
-  //     {
-  //       group: "3",
-  //       title: "Lifting State Up",
-  //       description:
-  //         "In this step, you will learn how to lift state up to a common ancestor component to share state between components.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText: `Create a parent component that manages the state for multiple Tweet components and passes the state and event handlers as props.`,
-  //       },
-  //     },
-  //     {
-  //       group: "3",
-  //       title: "Using useEffect for Side Effects",
-  //       description:
-  //         "In this step, you will learn how to use the useEffect hook to handle side effects in a React component.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Modify the Tweet component to use the useEffect hook to log a message to the console every time the number of retweets changes.",
-  //       },
-  //     },
-
-  //     {
-  //       group: "3",
-  //       title: "Understanding Component Lifecycle",
-  //       description:
-  //         "In this step, you will learn about the lifecycle of React components and how to use useEffect hook to manage side effects.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What is the component lifecycle in React and what is the purpose of the useEffect hook?",
-  //       },
-  //     },
-
-  //     //next
-  //     {
-  //       group: "3",
-  //       title: "Fetching Data with useEffect",
-  //       description:
-  //         "In this step, you will learn how to fetch data from an API using the useEffect hook.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the steps with drag-and-drop to correctly fetch data using useEffect.",
-  //         options: [
-  //           "Import React and useState",
-  //           "Import useEffect from React",
-  //           "Create a component",
-  //           "Define the useEffect hook",
-  //           "Make the API call inside useEffect",
-  //           "Use async/await or .then() to handle the API response",
-  //           "Update the component state with the fetched data",
-  //           "Handle errors in the API call",
-  //           "Render the data in the component",
-  //         ],
-  //         answer: [
-  //           "Import React and useState",
-  //           "Import useEffect from React",
-  //           "Create a component",
-  //           "Define the useEffect hook",
-  //           "Make the API call inside useEffect",
-  //           "Use async/await or .then() to handle the API response",
-  //           "Update the component state with the fetched data",
-  //           "Handle errors in the API call",
-  //           "Render the data in the component",
-  //         ],
-  //       },
-  //     },
-
-  //     {
-  //       group: "3",
-  //       title: "Building a Complete Tweet App",
-  //       description:
-  //         "In this step, you will combine everything you have learned to build a complete Tweet app.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText: `Build a complete Tweet app that fetches tweets from an API, displays them using the Tweet component, and allows users to like and retweet.`,
-  //       },
-  //     },
-  //     {
-  //       group: "3",
-  //       title: "Terminal Practice: Setting Up A React App",
-  //       description: "In this step, you will learn how to set up a react project",
-
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Enter the command to install the latest version of a react project with vite.",
-  //       },
-  //     },
-
-  //     //next
-  //     {
-  //       group: "3",
-  //       title: "Creating a New React Project with Vite",
-  //       description:
-  //         "In this step, you will learn how to create a new React project using Vite by following the correct steps and running command-line commands.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the steps with drag-and-drop to correctly create a new React project using Vite, including command-line commands.",
-  //         options: [
-  //           "Ensure Node.js, NPM and VSCode are installed",
-  //           "Run `npm create vite@latest` to create a new Vite project",
-  //           "Select the React template when prompted",
-  //           "Navigate to the project directory using `cd project-name`",
-  //           "Run `npm install` to install dependencies",
-  //           "Start the development server with `npm run dev`",
-  //         ],
-  //         answer: [
-  //           "Ensure Node.js, NPM and VSCode are installed",
-  //           "Run `npm create vite@latest` to create a new Vite project",
-  //           "Select the React template when prompted",
-  //           "Navigate to the project directory using `cd project-name`",
-  //           "Run `npm install` to install dependencies",
-  //           "Start the development server with `npm run dev`",
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       group: "3",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [49, 67], // Indices of steps to review
-  //       },
-  //     },
-  //     // 1
-  //     {
-  //       group: "4",
-  //       title: "Introduction to Python Backend Engineering",
-  //       description:
-  //         "In this step, you will learn what backend software engineering is and why it is important.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What is backend software engineering and why is it important in building applications?",
-  //       },
-  //     },
-  //     // 2
-  //     {
-  //       group: "4",
-  //       title: "Main Lessons Overview",
-  //       description:
-  //         "In this step, you will identify a core responsibility of backend engineering in Python.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following is a core responsibility in backend engineering?",
-  //         options: [
-  //           "Managing concurrency and ensuring thread safety in multi-user applications",
-  //           "Implementing user authentication directly in the user interface",
-  //           "Handling memory allocation and garbage collection in the Python interpreter",
-  //           "Designing scalable front-end components for cross-browser compatibility",
-  //           "Optimizing database queries and ensuring data consistency",
-  //         ],
-  //         answer: "Optimizing database queries and ensuring data consistency",
-  //       },
-  //     },
-  //     // 3
-  //     {
-  //       group: "4",
-  //       title: "Key Responsibilities of Backend Engineering",
-  //       description:
-  //         "In this step, you will learn about the various responsibilities involved in Python backend engineering.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following are core responsibilities of backend engineering?",
-  //         options: [
-  //           "Managing and optimizing databases for storing and retrieving data efficiently",
-  //           "Designing and implementing RESTful APIs to facilitate communication between systems",
-  //           "Ensuring security through user authentication and authorization mechanisms",
-  //           "Handling server-side logic, including business operations and calculations",
-  //           "Maintaining server reliability and performance under high traffic",
-  //           "Managing data integrity and consistency across distributed systems",
-  //           "Implementing logging and monitoring to ensure system health and debug issues",
-  //         ],
-  //         answer: [
-  //           "Managing and optimizing databases for storing and retrieving data efficiently",
-  //           "Designing and implementing RESTful APIs to facilitate communication between systems",
-  //           "Ensuring security through user authentication and authorization mechanisms",
-  //           "Handling server-side logic, including business operations and calculations",
-  //           "Maintaining server reliability and performance under high traffic",
-  //           "Managing data integrity and consistency across distributed systems",
-  //           "Implementing logging and monitoring to ensure system health and debug issues",
-  //         ],
-  //       },
-  //     },
-  //     // 4
-  //     {
-  //       group: "4",
-  //       title: "Interfacing with the Terminal",
-  //       description:
-  //         "In this step, you will learn about using the terminal in Python backend engineering.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Why is learning to use the terminal important for backend development, and what kinds of tasks can you perform using it?",
-  //       },
-  //     },
-  //     // 5
-  //     {
-  //       group: "4",
-  //       title: "Upgrading pip",
-  //       description: "In this step, you will learn how to upgrade pip globally.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Write the command to upgrade pip, the Python package manager, globally.",
-  //       },
-  //     },
-  //     // 6
-  //     {
-  //       group: "4",
-  //       title: "Installing a Python Package",
-  //       description:
-  //         "In this step, you will use the terminal to install a package with pip.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Write the command to install Flask, a popular Python web framework.",
-  //       },
-  //     },
-  //     // 7
-  //     {
-  //       group: "4",
-  //       title: "User Creation and Authentication",
-  //       description:
-  //         "In this step, you will understand the key concept related to creating users in backend systems.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What is the process called that verifies a user's identity during account creation?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "authentication",
-  //       },
-  //     },
-  //     // 8
-  //     {
-  //       group: "4",
-  //       title: "Database Foundations",
-  //       description:
-  //         "In this step, you will learn about the foundations of databases in backend engineering.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What are the main types of databases used in backend engineering?",
-  //       },
-  //     },
-  //     // 9
-  //     {
-  //       group: "4",
-  //       title: "Connecting Systems",
-  //       description:
-  //         "Write a code snippet to connect a Python application to a PostgreSQL database using psycopg2.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write a Python code snippet to connect an application to a PostgreSQL database.",
-  //       },
-  //     },
-  //     // 10
-  //     {
-  //       group: "4",
-  //       title: "Starting a Django Project",
-  //       description:
-  //         "In this step, you will learn how to start a Django project using the command line.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText: "What is the command to start a new Django project?",
-  //         answer: "django-admin startproject mysite",
-  //       },
-  //     },
-  //     // 11
-  //     {
-  //       group: "4",
-  //       title: "Advanced Data Storage Practices",
-  //       description:
-  //         "In this step, you will learn advanced practices for storing data responsibly in backend systems.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following are best practices for ensuring responsible data storage in a backend system?",
-  //         options: [
-  //           "Cache data in memory (e.g., Redis) to reduce database access time",
-  //           "Use a single centralized backup to reduce complexity and cost",
-  //           "Encrypt sensitive data both at rest and in transit to ensure security",
-  //           "Implement database replication across multiple servers to improve fault tolerance",
-  //         ],
-  //         answer: [
-  //           "Cache data in memory (e.g., Redis) to reduce database access time",
-  //           "Encrypt sensitive data both at rest and in transit to ensure security",
-  //           "Implement database replication across multiple servers to improve fault tolerance",
-  //         ],
-  //       },
-  //     },
-  //     // 12
-  //     {
-  //       group: "4",
-  //       title: "Initializing SQLAlchemy and Adding a Record",
-  //       description:
-  //         "In this step, you will learn how to initialize SQLAlchemy and add a record.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Complete the code to initialize SQLAlchemy with a Flask app and add a new User record.",
-  //         options: [
-  //           // 1) Correct initialization & commit
-  //           `from flask import Flask
-  // from flask_sqlalchemy import SQLAlchemy
-
-  // app = Flask(__name__)
-  // app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@localhost/db'
-  // db = SQLAlchemy(app)
-
-  // class User(db.Model):
-  //     id = db.Column(db.Integer, primary_key=True)
-  //     username = db.Column(db.String, unique=True)
-
-  // # Add user
-  // new_user = User(username='alice')
-  // db.session.add(new_user)
-  // db.session.commit()`,
-  //           // 2) Forgot to call commit()
-  //           `from flask import Flask
-  // from flask_sqlalchemy import SQLAlchemy
-
-  // app = Flask(__name__)
-  // app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@localhost/db'
-  // db = SQLAlchemy(app)
-
-  // class User(db.Model):
-  //     id = db.Column(db.Integer, primary_key=True)
-  //     username = db.Column(db.String, unique=True)
-
-  // # Add user
-  // new_user = User(username='alice')
-  // db.session.add(new_user)  # forgot db.session.commit()`,
-  //           // 3) Used create_all instead of binding to app
-  //           `from flask import Flask
-  // from flask_sqlalchemy import SQLAlchemy
-
-  // app = Flask(__name__)
-  // app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@localhost/db'
-  // db = SQLAlchemy()
-
-  // class User(db.Model):
-  //     id = db.Column(db.Integer, primary_key=True)
-  //     username = db.Column(db.String, unique=True)
-
-  // db.create_all()  # missing db.init_app(app)
-
-  // # Add user
-  // new_user = User(username='alice')
-  // db.session.add(new_user)
-  // db.session.commit()`,
-  //           // 4) Incorrect URI key and missing session.add
-  //           `from flask import Flask
-  // from flask_sqlalchemy import SQLAlchemy
-
-  // app = Flask(__name__)
-  // app.config['DATABASE_URI'] = 'postgres://user:pass@localhost/db'  # wrong config key
-  // db = SQLAlchemy(app)
-
-  // class User(db.Model):
-  //     id = db.Column(db.Integer, primary_key=True)
-  //     username = db.Column(db.String, unique=True)
-
-  // # Add user
-  // new_user = User(username='alice')
-  // db.commit()  # wrong call: should be db.session.commit()`,
-  //         ],
-  //         answer: `from flask import Flask
-  // from flask_sqlalchemy import SQLAlchemy
-
-  // app = Flask(__name__)
-  // app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@localhost/db'
-  // db = SQLAlchemy(app)
-
-  // class User(db.Model):
-  //     id = db.Column(db.Integer, primary_key=True)
-  //     username = db.Column(db.String, unique=True)
-
-  // # Add user
-  // new_user = User(username='alice')
-  // db.session.add(new_user)
-  // db.session.commit()`,
-  //       },
-  //     },
-  //     // 13
-  //     {
-  //       group: "4",
-  //       title: "Handling User Data",
-  //       description:
-  //         "In this step, you will learn how to retrieve a user object using SQLAlchemy.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write a Python code snippet to get a User object by ID using SQLAlchemy.",
-  //       },
-  //     },
-  //     // 14
-  //     {
-  //       group: "4",
-  //       title: "Retrieving a Record After Authentication",
-  //       description:
-  //         "In this step, you will learn how to retrieve a record after verifying credentials.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write code to retrieve a User record from the database after authentication.",
-  //       },
-  //     },
-  //     // 15
-  //     {
-  //       group: "4",
-  //       title: "Understanding the Authentication Flow",
-  //       description:
-  //         "In this step, you will learn about the typical flow of authentication in backend systems.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the following steps in the correct order for a typical JWT authentication flow in a Python backend.",
-  //         options: [
-  //           "User submits credentials via POST",
-  //           "Backend verifies credentials against the database",
-  //           "JWT token is generated and signed",
-  //           "Client stores token locally",
-  //           "Backend validates token on protected routes",
-  //         ],
-  //         answer: [
-  //           "User submits credentials via POST",
-  //           "Backend verifies credentials against the database",
-  //           "JWT token is generated and signed",
-  //           "Client stores token locally",
-  //           "Backend validates token on protected routes",
-  //         ],
-  //       },
-  //     },
-  //     // 16
-  //     {
-  //       group: "4",
-  //       title: "OAuth Authentication",
-  //       description:
-  //         "In this step, you will learn about OAuth-style authentication systems.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What is the widely used protocol for authorization that allows third-party services to access user data without exposing credentials?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "OAuth 2.0",
-  //       },
-  //     },
-  //     // 17
-  //     {
-  //       group: "4",
-  //       title: "Using Environment Variables",
-  //       description:
-  //         "In this step, you will learn about using environment variables in backend development.",
-  //       isText: true,
-  //       question: {
-  //         questionText: "What role do environment variables play in a codebase?",
-  //       },
-  //     },
-  //     // 18
-  //     {
-  //       group: "4",
-  //       title: "Database Relationships",
-  //       description:
-  //         "In this step, you will learn about defining relationships in SQLAlchemy.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write a code snippet to define a one-to-many relationship between User and Post models in SQLAlchemy.",
-  //       },
-  //     },
-  //     // 19
-  //     {
-  //       group: "4",
-  //       title: "Interfacing with an API",
-  //       description:
-  //         "In this step, you will learn the common HTTP methods used to interface with an API.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following HTTP methods are commonly used to interface with a REST API, and what do they do?",
-  //         options: [
-  //           "GET (Retrieves data)",
-  //           "POST (Creates a new resource)",
-  //           "SEND (Sends data for processing)",
-  //           "PATCH (Partially updates a resource)",
-  //           "DELETE (Deletes a resource)",
-  //         ],
-  //         answer: [
-  //           "GET (Retrieves data)",
-  //           "POST (Creates a new resource)",
-  //           "PATCH (Partially updates a resource)",
-  //           "DELETE (Deletes a resource)",
-  //         ],
-  //       },
-  //     },
-  //     // 20
-  //     {
-  //       group: "4",
-  //       title: "Creating a JWT Authentication System",
-  //       description:
-  //         "In this step, you will create a simple user authentication system with JWT.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the steps with drag-and-drop to implement JWT authentication in Python.",
-  //         options: [
-  //           "Install PyJWT",
-  //           "Define User model",
-  //           "Create register endpoint",
-  //           "Hash passwords before storing",
-  //           "Create login endpoint",
-  //           "Verify user credentials",
-  //           "Generate JWT token",
-  //           "Return token to client",
-  //           "Protect routes with token verification",
-  //         ],
-  //         answer: [
-  //           "Install PyJWT",
-  //           "Define User model",
-  //           "Create register endpoint",
-  //           "Hash passwords before storing",
-  //           "Create login endpoint",
-  //           "Verify user credentials",
-  //           "Generate JWT token",
-  //           "Return token to client",
-  //           "Protect routes with token verification",
-  //         ],
-  //       },
-  //     },
-  //     // 21
-  //     {
-  //       group: "4",
-  //       title: "Deploying a Python Application",
-  //       description:
-  //         "In this step, you will learn how to deploy a Python backend application.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Write the command to start a Gunicorn server for your Flask app.",
-  //       },
-  //     },
-  //     // 22
-  //     {
-  //       group: "4",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [69, 89],
-  //       },
-  //     },
-  //     // 1
-  //     {
-  //       group: "5",
-  //       title: "Benefits of Serverless Cloud Platforms",
-  //       description:
-  //         "In this step, you will explore the advantages of using Firebase in software development.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What are the key benefits of using Firebase as a serverless backend, and how does it differ from traditional server-based models?",
-  //       },
-  //     },
-  //     // 2
-  //     {
-  //       group: "5",
-  //       title: "Understanding VSCode",
-  //       description:
-  //         "In this step, you will explore what Visual Studio Code (VSCode) is and why it is a popular code editor for Firebase development.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What is Visual Studio Code (VSCode) and why do many Firebase developers choose it?",
-  //       },
-  //     },
-  //     // 3
-  //     {
-  //       group: "5",
-  //       title: "Installing Node.js and npm",
-  //       description:
-  //         "Install Node.js and npm, required for the Firebase CLI and local emulation.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What is the purpose of Node.js and npm when working with Firebase projects?",
-  //       },
-  //     },
-  //     // 4
-  //     {
-  //       group: "5",
-  //       title: "Installing Project Dependencies",
-  //       description: "Install all dependencies listed in package.json.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "Enter the command to install dependencies from package.json.",
-  //         answer: "npm install",
-  //       },
-  //     },
-  //     // 5
-  //     {
-  //       group: "5",
-  //       title: "Install Firebase CLI",
-  //       description: "Install the Firebase CLI globally using npm.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What command do you use to install the Firebase CLI globally?",
-  //         answer: "npm install -g firebase-tools",
-  //       },
-  //     },
-  //     // 6
-  //     {
-  //       group: "5",
-  //       title: "Initializing a Firebase Project",
-  //       description:
-  //         "In this step, you will initialize a new Firebase project using the CLI.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What command do you use to initialize a Firebase project in your directory?",
-  //         answer: "firebase init",
-  //       },
-  //     },
-  //     // 7
-  //     {
-  //       group: "5",
-  //       title: "Selecting Firebase Features",
-  //       description:
-  //         "Choose which Firebase services to configure during initialization.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "During `firebase init`, which of the following features might you enable?",
-  //         options: [
-  //           "Authentication",
-  //           "Firestore",
-  //           "Realtime Database",
-  //           "Cloud Functions",
-  //           "Hosting",
-  //           "Storage",
-  //           "Emulators",
-  //         ],
-  //         answer: ["Authentication", "Firestore", "Cloud Functions", "Hosting"],
-  //       },
-  //     },
-  //     // 8
-  //     {
-  //       group: "5",
-  //       title: "Configuring Firebase SDK",
-  //       description:
-  //         "In this step, you will set up the Firebase Admin SDK in Python.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write the Python code to initialize the Firebase Admin SDK with a service account.",
-  //       },
-  //     },
-  //     // 9
-  //     {
-  //       group: "5",
-  //       title: "Setting Up Firestore",
-  //       description: "Learn how to initialize Firestore in your Python code.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Add the code to get a Firestore client from the initialized Admin SDK.",
-  //       },
-  //     },
-  //     // 10
-  //     {
-  //       group: "5",
-  //       title: "Understanding Authentication",
-  //       description:
-  //         "In this step, you will learn about Firebase Authentication.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What is Firebase Authentication, and what types of sign-in methods does it support?",
-  //       },
-  //     },
-  //     // 11
-  //     {
-  //       group: "5",
-  //       title: "Creating a User with Firebase Auth",
-  //       description:
-  //         "In this step, you will learn how to create a new user account programmatically.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write Python code using the Admin SDK to create a new user with email and password.",
-  //       },
-  //     },
-  //     // 12
-  //     {
-  //       group: "5",
-  //       title: "Verifying ID Tokens",
-  //       description:
-  //         "Learn how to verify a client’s Firebase ID token on your backend.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write Python code to verify a Firebase ID token and extract the user UID.",
-  //       },
-  //     },
-  //     // 13
-  //     {
-  //       group: "5",
-  //       title: "CRUD with Firestore",
-  //       description:
-  //         "In this step, you will perform basic database operations with Firestore.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Complete the Python code to add, get, update, and delete a document in Firestore.",
-  //         options: [
-  //           // 1) Correct sequence of calls
-  //           `# assume db is a Firestore client
-  // doc_ref = db.collection('users').document('alice')
-  // # create
-  // doc_ref.set({'email': 'alice@example.com', 'age': 30})
-  // # read
-  // user = doc_ref.get().to_dict()
-  // # update
-  // doc_ref.update({'age': 31})
-  // # delete
-  // doc_ref.delete()`,
-
-  //           // 2) Forgot to delete the document
-  //           `# assume db is a Firestore client
-  // doc_ref = db.collection('users').document('alice')
-  // # create
-  // doc_ref.set({'email': 'alice@example.com', 'age': 30})
-  // # read
-  // user = doc_ref.get().to_dict()
-  // # update
-  // doc_ref.update({'age': 31})
-  // # (missing delete step)`,
-
-  //           // 3) Used add() on a collection instead of document()
-  //           `# assume db is a Firestore client
-  // users_col = db.collection('users')
-  // # create
-  // new_ref = users_col.add({'email': 'alice@example.com', 'age': 30})
-  // # read
-  // user = new_ref.get().to_dict()
-  // # update
-  // new_ref.update({'age': 31})
-  // # delete
-  // new_ref.delete()`,
-
-  //           // 4) Read without converting to dict, and wrong delete call
-  //           `# assume db is a Firestore client
-  // doc_ref = db.collection('users').document('alice')
-  // # create
-  // doc_ref.set({'email': 'alice@example.com', 'age': 30})
-  // # read
-  // user = doc_ref.get()             # forgot .to_dict()
-  // # update
-  // doc_ref.update({'age': 31})
-  // # delete
-  // db.collection('users').delete()   # invalid: delete on collection`,
-  //         ],
-  //         answer: `# assume db is a Firestore client
-  // doc_ref = db.collection('users').document('alice')
-  // # create
-  // doc_ref.set({'email': 'alice@example.com', 'age': 30})
-  // # read
-  // user = doc_ref.get().to_dict()
-  // # update
-  // doc_ref.update({'age': 31})
-  // # delete
-  // doc_ref.delete()`,
-  //       },
-  //     },
-  //     // 14
-  //     {
-  //       group: "5",
-  //       title: "Writing Cloud Functions",
-  //       description:
-  //         "In this step, you will write a simple Firebase Cloud Function in Python.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Show a basic HTTP-triggered Cloud Function that returns 'Hello Firebase'.",
-  //       },
-  //     },
-  //     // 15
-  //     {
-  //       group: "5",
-  //       title: "Local Emulation",
-  //       description: "Learn how to test Functions and Firestore locally.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText: "What command starts the local Firebase emulator suite?",
-  //         answer: "firebase emulators:start",
-  //       },
-  //     },
-  //     // 16
-  //     {
-  //       group: "5",
-  //       title: "Deploying to Firebase",
-  //       description:
-  //         "In this step, you will deploy your Functions and Firestore rules to production.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText: "What command do you use to deploy only Cloud Functions?",
-  //         answer: "firebase deploy --only functions",
-  //       },
-  //     },
-  //     // 17
-  //     {
-  //       group: "5",
-  //       title: "Storage with Firebase",
-  //       description:
-  //         "Learn how to upload and serve files using Firebase Storage.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write Python code using the Admin SDK to upload a file to a Storage bucket.",
-  //       },
-  //     },
-  //     // 18
-  //     {
-  //       group: "5",
-  //       title: "Security Rules Basics",
-  //       description:
-  //         "In this step, you will learn about Firestore security rules.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What are Firestore security rules and when are they evaluated?",
-  //       },
-  //     },
-  //     // 19
-  //     {
-  //       group: "5",
-  //       title: "Monitoring and Analytics",
-  //       description:
-  //         "Explore Firebase’s built-in monitoring and analytics tools.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Which Firebase products help you monitor performance and usage of your backend?",
-  //       },
-  //     },
-  //     // 20
-  //     {
-  //       group: "5",
-  //       title: "Popular Firebase Extensions",
-  //       description: "Learn about official Firebase Extensions you can install.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following are Firebase Extensions provided by Google?",
-  //         options: [
-  //           "Trigger Email via SendGrid",
-  //           "Resize Images",
-  //           "Translate Text",
-  //           "Host Static Site",
-  //           "Backup Realtime Database",
-  //         ],
-  //         answer: [
-  //           "Trigger Email via SendGrid",
-  //           "Resize Images",
-  //           "Translate Text",
-  //           "Backup Realtime Database",
-  //         ],
-  //       },
-  //     },
-  //     // 21
-  //     {
-  //       group: "5",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [91, 110],
-  //       },
-  //     },
-  //   ],
-
-  //   ["swift-en"]: [
-  //     {
-  //       group: "introduction",
-  //       title: "Introduction To iOS Development with Swift",
-  //       isStudyGuide: true,
-  //       description:
-  //         "Expose yourself to Swift fundamentals and SwiftUI basics to improve the quality of your learning before making progress.",
-  //       question: {
-  //         questionText: (
-  //           <div>
-  //             <p style={{ marginBottom: 12 }}>
-  //               {" "}
-  //               One of the best predictors for student success is exposure to
-  //               course material before studying it.
-  //             </p>
-
-  //             <p style={{ marginBottom: 12 }}>
-  //               Remember to fail faster and fail forward! The real education
-  //               happens when you push through a challenge.
-  //             </p>
-  //           </div>
-  //         ),
-  //         metaData: `### Advice
-  // This looks like ChatGPT content…but it’s not—it's me, your instructor!
-
-  // As a beginner:
-  // 1. Programming is about structuring data and logic, not advanced math.
-  // 2. Like spoken languages, you can express the same idea in many ways.
-  // 3. When something challenges you, break it into smaller steps and iterate quickly.
-
-  // ### Exposure
-  // This guide exposes you to concepts before you answer questions, so you won’t be intimidated later. Skim it now, code along later.
-
-  // ### Core Concepts in Swift
-
-  // \`\`\`swift
-  // // Arrays
-  // var myArray: [Any] = [1, 2, 3, "a", "b", "c"]
-  // myArray.append("new data")
-
-  // // Dictionaries
-  // var dataSet: [String: Any] = [
-  //     "introduction": "Welcome",
-  //     "title": "Chapter 1",
-  //     "isLive": true
-  // ]
-  // dataSet["page"] = 4
-  // dataSet["book"] = "Coding Basics"
-  // \`\`\`
-
-  // \`\`\`swift
-  // // Defining a class
-  // class House {
-  //     private var housePaint: String?
-
-  //     init(paint: String? = nil) {
-  //         self.housePaint = paint
-  //     }
-
-  //     func getPaint() -> String? {
-  //         return housePaint
-  //     }
-
-  //     func setPaint(_ paint: String) {
-  //         housePaint = paint
-  //     }
-
-  //     func deletePaint() {
-  //         housePaint = nil
-  //     }
-  // }
-
-  // // Usage
-  // let firstHome = House(paint: "pink")
-  // let nextHome = House(paint: "blue")
-  // print(firstHome.getPaint()!)   // "pink"
-  // \`\`\`
-
-  // ### SwiftUI Quick Preview
-
-  // \`\`\`swift
-  // import SwiftUI
-
-  // struct CelebrationView: View {
-  //     let message: String
-
-  //     var body: some View {
-  //         VStack {
-  //             Text("Good job!")
-  //                 .font(.title)
-  //                 .padding(.bottom, 8)
-  //             Text(message)
-  //                 .multilineTextAlignment(.center)
-  //                 .padding()
-  //                 .border(Color.black, width: 2)
-  //         }
-  //     }
-  // }
-
-  // // Preview in Xcode
-  // struct CelebrationView_Previews: PreviewProvider {
-  //     static var previews: some View {
-  //         CelebrationView(message: "You created a small app!")
-  //     }
-  // }
-  // \`\`\`
-
-  // ### Conclusion
-  // Failing fast is in your best interest when learning a new language. This one-pager will be available inside the app. Good luck, and happy coding in Swift!`,
-  //       },
-  //     },
-
-  //     {
-  //       group: "tutorial",
-  //       title: "Understanding Coding",
-  //       description: "Grasp the basic concept of coding in Swift.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "Which of the following best describes coding?",
-  //         options: [
-  //           "Writing instructions for computers to perform tasks",
-  //           "Creating physical components for computers",
-  //           "Designing user interfaces",
-  //           "Managing databases",
-  //         ],
-  //         answer: "Writing instructions for computers to perform tasks",
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Sequence of Program Execution",
-  //       description: "Learn the correct order of program execution.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the steps with drag-and-drop to order how a Swift program is built and run.",
-  //         options: [
-  //           "Writing Code",
-  //           "Code Compilation",
-  //           "Debugging",
-  //           "Program Execution",
-  //         ],
-  //         answer: [
-  //           "Writing Code",
-  //           "Code Compilation",
-  //           "Debugging",
-  //           "Program Execution",
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Introduction to Variables",
-  //       description:
-  //         "In this step, you will learn about variables and how to declare them in Swift.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Select all the steps involved in correctly declaring a variable in Swift:",
-  //         options: [
-  //           "Use the var or let keyword",
-  //           "Choose a descriptive variable name",
-  //           "Assign a value using the equals sign (=)",
-  //           "End the declaration with a semicolon (;)",
-  //           "Capitalize the first letter of the variable name",
-  //           "Annotate the type explicitly (optional)",
-  //         ],
-  //         answer: [
-  //           "Use the var or let keyword",
-  //           "Choose a descriptive variable name",
-  //           "Assign a value using the equals sign (=)",
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Understanding List Declarations",
-  //       description:
-  //         "Complete the code by selecting the correct way to declare an array of items in Swift.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Which code block correctly declares a list of items in Swift?",
-  //         options: [
-  //           `let items = ["apple", "banana", "cherry"]`,
-  //           `var items: [String] = ["apple", "banana", "cherry"]`,
-  //           `let items = ("apple", "banana", "cherry")`,
-  //           `let items = "apple, banana, cherry"`,
-  //           `class Items {\n    // properties here\n}`,
-  //         ],
-  //         answer: `let items = ["apple", "banana", "cherry"]`,
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Variable Assignment in Swift",
-  //       description: "Learn how to assign values to variables in Swift.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Declare a variable named `age` and assign it the value 25.",
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Understanding Data Types",
-  //       description: "Learn the basics of data types in Swift.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText: "What keyword is used to declare a constant in Swift?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "let",
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Purpose of Variables",
-  //       description: "Understand why variables are used in programming.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "In your own words, explain the purpose of variables in programming.",
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Bash Terminal Practice: Changing Directories",
-  //       description: "Practice changing directories in a terminal environment.",
-  //       isCode: true,
-  //       isTerminal: true,
-  //       question: {
-  //         questionText:
-  //           "Enter the command to change to the `new_folder` directory using a Bash terminal.",
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [1, 8],
-  //       },
-  //     },
-  //     // 1
-  //     {
-  //       group: "1",
-  //       title: "Data Types in Programming",
-  //       description: "Identify different primitive data types used in Swift.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following are primitive data types in Swift?",
-  //         options: ["String", "Int", "Float", "Double", "Bool", "Character"],
-  //         answer: ["String", "Int", "Float", "Double", "Bool", "Character"],
-  //       },
-  //     },
-  //     // 2
-  //     {
-  //       group: "1",
-  //       title: "Steps to Create a Function",
-  //       description: "Understand the sequence of creating and using a function.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the steps with drag-and-drop to create and use a Swift function.",
-  //         options: [
-  //           "Define the function",
-  //           "Call the function",
-  //           "Execute the function body",
-  //           "Return a value",
-  //         ],
-  //         answer: [
-  //           "Define the function",
-  //           "Call the function",
-  //           "Execute the function body",
-  //           "Return a value",
-  //         ],
-  //       },
-  //     },
-  //     // 3
-  //     {
-  //       group: "1",
-  //       title: "Writing a Simple Function",
-  //       description: "Practice writing functions in Swift.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write a function named `greet` that takes a `name: String` parameter and prints a greeting with that name.",
-  //       },
-  //     },
-  //     // 4
-  //     {
-  //       group: "1",
-  //       title: "Functions in Programming",
-  //       description: "Discuss the role of functions.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What is a function, and why is it useful in programming?",
-  //       },
-  //     },
-  //     // 5
-  //     {
-  //       group: "1",
-  //       title: "Conditional Statements",
-  //       description: "Identify the purpose of conditional statements.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "What is the primary purpose of an `if` statement?",
-  //         options: [
-  //           "To repeat a block of code multiple times",
-  //           "To execute a block of code based on a condition",
-  //           "To define a variable",
-  //           "To import external libraries",
-  //         ],
-  //         answer: "To execute a block of code based on a condition",
-  //       },
-  //     },
-  //     // 6
-  //     {
-  //       group: "1",
-  //       title: "Order of Conditional Checks",
-  //       description:
-  //         "Complete the code that evaluates an `if`/`else if`/`else` statement.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Complete the following Swift code to check if `x` is greater than 10, equal to 10, or less than 10.",
-  //         options: [
-  //           // 1) Correct order and operators
-  //           `if x > 10 {
-  //     print("x is greater than 10")
-  // } else if x == 10 {
-  //     print("x is equal to 10")
-  // } else {
-  //     print("x is less than 10")
-  // }`,
-
-  //           // 2) Swapped the first two checks (wrong logic)
-  //           `if x == 10 {
-  //     print("x is equal to 10")
-  // } else if x > 10 {
-  //     print("x is greater than 10")
-  // } else {
-  //     print("x is less than 10")
-  // }`,
-
-  //           // 3) Missing the else-if branch entirely
-  //           `if x > 10 {
-  //     print("x is greater than 10")
-  // } else {
-  //     print("x is not greater than 10")
-  // }`,
-
-  //           // 4) Used >= instead of == for equality check
-  //           `if x > 10 {
-  //     print("x is greater than 10")
-  // } else if x >= 10 {
-  //     print("x is equal to 10")
-  // } else {
-  //     print("x is less than 10")
-  // }`,
-  //         ],
-  //         answer: `if x > 10 {
-  //     print("x is greater than 10")
-  // } else if x == 10 {
-  //     print("x is equal to 10")
-  // } else {
-  //     print("x is less than 10")
-  // }`,
-  //       },
-  //     },
-  //     // 7
-  //     {
-  //       group: "1",
-  //       title: "Implementing Conditional Logic",
-  //       description: "Apply conditional logic in code.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write an `if`/`else if`/`else` statement that checks if a number `num` is positive, negative, or zero, and prints an appropriate message.",
-  //       },
-  //     },
-  //     // 8
-  //     {
-  //       group: "1",
-  //       title: "Understanding Conditional Logic in Programming",
-  //       description:
-  //         "Learn how logical operators like AND and OR control conditions in programming.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "Which logical operator is used to check if both conditions in a conditional statement are true in Swift?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "&&",
-  //       },
-  //     },
-  //     // 9
-  //     {
-  //       group: "1",
-  //       title: "Real-world Use of Conditionals",
-  //       description: "Reflect on how conditionals are used.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Provide an example of how conditional statements are used in real-world applications.",
-  //       },
-  //     },
-  //     // 10
-  //     {
-  //       group: "1",
-  //       title: "Terminal Practice: Help Command",
-  //       description: "Write the help command to observe basic commands.",
-  //       isCode: true,
-  //       isTerminal: true,
-  //       question: {
-  //         questionText:
-  //           "In a Bash terminal environment, enter the help command to discover basic commands.",
-  //       },
-  //     },
-  //     // 11
-  //     {
-  //       group: "1",
-  //       title: "Loops in Programming",
-  //       description: "Understand the purpose of loops.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which loop will continue executing as long as its condition remains true in Swift?",
-  //         options: [
-  //           "for-in loop",
-  //           "while loop",
-  //           "repeat-while loop",
-  //           "forEach method",
-  //         ],
-  //         answer: "while loop",
-  //       },
-  //     },
-  //     // 12
-  //     {
-  //       group: "1",
-  //       title: "Sequence of Loop Execution",
-  //       description: "Grasp the order in which loops execute.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the steps of a Swift `for-in` loop execution with drag-and-drop.",
-  //         options: [
-  //           "Initialize iterator",
-  //           "Check condition",
-  //           "Execute code block",
-  //           "Advance iterator",
-  //         ],
-  //         answer: [
-  //           "Initialize iterator",
-  //           "Check condition",
-  //           "Execute code block",
-  //           "Advance iterator",
-  //         ],
-  //       },
-  //     },
-  //     // 13
-  //     {
-  //       group: "1",
-  //       title: "Creating a Loop",
-  //       description: "Practice writing loops.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write a `for i in 1...5 { print(i) }` loop that prints numbers from 1 to 5 in Swift.",
-  //       },
-  //     },
-  //     // 14
-  //     {
-  //       group: "1",
-  //       title: "Applications of Loops",
-  //       description: "Discuss where loops are useful.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Describe a scenario in software development where loops are essential.",
-  //       },
-  //     },
-  //     // 15
-  //     {
-  //       group: "1",
-  //       title: "Arrays in Swift",
-  //       description: "Identify methods used for manipulating arrays in Swift.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following methods are valid for manipulating arrays in Swift?",
-  //         options: [
-  //           ".append()",
-  //           ".removeLast()",
-  //           ".remove(at:)",
-  //           ".insert(_:at:)",
-  //           ".map()",
-  //           ".filter()",
-  //         ],
-  //         answer: [
-  //           ".append()",
-  //           ".removeLast()",
-  //           ".remove(at:)",
-  //           ".insert(_:at:)",
-  //           ".map()",
-  //           ".filter()",
-  //         ],
-  //       },
-  //     },
-  //     // 16
-  //     {
-  //       group: "1",
-  //       title: "Order of Array Operations",
-  //       description: "Understand how array operations are performed.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Complete the code to declare an array, add an element to it, remove the first element, and then access an element.",
-  //         options: [
-  //           // 1) Correct sequence
-  //           `var fruits = ["apple", "banana"]
-  // fruits.append("pink")
-  // fruits.removeFirst()
-  // print(fruits[0])`,
-
-  //           // 2) Missing the removal step
-  //           `var fruits = ["apple", "banana"]
-  // fruits.append("pink")
-  // print(fruits[0])`,
-
-  //           // 3) Operations in the wrong order
-  //           `var fruits = ["apple", "banana"]
-  // fruits.removeFirst()
-  // fruits.append("pink")
-  // print(fruits[0])`,
-
-  //           // 4) Accessing the wrong index
-  //           `var fruits = ["apple", "banana"]
-  // fruits.append("pink")
-  // fruits.removeFirst()
-  // print(fruits[1])`,
-  //         ],
-  //         answer: `var fruits = ["apple", "banana"]
-  // fruits.append("pink")
-  // fruits.removeFirst()
-  // print(fruits[0])`,
-  //       },
-  //     },
-  //     // 17
-  //     {
-  //       group: "1",
-  //       title: "Manipulating Arrays",
-  //       description: "Apply array methods in code.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           'Create an array `fruits` with "apple" and "banana". Add "pink" to the end and remove the first element.',
-  //       },
-  //     },
-  //     // 18
-  //     {
-  //       group: "1",
-  //       title: "Use Cases for Arrays",
-  //       description: "Explore scenarios where arrays are used.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Provide an example of how an array can be used to manage data in an iOS application.",
-  //       },
-  //     },
-  //     // 19
-  //     {
-  //       group: "1",
-  //       title: "Terminal Practice: Creating Directories",
-  //       description: "Creating a directory command in a bash terminal",
-  //       isCode: true,
-  //       isTerminal: true,
-  //       question: {
-  //         questionText:
-  //           "In a Bash terminal environment, create a directory called `app` using the `mkdir` command.",
-  //       },
-  //     },
-  //     // 20
-  //     {
-  //       group: "1",
-  //       title: "Advanced Coding Output",
-  //       description:
-  //         "Predict the output of the following code with arrays, conditionals, logical operators, and array operations.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText: (
-  //           <div>
-  //             What will be the output of the following code?
-  //             <br />
-  //             <pre>
-  //               {`
-  // var arr = [1, 2, 3, 4]
-  // let x = 10
-  // let y = 5
-
-  // if x > y && arr.count > 3 {
-  //     arr.append(x)
-  //     arr = arr.filter { $0 % 2 == 0 }
-  // }
-
-  // print(arr)
-  // `}
-  //             </pre>
-  //           </div>
-  //         ),
-  //         placeholder: "Type your answer here...",
-  //         answer: "[2, 4, 10]",
-  //       },
-  //     },
-  //     // 21
-  //     {
-  //       group: "1",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [10, 29],
-  //       },
-  //     },
-  //     // 1
-  //     {
-  //       group: "2",
-  //       title: "Introduction to Objects",
-  //       description:
-  //         "In this step, you will learn what an object is in programming.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText: "In Swift, how do you create a new instance of a class?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "Call the class initializer, e.g. MyClass()",
-  //       },
-  //     },
-  //     // 2
-  //     {
-  //       group: "2",
-  //       title: "Understanding the init Method",
-  //       description:
-  //         "In this step, you will learn about the purpose of the `init` method in a class.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following code blocks correctly defines the `init` method and instantiates the class in Swift?",
-  //         options: [
-  //           `class Car {
-  //     var brand: String
-  //     init(brand: String) {
-  //         self.brand = brand
-  //     }
-  // }
-  // let myCar = Car(brand: "Toyota")`,
-  //           `class Car {
-  //     var brand: String
-  //     func init(brand: String) {
-  //         self.brand = brand
-  //     }
-  // }
-  // let myCar = Car(brand: "Toyota")`,
-  //           `class Car {
-  //     var brand: String
-  //     init(_ brand: String) {
-  //         self.brand = brand
-  //     }
-  // }
-  // let myCar = Car("Toyota")`,
-  //           `class Car {
-  //     var brand: String?
-  //     init() {
-  //         brand = "Toyota"
-  //     }
-  // }
-  // let myCar = Car()`,
-  //         ],
-  //         answer: `class Car {
-  //     var brand: String
-  //     init(brand: String) {
-  //         self.brand = brand
-  //     }
-  // }
-  // let myCar = Car(brand: "Toyota")`,
-  //       },
-  //     },
-  //     // 3
-  //     {
-  //       group: "2",
-  //       title: "Purpose of the init Method",
-  //       description:
-  //         "In this step, you will learn about the purpose of the `init` method in a class.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Explain the purpose of the `init` method in a Swift class.",
-  //       },
-  //     },
-  //     // 4
-  //     {
-  //       group: "2",
-  //       title: "Creating an Instance of a Class",
-  //       description:
-  //         "In this step, you will learn how to create an instance of a class in Swift.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Select all the correct steps required to create an instance of a class in Swift:",
-  //         options: [
-  //           "Define the class with the `class` keyword",
-  //           "Call the class initializer with parentheses",
-  //           "Pass required parameters to the initializer",
-  //           "Store the returned instance in a variable",
-  //           "Use the `new` keyword",
-  //           "Call the class without parentheses",
-  //         ],
-  //         answer: [
-  //           "Define the class with the `class` keyword",
-  //           "Call the class initializer with parentheses",
-  //           "Pass required parameters to the initializer",
-  //           "Store the returned instance in a variable",
-  //         ],
-  //       },
-  //     },
-  //     // 5
-  //     {
-  //       group: "2",
-  //       title: "Declaring a Method in a Class",
-  //       description:
-  //         "In this step, you will learn how to declare a method inside a class.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Declare a method named `updateModel()` in the `Car` class that updates the `model` property.",
-  //       },
-  //     },
-  //     // 6
-  //     {
-  //       group: "2",
-  //       title: "Using self",
-  //       description:
-  //         "Complete the code by selecting the correct way to use `self` to refer to the instance property.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Which code block correctly uses `self` to refer to the object's property?",
-  //         options: [
-  //           `class Car {
-  //     var brand: String
-  //     init(brand: String) { self.brand = brand }
-  //     func showBrand() { print(brand) }
-  // }
-  // let myCar = Car(brand: "Toyota")
-  // myCar.showBrand()`,
-  //           `class Car {
-  //     var brand: String
-  //     init(brand: String) { self.brand = brand }
-  //     func showBrand() { print(self.brand) }
-  // }
-  // let myCar = Car(brand: "Toyota")
-  // myCar.showBrand()`,
-  //           `class Car {
-  //     var brand: String
-  //     init(brand: String) { brand = self.brand }
-  //     func showBrand() { print(self.brand) }
-  // }
-  // let myCar = Car(brand: "Toyota")
-  // myCar.showBrand()`,
-  //           `class Car {
-  //     var brand: String
-  //     init(brand: String) { self.brand = brand }
-  //     func showBrand() { print(self.brand()) }
-  // }
-  // let myCar = Car(brand: "Toyota")
-  // myCar.showBrand()`,
-  //         ],
-  //         answer: `class Car {
-  //     var brand: String
-  //     init(brand: String) { self.brand = brand }
-  //     func showBrand() { print(self.brand) }
-  // }
-  // let myCar = Car(brand: "Toyota")
-  // myCar.showBrand()`,
-  //       },
-  //     },
-  //     // 7
-  //     {
-  //       group: "2",
-  //       title: "Adding Properties to an Object",
-  //       description:
-  //         "In this step, you will learn how to add properties to a Swift class.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText: "Add a new property `year: Int` to the `Car` class.",
-  //       },
-  //     },
-  //     // 8
-  //     {
-  //       group: "2",
-  //       title: "Accessing and Modifying Object Properties",
-  //       description:
-  //         "In this step, you will learn how to get or set properties of an object in Swift.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following are valid ways to get or set properties in Swift?",
-  //         options: [
-  //           "Use dot notation (e.g., obj.property)",
-  //           "Use custom getter/setter if defined",
-  //           "Use Key-Value Coding (KVC)",
-  //           "Use reflection APIs",
-  //         ],
-  //         answer: [
-  //           "Use dot notation (e.g., obj.property)",
-  //           "Use custom getter/setter if defined",
-  //         ],
-  //       },
-  //     },
-  //     // 9
-  //     {
-  //       group: "2",
-  //       title: "Modifying Object Properties",
-  //       description:
-  //         "In this step, you will learn how to modify properties of an object.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Modify the `model` property of an instance of the `Car` class.",
-  //       },
-  //     },
-  //     // 10
-  //     {
-  //       group: "2",
-  //       title: "Understanding Inheritance",
-  //       description:
-  //         "In this step, you will learn about inheritance in object-oriented programming.",
-  //       isText: true,
-  //       question: {
-  //         questionText: "What is inheritance in object-oriented programming?",
-  //       },
-  //     },
-  //     // 11
-  //     {
-  //       group: "2",
-  //       title: "Implementing Inheritance",
-  //       description:
-  //         "In this step, you will implement inheritance in Swift by subclassing.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Extend the `Car` class to create an `ElectricCar` subclass with an additional property `batteryLife: Int`.",
-  //       },
-  //     },
-  //     // 12
-  //     {
-  //       group: "2",
-  //       title: "Overriding Methods",
-  //       description:
-  //         "In this step, you will learn how to override methods in a subclass.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "What does it mean to override a method in a subclass?",
-  //         options: [
-  //           "Provide a new implementation for a superclass method",
-  //           "Delete the superclass method",
-  //           "Call the superclass method without changes",
-  //           "Extend functionality via super.method()",
-  //         ],
-  //         answer: "Provide a new implementation for a superclass method",
-  //       },
-  //     },
-  //     // 13
-  //     {
-  //       group: "2",
-  //       title: "Understanding Encapsulation",
-  //       description:
-  //         "In this step, you will learn about encapsulation in object-oriented programming.",
-  //       isText: true,
-  //       question: {
-  //         questionText: "What is encapsulation in object-oriented programming?",
-  //       },
-  //     },
-  //     // 14
-  //     {
-  //       group: "2",
-  //       title: "Implementing Encapsulation",
-  //       description:
-  //         "In this step, you will implement encapsulation by using computed properties.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Add a computed property `batteryLife` with get and set in the `ElectricCar` subclass.",
-  //       },
-  //     },
-  //     // 15
-  //     {
-  //       group: "2",
-  //       title: "Encapsulation Concept",
-  //       description:
-  //         "In this step, you will define the core concept of encapsulation in one word.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What is the primary concept encapsulation ensures in object-oriented programming?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "Abstraction",
-  //       },
-  //     },
-  //     // 16
-  //     {
-  //       group: "2",
-  //       title: "Combining Concepts",
-  //       description:
-  //         "In this step, you will combine various concepts learned to create a small project.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Create a small project that defines a `Person` class, uses inheritance to create a `Student` subclass, and demonstrates encapsulation and arrays of objects in Swift.",
-  //       },
-  //     },
-  //     // 17
-  //     {
-  //       group: "2",
-  //       title: "Printing in Code",
-  //       description: "In this step, you will print a message using Swift code.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write a Swift statement to print: 'I'm talking to the inside of a computer!'",
-  //       },
-  //     },
-  //     // 18
-  //     {
-  //       group: "2",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [31, 47],
-  //       },
-  //     },
-  //     // 1
-  //     {
-  //       group: "3",
-  //       title: "Introduction to SwiftUI Views",
-  //       description:
-  //         "In this step, you will learn about SwiftUI views, their role in creating reusable UI elements, and how they help manage the user interface efficiently.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "Which of the following best describes a SwiftUI view?",
-  //         options: [
-  //           "A method for handling events in Swift",
-  //           "A feature exclusive to UIKit",
-  //           "A reusable piece of user interface defined as a struct or class conforming to View",
-  //           "A built-in HTML element in Swift",
-  //         ],
-  //         answer:
-  //           "A reusable piece of user interface defined as a struct or class conforming to View",
-  //       },
-  //     },
-  //     // 2
-  //     {
-  //       group: "3",
-  //       title: "Key Concepts in SwiftUI",
-  //       description:
-  //         "In this step, you will learn about fundamental SwiftUI concepts, including properties, state, modifiers, and layout containers.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText: "Which of the following are key concepts in SwiftUI?",
-  //         options: [
-  //           "@State for local mutable state",
-  //           "Directly manipulating the view hierarchy",
-  //           "View modifiers for styling and behavior",
-  //           "HStack, VStack, ZStack for layout",
-  //         ],
-  //         answer: [
-  //           "@State for local mutable state",
-  //           "View modifiers for styling and behavior",
-  //           "HStack, VStack, ZStack for layout",
-  //         ],
-  //       },
-  //     },
-  //     // 3
-  //     {
-  //       group: "3",
-  //       title: "Effect of State Changes on a View",
-  //       description:
-  //         "In this step, you will explain what happens to a SwiftUI view when its @State changes.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What happens to a SwiftUI view when its @State property changes?",
-  //       },
-  //     },
-  //     // 4
-  //     {
-  //       group: "3",
-  //       title: "Creating a Simple SwiftUI View",
-  //       description:
-  //         "In this step, you will define a basic SwiftUI view that displays a heading and a text.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following code blocks correctly defines a simple SwiftUI view that shows a title and subtitle?",
-  //         options: [
-  //           `struct MyView: View {
-  //     var body: some View {
-  //         VStack {
-  //             Text("Hello, World!")
-  //             Text("Welcome to the thunderdome")
-  //         }
-  //     }
-  // }`,
-  //           `class MyView: View {
-  //     func body() -> some View {
-  //         VStack {
-  //             Text("Hello, World!")
-  //             Text("Welcome to the thunderdome")
-  //         }
-  //     }
-  // }`,
-  //           `struct MyView {
-  //     var body: some View {
-  //         VStack {
-  //             Text("Hello, World!")
-  //             Text("Welcome to the thunderdome")
-  //         }
-  //     }
-  // }`,
-  //           `struct MyView: View {
-  //     var content: some View {
-  //         VStack {
-  //             Text("Hello, World!")
-  //             Text("Welcome to the thunderdome")
-  //         }
-  //     }
-  // }`,
-  //         ],
-  //         answer: `struct MyView: View {
-  //     var body: some View {
-  //         VStack {
-  //             Text("Hello, World!")
-  //             Text("Welcome to the thunderdome")
-  //         }
-  //     }
-  // }`,
-  //       },
-  //     },
-  //     // 5
-  //     {
-  //       group: "3",
-  //       title: "Handling Tap Gestures",
-  //       description:
-  //         "In this step, you will handle a button tap event using SwiftUI's modifiers.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following code blocks correctly defines a SwiftUI view that handles a button tap?",
-  //         options: [
-  //           `Button("Click me") {
-  //     print("Button clicked!")
-  // }`,
-  //           `Button(action: {
-  //     print("Button clicked!")
-  // }) {
-  //     Text("Click me")
-  // }`,
-  //           `Button("Click me", action: print("Button clicked!"))`,
-  //           `Button {
-  //     Text("Click me")
-  // } onTap: {
-  //     print("Button clicked!")
-  // }`,
-  //         ],
-  //         answer: `Button("Click me") {
-  //     print("Button clicked!")
-  // }`,
-  //       },
-  //     },
-  //     // 6
-  //     {
-  //       group: "3",
-  //       title: "Managing State with @State",
-  //       description:
-  //         "In this step, you will learn how to use the @State property wrapper to manage local view state.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Modify the TweetView to include a like button that toggles a `@State var liked: Bool` property.",
-  //       },
-  //     },
-  //     // 7
-  //     {
-  //       group: "3",
-  //       title: "View Properties",
-  //       description:
-  //         "In this step, you will learn about passing data into SwiftUI views.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What is the term used for data passed into a SwiftUI view?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "View properties (initializer parameters)",
-  //       },
-  //     },
-  //     // 8
-  //     {
-  //       group: "3",
-  //       title: "Passing and Using Properties",
-  //       description:
-  //         "In this step, you will learn how to pass and use properties in a SwiftUI view.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Update the TweetView to accept and display the user’s `name`, `handle`, and `content` as view properties.",
-  //       },
-  //     },
-  //     // 9
-  //     {
-  //       group: "3",
-  //       title: "Working with Properties and State Together",
-  //       description:
-  //         "In this step, you will learn the difference between properties and @State.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText:
-  //           "What is the main difference between view properties and @State?",
-  //         options: [
-  //           "Properties are immutable while @State is mutable",
-  //           "Properties trigger view updates while @State does not",
-  //           "@State is passed from parent views, properties are local",
-  //           "There is no difference; they behave the same",
-  //         ],
-  //         answer: "Properties are immutable while @State is mutable",
-  //       },
-  //     },
-  //     // 10
-  //     {
-  //       group: "3",
-  //       title: "Terminal Practice: Listing Files",
-  //       description:
-  //         "In this step, you will learn how to list files in a bash terminal.",
-  //       isCode: true,
-  //       isTerminal: true,
-  //       question: {
-  //         questionText:
-  //           "Use the terminal to list all files using the `ls` command.",
-  //       },
-  //     },
-  //     // 11
-  //     {
-  //       group: "3",
-  //       title: "Styling SwiftUI Views",
-  //       description:
-  //         "In this step, you will learn how to style SwiftUI views using modifiers.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Add modifiers to the TweetView to set font, padding, background, and corner radius.",
-  //       },
-  //     },
-  //     // 12
-  //     {
-  //       group: "3",
-  //       title: "Using Stacks for Layout",
-  //       description:
-  //         "In this step, you will learn how to use HStack and VStack for layout in SwiftUI.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the following in the order needed to center content using VStack and modifiers:",
-  //         options: [
-  //           "VStack { }",
-  //           ".frame(maxWidth: .infinity, maxHeight: .infinity)",
-  //           ".background(Color.white)",
-  //           ".multilineTextAlignment(.center)",
-  //         ],
-  //         answer: [
-  //           "VStack { }",
-  //           ".frame(maxWidth: .infinity, maxHeight: .infinity)",
-  //           ".multilineTextAlignment(.center)",
-  //           ".background(Color.white)",
-  //         ],
-  //       },
-  //     },
-  //     // 13
-  //     {
-  //       group: "3",
-  //       title: "Lifting State Up",
-  //       description:
-  //         "In this step, you will learn how to lift state to a parent view to share data.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Create a parent view that manages an array of Tweet models with @State and passes bindings to child TweetViews.",
-  //       },
-  //     },
-  //     // 14
-  //     {
-  //       group: "3",
-  //       title: "Using onAppear for Side Effects",
-  //       description:
-  //         "In this step, you will learn how to use onAppear to handle side effects in a SwiftUI view.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Modify the TweetView to use `.onAppear` or `.onChange` to log a message when the retweet count changes.",
-  //       },
-  //     },
-  //     // 15
-  //     {
-  //       group: "3",
-  //       title: "Understanding View Lifecycle",
-  //       description:
-  //         "In this step, you will learn about the SwiftUI view lifecycle and the purpose of onAppear.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What is the SwiftUI view lifecycle, and what is the purpose of onAppear?",
-  //       },
-  //     },
-  //     // 16
-  //     {
-  //       group: "3",
-  //       title: "Fetching Data with async/await",
-  //       description:
-  //         "In this step, you will learn how to fetch data from an API using async/await in SwiftUI.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the steps to correctly fetch data in a SwiftUI view using async/await:",
-  //         options: [
-  //           "Import SwiftUI and Foundation",
-  //           "Define @State var data",
-  //           "Use Task { await fetchData() } in .task modifier",
-  //           "Handle errors with do/catch",
-  //           "Update state with received data",
-  //           "Render data in view",
-  //         ],
-  //         answer: [
-  //           "Import SwiftUI and Foundation",
-  //           "Define @State var data",
-  //           "Use Task { await fetchData() } in .task modifier",
-  //           "Handle errors with do/catch",
-  //           "Update state with received data",
-  //           "Render data in view",
-  //         ],
-  //       },
-  //     },
-  //     // 17
-  //     {
-  //       group: "3",
-  //       title: "Building a Complete Tweet App",
-  //       description:
-  //         "In this step, you will combine everything you have learned to build a complete Tweet app in SwiftUI.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Build a SwiftUI Tweet app that fetches tweets via async/await, displays them in a List, and allows users to like and retweet.",
-  //       },
-  //     },
-  //     // 18
-  //     {
-  //       group: "3",
-  //       title: "Terminal Practice: Creating a Swift Package",
-  //       description:
-  //         "In this step, you will learn how to initialize a Swift package using the terminal.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Enter the command to create a new Swift package: `swift package init --type executable`.",
-  //       },
-  //     },
-  //     // 19
-  //     {
-  //       group: "3",
-  //       title: "Creating a New SwiftUI Project",
-  //       description:
-  //         "In this step, you will learn how to create a new SwiftUI project in Xcode.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText: "Arrange the steps to create a new SwiftUI app in Xcode:",
-  //         options: [
-  //           "Open Xcode and select File > New > Project",
-  //           "Choose App template and click Next",
-  //           "Select SwiftUI for Interface and Swift for Language",
-  //           "Enter product name and organization identifier",
-  //           "Choose a location and create the project",
-  //         ],
-  //         answer: [
-  //           "Open Xcode and select File > New > Project",
-  //           "Choose App template and click Next",
-  //           "Select SwiftUI for Interface and Swift for Language",
-  //           "Enter product name and organization identifier",
-  //           "Choose a location and create the project",
-  //         ],
-  //       },
-  //     },
-  //     // 20
-  //     {
-  //       group: "3",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [49, 67],
-  //       },
-  //     },
-  //     // 1
-  //     {
-  //       group: "4",
-  //       title: "Introduction to Swift Backend Engineering with Vapor",
-  //       description:
-  //         "In this step, you will learn what backend software engineering is and why it is important.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What is backend software engineering and why is it important in building applications?",
-  //       },
-  //     },
-  //     // 2
-  //     {
-  //       group: "4",
-  //       title: "Main Lessons Overview",
-  //       description:
-  //         "In this step, you will identify a core responsibility of backend engineering in Swift.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following is a core responsibility in backend engineering?",
-  //         options: [
-  //           "Managing concurrency and ensuring thread safety in multi-user applications",
-  //           "Implementing user authentication directly in the UI layer",
-  //           "Handling memory allocation in the Swift runtime",
-  //           "Designing scalable UI components for cross-platform compatibility",
-  //           "Optimizing database queries and ensuring data consistency",
-  //         ],
-  //         answer: "Optimizing database queries and ensuring data consistency",
-  //       },
-  //     },
-  //     // 3
-  //     {
-  //       group: "4",
-  //       title: "Key Responsibilities of Backend Engineering",
-  //       description:
-  //         "In this step, you will learn about the various responsibilities involved in Swift backend engineering with Vapor.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following are core responsibilities of backend engineering?",
-  //         options: [
-  //           "Managing and optimizing databases for storing and retrieving data efficiently",
-  //           "Designing and implementing RESTful APIs using Vapor",
-  //           "Ensuring security through user authentication and authorization mechanisms",
-  //           "Handling server-side logic, including business operations and calculations",
-  //           "Maintaining server reliability and performance under high traffic",
-  //           "Managing data integrity and consistency across distributed systems",
-  //           "Implementing logging and monitoring to ensure system health and debug issues",
-  //         ],
-  //         answer: [
-  //           "Managing and optimizing databases for storing and retrieving data efficiently",
-  //           "Designing and implementing RESTful APIs using Vapor",
-  //           "Ensuring security through user authentication and authorization mechanisms",
-  //           "Handling server-side logic, including business operations and calculations",
-  //           "Maintaining server reliability and performance under high traffic",
-  //           "Managing data integrity and consistency across distributed systems",
-  //           "Implementing logging and monitoring to ensure system health and debug issues",
-  //         ],
-  //       },
-  //     },
-  //     // 4
-  //     {
-  //       group: "4",
-  //       title: "Interfacing with the Terminal",
-  //       description:
-  //         "In this step, you will learn about using the terminal in Swift backend engineering.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Why is learning to use the terminal important for backend development, and what tasks can you perform using it?",
-  //       },
-  //     },
-  //     // 5
-  //     {
-  //       group: "4",
-  //       title: "Installing the Vapor Toolbox",
-  //       description:
-  //         "In this step, you will learn how to install the Vapor CLI globally.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Write the command to install the Vapor Toolbox using Homebrew.",
-  //       },
-  //     },
-  //     // 6
-  //     {
-  //       group: "4",
-  //       title: "Adding a Swift Package with SwiftPM",
-  //       description:
-  //         "In this step, you will use Swift Package Manager to add a dependency.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Write the command to add the FluentPostgresDriver package via SwiftPM.",
-  //       },
-  //     },
-  //     // 7
-  //     {
-  //       group: "4",
-  //       title: "User Creation and Authentication",
-  //       description:
-  //         "In this step, you will understand the key concept related to creating users in backend systems.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What is the process called that verifies a user's identity during account creation?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "authentication",
-  //       },
-  //     },
-  //     // 8
-  //     {
-  //       group: "4",
-  //       title: "Database Foundations",
-  //       description:
-  //         "In this step, you will learn about the foundations of databases in backend engineering.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What are the main types of databases used in backend engineering?",
-  //       },
-  //     },
-  //     // 9
-  //     {
-  //       group: "4",
-  //       title: "Connecting to PostgreSQL with Fluent",
-  //       description:
-  //         "In this step, you will write a code snippet to connect a Vapor app to a PostgreSQL database.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write a Swift code snippet using FluentPostgresDriver to configure the database connection.",
-  //       },
-  //     },
-  //     // 10
-  //     {
-  //       group: "4",
-  //       title: "Initiating a Vapor Project",
-  //       description:
-  //         "In this step, you will learn how to start a new Vapor project using the CLI.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText: "What is the command to create a new Vapor API project?",
-  //         answer: "vapor new MyApp --api",
-  //       },
-  //     },
-  //     // 11
-  //     {
-  //       group: "4",
-  //       title: "Advanced Data Storage Practices",
-  //       description:
-  //         "In this step, you will learn advanced practices for storing data responsibly in backend systems.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following are best practices for ensuring responsible data storage in a backend system?",
-  //         options: [
-  //           "Cache data in memory (e.g., Redis) to reduce database access time",
-  //           "Use a single centralized backup to reduce complexity and cost",
-  //           "Encrypt sensitive data both at rest and in transit to ensure security",
-  //           "Implement database replication across multiple servers to improve fault tolerance",
-  //         ],
-  //         answer: [
-  //           "Cache data in memory (e.g., Redis) to reduce database access time",
-  //           "Encrypt sensitive data both at rest and in transit to ensure security",
-  //           "Implement database replication across multiple servers to improve fault tolerance",
-  //         ],
-  //       },
-  //     },
-  //     // 12
-  //     {
-  //       group: "4",
-  //       title: "Configuring Fluent and Running Migrations",
-  //       description:
-  //         "In this step, you will learn how to initialize Fluent and run migrations in Vapor.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Complete the code to configure PostgreSQL and register a User migration in Vapor.",
-  //         options: [
-  //           // 1) Correct configuration, migration registration, and await
-  //           `import Fluent
-  // import FluentPostgresDriver
-  // import Vapor
-
-  // public func configure(_ app: Application) throws {
-  //     app.databases.use(.postgres(
-  //         hostname: "localhost",
-  //         username: "user",
-  //         password: "pass",
-  //         database: "db"
-  //     ), as: .psql)
-  //     app.migrations.add(CreateUser())
-  //     try app.autoMigrate().wait()
-  // }`,
-
-  //           // 2) Missing the .wait() on autoMigrate
-  //           `import Fluent
-  // import FluentPostgresDriver
-  // import Vapor
-
-  // public func configure(_ app: Application) throws {
-  //     app.databases.use(.postgres(
-  //         hostname: "localhost",
-  //         username: "user",
-  //         password: "pass",
-  //         database: "db"
-  //     ), as: .psql)
-  //     app.migrations.add(CreateUser())
-  //     try app.autoMigrate()  // forgot .wait()
-  // }`,
-
-  //           // 3) Wrong driver (MySQL) instead of Postgres
-  //           `import Fluent
-  // import FluentMySQLDriver
-  // import Vapor
-
-  // public func configure(_ app: Application) throws {
-  //     app.databases.use(.mysql(
-  //         hostname: "localhost",
-  //         username: "user",
-  //         password: "pass",
-  //         database: "db"
-  //     ), as: .mysql)
-  //     app.migrations.add(CreateUser())
-  //     try app.autoMigrate().wait()
-  // }`,
-
-  //           // 4) Registered database but forgot to add the migration
-  //           `import Fluent
-  // import FluentPostgresDriver
-  // import Vapor
-
-  // public func configure(_ app: Application) throws {
-  //     app.databases.use(.postgres(
-  //         hostname: "localhost",
-  //         username: "user",
-  //         password: "pass",
-  //         database: "db"
-  //     ), as: .psql)
-  //     try app.autoMigrate().wait()  // missing app.migrations.add(CreateUser())
-  // }`,
-  //         ],
-  //         answer: `import Fluent
-  // import FluentPostgresDriver
-  // import Vapor
-
-  // public func configure(_ app: Application) throws {
-  //     app.databases.use(.postgres(
-  //         hostname: "localhost",
-  //         username: "user",
-  //         password: "pass",
-  //         database: "db"
-  //     ), as: .psql)
-  //     app.migrations.add(CreateUser())
-  //     try app.autoMigrate().wait()
-  // }`,
-  //       },
-  //     },
-  //     // 13
-  //     {
-  //       group: "4",
-  //       title: "Handling User Data",
-  //       description:
-  //         "In this step, you will learn how to retrieve a User model instance.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write a Vapor route handler to fetch a User by ID from the database.",
-  //       },
-  //     },
-  //     // 14
-  //     {
-  //       group: "4",
-  //       title: "Retrieving a User After Authentication",
-  //       description:
-  //         "In this step, you will learn how to retrieve the authenticated user.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write code to retrieve the authenticated User from the request auth context in Vapor.",
-  //       },
-  //     },
-  //     // 15
-  //     {
-  //       group: "4",
-  //       title: "Understanding the Authentication Flow",
-  //       description:
-  //         "In this step, you will learn about the typical flow of JWT authentication in a backend system.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the following steps in the correct order for a typical JWT authentication flow in Vapor.",
-  //         options: [
-  //           "User submits credentials via POST",
-  //           "Server verifies credentials against database",
-  //           "JWT token is generated and signed",
-  //           "Client stores token locally",
-  //           "Protected routes validate token",
-  //         ],
-  //         answer: [
-  //           "User submits credentials via POST",
-  //           "Server verifies credentials against database",
-  //           "JWT token is generated and signed",
-  //           "Client stores token locally",
-  //           "Protected routes validate token",
-  //         ],
-  //       },
-  //     },
-  //     // 16
-  //     {
-  //       group: "4",
-  //       title: "OAuth Authentication",
-  //       description:
-  //         "In this step, you will learn about OAuth-style authentication systems.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What is the widely used protocol for authorization that allows third-party services to access user data without exposing credentials?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "OAuth 2.0",
-  //       },
-  //     },
-  //     // 17
-  //     {
-  //       group: "4",
-  //       title: "Using Environment Variables",
-  //       description:
-  //         "In this step, you will learn about using environment variables in backend development.",
-  //       isText: true,
-  //       question: {
-  //         questionText: "What role do environment variables play in a codebase?",
-  //       },
-  //     },
-  //     // 18
-  //     {
-  //       group: "4",
-  //       title: "Database Relationships with Fluent",
-  //       description:
-  //         "In this step, you will learn about defining relationships in Fluent.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write a Fluent model snippet to define a one-to-many relationship between User and Post.",
-  //       },
-  //     },
-  //     // 19
-  //     {
-  //       group: "4",
-  //       title: "Interfacing with an API",
-  //       description:
-  //         "In this step, you will learn the common HTTP methods used to interface with an API.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following HTTP methods are commonly used to interface with a REST API, and what do they do?",
-  //         options: [
-  //           "GET (Retrieves data)",
-  //           "POST (Creates a new resource)",
-  //           "PUT (Replaces a resource)",
-  //           "PATCH (Partially updates a resource)",
-  //           "DELETE (Deletes a resource)",
-  //         ],
-  //         answer: [
-  //           "GET (Retrieves data)",
-  //           "POST (Creates a new resource)",
-  //           "PATCH (Partially updates a resource)",
-  //           "DELETE (Deletes a resource)",
-  //         ],
-  //       },
-  //     },
-  //     // 20
-  //     {
-  //       group: "4",
-  //       title: "Creating a JWT Authentication System",
-  //       description:
-  //         "In this step, you will create a simple user authentication system with JWT in Vapor.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the steps with drag-and-drop to implement JWT authentication in Vapor.",
-  //         options: [
-  //           "Add jwt-kit dependency",
-  //           "Define User model",
-  //           "Configure JWT signer",
-  //           "Create register route",
-  //           "Hash password before storing",
-  //           "Create login route",
-  //           "Verify credentials",
-  //           "Generate JWT token",
-  //           "Return token to client",
-  //           "Protect routes with token middleware",
-  //         ],
-  //         answer: [
-  //           "Add jwt-kit dependency",
-  //           "Define User model",
-  //           "Configure JWT signer",
-  //           "Create register route",
-  //           "Hash password before storing",
-  //           "Create login route",
-  //           "Verify credentials",
-  //           "Generate JWT token",
-  //           "Return token to client",
-  //           "Protect routes with token middleware",
-  //         ],
-  //       },
-  //     },
-  //     // 21
-  //     {
-  //       group: "4",
-  //       title: "Deploying a Vapor Application",
-  //       description:
-  //         "In this step, you will learn how to deploy a Vapor application.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Write the command to run your Vapor app in production mode.",
-  //       },
-  //     },
-  //     // 22
-  //     {
-  //       group: "4",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [69, 89],
-  //       },
-  //     },
-  //     // 1
-  //     {
-  //       group: "5",
-  //       title: "Benefits of Serverless Cloud Platforms",
-  //       description:
-  //         "In this step, you will explore the advantages of using Firebase in iOS development.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What are the key benefits of using Firebase as a serverless backend for an iOS app, and how does it differ from a traditional server-based model?",
-  //       },
-  //     },
-  //     // 2
-  //     {
-  //       group: "5",
-  //       title: "Understanding Xcode",
-  //       description:
-  //         "In this step, you will explore what Xcode is and why it is the primary IDE for iOS development.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What is Xcode and why is it the most popular IDE among iOS developers?",
-  //       },
-  //     },
-  //     // 3
-  //     {
-  //       group: "5",
-  //       title: "Installing Swift and SwiftPM",
-  //       description: "Install Swift and use the Swift Package Manager.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What is the purpose of Swift and Swift Package Manager (SwiftPM) in iOS development?",
-  //       },
-  //     },
-  //     // 4
-  //     {
-  //       group: "5",
-  //       title: "Installing CocoaPods",
-  //       description: "Set up CocoaPods to manage Firebase dependencies.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "Enter the command to install CocoaPods on your macOS system.",
-  //         answer: "sudo gem install cocoapods",
-  //       },
-  //     },
-  //     // 5
-  //     {
-  //       group: "5",
-  //       title: "Adding Firebase via CocoaPods",
-  //       description: "Add Firebase SDK pods to your Xcode project.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What entry do you add under `pod 'Firebase/Core'` in your Podfile?",
-  //         answer:
-  //           "pod 'Firebase/Auth'\npod 'Firebase/Firestore'\npod 'Firebase/Storage'",
-  //       },
-  //     },
-  //     // 6
-  //     {
-  //       group: "5",
-  //       title: "Initializing a Firebase Project",
-  //       description:
-  //         "In this step, you will initialize Firebase in your iOS project by adding the config file.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What file do you download from the Firebase console and add to your Xcode project root?",
-  //         answer: "GoogleService-Info.plist",
-  //       },
-  //     },
-  //     // 7
-  //     {
-  //       group: "5",
-  //       title: "Selecting Firebase Modules",
-  //       description: "Choose which Firebase modules to include in your iOS app.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following Firebase SDK modules might you enable for an iOS app?",
-  //         options: [
-  //           "Auth",
-  //           "Firestore",
-  //           "Realtime Database",
-  //           "Cloud Functions",
-  //           "Analytics",
-  //           "Storage",
-  //         ],
-  //         answer: ["Auth", "Firestore", "Analytics", "Storage"],
-  //       },
-  //     },
-  //     // 8
-  //     {
-  //       group: "5",
-  //       title: "Configuring Firebase in AppDelegate",
-  //       description:
-  //         "Initialize Firebase in your AppDelegate or SwiftUI App entry point.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write the Swift code to configure Firebase in AppDelegate `application(_:didFinishLaunchingWithOptions:)`.",
-  //       },
-  //     },
-  //     // 9
-  //     {
-  //       group: "5",
-  //       title: "Setting Up Firestore",
-  //       description: "Learn how to initialize and use Firestore in Swift.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write the Swift code to get a Firestore instance and add a document to `users` collection.",
-  //       },
-  //     },
-  //     // 10
-  //     {
-  //       group: "5",
-  //       title: "Understanding Authentication",
-  //       description:
-  //         "In this step, you will learn about Firebase Authentication in iOS.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What is Firebase Authentication, and which sign-in methods does it support on iOS?",
-  //       },
-  //     },
-  //     // 11
-  //     {
-  //       group: "5",
-  //       title: "Creating a User with FirebaseAuth",
-  //       description: "Create a new user account programmatically in Swift.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write Swift code using `Auth.auth().createUser` with email and password.",
-  //       },
-  //     },
-  //     // 12
-  //     {
-  //       group: "5",
-  //       title: "Verifying ID Tokens",
-  //       description: "Obtain and verify the current user's ID token.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write Swift code to fetch `currentUser.getIDToken(completion:)` and print the token.",
-  //       },
-  //     },
-  //     // 13
-  //     {
-  //       group: "5",
-  //       title: "CRUD with Firestore",
-  //       description: "Perform basic Firestore operations in Swift.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Complete the Swift code to create, read, update, and delete a document in Firestore.",
-  //         options: [
-  //           // 1) Correct sequence and syntax
-  //           `let db = Firestore.firestore()
-  // let doc = db.collection("users").document("alice")
-  // // create
-  // doc.setData(["email": "alice@example.com", "age": 30])
-  // // read
-  // doc.getDocument { snapshot, error in
-  //   let data = snapshot?.data()
-  // }
-  // // update
-  // doc.updateData(["age": 31])
-  // // delete
-  // doc.delete()`,
-
-  //           // 2) Mis-uses setData for update (overwrites entire document)
-  //           `let db = Firestore.firestore()
-  // let doc = db.collection("users").document("alice")
-  // // create
-  // doc.setData(["email": "alice@example.com", "age": 30])
-  // // read
-  // doc.getDocument { snapshot, error in
-  //   let data = snapshot?.data()
-  // }
-  // // update
-  // doc.setData(["age": 31])  // should use updateData
-  // // delete
-  // doc.delete()`,
-
-  //           // 3) Incorrect read method and missing closure brace
-  //           `let db = Firestore.firestore()
-  // let doc = db.collection("users").document("alice")
-  // // create
-  // doc.setData(["email": "alice@example.com", "age": 30])
-  // // read
-  // doc.getDocuments { snapshot, error in
-  //   let data = snapshot?.documents.first?.data()
-  // // update
-  // doc.updateData(["age": 31])
-  // // delete
-  // doc.delete()`,
-
-  //           // 4) Wrong delete call on collection instead of document
-  //           `let db = Firestore.firestore()
-  // let doc = db.collection("users").document("alice")
-  // // create
-  // doc.setData(["email": "alice@example.com", "age": 30])
-  // // read
-  // doc.getDocument { snapshot, error in
-  //   let data = snapshot?.data()
-  // }
-  // // update
-  // doc.updateData(["age": 31])
-  // // delete
-  // db.collection("users").delete()  // invalid: must call delete() on document`,
-  //         ],
-  //         answer: `let db = Firestore.firestore()
-  // let doc = db.collection("users").document("alice")
-  // // create
-  // doc.setData(["email": "alice@example.com", "age": 30])
-  // // read
-  // doc.getDocument { snapshot, error in
-  //   let data = snapshot?.data()
-  // }
-  // // update
-  // doc.updateData(["age": 31])
-  // // delete
-  // doc.delete()`,
-  //       },
-  //     },
-  //     // 14
-  //     {
-  //       group: "5",
-  //       title: "Calling Cloud Functions",
-  //       description: "Invoke an HTTPS Callable Cloud Function from Swift.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           'Write Swift code to call `functions.httpsCallable("helloWorld").call()` and handle the result.',
-  //       },
-  //     },
-  //     // 15
-  //     {
-  //       group: "5",
-  //       title: "Local Emulation",
-  //       description: "Learn how to test Firebase services locally.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText: "What command starts the local Firebase emulator suite?",
-  //         answer: "firebase emulators:start",
-  //       },
-  //     },
-  //     // 16
-  //     {
-  //       group: "5",
-  //       title: "Deploying to Firebase",
-  //       description: "Deploy your Cloud Functions and Firestore rules.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText: "What command do you use to deploy only Cloud Functions?",
-  //         answer: "firebase deploy --only functions",
-  //       },
-  //     },
-  //     // 17
-  //     {
-  //       group: "5",
-  //       title: "Uploading to Storage",
-  //       description: "Upload files to Firebase Storage in Swift.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write Swift code using `Storage.storage().reference()` to upload `data` to `images/photo.jpg`.",
-  //       },
-  //     },
-  //     // 18
-  //     {
-  //       group: "5",
-  //       title: "Security Rules Basics",
-  //       description: "Understand Firestore security rules for iOS clients.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What are Firestore security rules and when are they evaluated on client requests?",
-  //       },
-  //     },
-  //     // 19
-  //     {
-  //       group: "5",
-  //       title: "Performance Monitoring",
-  //       description: "Explore Firebase’s performance monitoring for iOS apps.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Which Firebase product helps you monitor performance metrics in an iOS app?",
-  //       },
-  //     },
-  //     // 20
-  //     {
-  //       group: "5",
-  //       title: "Popular Firebase Extensions",
-  //       description: "Learn about official Firebase Extensions you can install.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following are Firebase Extensions you might add to your project?",
-  //         options: [
-  //           "Trigger Email via SendGrid",
-  //           "Resize Images",
-  //           "Translate Text",
-  //           "Backup Realtime Database",
-  //         ],
-  //         answer: [
-  //           "Trigger Email via SendGrid",
-  //           "Resize Images",
-  //           "Translate Text",
-  //           "Backup Realtime Database",
-  //         ],
-  //       },
-  //     },
-  //     // 21
-  //     {
-  //       group: "5",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [91, 110],
-  //       },
-  //     },
-  //   ],
-
-  //   ["android-en"]: [
-  //     {
-  //       group: "introduction",
-  //       title: "Introduction To Android Development with Java",
-  //       isStudyGuide: true,
-  //       description:
-  //         "Expose yourself to Java fundamentals and Android basics to improve the quality of your learning before making progress.",
-  //       question: {
-  //         questionText: (
-  //           <div>
-  //             <p style={{ marginBottom: 12 }}>
-  //               {" "}
-  //               One of the best predictors for student success is exposure to
-  //               course material before studying it.
-  //             </p>
-
-  //             <p style={{ marginBottom: 12 }}>
-  //               Remember to fail faster and fail forward! The real education
-  //               happens when you push through a challenge.
-  //             </p>
-  //           </div>
-  //         ),
-  //         metaData: `### Advice
-  // I know this looks like ChatGPT content…but it’s not—it's me!
-
-  // As a beginner:
-  // 1. Programming is about structuring data and logic, not complex math.
-  // 2. Like spoken languages, you can express the same idea in many ways.
-  // 3. When something challenges you, break it into smaller steps and iterate quickly.
-
-  // ### Exposure
-  // This guide exposes you to concepts before you answer questions, so you won’t be intimidated later. Skim it now, code along later.
-
-  // ### Core Concepts in Java
-
-  // \`\`\`java
-  // // Lists with ArrayList
-  // import java.util.ArrayList;
-
-  // ArrayList<Object> myList = new ArrayList<>();
-  // myList.add(1);
-  // myList.add(2);
-  // myList.add(3);
-  // myList.add("a");
-  // myList.add(null);
-  // myList.add(false);
-  // myList.add("new data");
-  // \`\`\`
-
-  // \`\`\`java
-  // // Maps with HashMap
-  // import java.util.HashMap;
-
-  // HashMap<String, Object> dataSet = new HashMap<>();
-  // dataSet.put("introduction", "Welcome");
-  // dataSet.put("title", "Chapter 1");
-  // dataSet.put("isLive", true);
-  // dataSet.put("page", 4);
-  // dataSet.put("book", "Coding Basics");
-  // \`\`\`
-
-  // \`\`\`java
-  // // Defining a class
-  // public class House {
-  //     private String housePaint;
-
-  //     public House(String paint) {
-  //         this.housePaint = paint;
-  //     }
-
-  //     public String getPaint() {
-  //         return housePaint;
-  //     }
-
-  //     public void setPaint(String paint) {
-  //         this.housePaint = paint;
-  //     }
-
-  //     public void deletePaint() {
-  //         this.housePaint = null;
-  //     }
-  // }
-
-  // // Usage:
-  // // House firstHome = new House("pink");
-  // // System.out.println(firstHome.getPaint()); // "pink"
-  // \`\`\`
-
-  // ### Android UI Quick Preview
-
-  // \`\`\`java
-  // // MainActivity.java
-  // package com.example.introapp;
-
-  // import android.os.Bundle;
-  // import androidx.appcompat.app.AppCompatActivity;
-  // import android.widget.TextView;
-
-  // public class MainActivity extends AppCompatActivity {
-  //     @Override
-  //     protected void onCreate(Bundle savedInstanceState) {
-  //         super.onCreate(savedInstanceState);
-  //         TextView tv = new TextView(this);
-  //         tv.setText("Good job! You created a small Android app!");
-  //         tv.setTextSize(24);
-  //         setContentView(tv);
-  //     }
-  // }
-  // \`\`\`
-
-  // ### Conclusion
-  // Failing fast is in your best interest when learning a new language. This one-pager will be available inside the app. Good luck, and happy coding in Java & Android!`,
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Understanding Coding",
-  //       description: "Grasp the basic concept of coding in Java.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "Which of the following best describes coding?",
-  //         options: [
-  //           "Writing instructions for computers to perform tasks",
-  //           "Creating physical components for computers",
-  //           "Designing user interfaces",
-  //           "Managing databases",
-  //         ],
-  //         answer: "Writing instructions for computers to perform tasks",
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Sequence of Program Execution",
-  //       description: "Learn the correct order of program execution in Java.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the steps with drag-and-drop to order how a Java program is built and run.",
-  //         options: [
-  //           "Writing Code",
-  //           "Code Compilation",
-  //           "Debugging",
-  //           "Program Execution",
-  //         ],
-  //         answer: [
-  //           "Writing Code",
-  //           "Code Compilation",
-  //           "Debugging",
-  //           "Program Execution",
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Introduction to Variables",
-  //       description:
-  //         "In this step, you will learn about declaring variables in Java.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Select all the steps involved in correctly declaring a variable in Java:",
-  //         options: [
-  //           "Specify a type (e.g., int, String)",
-  //           "Choose a descriptive variable name",
-  //           "Assign a value using the equals sign (=)",
-  //           "End the declaration with a semicolon (;)",
-  //           "Start the name with a number",
-  //           "Use uppercase letters for all variable names",
-  //         ],
-  //         answer: [
-  //           "Specify a type (e.g., int, String)",
-  //           "Choose a descriptive variable name",
-  //           "Assign a value using the equals sign (=)",
-  //           "End the declaration with a semicolon (;)",
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Understanding List Declarations",
-  //       description:
-  //         "Complete the code by selecting the correct way to declare a list of items in Java.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Which code block correctly declares a list of items in Java?",
-  //         options: [
-  //           `String[] items = {"apple", "banana", "cherry"};`,
-  //           `List<String> items = Arrays.asList("apple", "banana", "cherry");`,
-  //           `String items = "apple, banana, cherry";`,
-  //           `Map<String, Integer> items = Map.of("apple", 1, "banana", 2, "cherry", 3);`,
-  //           `class Items { /* ... */ }`,
-  //         ],
-  //         answer: `String[] items = {"apple", "banana", "cherry"};`,
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Variable Assignment in Java",
-  //       description: "Learn how to assign values to variables in Java.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Declare a variable named `age` and assign it the value 25.",
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Understanding Data Types",
-  //       description: "Learn the basics of data types in Java.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText: "Which keyword is used to declare a constant in Java?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "final",
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Purpose of Variables",
-  //       description: "Understand why variables are used in programming.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "In your own words, explain the purpose of variables in programming.",
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Bash Terminal Practice: Changing Directories",
-  //       description: "Practice changing directories in a terminal environment.",
-  //       isCode: true,
-  //       isTerminal: true,
-  //       question: {
-  //         questionText:
-  //           "Enter the command to change to the `new_folder` directory using a Bash terminal.",
-  //       },
-  //     },
-  //     {
-  //       group: "tutorial",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [1, 8],
-  //       },
-  //     },
-
-  //     // 1
-  //     {
-  //       group: "1",
-  //       title: "Data Types in Programming",
-  //       description: "Identify different primitive data types used in Java.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following are primitive data types in Java?",
-  //         options: [
-  //           "byte",
-  //           "short",
-  //           "int",
-  //           "long",
-  //           "float",
-  //           "double",
-  //           "boolean",
-  //           "char",
-  //         ],
-  //         answer: [
-  //           "byte",
-  //           "short",
-  //           "int",
-  //           "long",
-  //           "float",
-  //           "double",
-  //           "boolean",
-  //           "char",
-  //         ],
-  //       },
-  //     },
-  //     // 2
-  //     {
-  //       group: "1",
-  //       title: "Steps to Create a Function",
-  //       description: "Understand the sequence of creating and using a method.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the steps with drag-and-drop to create and use a Java method.",
-  //         options: [
-  //           "Define the method",
-  //           "Call the method",
-  //           "Execute the method body",
-  //           "Return a value",
-  //         ],
-  //         answer: [
-  //           "Define the method",
-  //           "Call the method",
-  //           "Execute the method body",
-  //           "Return a value",
-  //         ],
-  //       },
-  //     },
-  //     // 3
-  //     {
-  //       group: "1",
-  //       title: "Writing a Simple Function",
-  //       description: "Practice writing methods in Java.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write a static method named `greet` that takes a `String name` parameter and prints a greeting with that name.",
-  //       },
-  //     },
-  //     // 4
-  //     {
-  //       group: "1",
-  //       title: "Functions in Programming",
-  //       description: "Discuss the role of methods.",
-  //       isText: true,
-  //       question: {
-  //         questionText: "What is a method, and why is it useful in programming?",
-  //       },
-  //     },
-  //     // 5
-  //     {
-  //       group: "1",
-  //       title: "Conditional Statements",
-  //       description: "Identify the purpose of conditional statements.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "What is the primary purpose of an `if` statement?",
-  //         options: [
-  //           "To repeat a block of code multiple times",
-  //           "To execute a block of code based on a condition",
-  //           "To define a variable",
-  //           "To import external libraries",
-  //         ],
-  //         answer: "To execute a block of code based on a condition",
-  //       },
-  //     },
-  //     // 6
-  //     {
-  //       group: "1",
-  //       title: "Order of Conditional Checks",
-  //       description:
-  //         "Complete the code that evaluates an `if`/`else if`/`else` statement.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Complete the following code to check if `x` is greater than 10, equal to 10, or less than 10.",
-  //         options: [
-  //           // 1) Correct logic and operators
-  //           `if (x > 10) {
-  //     System.out.println("x is greater than 10");
-  // } else if (x == 10) {
-  //     System.out.println("x is equal to 10");
-  // } else {
-  //     System.out.println("x is less than 10");
-  // }`,
-
-  //           // 2) Swapped first two checks (wrong logic order)
-  //           `if (x == 10) {
-  //     System.out.println("x is equal to 10");
-  // } else if (x > 10) {
-  //     System.out.println("x is greater than 10");
-  // } else {
-  //     System.out.println("x is less than 10");
-  // }`,
-
-  //           // 3) Missing the else-if branch entirely
-  //           `if (x > 10) {
-  //     System.out.println("x is greater than 10");
-  // } else {
-  //     System.out.println("x is not greater than 10");
-  // }`,
-
-  //           // 4) Used >= for the second check (treats 10 as greater-than)
-  //           `if (x > 10) {
-  //     System.out.println("x is greater than 10");
-  // } else if (x >= 10) {
-  //     System.out.println("x is equal to 10");
-  // } else {
-  //     System.out.println("x is less than 10");
-  // }`,
-  //         ],
-  //         answer: `if (x > 10) {
-  //     System.out.println("x is greater than 10");
-  // } else if (x == 10) {
-  //     System.out.println("x is equal to 10");
-  // } else {
-  //     System.out.println("x is less than 10");
-  // }`,
-  //       },
-  //     },
-  //     // 7
-  //     {
-  //       group: "1",
-  //       title: "Implementing Conditional Logic",
-  //       description: "Apply conditional logic in code.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write an `if`/`else if`/`else` statement that checks if a number `num` is positive, negative, or zero, and prints an appropriate message.",
-  //       },
-  //     },
-  //     // 8
-  //     {
-  //       group: "1",
-  //       title: "Understanding Conditional Logic in Programming",
-  //       description:
-  //         "Learn how logical operators like AND and OR control conditions in programming.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "Which logical operator is used to check if both conditions in a conditional statement are true in Java?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "&&",
-  //       },
-  //     },
-  //     // 9
-  //     {
-  //       group: "1",
-  //       title: "Real-world Use of Conditionals",
-  //       description: "Reflect on how conditionals are used.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Provide an example of how conditional statements are used in real-world applications.",
-  //       },
-  //     },
-  //     // 10
-  //     {
-  //       group: "1",
-  //       title: "Terminal Practice: Help Command",
-  //       description: "Write the help command to observe basic commands.",
-  //       isCode: true,
-  //       isTerminal: true,
-  //       question: {
-  //         questionText:
-  //           "In a Bash terminal environment, enter the help command to discover basic commands.",
-  //       },
-  //     },
-  //     // 11
-  //     {
-  //       group: "1",
-  //       title: "Loops in Programming",
-  //       description: "Understand the purpose of loops.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which loop will continue executing as long as its condition remains true in Java?",
-  //         options: ["for loop", "while loop", "do...while loop", "foreach loop"],
-  //         answer: "while loop",
-  //       },
-  //     },
-  //     // 12
-  //     {
-  //       group: "1",
-  //       title: "Sequence of Loop Execution",
-  //       description: "Grasp the order in which loops execute.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the steps of a Java `for` loop execution with drag-and-drop.",
-  //         options: [
-  //           "Initialization",
-  //           "Condition Check",
-  //           "Execution of Code Block",
-  //           "Update Expression",
-  //         ],
-  //         answer: [
-  //           "Initialization",
-  //           "Condition Check",
-  //           "Execution of Code Block",
-  //           "Update Expression",
-  //         ],
-  //       },
-  //     },
-  //     // 13
-  //     {
-  //       group: "1",
-  //       title: "Creating a Loop",
-  //       description: "Practice writing loops.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText: "Write a `for` loop that prints numbers from 1 to 5.",
-  //       },
-  //     },
-  //     // 14
-  //     {
-  //       group: "1",
-  //       title: "Applications of Loops",
-  //       description: "Discuss where loops are useful.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Describe a scenario in software development where loops are essential.",
-  //       },
-  //     },
-  //     // 15
-  //     {
-  //       group: "1",
-  //       title: "Arrays in Java",
-  //       description: "Identify methods used for manipulating arrays in Java.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following are valid for manipulating arrays in Java?",
-  //         options: [
-  //           ".length",
-  //           "Arrays.sort()",
-  //           "Arrays.asList()",
-  //           "System.arraycopy()",
-  //           ".clone()",
-  //         ],
-  //         answer: [
-  //           "Arrays.sort()",
-  //           "Arrays.asList()",
-  //           "System.arraycopy()",
-  //           ".clone()",
-  //         ],
-  //       },
-  //     },
-  //     // 16
-  //     {
-  //       group: "1",
-  //       title: "Order of Array Operations",
-  //       description: "Understand how array operations are performed.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Complete the code to declare an array, add an element, remove the last element, and then access an element.",
-  //         options: [
-  //           // 1) Correct sequence
-  //           `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
-  // fruits.add("pink");
-  // fruits.remove(fruits.size() - 1);
-  // System.out.println(fruits.get(0));`,
-
-  //           // 2) Missing the removal step
-  //           `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
-  // fruits.add("pink");
-  // System.out.println(fruits.get(0));`,
-
-  //           // 3) Removed the first element instead of the last
-  //           `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
-  // fruits.add("pink");
-  // fruits.remove(0);
-  // System.out.println(fruits.get(0));`,
-
-  //           // 4) Accessing the wrong index after removal
-  //           `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
-  // fruits.add("pink");
-  // fruits.remove(fruits.size() - 1);
-  // System.out.println(fruits.get(1));`,
-
-  //           // 5) Operations in the wrong order (remove before add)
-  //           `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
-  // fruits.remove(fruits.size() - 1);
-  // fruits.add("pink");
-  // System.out.println(fruits.get(0));`,
-  //         ],
-  //         answer: `List<String> fruits = new ArrayList<>(Arrays.asList("apple", "banana"));
-  // fruits.add("pink");
-  // fruits.remove(fruits.size() - 1);
-  // System.out.println(fruits.get(0));`,
-  //       },
-  //     },
-  //     // 17
-  //     {
-  //       group: "1",
-  //       title: "Manipulating Arrays",
-  //       description: "Apply array operations in code.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           'Create an ArrayList `fruits` with "apple" and "banana". Add "pink" to the list and remove the first element.',
-  //       },
-  //     },
-  //     // 18
-  //     {
-  //       group: "1",
-  //       title: "Use Cases for Arrays",
-  //       description: "Explore scenarios where arrays are used.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Provide an example of how an array can be used to manage data in an Android application.",
-  //       },
-  //     },
-  //     // 19
-  //     {
-  //       group: "1",
-  //       title: "Terminal Practice: Creating Directories",
-  //       description: "Creating a directory command in a bash terminal",
-  //       isCode: true,
-  //       isTerminal: true,
-  //       question: {
-  //         questionText:
-  //           "In a Bash terminal environment, create a directory called `app` using the `mkdir` command.",
-  //       },
-  //     },
-  //     // 20
-  //     {
-  //       group: "1",
-  //       title: "Advanced Coding Output",
-  //       description:
-  //         "Predict the output of the following code with arrays, conditionals, logical operators, and streams.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText: (
-  //           <div>
-  //             What will be the output of the following code?
-  //             <br />
-  //             <pre>
-  //               {`
-  // List<Integer> arr = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
-  // int x = 10;
-  // int y = 5;
-
-  // if (x > y && arr.size() > 3) {
-  //     arr.add(x);
-  //     arr = arr.stream().filter(n -> n % 2 == 0).collect(Collectors.toList());
-  // }
-
-  // System.out.println(arr);
-  // `}
-  //             </pre>
-  //           </div>
-  //         ),
-  //         placeholder: "Type your answer here...",
-  //         answer: "[2, 4, 10]",
-  //       },
-  //     },
-  //     // 21
-  //     {
-  //       group: "1",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [10, 29],
-  //       },
-  //     },
-  //     // 1
-  //     {
-  //       group: "2",
-  //       title: "Introduction to Objects",
-  //       description:
-  //         "In this step, you will learn what an object is in programming.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "Which keyword is used to create a new object instance in Java?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "new",
-  //       },
-  //     },
-  //     // 2
-  //     {
-  //       group: "2",
-  //       title: "Understanding the Constructor Method",
-  //       description:
-  //         "In this step, you will learn about the purpose of the constructor method in a class.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following code blocks correctly defines the constructor method and instantiates the class in Java?",
-  //         options: [
-  //           `public class Car {
-  //     private String brand;
-  //     public Car(String brand) {
-  //       this.brand = brand;
-  //     }
-  //     public void drive() {
-  //       System.out.println("The car is driving");
-  //     }
-  // }
-  // Car myCar = new Car("Toyota");`,
-  //           `public class Car {
-  //     private String brand;
-  //     public Car() {
-  //       this.brand = "Toyota";
-  //     }
-  //     public void drive() {
-  //       System.out.println("The car is driving");
-  //     }
-  // }
-  // Car myCar = new Car();`,
-  //           `public class Car {
-  //     private String brand;
-  //     public void Car(String brand) {
-  //       this.brand = brand;
-  //     }
-  //     public void drive() {
-  //       System.out.println("The car is driving");
-  //     }
-  // }
-  // Car myCar = new Car("Toyota");`,
-  //           `public class Car {
-  //     private String brand;
-  //     public Car(String b) {
-  //       brand = b;
-  //     }
-  //     public void drive() {
-  //       System.out.println("The car is driving");
-  //     }
-  // }
-  // Car myCar = new Car("Toyota");`,
-  //         ],
-  //         answer: `public class Car {
-  //     private String brand;
-  //     public Car(String brand) {
-  //       this.brand = brand;
-  //     }
-  //     public void drive() {
-  //       System.out.println("The car is driving");
-  //     }
-  // }
-  // Car myCar = new Car("Toyota");`,
-  //       },
-  //     },
-  //     // 3
-  //     {
-  //       group: "2",
-  //       title: "Purpose of the Constructor Method",
-  //       description:
-  //         "In this step, you will learn about the purpose of the constructor method in a class.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Explain the purpose of the constructor method in a class.",
-  //       },
-  //     },
-  //     // 4
-  //     {
-  //       group: "2",
-  //       title: "Creating an Instance of a Class",
-  //       description:
-  //         "In this step, you will learn how to create an instance of a class in Java.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Select all the correct steps required to create an instance of a class in Java:",
-  //         options: [
-  //           "Define the class using the `class` keyword",
-  //           "Use the `new` keyword to create an instance",
-  //           "Pass arguments required by the constructor when calling the class",
-  //           "Store the new instance in a variable",
-  //           "Declare the class instance without `new`",
-  //           "Instantiate the class before defining it",
-  //         ],
-  //         answer: [
-  //           "Define the class using the `class` keyword",
-  //           "Use the `new` keyword to create an instance",
-  //           "Pass arguments required by the constructor when calling the class",
-  //           "Store the new instance in a variable",
-  //         ],
-  //       },
-  //     },
-  //     // 5
-  //     {
-  //       group: "2",
-  //       title: "Declaring a Method in a Class",
-  //       description:
-  //         "In this step, you will learn how to declare a method inside a class.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Declare a method named `updateModel` in the `Car` class that updates the `model` property.",
-  //       },
-  //     },
-  //     // 6
-  //     {
-  //       group: "2",
-  //       title: "Using the this Keyword",
-  //       description:
-  //         "Complete the code by selecting the correct way to use the `this` keyword in a class method.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Which code block correctly uses the `this` keyword to refer to the object's property?",
-  //         options: [
-  //           `public class Car {
-  //     private String brand;
-  //     public Car(String brand) { this.brand = brand; }
-  //     public void showBrand() { System.out.println(brand); }
-  // }
-  // Car myCar = new Car("Toyota");
-  // myCar.showBrand();`,
-  //           `public class Car {
-  //     private String brand;
-  //     public Car(String brand) { this.brand = brand; }
-  //     public void showBrand() { System.out.println(this.brand); }
-  // }
-  // Car myCar = new Car("Toyota");
-  // myCar.showBrand();`,
-  //           `public class Car {
-  //     private String brand;
-  //     public Car(String brand) { brand = this.brand; }
-  //     public void showBrand() { System.out.println(brand); }
-  // }
-  // Car myCar = new Car("Toyota");
-  // myCar.showBrand();`,
-  //           `public class Car {
-  //     private String brand;
-  //     public Car(String brand) { this.brand = brand; }
-  //     public void showBrand() { System.out.println(this.brand()); }
-  // }
-  // Car myCar = new Car("Toyota");
-  // myCar.showBrand();`,
-  //         ],
-  //         answer: `public class Car {
-  //     private String brand;
-  //     public Car(String brand) { this.brand = brand; }
-  //     public void showBrand() { System.out.println(this.brand); }
-  // }
-  // Car myCar = new Car("Toyota");
-  // myCar.showBrand();`,
-  //       },
-  //     },
-  //     // 7
-  //     {
-  //       group: "2",
-  //       title: "Adding Properties to an Object",
-  //       description:
-  //         "In this step, you will learn how to add properties to a class in Java.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Add a new property `private int year;` to the `Car` class.",
-  //       },
-  //     },
-  //     // 8
-  //     {
-  //       group: "2",
-  //       title: "Accessing and Modifying Object Properties",
-  //       description:
-  //         "In this step, you will learn how to get or set properties of an object in Java.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following are valid ways to get or set properties in Java?",
-  //         options: [
-  //           "Use a getter method (e.g., getModel())",
-  //           "Use a setter method (e.g., setModel())",
-  //           "Access a public field directly (e.g., obj.model)",
-  //           "Use reflection APIs",
-  //         ],
-  //         answer: [
-  //           "Use a getter method (e.g., getModel())",
-  //           "Use a setter method (e.g., setModel())",
-  //           "Access a public field directly (e.g., obj.model)",
-  //         ],
-  //       },
-  //     },
-  //     // 9
-  //     {
-  //       group: "2",
-  //       title: "Modifying Object Properties",
-  //       description:
-  //         "In this step, you will learn how to modify properties of an object in Java.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Modify the `model` property of an instance of the `Car` class.",
-  //       },
-  //     },
-  //     // 10
-  //     {
-  //       group: "2",
-  //       title: "Understanding Inheritance",
-  //       description:
-  //         "In this step, you will learn about inheritance in object-oriented programming.",
-  //       isText: true,
-  //       question: {
-  //         questionText: "What is inheritance in object-oriented programming?",
-  //       },
-  //     },
-  //     // 11
-  //     {
-  //       group: "2",
-  //       title: "Implementing Inheritance",
-  //       description:
-  //         "In this step, you will implement inheritance in Java by extending a class.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Extend the `Car` class to create an `ElectricCar` class with an additional property `private int batteryLife;`.",
-  //       },
-  //     },
-  //     // 12
-  //     {
-  //       group: "2",
-  //       title: "Overriding Methods",
-  //       description:
-  //         "In this step, you will learn how to override methods in a subclass.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "What does it mean to override a method in a subclass?",
-  //         options: [
-  //           "Provide a new implementation for a superclass method",
-  //           "Delete the superclass method",
-  //           "Inherit the method without changes",
-  //           "Call the superclass method via super.method()",
-  //         ],
-  //         answer: "Provide a new implementation for a superclass method",
-  //       },
-  //     },
-  //     // 13
-  //     {
-  //       group: "2",
-  //       title: "Understanding Encapsulation",
-  //       description:
-  //         "In this step, you will learn about encapsulation in object-oriented programming.",
-  //       isText: true,
-  //       question: {
-  //         questionText: "What is encapsulation in object-oriented programming?",
-  //       },
-  //     },
-  //     // 14
-  //     {
-  //       group: "2",
-  //       title: "Implementing Encapsulation",
-  //       description:
-  //         "In this step, you will implement encapsulation by using getter and setter methods.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Add getter and setter methods for the `batteryLife` property in the `ElectricCar` class.",
-  //       },
-  //     },
-  //     // 15
-  //     {
-  //       group: "2",
-  //       title: "Encapsulation Concept",
-  //       description:
-  //         "In this step, you will define the concept of encapsulation in one word.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What is the primary concept encapsulation ensures in object-oriented programming?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "Privacy",
-  //       },
-  //     },
-  //     // 16
-  //     {
-  //       group: "2",
-  //       title: "Combining Concepts",
-  //       description:
-  //         "In this step, you will combine various concepts learned to create a small project.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Create a small project that defines a `Person` class, uses inheritance to create a `Student` class, and demonstrates encapsulation and arrays of objects.",
-  //       },
-  //     },
-  //     // 17
-  //     {
-  //       group: "2",
-  //       title: "Printing In The Terminal",
-  //       description: "In this step, you will print a message using the terminal",
-  //       isCode: true,
-  //       isTerminal: true,
-  //       question: {
-  //         questionText:
-  //           "Type a command to print the message: 'I'm talking to the inside of a computer!'",
-  //       },
-  //     },
-  //     // 18
-  //     {
-  //       group: "2",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [31, 47],
-  //       },
-  //     },
-  //     // 1
-  //     {
-  //       group: "3",
-  //       title: "Introduction to Android Views",
-  //       description:
-  //         "In this step, you will learn about Android Views, their role in creating reusable UI elements, and how they help manage the user interface efficiently.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText: "Which of the following best describes an Android View?",
-  //         options: [
-  //           "A method for handling events in Java",
-  //           "A feature exclusive to background services",
-  //           "A reusable piece of user interface defined by the View class or its subclasses",
-  //           "A built-in XML element that only represents layouts",
-  //         ],
-  //         answer:
-  //           "A reusable piece of user interface defined by the View class or its subclasses",
-  //       },
-  //     },
-  //     // 2
-  //     {
-  //       group: "3",
-  //       title: "Key Concepts in Android UI",
-  //       description:
-  //         "In this step, you will learn about fundamental Android UI concepts, including Activities, Fragments, XML layouts, and event handling.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText: "Which of the following are key concepts in Android UI?",
-  //         options: [
-  //           "Activities as screen controllers",
-  //           "Directly manipulating the window manager for animations",
-  //           "Fragments for modular UI",
-  //           "XML layouts for defining view hierarchies",
-  //           "Using TextView for data binding",
-  //         ],
-  //         answer: [
-  //           "Activities as screen controllers",
-  //           "Fragments for modular UI",
-  //           "XML layouts for defining view hierarchies",
-  //         ],
-  //       },
-  //     },
-  //     // 3
-  //     {
-  //       group: "3",
-  //       title: "Effect of LiveData Changes on UI",
-  //       description:
-  //         "In this step, you will explain what happens to an Activity or Fragment when its LiveData updates.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What happens to the UI when observed LiveData in a ViewModel changes?",
-  //       },
-  //     },
-  //     // 4
-  //     {
-  //       group: "3",
-  //       title: "Creating a Simple Activity",
-  //       description:
-  //         "In this step, you will define a basic Android Activity that sets a TextView in onCreate.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following code blocks correctly defines a simple Activity that sets its content view and updates a TextView?",
-  //         options: [
-  //           `public class MainActivity extends AppCompatActivity {
-  //     @Override
-  //     protected void onCreate(Bundle savedInstanceState) {
-  //         super.onCreate(savedInstanceState);
-  //         TextView tv = new TextView(this);
-  //         tv.setText("Hello, Android!");
-  //         setContentView(tv);
-  //     }
-  // }`,
-  //           `public class MainActivity {
-  //     protected void onCreate() {
-  //         setContentView(R.layout.activity_main);
-  //     }
-  // }`,
-  //           `class MainActivity extends Activity {
-  //     void onCreate(Bundle s) {
-  //         super.onCreate(s);
-  //     }
-  // }`,
-  //           `public class MainActivity extends AppCompatActivity {
-  //     void onStart() {
-  //         TextView tv = findViewById(R.id.tv);
-  //         tv.setText("Hello, Android!");
-  //     }
-  // }`,
-  //         ],
-  //         answer: `public class MainActivity extends AppCompatActivity {
-  //     @Override
-  //     protected void onCreate(Bundle savedInstanceState) {
-  //         super.onCreate(savedInstanceState);
-  //         TextView tv = new TextView(this);
-  //         tv.setText("Hello, Android!");
-  //         setContentView(tv);
-  //     }
-  // }`,
-  //       },
-  //     },
-  //     // 5
-  //     {
-  //       group: "3",
-  //       title: "Handling Button Clicks",
-  //       description:
-  //         "In this step, you will define a basic Activity that handles a button click event using setOnClickListener.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following code blocks correctly sets a click listener on a Button?",
-  //         options: [
-  //           `Button btn = findViewById(R.id.btn);
-  // btn.setOnClickListener(new View.OnClickListener() {
-  //     @Override
-  //     public void onClick(View v) {
-  //         Toast.makeText(this, "Clicked!", Toast.LENGTH_SHORT).show();
-  //     }
-  // });`,
-  //           `Button btn = findViewById(R.id.btn);
-  // btn.setOnClickListener(v -> {
-  //     Toast.makeText(MainActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
-  // });`,
-  //           `Button btn = findViewById(R.id.btn);
-  // btn.onClick(() -> Toast.makeText(this, "Clicked!", Toast.LENGTH_SHORT).show());`,
-  //           `findViewById(R.id.btn).setClickListener(this);`,
-  //         ],
-  //         answer: `Button btn = findViewById(R.id.btn);
-  // btn.setOnClickListener(v -> {
-  //     Toast.makeText(MainActivity.this, "Clicked!", Toast.LENGTH_SHORT).show();
-  // });`,
-  //       },
-  //     },
-  //     // 6
-  //     {
-  //       group: "3",
-  //       title: "Managing State with ViewModel",
-  //       description:
-  //         "In this step, you will learn how to use ViewModel and LiveData to manage UI-related data.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Modify your Activity to use a ViewModel with LiveData<Boolean> liked and observe it to update the UI.",
-  //       },
-  //     },
-  //     // 7
-  //     {
-  //       group: "3",
-  //       title: "Intent Extras",
-  //       description:
-  //         "In this step, you will learn about passing data between Activities using Intent extras.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What is the term used for passing data into an Activity at launch?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "Intent extras",
-  //       },
-  //     },
-  //     // 8
-  //     {
-  //       group: "3",
-  //       title: "Passing and Using Extras",
-  //       description:
-  //         "In this step, you will learn how to pass and retrieve extras in an Activity.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           'Update your Activity to read a String extra named "username" from the Intent and display it.',
-  //       },
-  //     },
-  //     // 9
-  //     {
-  //       group: "3",
-  //       title: "Props vs State in Android",
-  //       description:
-  //         "In this step, you will learn the difference between Intent extras and LiveData state.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText:
-  //           "What is the main difference between Intent extras and LiveData in an Android app?",
-  //         options: [
-  //           "Extras are immutable once set, LiveData can update over time",
-  //           "LiveData is only for background tasks",
-  //           "Extras trigger UI updates automatically",
-  //           "LiveData cannot be observed from Fragments",
-  //         ],
-  //         answer: "Extras are immutable once set, LiveData can update over time",
-  //       },
-  //     },
-  //     // 10
-  //     {
-  //       group: "3",
-  //       title: "Terminal Practice: Listing Files",
-  //       description:
-  //         "In this step, you will learn how to list files in a bash terminal.",
-  //       isCode: true,
-  //       isTerminal: true,
-  //       question: {
-  //         questionText:
-  //           "Use the terminal to list all files using the `ls` command.",
-  //       },
-  //     },
-  //     // 11
-  //     {
-  //       group: "3",
-  //       title: "Styling Android Views",
-  //       description:
-  //         "In this step, you will learn how to style Views using XML attributes and programmatic methods.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Add XML attributes to a TextView to set textSize, textColor, padding, and background.",
-  //       },
-  //     },
-  //     // 12
-  //     {
-  //       group: "3",
-  //       title: "ConstraintLayout Basics",
-  //       description:
-  //         "In this step, you will learn how to use ConstraintLayout for positioning UI elements.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the following steps to constrain a Button to the center of its parent:",
-  //         options: [
-  //           'app:layout_constraintTop_toTopOf="parent"',
-  //           'app:layout_constraintBottom_toBottomOf="parent"',
-  //           'app:layout_constraintStart_toStartOf="parent"',
-  //           'app:layout_constraintEnd_toEndOf="parent"',
-  //         ],
-  //         answer: [
-  //           'app:layout_constraintTop_toTopOf="parent"',
-  //           'app:layout_constraintBottom_toBottomOf="parent"',
-  //           'app:layout_constraintStart_toStartOf="parent"',
-  //           'app:layout_constraintEnd_toEndOf="parent"',
-  //         ],
-  //       },
-  //     },
-  //     // 13
-  //     {
-  //       group: "3",
-  //       title: "Sharing ViewModel Between Fragments",
-  //       description:
-  //         "In this step, you will learn how to share state via a ViewModel between Fragments.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Create a shared ViewModel in your Activity and have two Fragments observe its LiveData.",
-  //       },
-  //     },
-  //     // 14
-  //     {
-  //       group: "3",
-  //       title: "Observing LiveData for Side Effects",
-  //       description:
-  //         "In this step, you will learn how to observe LiveData to handle side effects in the UI.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Modify your Fragment to observe a LiveData<Int> retweetCount and show a Toast whenever it changes.",
-  //       },
-  //     },
-  //     // 15
-  //     {
-  //       group: "3",
-  //       title: "Understanding Activity Lifecycle",
-  //       description:
-  //         "In this step, you will learn about the Android Activity lifecycle and its callback methods.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What are the main callbacks in the Activity lifecycle and when is onResume called?",
-  //       },
-  //     },
-  //     // 16
-  //     {
-  //       group: "3",
-  //       title: "Fetching Data with Retrofit and LiveData",
-  //       description:
-  //         "In this step, you will learn how to fetch data from an API using Retrofit and expose it via LiveData.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the steps to correctly fetch tweets using Retrofit and LiveData:",
-  //         options: [
-  //           "Define a Retrofit interface",
-  //           "Create a Repository to call Retrofit",
-  //           "Expose results as LiveData in ViewModel",
-  //           "Observe LiveData in UI",
-  //           "Handle errors in the Repository",
-  //         ],
-  //         answer: [
-  //           "Define a Retrofit interface",
-  //           "Create a Repository to call Retrofit",
-  //           "Expose results as LiveData in ViewModel",
-  //           "Handle errors in the Repository",
-  //           "Observe LiveData in UI",
-  //         ],
-  //       },
-  //     },
-  //     // 17
-  //     {
-  //       group: "3",
-  //       title: "Building a Complete Tweet App",
-  //       description:
-  //         "In this step, you will combine everything you have learned to build a complete Tweet app on Android.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Build an Android Tweet app with Retrofit, ViewModel, LiveData, and RecyclerView allowing users to like and retweet.",
-  //       },
-  //     },
-  //     // 18
-  //     {
-  //       group: "3",
-  //       title: "Terminal Practice: Building with Gradle",
-  //       description:
-  //         "In this step, you will learn how to build your Android project using the terminal.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Enter the command to build your project using Gradle: `./gradlew build`.",
-  //       },
-  //     },
-  //     // 19
-  //     {
-  //       group: "3",
-  //       title: "Creating a New Android Project",
-  //       description:
-  //         "In this step, you will learn how to create a new Android project in Android Studio.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the steps to create a new Android app in Android Studio:",
-  //         options: [
-  //           "Open Android Studio and select New Project",
-  //           "Choose Empty Activity template",
-  //           "Select Java as the language",
-  //           "Enter application name and package",
-  //           "Click Finish to generate project",
-  //         ],
-  //         answer: [
-  //           "Open Android Studio and select New Project",
-  //           "Choose Empty Activity template",
-  //           "Select Java as the language",
-  //           "Enter application name and package",
-  //           "Click Finish to generate project",
-  //         ],
-  //       },
-  //     },
-  //     // 20
-  //     {
-  //       group: "3",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [49, 67],
-  //       },
-  //     },
-  //     // 1
-  //     {
-  //       group: "4",
-  //       title: "Introduction to Java Backend Engineering with Spring Boot",
-  //       description:
-  //         "In this step, you will learn what backend software engineering is and why it is important.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What is backend software engineering and why is it important in building applications?",
-  //       },
-  //     },
-  //     // 2
-  //     {
-  //       group: "4",
-  //       title: "Main Lessons Overview",
-  //       description:
-  //         "In this step, you will identify a core responsibility of backend engineering in Java.",
-  //       isMultipleChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following is a core responsibility in backend engineering?",
-  //         options: [
-  //           "Managing concurrency and ensuring thread safety in multi-user applications",
-  //           "Implementing user authentication directly in the user interface",
-  //           "Handling memory allocation in the Java Virtual Machine",
-  //           "Designing scalable UI components for cross-platform compatibility",
-  //           "Optimizing database queries and ensuring data consistency",
-  //         ],
-  //         answer: "Optimizing database queries and ensuring data consistency",
-  //       },
-  //     },
-  //     // 3
-  //     {
-  //       group: "4",
-  //       title: "Key Responsibilities of Backend Engineering",
-  //       description:
-  //         "In this step, you will learn about the various responsibilities involved in Java backend engineering with Spring Boot.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following are core responsibilities of backend engineering?",
-  //         options: [
-  //           "Managing and optimizing databases for storing and retrieving data efficiently",
-  //           "Designing and implementing RESTful APIs using Spring MVC",
-  //           "Ensuring security through user authentication and authorization mechanisms",
-  //           "Handling server-side logic, including business operations and calculations",
-  //           "Maintaining server reliability and performance under high traffic",
-  //           "Managing data integrity and consistency across distributed systems",
-  //           "Implementing logging and monitoring to ensure system health and debug issues",
-  //         ],
-  //         answer: [
-  //           "Managing and optimizing databases for storing and retrieving data efficiently",
-  //           "Designing and implementing RESTful APIs using Spring MVC",
-  //           "Ensuring security through user authentication and authorization mechanisms",
-  //           "Handling server-side logic, including business operations and calculations",
-  //           "Maintaining server reliability and performance under high traffic",
-  //           "Managing data integrity and consistency across distributed systems",
-  //           "Implementing logging and monitoring to ensure system health and debug issues",
-  //         ],
-  //       },
-  //     },
-  //     // 4
-  //     {
-  //       group: "4",
-  //       title: "Interfacing with the Terminal",
-  //       description:
-  //         "In this step, you will learn about using the terminal in Java backend engineering.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Why is learning to use the terminal important for backend development, and what kinds of tasks can you perform using it?",
-  //       },
-  //     },
-  //     // 5
-  //     {
-  //       group: "4",
-  //       title: "Installing Maven",
-  //       description:
-  //         "In this step, you will learn how to install Maven globally.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Write the command to install Apache Maven using Homebrew or apt.",
-  //       },
-  //     },
-  //     // 6
-  //     {
-  //       group: "4",
-  //       title: "Adding a Maven Dependency",
-  //       description: "In this step, you will use Maven to add a dependency.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Write the XML snippet to add the Spring Web starter dependency in pom.xml.",
-  //       },
-  //     },
-  //     // 7
-  //     {
-  //       group: "4",
-  //       title: "User Creation and Authentication",
-  //       description:
-  //         "In this step, you will understand the key concept related to creating users in backend systems.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What is the process called that verifies a user's identity during account creation?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "authentication",
-  //       },
-  //     },
-  //     // 8
-  //     {
-  //       group: "4",
-  //       title: "Database Foundations",
-  //       description:
-  //         "In this step, you will learn about the foundations of databases in backend engineering.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What are the main types of databases used in backend engineering?",
-  //       },
-  //     },
-  //     // 9
-  //     {
-  //       group: "4",
-  //       title: "Connecting to a Database with Spring Data JPA",
-  //       description:
-  //         "Write a code snippet to connect a Spring Boot application to a PostgreSQL database.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write a Java code snippet (application.properties and Entity configuration) to configure Spring Data JPA with PostgreSQL.",
-  //       },
-  //     },
-  //     // 10
-  //     {
-  //       group: "4",
-  //       title: "Initiating a Spring Boot Project",
-  //       description:
-  //         "In this step, you will learn how to start a Spring Boot project using the CLI.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What is the command to create a new Spring Boot project using Spring Initializr CLI?",
-  //         answer: "spring init --dependencies=web,data-jpa,postgresql my-app",
-  //       },
-  //     },
-  //     // 11
-  //     {
-  //       group: "4",
-  //       title: "Advanced Data Storage Practices",
-  //       description:
-  //         "In this step, you will learn advanced practices for storing data responsibly in backend systems.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following are best practices for ensuring responsible data storage in a backend system?",
-  //         options: [
-  //           "Cache data in memory (e.g., with Redis) to reduce database access time",
-  //           "Use a single centralized backup to reduce complexity and cost",
-  //           "Encrypt sensitive data both at rest and in transit to ensure security",
-  //           "Implement database replication across multiple servers to improve fault tolerance",
-  //         ],
-  //         answer: [
-  //           "Cache data in memory (e.g., with Redis) to reduce database access time",
-  //           "Encrypt sensitive data both at rest and in transit to ensure security",
-  //           "Implement database replication across multiple servers to improve fault tolerance",
-  //         ],
-  //       },
-  //     },
-  //     // 12
-  //     {
-  //       group: "4",
-  //       title: "Configuring JPA and Saving an Entity",
-  //       description:
-  //         "In this step, you will learn how to initialize Spring Data JPA and save a User entity.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Complete the code to configure Spring Data JPA and save a User entity.",
-  //         options: [
-  //           // 1) Correct configuration with JPA annotations and repository usage
-  //           `@Entity
-  // public class User {
-  //     @Id @GeneratedValue
-  //     private Long id;
-  //     private String username;
-  //     // getters/setters
-  // }
-
-  // @Repository
-  // public interface UserRepository extends JpaRepository<User, Long> {}
-
-  // @Service
-  // public class UserService {
-  //     @Autowired
-  //     private UserRepository repo;
-
-  //     public void addUser(String name) {
-  //         User u = new User();
-  //         u.setUsername(name);
-  //         repo.save(u);
-  //     }
-  // }`,
-
-  //           // 2) Missing @GeneratedValue, so IDs won’t be auto-generated
-  //           `@Entity
-  // public class User {
-  //     @Id
-  //     private Long id;            // @GeneratedValue omitted
-  //     private String username;
-  //     // getters/setters
-  // }
-
-  // @Repository
-  // public interface UserRepository extends JpaRepository<User, Long> {}
-
-  // @Service
-  // public class UserService {
-  //     @Autowired
-  //     private UserRepository repo;
-
-  //     public void addUser(String name) {
-  //         User u = new User();
-  //         u.setUsername(name);
-  //         repo.save(u);
-  //     }
-  // }`,
-
-  //           // 3) Repository extends CrudRepository instead of JpaRepository
-  //           `@Entity
-  // public class User {
-  //     @Id @GeneratedValue
-  //     private Long id;
-  //     private String username;
-  //     // getters/setters
-  // }
-
-  // @Repository
-  // public interface UserRepository extends CrudRepository<User, Long> {}  // wrong interface
-
-  // @Service
-  // public class UserService {
-  //     @Autowired
-  //     private UserRepository repo;
-
-  //     public void addUser(String name) {
-  //         User u = new User();
-  //         u.setUsername(name);
-  //         repo.save(u);
-  //     }
-  // }`,
-
-  //           // 4) Service missing @Autowired injection, so repo is null
-  //           `@Entity
-  // public class User {
-  //     @Id @GeneratedValue
-  //     private Long id;
-  //     private String username;
-  //     // getters/setters
-  // }
-
-  // @Repository
-  // public interface UserRepository extends JpaRepository<User, Long> {}
-
-  // @Service
-  // public class UserService {
-  //     private UserRepository repo;  // forgot @Autowired
-
-  //     public void addUser(String name) {
-  //         User u = new User();
-  //         u.setUsername(name);
-  //         repo.save(u);             // NullPointerException at runtime
-  //     }
-  // }`,
-  //         ],
-  //         answer: `@Entity
-  // public class User {
-  //     @Id @GeneratedValue
-  //     private Long id;
-  //     private String username;
-  //     // getters/setters
-  // }
-
-  // @Repository
-  // public interface UserRepository extends JpaRepository<User, Long> {}
-
-  // @Service
-  // public class UserService {
-  //     @Autowired
-  //     private UserRepository repo;
-
-  //     public void addUser(String name) {
-  //         User u = new User();
-  //         u.setUsername(name);
-  //         repo.save(u);
-  //     }
-  // }`,
-  //       },
-  //     },
-  //     // 13
-  //     {
-  //       group: "4",
-  //       title: "Handling User Data",
-  //       description:
-  //         "In this step, you will learn how to retrieve a User entity by ID.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write a Java code snippet using UserRepository to fetch a User by its ID.",
-  //       },
-  //     },
-  //     // 14
-  //     {
-  //       group: "4",
-  //       title: "Retrieving a User After Authentication",
-  //       description:
-  //         "In this step, you will learn how to retrieve the authenticated user principal.",
-  //       isCode: true,
-  //       isTerminal: false,
-  //       question: {
-  //         questionText:
-  //           "Write a Spring Security code snippet to get the authenticated username in a controller.",
-  //       },
-  //     },
-  //     // 15
-  //     {
-  //       group: "4",
-  //       title: "Understanding the Authentication Flow",
-  //       description:
-  //         "In this step, you will learn about the typical flow of authentication in backend systems.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the following steps in the correct order for a typical JWT authentication flow in a Java backend.",
-  //         options: [
-  //           "User submits credentials to /login endpoint",
-  //           "AuthenticationManager verifies credentials",
-  //           "JWT token is generated and signed",
-  //           "Client stores token locally",
-  //           "Protected endpoints validate token",
-  //         ],
-  //         answer: [
-  //           "User submits credentials to /login endpoint",
-  //           "AuthenticationManager verifies credentials",
-  //           "JWT token is generated and signed",
-  //           "Client stores token locally",
-  //           "Protected endpoints validate token",
-  //         ],
-  //       },
-  //     },
-  //     // 16
-  //     {
-  //       group: "4",
-  //       title: "OAuth Authentication",
-  //       description:
-  //         "In this step, you will learn about OAuth-style authentication systems.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What is the widely used protocol for authorization that allows third-party services to access user data without exposing credentials?",
-  //         placeholder: "Type your answer here...",
-  //         answer: "OAuth 2.0",
-  //       },
-  //     },
-  //     // 17
-  //     {
-  //       group: "4",
-  //       title: "Using Environment Variables",
-  //       description:
-  //         "In this step, you will learn about using environment variables in backend development.",
-  //       isText: true,
-  //       question: {
-  //         questionText: "What role do environment variables play in a codebase?",
-  //       },
-  //     },
-  //     // 18
-  //     {
-  //       group: "4",
-  //       title: "Database Relationships with JPA",
-  //       description:
-  //         "In this step, you will learn about defining relationships in JPA.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write a JPA code snippet to define a one-to-many relationship between User and Post entities.",
-  //       },
-  //     },
-  //     // 19
-  //     {
-  //       group: "4",
-  //       title: "Interfacing with an API",
-  //       description:
-  //         "In this step, you will learn the common HTTP methods used to interface with a REST API.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following HTTP methods are commonly used to interface with a REST API, and what do they do?",
-  //         options: [
-  //           "GET (Retrieves data)",
-  //           "POST (Creates a new resource)",
-  //           "PUT (Replaces a resource)",
-  //           "PATCH (Partially updates a resource)",
-  //           "DELETE (Deletes a resource)",
-  //         ],
-  //         answer: [
-  //           "GET (Retrieves data)",
-  //           "POST (Creates a new resource)",
-  //           "PATCH (Partially updates a resource)",
-  //           "DELETE (Deletes a resource)",
-  //         ],
-  //       },
-  //     },
-  //     // 20
-  //     {
-  //       group: "4",
-  //       title: "Creating a JWT Authentication System",
-  //       description:
-  //         "In this step, you will create a simple user authentication system with JWT.",
-  //       isSelectOrder: true,
-  //       question: {
-  //         questionText:
-  //           "Arrange the steps with drag-and-drop to implement JWT authentication in a Spring Boot app.",
-  //         options: [
-  //           "Add jjwt dependency",
-  //           "Configure security filter chain",
-  //           "Define UserDetailsService",
-  //           "Create /register endpoint",
-  //           "Hash passwords before storing",
-  //           "Create /login endpoint",
-  //           "Authenticate credentials",
-  //           "Generate JWT token",
-  //           "Return token in response",
-  //           "Validate token in filter",
-  //         ],
-  //         answer: [
-  //           "Add jjwt dependency",
-  //           "Configure security filter chain",
-  //           "Define UserDetailsService",
-  //           "Create /register endpoint",
-  //           "Hash passwords before storing",
-  //           "Create /login endpoint",
-  //           "Authenticate credentials",
-  //           "Generate JWT token",
-  //           "Return token in response",
-  //           "Validate token in filter",
-  //         ],
-  //       },
-  //     },
-  //     // 21
-  //     {
-  //       group: "4",
-  //       title: "Deploying a Spring Boot Application",
-  //       description:
-  //         "In this step, you will learn how to deploy a Spring Boot application.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Write the command to package and run your Spring Boot app with Maven.",
-  //       },
-  //     },
-  //     // 22
-  //     {
-  //       group: "4",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [69, 89],
-  //       },
-  //     },
-  //     // 1
-  //     {
-  //       group: "5",
-  //       title: "Benefits of Serverless Cloud Platforms",
-  //       description:
-  //         "Explore the advantages of using Firebase as a serverless backend for Android development.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What are the key benefits of using Firebase as a serverless backend for an Android app, and how does it differ from a traditional server-based model?",
-  //       },
-  //     },
-  //     // 2
-  //     {
-  //       group: "5",
-  //       title: "Understanding Android Studio",
-  //       description:
-  //         "Learn what Android Studio is and why it's the primary IDE for Android development.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What is Android Studio and why do most Android developers choose it?",
-  //       },
-  //     },
-  //     // 3
-  //     {
-  //       group: "5",
-  //       title: "Installing Java and Android SDK",
-  //       description:
-  //         "Install the Java JDK and Android SDK tools required for Android development.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What roles do the Java JDK and the Android SDK play in building Android apps?",
-  //       },
-  //     },
-  //     // 4
-  //     {
-  //       group: "5",
-  //       title: "Adding Firebase to Gradle",
-  //       description:
-  //         "Configure your project-level Gradle file to include Firebase dependencies.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What lines do you add to your module-level `build.gradle` to include the Firebase BOM?",
-  //         answer:
-  //           "implementation platform('com.google.firebase:firebase-bom:31.2.3')",
-  //       },
-  //     },
-  //     // 5
-  //     {
-  //       group: "5",
-  //       title: "Applying Google Services Plugin",
-  //       description:
-  //         "Enable the Google Services Gradle plugin to integrate Firebase.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What line do you add to your project-level `build.gradle` to apply the Google Services plugin?",
-  //         answer: "classpath 'com.google.gms:google-services:4.4.0'",
-  //       },
-  //     },
-  //     // 6
-  //     {
-  //       group: "5",
-  //       title: "Initializing a Firebase Project in Android",
-  //       description:
-  //         "Add the `google-services.json` file and apply the plugin in your module Gradle.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText:
-  //           "What file do you download from the Firebase console and where do you place it in your Android project?",
-  //         answer: "google-services.json in app/",
-  //       },
-  //     },
-  //     // 7
-  //     {
-  //       group: "5",
-  //       title: "Selecting Firebase Modules",
-  //       description:
-  //         "Choose which Firebase Android SDK libraries to include in your app.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following Firebase modules might you add to your Android app?",
-  //         options: [
-  //           "firebase-auth",
-  //           "firebase-firestore",
-  //           "firebase-database",
-  //           "firebase-functions",
-  //           "firebase-storage",
-  //           "firebase-analytics",
-  //         ],
-  //         answer:
-  //           "firebase-auth, firebase-firestore, firebase-storage, firebase-analytics",
-  //       },
-  //     },
-  //     // 8
-  //     {
-  //       group: "5",
-  //       title: "Configuring FirebaseApp",
-  //       description: "Initialize Firebase in your Android `Application` class.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write the Java code to initialize Firebase in `public void onCreate()` of your `Application` subclass.",
-  //       },
-  //     },
-  //     // 9
-  //     {
-  //       group: "5",
-  //       title: "Setting Up Firestore",
-  //       description: "Learn how to obtain a Firestore instance and write data.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write Java code to get `FirebaseFirestore` instance and add a document to `users` collection.",
-  //       },
-  //     },
-  //     // 10
-  //     {
-  //       group: "5",
-  //       title: "Understanding Authentication",
-  //       description: "Learn about Firebase Authentication in Android.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What is Firebase Authentication, and which sign-in methods does it support on Android?",
-  //       },
-  //     },
-  //     // 11
-  //     {
-  //       group: "5",
-  //       title: "Creating a User with FirebaseAuth",
-  //       description: "Programmatically create a new user account in Android.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write Java code using `FirebaseAuth.getInstance().createUserWithEmailAndPassword(...)`.",
-  //       },
-  //     },
-  //     // 12
-  //     {
-  //       group: "5",
-  //       title: "Retrieving the ID Token",
-  //       description: "Obtain the current user's ID token on the client.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write Java code to call `getCurrentUser().getIdToken(false)` and handle the result.",
-  //       },
-  //     },
-  //     // 13
-  //     {
-  //       group: "5",
-  //       title: "CRUD with Firestore",
-  //       description: "Perform basic Firestore operations in Android.",
-  //       isCodeCompletion: true,
-  //       question: {
-  //         questionText:
-  //           "Complete the Java code to create, read, update, and delete a Firestore document.",
-  //         options: [
-  //           // 1) Correct sequence and syntax
-  //           `FirebaseFirestore db = FirebaseFirestore.getInstance();
-  // DocumentReference doc = db.collection("users").document("alice");
-  // // create
-  // doc.set(new User("alice@example.com", 30));
-  // // read
-  // doc.get().addOnSuccessListener(snapshot -> {
-  //     User u = snapshot.toObject(User.class);
-  // });
-  // // update
-  // doc.update("age", 31);
-  // // delete
-  // doc.delete();`,
-
-  //           // 2) Forgot to handle asynchronous read success
-  //           `FirebaseFirestore db = FirebaseFirestore.getInstance();
-  // DocumentReference doc = db.collection("users").document("alice");
-  // // create
-  // doc.set(new User("alice@example.com", 30));
-  // // read
-  // User u = doc.get().toObject(User.class);  // missing addOnSuccessListener
-  // // update
-  // doc.update("age", 31);
-  // // delete
-  // doc.delete();`,
-
-  //           // 3) Used add() instead of set(), creating a new doc ID
-  //           `FirebaseFirestore db = FirebaseFirestore.getInstance();
-  // CollectionReference users = db.collection("users");
-  // // create
-  // users.add(new User("alice@example.com", 30));  // wrong: adds new auto-ID doc
-  // // read
-  // DocumentReference doc = users.document("alice");
-  // doc.get().addOnSuccessListener(snapshot -> {
-  //     User u = snapshot.toObject(User.class);
-  // });
-  // // update
-  // doc.update("age", 31);
-  // // delete
-  // doc.delete();`,
-
-  //           // 4) Deleted the entire collection instead of the document
-  //           `FirebaseFirestore db = FirebaseFirestore.getInstance();
-  // DocumentReference doc = db.collection("users").document("alice");
-  // // create
-  // doc.set(new User("alice@example.com", 30));
-  // // read
-  // doc.get().addOnSuccessListener(snapshot -> {
-  //     User u = snapshot.toObject(User.class);
-  // });
-  // // update
-  // doc.update("age", 31);
-  // // delete
-  // db.collection("users").delete();  // invalid: delete() not on CollectionReference`,
-
-  //           // 5) Misused update call with wrong field name
-  //           `FirebaseFirestore db = FirebaseFirestore.getInstance();
-  // DocumentReference doc = db.collection("users").document("alice");
-  // // create
-  // doc.set(new User("alice@example.com", 30));
-  // // read
-  // doc.get().addOnSuccessListener(snapshot -> {
-  //     User u = snapshot.toObject(User.class);
-  // });
-  // // update
-  // doc.update("username", "alice");  // wrong field key: should be "age"
-  // // delete
-  // doc.delete();`,
-  //         ],
-  //         answer: `FirebaseFirestore db = FirebaseFirestore.getInstance();
-  // DocumentReference doc = db.collection("users").document("alice");
-  // // create
-  // doc.set(new User("alice@example.com", 30));
-  // // read
-  // doc.get().addOnSuccessListener(snapshot -> {
-  //     User u = snapshot.toObject(User.class);
-  // });
-  // // update
-  // doc.update("age", 31);
-  // // delete
-  // doc.delete();`,
-  //       },
-  //     },
-  //     // 14
-  //     {
-  //       group: "5",
-  //       title: "Calling Cloud Functions",
-  //       description: "Invoke an HTTPS Callable Cloud Function from Android.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           'Write Java code to call `FirebaseFunctions.getInstance().getHttpsCallable("helloWorld").call()`.',
-  //       },
-  //     },
-  //     // 15
-  //     {
-  //       group: "5",
-  //       title: "Local Emulation",
-  //       description: "Test Functions and Firestore locally with the emulator.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText: "What command starts the local Firebase emulator suite?",
-  //         answer: "firebase emulators:start",
-  //       },
-  //     },
-  //     // 16
-  //     {
-  //       group: "5",
-  //       title: "Deploying to Firebase",
-  //       description: "Deploy only your Cloud Functions from the CLI.",
-  //       isSingleLineText: true,
-  //       question: {
-  //         questionText: "What command do you use to deploy only Cloud Functions?",
-  //         answer: "firebase deploy --only functions",
-  //       },
-  //     },
-  //     // 17
-  //     {
-  //       group: "5",
-  //       title: "Uploading to Storage",
-  //       description: "Upload files to Firebase Storage in Android.",
-  //       isCode: true,
-  //       question: {
-  //         questionText:
-  //           "Write Java code using `FirebaseStorage.getInstance().getReference()` to upload a file.",
-  //       },
-  //     },
-  //     // 18
-  //     {
-  //       group: "5",
-  //       title: "Security Rules Basics",
-  //       description: "Learn about Firestore security rules for Android clients.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "What are Firestore security rules and when are they evaluated for Android requests?",
-  //       },
-  //     },
-  //     // 19
-  //     {
-  //       group: "5",
-  //       title: "Performance Monitoring",
-  //       description: "Explore Firebase Performance Monitoring for Android apps.",
-  //       isText: true,
-  //       question: {
-  //         questionText:
-  //           "Which Firebase product helps you monitor performance metrics in an Android app?",
-  //       },
-  //     },
-  //     // 20
-  //     {
-  //       group: "5",
-  //       title: "Popular Firebase Extensions",
-  //       description: "Learn about official Firebase Extensions you can install.",
-  //       isMultipleAnswerChoice: true,
-  //       question: {
-  //         questionText:
-  //           "Which of the following are Firebase Extensions provided by Google?",
-  //         options: [
-  //           "Trigger Email via SendGrid",
-  //           "Resize Images",
-  //           "Translate Text",
-  //           "Backup Realtime Database",
-  //         ],
-  //         answer:
-  //           "Trigger Email via SendGrid, Resize Images, Translate Text, Backup Realtime Database",
-  //       },
-  //     },
-  //     // 21
-  //     {
-  //       group: "5",
-  //       title: "Review With AI Conversation (optional)",
-  //       isConversationReview: true,
-  //       description: "Review the subjects you've answered",
-  //       question: {
-  //         questionText: "Let's chat about the questions we've worked on so far.",
-  //         range: [91, 110],
-  //       },
-  //     },
-  //   ],
-  // ['py-en']: [
-
-  // ],
-};
-
-revampCourse(steps.en, "en");
-revampCourse(steps.es, "es");
-
-export const loot = [
-  {},
-  {
-    monetaryValue: 0,
-    en: "Purely conceptual—understanding what coding is doesn’t create billable skill.",
-    es: "Puramente conceptual: entender qué es la programación no genera habilidades vendibles.",
-  },
-  {
-    monetaryValue: 0,
-    en: "Knowing the program‑execution flow is still theory, so earnings remain unchanged.",
-    es: "Conocer el flujo de ejecución de un programa sigue siendo teoría, por lo que las ganancias no cambian.",
-  },
-  {
-    monetaryValue: 250,
-    en: "Declaring a basic variable lets the learner tweak tiny scripts or config files.",
-    es: "Declarar una variable básica permite al estudiante ajustar pequeños scripts o archivos de configuración.",
-  },
-  {
-    monetaryValue: 500,
-    en: "Creating an array makes simple data‑entry automations (lists, CSV tweaks) possible.",
-    es: "Crear un arreglo hace posibles automatizaciones simples de ingreso de datos (listas, ajustes de CSV).",
-  },
-  {
-    monetaryValue: 750,
-    en: "Recognising primitive data types enables safe edits to files.",
-    es: "Reconocer los tipos de datos primitivos permite editar de forma segura archivos JSON o de entorno.",
-  },
-
-  {
-    monetaryValue: 1000,
-    en: "Writing a working code snippet shows executable output—sellable micro‑tasks begin here.",
-    es: "Escribir un fragmento de código funcional demuestra resultados ejecutables; aquí empiezan las micro‑tareas comercializables.",
-  },
-  {
-    monetaryValue: 1100,
-    en: "Reflecting on the purpose of variables adds communication value but only a slight pay bump.",
-    es: "Reflexionar sobre el propósito de las variables añade valor comunicativo pero solo incrementa ligeramente el sueldo.",
-  },
-  {
-    monetaryValue: 1300,
-    en: "Navigating the CLI with `cd` unlocks basic terminal chores and version‑control operations.",
-    es: "Navegar por la CLI con `cd` habilita tareas básicas de terminal y operaciones de control de versiones.",
-  },
-  {
-    monetaryValue: 1500,
-    en: "Using AI to self‑review reduces mentorship overhead, making the learner more hireable.",
-    es: "Usar IA para auto‑revisarse reduce la necesidad de mentoría, lo que hace al estudiante más empleable.",
-  },
-  {
-    monetaryValue: 1600,
-    en: "Recognizing primitive vs. object types helps debug JSON and config issues.",
-    es: "Reconocer tipos primitivos y objetos ayuda a depurar JSON y archivos de configuración.",
-  },
-  {
-    monetaryValue: 1800,
-    en: "Understanding the lifecycle of a function enables safer edits to existing code.",
-    es: "Entender el ciclo de vida de una función permite modificar código existente con seguridad.",
-  },
-  {
-    monetaryValue: 2200,
-    en: "Writing and invoking a custom function shows executable logic—micro‑automation work begins.",
-    es: "Escribir e invocar una función propia demuestra lógica ejecutable; empiezan las micro‑automatizaciones.",
-  },
-  {
-    monetaryValue: 2300,
-    en: "Articulating the purpose of functions improves team communication and documentation.",
-    es: "Articular la finalidad de las funciones mejora la comunicación y la documentación del equipo.",
-  },
-  {
-    monetaryValue: 2700,
-    en: "Knowing the intent of an `if` statement is essential for QA test cases and bug fixes.",
-    es: "Conocer el propósito de una sentencia `if` es esencial para pruebas de QA y corrección de errores.",
-  },
-  {
-    monetaryValue: 3000,
-    en: "Completing a full `if … else if … else` block lets you repair simple decision bugs.",
-    es: "Completar un bloque `if … else if … else` permite corregir errores sencillos de decisión.",
-  },
-  {
-    monetaryValue: 3500,
-    en: "Writing conditional code independently enables input‑validation and business‑rule tasks.",
-    es: "Escribir código condicional de forma independiente habilita tareas de validación y reglas de negocio.",
-  },
-  {
-    monetaryValue: 3700,
-    en: "Using the `&&` operator correctly prevents edge‑case failures in compound conditions.",
-    es: "Usar correctamente el operador `&&` evita fallos en casos límite con condiciones compuestas.",
-  },
-  {
-    monetaryValue: 4000,
-    en: "Relating conditionals to real scenarios demonstrates applied problem‑solving skills.",
-    es: "Relacionar condicionales con escenarios reales demuestra habilidades de resolución aplicada de problemas.",
-  },
-  {
-    monetaryValue: 4300,
-    en: "Using `help` in Bash increases self‑sufficiency on Unix systems and servers.",
-    es: "Usar `help` en Bash aumenta la autosuficiencia en sistemas y servidores Unix.",
-  },
-  {
-    monetaryValue: 4600,
-    en: "Selecting the right loop structure is key for efficient data iteration.",
-    es: "Elegir la estructura de bucle correcta es clave para iteraciones de datos eficientes.",
-  },
-  {
-    monetaryValue: 4900,
-    en: "Understanding the phases of a `for` loop aids in spotting off‑by‑one errors.",
-    es: "Comprender las fases de un bucle `for` ayuda a detectar errores de desbordamiento.",
-  },
-  {
-    monetaryValue: 5300,
-    en: "Writing a loop that prints 1‑5 automates repetitive tasks like batch data cleanup.",
-    es: "Escribir un bucle que imprime del 1 al 5 automatiza tareas repetitivas como la limpieza de datos por lotes.",
-  },
-  {
-    monetaryValue: 5500,
-    en: "Explaining practical loop use cases shows awareness of common software patterns.",
-    es: "Explicar casos prácticos de uso de bucles muestra conocimiento de patrones comunes de software.",
-  },
-  {
-    monetaryValue: 5800,
-    en: "Listing array‑manipulation methods speeds up everyday JavaScript development.",
-    es: "Enumerar métodos de manipulación de arrays agiliza el desarrollo diario en JavaScript.",
-  },
-  {
-    monetaryValue: 6100,
-    en: "Debugging push/pop issues proves capability to maintain front‑end array code.",
-    es: "Depurar problemas de push/pop demuestra capacidad para mantener código de arrays en front‑end.",
-  },
-  {
-    monetaryValue: 6500,
-    en: "Mutating arrays programmatically enables dynamic lists and real UI features.",
-    es: "Mutar arrays de forma programática habilita listas dinámicas y funciones reales de UI.",
-  },
-  {
-    monetaryValue: 6700,
-    en: "Connecting arrays to real application data flows sharpens design reasoning.",
-    es: "Conectar arrays con flujos de datos reales afina el razonamiento de diseño.",
-  },
-  {
-    monetaryValue: 6900,
-    en: "Scaffolding a project directory with `mkdir` shows comfort with CLI workflows.",
-    es: "Crear un directorio de proyecto con `mkdir` demuestra comodidad con flujos de trabajo en CLI.",
-  },
-  {
-    monetaryValue: 7000,
-    en: "Mentally predicting mixed‑logic output demonstrates readiness for technical interviews.",
-    es: "Predecir mentalmente la salida de lógica combinada demuestra preparación para entrevistas técnicas.",
-  },
-  {
-    monetaryValue: 7000,
-    en: "Using AI feedback for self‑review lowers supervision costs and boosts hireability.",
-    es: "Utilizar retroalimentación de IA para auto‑revisión reduce costos de supervisión y mejora la empleabilidad.",
-  },
-  {
-    monetaryValue: 7500,
-    en: "Creating an object with the `new` keyword shows you can follow SDK samples and start modeling data.",
-    es: "Crear un objeto con la palabra clave `new` demuestra que puedes seguir ejemplos de SDK y empezar a modelar datos.",
-  },
-  {
-    monetaryValue: 8200,
-    en: "Choosing the correct `constructor` syntax means you can write ES6 classes other code can reuse.",
-    es: "Elegir la sintaxis correcta de `constructor` significa que puedes escribir clases ES6 que otro código pueda reutilizar.",
-  },
-  {
-    monetaryValue: 8500,
-    en: "Explaining the purpose of a constructor shows you grasp an object's lifecycle and initialization.",
-    es: "Explicar el propósito de un constructor indica que entiendes el ciclo de vida e inicialización de un objeto.",
-  },
-  {
-    monetaryValue: 8800,
-    en: "Listing every step to instantiate a class proves you can follow vendor quick‑starts without guidance.",
-    es: "Enumerar cada paso para instanciar una clase demuestra que puedes seguir guías de inicio rápido sin ayuda.",
-  },
-  {
-    monetaryValue: 9600,
-    en: "Declaring a method inside a class lets you extend existing codebases and tackle real feature tickets.",
-    es: "Declarar un método dentro de una clase te permite extender bases de código existentes y abordar funciones reales.",
-  },
-  {
-    monetaryValue: 10400,
-    en: "Using `this` correctly prevents classic bugs (`undefined is not a function`) and speeds up reviews.",
-    es: "Usar `this` correctamente evita errores clásicos (`undefined is not a function`) y agiliza las revisiones.",
-  },
-  {
-    monetaryValue: 10800,
-    en: "Adding a new property (`year`) shows you can safely evolve domain models as requirements change.",
-    es: "Añadir una nueva propiedad (`year`) demuestra que puedes evolucionar modelos de dominio conforme cambian los requisitos.",
-  },
-  {
-    monetaryValue: 11200,
-    en: "Identifying all valid get/set patterns proves you can build and maintain clean CRUD APIs.",
-    es: "Identificar todos los patrones válidos de get/set demuestra que puedes crear y mantener APIs CRUD limpias.",
-  },
-  {
-    monetaryValue: 11700,
-    en: "Mutating a property at runtime enables admin scripts and one‑off data migrations.",
-    es: "Mutar una propiedad en tiempo de ejecución habilita scripts de administración y migraciones de datos puntuales.",
-  },
-  {
-    monetaryValue: 12000,
-    en: "Defining inheritance conceptually shows readiness for frameworks that rely on `extends`.",
-    es: "Definir la herencia de forma conceptual muestra preparación para frameworks que dependen de `extends`.",
-  },
-  {
-    monetaryValue: 13000,
-    en: "Implementing a subclass (`ElectricCar`) demonstrates real OOP design and hierarchy modeling.",
-    es: "Implementar una subclase (`ElectricCar`) demuestra diseño POO real y modelado de jerarquías.",
-  },
-  {
-    monetaryValue: 13300,
-    en: "Describing method overriding means you can safely customize inherited behavior.",
-    es: "Describir la sobrescritura de métodos significa que puedes personalizar el comportamiento heredado de forma segura.",
-  },
-  {
-    monetaryValue: 13600,
-    en: "Defining encapsulation shows you understand information hiding and API boundaries.",
-    es: "Definir encapsulamiento muestra que entiendes el ocultamiento de información y los límites de la API.",
-  },
-  {
-    monetaryValue: 14000,
-    en: "Adding getters/setters for `batteryLife` safeguards data integrity and business rules.",
-    es: "Agregar getters/setters para `batteryLife` protege la integridad de datos y las reglas de negocio.",
-  },
-  {
-    monetaryValue: 14100,
-    en: "Passing the one‑word quiz reinforces key terminology but only nudges pay slightly.",
-    es: "Aprobar el cuestionario de una palabra refuerza la terminología clave pero solo aumenta un poco el salario.",
-  },
-  {
-    monetaryValue: 14800,
-    en: "Completing the mini‑project (`Person` → `Student`) provides a portfolio‑ready OOP module.",
-    es: "Completar el mini‑proyecto (`Person` → `Student`) aporta un módulo POO listo para el portafolio.",
-  },
-  {
-    monetaryValue: 14900,
-    en: "Printing a message with `echo` shows CLI comfort useful for deployment scripts.",
-    es: "Imprimir un mensaje con `echo` demuestra comodidad con la CLI, útil para scripts de despliegue.",
-  },
-  {
-    monetaryValue: 15000,
-    en: "Using AI to self‑review and refactor lowers supervision costs and boosts independence.",
-    es: "Usar IA para auto‑revisar y refactorizar reduce los costos de supervisión y aumenta la independencia.",
-  },
-  {
-    monetaryValue: 15500,
-    en: "Defining what a React component is proves knowledge of modern UI building blocks.",
-    es: "Definir qué es un componente React demuestra conocimiento de los bloques de construcción de interfaces modernas.",
-  },
-  {
-    monetaryValue: 16200,
-    en: "Listing core ideas (props, state, events, styles) shows readiness to read real React code.",
-    es: "Enumerar ideas clave (props, state, eventos, estilos) indica preparación para leer código React real.",
-  },
-  {
-    monetaryValue: 16900,
-    en: "Explaining how state triggers re‑renders reveals an essential mental model for debugging.",
-    es: "Explicar cómo el estado provoca re‑renders revela un modelo mental esencial para depurar.",
-  },
-  {
-    monetaryValue: 18900,
-    en: "Coding a component that returns JSX produces tangible UI—first portfolio material.",
-    es: "Codificar un componente que devuelve JSX produce una UI tangible—primer material de portafolio.",
-  },
-  {
-    monetaryValue: 20400,
-    en: "Handling a button click with `onClick` adds real interactivity for product features.",
-    es: "Manejar un clic de botón con `onClick` agrega interactividad real para funciones de producto.",
-  },
-  {
-    monetaryValue: 22400,
-    en: "Using `useState` to toggle a like button delivers dynamic behavior clients pay for.",
-    es: "Usar `useState` para alternar un botón de like aporta comportamiento dinámico que los clientes pagan.",
-  },
-  {
-    monetaryValue: 22800,
-    en: "Recalling the term props cements vocabulary; a minor but useful credibility boost.",
-    es: "Recordar el término props consolida vocabulario; aumento menor pero útil de credibilidad.",
-  },
-  {
-    monetaryValue: 24300,
-    en: "Accepting and displaying props enables reusable, data‑driven UI components.",
-    es: "Aceptar y mostrar props permite componentes de UI reutilizables y orientados a datos.",
-  },
-  {
-    monetaryValue: 25000,
-    en: "Distinguishing props vs. state is a common junior‑interview hurdle—now cleared.",
-    es: "Distinguir props de state es un obstáculo común en entrevistas junior—ahora superado.",
-  },
-  {
-    monetaryValue: 25500,
-    en: "Running `ls` in the terminal shows CLI comfort for front‑end build tooling.",
-    es: "Ejecutar `ls` en la terminal muestra comodidad con la CLI para herramientas de construcción front‑end.",
-  },
-  {
-    monetaryValue: 27000,
-    en: "Styling the Tweet component with CSS proves you can meet design requirements.",
-    es: "Estilizar el componente Tweet con CSS demuestra que puedes cumplir requisitos de diseño.",
-  },
-  {
-    monetaryValue: 27800,
-    en: "Ordering Flexbox rules illustrates layout mastery for responsive pages.",
-    es: "Ordenar reglas de Flexbox ilustra dominio de diseño para páginas responsivas.",
-  },
-  {
-    monetaryValue: 29800,
-    en: "Lifting state up coordinates child components—step toward full app architecture.",
-    es: "Elevar el estado coordina componentes hijos—paso hacia la arquitectura de apps completas.",
-  },
-  {
-    monetaryValue: 31300,
-    en: "Adding `useEffect` for side effects equips you to handle timers, logs and more.",
-    es: "Agregar `useEffect` para efectos secundarios te capacita para manejar temporizadores, registros y más.",
-  },
-  {
-    monetaryValue: 32000,
-    en: "Explaining the component lifecycle shows architectural awareness recruiters like.",
-    es: "Explicar el ciclo de vida del componente muestra conciencia arquitectónica que valoran los reclutadores.",
-  },
-  {
-    monetaryValue: 33500,
-    en: "Sequencing fetch‑data steps means you can call real APIs from the browser safely.",
-    es: "Secuenciar los pasos de obtención de datos implica que puedes llamar APIs reales desde el navegador de forma segura.",
-  },
-  {
-    monetaryValue: 38300,
-    en: "Building the mini Tweet app (API, likes, retweets) adds a showcase project employers can click.",
-    es: "Construir la mini app de Tweets (API, likes, retweets) añade un proyecto demostrable que los empleadores pueden probar.",
-  },
-  {
-    monetaryValue: 39000,
-    en: "Knowing the command to scaffold React/Vite lets you spin up new projects instantly.",
-    es: "Conocer el comando para crear un proyecto React/Vite te permite iniciar proyectos nuevos al instante.",
-  },
-  {
-    monetaryValue: 40000,
-    en: "Ordering every Vite setup step proves end‑to‑end scaffolding autonomy.",
-    es: "Ordenar cada paso de configuración de Vite demuestra autonomía total en el arranque de proyectos.",
-  },
-  {
-    monetaryValue: 40000,
-    en: "AI conversation review boosts self‑debugging but doesn’t change earnings further.",
-    es: "La revisión con IA mejora la auto‑depuración pero no modifica más los ingresos.",
-  },
-  {
-    monetaryValue: 40500,
-    en: "Explaining what backend engineering is shows you understand the server side of apps.",
-    es: "Explicar qué es la ingeniería backend demuestra que entiendes el lado servidor de las aplicaciones.",
-  },
-  {
-    monetaryValue: 41000,
-    en: "Picking a core backend lesson proves you can identify real server responsibilities.",
-    es: "Elegir una lección fundamental de backend prueba que puedes identificar responsabilidades reales del servidor.",
-  },
-  {
-    monetaryValue: 42000,
-    en: "Listing key backend duties shows awareness of performance, data and security tasks.",
-    es: "Enumerar deberes clave de backend muestra conciencia de tareas de rendimiento, datos y seguridad.",
-  },
-  {
-    monetaryValue: 42500,
-    en: "Describing why the terminal matters signals comfort with command‑line operations.",
-    es: "Describir por qué importa la terminal indica comodidad con operaciones de línea de comandos.",
-  },
-  {
-    monetaryValue: 43000,
-    en: "Writing the command to install npm proves you can prepare a fresh environment.",
-    es: "Escribir el comando para instalar npm demuestra que puedes preparar un entorno nuevo.",
-  },
-  {
-    monetaryValue: 44000,
-    en: "Installing an npm package shows you can pull external libraries into a project.",
-    es: "Instalar un paquete con npm demuestra que puedes incorporar librerías externas en un proyecto.",
-  },
-  {
-    monetaryValue: 46000,
-    en: "Defining authentication during user creation shows security vocabulary and focus.",
-    es: "Definir autenticación durante la creación de usuarios muestra vocabulario y enfoque en seguridad.",
-  },
-  {
-    monetaryValue: 47000,
-    en: "Outlining database types indicates you can choose the right store for the job.",
-    es: "Explicar los tipos de bases de datos indica que puedes elegir el almacén adecuado para la tarea.",
-  },
-  {
-    monetaryValue: 50000,
-    en: "Connecting an app to Firebase demonstrates a working cloud data integration.",
-    es: "Conectar una app a Firebase demuestra una integración de datos en la nube funcional.",
-  },
-  {
-    monetaryValue: 51000,
-    en: "Recalling `firebase init` shows you can bootstrap a backend project from the CLI.",
-    es: "Recordar `firebase init` muestra que puedes iniciar un proyecto backend desde la CLI.",
-  },
-  {
-    monetaryValue: 52000,
-    en: "Listing responsible storage practices signals attention to encryption and backup.",
-    es: "Enumerar prácticas de almacenamiento responsable indica atención al cifrado y las copias de seguridad.",
-  },
-  {
-    monetaryValue: 55000,
-    en: "Initializing Firebase and adding a document proves full CRUD path knowledge.",
-    es: "Inicializar Firebase y añadir un documento demuestra conocimiento completo del flujo CRUD.",
-  },
-  {
-    monetaryValue: 57000,
-    en: "Handling user data with auth objects shows you can tie identity to database rows.",
-    es: "Gestionar datos de usuario con objetos de autenticación muestra que puedes vincular identidad y datos.",
-  },
-  {
-    monetaryValue: 59000,
-    en: "Retrieving a user doc after login completes the real‑world auth‑data loop.",
-    es: "Recuperar un documento de usuario tras iniciar sesión completa el ciclo real de autenticación y datos.",
-  },
-  {
-    monetaryValue: 61000,
-    en: "Ordering a typical auth flow proves you grasp token lifecycle and access control.",
-    es: "Ordenar un flujo típico de autenticación demuestra que comprendes el ciclo de tokens y el control de acceso.",
-  },
-  {
-    monetaryValue: 62000,
-    en: "Naming OAuth as the protocol shows you’re ready to add social sign‑ins.",
-    es: "Nombrar OAuth como protocolo muestra que estás listo para añadir inicios de sesión sociales.",
-  },
-  {
-    monetaryValue: 63000,
-    en: "Explaining environment variables proves you can protect secrets in production.",
-    es: "Explicar las variables de entorno demuestra que puedes proteger secretos en producción.",
-  },
-  {
-    monetaryValue: 65000,
-    en: "Defining a one‑to‑many relationship models users and posts or similar data chains.",
-    es: "Definir una relación uno‑a‑muchos modela usuarios y publicaciones u otras cadenas de datos.",
-  },
-  {
-    monetaryValue: 66000,
-    en: "Choosing correct HTTP verbs shows you can design RESTful APIs that clients expect.",
-    es: "Elegir los verbos HTTP correctos muestra que puedes diseñar APIs RESTful que esperan los clientes.",
-  },
-  {
-    monetaryValue: 68000,
-    en: "Ordering JWT auth steps proves you can create secure, stateless sessions.",
-    es: "Ordenar los pasos de autenticación JWT demuestra que puedes crear sesiones seguras y sin estado.",
-  },
-  {
-    monetaryValue: 70000,
-    en: "Writing the deploy command for Firebase shows you can launch to the cloud alone.",
-    es: "Escribir el comando de despliegue para Firebase muestra que puedes lanzar a la nube por tu cuenta.",
-  },
-  {
-    monetaryValue: 70000,
-    en: "Using AI for self‑review increases autonomy but doesn’t raise pay further.",
-    es: "Usar IA para auto‑revisión aumenta la autonomía, pero no incrementa más el salario.",
-  },
-  {
-    monetaryValue: 70000,
-    en: "Explaining the benefits of serverless platforms is useful context but doesn’t add hands‑on earning power.",
-    es: "Explicar los beneficios de las plataformas serverless es contexto útil pero no aumenta habilidades facturables.",
-  },
-  {
-    monetaryValue: 70000,
-    en: "Describing why VS Code is popular is tool awareness with no direct market premium.",
-    es: "Describir por qué VS Code es popular refleja conocimiento de herramientas sin prima salarial directa.",
-  },
-  {
-    monetaryValue: 70000,
-    en: "Stating the purpose of Node.js and npm is still theory, so pay stays flat.",
-    es: "Indicar el propósito de Node.js y npm sigue siendo teoría, por lo que el salario se mantiene.",
-  },
-  {
-    monetaryValue: 71000,
-    en: "Running `npm install` proves you can bootstrap any JavaScript project locally.",
-    es: "Ejecutar `npm install` demuestra que puedes iniciar cualquier proyecto JavaScript de forma local.",
-  },
-  {
-    monetaryValue: 72000,
-    en: "Installing the Firebase CLI shows readiness to deploy from the command line.",
-    es: "Instalar Firebase CLI demuestra preparación para desplegar desde la línea de comandos.",
-  },
-  {
-    monetaryValue: 75000,
-    en: "Ordering every step to scaffold React + Firebase signals end‑to‑end project setup skills.",
-    es: "Ordenar cada paso para crear React + Firebase indica habilidades de configuración de proyectos de principio a fin.",
-  },
-  {
-    monetaryValue: 80000,
-    en: "Writing code that initializes Firebase services delivers a live cloud backend—big real‑world value.",
-    es: "Escribir código que inicializa servicios de Firebase aporta un backend en la nube listo—gran valor práctico.",
-  },
-  {
-    monetaryValue: 80000,
-    en: "Knowing that GitHub hosts code is baseline knowledge with no salary bump.",
-    es: "Saber que GitHub aloja código es conocimiento básico sin aumento salarial.",
-  },
-  {
-    monetaryValue: 81000,
-    en: "Cloning a repo from the terminal lets you pull sprint tasks unassisted.",
-    es: "Clonar un repositorio desde la terminal te permite tomar tareas de sprint sin ayuda.",
-  },
-  {
-    monetaryValue: 82000,
-    en: "Comparing Firebase to rivals shows platform judgment—small compensation lift.",
-    es: "Comparar Firebase con rivales muestra criterio de plataforma—pequeño aumento de compensación.",
-  },
-  {
-    monetaryValue: 83000,
-    en: "Identifying core Firebase products proves you can navigate its ecosystem solo.",
-    es: "Identificar los productos clave de Firebase demuestra que puedes moverte solo por su ecosistema.",
-  },
-  {
-    monetaryValue: 84000,
-    en: "Using `git pull` to sync branches prevents merge pain on team projects.",
-    es: "Usar `git pull` para sincronizar ramas evita dolores de cabeza de merge en proyectos de equipo.",
-  },
-  {
-    monetaryValue: 88000,
-    en: "Choosing `react‑firebaseui` for auth avoids weeks of custom login work.",
-    es: "Elegir `react‑firebaseui` para autenticación evita semanas de trabajo de login a medida.",
-  },
-  {
-    monetaryValue: 92000,
-    en: "Enabling Google Sign‑In completes an OAuth flow that production apps need.",
-    es: "Habilitar Google Sign‑In completa un flujo OAuth que requieren las apps en producción.",
-  },
-  {
-    monetaryValue: 94000,
-    en: "Injecting Firebase config keys securely shows you can protect secrets in prod.",
-    es: "Inyectar claves de configuración de Firebase de forma segura demuestra que puedes proteger secretos en producción.",
-  },
-  {
-    monetaryValue: 97000,
-    en: "Rendering a Firebase sign‑in button delivers a usable login screen.",
-    es: "Renderizar un botón de inicio de sesión de Firebase ofrece una pantalla de login utilizable.",
-  },
-  {
-    monetaryValue: 100000,
-    en: "Displaying user data with `useEffect` adds personalized dashboards—core SaaS value.",
-    es: "Mostrar datos de usuario con `useEffect` añade paneles personalizados—valor clave para SaaS.",
-  },
-  {
-    monetaryValue: 105000,
-    en: "Updating the user profile in Firestore closes the CRUD loop across auth and DB.",
-    es: "Actualizar el perfil de usuario en Firestore cierra el ciclo CRUD entre autenticación y base de datos.",
-  },
-  {
-    monetaryValue: 107000,
-    en: "Chaining `git add && commit && push` shows an efficient, professional workflow.",
-    es: "Encadenar `git add && commit && push` muestra un flujo de trabajo eficiente y profesional.",
-  },
-  {
-    monetaryValue: 120000,
-    en: "Ordering all Git commands to create and push a new repo proves you can launch green‑field projects autonomously—mid‑level salary territory.",
-    es: "Ordenar todos los comandos Git para crear y subir un repositorio nuevo demuestra que puedes lanzar proyectos desde cero de forma autónoma—territorio salarial de nivel medio.",
-  },
-  {
-    monetaryValue: 120000,
-    en: "AI conversation review boosts self‑debugging but doesn’t increase pay further.",
-    es: "La revisión con IA mejora la auto‑depuración, pero no aumenta más el salario.",
-  },
-];
+export const loot = [{}, {
+  monetaryValue: 0,
+  en: "Purely conceptual—understanding what coding is doesn’t create billable skill.",
+  es: "Puramente conceptual: entender qué es la programación no genera habilidades vendibles."
+}, {
+  monetaryValue: 0,
+  en: "Knowing the program‑execution flow is still theory, so earnings remain unchanged.",
+  es: "Conocer el flujo de ejecución de un programa sigue siendo teoría, por lo que las ganancias no cambian."
+}, {
+  monetaryValue: 250,
+  en: "Declaring a basic variable lets the learner tweak tiny scripts or config files.",
+  es: "Declarar una variable básica permite al estudiante ajustar pequeños scripts o archivos de configuración."
+}, {
+  monetaryValue: 500,
+  en: "Creating an array makes simple data‑entry automations (lists, CSV tweaks) possible.",
+  es: "Crear un arreglo hace posibles automatizaciones simples de ingreso de datos (listas, ajustes de CSV)."
+}, {
+  monetaryValue: 750,
+  en: "Recognising primitive data types enables safe edits to files.",
+  es: "Reconocer los tipos de datos primitivos permite editar de forma segura archivos JSON o de entorno."
+}, {
+  monetaryValue: 1000,
+  en: "Writing a working code snippet shows executable output—sellable micro‑tasks begin here.",
+  es: "Escribir un fragmento de código funcional demuestra resultados ejecutables; aquí empiezan las micro‑tareas comercializables."
+}, {
+  monetaryValue: 1100,
+  en: "Reflecting on the purpose of variables adds communication value but only a slight pay bump.",
+  es: "Reflexionar sobre el propósito de las variables añade valor comunicativo pero solo incrementa ligeramente el sueldo."
+}, {
+  monetaryValue: 1300,
+  en: "Navigating the CLI with `cd` unlocks basic terminal chores and version‑control operations.",
+  es: "Navegar por la CLI con `cd` habilita tareas básicas de terminal y operaciones de control de versiones."
+}, {
+  monetaryValue: 1500,
+  en: "Using AI to self‑review reduces mentorship overhead, making the learner more hireable.",
+  es: "Usar IA para auto‑revisarse reduce la necesidad de mentoría, lo que hace al estudiante más empleable."
+}, {
+  monetaryValue: 1600,
+  en: "Recognizing primitive vs. object types helps debug JSON and config issues.",
+  es: "Reconocer tipos primitivos y objetos ayuda a depurar JSON y archivos de configuración."
+}, {
+  monetaryValue: 1800,
+  en: "Understanding the lifecycle of a function enables safer edits to existing code.",
+  es: "Entender el ciclo de vida de una función permite modificar código existente con seguridad."
+}, {
+  monetaryValue: 2200,
+  en: "Writing and invoking a custom function shows executable logic—micro‑automation work begins.",
+  es: "Escribir e invocar una función propia demuestra lógica ejecutable; empiezan las micro‑automatizaciones."
+}, {
+  monetaryValue: 2300,
+  en: "Articulating the purpose of functions improves team communication and documentation.",
+  es: "Articular la finalidad de las funciones mejora la comunicación y la documentación del equipo."
+}, {
+  monetaryValue: 2700,
+  en: "Knowing the intent of an `if` statement is essential for QA test cases and bug fixes.",
+  es: "Conocer el propósito de una sentencia `if` es esencial para pruebas de QA y corrección de errores."
+}, {
+  monetaryValue: 3000,
+  en: "Completing a full `if … else if … else` block lets you repair simple decision bugs.",
+  es: "Completar un bloque `if … else if … else` permite corregir errores sencillos de decisión."
+}, {
+  monetaryValue: 3500,
+  en: "Writing conditional code independently enables input‑validation and business‑rule tasks.",
+  es: "Escribir código condicional de forma independiente habilita tareas de validación y reglas de negocio."
+}, {
+  monetaryValue: 3700,
+  en: "Using the `&&` operator correctly prevents edge‑case failures in compound conditions.",
+  es: "Usar correctamente el operador `&&` evita fallos en casos límite con condiciones compuestas."
+}, {
+  monetaryValue: 4000,
+  en: "Relating conditionals to real scenarios demonstrates applied problem‑solving skills.",
+  es: "Relacionar condicionales con escenarios reales demuestra habilidades de resolución aplicada de problemas."
+}, {
+  monetaryValue: 4300,
+  en: "Using `help` in Bash increases self‑sufficiency on Unix systems and servers.",
+  es: "Usar `help` en Bash aumenta la autosuficiencia en sistemas y servidores Unix."
+}, {
+  monetaryValue: 4600,
+  en: "Selecting the right loop structure is key for efficient data iteration.",
+  es: "Elegir la estructura de bucle correcta es clave para iteraciones de datos eficientes."
+}, {
+  monetaryValue: 4900,
+  en: "Understanding the phases of a `for` loop aids in spotting off‑by‑one errors.",
+  es: "Comprender las fases de un bucle `for` ayuda a detectar errores de desbordamiento."
+}, {
+  monetaryValue: 5300,
+  en: "Writing a loop that prints 1‑5 automates repetitive tasks like batch data cleanup.",
+  es: "Escribir un bucle que imprime del 1 al 5 automatiza tareas repetitivas como la limpieza de datos por lotes."
+}, {
+  monetaryValue: 5500,
+  en: "Explaining practical loop use cases shows awareness of common software patterns.",
+  es: "Explicar casos prácticos de uso de bucles muestra conocimiento de patrones comunes de software."
+}, {
+  monetaryValue: 5800,
+  en: "Listing array‑manipulation methods speeds up everyday JavaScript development.",
+  es: "Enumerar métodos de manipulación de arrays agiliza el desarrollo diario en JavaScript."
+}, {
+  monetaryValue: 6100,
+  en: "Debugging push/pop issues proves capability to maintain front‑end array code.",
+  es: "Depurar problemas de push/pop demuestra capacidad para mantener código de arrays en front‑end."
+}, {
+  monetaryValue: 6500,
+  en: "Mutating arrays programmatically enables dynamic lists and real UI features.",
+  es: "Mutar arrays de forma programática habilita listas dinámicas y funciones reales de UI."
+}, {
+  monetaryValue: 6700,
+  en: "Connecting arrays to real application data flows sharpens design reasoning.",
+  es: "Conectar arrays con flujos de datos reales afina el razonamiento de diseño."
+}, {
+  monetaryValue: 6900,
+  en: "Scaffolding a project directory with `mkdir` shows comfort with CLI workflows.",
+  es: "Crear un directorio de proyecto con `mkdir` demuestra comodidad con flujos de trabajo en CLI."
+}, {
+  monetaryValue: 7000,
+  en: "Mentally predicting mixed‑logic output demonstrates readiness for technical interviews.",
+  es: "Predecir mentalmente la salida de lógica combinada demuestra preparación para entrevistas técnicas."
+}, {
+  monetaryValue: 7000,
+  en: "Using AI feedback for self‑review lowers supervision costs and boosts hireability.",
+  es: "Utilizar retroalimentación de IA para auto‑revisión reduce costos de supervisión y mejora la empleabilidad."
+}, {
+  monetaryValue: 7500,
+  en: "Creating an object with the `new` keyword shows you can follow SDK samples and start modeling data.",
+  es: "Crear un objeto con la palabra clave `new` demuestra que puedes seguir ejemplos de SDK y empezar a modelar datos."
+}, {
+  monetaryValue: 8200,
+  en: "Choosing the correct `constructor` syntax means you can write ES6 classes other code can reuse.",
+  es: "Elegir la sintaxis correcta de `constructor` significa que puedes escribir clases ES6 que otro código pueda reutilizar."
+}, {
+  monetaryValue: 8500,
+  en: "Explaining the purpose of a constructor shows you grasp an object's lifecycle and initialization.",
+  es: "Explicar el propósito de un constructor indica que entiendes el ciclo de vida e inicialización de un objeto."
+}, {
+  monetaryValue: 8800,
+  en: "Listing every step to instantiate a class proves you can follow vendor quick‑starts without guidance.",
+  es: "Enumerar cada paso para instanciar una clase demuestra que puedes seguir guías de inicio rápido sin ayuda."
+}, {
+  monetaryValue: 9600,
+  en: "Declaring a method inside a class lets you extend existing codebases and tackle real feature tickets.",
+  es: "Declarar un método dentro de una clase te permite extender bases de código existentes y abordar funciones reales."
+}, {
+  monetaryValue: 10400,
+  en: "Using `this` correctly prevents classic bugs (`undefined is not a function`) and speeds up reviews.",
+  es: "Usar `this` correctamente evita errores clásicos (`undefined is not a function`) y agiliza las revisiones."
+}, {
+  monetaryValue: 10800,
+  en: "Adding a new property (`year`) shows you can safely evolve domain models as requirements change.",
+  es: "Añadir una nueva propiedad (`year`) demuestra que puedes evolucionar modelos de dominio conforme cambian los requisitos."
+}, {
+  monetaryValue: 11200,
+  en: "Identifying all valid get/set patterns proves you can build and maintain clean CRUD APIs.",
+  es: "Identificar todos los patrones válidos de get/set demuestra que puedes crear y mantener APIs CRUD limpias."
+}, {
+  monetaryValue: 11700,
+  en: "Mutating a property at runtime enables admin scripts and one‑off data migrations.",
+  es: "Mutar una propiedad en tiempo de ejecución habilita scripts de administración y migraciones de datos puntuales."
+}, {
+  monetaryValue: 12000,
+  en: "Defining inheritance conceptually shows readiness for frameworks that rely on `extends`.",
+  es: "Definir la herencia de forma conceptual muestra preparación para frameworks que dependen de `extends`."
+}, {
+  monetaryValue: 13000,
+  en: "Implementing a subclass (`ElectricCar`) demonstrates real OOP design and hierarchy modeling.",
+  es: "Implementar una subclase (`ElectricCar`) demuestra diseño POO real y modelado de jerarquías."
+}, {
+  monetaryValue: 13300,
+  en: "Describing method overriding means you can safely customize inherited behavior.",
+  es: "Describir la sobrescritura de métodos significa que puedes personalizar el comportamiento heredado de forma segura."
+}, {
+  monetaryValue: 13600,
+  en: "Defining encapsulation shows you understand information hiding and API boundaries.",
+  es: "Definir encapsulamiento muestra que entiendes el ocultamiento de información y los límites de la API."
+}, {
+  monetaryValue: 14000,
+  en: "Adding getters/setters for `batteryLife` safeguards data integrity and business rules.",
+  es: "Agregar getters/setters para `batteryLife` protege la integridad de datos y las reglas de negocio."
+}, {
+  monetaryValue: 14100,
+  en: "Passing the one‑word quiz reinforces key terminology but only nudges pay slightly.",
+  es: "Aprobar el cuestionario de una palabra refuerza la terminología clave pero solo aumenta un poco el salario."
+}, {
+  monetaryValue: 14800,
+  en: "Completing the mini‑project (`Person` → `Student`) provides a portfolio‑ready OOP module.",
+  es: "Completar el mini‑proyecto (`Person` → `Student`) aporta un módulo POO listo para el portafolio."
+}, {
+  monetaryValue: 14900,
+  en: "Printing a message with `echo` shows CLI comfort useful for deployment scripts.",
+  es: "Imprimir un mensaje con `echo` demuestra comodidad con la CLI, útil para scripts de despliegue."
+}, {
+  monetaryValue: 15000,
+  en: "Using AI to self‑review and refactor lowers supervision costs and boosts independence.",
+  es: "Usar IA para auto‑revisar y refactorizar reduce los costos de supervisión y aumenta la independencia."
+}, {
+  monetaryValue: 15500,
+  en: "Defining what a React component is proves knowledge of modern UI building blocks.",
+  es: "Definir qué es un componente React demuestra conocimiento de los bloques de construcción de interfaces modernas."
+}, {
+  monetaryValue: 16200,
+  en: "Listing core ideas (props, state, events, styles) shows readiness to read real React code.",
+  es: "Enumerar ideas clave (props, state, eventos, estilos) indica preparación para leer código React real."
+}, {
+  monetaryValue: 16900,
+  en: "Explaining how state triggers re‑renders reveals an essential mental model for debugging.",
+  es: "Explicar cómo el estado provoca re‑renders revela un modelo mental esencial para depurar."
+}, {
+  monetaryValue: 18900,
+  en: "Coding a component that returns JSX produces tangible UI—first portfolio material.",
+  es: "Codificar un componente que devuelve JSX produce una UI tangible—primer material de portafolio."
+}, {
+  monetaryValue: 20400,
+  en: "Handling a button click with `onClick` adds real interactivity for product features.",
+  es: "Manejar un clic de botón con `onClick` agrega interactividad real para funciones de producto."
+}, {
+  monetaryValue: 22400,
+  en: "Using `useState` to toggle a like button delivers dynamic behavior clients pay for.",
+  es: "Usar `useState` para alternar un botón de like aporta comportamiento dinámico que los clientes pagan."
+}, {
+  monetaryValue: 22800,
+  en: "Recalling the term props cements vocabulary; a minor but useful credibility boost.",
+  es: "Recordar el término props consolida vocabulario; aumento menor pero útil de credibilidad."
+}, {
+  monetaryValue: 24300,
+  en: "Accepting and displaying props enables reusable, data‑driven UI components.",
+  es: "Aceptar y mostrar props permite componentes de UI reutilizables y orientados a datos."
+}, {
+  monetaryValue: 25000,
+  en: "Distinguishing props vs. state is a common junior‑interview hurdle—now cleared.",
+  es: "Distinguir props de state es un obstáculo común en entrevistas junior—ahora superado."
+}, {
+  monetaryValue: 25500,
+  en: "Running `ls` in the terminal shows CLI comfort for front‑end build tooling.",
+  es: "Ejecutar `ls` en la terminal muestra comodidad con la CLI para herramientas de construcción front‑end."
+}, {
+  monetaryValue: 27000,
+  en: "Styling the Tweet component with CSS proves you can meet design requirements.",
+  es: "Estilizar el componente Tweet con CSS demuestra que puedes cumplir requisitos de diseño."
+}, {
+  monetaryValue: 27800,
+  en: "Ordering Flexbox rules illustrates layout mastery for responsive pages.",
+  es: "Ordenar reglas de Flexbox ilustra dominio de diseño para páginas responsivas."
+}, {
+  monetaryValue: 29800,
+  en: "Lifting state up coordinates child components—step toward full app architecture.",
+  es: "Elevar el estado coordina componentes hijos—paso hacia la arquitectura de apps completas."
+}, {
+  monetaryValue: 31300,
+  en: "Adding `useEffect` for side effects equips you to handle timers, logs and more.",
+  es: "Agregar `useEffect` para efectos secundarios te capacita para manejar temporizadores, registros y más."
+}, {
+  monetaryValue: 32000,
+  en: "Explaining the component lifecycle shows architectural awareness recruiters like.",
+  es: "Explicar el ciclo de vida del componente muestra conciencia arquitectónica que valoran los reclutadores."
+}, {
+  monetaryValue: 33500,
+  en: "Sequencing fetch‑data steps means you can call real APIs from the browser safely.",
+  es: "Secuenciar los pasos de obtención de datos implica que puedes llamar APIs reales desde el navegador de forma segura."
+}, {
+  monetaryValue: 38300,
+  en: "Building the mini Tweet app (API, likes, retweets) adds a showcase project employers can click.",
+  es: "Construir la mini app de Tweets (API, likes, retweets) añade un proyecto demostrable que los empleadores pueden probar."
+}, {
+  monetaryValue: 39000,
+  en: "Knowing the command to scaffold React/Vite lets you spin up new projects instantly.",
+  es: "Conocer el comando para crear un proyecto React/Vite te permite iniciar proyectos nuevos al instante."
+}, {
+  monetaryValue: 40000,
+  en: "Ordering every Vite setup step proves end‑to‑end scaffolding autonomy.",
+  es: "Ordenar cada paso de configuración de Vite demuestra autonomía total en el arranque de proyectos."
+}, {
+  monetaryValue: 40000,
+  en: "AI conversation review boosts self‑debugging but doesn’t change earnings further.",
+  es: "La revisión con IA mejora la auto‑depuración pero no modifica más los ingresos."
+}, {
+  monetaryValue: 40500,
+  en: "Explaining what backend engineering is shows you understand the server side of apps.",
+  es: "Explicar qué es la ingeniería backend demuestra que entiendes el lado servidor de las aplicaciones."
+}, {
+  monetaryValue: 41000,
+  en: "Picking a core backend lesson proves you can identify real server responsibilities.",
+  es: "Elegir una lección fundamental de backend prueba que puedes identificar responsabilidades reales del servidor."
+}, {
+  monetaryValue: 42000,
+  en: "Listing key backend duties shows awareness of performance, data and security tasks.",
+  es: "Enumerar deberes clave de backend muestra conciencia de tareas de rendimiento, datos y seguridad."
+}, {
+  monetaryValue: 42500,
+  en: "Describing why the terminal matters signals comfort with command‑line operations.",
+  es: "Describir por qué importa la terminal indica comodidad con operaciones de línea de comandos."
+}, {
+  monetaryValue: 43000,
+  en: "Writing the command to install npm proves you can prepare a fresh environment.",
+  es: "Escribir el comando para instalar npm demuestra que puedes preparar un entorno nuevo."
+}, {
+  monetaryValue: 44000,
+  en: "Installing an npm package shows you can pull external libraries into a project.",
+  es: "Instalar un paquete con npm demuestra que puedes incorporar librerías externas en un proyecto."
+}, {
+  monetaryValue: 46000,
+  en: "Defining authentication during user creation shows security vocabulary and focus.",
+  es: "Definir autenticación durante la creación de usuarios muestra vocabulario y enfoque en seguridad."
+}, {
+  monetaryValue: 47000,
+  en: "Outlining database types indicates you can choose the right store for the job.",
+  es: "Explicar los tipos de bases de datos indica que puedes elegir el almacén adecuado para la tarea."
+}, {
+  monetaryValue: 50000,
+  en: "Connecting an app to Firebase demonstrates a working cloud data integration.",
+  es: "Conectar una app a Firebase demuestra una integración de datos en la nube funcional."
+}, {
+  monetaryValue: 51000,
+  en: "Recalling `firebase init` shows you can bootstrap a backend project from the CLI.",
+  es: "Recordar `firebase init` muestra que puedes iniciar un proyecto backend desde la CLI."
+}, {
+  monetaryValue: 52000,
+  en: "Listing responsible storage practices signals attention to encryption and backup.",
+  es: "Enumerar prácticas de almacenamiento responsable indica atención al cifrado y las copias de seguridad."
+}, {
+  monetaryValue: 55000,
+  en: "Initializing Firebase and adding a document proves full CRUD path knowledge.",
+  es: "Inicializar Firebase y añadir un documento demuestra conocimiento completo del flujo CRUD."
+}, {
+  monetaryValue: 57000,
+  en: "Handling user data with auth objects shows you can tie identity to database rows.",
+  es: "Gestionar datos de usuario con objetos de autenticación muestra que puedes vincular identidad y datos."
+}, {
+  monetaryValue: 59000,
+  en: "Retrieving a user doc after login completes the real‑world auth‑data loop.",
+  es: "Recuperar un documento de usuario tras iniciar sesión completa el ciclo real de autenticación y datos."
+}, {
+  monetaryValue: 61000,
+  en: "Ordering a typical auth flow proves you grasp token lifecycle and access control.",
+  es: "Ordenar un flujo típico de autenticación demuestra que comprendes el ciclo de tokens y el control de acceso."
+}, {
+  monetaryValue: 62000,
+  en: "Naming OAuth as the protocol shows you’re ready to add social sign‑ins.",
+  es: "Nombrar OAuth como protocolo muestra que estás listo para añadir inicios de sesión sociales."
+}, {
+  monetaryValue: 63000,
+  en: "Explaining environment variables proves you can protect secrets in production.",
+  es: "Explicar las variables de entorno demuestra que puedes proteger secretos en producción."
+}, {
+  monetaryValue: 65000,
+  en: "Defining a one‑to‑many relationship models users and posts or similar data chains.",
+  es: "Definir una relación uno‑a‑muchos modela usuarios y publicaciones u otras cadenas de datos."
+}, {
+  monetaryValue: 66000,
+  en: "Choosing correct HTTP verbs shows you can design RESTful APIs that clients expect.",
+  es: "Elegir los verbos HTTP correctos muestra que puedes diseñar APIs RESTful que esperan los clientes."
+}, {
+  monetaryValue: 68000,
+  en: "Ordering JWT auth steps proves you can create secure, stateless sessions.",
+  es: "Ordenar los pasos de autenticación JWT demuestra que puedes crear sesiones seguras y sin estado."
+}, {
+  monetaryValue: 70000,
+  en: "Writing the deploy command for Firebase shows you can launch to the cloud alone.",
+  es: "Escribir el comando de despliegue para Firebase muestra que puedes lanzar a la nube por tu cuenta."
+}, {
+  monetaryValue: 70000,
+  en: "Using AI for self‑review increases autonomy but doesn’t raise pay further.",
+  es: "Usar IA para auto‑revisión aumenta la autonomía, pero no incrementa más el salario."
+}, {
+  monetaryValue: 70000,
+  en: "Explaining the benefits of serverless platforms is useful context but doesn’t add hands‑on earning power.",
+  es: "Explicar los beneficios de las plataformas serverless es contexto útil pero no aumenta habilidades facturables."
+}, {
+  monetaryValue: 70000,
+  en: "Describing why VS Code is popular is tool awareness with no direct market premium.",
+  es: "Describir por qué VS Code es popular refleja conocimiento de herramientas sin prima salarial directa."
+}, {
+  monetaryValue: 70000,
+  en: "Stating the purpose of Node.js and npm is still theory, so pay stays flat.",
+  es: "Indicar el propósito de Node.js y npm sigue siendo teoría, por lo que el salario se mantiene."
+}, {
+  monetaryValue: 71000,
+  en: "Running `npm install` proves you can bootstrap any JavaScript project locally.",
+  es: "Ejecutar `npm install` demuestra que puedes iniciar cualquier proyecto JavaScript de forma local."
+}, {
+  monetaryValue: 72000,
+  en: "Installing the Firebase CLI shows readiness to deploy from the command line.",
+  es: "Instalar Firebase CLI demuestra preparación para desplegar desde la línea de comandos."
+}, {
+  monetaryValue: 75000,
+  en: "Ordering every step to scaffold React + Firebase signals end‑to‑end project setup skills.",
+  es: "Ordenar cada paso para crear React + Firebase indica habilidades de configuración de proyectos de principio a fin."
+}, {
+  monetaryValue: 80000,
+  en: "Writing code that initializes Firebase services delivers a live cloud backend—big real‑world value.",
+  es: "Escribir código que inicializa servicios de Firebase aporta un backend en la nube listo—gran valor práctico."
+}, {
+  monetaryValue: 80000,
+  en: "Knowing that GitHub hosts code is baseline knowledge with no salary bump.",
+  es: "Saber que GitHub aloja código es conocimiento básico sin aumento salarial."
+}, {
+  monetaryValue: 81000,
+  en: "Cloning a repo from the terminal lets you pull sprint tasks unassisted.",
+  es: "Clonar un repositorio desde la terminal te permite tomar tareas de sprint sin ayuda."
+}, {
+  monetaryValue: 82000,
+  en: "Comparing Firebase to rivals shows platform judgment—small compensation lift.",
+  es: "Comparar Firebase con rivales muestra criterio de plataforma—pequeño aumento de compensación."
+}, {
+  monetaryValue: 83000,
+  en: "Identifying core Firebase products proves you can navigate its ecosystem solo.",
+  es: "Identificar los productos clave de Firebase demuestra que puedes moverte solo por su ecosistema."
+}, {
+  monetaryValue: 84000,
+  en: "Using `git pull` to sync branches prevents merge pain on team projects.",
+  es: "Usar `git pull` para sincronizar ramas evita dolores de cabeza de merge en proyectos de equipo."
+}, {
+  monetaryValue: 88000,
+  en: "Choosing `react‑firebaseui` for auth avoids weeks of custom login work.",
+  es: "Elegir `react‑firebaseui` para autenticación evita semanas de trabajo de login a medida."
+}, {
+  monetaryValue: 92000,
+  en: "Enabling Google Sign‑In completes an OAuth flow that production apps need.",
+  es: "Habilitar Google Sign‑In completa un flujo OAuth que requieren las apps en producción."
+}, {
+  monetaryValue: 94000,
+  en: "Injecting Firebase config keys securely shows you can protect secrets in prod.",
+  es: "Inyectar claves de configuración de Firebase de forma segura demuestra que puedes proteger secretos en producción."
+}, {
+  monetaryValue: 97000,
+  en: "Rendering a Firebase sign‑in button delivers a usable login screen.",
+  es: "Renderizar un botón de inicio de sesión de Firebase ofrece una pantalla de login utilizable."
+}, {
+  monetaryValue: 100000,
+  en: "Displaying user data with `useEffect` adds personalized dashboards—core SaaS value.",
+  es: "Mostrar datos de usuario con `useEffect` añade paneles personalizados—valor clave para SaaS."
+}, {
+  monetaryValue: 105000,
+  en: "Updating the user profile in Firestore closes the CRUD loop across auth and DB.",
+  es: "Actualizar el perfil de usuario en Firestore cierra el ciclo CRUD entre autenticación y base de datos."
+}, {
+  monetaryValue: 107000,
+  en: "Chaining `git add && commit && push` shows an efficient, professional workflow.",
+  es: "Encadenar `git add && commit && push` muestra un flujo de trabajo eficiente y profesional."
+}, {
+  monetaryValue: 120000,
+  en: "Ordering all Git commands to create and push a new repo proves you can launch green‑field projects autonomously—mid‑level salary territory.",
+  es: "Ordenar todos los comandos Git para crear y subir un repositorio nuevo demuestra que puedes lanzar proyectos desde cero de forma autónoma—territorio salarial de nivel medio."
+}, {
+  monetaryValue: 120000,
+  en: "AI conversation review boosts self‑debugging but doesn’t increase pay further.",
+  es: "La revisión con IA mejora la auto‑depuración, pero no aumenta más el salario."
+}];
 
 // The expanded tutorial adds interaction onboarding without changing the
 // chapter curriculum. Keep chapter reward metadata aligned with its original
 // questions and use neutral entries for the additional tutorial steps.
-const englishFirstChapterIndex = steps.en.findIndex(
-  (step) => String(step?.group) === "1",
-);
+const englishFirstChapterIndex = steps.en.findIndex(step => String(step?.group) === "1");
 const tutorialLootGap = steps.en.length - loot.length;
 if (tutorialLootGap > 0) {
-  loot.splice(
-    englishFirstChapterIndex - tutorialLootGap,
-    0,
-    ...Array.from({ length: tutorialLootGap }, () => ({
-      monetaryValue: 0,
-      en: "Tutorial practice for learning a new question style.",
-      es: "Práctica del tutorial para aprender un nuevo estilo de pregunta.",
-    })),
-  );
+  loot.splice(englishFirstChapterIndex - tutorialLootGap, 0, ...Array.from({
+    length: tutorialLootGap
+  }, () => ({
+    monetaryValue: 0,
+    en: "Tutorial practice for learning a new question style.",
+    es: "Práctica del tutorial para aprender un nuevo estilo de pregunta."
+  })));
 }
 
 // Tutorial-only loot meter for the Python track
-export const pythonLoot = [
-  {}, // 0 – Introduction placeholder (no monetary movement yet)
+export const pythonLoot = [{},
+// 0 – Introduction placeholder (no monetary movement yet)
 
-  // 1 – Understanding Coding
-  {
-    monetaryValue: 0,
-    "py-en": "Pure theory—no immediate billable skill.",
-  },
-
-  // 2 – Sequence of Program Execution
-  {
-    monetaryValue: 0,
-    "py-en": "Execution-flow insight is still unpaid groundwork.",
-  },
-
-  // 3 – Introduction to Variables
-  {
-    monetaryValue: 125,
-    "py-en": "Variable basics open tiny scripting gigs (~$125).",
-  },
-
-  // 4 – Understanding List Declarations
-  {
-    monetaryValue: 250,
-    "py-en": "List handling enables simple automation scripts.",
-  },
-
-  // 5 – Variable Assignment in Python
-  {
-    monetaryValue: 250,
-    "py-en": "Confident assignment lets you edit configs safely.",
-  },
-
-  // 6 – Understanding Data Types
-  {
-    monetaryValue: 300,
-    "py-en": "Type awareness prevents bugs—marketable skill bump.",
-  },
-
-  // 7 – Purpose of Variables
-  {
-    monetaryValue: 300,
-    "py-en": "Explaining variable intent shows code clarity to employers.",
-  },
-
-  // 8 – Bash Terminal Practice: Changing Directories
-  {
-    monetaryValue: 375,
-    "py-en": "CLI navigation preps you for junior DevOps chores.",
-  },
-
-  // 9 – Review With AI Conversation (optional)
-  {
-    monetaryValue: 375,
-    "py-en": "Conversation recap cements knowledge—earnings hold steady.",
-  },
-  /* 1 */ {
-    monetaryValue: 375,
-    "py-en": "Primitive-type fluency lands basic data-cleanup gigs.",
-  },
-  /* 2 */ {
-    monetaryValue: 425,
-    "py-en": "Function workflow qualifies you for tiny utility scripts.",
-  },
-  /* 3 */ {
-    monetaryValue: 500,
-    "py-en": "Authoring functions opens low-stakes automation work.",
-  },
-  /* 4 */ {
-    monetaryValue: 500,
-    "py-en": "Explaining functions shows architectural awareness.",
-  },
-  /* 5 */ {
-    monetaryValue: 625,
-    "py-en": "Branching logic unlocks decision-making code tasks.",
-  },
-  /* 6 */ {
-    monetaryValue: 750,
-    "py-en": "Flow-control precision reduces QA time for small apps.",
-  },
-  /* 7 */ {
-    monetaryValue: 875,
-    "py-en": "Hands-on conditionals prove practical coding ability.",
-  },
-  /* 8 */ {
-    monetaryValue: 1000,
-    "py-en": "Operator insight tightens code correctness.",
-  },
-  /* 9 */ {
-    monetaryValue: 1000,
-    "py-en": "Applying conditionals to business logic adds value.",
-  },
-  /*10 */ {
-    monetaryValue: 1125,
-    "py-en": "CLI help skills prep you for DevOps workflows.",
-  },
-  /*11 */ {
-    monetaryValue: 1250,
-    "py-en": "Loop mastery automates repetitive data tasks.",
-  },
-  /*12 */ {
-    monetaryValue: 1375,
-    "py-en": "Understanding loop order trims runtime errors.",
-  },
-  /*13 */ {
-    monetaryValue: 1500,
-    "py-en": "Writing loops nets entry-level data-wrangling jobs.",
-  },
-  /*14 */ {
-    monetaryValue: 1500,
-    "py-en": "Articulating loop use cases shows system thinking.",
-  },
-  /*15 */ {
-    monetaryValue: 1625,
-    "py-en": "List methods speed up ETL and small-scale tooling.",
-  },
-  /*16 */ {
-    monetaryValue: 1750,
-    "py-en": "Sequencing list ops improves data-pipeline quality.",
-  },
-  /*17 */ {
-    monetaryValue: 1875,
-    "py-en": "Fluent list manipulation boosts productivity rates.",
-  },
-  /*18 */ {
-    monetaryValue: 1875,
-    "py-en": "Mapping list use cases to products signals insight.",
-  },
-  /*19 */ {
-    monetaryValue: 2000,
-    "py-en": "Directory commands add deploy-script credibility.",
-  },
-  /*20 */ {
-    monetaryValue: 2250,
-    "py-en": "Predicting complex output shows mental-model mastery.",
-  },
-  /*21 */ {
-    monetaryValue: 2250,
-    "py-en": "AI recap consolidates gains—value steadies here.",
-  },
-  {
-    monetaryValue: 2500,
-    "py-en": "Basic OOP concepts spark entry-level maintenance gigs.",
-  },
-  {
-    monetaryValue: 3750,
-    "py-en": "Constructor mastery scaffolds clean, reusable classes.",
-  },
-  {
-    monetaryValue: 3875,
-    "py-en": "Articulating __init__ shows design-pattern awareness.",
-  },
-  {
-    monetaryValue: 4250,
-    "py-en": "Instance creation enables API-client & SDK tasks.",
-  },
-  {
-    monetaryValue: 4500,
-    "py-en": "Methods demonstrate behavior encapsulation.",
-  },
-  {
-    monetaryValue: 4625,
-    "py-en": "Proper self usage signals readiness for code reviews.",
-  },
-  {
-    monetaryValue: 4750,
-    "py-en": "Attribute modeling improves data-layer flexibility.",
-  },
-  {
-    monetaryValue: 4875,
-    "py-en": "Safe property access reduces production-bug risk.",
-  },
-  {
-    monetaryValue: 5000,
-    "py-en": "Confident attribute updates unlock CRUD feature work.",
-  },
-  {
-    monetaryValue: 6000,
-    "py-en": "Inheritance insight opens framework customization.",
-  },
-  {
-    monetaryValue: 6750,
-    "py-en": "Subclassing skills qualify you for component libraries.",
-  },
-  {
-    monetaryValue: 7500,
-    "py-en": "Polymorphic overrides raise solid junior-dev salaries.",
-  },
-  {
-    monetaryValue: 7625,
-    "py-en": "Encapsulation theory guards data integrity.",
-  },
-  {
-    monetaryValue: 8250,
-    "py-en": "Getters/setters show production-ready design.",
-  },
-  { monetaryValue: 8250, "py-en": "Terminology locked in—value holds steady." },
-  {
-    monetaryValue: 9500,
-    "py-en": "Capstone project proves deliverable-ready OOP skills.",
-  },
-  {
-    monetaryValue: 9500,
-    "py-en": "Shell output practice reinforces value—no bump.",
-  },
-  {
-    monetaryValue: 9500,
-    "py-en": "AI recap solidifies OOP foundation—earnings level off.",
-  },
-  {
-    monetaryValue: 20000,
-    "py-en": "React component basics expand full-stack horizons.",
-  },
-  { monetaryValue: 21000, "py-en": "Props & state boost UI salary potential." },
-  {
-    monetaryValue: 22000,
-    "py-en": "State-driven rendering marks you as front-end capable.",
-  },
-  {
-    monetaryValue: 23000,
-    "py-en": "Building a component proves hands-on UI delivery.",
-  },
-  {
-    monetaryValue: 24000,
-    "py-en": "Event handling shows interactive UI chops.",
-  },
-  {
-    monetaryValue: 25000,
-    "py-en": "useState mastery qualifies you for junior React roles.",
-  },
-  {
-    monetaryValue: 26000,
-    "py-en": "Prop passing skills enhance component reusability.",
-  },
-  {
-    monetaryValue: 27000,
-    "py-en": "Dynamic props implementation sharpens architecture.",
-  },
-  {
-    monetaryValue: 28000,
-    "py-en": "Distinguishing props vs state signals design maturity.",
-  },
-  {
-    monetaryValue: 29000,
-    "py-en": "CLI file ops prep build-workflow automation.",
-  },
-  {
-    monetaryValue: 30000,
-    "py-en": "Styling components showcases product-ready polish.",
-  },
-  {
-    monetaryValue: 31000,
-    "py-en": "Flexbox layout fluency speeds responsive design.",
-  },
-  {
-    monetaryValue: 32000,
-    "py-en": "Lifting state enables multi-component orchestration.",
-  },
-  {
-    monetaryValue: 33000,
-    "py-en": "useEffect usage signals side-effect competence.",
-  },
-  {
-    monetaryValue: 34000,
-    "py-en": "Lifecycle awareness supports performance tuning.",
-  },
-  {
-    monetaryValue: 35000,
-    "py-en": "Async data fetching demonstrates API integration.",
-  },
-  {
-    monetaryValue: 37500,
-    "py-en": "Complete Tweet app exhibits full-stack delivery.",
-  },
-  {
-    monetaryValue: 40000,
-    "py-en": "Project setup mastery shows dev-environment autonomy.",
-  },
-  {
-    monetaryValue: 42500,
-    "py-en": "Vite workflow accelerates modern build pipelines.",
-  },
-  {
-    monetaryValue: 45000,
-    "py-en": "Comprehensive review cements senior-track value.",
-  },
-  /* 1 */ {
-    monetaryValue: 46000,
-    "py-en": "Backend fundamentals introduce server-side logic know-how.",
-  },
-  /* 2 */ {
-    monetaryValue: 48000,
-    "py-en": "Spotting core duties sharpens your roadmap to employment.",
-  },
-  /* 3 */ {
-    monetaryValue: 50000,
-    "py-en": "Multi-responsibility insight boosts junior-dev readiness.",
-  },
-  /* 4 */ {
-    monetaryValue: 51000,
-    "py-en": "Terminal fluency powers everyday backend tasks.",
-  },
-  /* 5 */ {
-    monetaryValue: 52000,
-    "py-en": "Upgrading pip keeps environments modern and secure.",
-  },
-  /* 6 */ {
-    monetaryValue: 53000,
-    "py-en": "Package installs unlock framework experimentation.",
-  },
-  /* 7 */ {
-    monetaryValue: 54000,
-    "py-en": "Auth terminology safeguards future user data.",
-  },
-  /* 8 */ {
-    monetaryValue: 55000,
-    "py-en": "Database-type literacy guides sound architecture choices.",
-  },
-  /* 9 */ {
-    monetaryValue: 56000,
-    "py-en": "PostgreSQL connection skills impress hiring managers.",
-  },
-  /*10*/ {
-    monetaryValue: 57000,
-    "py-en": "Django bootstrap showcases rapid project setup.",
-  },
-  /*11*/ {
-    monetaryValue: 59000,
-    "py-en": "Data-storage best practices prove reliability mindset.",
-  },
-  /*12*/ {
-    monetaryValue: 61000,
-    "py-en": "SQLAlchemy CRUD shows ORM proficiency in action.",
-  },
-  /*13*/ {
-    monetaryValue: 62000,
-    "py-en": "User-lookup code demonstrates practical DB use.",
-  },
-  /*14*/ {
-    monetaryValue: 63000,
-    "py-en": "Secure queries highlight credential-handling care.",
-  },
-  /*15*/ {
-    monetaryValue: 64000,
-    "py-en": "JWT flow maps modern authentication pipelines.",
-  },
-  /*16*/ {
-    monetaryValue: 65000,
-    "py-en": "OAuth know-how enables third-party sign-ins.",
-  },
-  /*17*/ {
-    monetaryValue: 66000,
-    "py-en": "Environment variables keep secrets safe in code.",
-  },
-  /*18*/ {
-    monetaryValue: 67000,
-    "py-en": "Model relationships design scalable data schemas.",
-  },
-  /*19*/ {
-    monetaryValue: 68000,
-    "py-en": "REST method insight preps you for API work.",
-  },
-  /*20*/ {
-    monetaryValue: 69000,
-    "py-en": "Building a JWT system shows end-to-end security chops.",
-  },
-  /*21*/ {
-    monetaryValue: 70000,
-    "py-en": "Deploying with Gunicorn caps senior-track salary bands.",
-  },
-  /*22 – Review (optional)*/ {
-    monetaryValue: 70000,
-    "py-en": "AI recap locks in knowledge—value plateaus here.",
-  },
-  /* 1  */ {
-    monetaryValue: 75000,
-    "py-en": "Serverless benefits raise your market ceiling immediately.",
-  },
-  /* 2  */ {
-    monetaryValue: 76000,
-    "py-en": "VSCode workflow fluency boosts day-one productivity value.",
-  },
-  /* 3  */ {
-    monetaryValue: 77000,
-    "py-en": "Node + npm installs unlock cross-stack tooling jobs.",
-  },
-  /* 4  */ {
-    monetaryValue: 78000,
-    "py-en": "Dependency installs prove environment-setup competence.",
-  },
-  /* 5  */ {
-    monetaryValue: 79000,
-    "py-en": "Firebase CLI install shows command-line confidence.",
-  },
-  /* 6  */ {
-    monetaryValue: 81000,
-    "py-en": "Project init demonstrates cloud project bootstrapping.",
-  },
-  /* 7  */ {
-    monetaryValue: 83000,
-    "py-en": "Choosing services reveals solution-architecture judgment.",
-  },
-  /* 8  */ {
-    monetaryValue: 86000,
-    "py-en": "Admin-SDK config signals secure credential handling.",
-  },
-  /* 9  */ {
-    monetaryValue: 88000,
-    "py-en": "Firestore client setup proves NoSQL ready-for-prod skill.",
-  },
-  /* 10 */ {
-    monetaryValue: 90000,
-    "py-en": "Auth concepts mark you as user-management capable.",
-  },
-  /* 11 */ {
-    monetaryValue: 92000,
-    "py-en": "Programmatic user-creation meets SaaS onboarding needs.",
-  },
-  /* 12 */ {
-    monetaryValue: 94000,
-    "py-en": "ID-token verification shows secure session handling.",
-  },
-  /* 13 */ {
-    monetaryValue: 97000,
-    "py-en": "CRUD mastery enables full data-layer ownership.",
-  },
-  /* 14 */ {
-    monetaryValue: 100000,
-    "py-en": "Cloud Functions coding pushes you into six-figure tier.",
-  },
-  /* 15 */ {
-    monetaryValue: 103000,
-    "py-en": "Local emulation shortens dev cycles—high ROI for teams.",
-  },
-  /* 16 */ {
-    monetaryValue: 108000,
-    "py-en": "Production deploy proficiency justifies senior rates.",
-  },
-  /* 17 */ {
-    monetaryValue: 110000,
-    "py-en": "Storage uploads add scalable asset-handling expertise.",
-  },
-  /* 18 */ {
-    monetaryValue: 112000,
-    "py-en": "Security-rules insight protects data at enterprise scale.",
-  },
-  /* 19 */ {
-    monetaryValue: 115000,
-    "py-en": "Monitoring & analytics drive performance optimization value.",
-  },
-  /* 20 */ {
-    monetaryValue: 118000,
-    "py-en": "Extension know-how speeds feature delivery for clients.",
-  },
-  /* 21 – Review */ {
-    monetaryValue: 120000,
-    "py-en": "Comprehensive review crowns you at senior-full-stack tier.",
-  },
-];
+// 1 – Understanding Coding
+{
+  monetaryValue: 0,
+  "py-en": "Pure theory—no immediate billable skill."
+},
+// 2 – Sequence of Program Execution
+{
+  monetaryValue: 0,
+  "py-en": "Execution-flow insight is still unpaid groundwork."
+},
+// 3 – Introduction to Variables
+{
+  monetaryValue: 125,
+  "py-en": "Variable basics open tiny scripting gigs (~$125)."
+},
+// 4 – Understanding List Declarations
+{
+  monetaryValue: 250,
+  "py-en": "List handling enables simple automation scripts."
+},
+// 5 – Variable Assignment in Python
+{
+  monetaryValue: 250,
+  "py-en": "Confident assignment lets you edit configs safely."
+},
+// 6 – Understanding Data Types
+{
+  monetaryValue: 300,
+  "py-en": "Type awareness prevents bugs—marketable skill bump."
+},
+// 7 – Purpose of Variables
+{
+  monetaryValue: 300,
+  "py-en": "Explaining variable intent shows code clarity to employers."
+},
+// 8 – Bash Terminal Practice: Changing Directories
+{
+  monetaryValue: 375,
+  "py-en": "CLI navigation preps you for junior DevOps chores."
+},
+// 9 – Review With AI Conversation (optional)
+{
+  monetaryValue: 375,
+  "py-en": "Conversation recap cements knowledge—earnings hold steady."
+}, /* 1 */{
+  monetaryValue: 375,
+  "py-en": "Primitive-type fluency lands basic data-cleanup gigs."
+}, /* 2 */{
+  monetaryValue: 425,
+  "py-en": "Function workflow qualifies you for tiny utility scripts."
+}, /* 3 */{
+  monetaryValue: 500,
+  "py-en": "Authoring functions opens low-stakes automation work."
+}, /* 4 */{
+  monetaryValue: 500,
+  "py-en": "Explaining functions shows architectural awareness."
+}, /* 5 */{
+  monetaryValue: 625,
+  "py-en": "Branching logic unlocks decision-making code tasks."
+}, /* 6 */{
+  monetaryValue: 750,
+  "py-en": "Flow-control precision reduces QA time for small apps."
+}, /* 7 */{
+  monetaryValue: 875,
+  "py-en": "Hands-on conditionals prove practical coding ability."
+}, /* 8 */{
+  monetaryValue: 1000,
+  "py-en": "Operator insight tightens code correctness."
+}, /* 9 */{
+  monetaryValue: 1000,
+  "py-en": "Applying conditionals to business logic adds value."
+}, /*10 */{
+  monetaryValue: 1125,
+  "py-en": "CLI help skills prep you for DevOps workflows."
+}, /*11 */{
+  monetaryValue: 1250,
+  "py-en": "Loop mastery automates repetitive data tasks."
+}, /*12 */{
+  monetaryValue: 1375,
+  "py-en": "Understanding loop order trims runtime errors."
+}, /*13 */{
+  monetaryValue: 1500,
+  "py-en": "Writing loops nets entry-level data-wrangling jobs."
+}, /*14 */{
+  monetaryValue: 1500,
+  "py-en": "Articulating loop use cases shows system thinking."
+}, /*15 */{
+  monetaryValue: 1625,
+  "py-en": "List methods speed up ETL and small-scale tooling."
+}, /*16 */{
+  monetaryValue: 1750,
+  "py-en": "Sequencing list ops improves data-pipeline quality."
+}, /*17 */{
+  monetaryValue: 1875,
+  "py-en": "Fluent list manipulation boosts productivity rates."
+}, /*18 */{
+  monetaryValue: 1875,
+  "py-en": "Mapping list use cases to products signals insight."
+}, /*19 */{
+  monetaryValue: 2000,
+  "py-en": "Directory commands add deploy-script credibility."
+}, /*20 */{
+  monetaryValue: 2250,
+  "py-en": "Predicting complex output shows mental-model mastery."
+}, /*21 */{
+  monetaryValue: 2250,
+  "py-en": "AI recap consolidates gains—value steadies here."
+}, {
+  monetaryValue: 2500,
+  "py-en": "Basic OOP concepts spark entry-level maintenance gigs."
+}, {
+  monetaryValue: 3750,
+  "py-en": "Constructor mastery scaffolds clean, reusable classes."
+}, {
+  monetaryValue: 3875,
+  "py-en": "Articulating __init__ shows design-pattern awareness."
+}, {
+  monetaryValue: 4250,
+  "py-en": "Instance creation enables API-client & SDK tasks."
+}, {
+  monetaryValue: 4500,
+  "py-en": "Methods demonstrate behavior encapsulation."
+}, {
+  monetaryValue: 4625,
+  "py-en": "Proper self usage signals readiness for code reviews."
+}, {
+  monetaryValue: 4750,
+  "py-en": "Attribute modeling improves data-layer flexibility."
+}, {
+  monetaryValue: 4875,
+  "py-en": "Safe property access reduces production-bug risk."
+}, {
+  monetaryValue: 5000,
+  "py-en": "Confident attribute updates unlock CRUD feature work."
+}, {
+  monetaryValue: 6000,
+  "py-en": "Inheritance insight opens framework customization."
+}, {
+  monetaryValue: 6750,
+  "py-en": "Subclassing skills qualify you for component libraries."
+}, {
+  monetaryValue: 7500,
+  "py-en": "Polymorphic overrides raise solid junior-dev salaries."
+}, {
+  monetaryValue: 7625,
+  "py-en": "Encapsulation theory guards data integrity."
+}, {
+  monetaryValue: 8250,
+  "py-en": "Getters/setters show production-ready design."
+}, {
+  monetaryValue: 8250,
+  "py-en": "Terminology locked in—value holds steady."
+}, {
+  monetaryValue: 9500,
+  "py-en": "Capstone project proves deliverable-ready OOP skills."
+}, {
+  monetaryValue: 9500,
+  "py-en": "Shell output practice reinforces value—no bump."
+}, {
+  monetaryValue: 9500,
+  "py-en": "AI recap solidifies OOP foundation—earnings level off."
+}, {
+  monetaryValue: 20000,
+  "py-en": "React component basics expand full-stack horizons."
+}, {
+  monetaryValue: 21000,
+  "py-en": "Props & state boost UI salary potential."
+}, {
+  monetaryValue: 22000,
+  "py-en": "State-driven rendering marks you as front-end capable."
+}, {
+  monetaryValue: 23000,
+  "py-en": "Building a component proves hands-on UI delivery."
+}, {
+  monetaryValue: 24000,
+  "py-en": "Event handling shows interactive UI chops."
+}, {
+  monetaryValue: 25000,
+  "py-en": "useState mastery qualifies you for junior React roles."
+}, {
+  monetaryValue: 26000,
+  "py-en": "Prop passing skills enhance component reusability."
+}, {
+  monetaryValue: 27000,
+  "py-en": "Dynamic props implementation sharpens architecture."
+}, {
+  monetaryValue: 28000,
+  "py-en": "Distinguishing props vs state signals design maturity."
+}, {
+  monetaryValue: 29000,
+  "py-en": "CLI file ops prep build-workflow automation."
+}, {
+  monetaryValue: 30000,
+  "py-en": "Styling components showcases product-ready polish."
+}, {
+  monetaryValue: 31000,
+  "py-en": "Flexbox layout fluency speeds responsive design."
+}, {
+  monetaryValue: 32000,
+  "py-en": "Lifting state enables multi-component orchestration."
+}, {
+  monetaryValue: 33000,
+  "py-en": "useEffect usage signals side-effect competence."
+}, {
+  monetaryValue: 34000,
+  "py-en": "Lifecycle awareness supports performance tuning."
+}, {
+  monetaryValue: 35000,
+  "py-en": "Async data fetching demonstrates API integration."
+}, {
+  monetaryValue: 37500,
+  "py-en": "Complete Tweet app exhibits full-stack delivery."
+}, {
+  monetaryValue: 40000,
+  "py-en": "Project setup mastery shows dev-environment autonomy."
+}, {
+  monetaryValue: 42500,
+  "py-en": "Vite workflow accelerates modern build pipelines."
+}, {
+  monetaryValue: 45000,
+  "py-en": "Comprehensive review cements senior-track value."
+}, /* 1 */{
+  monetaryValue: 46000,
+  "py-en": "Backend fundamentals introduce server-side logic know-how."
+}, /* 2 */{
+  monetaryValue: 48000,
+  "py-en": "Spotting core duties sharpens your roadmap to employment."
+}, /* 3 */{
+  monetaryValue: 50000,
+  "py-en": "Multi-responsibility insight boosts junior-dev readiness."
+}, /* 4 */{
+  monetaryValue: 51000,
+  "py-en": "Terminal fluency powers everyday backend tasks."
+}, /* 5 */{
+  monetaryValue: 52000,
+  "py-en": "Upgrading pip keeps environments modern and secure."
+}, /* 6 */{
+  monetaryValue: 53000,
+  "py-en": "Package installs unlock framework experimentation."
+}, /* 7 */{
+  monetaryValue: 54000,
+  "py-en": "Auth terminology safeguards future user data."
+}, /* 8 */{
+  monetaryValue: 55000,
+  "py-en": "Database-type literacy guides sound architecture choices."
+}, /* 9 */{
+  monetaryValue: 56000,
+  "py-en": "PostgreSQL connection skills impress hiring managers."
+}, /*10*/{
+  monetaryValue: 57000,
+  "py-en": "Django bootstrap showcases rapid project setup."
+}, /*11*/{
+  monetaryValue: 59000,
+  "py-en": "Data-storage best practices prove reliability mindset."
+}, /*12*/{
+  monetaryValue: 61000,
+  "py-en": "SQLAlchemy CRUD shows ORM proficiency in action."
+}, /*13*/{
+  monetaryValue: 62000,
+  "py-en": "User-lookup code demonstrates practical DB use."
+}, /*14*/{
+  monetaryValue: 63000,
+  "py-en": "Secure queries highlight credential-handling care."
+}, /*15*/{
+  monetaryValue: 64000,
+  "py-en": "JWT flow maps modern authentication pipelines."
+}, /*16*/{
+  monetaryValue: 65000,
+  "py-en": "OAuth know-how enables third-party sign-ins."
+}, /*17*/{
+  monetaryValue: 66000,
+  "py-en": "Environment variables keep secrets safe in code."
+}, /*18*/{
+  monetaryValue: 67000,
+  "py-en": "Model relationships design scalable data schemas."
+}, /*19*/{
+  monetaryValue: 68000,
+  "py-en": "REST method insight preps you for API work."
+}, /*20*/{
+  monetaryValue: 69000,
+  "py-en": "Building a JWT system shows end-to-end security chops."
+}, /*21*/{
+  monetaryValue: 70000,
+  "py-en": "Deploying with Gunicorn caps senior-track salary bands."
+}, /*22 – Review (optional)*/{
+  monetaryValue: 70000,
+  "py-en": "AI recap locks in knowledge—value plateaus here."
+}, /* 1  */{
+  monetaryValue: 75000,
+  "py-en": "Serverless benefits raise your market ceiling immediately."
+}, /* 2  */{
+  monetaryValue: 76000,
+  "py-en": "VSCode workflow fluency boosts day-one productivity value."
+}, /* 3  */{
+  monetaryValue: 77000,
+  "py-en": "Node + npm installs unlock cross-stack tooling jobs."
+}, /* 4  */{
+  monetaryValue: 78000,
+  "py-en": "Dependency installs prove environment-setup competence."
+}, /* 5  */{
+  monetaryValue: 79000,
+  "py-en": "Firebase CLI install shows command-line confidence."
+}, /* 6  */{
+  monetaryValue: 81000,
+  "py-en": "Project init demonstrates cloud project bootstrapping."
+}, /* 7  */{
+  monetaryValue: 83000,
+  "py-en": "Choosing services reveals solution-architecture judgment."
+}, /* 8  */{
+  monetaryValue: 86000,
+  "py-en": "Admin-SDK config signals secure credential handling."
+}, /* 9  */{
+  monetaryValue: 88000,
+  "py-en": "Firestore client setup proves NoSQL ready-for-prod skill."
+}, /* 10 */{
+  monetaryValue: 90000,
+  "py-en": "Auth concepts mark you as user-management capable."
+}, /* 11 */{
+  monetaryValue: 92000,
+  "py-en": "Programmatic user-creation meets SaaS onboarding needs."
+}, /* 12 */{
+  monetaryValue: 94000,
+  "py-en": "ID-token verification shows secure session handling."
+}, /* 13 */{
+  monetaryValue: 97000,
+  "py-en": "CRUD mastery enables full data-layer ownership."
+}, /* 14 */{
+  monetaryValue: 100000,
+  "py-en": "Cloud Functions coding pushes you into six-figure tier."
+}, /* 15 */{
+  monetaryValue: 103000,
+  "py-en": "Local emulation shortens dev cycles—high ROI for teams."
+}, /* 16 */{
+  monetaryValue: 108000,
+  "py-en": "Production deploy proficiency justifies senior rates."
+}, /* 17 */{
+  monetaryValue: 110000,
+  "py-en": "Storage uploads add scalable asset-handling expertise."
+}, /* 18 */{
+  monetaryValue: 112000,
+  "py-en": "Security-rules insight protects data at enterprise scale."
+}, /* 19 */{
+  monetaryValue: 115000,
+  "py-en": "Monitoring & analytics drive performance optimization value."
+}, /* 20 */{
+  monetaryValue: 118000,
+  "py-en": "Extension know-how speeds feature delivery for clients."
+}, /* 21 – Review */{
+  monetaryValue: 120000,
+  "py-en": "Comprehensive review crowns you at senior-full-stack tier."
+}];
 
 // Swift Tutorial loot meter
-export const swiftLoot = [
-  {}, // 0 – Introduction placeholder (no monetary movement)
-
-  // 1 – Understanding Coding
-  {
-    monetaryValue: 0,
-    "swift-en": "Pure theory—no immediate billable skill.",
-  },
-
-  // 2 – Sequence of Program Execution
-  {
-    monetaryValue: 0,
-    "swift-en": "Execution-flow insight is still unpaid groundwork.",
-  },
-
-  // 3 – Introduction to Variables
-  {
-    monetaryValue: 125,
-    "swift-en": "Variable basics open tiny scripting gigs (~$125).",
-  },
-
-  // 4 – Understanding List (Array) Declarations
-  {
-    monetaryValue: 250,
-    "swift-en": "Array handling enables simple automation scripts.",
-  },
-
-  // 5 – Variable Assignment in Swift
-  {
-    monetaryValue: 250,
-    "swift-en": "Confident assignment lets you tweak configs safely.",
-  },
-
-  // 6 – Understanding Data Types
-  {
-    monetaryValue: 300,
-    "swift-en": "Type awareness prevents bugs—marketable skill bump.",
-  },
-
-  // 7 – Purpose of Variables
-  {
-    monetaryValue: 300,
-    "swift-en": "Explaining variable intent shows code clarity to employers.",
-  },
-
-  // 8 – Bash Terminal Practice: cd
-  {
-    monetaryValue: 375,
-    "swift-en": "CLI navigation preps you for junior DevOps chores.",
-  },
-
-  // 9 – Review With AI Conversation (optional)
-  {
-    monetaryValue: 375,
-    "swift-en": "Conversation recap cements knowledge—earnings hold steady.",
-  },
-  // 1 – Data Types in Programming
-  {
-    monetaryValue: 375,
-    "swift-en": "Primitive-type fluency lands basic data-cleanup gigs.",
-  },
-
-  // 2 – Steps to Create a Function
-  {
-    monetaryValue: 425,
-    "swift-en": "Function workflow qualifies you for tiny utility scripts.",
-  },
-
-  // 3 – Writing a Simple Function
-  {
-    monetaryValue: 500,
-    "swift-en": "Authoring functions opens low-stakes automation work.",
-  },
-
-  // 4 – Functions in Programming (concept question)
-  {
-    monetaryValue: 500,
-    "swift-en": "Explaining functions shows architectural awareness.",
-  },
-
-  // 5 – Conditional Statements
-  {
-    monetaryValue: 625,
-    "swift-en": "Branching logic unlocks decision-making code tasks.",
-  },
-
-  // 6 – Order of Conditional Checks
-  {
-    monetaryValue: 750,
-    "swift-en": "Flow-control precision reduces QA time for small apps.",
-  },
-
-  // 7 – Implementing Conditional Logic
-  {
-    monetaryValue: 875,
-    "swift-en": "Hands-on conditionals prove practical coding ability.",
-  },
-
-  // 8 – Logical Operator (single-line answer)
-  {
-    monetaryValue: 1000,
-    "swift-en": "Operator insight tightens code correctness.",
-  },
-
-  // 9 – Real-world Use of Conditionals
-  {
-    monetaryValue: 1000,
-    "swift-en": "Applying conditionals to business logic adds value.",
-  },
-
-  // 10 – Terminal Practice: help
-  {
-    monetaryValue: 1125,
-    "swift-en": "CLI help skills prep you for DevOps workflows.",
-  },
-
-  // 11 – Loops in Programming
-  {
-    monetaryValue: 1250,
-    "swift-en": "Loop mastery automates repetitive data tasks.",
-  },
-
-  // 12 – Sequence of Loop Execution
-  {
-    monetaryValue: 1375,
-    "swift-en": "Understanding loop order trims runtime errors.",
-  },
-
-  // 13 – Creating a Loop (code)
-  {
-    monetaryValue: 1500,
-    "swift-en": "Writing loops nets entry-level data-wrangling jobs.",
-  },
-
-  // 14 – Applications of Loops (text)
-  {
-    monetaryValue: 1500,
-    "swift-en": "Articulating loop use cases shows system thinking.",
-  },
-
-  // 15 – Arrays in Swift (methods quiz)
-  {
-    monetaryValue: 1625,
-    "swift-en": "Array methods speed up ETL and small-scale tooling.",
-  },
-
-  // 16 – Order of Array Operations
-  {
-    monetaryValue: 1750,
-    "swift-en": "Sequencing array ops improves data-pipeline quality.",
-  },
-
-  // 17 – Manipulating Arrays (code)
-  {
-    monetaryValue: 1875,
-    "swift-en": "Fluent array manipulation boosts productivity rates.",
-  },
-
-  // 18 – Use Cases for Arrays (text)
-  {
-    monetaryValue: 1875,
-    "swift-en": "Mapping array use cases to apps signals insight.",
-  },
-
-  // 19 – Terminal Practice: mkdir
-  {
-    monetaryValue: 2000,
-    "swift-en": "Directory commands add deploy-script credibility.",
-  },
-
-  // 20 – Advanced Coding Output (array comprehension logic)
-  {
-    monetaryValue: 2250,
-    "swift-en": "Predicting complex output shows mental-model mastery.",
-  },
-
-  // 21 – Review With AI Conversation (optional)
-  {
-    monetaryValue: 2250,
-    "swift-en": "AI recap consolidates gains—value steadies here.",
-  },
-  /* 1 – Introduction to Objects */
-  {
-    monetaryValue: 2500,
-    "swift-en": "Object basics spark entry-level MVC maintenance gigs.",
-  },
-
-  /* 2 – Understanding the init Method */
-  {
-    monetaryValue: 3750,
-    "swift-en": "init mastery scaffolds reusable Swift classes.",
-  },
-
-  /* 3 – Purpose of the init Method */
-  {
-    monetaryValue: 3875,
-    "swift-en": "Explaining init shows design-pattern awareness.",
-  },
-
-  /* 4 – Creating an Instance of a Class */
-  {
-    monetaryValue: 4250,
-    "swift-en": "Instantiating objects enables model-layer tasks.",
-  },
-
-  /* 5 – Declaring a Method in a Class */
-  {
-    monetaryValue: 4500,
-    "swift-en": "Custom methods demonstrate behavior encapsulation.",
-  },
-
-  /* 6 – Using self Correctly */
-  {
-    monetaryValue: 4625,
-    "swift-en": "Proper use of self signals context mastery.",
-  },
-
-  /* 7 – Adding Properties to an Object */
-  {
-    monetaryValue: 4750,
-    "swift-en": "Property modeling improves data flexibility.",
-  },
-
-  /* 8 – Accessing & Modifying Properties */
-  {
-    monetaryValue: 4875,
-    "swift-en": "Safe property access reduces runtime errors.",
-  },
-
-  /* 9 – Modifying Object Properties */
-  {
-    monetaryValue: 5000,
-    "swift-en": "Dynamic updates unlock CRUD feature work.",
-  },
-
-  /* 10 – Understanding Inheritance */
-  {
-    monetaryValue: 6000,
-    "swift-en": "Inheritance insight opens framework customization.",
-  },
-
-  /* 11 – Implementing Inheritance */
-  {
-    monetaryValue: 6750,
-    "swift-en": "Subclassing skills qualify you for SDK extensions.",
-  },
-
-  /* 12 – Overriding Methods */
-  {
-    monetaryValue: 7500,
-    "swift-en": "Polymorphic overrides elevate junior-dev salaries.",
-  },
-
-  /* 13 – Understanding Encapsulation */
-  {
-    monetaryValue: 7625,
-    "swift-en": "Encapsulation theory guards state integrity.",
-  },
-
-  /* 14 – Implementing Encapsulation */
-  {
-    monetaryValue: 8250,
-    "swift-en": "Computed properties show production-ready design.",
-  },
-
-  /* 15 – Encapsulation Concept (one-word recall) */
-  {
-    monetaryValue: 8250,
-    "swift-en": "Term recall keeps value steady here.",
-  },
-
-  /* 16 – Combining Concepts Mini-Project */
-  {
-    monetaryValue: 9500,
-    "swift-en": "Capstone OOP project proves deliverable-ready skills.",
-  },
-
-  /* 17 – Printing in Code */
-  {
-    monetaryValue: 9500,
-    "swift-en": "Print practice reinforces fundamentals—value holds.",
-  },
-
-  /* 18 – Review With AI Conversation */
-  {
-    monetaryValue: 9500,
-    "swift-en": "AI recap solidifies OOP foundation—earnings level off.",
-  },
-  /* 1 – Introduction to SwiftUI Views */
-  {
-    monetaryValue: 20000,
-    "swift-en": "SwiftUI view basics unlock modern iOS UI gigs.",
-  },
-
-  /* 2 – Key Concepts in SwiftUI */
-  {
-    monetaryValue: 21000,
-    "swift-en": "State & modifiers boost UI architecture value.",
-  },
-
-  /* 3 – Effect of State Changes on a View */
-  {
-    monetaryValue: 22000,
-    "swift-en": "Reactive rendering marks you as SwiftUI-ready.",
-  },
-
-  /* 4 – Creating a Simple SwiftUI View */
-  {
-    monetaryValue: 23000,
-    "swift-en": "Hands-on view building shows deliverable skills.",
-  },
-
-  /* 5 – Handling Tap Gestures */
-  {
-    monetaryValue: 24000,
-    "swift-en": "Gesture handling demonstrates interactive chops.",
-  },
-
-  /* 6 – Managing State with @State */
-  {
-    monetaryValue: 25000,
-    "swift-en": "@State mastery qualifies you for junior iOS roles.",
-  },
-
-  /* 7 – View Properties */
-  {
-    monetaryValue: 26000,
-    "swift-en": "Data-injection patterns enhance component reuse.",
-  },
-
-  /* 8 – Passing and Using Properties */
-  {
-    monetaryValue: 27000,
-    "swift-en": "Dynamic props sharpen app architecture.",
-  },
-
-  /* 9 – Working with Properties and State Together */
-  {
-    monetaryValue: 28000,
-    "swift-en": "Distinguishing props vs state shows design maturity.",
-  },
-
-  /* 10 – Terminal Practice: ls */
-  {
-    monetaryValue: 29000,
-    "swift-en": "CLI file ops prep build-workflow automation.",
-  },
-
-  /* 11 – Styling SwiftUI Views */
-  {
-    monetaryValue: 30000,
-    "swift-en": "View styling proves product-ready polish.",
-  },
-
-  /* 12 – Using Stacks for Layout */
-  {
-    monetaryValue: 31000,
-    "swift-en": "Stack layouts speed responsive design.",
-  },
-
-  /* 13 – Lifting State Up */
-  {
-    monetaryValue: 32000,
-    "swift-en": "State sharing enables multi-view orchestration.",
-  },
-
-  /* 14 – Using onAppear for Side Effects */
-  {
-    monetaryValue: 33000,
-    "swift-en": "Lifecycle hooks signal side-effect competence.",
-  },
-
-  /* 15 – Understanding View Lifecycle */
-  {
-    monetaryValue: 34000,
-    "swift-en": "Lifecycle insight supports performance tuning.",
-  },
-
-  /* 16 – Fetching Data with async/await */
-  {
-    monetaryValue: 35000,
-    "swift-en": "Async data fetching shows API integration skill.",
-  },
-
-  /* 17 – Building a Complete Tweet App */
-  {
-    monetaryValue: 37500,
-    "swift-en": "End-to-end app showcases full-stack delivery.",
-  },
-
-  /* 18 – Terminal Practice: Swift Package */
-  {
-    monetaryValue: 40000,
-    "swift-en": "SwiftPM workflow demonstrates dev-environment autonomy.",
-  },
-
-  /* 19 – Creating a New SwiftUI Project */
-  {
-    monetaryValue: 42500,
-    "swift-en": "Xcode project setup accelerates shipping velocity.",
-  },
-
-  /* 20 – Review With AI Conversation (optional) */
-  {
-    monetaryValue: 45000,
-    "swift-en": "Comprehensive review cements senior-track value.",
-  },
-  /* 1 – Introduction to Swift Backend Engineering */
-  {
-    monetaryValue: 46000,
-    "swift-en": "Backend basics introduce server-side logic know-how.",
-  },
-
-  /* 2 – Main Lessons Overview (core duty) */
-  {
-    monetaryValue: 48000,
-    "swift-en": "Spotting core duties sharpens your employment roadmap.",
-  },
-
-  /* 3 – Key Responsibilities of Backend Engineering */
-  {
-    monetaryValue: 50000,
-    "swift-en": "Multi-responsibility insight boosts junior‐dev readiness.",
-  },
-
-  /* 4 – Interfacing with the Terminal */
-  {
-    monetaryValue: 51000,
-    "swift-en": "Terminal fluency powers everyday backend tasks.",
-  },
-
-  /* 5 – Installing the Vapor Toolbox */
-  {
-    monetaryValue: 52000,
-    "swift-en": "Vapor CLI install shows command-line confidence.",
-  },
-
-  /* 6 – Adding a Swift Package with SwiftPM */
-  {
-    monetaryValue: 53000,
-    "swift-en": "SwiftPM mastery unlocks dependency management skills.",
-  },
-
-  /* 7 – User Creation and Authentication (concept) */
-  {
-    monetaryValue: 54000,
-    "swift-en": "Auth terminology safeguards future user data.",
-  },
-
-  /* 8 – Database Foundations */
-  {
-    monetaryValue: 55000,
-    "swift-en": "DB-type literacy guides sound architecture choices.",
-  },
-
-  /* 9 – Connecting to PostgreSQL with Fluent */
-  {
-    monetaryValue: 56000,
-    "swift-en": "Postgres connection skills impress hiring managers.",
-  },
-
-  /*10 – Initiating a Vapor Project */
-  {
-    monetaryValue: 57000,
-    "swift-en": "Project bootstrap showcases rapid API setup.",
-  },
-
-  /*11 – Advanced Data-Storage Practices */
-  {
-    monetaryValue: 59000,
-    "swift-en": "Storage best-practices prove reliability mindset.",
-  },
-
-  /*12 – Configuring Fluent & Running Migrations */
-  {
-    monetaryValue: 61000,
-    "swift-en": "Fluent migrations show ORM proficiency in action.",
-  },
-
-  /*13 – Handling User Data */
-  {
-    monetaryValue: 62000,
-    "swift-en": "User-lookup code demonstrates practical DB use.",
-  },
-
-  /*14 – Retrieving User After Authentication */
-  {
-    monetaryValue: 63000,
-    "swift-en": "Secure queries highlight credential-handling care.",
-  },
-
-  /*15 – Understanding the Authentication Flow */
-  {
-    monetaryValue: 64000,
-    "swift-en": "JWT flow maps modern authentication pipelines.",
-  },
-
-  /*16 – OAuth Authentication */
-  {
-    monetaryValue: 65000,
-    "swift-en": "OAuth know-how enables third-party sign-ins.",
-  },
-
-  /*17 – Using Environment Variables */
-  {
-    monetaryValue: 66000,
-    "swift-en": "Environment variables keep secrets safe in code.",
-  },
-
-  /*18 – Database Relationships with Fluent */
-  {
-    monetaryValue: 67000,
-    "swift-en": "Model relationships design scalable data schemas.",
-  },
-
-  /*19 – Interfacing with an API */
-  {
-    monetaryValue: 68000,
-    "swift-en": "REST method insight preps you for API work.",
-  },
-
-  /*20 – Creating a JWT Authentication System */
-  {
-    monetaryValue: 69000,
-    "swift-en": "Building a JWT system shows end-to-end security chops.",
-  },
-
-  /*21 – Deploying a Vapor Application */
-  {
-    monetaryValue: 70000,
-    "swift-en": "Production deployment caps senior-track salary bands.",
-  },
-
-  /*22 – Review With AI Conversation (optional) */
-  {
-    monetaryValue: 70000,
-    "swift-en": "AI recap locks in knowledge—value plateaus here.",
-  },
-
-  /* 1 – Benefits of Serverless Cloud Platforms */
-  {
-    monetaryValue: 75000,
-    "swift-en": "Serverless know-how unlocks higher-margin app builds.",
-  },
-
-  /* 2 – Understanding Xcode */
-  {
-    monetaryValue: 76000,
-    "swift-en": "Xcode mastery speeds day-one productivity on iOS teams.",
-  },
-
-  /* 3 – Installing Swift & SwiftPM */
-  {
-    monetaryValue: 77000,
-    "swift-en": "SwiftPM fluency streamlines dependency management.",
-  },
-
-  /* 4 – Installing CocoaPods */
-  {
-    monetaryValue: 78000,
-    "swift-en": "CocoaPods install preps Firebase SDK integration.",
-  },
-
-  /* 5 – Adding Firebase via CocoaPods */
-  {
-    monetaryValue: 79000,
-    "swift-en": "Podfile wiring proves multi-module setup skills.",
-  },
-
-  /* 6 – Initializing a Firebase Project */
-  {
-    monetaryValue: 81000,
-    "swift-en": "Config-file onboarding shows cloud-project bootstrap.",
-  },
-
-  /* 7 – Selecting Firebase Modules */
-  {
-    monetaryValue: 83000,
-    "swift-en": "Service selection reveals solution-architecture sense.",
-  },
-
-  /* 8 – Configuring Firebase in AppDelegate */
-  {
-    monetaryValue: 86000,
-    "swift-en": "Runtime config signals secure SDK initialization.",
-  },
-
-  /* 9 – Setting Up Firestore */
-  {
-    monetaryValue: 88000,
-    "swift-en": "Firestore setup proves NoSQL data-layer chops.",
-  },
-
-  /* 10 – Understanding Authentication */
-  {
-    monetaryValue: 90000,
-    "swift-en": "Auth concepts mark you as user-management capable.",
-  },
-
-  /* 11 – Creating a User with FirebaseAuth */
-  {
-    monetaryValue: 92000,
-    "swift-en": "Programmatic sign-up enables SaaS onboarding flows.",
-  },
-
-  /* 12 – Verifying ID Tokens */
-  {
-    monetaryValue: 94000,
-    "swift-en": "Token verification shows secure session handling.",
-  },
-
-  /* 13 – CRUD with Firestore */
-  {
-    monetaryValue: 97000,
-    "swift-en": "CRUD mastery enables full data-layer ownership.",
-  },
-
-  /* 14 – Calling Cloud Functions */
-  {
-    monetaryValue: 100000,
-    "swift-en": "Function calls push you into six-figure tier.",
-  },
-
-  /* 15 – Local Emulation */
-  {
-    monetaryValue: 103000,
-    "swift-en": "Emulator workflow shortens dev cycles—high ROI.",
-  },
-
-  /* 16 – Deploying to Firebase */
-  {
-    monetaryValue: 108000,
-    "swift-en": "Production deploy proficiency justifies senior rates.",
-  },
-
-  /* 17 – Uploading to Storage */
-  {
-    monetaryValue: 110000,
-    "swift-en": "Storage uploads add scalable asset-handling expertise.",
-  },
-
-  /* 18 – Security Rules Basics */
-  {
-    monetaryValue: 112000,
-    "swift-en": "Security-rules insight protects data at enterprise scale.",
-  },
-
-  /* 19 – Performance Monitoring */
-  {
-    monetaryValue: 115000,
-    "swift-en": "Monitoring skills drive performance-optimization value.",
-  },
-
-  /* 20 – Popular Firebase Extensions */
-  {
-    monetaryValue: 118000,
-    "swift-en": "Extension know-how accelerates feature delivery.",
-  },
-
-  /* 21 – Review With AI Conversation (optional) */
-  {
-    monetaryValue: 120000,
-    "swift-en": "Comprehensive review crowns you at senior iOS tier.",
-  },
-];
+export const swiftLoot = [{},
+// 0 – Introduction placeholder (no monetary movement)
+
+// 1 – Understanding Coding
+{
+  monetaryValue: 0,
+  "swift-en": "Pure theory—no immediate billable skill."
+},
+// 2 – Sequence of Program Execution
+{
+  monetaryValue: 0,
+  "swift-en": "Execution-flow insight is still unpaid groundwork."
+},
+// 3 – Introduction to Variables
+{
+  monetaryValue: 125,
+  "swift-en": "Variable basics open tiny scripting gigs (~$125)."
+},
+// 4 – Understanding List (Array) Declarations
+{
+  monetaryValue: 250,
+  "swift-en": "Array handling enables simple automation scripts."
+},
+// 5 – Variable Assignment in Swift
+{
+  monetaryValue: 250,
+  "swift-en": "Confident assignment lets you tweak configs safely."
+},
+// 6 – Understanding Data Types
+{
+  monetaryValue: 300,
+  "swift-en": "Type awareness prevents bugs—marketable skill bump."
+},
+// 7 – Purpose of Variables
+{
+  monetaryValue: 300,
+  "swift-en": "Explaining variable intent shows code clarity to employers."
+},
+// 8 – Bash Terminal Practice: cd
+{
+  monetaryValue: 375,
+  "swift-en": "CLI navigation preps you for junior DevOps chores."
+},
+// 9 – Review With AI Conversation (optional)
+{
+  monetaryValue: 375,
+  "swift-en": "Conversation recap cements knowledge—earnings hold steady."
+},
+// 1 – Data Types in Programming
+{
+  monetaryValue: 375,
+  "swift-en": "Primitive-type fluency lands basic data-cleanup gigs."
+},
+// 2 – Steps to Create a Function
+{
+  monetaryValue: 425,
+  "swift-en": "Function workflow qualifies you for tiny utility scripts."
+},
+// 3 – Writing a Simple Function
+{
+  monetaryValue: 500,
+  "swift-en": "Authoring functions opens low-stakes automation work."
+},
+// 4 – Functions in Programming (concept question)
+{
+  monetaryValue: 500,
+  "swift-en": "Explaining functions shows architectural awareness."
+},
+// 5 – Conditional Statements
+{
+  monetaryValue: 625,
+  "swift-en": "Branching logic unlocks decision-making code tasks."
+},
+// 6 – Order of Conditional Checks
+{
+  monetaryValue: 750,
+  "swift-en": "Flow-control precision reduces QA time for small apps."
+},
+// 7 – Implementing Conditional Logic
+{
+  monetaryValue: 875,
+  "swift-en": "Hands-on conditionals prove practical coding ability."
+},
+// 8 – Logical Operator (single-line answer)
+{
+  monetaryValue: 1000,
+  "swift-en": "Operator insight tightens code correctness."
+},
+// 9 – Real-world Use of Conditionals
+{
+  monetaryValue: 1000,
+  "swift-en": "Applying conditionals to business logic adds value."
+},
+// 10 – Terminal Practice: help
+{
+  monetaryValue: 1125,
+  "swift-en": "CLI help skills prep you for DevOps workflows."
+},
+// 11 – Loops in Programming
+{
+  monetaryValue: 1250,
+  "swift-en": "Loop mastery automates repetitive data tasks."
+},
+// 12 – Sequence of Loop Execution
+{
+  monetaryValue: 1375,
+  "swift-en": "Understanding loop order trims runtime errors."
+},
+// 13 – Creating a Loop (code)
+{
+  monetaryValue: 1500,
+  "swift-en": "Writing loops nets entry-level data-wrangling jobs."
+},
+// 14 – Applications of Loops (text)
+{
+  monetaryValue: 1500,
+  "swift-en": "Articulating loop use cases shows system thinking."
+},
+// 15 – Arrays in Swift (methods quiz)
+{
+  monetaryValue: 1625,
+  "swift-en": "Array methods speed up ETL and small-scale tooling."
+},
+// 16 – Order of Array Operations
+{
+  monetaryValue: 1750,
+  "swift-en": "Sequencing array ops improves data-pipeline quality."
+},
+// 17 – Manipulating Arrays (code)
+{
+  monetaryValue: 1875,
+  "swift-en": "Fluent array manipulation boosts productivity rates."
+},
+// 18 – Use Cases for Arrays (text)
+{
+  monetaryValue: 1875,
+  "swift-en": "Mapping array use cases to apps signals insight."
+},
+// 19 – Terminal Practice: mkdir
+{
+  monetaryValue: 2000,
+  "swift-en": "Directory commands add deploy-script credibility."
+},
+// 20 – Advanced Coding Output (array comprehension logic)
+{
+  monetaryValue: 2250,
+  "swift-en": "Predicting complex output shows mental-model mastery."
+},
+// 21 – Review With AI Conversation (optional)
+{
+  monetaryValue: 2250,
+  "swift-en": "AI recap consolidates gains—value steadies here."
+}, /* 1 – Introduction to Objects */
+{
+  monetaryValue: 2500,
+  "swift-en": "Object basics spark entry-level MVC maintenance gigs."
+}, /* 2 – Understanding the init Method */
+{
+  monetaryValue: 3750,
+  "swift-en": "init mastery scaffolds reusable Swift classes."
+}, /* 3 – Purpose of the init Method */
+{
+  monetaryValue: 3875,
+  "swift-en": "Explaining init shows design-pattern awareness."
+}, /* 4 – Creating an Instance of a Class */
+{
+  monetaryValue: 4250,
+  "swift-en": "Instantiating objects enables model-layer tasks."
+}, /* 5 – Declaring a Method in a Class */
+{
+  monetaryValue: 4500,
+  "swift-en": "Custom methods demonstrate behavior encapsulation."
+}, /* 6 – Using self Correctly */
+{
+  monetaryValue: 4625,
+  "swift-en": "Proper use of self signals context mastery."
+}, /* 7 – Adding Properties to an Object */
+{
+  monetaryValue: 4750,
+  "swift-en": "Property modeling improves data flexibility."
+}, /* 8 – Accessing & Modifying Properties */
+{
+  monetaryValue: 4875,
+  "swift-en": "Safe property access reduces runtime errors."
+}, /* 9 – Modifying Object Properties */
+{
+  monetaryValue: 5000,
+  "swift-en": "Dynamic updates unlock CRUD feature work."
+}, /* 10 – Understanding Inheritance */
+{
+  monetaryValue: 6000,
+  "swift-en": "Inheritance insight opens framework customization."
+}, /* 11 – Implementing Inheritance */
+{
+  monetaryValue: 6750,
+  "swift-en": "Subclassing skills qualify you for SDK extensions."
+}, /* 12 – Overriding Methods */
+{
+  monetaryValue: 7500,
+  "swift-en": "Polymorphic overrides elevate junior-dev salaries."
+}, /* 13 – Understanding Encapsulation */
+{
+  monetaryValue: 7625,
+  "swift-en": "Encapsulation theory guards state integrity."
+}, /* 14 – Implementing Encapsulation */
+{
+  monetaryValue: 8250,
+  "swift-en": "Computed properties show production-ready design."
+}, /* 15 – Encapsulation Concept (one-word recall) */
+{
+  monetaryValue: 8250,
+  "swift-en": "Term recall keeps value steady here."
+}, /* 16 – Combining Concepts Mini-Project */
+{
+  monetaryValue: 9500,
+  "swift-en": "Capstone OOP project proves deliverable-ready skills."
+}, /* 17 – Printing in Code */
+{
+  monetaryValue: 9500,
+  "swift-en": "Print practice reinforces fundamentals—value holds."
+}, /* 18 – Review With AI Conversation */
+{
+  monetaryValue: 9500,
+  "swift-en": "AI recap solidifies OOP foundation—earnings level off."
+}, /* 1 – Introduction to SwiftUI Views */
+{
+  monetaryValue: 20000,
+  "swift-en": "SwiftUI view basics unlock modern iOS UI gigs."
+}, /* 2 – Key Concepts in SwiftUI */
+{
+  monetaryValue: 21000,
+  "swift-en": "State & modifiers boost UI architecture value."
+}, /* 3 – Effect of State Changes on a View */
+{
+  monetaryValue: 22000,
+  "swift-en": "Reactive rendering marks you as SwiftUI-ready."
+}, /* 4 – Creating a Simple SwiftUI View */
+{
+  monetaryValue: 23000,
+  "swift-en": "Hands-on view building shows deliverable skills."
+}, /* 5 – Handling Tap Gestures */
+{
+  monetaryValue: 24000,
+  "swift-en": "Gesture handling demonstrates interactive chops."
+}, /* 6 – Managing State with @State */
+{
+  monetaryValue: 25000,
+  "swift-en": "@State mastery qualifies you for junior iOS roles."
+}, /* 7 – View Properties */
+{
+  monetaryValue: 26000,
+  "swift-en": "Data-injection patterns enhance component reuse."
+}, /* 8 – Passing and Using Properties */
+{
+  monetaryValue: 27000,
+  "swift-en": "Dynamic props sharpen app architecture."
+}, /* 9 – Working with Properties and State Together */
+{
+  monetaryValue: 28000,
+  "swift-en": "Distinguishing props vs state shows design maturity."
+}, /* 10 – Terminal Practice: ls */
+{
+  monetaryValue: 29000,
+  "swift-en": "CLI file ops prep build-workflow automation."
+}, /* 11 – Styling SwiftUI Views */
+{
+  monetaryValue: 30000,
+  "swift-en": "View styling proves product-ready polish."
+}, /* 12 – Using Stacks for Layout */
+{
+  monetaryValue: 31000,
+  "swift-en": "Stack layouts speed responsive design."
+}, /* 13 – Lifting State Up */
+{
+  monetaryValue: 32000,
+  "swift-en": "State sharing enables multi-view orchestration."
+}, /* 14 – Using onAppear for Side Effects */
+{
+  monetaryValue: 33000,
+  "swift-en": "Lifecycle hooks signal side-effect competence."
+}, /* 15 – Understanding View Lifecycle */
+{
+  monetaryValue: 34000,
+  "swift-en": "Lifecycle insight supports performance tuning."
+}, /* 16 – Fetching Data with async/await */
+{
+  monetaryValue: 35000,
+  "swift-en": "Async data fetching shows API integration skill."
+}, /* 17 – Building a Complete Tweet App */
+{
+  monetaryValue: 37500,
+  "swift-en": "End-to-end app showcases full-stack delivery."
+}, /* 18 – Terminal Practice: Swift Package */
+{
+  monetaryValue: 40000,
+  "swift-en": "SwiftPM workflow demonstrates dev-environment autonomy."
+}, /* 19 – Creating a New SwiftUI Project */
+{
+  monetaryValue: 42500,
+  "swift-en": "Xcode project setup accelerates shipping velocity."
+}, /* 20 – Review With AI Conversation (optional) */
+{
+  monetaryValue: 45000,
+  "swift-en": "Comprehensive review cements senior-track value."
+}, /* 1 – Introduction to Swift Backend Engineering */
+{
+  monetaryValue: 46000,
+  "swift-en": "Backend basics introduce server-side logic know-how."
+}, /* 2 – Main Lessons Overview (core duty) */
+{
+  monetaryValue: 48000,
+  "swift-en": "Spotting core duties sharpens your employment roadmap."
+}, /* 3 – Key Responsibilities of Backend Engineering */
+{
+  monetaryValue: 50000,
+  "swift-en": "Multi-responsibility insight boosts junior‐dev readiness."
+}, /* 4 – Interfacing with the Terminal */
+{
+  monetaryValue: 51000,
+  "swift-en": "Terminal fluency powers everyday backend tasks."
+}, /* 5 – Installing the Vapor Toolbox */
+{
+  monetaryValue: 52000,
+  "swift-en": "Vapor CLI install shows command-line confidence."
+}, /* 6 – Adding a Swift Package with SwiftPM */
+{
+  monetaryValue: 53000,
+  "swift-en": "SwiftPM mastery unlocks dependency management skills."
+}, /* 7 – User Creation and Authentication (concept) */
+{
+  monetaryValue: 54000,
+  "swift-en": "Auth terminology safeguards future user data."
+}, /* 8 – Database Foundations */
+{
+  monetaryValue: 55000,
+  "swift-en": "DB-type literacy guides sound architecture choices."
+}, /* 9 – Connecting to PostgreSQL with Fluent */
+{
+  monetaryValue: 56000,
+  "swift-en": "Postgres connection skills impress hiring managers."
+}, /*10 – Initiating a Vapor Project */
+{
+  monetaryValue: 57000,
+  "swift-en": "Project bootstrap showcases rapid API setup."
+}, /*11 – Advanced Data-Storage Practices */
+{
+  monetaryValue: 59000,
+  "swift-en": "Storage best-practices prove reliability mindset."
+}, /*12 – Configuring Fluent & Running Migrations */
+{
+  monetaryValue: 61000,
+  "swift-en": "Fluent migrations show ORM proficiency in action."
+}, /*13 – Handling User Data */
+{
+  monetaryValue: 62000,
+  "swift-en": "User-lookup code demonstrates practical DB use."
+}, /*14 – Retrieving User After Authentication */
+{
+  monetaryValue: 63000,
+  "swift-en": "Secure queries highlight credential-handling care."
+}, /*15 – Understanding the Authentication Flow */
+{
+  monetaryValue: 64000,
+  "swift-en": "JWT flow maps modern authentication pipelines."
+}, /*16 – OAuth Authentication */
+{
+  monetaryValue: 65000,
+  "swift-en": "OAuth know-how enables third-party sign-ins."
+}, /*17 – Using Environment Variables */
+{
+  monetaryValue: 66000,
+  "swift-en": "Environment variables keep secrets safe in code."
+}, /*18 – Database Relationships with Fluent */
+{
+  monetaryValue: 67000,
+  "swift-en": "Model relationships design scalable data schemas."
+}, /*19 – Interfacing with an API */
+{
+  monetaryValue: 68000,
+  "swift-en": "REST method insight preps you for API work."
+}, /*20 – Creating a JWT Authentication System */
+{
+  monetaryValue: 69000,
+  "swift-en": "Building a JWT system shows end-to-end security chops."
+}, /*21 – Deploying a Vapor Application */
+{
+  monetaryValue: 70000,
+  "swift-en": "Production deployment caps senior-track salary bands."
+}, /*22 – Review With AI Conversation (optional) */
+{
+  monetaryValue: 70000,
+  "swift-en": "AI recap locks in knowledge—value plateaus here."
+}, /* 1 – Benefits of Serverless Cloud Platforms */
+{
+  monetaryValue: 75000,
+  "swift-en": "Serverless know-how unlocks higher-margin app builds."
+}, /* 2 – Understanding Xcode */
+{
+  monetaryValue: 76000,
+  "swift-en": "Xcode mastery speeds day-one productivity on iOS teams."
+}, /* 3 – Installing Swift & SwiftPM */
+{
+  monetaryValue: 77000,
+  "swift-en": "SwiftPM fluency streamlines dependency management."
+}, /* 4 – Installing CocoaPods */
+{
+  monetaryValue: 78000,
+  "swift-en": "CocoaPods install preps Firebase SDK integration."
+}, /* 5 – Adding Firebase via CocoaPods */
+{
+  monetaryValue: 79000,
+  "swift-en": "Podfile wiring proves multi-module setup skills."
+}, /* 6 – Initializing a Firebase Project */
+{
+  monetaryValue: 81000,
+  "swift-en": "Config-file onboarding shows cloud-project bootstrap."
+}, /* 7 – Selecting Firebase Modules */
+{
+  monetaryValue: 83000,
+  "swift-en": "Service selection reveals solution-architecture sense."
+}, /* 8 – Configuring Firebase in AppDelegate */
+{
+  monetaryValue: 86000,
+  "swift-en": "Runtime config signals secure SDK initialization."
+}, /* 9 – Setting Up Firestore */
+{
+  monetaryValue: 88000,
+  "swift-en": "Firestore setup proves NoSQL data-layer chops."
+}, /* 10 – Understanding Authentication */
+{
+  monetaryValue: 90000,
+  "swift-en": "Auth concepts mark you as user-management capable."
+}, /* 11 – Creating a User with FirebaseAuth */
+{
+  monetaryValue: 92000,
+  "swift-en": "Programmatic sign-up enables SaaS onboarding flows."
+}, /* 12 – Verifying ID Tokens */
+{
+  monetaryValue: 94000,
+  "swift-en": "Token verification shows secure session handling."
+}, /* 13 – CRUD with Firestore */
+{
+  monetaryValue: 97000,
+  "swift-en": "CRUD mastery enables full data-layer ownership."
+}, /* 14 – Calling Cloud Functions */
+{
+  monetaryValue: 100000,
+  "swift-en": "Function calls push you into six-figure tier."
+}, /* 15 – Local Emulation */
+{
+  monetaryValue: 103000,
+  "swift-en": "Emulator workflow shortens dev cycles—high ROI."
+}, /* 16 – Deploying to Firebase */
+{
+  monetaryValue: 108000,
+  "swift-en": "Production deploy proficiency justifies senior rates."
+}, /* 17 – Uploading to Storage */
+{
+  monetaryValue: 110000,
+  "swift-en": "Storage uploads add scalable asset-handling expertise."
+}, /* 18 – Security Rules Basics */
+{
+  monetaryValue: 112000,
+  "swift-en": "Security-rules insight protects data at enterprise scale."
+}, /* 19 – Performance Monitoring */
+{
+  monetaryValue: 115000,
+  "swift-en": "Monitoring skills drive performance-optimization value."
+}, /* 20 – Popular Firebase Extensions */
+{
+  monetaryValue: 118000,
+  "swift-en": "Extension know-how accelerates feature delivery."
+}, /* 21 – Review With AI Conversation (optional) */
+{
+  monetaryValue: 120000,
+  "swift-en": "Comprehensive review crowns you at senior iOS tier."
+}];
 
 /* ---------- Android Tutorial loot meter ---------- */
-export const androidLoot = [
-  {}, // 0 – Introduction placeholder (no monetary gain yet)
-
-  // 1 – Understanding Coding
-  {
-    monetaryValue: 0,
-    "android-en": "Pure theory—no immediate billable skill.",
-  },
-
-  // 2 – Sequence of Program Execution
-  {
-    monetaryValue: 0,
-    "android-en": "Execution-flow insight is still unpaid groundwork.",
-  },
-
-  // 3 – Introduction to Variables
-  {
-    monetaryValue: 125,
-    "android-en": "Variable basics open tiny scripting gigs (~$125).",
-  },
-
-  // 4 – Understanding List Declarations
-  {
-    monetaryValue: 250,
-    "android-en": "Array/List handling enables simple automation tasks.",
-  },
-
-  // 5 – Variable Assignment in Java
-  {
-    monetaryValue: 250,
-    "android-en": "Confident assignment lets you tweak configs safely.",
-  },
-
-  // 6 – Understanding Data Types
-  {
-    monetaryValue: 300,
-    "android-en": "Type awareness prevents bugs—marketable skill bump.",
-  },
-
-  // 7 – Purpose of Variables
-  {
-    monetaryValue: 300,
-    "android-en": "Explaining variable intent shows code clarity to employers.",
-  },
-
-  // 8 – Bash Terminal Practice: cd
-  {
-    monetaryValue: 375,
-    "android-en": "CLI navigation preps you for junior DevOps chores.",
-  },
-
-  // 9 – Review With AI Conversation (optional)
-  {
-    monetaryValue: 375,
-    "android-en": "Conversation recap cements knowledge—earnings hold steady.",
-  },
-  /* 1 – Data Types in Programming */
-  {
-    monetaryValue: 375,
-    "android-en": "Primitive-type fluency lands basic data-cleanup gigs.",
-  },
-
-  /* 2 – Steps to Create a Function */
-  {
-    monetaryValue: 425,
-    "android-en": "Method workflow qualifies you for tiny utility scripts.",
-  },
-
-  /* 3 – Writing a Simple Function */
-  {
-    monetaryValue: 500,
-    "android-en": "Authoring methods opens low-stakes automation work.",
-  },
-
-  /* 4 – Functions in Programming (concept) */
-  {
-    monetaryValue: 500,
-    "android-en": "Explaining methods shows architectural awareness.",
-  },
-
-  /* 5 – Conditional Statements */
-  {
-    monetaryValue: 625,
-    "android-en": "Branching logic unlocks decision-making code tasks.",
-  },
-
-  /* 6 – Order of Conditional Checks */
-  {
-    monetaryValue: 750,
-    "android-en": "Flow-control precision reduces QA time for small apps.",
-  },
-
-  /* 7 – Implementing Conditional Logic */
-  {
-    monetaryValue: 875,
-    "android-en": "Hands-on conditionals prove practical coding ability.",
-  },
-
-  /* 8 – Logical Operator (single-line answer) */
-  {
-    monetaryValue: 1000,
-    "android-en": "Operator insight tightens code correctness.",
-  },
-
-  /* 9 – Real-world Use of Conditionals */
-  {
-    monetaryValue: 1000,
-    "android-en": "Applying conditionals to business logic adds value.",
-  },
-
-  /* 10 – Terminal Practice: help */
-  {
-    monetaryValue: 1125,
-    "android-en": "CLI help skills prep you for DevOps workflows.",
-  },
-
-  /* 11 – Loops in Programming */
-  {
-    monetaryValue: 1250,
-    "android-en": "Loop mastery automates repetitive data tasks.",
-  },
-
-  /* 12 – Sequence of Loop Execution */
-  {
-    monetaryValue: 1375,
-    "android-en": "Understanding loop order trims runtime errors.",
-  },
-
-  /* 13 – Creating a Loop (code) */
-  {
-    monetaryValue: 1500,
-    "android-en": "Writing loops nets entry-level data-wrangling jobs.",
-  },
-
-  /* 14 – Applications of Loops */
-  {
-    monetaryValue: 1500,
-    "android-en": "Articulating loop use cases shows system thinking.",
-  },
-
-  /* 15 – Arrays in Java (methods quiz) */
-  {
-    monetaryValue: 1625,
-    "android-en": "Array utilities speed up ETL and tooling.",
-  },
-
-  /* 16 – Order of Array Operations */
-  {
-    monetaryValue: 1750,
-    "android-en": "Sequencing array ops improves data-pipeline quality.",
-  },
-
-  /* 17 – Manipulating Arrays (code) */
-  {
-    monetaryValue: 1875,
-    "android-en": "Fluent array manipulation boosts productivity rates.",
-  },
-
-  /* 18 – Use Cases for Arrays (text) */
-  {
-    monetaryValue: 1875,
-    "android-en": "Mapping array use cases to apps signals insight.",
-  },
-
-  /* 19 – Terminal Practice: mkdir */
-  {
-    monetaryValue: 2000,
-    "android-en": "Directory commands add build-script credibility.",
-  },
-
-  /* 20 – Advanced Coding Output */
-  {
-    monetaryValue: 2250,
-    "android-en": "Predicting complex output shows mental-model mastery.",
-  },
-
-  /* 21 – Review With AI Conversation (optional) */
-  {
-    monetaryValue: 2250,
-    "android-en": "AI recap consolidates gains—value steadies here.",
-  },
-
-  /* 1 – Introduction to Objects */
-  {
-    monetaryValue: 2500,
-    "android-en": "Object basics spark entry-level MVC maintenance gigs.",
-  },
-
-  /* 2 – Understanding the Constructor Method */
-  {
-    monetaryValue: 3750,
-    "android-en": "Constructor mastery scaffolds clean, reusable classes.",
-  },
-
-  /* 3 – Purpose of the Constructor Method */
-  {
-    monetaryValue: 3875,
-    "android-en": "Explaining constructors shows design-pattern awareness.",
-  },
-
-  /* 4 – Creating an Instance of a Class */
-  {
-    monetaryValue: 4250,
-    "android-en": "Instantiating objects enables model-layer tasks.",
-  },
-
-  /* 5 – Declaring a Method in a Class */
-  {
-    monetaryValue: 4500,
-    "android-en": "Custom methods demonstrate behavior encapsulation.",
-  },
-
-  /* 6 – Using the this Keyword Correctly */
-  {
-    monetaryValue: 4625,
-    "android-en": "Proper use of this signals context mastery.",
-  },
-
-  /* 7 – Adding Properties to an Object */
-  {
-    monetaryValue: 4750,
-    "android-en": "Property modeling improves data flexibility.",
-  },
-
-  /* 8 – Accessing & Modifying Object Properties */
-  {
-    monetaryValue: 4875,
-    "android-en": "Safe property access reduces runtime errors.",
-  },
-
-  /* 9 – Modifying Object Properties */
-  {
-    monetaryValue: 5000,
-    "android-en": "Dynamic updates unlock CRUD feature work.",
-  },
-
-  /* 10 – Understanding Inheritance */
-  {
-    monetaryValue: 6000,
-    "android-en": "Inheritance insight opens framework customization.",
-  },
-
-  /* 11 – Implementing Inheritance */
-  {
-    monetaryValue: 6750,
-    "android-en": "Subclassing skills qualify you for SDK extensions.",
-  },
-
-  /* 12 – Overriding Methods */
-  {
-    monetaryValue: 7500,
-    "android-en": "Polymorphic overrides elevate junior-dev salaries.",
-  },
-
-  /* 13 – Understanding Encapsulation */
-  {
-    monetaryValue: 7625,
-    "android-en": "Encapsulation theory guards state integrity.",
-  },
-
-  /* 14 – Implementing Encapsulation */
-  {
-    monetaryValue: 8250,
-    "android-en": "Getters/setters show production-ready design.",
-  },
-
-  /* 15 – Encapsulation Concept (one-word recall) */
-  { monetaryValue: 8250, "android-en": "Term recall keeps value steady here." },
-
-  /* 16 – Combining Concepts Mini-Project */
-  {
-    monetaryValue: 9500,
-    "android-en": "Capstone OOP project proves deliverable-ready skills.",
-  },
-
-  /* 17 – Printing in the Terminal */
-  {
-    monetaryValue: 9500,
-    "android-en": "Shell output reinforces fundamentals—value holds.",
-  },
-
-  /* 18 – Review With AI Conversation (optional) */
-  {
-    monetaryValue: 9500,
-    "android-en": "AI recap solidifies OOP foundation—earnings level off.",
-  },
-  {
-    monetaryValue: 20000,
-    "android-en": "View fundamentals unlock modern Android UI gigs.",
-  },
-
-  /* 2 – Key Concepts in Android UI */
-  {
-    monetaryValue: 21000,
-    "android-en": "Activity + Fragment mastery boosts architecture value.",
-  },
-
-  /* 3 – Effect of LiveData Changes on UI */
-  {
-    monetaryValue: 22000,
-    "android-en": "Reactive updates mark you as MVVM-ready.",
-  },
-
-  /* 4 – Creating a Simple Activity */
-  {
-    monetaryValue: 23000,
-    "android-en": "Hands-on Activity building shows deliverable skills.",
-  },
-
-  /* 5 – Handling Button Clicks */
-  {
-    monetaryValue: 24000,
-    "android-en": "Click listeners demonstrate interactive chops.",
-  },
-
-  /* 6 – Managing State with ViewModel */
-  {
-    monetaryValue: 25000,
-    "android-en": "ViewModel + LiveData qualify you for junior Android roles.",
-  },
-
-  /* 7 – Intent Extras */
-  {
-    monetaryValue: 26000,
-    "android-en": "Intent data-passing enhances component reuse.",
-  },
-
-  /* 8 – Passing and Using Extras */
-  {
-    monetaryValue: 27000,
-    "android-en": "Dynamic extras sharpen navigation architecture.",
-  },
-
-  /* 9 – Props vs State in Android */
-  {
-    monetaryValue: 28000,
-    "android-en": "Distinguishing extras vs LiveData shows design maturity.",
-  },
-
-  /* 10 – Terminal Practice: ls */
-  {
-    monetaryValue: 29000,
-    "android-en": "CLI file ops prep build-workflow automation.",
-  },
-
-  /* 11 – Styling Android Views */
-  {
-    monetaryValue: 30000,
-    "android-en": "XML styling proves product-ready polish.",
-  },
-
-  /* 12 – ConstraintLayout Basics */
-  {
-    monetaryValue: 31000,
-    "android-en": "ConstraintLayout fluency speeds responsive design.",
-  },
-
-  /* 13 – Sharing ViewModel Between Fragments */
-  {
-    monetaryValue: 32000,
-    "android-en": "Shared state enables multi-fragment orchestration.",
-  },
-
-  /* 14 – Observing LiveData for Side Effects */
-  {
-    monetaryValue: 33000,
-    "android-en": "Lifecycle hooks signal side-effect competence.",
-  },
-
-  /* 15 – Understanding Activity Lifecycle */
-  {
-    monetaryValue: 34000,
-    "android-en": "Lifecycle insight supports performance tuning.",
-  },
-
-  /* 16 – Fetching Data with Retrofit & LiveData */
-  {
-    monetaryValue: 35000,
-    "android-en": "Async Retrofit calls show API-integration skill.",
-  },
-
-  /* 17 – Building a Complete Tweet App */
-  {
-    monetaryValue: 37500,
-    "android-en": "End-to-end app showcases full-stack delivery.",
-  },
-
-  /* 18 – Terminal Practice: Gradle build */
-  {
-    monetaryValue: 40000,
-    "android-en": "Gradle CLI workflow demonstrates dev-env autonomy.",
-  },
-
-  /* 19 – Creating a New Android Project */
-  {
-    monetaryValue: 42500,
-    "android-en": "Android-Studio setup accelerates shipping velocity.",
-  },
-
-  /* 20 – Review With AI Conversation (optional) */
-  {
-    monetaryValue: 45000,
-    "android-en": "Comprehensive review cements senior-track value.",
-  },
-  /* 1 – Intro to Java Backend Engineering */
-  {
-    monetaryValue: 46000,
-    "android-en": "Backend basics introduce server-side logic know-how.",
-  },
-
-  /* 2 – Main Lessons Overview (core duty) */
-  {
-    monetaryValue: 48000,
-    "android-en": "Spotting core duties sharpens your employment roadmap.",
-  },
-
-  /* 3 – Key Responsibilities of Backend Engineering */
-  {
-    monetaryValue: 50000,
-    "android-en": "Multi-responsibility insight boosts junior-dev readiness.",
-  },
-
-  /* 4 – Interfacing with the Terminal */
-  {
-    monetaryValue: 51000,
-    "android-en": "Terminal fluency powers everyday backend tasks.",
-  },
-
-  /* 5 – Installing Maven */
-  {
-    monetaryValue: 52000,
-    "android-en": "Maven install shows dependency-management confidence.",
-  },
-
-  /* 6 – Adding a Maven Dependency */
-  {
-    monetaryValue: 53000,
-    "android-en": "POM wiring proves build-tool mastery.",
-  },
-
-  /* 7 – User Creation & Authentication (concept) */
-  {
-    monetaryValue: 54000,
-    "android-en": "Auth terminology safeguards future user data.",
-  },
-
-  /* 8 – Database Foundations */
-  {
-    monetaryValue: 55000,
-    "android-en": "DB-type literacy guides sound architecture choices.",
-  },
-
-  /* 9 – Connecting to DB with Spring Data JPA */
-  {
-    monetaryValue: 56000,
-    "android-en": "PostgreSQL hookup skills impress hiring managers.",
-  },
-
-  /*10 – Initiating a Spring Boot Project */
-  {
-    monetaryValue: 57000,
-    "android-en": "Project bootstrap showcases rapid API setup.",
-  },
-
-  /*11 – Advanced Data-Storage Practices */
-  {
-    monetaryValue: 59000,
-    "android-en": "Storage best-practices prove reliability mindset.",
-  },
-
-  /*12 – Configuring JPA & Saving Entity */
-  {
-    monetaryValue: 61000,
-    "android-en": "JPA CRUD shows ORM proficiency in action.",
-  },
-
-  /*13 – Handling User Data */
-  {
-    monetaryValue: 62000,
-    "android-en": "User-lookup code demonstrates practical DB use.",
-  },
-
-  /*14 – Retrieving User After Authentication */
-  {
-    monetaryValue: 63000,
-    "android-en": "Secure queries highlight credential-handling care.",
-  },
-
-  /*15 – Understanding the Authentication Flow */
-  {
-    monetaryValue: 64000,
-    "android-en": "JWT flow maps modern authentication pipelines.",
-  },
-
-  /*16 – OAuth Authentication */
-  {
-    monetaryValue: 65000,
-    "android-en": "OAuth know-how enables third-party sign-ins.",
-  },
-
-  /*17 – Using Environment Variables */
-  {
-    monetaryValue: 66000,
-    "android-en": "Environment vars keep secrets safe in code.",
-  },
-
-  /*18 – Database Relationships with JPA */
-  {
-    monetaryValue: 67000,
-    "android-en": "Entity relationships design scalable schemas.",
-  },
-
-  /*19 – Interfacing with an API */
-  {
-    monetaryValue: 68000,
-    "android-en": "REST method insight preps you for API work.",
-  },
-
-  /*20 – Creating a JWT Auth System */
-  {
-    monetaryValue: 69000,
-    "android-en": "Building JWT security shows end-to-end chops.",
-  },
-
-  /*21 – Deploying Spring Boot App */
-  {
-    monetaryValue: 70000,
-    "android-en": "Production deployment caps senior-track salary bands.",
-  },
-
-  /*22 – Review With AI Conversation (optional) */
-  {
-    monetaryValue: 70000,
-    "android-en": "AI recap locks in knowledge—value plateaus here.",
-  },
-
-  /* 1 – Benefits of Serverless Cloud Platforms */
-  {
-    monetaryValue: 75000,
-    "android-en": "Serverless savvy raises your market ceiling instantly.",
-  },
-  /* 2 – Understanding Android Studio */
-  {
-    monetaryValue: 76000,
-    "android-en":
-      "Studio mastery speeds day-one productivity on Android teams.",
-  },
-  /* 3 – Installing JDK & Android SDK */
-  {
-    monetaryValue: 77000,
-    "android-en": "Proper tool-chain setup unlocks cross-stack development.",
-  },
-  /* 4 – Adding Firebase to Gradle */
-  {
-    monetaryValue: 78000,
-    "android-en": "Gradle BOM wiring proves build-script competence.",
-  },
-  /* 5 – Applying Google Services Plugin */
-  {
-    monetaryValue: 79000,
-    "android-en": "Plugin config shows dependency-injection confidence.",
-  },
-  /* 6 – Initializing a Firebase Project */
-  {
-    monetaryValue: 81000,
-    "android-en":
-      "google-services.json onboarding shows cloud bootstrap skill.",
-  },
-  /* 7 – Selecting Firebase Modules */
-  {
-    monetaryValue: 83000,
-    "android-en": "Service selection reveals solution-architecture judgment.",
-  },
-  /* 8 – Configuring FirebaseApp */
-  {
-    monetaryValue: 86000,
-    "android-en": "Runtime init signals secure SDK integration.",
-  },
-  /* 9 – Setting Up Firestore */
-  {
-    monetaryValue: 88000,
-    "android-en": "Firestore setup proves NoSQL data-layer chops.",
-  },
-  /* 10 – Understanding Authentication */
-  {
-    monetaryValue: 90000,
-    "android-en": "Auth concepts mark you as user-management capable.",
-  },
-  /* 11 – Creating a User with FirebaseAuth */
-  {
-    monetaryValue: 92000,
-    "android-en": "Programmatic sign-up enables SaaS onboarding flows.",
-  },
-  /* 12 – Retrieving the ID Token */
-  {
-    monetaryValue: 94000,
-    "android-en": "ID-token handling shows secure session logic.",
-  },
-  /* 13 – CRUD with Firestore */
-  {
-    monetaryValue: 97000,
-    "android-en": "CRUD mastery enables full data-layer ownership.",
-  },
-  /* 14 – Calling Cloud Functions */
-  {
-    monetaryValue: 100000,
-    "android-en": "Function calls push you into six-figure territory.",
-  },
-  /* 15 – Local Emulation */
-  {
-    monetaryValue: 103000,
-    "android-en": "Emulator workflow shortens dev cycles—high ROI for teams.",
-  },
-  /* 16 – Deploying to Firebase */
-  {
-    monetaryValue: 108000,
-    "android-en": "Production deploy proficiency justifies senior rates.",
-  },
-  /* 17 – Uploading to Storage */
-  {
-    monetaryValue: 110000,
-    "android-en": "Storage uploads add scalable asset-handling expertise.",
-  },
-  /* 18 – Security Rules Basics */
-  {
-    monetaryValue: 112000,
-    "android-en": "Security-rules insight protects data at enterprise scale.",
-  },
-  /* 19 – Performance Monitoring */
-  {
-    monetaryValue: 115000,
-    "android-en": "Monitoring skills drive performance-optimization value.",
-  },
-  /* 20 – Popular Firebase Extensions */
-  {
-    monetaryValue: 118000,
-    "android-en": "Extension know-how accelerates feature delivery.",
-  },
-  /* 21 – Review With AI Conversation (optional) */
-  {
-    monetaryValue: 120000,
-    "android-en": "Comprehensive review crowns you at senior Android tier.",
-  },
-];
-
+export const androidLoot = [{},
+// 0 – Introduction placeholder (no monetary gain yet)
+
+// 1 – Understanding Coding
+{
+  monetaryValue: 0,
+  "android-en": "Pure theory—no immediate billable skill."
+},
+// 2 – Sequence of Program Execution
+{
+  monetaryValue: 0,
+  "android-en": "Execution-flow insight is still unpaid groundwork."
+},
+// 3 – Introduction to Variables
+{
+  monetaryValue: 125,
+  "android-en": "Variable basics open tiny scripting gigs (~$125)."
+},
+// 4 – Understanding List Declarations
+{
+  monetaryValue: 250,
+  "android-en": "Array/List handling enables simple automation tasks."
+},
+// 5 – Variable Assignment in Java
+{
+  monetaryValue: 250,
+  "android-en": "Confident assignment lets you tweak configs safely."
+},
+// 6 – Understanding Data Types
+{
+  monetaryValue: 300,
+  "android-en": "Type awareness prevents bugs—marketable skill bump."
+},
+// 7 – Purpose of Variables
+{
+  monetaryValue: 300,
+  "android-en": "Explaining variable intent shows code clarity to employers."
+},
+// 8 – Bash Terminal Practice: cd
+{
+  monetaryValue: 375,
+  "android-en": "CLI navigation preps you for junior DevOps chores."
+},
+// 9 – Review With AI Conversation (optional)
+{
+  monetaryValue: 375,
+  "android-en": "Conversation recap cements knowledge—earnings hold steady."
+}, /* 1 – Data Types in Programming */
+{
+  monetaryValue: 375,
+  "android-en": "Primitive-type fluency lands basic data-cleanup gigs."
+}, /* 2 – Steps to Create a Function */
+{
+  monetaryValue: 425,
+  "android-en": "Method workflow qualifies you for tiny utility scripts."
+}, /* 3 – Writing a Simple Function */
+{
+  monetaryValue: 500,
+  "android-en": "Authoring methods opens low-stakes automation work."
+}, /* 4 – Functions in Programming (concept) */
+{
+  monetaryValue: 500,
+  "android-en": "Explaining methods shows architectural awareness."
+}, /* 5 – Conditional Statements */
+{
+  monetaryValue: 625,
+  "android-en": "Branching logic unlocks decision-making code tasks."
+}, /* 6 – Order of Conditional Checks */
+{
+  monetaryValue: 750,
+  "android-en": "Flow-control precision reduces QA time for small apps."
+}, /* 7 – Implementing Conditional Logic */
+{
+  monetaryValue: 875,
+  "android-en": "Hands-on conditionals prove practical coding ability."
+}, /* 8 – Logical Operator (single-line answer) */
+{
+  monetaryValue: 1000,
+  "android-en": "Operator insight tightens code correctness."
+}, /* 9 – Real-world Use of Conditionals */
+{
+  monetaryValue: 1000,
+  "android-en": "Applying conditionals to business logic adds value."
+}, /* 10 – Terminal Practice: help */
+{
+  monetaryValue: 1125,
+  "android-en": "CLI help skills prep you for DevOps workflows."
+}, /* 11 – Loops in Programming */
+{
+  monetaryValue: 1250,
+  "android-en": "Loop mastery automates repetitive data tasks."
+}, /* 12 – Sequence of Loop Execution */
+{
+  monetaryValue: 1375,
+  "android-en": "Understanding loop order trims runtime errors."
+}, /* 13 – Creating a Loop (code) */
+{
+  monetaryValue: 1500,
+  "android-en": "Writing loops nets entry-level data-wrangling jobs."
+}, /* 14 – Applications of Loops */
+{
+  monetaryValue: 1500,
+  "android-en": "Articulating loop use cases shows system thinking."
+}, /* 15 – Arrays in Java (methods quiz) */
+{
+  monetaryValue: 1625,
+  "android-en": "Array utilities speed up ETL and tooling."
+}, /* 16 – Order of Array Operations */
+{
+  monetaryValue: 1750,
+  "android-en": "Sequencing array ops improves data-pipeline quality."
+}, /* 17 – Manipulating Arrays (code) */
+{
+  monetaryValue: 1875,
+  "android-en": "Fluent array manipulation boosts productivity rates."
+}, /* 18 – Use Cases for Arrays (text) */
+{
+  monetaryValue: 1875,
+  "android-en": "Mapping array use cases to apps signals insight."
+}, /* 19 – Terminal Practice: mkdir */
+{
+  monetaryValue: 2000,
+  "android-en": "Directory commands add build-script credibility."
+}, /* 20 – Advanced Coding Output */
+{
+  monetaryValue: 2250,
+  "android-en": "Predicting complex output shows mental-model mastery."
+}, /* 21 – Review With AI Conversation (optional) */
+{
+  monetaryValue: 2250,
+  "android-en": "AI recap consolidates gains—value steadies here."
+}, /* 1 – Introduction to Objects */
+{
+  monetaryValue: 2500,
+  "android-en": "Object basics spark entry-level MVC maintenance gigs."
+}, /* 2 – Understanding the Constructor Method */
+{
+  monetaryValue: 3750,
+  "android-en": "Constructor mastery scaffolds clean, reusable classes."
+}, /* 3 – Purpose of the Constructor Method */
+{
+  monetaryValue: 3875,
+  "android-en": "Explaining constructors shows design-pattern awareness."
+}, /* 4 – Creating an Instance of a Class */
+{
+  monetaryValue: 4250,
+  "android-en": "Instantiating objects enables model-layer tasks."
+}, /* 5 – Declaring a Method in a Class */
+{
+  monetaryValue: 4500,
+  "android-en": "Custom methods demonstrate behavior encapsulation."
+}, /* 6 – Using the this Keyword Correctly */
+{
+  monetaryValue: 4625,
+  "android-en": "Proper use of this signals context mastery."
+}, /* 7 – Adding Properties to an Object */
+{
+  monetaryValue: 4750,
+  "android-en": "Property modeling improves data flexibility."
+}, /* 8 – Accessing & Modifying Object Properties */
+{
+  monetaryValue: 4875,
+  "android-en": "Safe property access reduces runtime errors."
+}, /* 9 – Modifying Object Properties */
+{
+  monetaryValue: 5000,
+  "android-en": "Dynamic updates unlock CRUD feature work."
+}, /* 10 – Understanding Inheritance */
+{
+  monetaryValue: 6000,
+  "android-en": "Inheritance insight opens framework customization."
+}, /* 11 – Implementing Inheritance */
+{
+  monetaryValue: 6750,
+  "android-en": "Subclassing skills qualify you for SDK extensions."
+}, /* 12 – Overriding Methods */
+{
+  monetaryValue: 7500,
+  "android-en": "Polymorphic overrides elevate junior-dev salaries."
+}, /* 13 – Understanding Encapsulation */
+{
+  monetaryValue: 7625,
+  "android-en": "Encapsulation theory guards state integrity."
+}, /* 14 – Implementing Encapsulation */
+{
+  monetaryValue: 8250,
+  "android-en": "Getters/setters show production-ready design."
+}, /* 15 – Encapsulation Concept (one-word recall) */
+{
+  monetaryValue: 8250,
+  "android-en": "Term recall keeps value steady here."
+}, /* 16 – Combining Concepts Mini-Project */
+{
+  monetaryValue: 9500,
+  "android-en": "Capstone OOP project proves deliverable-ready skills."
+}, /* 17 – Printing in the Terminal */
+{
+  monetaryValue: 9500,
+  "android-en": "Shell output reinforces fundamentals—value holds."
+}, /* 18 – Review With AI Conversation (optional) */
+{
+  monetaryValue: 9500,
+  "android-en": "AI recap solidifies OOP foundation—earnings level off."
+}, {
+  monetaryValue: 20000,
+  "android-en": "View fundamentals unlock modern Android UI gigs."
+}, /* 2 – Key Concepts in Android UI */
+{
+  monetaryValue: 21000,
+  "android-en": "Activity + Fragment mastery boosts architecture value."
+}, /* 3 – Effect of LiveData Changes on UI */
+{
+  monetaryValue: 22000,
+  "android-en": "Reactive updates mark you as MVVM-ready."
+}, /* 4 – Creating a Simple Activity */
+{
+  monetaryValue: 23000,
+  "android-en": "Hands-on Activity building shows deliverable skills."
+}, /* 5 – Handling Button Clicks */
+{
+  monetaryValue: 24000,
+  "android-en": "Click listeners demonstrate interactive chops."
+}, /* 6 – Managing State with ViewModel */
+{
+  monetaryValue: 25000,
+  "android-en": "ViewModel + LiveData qualify you for junior Android roles."
+}, /* 7 – Intent Extras */
+{
+  monetaryValue: 26000,
+  "android-en": "Intent data-passing enhances component reuse."
+}, /* 8 – Passing and Using Extras */
+{
+  monetaryValue: 27000,
+  "android-en": "Dynamic extras sharpen navigation architecture."
+}, /* 9 – Props vs State in Android */
+{
+  monetaryValue: 28000,
+  "android-en": "Distinguishing extras vs LiveData shows design maturity."
+}, /* 10 – Terminal Practice: ls */
+{
+  monetaryValue: 29000,
+  "android-en": "CLI file ops prep build-workflow automation."
+}, /* 11 – Styling Android Views */
+{
+  monetaryValue: 30000,
+  "android-en": "XML styling proves product-ready polish."
+}, /* 12 – ConstraintLayout Basics */
+{
+  monetaryValue: 31000,
+  "android-en": "ConstraintLayout fluency speeds responsive design."
+}, /* 13 – Sharing ViewModel Between Fragments */
+{
+  monetaryValue: 32000,
+  "android-en": "Shared state enables multi-fragment orchestration."
+}, /* 14 – Observing LiveData for Side Effects */
+{
+  monetaryValue: 33000,
+  "android-en": "Lifecycle hooks signal side-effect competence."
+}, /* 15 – Understanding Activity Lifecycle */
+{
+  monetaryValue: 34000,
+  "android-en": "Lifecycle insight supports performance tuning."
+}, /* 16 – Fetching Data with Retrofit & LiveData */
+{
+  monetaryValue: 35000,
+  "android-en": "Async Retrofit calls show API-integration skill."
+}, /* 17 – Building a Complete Tweet App */
+{
+  monetaryValue: 37500,
+  "android-en": "End-to-end app showcases full-stack delivery."
+}, /* 18 – Terminal Practice: Gradle build */
+{
+  monetaryValue: 40000,
+  "android-en": "Gradle CLI workflow demonstrates dev-env autonomy."
+}, /* 19 – Creating a New Android Project */
+{
+  monetaryValue: 42500,
+  "android-en": "Android-Studio setup accelerates shipping velocity."
+}, /* 20 – Review With AI Conversation (optional) */
+{
+  monetaryValue: 45000,
+  "android-en": "Comprehensive review cements senior-track value."
+}, /* 1 – Intro to Java Backend Engineering */
+{
+  monetaryValue: 46000,
+  "android-en": "Backend basics introduce server-side logic know-how."
+}, /* 2 – Main Lessons Overview (core duty) */
+{
+  monetaryValue: 48000,
+  "android-en": "Spotting core duties sharpens your employment roadmap."
+}, /* 3 – Key Responsibilities of Backend Engineering */
+{
+  monetaryValue: 50000,
+  "android-en": "Multi-responsibility insight boosts junior-dev readiness."
+}, /* 4 – Interfacing with the Terminal */
+{
+  monetaryValue: 51000,
+  "android-en": "Terminal fluency powers everyday backend tasks."
+}, /* 5 – Installing Maven */
+{
+  monetaryValue: 52000,
+  "android-en": "Maven install shows dependency-management confidence."
+}, /* 6 – Adding a Maven Dependency */
+{
+  monetaryValue: 53000,
+  "android-en": "POM wiring proves build-tool mastery."
+}, /* 7 – User Creation & Authentication (concept) */
+{
+  monetaryValue: 54000,
+  "android-en": "Auth terminology safeguards future user data."
+}, /* 8 – Database Foundations */
+{
+  monetaryValue: 55000,
+  "android-en": "DB-type literacy guides sound architecture choices."
+}, /* 9 – Connecting to DB with Spring Data JPA */
+{
+  monetaryValue: 56000,
+  "android-en": "PostgreSQL hookup skills impress hiring managers."
+}, /*10 – Initiating a Spring Boot Project */
+{
+  monetaryValue: 57000,
+  "android-en": "Project bootstrap showcases rapid API setup."
+}, /*11 – Advanced Data-Storage Practices */
+{
+  monetaryValue: 59000,
+  "android-en": "Storage best-practices prove reliability mindset."
+}, /*12 – Configuring JPA & Saving Entity */
+{
+  monetaryValue: 61000,
+  "android-en": "JPA CRUD shows ORM proficiency in action."
+}, /*13 – Handling User Data */
+{
+  monetaryValue: 62000,
+  "android-en": "User-lookup code demonstrates practical DB use."
+}, /*14 – Retrieving User After Authentication */
+{
+  monetaryValue: 63000,
+  "android-en": "Secure queries highlight credential-handling care."
+}, /*15 – Understanding the Authentication Flow */
+{
+  monetaryValue: 64000,
+  "android-en": "JWT flow maps modern authentication pipelines."
+}, /*16 – OAuth Authentication */
+{
+  monetaryValue: 65000,
+  "android-en": "OAuth know-how enables third-party sign-ins."
+}, /*17 – Using Environment Variables */
+{
+  monetaryValue: 66000,
+  "android-en": "Environment vars keep secrets safe in code."
+}, /*18 – Database Relationships with JPA */
+{
+  monetaryValue: 67000,
+  "android-en": "Entity relationships design scalable schemas."
+}, /*19 – Interfacing with an API */
+{
+  monetaryValue: 68000,
+  "android-en": "REST method insight preps you for API work."
+}, /*20 – Creating a JWT Auth System */
+{
+  monetaryValue: 69000,
+  "android-en": "Building JWT security shows end-to-end chops."
+}, /*21 – Deploying Spring Boot App */
+{
+  monetaryValue: 70000,
+  "android-en": "Production deployment caps senior-track salary bands."
+}, /*22 – Review With AI Conversation (optional) */
+{
+  monetaryValue: 70000,
+  "android-en": "AI recap locks in knowledge—value plateaus here."
+}, /* 1 – Benefits of Serverless Cloud Platforms */
+{
+  monetaryValue: 75000,
+  "android-en": "Serverless savvy raises your market ceiling instantly."
+}, /* 2 – Understanding Android Studio */
+{
+  monetaryValue: 76000,
+  "android-en": "Studio mastery speeds day-one productivity on Android teams."
+}, /* 3 – Installing JDK & Android SDK */
+{
+  monetaryValue: 77000,
+  "android-en": "Proper tool-chain setup unlocks cross-stack development."
+}, /* 4 – Adding Firebase to Gradle */
+{
+  monetaryValue: 78000,
+  "android-en": "Gradle BOM wiring proves build-script competence."
+}, /* 5 – Applying Google Services Plugin */
+{
+  monetaryValue: 79000,
+  "android-en": "Plugin config shows dependency-injection confidence."
+}, /* 6 – Initializing a Firebase Project */
+{
+  monetaryValue: 81000,
+  "android-en": "google-services.json onboarding shows cloud bootstrap skill."
+}, /* 7 – Selecting Firebase Modules */
+{
+  monetaryValue: 83000,
+  "android-en": "Service selection reveals solution-architecture judgment."
+}, /* 8 – Configuring FirebaseApp */
+{
+  monetaryValue: 86000,
+  "android-en": "Runtime init signals secure SDK integration."
+}, /* 9 – Setting Up Firestore */
+{
+  monetaryValue: 88000,
+  "android-en": "Firestore setup proves NoSQL data-layer chops."
+}, /* 10 – Understanding Authentication */
+{
+  monetaryValue: 90000,
+  "android-en": "Auth concepts mark you as user-management capable."
+}, /* 11 – Creating a User with FirebaseAuth */
+{
+  monetaryValue: 92000,
+  "android-en": "Programmatic sign-up enables SaaS onboarding flows."
+}, /* 12 – Retrieving the ID Token */
+{
+  monetaryValue: 94000,
+  "android-en": "ID-token handling shows secure session logic."
+}, /* 13 – CRUD with Firestore */
+{
+  monetaryValue: 97000,
+  "android-en": "CRUD mastery enables full data-layer ownership."
+}, /* 14 – Calling Cloud Functions */
+{
+  monetaryValue: 100000,
+  "android-en": "Function calls push you into six-figure territory."
+}, /* 15 – Local Emulation */
+{
+  monetaryValue: 103000,
+  "android-en": "Emulator workflow shortens dev cycles—high ROI for teams."
+}, /* 16 – Deploying to Firebase */
+{
+  monetaryValue: 108000,
+  "android-en": "Production deploy proficiency justifies senior rates."
+}, /* 17 – Uploading to Storage */
+{
+  monetaryValue: 110000,
+  "android-en": "Storage uploads add scalable asset-handling expertise."
+}, /* 18 – Security Rules Basics */
+{
+  monetaryValue: 112000,
+  "android-en": "Security-rules insight protects data at enterprise scale."
+}, /* 19 – Performance Monitoring */
+{
+  monetaryValue: 115000,
+  "android-en": "Monitoring skills drive performance-optimization value."
+}, /* 20 – Popular Firebase Extensions */
+{
+  monetaryValue: 118000,
+  "android-en": "Extension know-how accelerates feature delivery."
+}, /* 21 – Review With AI Conversation (optional) */
+{
+  monetaryValue: 120000,
+  "android-en": "Comprehensive review crowns you at senior Android tier."
+}];
 export let buildSuperLoot = () => {
-  const maxLen = Math.max(
-    loot.length,
-    // pythonLoot.length,
-    // androidLoot.length,
-    // swiftLoot.length
+  const maxLen = Math.max(loot.length
+  // pythonLoot.length,
+  // androidLoot.length,
+  // swiftLoot.length
   );
-
   const superLoot = [];
-
   for (let i = 0; i < maxLen; i++) {
     // base object with all expected keys
     const entry = {
@@ -16856,7 +5625,7 @@ export let buildSuperLoot = () => {
       es: "",
       "python-en": "",
       "android-en": "",
-      "swift-en": "",
+      "swift-en": ""
     };
 
     /* ------------------------  LOOT  ------------------------ */
@@ -16896,23 +5665,23 @@ export let buildSuperLoot = () => {
 
     superLoot.push(entry);
   }
-
   return superLoot;
 };
-
 export const lectureSummaries = {
   en: {
     tutorial: {
-      videoSrc: "", //string url
-      content: <div>Hello world</div>, //jsx
-      challengeQuestion: "",
+      videoSrc: "",
+      //string url
+      content: <div>Hello world</div>,
+      //jsx
+      challengeQuestion: ""
     },
     1: {},
     2: {},
     3: {},
     4: {},
     5: {},
-    6: {},
+    6: {}
   },
   es: {
     tutorial: {},
@@ -16921,919 +5690,78 @@ export const lectureSummaries = {
     3: {},
     4: {},
     5: {},
-    6: {},
+    6: {}
   },
   "py-en": {
     tutorial: {
-      videoSrc: "", //string url
-      content: <div>Hello world</div>, //jsx
-      challengeQuestion: "",
+      videoSrc: "",
+      //string url
+      content: <div>Hello world</div>,
+      //jsx
+      challengeQuestion: ""
     },
     1: {},
     2: {},
     3: {},
     4: {},
     5: {},
-    6: {},
+    6: {}
   },
   "swift-end": {
     tutorial: {
-      videoSrc: "", //string url
-      content: <div>Hello world</div>, //jsx
-      challengeQuestion: "",
+      videoSrc: "",
+      //string url
+      content: <div>Hello world</div>,
+      //jsx
+      challengeQuestion: ""
     },
     1: {},
     2: {},
     3: {},
     4: {},
     5: {},
-    6: {},
+    6: {}
   },
   "android-en": {
     tutorial: {
-      videoSrc: "", //string url
-      content: <div>Hello world</div>, //jsx
-      challengeQuestion: "",
+      videoSrc: "",
+      //string url
+      content: <div>Hello world</div>,
+      //jsx
+      challengeQuestion: ""
     },
     1: {},
     2: {},
     3: {},
     4: {},
     5: {},
-    6: {},
+    6: {}
   },
   "compsci-en": {
     tutorial: {
-      videoSrc: "", //string url
-      content: <div>Hello world</div>, //jsx
-      challengeQuestion: "",
+      videoSrc: "",
+      //string url
+      content: <div>Hello world</div>,
+      //jsx
+      challengeQuestion: ""
     },
     1: {},
     2: {},
     3: {},
     4: {},
     5: {},
-    6: {},
-  },
+    6: {}
+  }
 };
-
 export const generatedSteps = [];
-
 export const celebrationMessages = {
-  en: [
-    "You're doing amazing! 🎉✨",
-    "Fantastic job! Keep it up! 🚀🎈",
-    "You're crushing it! 💪😄",
-    "Awesome work! 👏🥳",
-    "Impressive progress! 🌠🙌",
-    "Way to go! 🥳🔥",
-    "Outstanding performance! 🥇👏",
-    "You're incredible! 🤩✨",
-    "Keep up the fantastic work! 🎈🙌",
-    "You've got this! 💪🎉",
-    "Bravo! 👏🎊",
-    "So proud of you! 🌟😊",
-    "Keep up the amazing effort! 🙌🔥",
-    "You're a total champion! 🏆😄",
-    "Great job, keep rocking! 🤘🎉",
-    "You're unstoppable today! 🚀💥",
-    "Absolutely fantastic! 🌟🎉",
-    "You're making waves! 🌊😄",
-    "Keep being awesome! 😎✨",
-    "Epic job! 🚀🥳",
-    "You're flying high! ✈️😊",
-    "Outstanding job! 🌟🎈",
-    "You nailed it! 🎯😄",
-    "Keep soaring! 🦅✨",
-    "You're incredible! 🤩🙌",
-    "You're on fire! 🔥🥳",
-    "Amazing job, keep it up! 🚀😄",
-    "You're thriving! 🌱😊",
-    "Extraordinary effort! 🎖️👏",
-    "Keep shining bright! ✨😄",
-    "Magnificent performance! 🌟🙌",
-    "You're unstoppable! 🚀💪",
-    "You're a powerhouse! 💥🥳",
-    "You're a true superstar! 🤩🌟",
-    "Epic performance! 🚀🎉",
-    "You're doing wonderfully! 😊👏",
-    "Great momentum! Keep it going! 🌟🚀",
-    "Keep dazzling! ✨😄",
-    "You're making magic happen! ✨🪄",
-    "You're unstoppable! 🚀🔥",
-    "Incredible progress! 🙌😄",
-    "You're phenomenal! 🌟🥳",
-    "Keep shining bright! ✨🌞",
-    "You're slaying! 🔥👏",
-    "You're positively radiant! 😊✨",
-    "You're unstoppable today! 🚀🎊",
-    "Outstanding performance! 👏😊",
-    "Keep being fabulous! 🌟🎈",
-    "You're rocking this! 🎸🥳",
-    "You're amazing! Keep going! 🌟✨",
-    "You're absolutely brilliant! 💡🎉",
-    "Keep conquering! 🏅🚀",
-    "Fantastic work! Keep soaring! ✈️🌟",
-    "You're truly impressive! 👏✨",
-    "You're extraordinary! 🌟😊",
-    "Great job! Keep thriving! 🌱🎉",
-    "You're exceptional! 🎉🌟",
-    "Keep up the awesome work! 🙌🥳",
-    "You're fantastic! ✨😄",
-    "You're truly inspirational! 🌈👏",
-    "You're absolutely smashing it! 🚀💥",
-    "You're outstanding! 🌟🎉",
-    "Keep making us proud! 😊🙌",
-    "You're truly unstoppable! 🚀🎈",
-    "You're amazing! Keep pushing! 💪🥳",
-    "You're a legend! 🏅😄",
-    "Keep lighting it up! 🔥✨",
-    "You're doing incredible! 🎉👏",
-    "You're truly spectacular! 🌠😊",
-    "Keep it going! You're doing great! 💪✨",
-    "You're wonderful! 🌟😄",
-    "You're unstoppable brilliance! 🚀✨",
-    "You're absolutely rocking it! 🎸😊",
-    "Keep reaching new heights! 🏔️🎉",
-    "You're superb! ✨🙌",
-    "You're on a fantastic roll! 🎲🥳",
-    "Keep crushing those goals! 🎯😄",
-    "You're brilliant! 💡✨",
-    "You're fantastic beyond words! 🎉👏",
-    "You're totally rocking it! 🤘😎",
-    "Keep it up, superstar! 🌟😊",
-    "You're shining bright today! ✨😄",
-    "Keep smashing it! 🚀💥",
-    "You're truly unstoppable! 🚀🎊",
-    "Outstanding effort! 🎖️✨",
-    "You're awesome, keep it going! 🎉😄",
-    "Keep breaking barriers! 🚧💪",
-    "You're extraordinary every day! 🎉😊",
-    "Keep achieving greatness! 🏆✨",
-    "You're a shining example! ✨😊",
-    "You're a total winner! 🏅😄",
-    "Keep shining, you're amazing! ✨🌞",
-    "You're absolutely crushing it! 💪🔥",
-    "You're fantastic today! 🎉😄",
-    "Keep the greatness coming! 🚀✨",
-    "You're inspirational! 🌈😊",
-    "You're lighting it up! 🔥🎈",
-    "Keep soaring high! 🦅✨",
-    "You're doing an awesome job! 🎉😊",
-    "You're unstoppable greatness! 🚀🌟",
-    "Keep going strong! 💪😄",
-    "You're absolutely remarkable! 🎖️✨",
-    "Keep being amazing! 🌟😊",
-    "You're thriving wonderfully! 🌱🎉",
-    "You're absolutely incredible! 🌠😄",
-    "Keep shining! ✨🎈",
-    "You're exceptional! 🌟👏",
-    "You're unstoppable brilliance today! 🚀😄",
-    "Keep up the excellent work! 🎉🙌",
-    "You're extraordinary! Keep going! 🌟😊",
-    "Keep pushing forward! 🚀🎉",
-    "You're making fantastic progress! 🎈😊",
-    "You're an absolute champion! 🏆😄",
-    "Keep slaying your goals! 🔥👏",
-    "You're fantastic! Keep going strong! 🎉💪",
-    "You're totally impressive! 🌟😄",
-    "Keep rocking! 🎸✨",
-    "You're absolutely magnificent! 🎉🌟",
-    "You're on a roll! Keep it up! 🎲😄",
-    "You're exceptional today! 🎉👏",
-    "Keep shining brightly! ✨😊",
-    "You're totally unstoppable! 🚀🥳",
-    "You're thriving and inspiring! 🌱😊",
-    "Keep excelling! 🎖️😄",
-    "You're doing wonderfully today! 🌟🎉",
-    "You're making it happen! 🚀✨",
-    "Keep being unstoppable! 🔥💪",
-    "You're spectacular! 🎉🌠",
-    "Keep achieving greatness! 🏆✨",
-    "You're positively radiant today! 😊✨",
-    "Keep being fantastic! 🌟😄",
-    "You're crushing everything! 💥💪",
-    "Keep up the amazing work! 🎉🙌",
-    "You're totally epic! 🚀😄",
-    "You're remarkable! 🌟👏",
-    "Keep shining, you're a star! ✨😊",
-    "You're truly magnificent! 🎉😄",
-    "You're on fire! 🔥🚀",
-    "Keep being incredible! 🌟😄",
-    "You're unstoppable today! 🚀✨",
-  ],
-  es: [
-    "¡Lo estás haciendo increíble! 🎉✨",
-    "¡Trabajo fantástico! ¡Sigue así! 🚀🎈",
-    "¡Lo estás arrasando! 💪😄",
-    "¡Excelente trabajo! 👏🥳",
-    "¡Progreso impresionante! 🌠🙌",
-    "¡Así se hace! 🥳🔥",
-    "¡Actuación sobresaliente! 🥇👏",
-    "¡Eres increíble! 🤩✨",
-    "¡Sigue con el fantástico trabajo! 🎈🙌",
-    "¡Tú puedes hacerlo! 💪🎉",
-    "¡Bravo! 👏🎊",
-    "¡Muy orgulloso de ti! 🌟😊",
-    "¡Continúa con ese esfuerzo increíble! 🙌🔥",
-    "¡Eres todo un campeón! 🏆😄",
-    "¡Gran trabajo, sigue así! 🤘🎉",
-    "¡Hoy eres imparable! 🚀💥",
-    "¡Absolutamente fantástico! 🌟🎉",
-    "¡Estás causando sensación! 🌊😄",
-    "¡Sigue siendo increíble! 😎✨",
-    "¡Trabajo épico! 🚀🥳",
-    "¡Estás volando alto! ✈️😊",
-    "¡Trabajo sobresaliente! 🌟🎈",
-    "¡Lo clavaste! 🎯😄",
-    "¡Sigue volando alto! 🦅✨",
-    "¡Eres increíble! 🤩🙌",
-    "¡Estás que ardes! 🔥🥳",
-    "¡Trabajo increíble, sigue así! 🚀😄",
-    "¡Estás floreciendo! 🌱😊",
-    "¡Esfuerzo extraordinario! 🎖️👏",
-    "¡Sigue brillando fuerte! ✨😄",
-    "¡Actuación magnífica! 🌟🙌",
-    "¡Eres imparable! 🚀💪",
-    "¡Eres una fuerza imparable! 💥🥳",
-    "¡Eres una verdadera estrella! 🤩🌟",
-    "¡Actuación épica! 🚀🎉",
-    "¡Lo estás haciendo maravillosamente! 😊👏",
-    "¡Gran impulso! ¡Sigue adelante! 🌟🚀",
-    "¡Sigue deslumbrando! ✨😄",
-    "¡Estás haciendo magia! ✨🪄",
-    "¡Eres imparable! 🚀🔥",
-    "¡Progreso increíble! 🙌😄",
-    "¡Eres fenomenal! 🌟🥳",
-    "¡Sigue brillando! ✨🌞",
-    "¡Estás arrasando! 🔥👏",
-    "¡Estás radiante! 😊✨",
-    "¡Hoy eres imparable! 🚀🎊",
-    "¡Actuación excepcional! 👏😊",
-    "¡Sigue siendo fabuloso! 🌟🎈",
-    "¡Lo estás rockeando! 🎸🥳",
-    "¡Eres increíble! ¡Sigue adelante! 🌟✨",
-    "¡Eres absolutamente brillante! 💡🎉",
-    "¡Sigue conquistando! 🏅🚀",
-    "¡Trabajo fantástico! ¡Sigue volando alto! ✈️🌟",
-    "¡Eres realmente impresionante! 👏✨",
-    "¡Eres extraordinario! 🌟😊",
-    "¡Gran trabajo! ¡Sigue floreciendo! 🌱🎉",
-    "¡Eres excepcional! 🎉🌟",
-    "¡Continúa con el excelente trabajo! 🙌🥳",
-    "¡Eres fantástico! ✨😄",
-    "¡Eres verdaderamente inspirador! 🌈👏",
-    "¡Lo estás destrozando absolutamente! 🚀💥",
-    "¡Eres sobresaliente! 🌟🎉",
-    "¡Sigue haciéndonos sentir orgullosos! 😊🙌",
-    "¡Eres verdaderamente imparable! 🚀🎈",
-    "¡Eres increíble! ¡Sigue empujando! 💪🥳",
-    "¡Eres una leyenda! 🏅😄",
-    "¡Sigue encendiéndolo todo! 🔥✨",
-    "¡Estás increíble! 🎉👏",
-    "¡Eres realmente espectacular! 🌠😊",
-    "¡Sigue así! ¡Lo estás haciendo genial! 💪✨",
-    "¡Eres maravilloso! 🌟😄",
-    "¡Tu brillantez es imparable! 🚀✨",
-    "¡Lo estás haciendo genial! 🎸😊",
-    "¡Sigue alcanzando nuevas alturas! 🏔️🎉",
-    "¡Eres magnífico! ✨🙌",
-    "¡Estás en una racha fantástica! 🎲🥳",
-    "¡Sigue alcanzando esas metas! 🎯😄",
-    "¡Eres brillante! 💡✨",
-    "¡Eres fantástico más allá de las palabras! 🎉👏",
-    "¡Lo estás rockeando totalmente! 🤘😎",
-    "¡Sigue así, superestrella! 🌟😊",
-    "¡Estás brillando hoy! ✨😄",
-    "¡Sigue rompiéndola! 🚀💥",
-    "¡Eres realmente imparable! 🚀🎊",
-    "¡Esfuerzo sobresaliente! 🎖️✨",
-    "¡Eres increíble, sigue así! 🎉😄",
-    "¡Sigue rompiendo barreras! 🚧💪",
-    "¡Eres extraordinario cada día! 🎉😊",
-    "¡Sigue alcanzando grandeza! 🏆✨",
-    "¡Eres un ejemplo brillante! ✨😊",
-    "¡Eres un verdadero ganador! 🏅😄",
-    "¡Sigue brillando, eres increíble! ✨🌞",
-    "¡Lo estás haciendo genial! 💪🔥",
-    "¡Hoy estás fantástico! 🎉😄",
-    "¡Continúa con tu grandeza! 🚀✨",
-    "¡Eres una inspiración! 🌈😊",
-    "¡Estás encendiéndolo todo! 🔥🎈",
-    "¡Sigue volando alto! 🦅✨",
-    "¡Estás haciendo un trabajo increíble! 🎉😊",
-    "¡Tu grandeza es imparable! 🚀🌟",
-    "¡Sigue fuerte! 💪😄",
-    "¡Eres absolutamente notable! 🎖️✨",
-    "¡Sigue siendo increíble! 🌟😊",
-    "¡Estás floreciendo maravillosamente! 🌱🎉",
-    "¡Eres absolutamente increíble! 🌠😄",
-    "¡Sigue brillando! ✨🎈",
-    "¡Eres excepcional! 🌟👏",
-    "¡Tu brillantez hoy es imparable! 🚀😄",
-    "¡Continúa con el excelente trabajo! 🎉🙌",
-    "¡Eres extraordinario! ¡Sigue adelante! 🌟😊",
-    "¡Sigue avanzando! 🚀🎉",
-    "¡Estás progresando fantásticamente! 🎈😊",
-    "¡Eres un campeón absoluto! 🏆😄",
-    "¡Sigue logrando tus objetivos! 🔥👏",
-    "¡Eres fantástico! ¡Sigue fuerte! 🎉💪",
-    "¡Eres totalmente impresionante! 🌟😄",
-    "¡Sigue rockeando! 🎸✨",
-    "¡Eres absolutamente magnífico! 🎉🌟",
-    "¡Estás en racha! ¡Sigue así! 🎲😄",
-    "¡Eres excepcional hoy! 🎉👏",
-    "¡Sigue brillando intensamente! ✨😊",
-    "¡Eres totalmente imparable! 🚀🥳",
-    "¡Estás floreciendo e inspirando! 🌱😊",
-    "¡Sigue sobresaliendo! 🎖️😄",
-    "¡Hoy lo estás haciendo maravillosamente! 🌟🎉",
-    "¡Estás haciéndolo realidad! 🚀✨",
-    "¡Sigue siendo imparable! 🔥💪",
-    "¡Eres espectacular! 🎉🌠",
-    "¡Sigue alcanzando grandeza! 🏆✨",
-    "¡Hoy estás radiante! 😊✨",
-    "¡Sigue siendo fantástico! 🌟😄",
-    "¡Estás arrasando con todo! 💥💪",
-    "¡Continúa con el increíble trabajo! 🎉🙌",
-    "¡Eres totalmente épico! 🚀😄",
-    "¡Eres notable! 🌟👏",
-    "¡Sigue brillando, eres una estrella! ✨😊",
-    "¡Eres realmente magnífico! 🎉😄",
-    "¡Estás que ardes! 🔥🚀",
-    "¡Sigue siendo increíble! 🌟😄",
-    "¡Hoy eres imparable! 🚀✨",
-  ],
-  "py-en": [
-    "You're doing amazing! 🎉✨",
-    "Fantastic job! Keep it up! 🚀🎈",
-    "You're crushing it! 💪😄",
-    "Awesome work! 👏🥳",
-    "Impressive progress! 🌠🙌",
-    "Way to go! 🥳🔥",
-    "Outstanding performance! 🥇👏",
-    "You're incredible! 🤩✨",
-    "Keep up the fantastic work! 🎈🙌",
-    "You've got this! 💪🎉",
-    "Bravo! 👏🎊",
-    "So proud of you! 🌟😊",
-    "Keep up the amazing effort! 🙌🔥",
-    "You're a total champion! 🏆😄",
-    "Great job, keep rocking! 🤘🎉",
-    "You're unstoppable today! 🚀💥",
-    "Absolutely fantastic! 🌟🎉",
-    "You're making waves! 🌊😄",
-    "Keep being awesome! 😎✨",
-    "Epic job! 🚀🥳",
-    "You're flying high! ✈️😊",
-    "Outstanding job! 🌟🎈",
-    "You nailed it! 🎯😄",
-    "Keep soaring! 🦅✨",
-    "You're incredible! 🤩🙌",
-    "You're on fire! 🔥🥳",
-    "Amazing job, keep it up! 🚀😄",
-    "You're thriving! 🌱😊",
-    "Extraordinary effort! 🎖️👏",
-    "Keep shining bright! ✨😄",
-    "Magnificent performance! 🌟🙌",
-    "You're unstoppable! 🚀💪",
-    "You're a powerhouse! 💥🥳",
-    "You're a true superstar! 🤩🌟",
-    "Epic performance! 🚀🎉",
-    "You're doing wonderfully! 😊👏",
-    "Great momentum! Keep it going! 🌟🚀",
-    "Keep dazzling! ✨😄",
-    "You're making magic happen! ✨🪄",
-    "You're unstoppable! 🚀🔥",
-    "Incredible progress! 🙌😄",
-    "You're phenomenal! 🌟🥳",
-    "Keep shining bright! ✨🌞",
-    "You're slaying! 🔥👏",
-    "You're positively radiant! 😊✨",
-    "You're unstoppable today! 🚀🎊",
-    "Outstanding performance! 👏😊",
-    "Keep being fabulous! 🌟🎈",
-    "You're rocking this! 🎸🥳",
-    "You're amazing! Keep going! 🌟✨",
-    "You're absolutely brilliant! 💡🎉",
-    "Keep conquering! 🏅🚀",
-    "Fantastic work! Keep soaring! ✈️🌟",
-    "You're truly impressive! 👏✨",
-    "You're extraordinary! 🌟😊",
-    "Great job! Keep thriving! 🌱🎉",
-    "You're exceptional! 🎉🌟",
-    "Keep up the awesome work! 🙌🥳",
-    "You're fantastic! ✨😄",
-    "You're truly inspirational! 🌈👏",
-    "You're absolutely smashing it! 🚀💥",
-    "You're outstanding! 🌟🎉",
-    "Keep making us proud! 😊🙌",
-    "You're truly unstoppable! 🚀🎈",
-    "You're amazing! Keep pushing! 💪🥳",
-    "You're a legend! 🏅😄",
-    "Keep lighting it up! 🔥✨",
-    "You're doing incredible! 🎉👏",
-    "You're truly spectacular! 🌠😊",
-    "Keep it going! You're doing great! 💪✨",
-    "You're wonderful! 🌟😄",
-    "You're unstoppable brilliance! 🚀✨",
-    "You're absolutely rocking it! 🎸😊",
-    "Keep reaching new heights! 🏔️🎉",
-    "You're superb! ✨🙌",
-    "You're on a fantastic roll! 🎲🥳",
-    "Keep crushing those goals! 🎯😄",
-    "You're brilliant! 💡✨",
-    "You're fantastic beyond words! 🎉👏",
-    "You're totally rocking it! 🤘😎",
-    "Keep it up, superstar! 🌟😊",
-    "You're shining bright today! ✨😄",
-    "Keep smashing it! 🚀💥",
-    "You're truly unstoppable! 🚀🎊",
-    "Outstanding effort! 🎖️✨",
-    "You're awesome, keep it going! 🎉😄",
-    "Keep breaking barriers! 🚧💪",
-    "You're extraordinary every day! 🎉😊",
-    "Keep achieving greatness! 🏆✨",
-    "You're a shining example! ✨😊",
-    "You're a total winner! 🏅😄",
-    "Keep shining, you're amazing! ✨🌞",
-    "You're absolutely crushing it! 💪🔥",
-    "You're fantastic today! 🎉😄",
-    "Keep the greatness coming! 🚀✨",
-    "You're inspirational! 🌈😊",
-    "You're lighting it up! 🔥🎈",
-    "Keep soaring high! 🦅✨",
-    "You're doing an awesome job! 🎉😊",
-    "You're unstoppable greatness! 🚀🌟",
-    "Keep going strong! 💪😄",
-    "You're absolutely remarkable! 🎖️✨",
-    "Keep being amazing! 🌟😊",
-    "You're thriving wonderfully! 🌱🎉",
-    "You're absolutely incredible! 🌠😄",
-    "Keep shining! ✨🎈",
-    "You're exceptional! 🌟👏",
-    "You're unstoppable brilliance today! 🚀😄",
-    "Keep up the excellent work! 🎉🙌",
-    "You're extraordinary! Keep going! 🌟😊",
-    "Keep pushing forward! 🚀🎉",
-    "You're making fantastic progress! 🎈😊",
-    "You're an absolute champion! 🏆😄",
-    "Keep slaying your goals! 🔥👏",
-    "You're fantastic! Keep going strong! 🎉💪",
-    "You're totally impressive! 🌟😄",
-    "Keep rocking! 🎸✨",
-    "You're absolutely magnificent! 🎉🌟",
-    "You're on a roll! Keep it up! 🎲😄",
-    "You're exceptional today! 🎉👏",
-    "Keep shining brightly! ✨😊",
-    "You're totally unstoppable! 🚀🥳",
-    "You're thriving and inspiring! 🌱😊",
-    "Keep excelling! 🎖️😄",
-    "You're doing wonderfully today! 🌟🎉",
-    "You're making it happen! 🚀✨",
-    "Keep being unstoppable! 🔥💪",
-    "You're spectacular! 🎉🌠",
-    "Keep achieving greatness! 🏆✨",
-    "You're positively radiant today! 😊✨",
-    "Keep being fantastic! 🌟😄",
-    "You're crushing everything! 💥💪",
-    "Keep up the amazing work! 🎉🙌",
-    "You're totally epic! 🚀😄",
-    "You're remarkable! 🌟👏",
-    "Keep shining, you're a star! ✨😊",
-    "You're truly magnificent! 🎉😄",
-    "You're on fire! 🔥🚀",
-    "Keep being incredible! 🌟😄",
-    "You're unstoppable today! 🚀✨",
-  ],
-  "swift-en": [
-    "You're doing amazing! 🎉✨",
-    "Fantastic job! Keep it up! 🚀🎈",
-    "You're crushing it! 💪😄",
-    "Awesome work! 👏🥳",
-    "Impressive progress! 🌠🙌",
-    "Way to go! 🥳🔥",
-    "Outstanding performance! 🥇👏",
-    "You're incredible! 🤩✨",
-    "Keep up the fantastic work! 🎈🙌",
-    "You've got this! 💪🎉",
-    "Bravo! 👏🎊",
-    "So proud of you! 🌟😊",
-    "Keep up the amazing effort! 🙌🔥",
-    "You're a total champion! 🏆😄",
-    "Great job, keep rocking! 🤘🎉",
-    "You're unstoppable today! 🚀💥",
-    "Absolutely fantastic! 🌟🎉",
-    "You're making waves! 🌊😄",
-    "Keep being awesome! 😎✨",
-    "Epic job! 🚀🥳",
-    "You're flying high! ✈️😊",
-    "Outstanding job! 🌟🎈",
-    "You nailed it! 🎯😄",
-    "Keep soaring! 🦅✨",
-    "You're incredible! 🤩🙌",
-    "You're on fire! 🔥🥳",
-    "Amazing job, keep it up! 🚀😄",
-    "You're thriving! 🌱😊",
-    "Extraordinary effort! 🎖️👏",
-    "Keep shining bright! ✨😄",
-    "Magnificent performance! 🌟🙌",
-    "You're unstoppable! 🚀💪",
-    "You're a powerhouse! 💥🥳",
-    "You're a true superstar! 🤩🌟",
-    "Epic performance! 🚀🎉",
-    "You're doing wonderfully! 😊👏",
-    "Great momentum! Keep it going! 🌟🚀",
-    "Keep dazzling! ✨😄",
-    "You're making magic happen! ✨🪄",
-    "You're unstoppable! 🚀🔥",
-    "Incredible progress! 🙌😄",
-    "You're phenomenal! 🌟🥳",
-    "Keep shining bright! ✨🌞",
-    "You're slaying! 🔥👏",
-    "You're positively radiant! 😊✨",
-    "You're unstoppable today! 🚀🎊",
-    "Outstanding performance! 👏😊",
-    "Keep being fabulous! 🌟🎈",
-    "You're rocking this! 🎸🥳",
-    "You're amazing! Keep going! 🌟✨",
-    "You're absolutely brilliant! 💡🎉",
-    "Keep conquering! 🏅🚀",
-    "Fantastic work! Keep soaring! ✈️🌟",
-    "You're truly impressive! 👏✨",
-    "You're extraordinary! 🌟😊",
-    "Great job! Keep thriving! 🌱🎉",
-    "You're exceptional! 🎉🌟",
-    "Keep up the awesome work! 🙌🥳",
-    "You're fantastic! ✨😄",
-    "You're truly inspirational! 🌈👏",
-    "You're absolutely smashing it! 🚀💥",
-    "You're outstanding! 🌟🎉",
-    "Keep making us proud! 😊🙌",
-    "You're truly unstoppable! 🚀🎈",
-    "You're amazing! Keep pushing! 💪🥳",
-    "You're a legend! 🏅😄",
-    "Keep lighting it up! 🔥✨",
-    "You're doing incredible! 🎉👏",
-    "You're truly spectacular! 🌠😊",
-    "Keep it going! You're doing great! 💪✨",
-    "You're wonderful! 🌟😄",
-    "You're unstoppable brilliance! 🚀✨",
-    "You're absolutely rocking it! 🎸😊",
-    "Keep reaching new heights! 🏔️🎉",
-    "You're superb! ✨🙌",
-    "You're on a fantastic roll! 🎲🥳",
-    "Keep crushing those goals! 🎯😄",
-    "You're brilliant! 💡✨",
-    "You're fantastic beyond words! 🎉👏",
-    "You're totally rocking it! 🤘😎",
-    "Keep it up, superstar! 🌟😊",
-    "You're shining bright today! ✨😄",
-    "Keep smashing it! 🚀💥",
-    "You're truly unstoppable! 🚀🎊",
-    "Outstanding effort! 🎖️✨",
-    "You're awesome, keep it going! 🎉😄",
-    "Keep breaking barriers! 🚧💪",
-    "You're extraordinary every day! 🎉😊",
-    "Keep achieving greatness! 🏆✨",
-    "You're a shining example! ✨😊",
-    "You're a total winner! 🏅😄",
-    "Keep shining, you're amazing! ✨🌞",
-    "You're absolutely crushing it! 💪🔥",
-    "You're fantastic today! 🎉😄",
-    "Keep the greatness coming! 🚀✨",
-    "You're inspirational! 🌈😊",
-    "You're lighting it up! 🔥🎈",
-    "Keep soaring high! 🦅✨",
-    "You're doing an awesome job! 🎉😊",
-    "You're unstoppable greatness! 🚀🌟",
-    "Keep going strong! 💪😄",
-    "You're absolutely remarkable! 🎖️✨",
-    "Keep being amazing! 🌟😊",
-    "You're thriving wonderfully! 🌱🎉",
-    "You're absolutely incredible! 🌠😄",
-    "Keep shining! ✨🎈",
-    "You're exceptional! 🌟👏",
-    "You're unstoppable brilliance today! 🚀😄",
-    "Keep up the excellent work! 🎉🙌",
-    "You're extraordinary! Keep going! 🌟😊",
-    "Keep pushing forward! 🚀🎉",
-    "You're making fantastic progress! 🎈😊",
-    "You're an absolute champion! 🏆😄",
-    "Keep slaying your goals! 🔥👏",
-    "You're fantastic! Keep going strong! 🎉💪",
-    "You're totally impressive! 🌟😄",
-    "Keep rocking! 🎸✨",
-    "You're absolutely magnificent! 🎉🌟",
-    "You're on a roll! Keep it up! 🎲😄",
-    "You're exceptional today! 🎉👏",
-    "Keep shining brightly! ✨😊",
-    "You're totally unstoppable! 🚀🥳",
-    "You're thriving and inspiring! 🌱😊",
-    "Keep excelling! 🎖️😄",
-    "You're doing wonderfully today! 🌟🎉",
-    "You're making it happen! 🚀✨",
-    "Keep being unstoppable! 🔥💪",
-    "You're spectacular! 🎉🌠",
-    "Keep achieving greatness! 🏆✨",
-    "You're positively radiant today! 😊✨",
-    "Keep being fantastic! 🌟😄",
-    "You're crushing everything! 💥💪",
-    "Keep up the amazing work! 🎉🙌",
-    "You're totally epic! 🚀😄",
-    "You're remarkable! 🌟👏",
-    "Keep shining, you're a star! ✨😊",
-    "You're truly magnificent! 🎉😄",
-    "You're on fire! 🔥🚀",
-    "Keep being incredible! 🌟😄",
-    "You're unstoppable today! 🚀✨",
-  ],
-  "android-en": [
-    "You're doing amazing! 🎉✨",
-    "Fantastic job! Keep it up! 🚀🎈",
-    "You're crushing it! 💪😄",
-    "Awesome work! 👏🥳",
-    "Impressive progress! 🌠🙌",
-    "Way to go! 🥳🔥",
-    "Outstanding performance! 🥇👏",
-    "You're incredible! 🤩✨",
-    "Keep up the fantastic work! 🎈🙌",
-    "You've got this! 💪🎉",
-    "Bravo! 👏🎊",
-    "So proud of you! 🌟😊",
-    "Keep up the amazing effort! 🙌🔥",
-    "You're a total champion! 🏆😄",
-    "Great job, keep rocking! 🤘🎉",
-    "You're unstoppable today! 🚀💥",
-    "Absolutely fantastic! 🌟🎉",
-    "You're making waves! 🌊😄",
-    "Keep being awesome! 😎✨",
-    "Epic job! 🚀🥳",
-    "You're flying high! ✈️😊",
-    "Outstanding job! 🌟🎈",
-    "You nailed it! 🎯😄",
-    "Keep soaring! 🦅✨",
-    "You're incredible! 🤩🙌",
-    "You're on fire! 🔥🥳",
-    "Amazing job, keep it up! 🚀😄",
-    "You're thriving! 🌱😊",
-    "Extraordinary effort! 🎖️👏",
-    "Keep shining bright! ✨😄",
-    "Magnificent performance! 🌟🙌",
-    "You're unstoppable! 🚀💪",
-    "You're a powerhouse! 💥🥳",
-    "You're a true superstar! 🤩🌟",
-    "Epic performance! 🚀🎉",
-    "You're doing wonderfully! 😊👏",
-    "Great momentum! Keep it going! 🌟🚀",
-    "Keep dazzling! ✨😄",
-    "You're making magic happen! ✨🪄",
-    "You're unstoppable! 🚀🔥",
-    "Incredible progress! 🙌😄",
-    "You're phenomenal! 🌟🥳",
-    "Keep shining bright! ✨🌞",
-    "You're slaying! 🔥👏",
-    "You're positively radiant! 😊✨",
-    "You're unstoppable today! 🚀🎊",
-    "Outstanding performance! 👏😊",
-    "Keep being fabulous! 🌟🎈",
-    "You're rocking this! 🎸🥳",
-    "You're amazing! Keep going! 🌟✨",
-    "You're absolutely brilliant! 💡🎉",
-    "Keep conquering! 🏅🚀",
-    "Fantastic work! Keep soaring! ✈️🌟",
-    "You're truly impressive! 👏✨",
-    "You're extraordinary! 🌟😊",
-    "Great job! Keep thriving! 🌱🎉",
-    "You're exceptional! 🎉🌟",
-    "Keep up the awesome work! 🙌🥳",
-    "You're fantastic! ✨😄",
-    "You're truly inspirational! 🌈👏",
-    "You're absolutely smashing it! 🚀💥",
-    "You're outstanding! 🌟🎉",
-    "Keep making us proud! 😊🙌",
-    "You're truly unstoppable! 🚀🎈",
-    "You're amazing! Keep pushing! 💪🥳",
-    "You're a legend! 🏅😄",
-    "Keep lighting it up! 🔥✨",
-    "You're doing incredible! 🎉👏",
-    "You're truly spectacular! 🌠😊",
-    "Keep it going! You're doing great! 💪✨",
-    "You're wonderful! 🌟😄",
-    "You're unstoppable brilliance! 🚀✨",
-    "You're absolutely rocking it! 🎸😊",
-    "Keep reaching new heights! 🏔️🎉",
-    "You're superb! ✨🙌",
-    "You're on a fantastic roll! 🎲🥳",
-    "Keep crushing those goals! 🎯😄",
-    "You're brilliant! 💡✨",
-    "You're fantastic beyond words! 🎉👏",
-    "You're totally rocking it! 🤘😎",
-    "Keep it up, superstar! 🌟😊",
-    "You're shining bright today! ✨😄",
-    "Keep smashing it! 🚀💥",
-    "You're truly unstoppable! 🚀🎊",
-    "Outstanding effort! 🎖️✨",
-    "You're awesome, keep it going! 🎉😄",
-    "Keep breaking barriers! 🚧💪",
-    "You're extraordinary every day! 🎉😊",
-    "Keep achieving greatness! 🏆✨",
-    "You're a shining example! ✨😊",
-    "You're a total winner! 🏅😄",
-    "Keep shining, you're amazing! ✨🌞",
-    "You're absolutely crushing it! 💪🔥",
-    "You're fantastic today! 🎉😄",
-    "Keep the greatness coming! 🚀✨",
-    "You're inspirational! 🌈😊",
-    "You're lighting it up! 🔥🎈",
-    "Keep soaring high! 🦅✨",
-    "You're doing an awesome job! 🎉😊",
-    "You're unstoppable greatness! 🚀🌟",
-    "Keep going strong! 💪😄",
-    "You're absolutely remarkable! 🎖️✨",
-    "Keep being amazing! 🌟😊",
-    "You're thriving wonderfully! 🌱🎉",
-    "You're absolutely incredible! 🌠😄",
-    "Keep shining! ✨🎈",
-    "You're exceptional! 🌟👏",
-    "You're unstoppable brilliance today! 🚀😄",
-    "Keep up the excellent work! 🎉🙌",
-    "You're extraordinary! Keep going! 🌟😊",
-    "Keep pushing forward! 🚀🎉",
-    "You're making fantastic progress! 🎈😊",
-    "You're an absolute champion! 🏆😄",
-    "Keep slaying your goals! 🔥👏",
-    "You're fantastic! Keep going strong! 🎉💪",
-    "You're totally impressive! 🌟😄",
-    "Keep rocking! 🎸✨",
-    "You're absolutely magnificent! 🎉🌟",
-    "You're on a roll! Keep it up! 🎲😄",
-    "You're exceptional today! 🎉👏",
-    "Keep shining brightly! ✨😊",
-    "You're totally unstoppable! 🚀🥳",
-    "You're thriving and inspiring! 🌱😊",
-    "Keep excelling! 🎖️😄",
-    "You're doing wonderfully today! 🌟🎉",
-    "You're making it happen! 🚀✨",
-    "Keep being unstoppable! 🔥💪",
-    "You're spectacular! 🎉🌠",
-    "Keep achieving greatness! 🏆✨",
-    "You're positively radiant today! 😊✨",
-    "Keep being fantastic! 🌟😄",
-    "You're crushing everything! 💥💪",
-    "Keep up the amazing work! 🎉🙌",
-    "You're totally epic! 🚀😄",
-    "You're remarkable! 🌟👏",
-    "Keep shining, you're a star! ✨😊",
-    "You're truly magnificent! 🎉😄",
-    "You're on fire! 🔥🚀",
-    "Keep being incredible! 🌟😄",
-    "You're unstoppable today! 🚀✨",
-  ],
-  "compsci-en": [
-    "You're doing amazing! 🎉✨",
-    "Fantastic job! Keep it up! 🚀🎈",
-    "You're crushing it! 💪😄",
-    "Awesome work! 👏🥳",
-    "Impressive progress! 🌠🙌",
-    "Way to go! 🥳🔥",
-    "Outstanding performance! 🥇👏",
-    "You're incredible! 🤩✨",
-    "Keep up the fantastic work! 🎈🙌",
-    "You've got this! 💪🎉",
-    "Bravo! 👏🎊",
-    "So proud of you! 🌟😊",
-    "Keep up the amazing effort! 🙌🔥",
-    "You're a total champion! 🏆😄",
-    "Great job, keep rocking! 🤘🎉",
-    "You're unstoppable today! 🚀💥",
-    "Absolutely fantastic! 🌟🎉",
-    "You're making waves! 🌊😄",
-    "Keep being awesome! 😎✨",
-    "Epic job! 🚀🥳",
-    "You're flying high! ✈️😊",
-    "Outstanding job! 🌟🎈",
-    "You nailed it! 🎯😄",
-    "Keep soaring! 🦅✨",
-    "You're incredible! 🤩🙌",
-    "You're on fire! 🔥🥳",
-    "Amazing job, keep it up! 🚀😄",
-    "You're thriving! 🌱😊",
-    "Extraordinary effort! 🎖️👏",
-    "Keep shining bright! ✨😄",
-    "Magnificent performance! 🌟🙌",
-    "You're unstoppable! 🚀💪",
-    "You're a powerhouse! 💥🥳",
-    "You're a true superstar! 🤩🌟",
-    "Epic performance! 🚀🎉",
-    "You're doing wonderfully! 😊👏",
-    "Great momentum! Keep it going! 🌟🚀",
-    "Keep dazzling! ✨😄",
-    "You're making magic happen! ✨🪄",
-    "You're unstoppable! 🚀🔥",
-    "Incredible progress! 🙌😄",
-    "You're phenomenal! 🌟🥳",
-    "Keep shining bright! ✨🌞",
-    "You're slaying! 🔥👏",
-    "You're positively radiant! 😊✨",
-    "You're unstoppable today! 🚀🎊",
-    "Outstanding performance! 👏😊",
-    "Keep being fabulous! 🌟🎈",
-    "You're rocking this! 🎸🥳",
-    "You're amazing! Keep going! 🌟✨",
-    "You're absolutely brilliant! 💡🎉",
-    "Keep conquering! 🏅🚀",
-    "Fantastic work! Keep soaring! ✈️🌟",
-    "You're truly impressive! 👏✨",
-    "You're extraordinary! 🌟😊",
-    "Great job! Keep thriving! 🌱🎉",
-    "You're exceptional! 🎉🌟",
-    "Keep up the awesome work! 🙌🥳",
-    "You're fantastic! ✨😄",
-    "You're truly inspirational! 🌈👏",
-    "You're absolutely smashing it! 🚀💥",
-    "You're outstanding! 🌟🎉",
-    "Keep making us proud! 😊🙌",
-    "You're truly unstoppable! 🚀🎈",
-    "You're amazing! Keep pushing! 💪🥳",
-    "You're a legend! 🏅😄",
-    "Keep lighting it up! 🔥✨",
-    "You're doing incredible! 🎉👏",
-    "You're truly spectacular! 🌠😊",
-    "Keep it going! You're doing great! 💪✨",
-    "You're wonderful! 🌟😄",
-    "You're unstoppable brilliance! 🚀✨",
-    "You're absolutely rocking it! 🎸😊",
-    "Keep reaching new heights! 🏔️🎉",
-    "You're superb! ✨🙌",
-    "You're on a fantastic roll! 🎲🥳",
-    "Keep crushing those goals! 🎯😄",
-    "You're brilliant! 💡✨",
-    "You're fantastic beyond words! 🎉👏",
-    "You're totally rocking it! 🤘😎",
-    "Keep it up, superstar! 🌟😊",
-    "You're shining bright today! ✨😄",
-    "Keep smashing it! 🚀💥",
-    "You're truly unstoppable! 🚀🎊",
-    "Outstanding effort! 🎖️✨",
-    "You're awesome, keep it going! 🎉😄",
-    "Keep breaking barriers! 🚧💪",
-    "You're extraordinary every day! 🎉😊",
-    "Keep achieving greatness! 🏆✨",
-    "You're a shining example! ✨😊",
-    "You're a total winner! 🏅😄",
-    "Keep shining, you're amazing! ✨🌞",
-    "You're absolutely crushing it! 💪🔥",
-    "You're fantastic today! 🎉😄",
-    "Keep the greatness coming! 🚀✨",
-    "You're inspirational! 🌈😊",
-    "You're lighting it up! 🔥🎈",
-    "Keep soaring high! 🦅✨",
-    "You're doing an awesome job! 🎉😊",
-    "You're unstoppable greatness! 🚀🌟",
-    "Keep going strong! 💪😄",
-    "You're absolutely remarkable! 🎖️✨",
-    "Keep being amazing! 🌟😊",
-    "You're thriving wonderfully! 🌱🎉",
-    "You're absolutely incredible! 🌠😄",
-    "Keep shining! ✨🎈",
-    "You're exceptional! 🌟👏",
-    "You're unstoppable brilliance today! 🚀😄",
-    "Keep up the excellent work! 🎉🙌",
-    "You're extraordinary! Keep going! 🌟😊",
-    "Keep pushing forward! 🚀🎉",
-    "You're making fantastic progress! 🎈😊",
-    "You're an absolute champion! 🏆😄",
-    "Keep slaying your goals! 🔥👏",
-    "You're fantastic! Keep going strong! 🎉💪",
-    "You're totally impressive! 🌟😄",
-    "Keep rocking! 🎸✨",
-    "You're absolutely magnificent! 🎉🌟",
-    "You're on a roll! Keep it up! 🎲😄",
-    "You're exceptional today! 🎉👏",
-    "Keep shining brightly! ✨😊",
-    "You're totally unstoppable! 🚀🥳",
-    "You're thriving and inspiring! 🌱😊",
-    "Keep excelling! 🎖️😄",
-    "You're doing wonderfully today! 🌟🎉",
-    "You're making it happen! 🚀✨",
-    "Keep being unstoppable! 🔥💪",
-    "You're spectacular! 🎉🌠",
-    "Keep achieving greatness! 🏆✨",
-    "You're positively radiant today! 😊✨",
-    "Keep being fantastic! 🌟😄",
-    "You're crushing everything! 💥💪",
-    "Keep up the amazing work! 🎉🙌",
-    "You're totally epic! 🚀😄",
-    "You're remarkable! 🌟👏",
-    "Keep shining, you're a star! ✨😊",
-    "You're truly magnificent! 🎉😄",
-    "You're on fire! 🔥🚀",
-    "Keep being incredible! 🌟😄",
-    "You're unstoppable today! 🚀✨",
-  ],
+  en: ["You're doing amazing! 🎉✨", "Fantastic job! Keep it up! 🚀🎈", "You're crushing it! 💪😄", "Awesome work! 👏🥳", "Impressive progress! 🌠🙌", "Way to go! 🥳🔥", "Outstanding performance! 🥇👏", "You're incredible! 🤩✨", "Keep up the fantastic work! 🎈🙌", "You've got this! 💪🎉", "Bravo! 👏🎊", "So proud of you! 🌟😊", "Keep up the amazing effort! 🙌🔥", "You're a total champion! 🏆😄", "Great job, keep rocking! 🤘🎉", "You're unstoppable today! 🚀💥", "Absolutely fantastic! 🌟🎉", "You're making waves! 🌊😄", "Keep being awesome! 😎✨", "Epic job! 🚀🥳", "You're flying high! ✈️😊", "Outstanding job! 🌟🎈", "You nailed it! 🎯😄", "Keep soaring! 🦅✨", "You're incredible! 🤩🙌", "You're on fire! 🔥🥳", "Amazing job, keep it up! 🚀😄", "You're thriving! 🌱😊", "Extraordinary effort! 🎖️👏", "Keep shining bright! ✨😄", "Magnificent performance! 🌟🙌", "You're unstoppable! 🚀💪", "You're a powerhouse! 💥🥳", "You're a true superstar! 🤩🌟", "Epic performance! 🚀🎉", "You're doing wonderfully! 😊👏", "Great momentum! Keep it going! 🌟🚀", "Keep dazzling! ✨😄", "You're making magic happen! ✨🪄", "You're unstoppable! 🚀🔥", "Incredible progress! 🙌😄", "You're phenomenal! 🌟🥳", "Keep shining bright! ✨🌞", "You're slaying! 🔥👏", "You're positively radiant! 😊✨", "You're unstoppable today! 🚀🎊", "Outstanding performance! 👏😊", "Keep being fabulous! 🌟🎈", "You're rocking this! 🎸🥳", "You're amazing! Keep going! 🌟✨", "You're absolutely brilliant! 💡🎉", "Keep conquering! 🏅🚀", "Fantastic work! Keep soaring! ✈️🌟", "You're truly impressive! 👏✨", "You're extraordinary! 🌟😊", "Great job! Keep thriving! 🌱🎉", "You're exceptional! 🎉🌟", "Keep up the awesome work! 🙌🥳", "You're fantastic! ✨😄", "You're truly inspirational! 🌈👏", "You're absolutely smashing it! 🚀💥", "You're outstanding! 🌟🎉", "Keep making us proud! 😊🙌", "You're truly unstoppable! 🚀🎈", "You're amazing! Keep pushing! 💪🥳", "You're a legend! 🏅😄", "Keep lighting it up! 🔥✨", "You're doing incredible! 🎉👏", "You're truly spectacular! 🌠😊", "Keep it going! You're doing great! 💪✨", "You're wonderful! 🌟😄", "You're unstoppable brilliance! 🚀✨", "You're absolutely rocking it! 🎸😊", "Keep reaching new heights! 🏔️🎉", "You're superb! ✨🙌", "You're on a fantastic roll! 🎲🥳", "Keep crushing those goals! 🎯😄", "You're brilliant! 💡✨", "You're fantastic beyond words! 🎉👏", "You're totally rocking it! 🤘😎", "Keep it up, superstar! 🌟😊", "You're shining bright today! ✨😄", "Keep smashing it! 🚀💥", "You're truly unstoppable! 🚀🎊", "Outstanding effort! 🎖️✨", "You're awesome, keep it going! 🎉😄", "Keep breaking barriers! 🚧💪", "You're extraordinary every day! 🎉😊", "Keep achieving greatness! 🏆✨", "You're a shining example! ✨😊", "You're a total winner! 🏅😄", "Keep shining, you're amazing! ✨🌞", "You're absolutely crushing it! 💪🔥", "You're fantastic today! 🎉😄", "Keep the greatness coming! 🚀✨", "You're inspirational! 🌈😊", "You're lighting it up! 🔥🎈", "Keep soaring high! 🦅✨", "You're doing an awesome job! 🎉😊", "You're unstoppable greatness! 🚀🌟", "Keep going strong! 💪😄", "You're absolutely remarkable! 🎖️✨", "Keep being amazing! 🌟😊", "You're thriving wonderfully! 🌱🎉", "You're absolutely incredible! 🌠😄", "Keep shining! ✨🎈", "You're exceptional! 🌟👏", "You're unstoppable brilliance today! 🚀😄", "Keep up the excellent work! 🎉🙌", "You're extraordinary! Keep going! 🌟😊", "Keep pushing forward! 🚀🎉", "You're making fantastic progress! 🎈😊", "You're an absolute champion! 🏆😄", "Keep slaying your goals! 🔥👏", "You're fantastic! Keep going strong! 🎉💪", "You're totally impressive! 🌟😄", "Keep rocking! 🎸✨", "You're absolutely magnificent! 🎉🌟", "You're on a roll! Keep it up! 🎲😄", "You're exceptional today! 🎉👏", "Keep shining brightly! ✨😊", "You're totally unstoppable! 🚀🥳", "You're thriving and inspiring! 🌱😊", "Keep excelling! 🎖️😄", "You're doing wonderfully today! 🌟🎉", "You're making it happen! 🚀✨", "Keep being unstoppable! 🔥💪", "You're spectacular! 🎉🌠", "Keep achieving greatness! 🏆✨", "You're positively radiant today! 😊✨", "Keep being fantastic! 🌟😄", "You're crushing everything! 💥💪", "Keep up the amazing work! 🎉🙌", "You're totally epic! 🚀😄", "You're remarkable! 🌟👏", "Keep shining, you're a star! ✨😊", "You're truly magnificent! 🎉😄", "You're on fire! 🔥🚀", "Keep being incredible! 🌟😄", "You're unstoppable today! 🚀✨"],
+  es: ["¡Lo estás haciendo increíble! 🎉✨", "¡Trabajo fantástico! ¡Sigue así! 🚀🎈", "¡Lo estás arrasando! 💪😄", "¡Excelente trabajo! 👏🥳", "¡Progreso impresionante! 🌠🙌", "¡Así se hace! 🥳🔥", "¡Actuación sobresaliente! 🥇👏", "¡Eres increíble! 🤩✨", "¡Sigue con el fantástico trabajo! 🎈🙌", "¡Tú puedes hacerlo! 💪🎉", "¡Bravo! 👏🎊", "¡Muy orgulloso de ti! 🌟😊", "¡Continúa con ese esfuerzo increíble! 🙌🔥", "¡Eres todo un campeón! 🏆😄", "¡Gran trabajo, sigue así! 🤘🎉", "¡Hoy eres imparable! 🚀💥", "¡Absolutamente fantástico! 🌟🎉", "¡Estás causando sensación! 🌊😄", "¡Sigue siendo increíble! 😎✨", "¡Trabajo épico! 🚀🥳", "¡Estás volando alto! ✈️😊", "¡Trabajo sobresaliente! 🌟🎈", "¡Lo clavaste! 🎯😄", "¡Sigue volando alto! 🦅✨", "¡Eres increíble! 🤩🙌", "¡Estás que ardes! 🔥🥳", "¡Trabajo increíble, sigue así! 🚀😄", "¡Estás floreciendo! 🌱😊", "¡Esfuerzo extraordinario! 🎖️👏", "¡Sigue brillando fuerte! ✨😄", "¡Actuación magnífica! 🌟🙌", "¡Eres imparable! 🚀💪", "¡Eres una fuerza imparable! 💥🥳", "¡Eres una verdadera estrella! 🤩🌟", "¡Actuación épica! 🚀🎉", "¡Lo estás haciendo maravillosamente! 😊👏", "¡Gran impulso! ¡Sigue adelante! 🌟🚀", "¡Sigue deslumbrando! ✨😄", "¡Estás haciendo magia! ✨🪄", "¡Eres imparable! 🚀🔥", "¡Progreso increíble! 🙌😄", "¡Eres fenomenal! 🌟🥳", "¡Sigue brillando! ✨🌞", "¡Estás arrasando! 🔥👏", "¡Estás radiante! 😊✨", "¡Hoy eres imparable! 🚀🎊", "¡Actuación excepcional! 👏😊", "¡Sigue siendo fabuloso! 🌟🎈", "¡Lo estás rockeando! 🎸🥳", "¡Eres increíble! ¡Sigue adelante! 🌟✨", "¡Eres absolutamente brillante! 💡🎉", "¡Sigue conquistando! 🏅🚀", "¡Trabajo fantástico! ¡Sigue volando alto! ✈️🌟", "¡Eres realmente impresionante! 👏✨", "¡Eres extraordinario! 🌟😊", "¡Gran trabajo! ¡Sigue floreciendo! 🌱🎉", "¡Eres excepcional! 🎉🌟", "¡Continúa con el excelente trabajo! 🙌🥳", "¡Eres fantástico! ✨😄", "¡Eres verdaderamente inspirador! 🌈👏", "¡Lo estás destrozando absolutamente! 🚀💥", "¡Eres sobresaliente! 🌟🎉", "¡Sigue haciéndonos sentir orgullosos! 😊🙌", "¡Eres verdaderamente imparable! 🚀🎈", "¡Eres increíble! ¡Sigue empujando! 💪🥳", "¡Eres una leyenda! 🏅😄", "¡Sigue encendiéndolo todo! 🔥✨", "¡Estás increíble! 🎉👏", "¡Eres realmente espectacular! 🌠😊", "¡Sigue así! ¡Lo estás haciendo genial! 💪✨", "¡Eres maravilloso! 🌟😄", "¡Tu brillantez es imparable! 🚀✨", "¡Lo estás haciendo genial! 🎸😊", "¡Sigue alcanzando nuevas alturas! 🏔️🎉", "¡Eres magnífico! ✨🙌", "¡Estás en una racha fantástica! 🎲🥳", "¡Sigue alcanzando esas metas! 🎯😄", "¡Eres brillante! 💡✨", "¡Eres fantástico más allá de las palabras! 🎉👏", "¡Lo estás rockeando totalmente! 🤘😎", "¡Sigue así, superestrella! 🌟😊", "¡Estás brillando hoy! ✨😄", "¡Sigue rompiéndola! 🚀💥", "¡Eres realmente imparable! 🚀🎊", "¡Esfuerzo sobresaliente! 🎖️✨", "¡Eres increíble, sigue así! 🎉😄", "¡Sigue rompiendo barreras! 🚧💪", "¡Eres extraordinario cada día! 🎉😊", "¡Sigue alcanzando grandeza! 🏆✨", "¡Eres un ejemplo brillante! ✨😊", "¡Eres un verdadero ganador! 🏅😄", "¡Sigue brillando, eres increíble! ✨🌞", "¡Lo estás haciendo genial! 💪🔥", "¡Hoy estás fantástico! 🎉😄", "¡Continúa con tu grandeza! 🚀✨", "¡Eres una inspiración! 🌈😊", "¡Estás encendiéndolo todo! 🔥🎈", "¡Sigue volando alto! 🦅✨", "¡Estás haciendo un trabajo increíble! 🎉😊", "¡Tu grandeza es imparable! 🚀🌟", "¡Sigue fuerte! 💪😄", "¡Eres absolutamente notable! 🎖️✨", "¡Sigue siendo increíble! 🌟😊", "¡Estás floreciendo maravillosamente! 🌱🎉", "¡Eres absolutamente increíble! 🌠😄", "¡Sigue brillando! ✨🎈", "¡Eres excepcional! 🌟👏", "¡Tu brillantez hoy es imparable! 🚀😄", "¡Continúa con el excelente trabajo! 🎉🙌", "¡Eres extraordinario! ¡Sigue adelante! 🌟😊", "¡Sigue avanzando! 🚀🎉", "¡Estás progresando fantásticamente! 🎈😊", "¡Eres un campeón absoluto! 🏆😄", "¡Sigue logrando tus objetivos! 🔥👏", "¡Eres fantástico! ¡Sigue fuerte! 🎉💪", "¡Eres totalmente impresionante! 🌟😄", "¡Sigue rockeando! 🎸✨", "¡Eres absolutamente magnífico! 🎉🌟", "¡Estás en racha! ¡Sigue así! 🎲😄", "¡Eres excepcional hoy! 🎉👏", "¡Sigue brillando intensamente! ✨😊", "¡Eres totalmente imparable! 🚀🥳", "¡Estás floreciendo e inspirando! 🌱😊", "¡Sigue sobresaliendo! 🎖️😄", "¡Hoy lo estás haciendo maravillosamente! 🌟🎉", "¡Estás haciéndolo realidad! 🚀✨", "¡Sigue siendo imparable! 🔥💪", "¡Eres espectacular! 🎉🌠", "¡Sigue alcanzando grandeza! 🏆✨", "¡Hoy estás radiante! 😊✨", "¡Sigue siendo fantástico! 🌟😄", "¡Estás arrasando con todo! 💥💪", "¡Continúa con el increíble trabajo! 🎉🙌", "¡Eres totalmente épico! 🚀😄", "¡Eres notable! 🌟👏", "¡Sigue brillando, eres una estrella! ✨😊", "¡Eres realmente magnífico! 🎉😄", "¡Estás que ardes! 🔥🚀", "¡Sigue siendo increíble! 🌟😄", "¡Hoy eres imparable! 🚀✨"],
+  "py-en": ["You're doing amazing! 🎉✨", "Fantastic job! Keep it up! 🚀🎈", "You're crushing it! 💪😄", "Awesome work! 👏🥳", "Impressive progress! 🌠🙌", "Way to go! 🥳🔥", "Outstanding performance! 🥇👏", "You're incredible! 🤩✨", "Keep up the fantastic work! 🎈🙌", "You've got this! 💪🎉", "Bravo! 👏🎊", "So proud of you! 🌟😊", "Keep up the amazing effort! 🙌🔥", "You're a total champion! 🏆😄", "Great job, keep rocking! 🤘🎉", "You're unstoppable today! 🚀💥", "Absolutely fantastic! 🌟🎉", "You're making waves! 🌊😄", "Keep being awesome! 😎✨", "Epic job! 🚀🥳", "You're flying high! ✈️😊", "Outstanding job! 🌟🎈", "You nailed it! 🎯😄", "Keep soaring! 🦅✨", "You're incredible! 🤩🙌", "You're on fire! 🔥🥳", "Amazing job, keep it up! 🚀😄", "You're thriving! 🌱😊", "Extraordinary effort! 🎖️👏", "Keep shining bright! ✨😄", "Magnificent performance! 🌟🙌", "You're unstoppable! 🚀💪", "You're a powerhouse! 💥🥳", "You're a true superstar! 🤩🌟", "Epic performance! 🚀🎉", "You're doing wonderfully! 😊👏", "Great momentum! Keep it going! 🌟🚀", "Keep dazzling! ✨😄", "You're making magic happen! ✨🪄", "You're unstoppable! 🚀🔥", "Incredible progress! 🙌😄", "You're phenomenal! 🌟🥳", "Keep shining bright! ✨🌞", "You're slaying! 🔥👏", "You're positively radiant! 😊✨", "You're unstoppable today! 🚀🎊", "Outstanding performance! 👏😊", "Keep being fabulous! 🌟🎈", "You're rocking this! 🎸🥳", "You're amazing! Keep going! 🌟✨", "You're absolutely brilliant! 💡🎉", "Keep conquering! 🏅🚀", "Fantastic work! Keep soaring! ✈️🌟", "You're truly impressive! 👏✨", "You're extraordinary! 🌟😊", "Great job! Keep thriving! 🌱🎉", "You're exceptional! 🎉🌟", "Keep up the awesome work! 🙌🥳", "You're fantastic! ✨😄", "You're truly inspirational! 🌈👏", "You're absolutely smashing it! 🚀💥", "You're outstanding! 🌟🎉", "Keep making us proud! 😊🙌", "You're truly unstoppable! 🚀🎈", "You're amazing! Keep pushing! 💪🥳", "You're a legend! 🏅😄", "Keep lighting it up! 🔥✨", "You're doing incredible! 🎉👏", "You're truly spectacular! 🌠😊", "Keep it going! You're doing great! 💪✨", "You're wonderful! 🌟😄", "You're unstoppable brilliance! 🚀✨", "You're absolutely rocking it! 🎸😊", "Keep reaching new heights! 🏔️🎉", "You're superb! ✨🙌", "You're on a fantastic roll! 🎲🥳", "Keep crushing those goals! 🎯😄", "You're brilliant! 💡✨", "You're fantastic beyond words! 🎉👏", "You're totally rocking it! 🤘😎", "Keep it up, superstar! 🌟😊", "You're shining bright today! ✨😄", "Keep smashing it! 🚀💥", "You're truly unstoppable! 🚀🎊", "Outstanding effort! 🎖️✨", "You're awesome, keep it going! 🎉😄", "Keep breaking barriers! 🚧💪", "You're extraordinary every day! 🎉😊", "Keep achieving greatness! 🏆✨", "You're a shining example! ✨😊", "You're a total winner! 🏅😄", "Keep shining, you're amazing! ✨🌞", "You're absolutely crushing it! 💪🔥", "You're fantastic today! 🎉😄", "Keep the greatness coming! 🚀✨", "You're inspirational! 🌈😊", "You're lighting it up! 🔥🎈", "Keep soaring high! 🦅✨", "You're doing an awesome job! 🎉😊", "You're unstoppable greatness! 🚀🌟", "Keep going strong! 💪😄", "You're absolutely remarkable! 🎖️✨", "Keep being amazing! 🌟😊", "You're thriving wonderfully! 🌱🎉", "You're absolutely incredible! 🌠😄", "Keep shining! ✨🎈", "You're exceptional! 🌟👏", "You're unstoppable brilliance today! 🚀😄", "Keep up the excellent work! 🎉🙌", "You're extraordinary! Keep going! 🌟😊", "Keep pushing forward! 🚀🎉", "You're making fantastic progress! 🎈😊", "You're an absolute champion! 🏆😄", "Keep slaying your goals! 🔥👏", "You're fantastic! Keep going strong! 🎉💪", "You're totally impressive! 🌟😄", "Keep rocking! 🎸✨", "You're absolutely magnificent! 🎉🌟", "You're on a roll! Keep it up! 🎲😄", "You're exceptional today! 🎉👏", "Keep shining brightly! ✨😊", "You're totally unstoppable! 🚀🥳", "You're thriving and inspiring! 🌱😊", "Keep excelling! 🎖️😄", "You're doing wonderfully today! 🌟🎉", "You're making it happen! 🚀✨", "Keep being unstoppable! 🔥💪", "You're spectacular! 🎉🌠", "Keep achieving greatness! 🏆✨", "You're positively radiant today! 😊✨", "Keep being fantastic! 🌟😄", "You're crushing everything! 💥💪", "Keep up the amazing work! 🎉🙌", "You're totally epic! 🚀😄", "You're remarkable! 🌟👏", "Keep shining, you're a star! ✨😊", "You're truly magnificent! 🎉😄", "You're on fire! 🔥🚀", "Keep being incredible! 🌟😄", "You're unstoppable today! 🚀✨"],
+  "swift-en": ["You're doing amazing! 🎉✨", "Fantastic job! Keep it up! 🚀🎈", "You're crushing it! 💪😄", "Awesome work! 👏🥳", "Impressive progress! 🌠🙌", "Way to go! 🥳🔥", "Outstanding performance! 🥇👏", "You're incredible! 🤩✨", "Keep up the fantastic work! 🎈🙌", "You've got this! 💪🎉", "Bravo! 👏🎊", "So proud of you! 🌟😊", "Keep up the amazing effort! 🙌🔥", "You're a total champion! 🏆😄", "Great job, keep rocking! 🤘🎉", "You're unstoppable today! 🚀💥", "Absolutely fantastic! 🌟🎉", "You're making waves! 🌊😄", "Keep being awesome! 😎✨", "Epic job! 🚀🥳", "You're flying high! ✈️😊", "Outstanding job! 🌟🎈", "You nailed it! 🎯😄", "Keep soaring! 🦅✨", "You're incredible! 🤩🙌", "You're on fire! 🔥🥳", "Amazing job, keep it up! 🚀😄", "You're thriving! 🌱😊", "Extraordinary effort! 🎖️👏", "Keep shining bright! ✨😄", "Magnificent performance! 🌟🙌", "You're unstoppable! 🚀💪", "You're a powerhouse! 💥🥳", "You're a true superstar! 🤩🌟", "Epic performance! 🚀🎉", "You're doing wonderfully! 😊👏", "Great momentum! Keep it going! 🌟🚀", "Keep dazzling! ✨😄", "You're making magic happen! ✨🪄", "You're unstoppable! 🚀🔥", "Incredible progress! 🙌😄", "You're phenomenal! 🌟🥳", "Keep shining bright! ✨🌞", "You're slaying! 🔥👏", "You're positively radiant! 😊✨", "You're unstoppable today! 🚀🎊", "Outstanding performance! 👏😊", "Keep being fabulous! 🌟🎈", "You're rocking this! 🎸🥳", "You're amazing! Keep going! 🌟✨", "You're absolutely brilliant! 💡🎉", "Keep conquering! 🏅🚀", "Fantastic work! Keep soaring! ✈️🌟", "You're truly impressive! 👏✨", "You're extraordinary! 🌟😊", "Great job! Keep thriving! 🌱🎉", "You're exceptional! 🎉🌟", "Keep up the awesome work! 🙌🥳", "You're fantastic! ✨😄", "You're truly inspirational! 🌈👏", "You're absolutely smashing it! 🚀💥", "You're outstanding! 🌟🎉", "Keep making us proud! 😊🙌", "You're truly unstoppable! 🚀🎈", "You're amazing! Keep pushing! 💪🥳", "You're a legend! 🏅😄", "Keep lighting it up! 🔥✨", "You're doing incredible! 🎉👏", "You're truly spectacular! 🌠😊", "Keep it going! You're doing great! 💪✨", "You're wonderful! 🌟😄", "You're unstoppable brilliance! 🚀✨", "You're absolutely rocking it! 🎸😊", "Keep reaching new heights! 🏔️🎉", "You're superb! ✨🙌", "You're on a fantastic roll! 🎲🥳", "Keep crushing those goals! 🎯😄", "You're brilliant! 💡✨", "You're fantastic beyond words! 🎉👏", "You're totally rocking it! 🤘😎", "Keep it up, superstar! 🌟😊", "You're shining bright today! ✨😄", "Keep smashing it! 🚀💥", "You're truly unstoppable! 🚀🎊", "Outstanding effort! 🎖️✨", "You're awesome, keep it going! 🎉😄", "Keep breaking barriers! 🚧💪", "You're extraordinary every day! 🎉😊", "Keep achieving greatness! 🏆✨", "You're a shining example! ✨😊", "You're a total winner! 🏅😄", "Keep shining, you're amazing! ✨🌞", "You're absolutely crushing it! 💪🔥", "You're fantastic today! 🎉😄", "Keep the greatness coming! 🚀✨", "You're inspirational! 🌈😊", "You're lighting it up! 🔥🎈", "Keep soaring high! 🦅✨", "You're doing an awesome job! 🎉😊", "You're unstoppable greatness! 🚀🌟", "Keep going strong! 💪😄", "You're absolutely remarkable! 🎖️✨", "Keep being amazing! 🌟😊", "You're thriving wonderfully! 🌱🎉", "You're absolutely incredible! 🌠😄", "Keep shining! ✨🎈", "You're exceptional! 🌟👏", "You're unstoppable brilliance today! 🚀😄", "Keep up the excellent work! 🎉🙌", "You're extraordinary! Keep going! 🌟😊", "Keep pushing forward! 🚀🎉", "You're making fantastic progress! 🎈😊", "You're an absolute champion! 🏆😄", "Keep slaying your goals! 🔥👏", "You're fantastic! Keep going strong! 🎉💪", "You're totally impressive! 🌟😄", "Keep rocking! 🎸✨", "You're absolutely magnificent! 🎉🌟", "You're on a roll! Keep it up! 🎲😄", "You're exceptional today! 🎉👏", "Keep shining brightly! ✨😊", "You're totally unstoppable! 🚀🥳", "You're thriving and inspiring! 🌱😊", "Keep excelling! 🎖️😄", "You're doing wonderfully today! 🌟🎉", "You're making it happen! 🚀✨", "Keep being unstoppable! 🔥💪", "You're spectacular! 🎉🌠", "Keep achieving greatness! 🏆✨", "You're positively radiant today! 😊✨", "Keep being fantastic! 🌟😄", "You're crushing everything! 💥💪", "Keep up the amazing work! 🎉🙌", "You're totally epic! 🚀😄", "You're remarkable! 🌟👏", "Keep shining, you're a star! ✨😊", "You're truly magnificent! 🎉😄", "You're on fire! 🔥🚀", "Keep being incredible! 🌟😄", "You're unstoppable today! 🚀✨"],
+  "android-en": ["You're doing amazing! 🎉✨", "Fantastic job! Keep it up! 🚀🎈", "You're crushing it! 💪😄", "Awesome work! 👏🥳", "Impressive progress! 🌠🙌", "Way to go! 🥳🔥", "Outstanding performance! 🥇👏", "You're incredible! 🤩✨", "Keep up the fantastic work! 🎈🙌", "You've got this! 💪🎉", "Bravo! 👏🎊", "So proud of you! 🌟😊", "Keep up the amazing effort! 🙌🔥", "You're a total champion! 🏆😄", "Great job, keep rocking! 🤘🎉", "You're unstoppable today! 🚀💥", "Absolutely fantastic! 🌟🎉", "You're making waves! 🌊😄", "Keep being awesome! 😎✨", "Epic job! 🚀🥳", "You're flying high! ✈️😊", "Outstanding job! 🌟🎈", "You nailed it! 🎯😄", "Keep soaring! 🦅✨", "You're incredible! 🤩🙌", "You're on fire! 🔥🥳", "Amazing job, keep it up! 🚀😄", "You're thriving! 🌱😊", "Extraordinary effort! 🎖️👏", "Keep shining bright! ✨😄", "Magnificent performance! 🌟🙌", "You're unstoppable! 🚀💪", "You're a powerhouse! 💥🥳", "You're a true superstar! 🤩🌟", "Epic performance! 🚀🎉", "You're doing wonderfully! 😊👏", "Great momentum! Keep it going! 🌟🚀", "Keep dazzling! ✨😄", "You're making magic happen! ✨🪄", "You're unstoppable! 🚀🔥", "Incredible progress! 🙌😄", "You're phenomenal! 🌟🥳", "Keep shining bright! ✨🌞", "You're slaying! 🔥👏", "You're positively radiant! 😊✨", "You're unstoppable today! 🚀🎊", "Outstanding performance! 👏😊", "Keep being fabulous! 🌟🎈", "You're rocking this! 🎸🥳", "You're amazing! Keep going! 🌟✨", "You're absolutely brilliant! 💡🎉", "Keep conquering! 🏅🚀", "Fantastic work! Keep soaring! ✈️🌟", "You're truly impressive! 👏✨", "You're extraordinary! 🌟😊", "Great job! Keep thriving! 🌱🎉", "You're exceptional! 🎉🌟", "Keep up the awesome work! 🙌🥳", "You're fantastic! ✨😄", "You're truly inspirational! 🌈👏", "You're absolutely smashing it! 🚀💥", "You're outstanding! 🌟🎉", "Keep making us proud! 😊🙌", "You're truly unstoppable! 🚀🎈", "You're amazing! Keep pushing! 💪🥳", "You're a legend! 🏅😄", "Keep lighting it up! 🔥✨", "You're doing incredible! 🎉👏", "You're truly spectacular! 🌠😊", "Keep it going! You're doing great! 💪✨", "You're wonderful! 🌟😄", "You're unstoppable brilliance! 🚀✨", "You're absolutely rocking it! 🎸😊", "Keep reaching new heights! 🏔️🎉", "You're superb! ✨🙌", "You're on a fantastic roll! 🎲🥳", "Keep crushing those goals! 🎯😄", "You're brilliant! 💡✨", "You're fantastic beyond words! 🎉👏", "You're totally rocking it! 🤘😎", "Keep it up, superstar! 🌟😊", "You're shining bright today! ✨😄", "Keep smashing it! 🚀💥", "You're truly unstoppable! 🚀🎊", "Outstanding effort! 🎖️✨", "You're awesome, keep it going! 🎉😄", "Keep breaking barriers! 🚧💪", "You're extraordinary every day! 🎉😊", "Keep achieving greatness! 🏆✨", "You're a shining example! ✨😊", "You're a total winner! 🏅😄", "Keep shining, you're amazing! ✨🌞", "You're absolutely crushing it! 💪🔥", "You're fantastic today! 🎉😄", "Keep the greatness coming! 🚀✨", "You're inspirational! 🌈😊", "You're lighting it up! 🔥🎈", "Keep soaring high! 🦅✨", "You're doing an awesome job! 🎉😊", "You're unstoppable greatness! 🚀🌟", "Keep going strong! 💪😄", "You're absolutely remarkable! 🎖️✨", "Keep being amazing! 🌟😊", "You're thriving wonderfully! 🌱🎉", "You're absolutely incredible! 🌠😄", "Keep shining! ✨🎈", "You're exceptional! 🌟👏", "You're unstoppable brilliance today! 🚀😄", "Keep up the excellent work! 🎉🙌", "You're extraordinary! Keep going! 🌟😊", "Keep pushing forward! 🚀🎉", "You're making fantastic progress! 🎈😊", "You're an absolute champion! 🏆😄", "Keep slaying your goals! 🔥👏", "You're fantastic! Keep going strong! 🎉💪", "You're totally impressive! 🌟😄", "Keep rocking! 🎸✨", "You're absolutely magnificent! 🎉🌟", "You're on a roll! Keep it up! 🎲😄", "You're exceptional today! 🎉👏", "Keep shining brightly! ✨😊", "You're totally unstoppable! 🚀🥳", "You're thriving and inspiring! 🌱😊", "Keep excelling! 🎖️😄", "You're doing wonderfully today! 🌟🎉", "You're making it happen! 🚀✨", "Keep being unstoppable! 🔥💪", "You're spectacular! 🎉🌠", "Keep achieving greatness! 🏆✨", "You're positively radiant today! 😊✨", "Keep being fantastic! 🌟😄", "You're crushing everything! 💥💪", "Keep up the amazing work! 🎉🙌", "You're totally epic! 🚀😄", "You're remarkable! 🌟👏", "Keep shining, you're a star! ✨😊", "You're truly magnificent! 🎉😄", "You're on fire! 🔥🚀", "Keep being incredible! 🌟😄", "You're unstoppable today! 🚀✨"],
+  "compsci-en": ["You're doing amazing! 🎉✨", "Fantastic job! Keep it up! 🚀🎈", "You're crushing it! 💪😄", "Awesome work! 👏🥳", "Impressive progress! 🌠🙌", "Way to go! 🥳🔥", "Outstanding performance! 🥇👏", "You're incredible! 🤩✨", "Keep up the fantastic work! 🎈🙌", "You've got this! 💪🎉", "Bravo! 👏🎊", "So proud of you! 🌟😊", "Keep up the amazing effort! 🙌🔥", "You're a total champion! 🏆😄", "Great job, keep rocking! 🤘🎉", "You're unstoppable today! 🚀💥", "Absolutely fantastic! 🌟🎉", "You're making waves! 🌊😄", "Keep being awesome! 😎✨", "Epic job! 🚀🥳", "You're flying high! ✈️😊", "Outstanding job! 🌟🎈", "You nailed it! 🎯😄", "Keep soaring! 🦅✨", "You're incredible! 🤩🙌", "You're on fire! 🔥🥳", "Amazing job, keep it up! 🚀😄", "You're thriving! 🌱😊", "Extraordinary effort! 🎖️👏", "Keep shining bright! ✨😄", "Magnificent performance! 🌟🙌", "You're unstoppable! 🚀💪", "You're a powerhouse! 💥🥳", "You're a true superstar! 🤩🌟", "Epic performance! 🚀🎉", "You're doing wonderfully! 😊👏", "Great momentum! Keep it going! 🌟🚀", "Keep dazzling! ✨😄", "You're making magic happen! ✨🪄", "You're unstoppable! 🚀🔥", "Incredible progress! 🙌😄", "You're phenomenal! 🌟🥳", "Keep shining bright! ✨🌞", "You're slaying! 🔥👏", "You're positively radiant! 😊✨", "You're unstoppable today! 🚀🎊", "Outstanding performance! 👏😊", "Keep being fabulous! 🌟🎈", "You're rocking this! 🎸🥳", "You're amazing! Keep going! 🌟✨", "You're absolutely brilliant! 💡🎉", "Keep conquering! 🏅🚀", "Fantastic work! Keep soaring! ✈️🌟", "You're truly impressive! 👏✨", "You're extraordinary! 🌟😊", "Great job! Keep thriving! 🌱🎉", "You're exceptional! 🎉🌟", "Keep up the awesome work! 🙌🥳", "You're fantastic! ✨😄", "You're truly inspirational! 🌈👏", "You're absolutely smashing it! 🚀💥", "You're outstanding! 🌟🎉", "Keep making us proud! 😊🙌", "You're truly unstoppable! 🚀🎈", "You're amazing! Keep pushing! 💪🥳", "You're a legend! 🏅😄", "Keep lighting it up! 🔥✨", "You're doing incredible! 🎉👏", "You're truly spectacular! 🌠😊", "Keep it going! You're doing great! 💪✨", "You're wonderful! 🌟😄", "You're unstoppable brilliance! 🚀✨", "You're absolutely rocking it! 🎸😊", "Keep reaching new heights! 🏔️🎉", "You're superb! ✨🙌", "You're on a fantastic roll! 🎲🥳", "Keep crushing those goals! 🎯😄", "You're brilliant! 💡✨", "You're fantastic beyond words! 🎉👏", "You're totally rocking it! 🤘😎", "Keep it up, superstar! 🌟😊", "You're shining bright today! ✨😄", "Keep smashing it! 🚀💥", "You're truly unstoppable! 🚀🎊", "Outstanding effort! 🎖️✨", "You're awesome, keep it going! 🎉😄", "Keep breaking barriers! 🚧💪", "You're extraordinary every day! 🎉😊", "Keep achieving greatness! 🏆✨", "You're a shining example! ✨😊", "You're a total winner! 🏅😄", "Keep shining, you're amazing! ✨🌞", "You're absolutely crushing it! 💪🔥", "You're fantastic today! 🎉😄", "Keep the greatness coming! 🚀✨", "You're inspirational! 🌈😊", "You're lighting it up! 🔥🎈", "Keep soaring high! 🦅✨", "You're doing an awesome job! 🎉😊", "You're unstoppable greatness! 🚀🌟", "Keep going strong! 💪😄", "You're absolutely remarkable! 🎖️✨", "Keep being amazing! 🌟😊", "You're thriving wonderfully! 🌱🎉", "You're absolutely incredible! 🌠😄", "Keep shining! ✨🎈", "You're exceptional! 🌟👏", "You're unstoppable brilliance today! 🚀😄", "Keep up the excellent work! 🎉🙌", "You're extraordinary! Keep going! 🌟😊", "Keep pushing forward! 🚀🎉", "You're making fantastic progress! 🎈😊", "You're an absolute champion! 🏆😄", "Keep slaying your goals! 🔥👏", "You're fantastic! Keep going strong! 🎉💪", "You're totally impressive! 🌟😄", "Keep rocking! 🎸✨", "You're absolutely magnificent! 🎉🌟", "You're on a roll! Keep it up! 🎲😄", "You're exceptional today! 🎉👏", "Keep shining brightly! ✨😊", "You're totally unstoppable! 🚀🥳", "You're thriving and inspiring! 🌱😊", "Keep excelling! 🎖️😄", "You're doing wonderfully today! 🌟🎉", "You're making it happen! 🚀✨", "Keep being unstoppable! 🔥💪", "You're spectacular! 🎉🌠", "Keep achieving greatness! 🏆✨", "You're positively radiant today! 😊✨", "Keep being fantastic! 🌟😄", "You're crushing everything! 💥💪", "Keep up the amazing work! 🎉🙌", "You're totally epic! 🚀😄", "You're remarkable! 🌟👏", "Keep shining, you're a star! ✨😊", "You're truly magnificent! 🎉😄", "You're on fire! 🔥🚀", "Keep being incredible! 🌟😄", "You're unstoppable today! 🚀✨"]
 };
-
 export const getRandomCelebrationMessage = (userLanguage = "en") => {
   const messages = celebrationMessages[userLanguage] || celebrationMessages.en;
   const randomIndex = Math.floor(Math.random() * messages.length);

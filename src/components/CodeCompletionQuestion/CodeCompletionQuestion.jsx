@@ -113,7 +113,7 @@ const CodeCompletionQuestion = ({
 
   return (
     <VStack
-      spacing={6}
+      spacing={3.5}
       width="100%"
       maxWidth="600px"
       // Removed tabIndex, onFocus, onBlur, and onKeyDown from the container
@@ -135,7 +135,7 @@ const CodeCompletionQuestion = ({
           }}
           textAlign="left"
           width="100%"
-          p={4}
+          p={{ base: 2.5, md: 3.5 }}
           borderRadius="2xl"
           boxShadow={
             focusedIndex === index
@@ -156,22 +156,26 @@ const CodeCompletionQuestion = ({
           }}
         >
           {/* Render cleaned-up and highlighted code block */}
-          <Editor
-            value={option}
-            onValueChange={() => {}} // Disable editing
-            highlight={(code) => highlight(code, languages.js)}
-            padding={10}
-            style={{
-              fontFamily: '"Fira code", "Fira Mono", monospace',
-              fontSize: 14,
-              backgroundColor: "transparent", // Keep it transparent
-              whiteSpace: "pre-wrap", // Handle long lines
-              width: "100%",
-              color: "var(--chakra-colors-appCodeColor)",
-              pointerEvents: "none", // Prevent editor from blocking clicks
-            }}
-            disabled
-          />
+          <Box width="100%">
+            <Editor
+              value={option}
+              onValueChange={() => {}} // Disable editing
+              highlight={(code) => highlight(code, languages.js)}
+              padding={6}
+              style={{
+                fontFamily: '"Fira code", "Fira Mono", monospace',
+                fontSize: 13,
+                lineHeight: "1.6",
+                backgroundColor: "transparent", // Keep it transparent
+                whiteSpace: "pre-wrap", // Preserve explicit newlines and wrap gracefully
+                wordBreak: "break-word",
+                width: "100%",
+                color: "var(--chakra-colors-appCodeColor)",
+                pointerEvents: "none", // Prevent editor from blocking clicks
+              }}
+              disabled
+            />
+          </Box>
         </Box>
       ))}
     </VStack>

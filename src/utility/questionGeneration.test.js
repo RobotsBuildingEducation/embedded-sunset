@@ -23,7 +23,7 @@ test("canonical interfaces cover every unique supported generation type", () => 
   const types = tutorial_interface.map(getQuestionType);
   assert.equal(new Set(types).size, types.length);
   assert.ok(types.includes("codeTracing"));
-  assert.ok(types.includes("projectCheckpoint"));
+  assert.ok(types.includes("refactoring"));
   assert.ok(types.includes("conversationReview"));
 });
 

@@ -138,13 +138,6 @@ const QUESTION_TYPE_STYLES = {
     gradient: "linear(to-br, rgba(217,70,239,0.22), rgba(99,102,241,0.16))",
     halo: "rgba(217,70,239,0.2)",
   },
-  projectCheckpoint: {
-    icon: RiFlagLine,
-    label: "Project Checkpoint",
-    accent: "#10b981",
-    gradient: "linear(to-br, rgba(16,185,129,0.22), rgba(6,182,212,0.16))",
-    halo: "rgba(16,185,129,0.2)",
-  },
 
   // Expanded types
   singleLine: {
@@ -293,8 +286,6 @@ const detectQuestionKind = (step) => {
   if (step.isFixBug || q?.isFixBug) return "fixBug";
   if (step.isRefactoringChallenge || q?.isRefactoringChallenge)
     return "refactoring";
-  if (step.isProjectCheckpoint || q?.isProjectCheckpoint)
-    return "projectCheckpoint";
 
   // 2) Explicit legacy flags
   if (step.isStudyGuide || q?.isStudyGuide) return "study";

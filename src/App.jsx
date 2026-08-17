@@ -2043,6 +2043,7 @@ const Step = ({
   const pendingGeneratedQuestionTypeRef = useRef(null);
   const pendingGenerationModeRef = useRef("reinforcement");
   const pendingGenerationCountsAsNewRef = useRef(true);
+  const activeQuestionMenuItemRef = useRef(null);
   const [actionBarTourIndex, setActionBarTourIndex] = useState(0);
   const [isActionBarTourActive, setIsActionBarTourActive] = useState(
     () =>
@@ -3221,7 +3222,7 @@ Expected answer, when the exercise has one: ${JSON.stringify(step.question.answe
 Success checks, when the exercise uses a rubric: ${JSON.stringify(step.question.tests || [])}
 Submitted answer: ${JSON.stringify(answer)}
 
-For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-implementation, and fix-the-bug questions with an expected answer, grade by comparing the submitted and expected values. Parsons order matters. Matching keys and values must all match. Relevant-line order does not matter. For refactoring and project checkpoints, judge whether the submitted code satisfies every success check while preserving valid, readable code. Return only JSON using { "isCorrect": boolean, "feedback": string, "grade": string }. Do not reveal the complete solution. If correct, grade 100. The learner is speaking ${
+For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-implementation, and fix-the-bug questions with an expected answer, grade by comparing the submitted and expected values. Parsons order matters. Matching keys and values must all match. Relevant-line order does not matter. For refactoring challenges, judge whether the submitted code satisfies every success check while preserving valid, readable code. Return only JSON using { "isCorrect": boolean, "feedback": string, "grade": string }. Do not reveal the complete solution. If correct, grade 100. The learner is speaking ${
               userLanguage === "es" ? "Spanish" : "English"
             }.`,
             role: "user",
@@ -3650,7 +3651,9 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
     setModeAnswer(
       step.isParsonsProblem
         ? scrambleArray(step.question?.lines || [])
-        : null,
+        : typeof step.question?.starterCode === "string"
+          ? step.question.starterCode
+          : null,
     );
 
     setSuggestionMessage("");
@@ -4778,7 +4781,19 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
                     {/* dropdown for jumping between questions */}
 
                     {currentStep > 0 && (
-                      <Menu>
+                      <Menu
+                        onOpen={() => {
+                          setTimeout(() => {
+                            if (activeQuestionMenuItemRef.current) {
+                              activeQuestionMenuItemRef.current.scrollIntoView({
+                                block: "center",
+                                inline: "nearest",
+                                behavior: "instant",
+                              });
+                            }
+                          }, 0);
+                        }}
+                      >
                         <MenuButton
                           as={Button}
                           variant="link"
@@ -4852,6 +4867,9 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
                                 idx > tutorialEndIndex &&
                                 !subscriptionAuthorized;
                               const label = `${idx > 0 ? idx + ". " : ""}${s.title}`;
+                              const isCurrent =
+                                !isAILearningMode && idx === currentStep;
+
                               return disabled ? (
                                 <Tooltip
                                   key={idx}
@@ -4872,6 +4890,14 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
                               ) : (
                                 <MenuItem
                                   key={idx}
+                                  ref={
+                                    isCurrent
+                                      ? activeQuestionMenuItemRef
+                                      : undefined
+                                  }
+                                  bg={isCurrent ? "appSurfaceMuted" : undefined}
+                                  fontWeight={isCurrent ? "bold" : "normal"}
+                                  color={isCurrent ? "pink.600" : undefined}
                                   onClick={() => {
                                     setSearchTerm("");
                                     if (isAILearningMode) {
@@ -4905,18 +4931,31 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
                               const absoluteQuestionNumber =
                                 Math.max(0, steps[userLanguage].length - 1) +
                                 entry.questionCount;
+                              const isCurrentContinuing =
+                                isAILearningMode &&
+                                viewedContinuingQuestionCount ===
+                                  entry.questionCount;
                               return (
                                 <MenuItem
                                   key={`continuing-${entry.questionCount}`}
+                                  ref={
+                                    isCurrentContinuing
+                                      ? activeQuestionMenuItemRef
+                                      : undefined
+                                  }
                                   onClick={() =>
                                     handleOpenContinuingQuestion(entry)
                                   }
                                   bg={
-                                    isAILearningMode &&
-                                    viewedContinuingQuestionCount ===
-                                      entry.questionCount
+                                    isCurrentContinuing
                                       ? "appSurfaceMuted"
                                       : undefined
+                                  }
+                                  fontWeight={
+                                    isCurrentContinuing ? "bold" : "normal"
+                                  }
+                                  color={
+                                    isCurrentContinuing ? "pink.600" : undefined
                                   }
                                   whiteSpace="normal"
                                 >
@@ -5121,6 +5160,7 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
             )}
             {isNewQuestionType(step) && (
               <QuestionMode
+                key={`${currentStep}-${step.title}-${userLanguage}`}
                 step={step}
                 value={modeAnswer}
                 onChange={setModeAnswer}

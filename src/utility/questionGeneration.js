@@ -4,8 +4,8 @@ export const CONTINUING_LEARNING_SUMMARY_MAX_LENGTH = 1800;
 export const CONTINUING_LEARNING_PROFILE_VERSION = 2;
 
 const courseCompletionSummaries = {
-  en: `The learner completed the full Robots Building Education JavaScript application-development course. They practiced JavaScript values and data types, functions, conditionals, loops, arrays, code output, and foundational terminal commands. They studied object-oriented programming through objects, classes, constructors, methods, this, properties, inheritance, method overriding, and encapsulation. They built frontend skills with React components, JSX, props, events, useState, shared state, useEffect, component lifecycle, data fetching, styling, and Flexbox. They studied backend and cloud foundations including servers, APIs, npm packages, Firebase projects, Firestore data, authentication, OAuth, environment variables, database relationships, and deployment. They also practiced an end-to-end app workflow with VS Code, Node.js, npm, package.json, Firebase tools, Git and GitHub, Google sign-in, displaying and updating user profiles, and publishing application updates. Across the course they answered conceptual questions, traced code, completed syntax, assembled and debugged programs, compared implementations, refactored code, and completed project checkpoints. Continue with fresh material that reinforces unresolved fundamentals, combines established skills, and introduces adjacent intermediate JavaScript, React, backend, testing, accessibility, security, and application-design concepts gradually.`,
-  es: `El estudiante completó todo el curso de desarrollo de aplicaciones con JavaScript de Robots Building Education. Practicó valores y tipos de datos de JavaScript, funciones, condicionales, ciclos, arreglos, salida de código y comandos fundamentales de terminal. Estudió programación orientada a objetos mediante objetos, clases, constructores, métodos, this, propiedades, herencia, sobrescritura de métodos y encapsulación. Desarrolló habilidades de frontend con componentes de React, JSX, props, eventos, useState, estado compartido, useEffect, ciclo de vida, obtención de datos, estilos y Flexbox. Estudió fundamentos de backend y nube, incluidos servidores, APIs, paquetes npm, proyectos de Firebase, datos en Firestore, autenticación, OAuth, variables de entorno, relaciones de bases de datos y despliegue. También practicó un flujo completo de creación de aplicaciones con VS Code, Node.js, npm, package.json, herramientas de Firebase, Git y GitHub, inicio de sesión con Google, visualización y actualización de perfiles y publicación de cambios. Durante el curso respondió preguntas conceptuales, siguió la ejecución de código, completó sintaxis, ensambló y corrigió programas, comparó implementaciones, refactorizó código y completó puntos de control de proyectos. Continúa con material nuevo que refuerce fundamentos pendientes, combine habilidades ya practicadas e introduzca gradualmente conceptos intermedios de JavaScript, React, backend, pruebas, accesibilidad, seguridad y diseño de aplicaciones.`,
+  en: `The learner completed the full Robots Building Education JavaScript application-development course. They practiced JavaScript values and data types, functions, conditionals, loops, arrays, code output, and foundational terminal commands. They studied object-oriented programming through objects, classes, constructors, methods, this, properties, inheritance, method overriding, and encapsulation. They built frontend skills with React components, JSX, props, events, useState, shared state, useEffect, component lifecycle, data fetching, styling, and Flexbox. They studied backend and cloud foundations including servers, APIs, npm packages, Firebase projects, Firestore data, authentication, OAuth, environment variables, database relationships, and deployment. They also practiced an end-to-end app workflow with VS Code, Node.js, npm, package.json, Firebase tools, Git and GitHub, Google sign-in, displaying and updating user profiles, and publishing application updates. Across the course they answered conceptual questions, traced code, completed syntax, assembled and debugged programs, compared implementations, and refactored code. Continue with fresh material that reinforces unresolved fundamentals, combines established skills, and introduces adjacent intermediate JavaScript, React, backend, testing, accessibility, security, and application-design concepts gradually.`,
+  es: `El estudiante completó todo el curso de desarrollo de aplicaciones con JavaScript de Robots Building Education. Practicó valores y tipos de datos de JavaScript, funciones, condicionales, ciclos, arreglos, salida de código y comandos fundamentales de terminal. Estudió programación orientada a objetos mediante objetos, clases, constructores, métodos, this, propiedades, herencia, sobrescritura de métodos y encapsulación. Desarrolló habilidades de frontend con componentes de React, JSX, props, eventos, useState, estado compartido, useEffect, ciclo de vida, obtención de datos, estilos y Flexbox. Estudió fundamentos de backend y nube, incluidos servidores, APIs, paquetes npm, proyectos de Firebase, datos en Firestore, autenticación, OAuth, variables de entorno, relaciones de bases de datos y despliegue. También practicó un flujo completo de creación de aplicaciones con VS Code, Node.js, npm, package.json, herramientas de Firebase, Git y GitHub, inicio de sesión con Google, visualización y actualización de perfiles y publicación de cambios. Durante el curso respondió preguntas conceptuales, siguió la ejecución de código, completó sintaxis, ensambló y corrigió programas, comparó implementaciones y refactorizó código. Continúa con material nuevo que refuerce fundamentos pendientes, combine habilidades ya practicadas e introduzca gradualmente conceptos intermedios de JavaScript, React, backend, pruebas, accesibilidad, seguridad y diseño de aplicaciones.`,
 };
 
 export const getCourseLocale = (userLanguage = "en") =>
@@ -199,19 +199,6 @@ export const tutorial_interface = [
     group: "",
     title: "",
     description: "",
-    isProjectCheckpoint: true,
-    question: {
-      questionText: "",
-      projectId: "continuing-learning",
-      checkpointId: "",
-      starterCode: "",
-      tests: ["", ""],
-    },
-  },
-  {
-    group: "",
-    title: "",
-    description: "",
     isConversationReview: true,
     question: { questionText: "", range: [1, 2] },
   },
@@ -285,11 +272,6 @@ export const getQuestionTypePromptInstructions = (targetType) => {
 - questionText MUST state the refactoring goal (e.g. improve security, extract logic, simplify conditions) for the starterCode.
 - starterCode contains the initial unrefactored code.
 - tests contains verifiable success criteria.`;
-    case "projectCheckpoint":
-      return `For projectCheckpoint:
-- questionText MUST guide the learner through a concrete application feature or checkpoint.
-- starterCode contains the project starter code.
-- tests contains criteria.`;
     case "codeCompletion":
       return `For codeCompletion:
 - questionText MUST ask which token or code snippet belongs in the blank or completes the snippet.
@@ -359,7 +341,7 @@ Interface & interaction requirements:
 - For matchPairs, every pair.left string must be a key in answer and map to that pair.right string.
 - For selectOrder and Parsons problems, answer must contain the exact correct order.
 - For relevantLine, answer must be an array of one-based line numbers.
-- For refactoring and project checkpoints, tests must be observable success criteria.
+- For refactoring challenges, tests must be observable success criteria.
 ${typeInstructions ? `\nSpecific rules for ${targetType}:\n${typeInstructions}\n` : ""}- Do not include Markdown, code fences, commentary, or anything outside the single JSON step object.
   `.trim();
 };
@@ -534,7 +516,6 @@ export const validateGeneratedQuestion = (step, expectedType) => {
           isStringArray(question.acceptedAnswers))
       );
     case "refactoring":
-    case "projectCheckpoint":
       return (
         typeof question.starterCode === "string" &&
         isStringArray(question.tests)

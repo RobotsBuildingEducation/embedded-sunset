@@ -162,7 +162,6 @@ const QUESTION_KIND_ALIASES = {
   relevantline: "code",
   fixbug: "code",
   refactoring: "code",
-  projectcheckpoint: "code",
 
   // code completion
   codecompletion: "codeCompletion",
