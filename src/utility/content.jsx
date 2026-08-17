@@ -142,7 +142,10 @@ export const steps = {
     "isCode": true,
     "isTerminal": false,
     "question": {
-      "questionText": "Declare a variable named age with the value 25."
+      "questionText": "Declare a variable named age with the value 25.",
+      starterCode: "// Write your code below\n",
+      answer: "let age = 25;",
+      tests: ["Declares age with value 25"]
     }
   }, {
     "group": "tutorial",
@@ -219,26 +222,15 @@ export const steps = {
       }
     }
   }, {
-    "group": "1",
-    "title": "Anatomy of a Function",
-    "description": "Complete the function declaration with the function name and parameter.",
-    "isFillCodeBlanks": true,
-    "question": {
-      "questionText": "Complete the function definition to create a greeting for any provided name:",
-      "template": "function {{greet}}({{name}}) {\n  return \"Hello, \" + {{name}};\n}",
-      "blanks": [{
-        "key": "greet",
-        "label": "Function Name",
-        "hint": "greet"
-      }, {
-        "key": "name",
-        "label": "Parameter",
-        "hint": "name"
-      }],
-      "answer": {
-        "greet": "greet",
-        "name": "name"
-      }
+    group: "1",
+    title: "Anatomy of a Function Declaration",
+    description: "Select the correct function header and parameter syntax.",
+    isCodeCompletion: true,
+    question: {
+      questionText: "Which code snippet correctly defines the function header to accept a name argument?",
+      code: "function greet(name) {\n  return 'Hello, ' + name;\n}",
+      options: ["function greet(name)", "function greet()", "def greet(name)", "fun greet(name)"],
+      answer: "function greet(name)"
     }
   }, {
     "group": "1",
@@ -321,14 +313,17 @@ export const steps = {
       "answer": ["0", "\"\"", "null", "undefined", "NaN", "false"]
     }
   }, {
-    "group": "1",
-    "title": "Guard Clauses and Early Returns",
-    "description": "Locate the guard clause that halts execution when invalid input is supplied.",
-    "isRelevantLine": true,
-    "question": {
-      "questionText": "Select the line containing the guard clause condition that prevents invalid negative payments:",
-      "code": "function processPayment(amount) {\n  if (amount <= 0) {\n    return 'Invalid amount';\n  }\n  return 'Payment of $' + amount + ' approved';\n}",
-      "answer": 2
+    group: "1",
+    title: "Guard Clauses and Early Returns",
+    description: "Complete the guard clause comparison to halt invalid execution.",
+    isFillCodeBlanks: true,
+    question: {
+      questionText: "Complete the guard clause condition to return early if the payment amount is less than or equal to zero:",
+      template: "function processPayment(amount) {\n  if (amount {{<=}} {{0}}) {\n    return 'Invalid amount';\n  }\n  return 'Approved';\n}",
+      answer: {
+        "<=": "<=",
+        "0": "0"
+      }
     }
   }, {
     "group": "1",
@@ -340,31 +335,13 @@ export const steps = {
       "questionText": "In a Bash terminal environment, enter the help command to discover basic commands."
     }
   }, {
-    "group": "1",
-    "title": "For Loop Syntax and Structure",
-    "description": "Fill in the loop counter initialization, condition bound, and increment step.",
-    "isFillCodeBlanks": true,
-    "question": {
-      "questionText": "Complete the standard for loop to count from 0 up to (but not including) 5:",
-      "template": "for (let {{i}} = 0; i < {{5}}; {{i++}}) {\n  console.log(i);\n}",
-      "blanks": [{
-        "key": "i",
-        "label": "Counter Variable",
-        "hint": "i"
-      }, {
-        "key": "5",
-        "label": "Loop Bound",
-        "hint": "5"
-      }, {
-        "key": "i++",
-        "label": "Increment Expression",
-        "hint": "i++"
-      }],
-      "answer": {
-        "5": "5",
-        "i": "i",
-        "i++": "i++"
-      }
+    group: "1",
+    title: "For Loop Termination with break",
+    description: "Identify the control flow keyword used to exit loops early.",
+    isSingleLineText: true,
+    question: {
+      questionText: "Which keyword is used in JavaScript to immediately terminate and exit a loop before its test condition evaluates to false?",
+      answer: "break"
     }
   }, {
     "group": "1",
@@ -377,14 +354,15 @@ export const steps = {
       "answer": ["1. Initialize counter variable once", "2. Evaluate loop condition", "3. Execute loop body code block", "4. Increment counter expression"]
     }
   }, {
-    "group": "1",
-    "title": "The Loop Accumulator Pattern",
-    "description": "Arrange lines to accumulate a running sum across multiple iterations.",
-    "isParsonsProblem": true,
-    "question": {
-      "questionText": "Reorder the lines to correctly initialize an accumulator, sum numbers 1 through 4, and log the result:",
-      "lines": ["let total = 0;", "for (let i = 1; i <= 4; i++) {", "  total += i;", "}", "console.log(total);"],
-      "answer": ["let total = 0;", "for (let i = 1; i <= 4; i++) {", "  total += i;", "}", "console.log(total);"]
+    group: "1",
+    title: "Code Writing: Array Sum Accumulator",
+    description: "Write a function that iterates through an array to compute its total sum.",
+    isCode: true,
+    question: {
+      questionText: "Write a function sumNumbers(numbers) that iterates through an array of numbers and returns their total sum:",
+      starterCode: "function sumNumbers(numbers) {\n  let total = 0;\n  for (let n of numbers) {\n    total += n;\n  }\n  return total;\n}",
+      answer: "function sumNumbers(numbers) {\n  let total = 0;\n  for (let n of numbers) {\n    total += n;\n  }\n  return total;\n}",
+      tests: ["sumNumbers returns a number", "sumNumbers([1, 2, 3, 4]) returns 10"]
     }
   }, {
     "group": "1",
@@ -449,14 +427,12 @@ export const steps = {
       "questionText": "In a bash terminal environment, create a directory called app using the make directory command"
     }
   }, {
-    "group": "1",
-    "title": "Iterating Over Arrays with For...Of",
-    "description": "Select the modern, readable syntax for looping directly through array values.",
-    "isCodeCompletion": true,
-    "question": {
-      "questionText": "Which code snippet cleanest iterates directly over each item value in a products array?",
-      "options": ["for (const product of products) {\n  console.log(product);\n}", "for (const product in products) {\n  console.log(product);\n}", "for (let i = products; i++;) {\n  console.log(i);\n}", "while (products.length) {\n  products.each();\n}"],
-      "answer": "for (const product of products) {\n  console.log(product);\n}"
+    group: "1",
+    title: "Open Response: For Loops vs For...Of",
+    description: "Explain the architectural trade-offs between indexed and iterable loops.",
+    isText: true,
+    question: {
+      questionText: "Explain the difference between iterating over an array with an indexed for loop versus a for...of loop. When is an indexed loop required over for...of?"
     }
   }, {
     "group": "1",
@@ -496,31 +472,15 @@ export const steps = {
       }
     }
   }, {
-    "group": "2",
-    "title": "Creating and Accessing Objects",
-    "description": "Complete an object literal definition and access its properties.",
-    "isFillCodeBlanks": true,
-    "question": {
-      "questionText": "Complete the object definition and access the name property:",
-      "template": "const user = {\n  name: \"Alex\",\n  age: {{28}},\n  isAdmin: {{true}}\n};\nconst userName = user.{{name}};",
-      "blanks": [{
-        "key": "28",
-        "label": "Age value",
-        "hint": "28"
-      }, {
-        "key": "true",
-        "label": "Boolean value",
-        "hint": "true"
-      }, {
-        "key": "name",
-        "label": "Property key",
-        "hint": "name"
-      }],
-      "answer": {
-        "28": "28",
-        "true": "true",
-        "name": "name"
-      }
+    group: "2",
+    title: "Code Writing: Object Factory Function",
+    description: "Write a function that constructs and returns a structured user object.",
+    isCode: true,
+    question: {
+      questionText: "Write a function createUser(name, role) that returns an object containing name, role, and an isActive property set to true:",
+      starterCode: "function createUser(name, role) {\n  return {\n    name,\n    role,\n    isActive: true\n  };\n}",
+      answer: "function createUser(name, role) {\n  return {\n    name,\n    role,\n    isActive: true\n  };\n}",
+      tests: ["createUser returns an object", "createUser('Alice', 'admin').isActive is true"]
     }
   }, {
     "group": "2",
@@ -577,14 +537,14 @@ export const steps = {
       "answer": "A new object is created in memory, its constructor is executed with 'this' bound to the new instance, and the instance is returned."
     }
   }, {
-    "group": "2",
-    "title": "Defining Methods in a Class",
-    "description": "Arrange lines to create a class with an encapsulated deposit method.",
-    "isParsonsProblem": true,
-    "question": {
-      "questionText": "Arrange the lines to define a BankAccount class with a deposit method:",
-      "lines": ["class BankAccount {", "  constructor(balance) {", "    this.balance = balance;", "  }", "  deposit(amount) {", "    this.balance += amount;", "  }", "}"],
-      "answer": ["class BankAccount {", "  constructor(balance) {", "    this.balance = balance;", "  }", "  deposit(amount) {", "    this.balance += amount;", "  }", "}"]
+    group: "2",
+    title: "Class Execution and Method Invocation Lifecycle",
+    description: "Arrange the chronological phases of defining and using class instances.",
+    isSelectOrder: true,
+    question: {
+      questionText: "Arrange the phases of defining and using a class instance in chronological execution order:",
+      options: ["Define class blueprint with constructor and methods", "Instantiate object using new ClassName(args)", "Constructor initializes instance properties on this", "Invoke instance method (e.g. user.getDetails())"],
+      answer: ["Define class blueprint with constructor and methods", "Instantiate object using new ClassName(args)", "Constructor initializes instance properties on this", "Invoke instance method (e.g. user.getDetails())"]
     }
   }, {
     "group": "2",
@@ -607,14 +567,13 @@ export const steps = {
       "answer": "const names = users\n  .filter((u) => u.isActive)\n  .map((u) => u.name);"
     }
   }, {
-    "group": "2",
-    "title": "Array of Objects Data Modeling",
-    "description": "Represent collections of records using an array of structured objects.",
-    "isCodeCompletion": true,
-    "question": {
-      "questionText": "Which code snippet correctly models a list of user records as an array of objects?",
-      "options": ["const users = [\n  {\n    id: 1,\n    name: \"Alice\",\n    role: \"admin\"\n  },\n  {\n    id: 2,\n    name: \"Bob\",\n    role: \"member\"\n  }\n];", "const users = {\n  id: 1,\n  name: \"Alice\",\n  role: \"admin\",\n  id: 2,\n  name: \"Bob\",\n  role: \"member\"\n};", "const users =\n  \"id: 1, name: Alice; id: 2, name: Bob\";", "const users = [\n  1, \"Alice\", \"admin\",\n  2, \"Bob\", \"member\"\n];"],
-      "answer": "const users = [\n  {\n    id: 1,\n    name: \"Alice\",\n    role: \"admin\"\n  },\n  {\n    id: 2,\n    name: \"Bob\",\n    role: \"member\"\n  }\n];"
+    group: "2",
+    title: "Short Answer: Array Filtering Method",
+    description: "Identify the array method used to filter elements by a predicate callback.",
+    isSingleLineText: true,
+    question: {
+      questionText: "Which built-in JavaScript Array method returns a new array containing all elements that satisfy a given predicate function?",
+      answer: "filter"
     }
   }, {
     "group": "2",
@@ -648,42 +607,23 @@ export const steps = {
       "answer": ["class Employee extends Person {", "  constructor(name, role) {", "    super(name);", "    this.role = role;", "  }", "}"]
     }
   }, {
-    "group": "2",
-    "title": "Data Modeling Structures and Use Cases",
-    "description": "Match data representations to their primary real-world use case.",
-    "isMatchPairs": true,
-    "question": {
-      "questionText": "Match each data structure to its ideal development purpose:",
-      "pairs": [{
-        "left": "Object Literal {}",
-        "right": "Grouping related properties of a single entity"
-      }, {
-        "left": "Array of Objects [{}, {}]",
-        "right": "Storing a list of records like products or users"
-      }, {
-        "left": "Class Blueprint",
-        "right": "Instantiating reusable objects with shared methods"
-      }, {
-        "left": "JSON String",
-        "right": "Transmitting structured data over HTTP network requests"
-      }],
-      "choices": ["Grouping related properties of a single entity", "Storing a list of records like products or users", "Instantiating reusable objects with shared methods", "Transmitting structured data over HTTP network requests"],
-      "answer": {
-        "Object Literal {}": "Grouping related properties of a single entity",
-        "Array of Objects [{}, {}]": "Storing a list of records like products or users",
-        "Class Blueprint": "Instantiating reusable objects with shared methods",
-        "JSON String": "Transmitting structured data over HTTP network requests"
-      }
+    group: "2",
+    title: "Open Response: Immutability in JavaScript",
+    description: "Explain why avoiding direct object mutation is critical in modern applications.",
+    isText: true,
+    question: {
+      questionText: "Why is immutability important when modifying objects or arrays in JavaScript applications? Explain what unexpected side effects direct mutation causes."
     }
   }, {
-    "group": "2",
-    "title": "Locating Unsafe Nested Property Access",
-    "description": "Find the line where accessing a property on undefined causes a runtime crash.",
-    "isRelevantLine": true,
-    "question": {
-      "questionText": "Select the line where attempting to read city from an undefined address throws a TypeError:",
-      "code": "const user = { name: 'Alex' };\nconsole.log(user.name);\nconst city = user.address.city;\nconsole.log(city);",
-      "answer": 3
+    group: "2",
+    title: "Optional Chaining for Safe Property Access",
+    description: "Select the operator that safely reads deeply nested properties without crashing.",
+    isCodeCompletion: true,
+    question: {
+      questionText: "Which operator safely accesses deeply nested properties when an intermediate property might be null or undefined?",
+      code: "const city = user?.profile?.address?.city;",
+      options: ["?.", "??", "||", "&&"],
+      answer: "?."
     }
   }, {
     "group": "2",
@@ -786,14 +726,17 @@ export const steps = {
       "tests": ["Includes self-closing slash />", "Valid JSX component"]
     }
   }, {
-    "group": "3",
-    "title": "Assembling Card Markup",
-    "description": "Reorder lines of JSX to form a complete, well-structured product card.",
-    "isParsonsProblem": true,
-    "question": {
-      "questionText": "Arrange the JSX lines into a properly nested card component:",
-      "lines": ["<article className=\"card\">", "  <img src=\"item.jpg\" alt=\"Item\" />", "  <div className=\"card-body\">", "    <h3>Pro Headphones</h3>", "    <p>$199.99</p>", "  </div>", "</article>"],
-      "answer": ["<article className=\"card\">", "  <img src=\"item.jpg\" alt=\"Item\" />", "  <div className=\"card-body\">", "    <h3>Pro Headphones</h3>", "    <p>$199.99</p>", "  </div>", "</article>"]
+    group: "3",
+    title: "Assembling Card Structure in JSX",
+    description: "Fill in the missing semantic tags to complete an interactive product card.",
+    isFillCodeBlanks: true,
+    question: {
+      questionText: "Fill in the missing semantic HTML/JSX elements to complete the product card component:",
+      template: "<article className=\"card\">\n  <{{h2}}>Product Title</{{h2}}>\n  <p>Product Description</p>\n  <{{button}}>Buy Now</{{button}}>\n</article>",
+      answer: {
+        "h2": "h2",
+        "button": "button"
+      }
     }
   }, {
     "group": "3",
@@ -834,24 +777,23 @@ export const steps = {
       }
     }
   }, {
-    "group": "3",
-    "title": "Responsive CSS Units with clamp()",
-    "description": "Select the modern CSS snippet using responsive typography scaling.",
-    "isCodeCompletion": true,
-    "question": {
-      "questionText": "Which CSS block scales typography fluidly between 16px and 24px across viewport sizes?",
-      "options": ["h1 {\n  font-size: clamp(\n    1rem,\n    2.5vw,\n    1.5rem\n  );\n}", "h1 {\n  font-size: 20px;\n}", "h1 {\n  font-size: 100%;\n}", "h1 {\n  font-size: scale(1.5);\n}"],
-      "answer": "h1 {\n  font-size: clamp(\n    1rem,\n    2.5vw,\n    1.5rem\n  );\n}"
+    group: "3",
+    title: "Short Answer: CSS Fluid Sizing Function",
+    description: "Identify the CSS math function used for responsive fluid typography and sizing.",
+    isSingleLineText: true,
+    question: {
+      questionText: "Which CSS math function accepts a minimum, preferred, and maximum value to enable fluid responsive sizing without media queries?",
+      answer: "clamp()"
     }
   }, {
-    "group": "3",
-    "title": "Identifying Layout Overflow",
-    "description": "Locate the problematic fixed width causing horizontal overflow on mobile screens.",
-    "isRelevantLine": true,
-    "question": {
-      "questionText": "Select the line containing the rigid pixel width that breaks responsive layouts on mobile devices:",
-      "code": ".container {\n  display: flex;\n  width: 1200px;\n  padding: 16px;\n  box-sizing: border-box;\n}",
-      "answer": 3
+    group: "3",
+    title: "CSS Layout Overflow and Sizing Rules",
+    description: "Select all valid techniques for preventing unwanted horizontal page scrolling.",
+    isMultipleAnswerChoice: true,
+    question: {
+      questionText: "Which techniques help prevent unexpected horizontal overflow and page scrollbars on mobile viewports?",
+      options: ["Use box-sizing: border-box globally across all elements", "Use max-width: 100% on images and media containers", "Avoid fixed wide pixel widths on layout wrappers (use percentages, flex, or rem)", "Set min-width: 2000px on all container elements"],
+      answer: ["Use box-sizing: border-box globally across all elements", "Use max-width: 100% on images and media containers", "Avoid fixed wide pixel widths on layout wrappers (use percentages, flex, or rem)"]
     }
   }, {
     "group": "3",
@@ -864,16 +806,15 @@ export const steps = {
       "answer": [".navbar {", "  display: flex;", "  justify-content: space-between;", "  align-items: center;", "  padding: 12px 24px;", "}"]
     }
   }, {
-    "group": "3",
-    "title": "Controlled Input Binding",
-    "description": "Bind React state and onChange event handler to create a controlled text input.",
-    "showPreview": true,
-    "isCodeCompletion": true,
-    "question": {
-      "questionText": "Which input element correctly establishes two-way binding with React state?",
-      "previewCode": "function Demo() {\n  const [val, setVal] = React.useState('Type here...');\n  return (\n    <div style={{ padding: 16 }}>\n      <input\n        value={val}\n        onChange={e => setVal(e.target.value)}\n        style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc', width: '100%' }}\n      />\n      <p style={{ marginTop: 8, color: '#666' }}>Output: {val}</p>\n    </div>\n  );\n}",
-      "options": ["<input\n  value={query}\n  onChange={(e) =>\n    setQuery(e.target.value)\n  }\n/>", "<input\n  defaultValue={query}\n  onBlur={() => query}\n/>", "<input\n  value=\"query\"\n  onChange={setQuery}\n/>", "<input\n  state={query}\n  set={setQuery}\n/>"],
-      "answer": "<input\n  value={query}\n  onChange={(e) =>\n    setQuery(e.target.value)\n  }\n/>"
+    group: "3",
+    title: "Code Writing: Controlled Search Input",
+    description: "Write a React functional component rendering a controlled text input.",
+    isCode: true,
+    question: {
+      questionText: "Write a React component SearchInput({ query, setQuery }) that binds value and onChange to control an HTML input:",
+      starterCode: "function SearchInput({ query, setQuery }) {\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      placeholder=\"Search...\"\n    />\n  );\n}",
+      answer: "function SearchInput({ query, setQuery }) {\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      placeholder=\"Search...\"\n    />\n  );\n}",
+      tests: ["Renders an input element", "Binds value to query and updates via onChange"]
     }
   }, {
     "group": "3",
@@ -909,26 +850,15 @@ export const steps = {
       "tests": ["Uses useState('') for name", "Binds value and onChange to input"]
     }
   }, {
-    "group": "3",
-    "title": "Multi-Field Form State Handler",
-    "description": "Dynamically update an object form state using computed property names.",
-    "isFillCodeBlanks": true,
-    "question": {
-      "questionText": "Complete the generic handleChange handler for multi-input forms:",
-      "template": "const handleChange = (e) => {\n  const { name, value } = e.{{target}};\n  setForm((prev) => ({\n    ...prev,\n    [{{name}}]: value\n  }));\n};",
-      "blanks": [{
-        "key": "target",
-        "label": "Event target element",
-        "hint": "target"
-      }, {
-        "key": "name",
-        "label": "Computed key variable",
-        "hint": "name"
-      }],
-      "answer": {
-        "target": "target",
-        "name": "name"
-      }
+    group: "3",
+    title: "Code Writing: Immutable Field Updater",
+    description: "Write a helper function that immutably updates a form field in state.",
+    isCode: true,
+    question: {
+      questionText: "Write a function updateField(formData, fieldName, value) that returns a new object with the specified field updated immutably:",
+      starterCode: "function updateField(formData, fieldName, value) {\n  return {\n    ...formData,\n    [fieldName]: value\n  };\n}",
+      answer: "function updateField(formData, fieldName, value) {\n  return {\n    ...formData,\n    [fieldName]: value\n  };\n}",
+      tests: ["Returns a new object without mutating original", "Updates the dynamic field key correctly"]
     }
   }, {
     "group": "3",
@@ -1002,14 +932,12 @@ export const steps = {
       "answer": "A JavaScript function that accepts props and returns JSX describing what should appear on screen."
     }
   }, {
-    "group": "3",
-    "title": "Core React Architectural Concepts",
-    "description": "Select the foundational concepts of React component-driven architecture.",
-    "isMultipleAnswerChoice": true,
-    "question": {
-      "questionText": "Select all true statements regarding React architecture:",
-      "options": ["UI is expressed as a pure function of state and props", "React uses a Virtual DOM to minimize costly real DOM mutations", "Components can be composed hierarchically like building blocks", "Directly mutating document.getElementById is the recommended way to update React UI", "React components cannot accept any arguments"],
-      "answer": ["UI is expressed as a pure function of state and props", "React uses a Virtual DOM to minimize costly real DOM mutations", "Components can be composed hierarchically like building blocks"]
+    group: "3",
+    title: "Open Response: Virtual DOM and Reconciliation",
+    description: "Explain how React optimizes rendering using the Virtual DOM.",
+    isText: true,
+    question: {
+      questionText: "Explain how React's Virtual DOM and reconciliation algorithm optimize updates to the real browser DOM. Why is this more efficient than direct DOM manipulation?"
     }
   }, {
     "group": "3",
@@ -1044,59 +972,21 @@ export const steps = {
       "answer": "To provide consistent event behavior and properties across all web browsers."
     }
   }, {
-    "group": "3",
-    "title": "Managing State with useState Hook",
-    "description": "Initialize state and unpack the state value and updater function.",
-    "isFillCodeBlanks": true,
-    "question": {
-      "questionText": "Complete the useState declaration initialized with 0:",
-      "template": "const [count, {{setCount}}] = {{useState}}({{0}});",
-      "blanks": [{
-        "key": "setCount",
-        "label": "State setter function",
-        "hint": "setCount"
-      }, {
-        "key": "useState",
-        "label": "React hook name",
-        "hint": "useState"
-      }, {
-        "key": "0",
-        "label": "Initial value",
-        "hint": "0"
-      }],
-      "answer": {
-        "0": "0",
-        "setCount": "setCount",
-        "useState": "useState"
-      }
+    group: "3",
+    title: "Short Answer: React State Hook",
+    description: "Identify the primary hook used for state management in functional components.",
+    isSingleLineText: true,
+    question: {
+      questionText: "What is the name of the standard React hook used to declare and update local state variables in functional components?",
+      answer: "useState"
     }
   }, {
-    "group": "3",
-    "title": "Props vs State vs Children",
-    "description": "Match React data communication concepts to their architectural role.",
-    "isMatchPairs": true,
-    "question": {
-      "questionText": "Match each React concept to its data flow role:",
-      "pairs": [{
-        "left": "Props",
-        "right": "Read-only data passed downward from parent"
-      }, {
-        "left": "State",
-        "right": "Mutable local data managed internally by component"
-      }, {
-        "left": "props.children",
-        "right": "Nested elements passed inside component tags"
-      }, {
-        "left": "Event Callbacks",
-        "right": "Functions passed downward so children notify parents"
-      }],
-      "choices": ["Read-only data passed downward from parent", "Mutable local data managed internally by component", "Nested elements passed inside component tags", "Functions passed downward so children notify parents"],
-      "answer": {
-        "Props": "Read-only data passed downward from parent",
-        "State": "Mutable local data managed internally by component",
-        "props.children": "Nested elements passed inside component tags",
-        "Event Callbacks": "Functions passed downward so children notify parents"
-      }
+    group: "3",
+    title: "Open Response: Props vs State in React",
+    description: "Explain the difference between props and state in component architecture.",
+    isText: true,
+    question: {
+      questionText: "Explain the fundamental differences between props and state in React. How does data flow between parent and child components?"
     }
   }, {
     "group": "3",
@@ -1178,14 +1068,12 @@ export const steps = {
       "tests": ["Defines const [query, setQuery] in SearchPage", "Passes query to SearchResults"]
     }
   }, {
-    "group": "3",
-    "title": "Understanding Side Effects in React",
-    "description": "Recognize what constitutes a side effect in frontend applications.",
-    "isMultipleChoice": true,
-    "question": {
-      "questionText": "Which of the following is considered a 'side effect' in a React component?",
-      "options": ["Fetching data from an external API or setting a browser timer.", "Calculating a sum of two numbers inside JSX.", "Returning an <h1> element from the component function.", "Passing a string prop to a child component."],
-      "answer": "Fetching data from an external API or setting a browser timer."
+    group: "3",
+    title: "Open Response: Side Effects and Lifecycle",
+    description: "Explain what constitutes a side effect and why useEffect is required.",
+    isText: true,
+    question: {
+      questionText: "What is a side effect in React, and why should operations like data fetching, event subscriptions, and DOM timers be placed inside useEffect?"
     }
   }, {
     "group": "3",
@@ -1239,15 +1127,16 @@ export const steps = {
       "tests": ["Defines function useFetch(url)", "Returns fetched data state"]
     }
   }, {
-    "group": "3",
-    "title": "Fixing Infinite Re-Render Loop in useEffect",
-    "description": "Add the missing dependency array to stop an infinite render loop.",
-    "isFixBug": true,
-    "question": {
-      "questionText": "Fix the useEffect hook below so it only runs once on mount instead of looping infinitely:",
-      "starterCode": "function Timer() {\n  const [seconds, setSeconds] = useState(0);\n  useEffect(() => {\n    setSeconds(s => s + 1);\n  });\n  return <div>{seconds}</div>;\n}",
-      "answer": "function Timer() {\n  const [seconds, setSeconds] = useState(0);\n  useEffect(() => {\n    setSeconds(s => s + 1);\n  }, []);\n  return <div>{seconds}</div>;\n}",
-      "tests": ["Adds empty dependency array []", "Prevents infinite re-render loop"]
+    group: "3",
+    title: "useEffect Dependency Array Configuration",
+    description: "Fill in the missing dependency array to prevent infinite re-render loops.",
+    isFillCodeBlanks: true,
+    question: {
+      questionText: "Fill in the empty dependency array to ensure the fetch effect runs only once when the component mounts:",
+      template: "useEffect(() => {\n  fetchData();\n}, {{[]}});",
+      answer: {
+        "[]": "[]"
+      }
     }
   }, {
     "group": "3",
@@ -1280,14 +1169,13 @@ export const steps = {
       "answer": 5
     }
   }, {
-    "group": "3",
-    "title": "Custom Hook Window Size Extraction",
-    "description": "Select the custom hook returning responsive window dimensions.",
-    "isCodeCompletion": true,
-    "question": {
-      "questionText": "Which function signature correctly defines a custom hook returning window dimensions?",
-      "options": ["function useWindowSize() {\n  const [size, setSize] =\n    useState(window.innerWidth);\n  return size;\n}", "class useWindowSize {\n  constructor() {\n    return window.innerWidth;\n  }\n}", "const useWindowSize = (width) => {\n  return <width />;\n};", "function getWindowSize() {\n  return useState(100);\n}"],
-      "answer": "function useWindowSize() {\n  const [size, setSize] =\n    useState(window.innerWidth);\n  return size;\n}"
+    group: "3",
+    title: "Short Answer: Custom Hook Naming Rule",
+    description: "Identify the required naming prefix for React custom hooks.",
+    isSingleLineText: true,
+    question: {
+      questionText: "What two-letter prefix must every custom React hook name start with by convention (e.g. useWindowSize)?",
+      answer: "use"
     }
   }, {
     "group": "3",
@@ -1322,14 +1210,15 @@ export const steps = {
       "tests": ["Uses let isMounted = true flag", "Cleans up with isMounted = false"]
     }
   }, {
-    "group": "3",
-    "title": "Building a Filterable Interactive Dashboard",
-    "description": "Assemble a responsive filterable dashboard with reactive state.",
-    "isCodeCompletion": true,
-    "question": {
-      "questionText": "Which pattern combines search input, category filtering, and count display cleanly?",
-      "options": ["const filtered = items\n  .filter((i) =>\n    category === 'all' ||\n    i.category === category\n  )\n  .filter((i) =>\n    i.title\n      .toLowerCase()\n      .includes(query.toLowerCase())\n  );", "const filtered = items.push(query);", "const filtered = items.sort(category);", "const filtered = items.map(query);"],
-      "answer": "const filtered = items\n  .filter((i) =>\n    category === 'all' ||\n    i.category === category\n  )\n  .filter((i) =>\n    i.title\n      .toLowerCase()\n      .includes(query.toLowerCase())\n  );"
+    group: "3",
+    title: "Code Writing: Filtering and Mapping Pipeline",
+    description: "Write a utility that filters active users and maps their names.",
+    isCode: true,
+    question: {
+      questionText: "Write a function getActiveUserNames(users) that filters users where isActive is true and returns an array of their name strings:",
+      starterCode: "function getActiveUserNames(users) {\n  return users\n    .filter((u) => u.isActive)\n    .map((u) => u.name);\n}",
+      answer: "function getActiveUserNames(users) {\n  return users\n    .filter((u) => u.isActive)\n    .map((u) => u.name);\n}",
+      tests: ["Filters out inactive users", "Returns an array of string names"]
     }
   }, {
     "group": "3",
@@ -1381,36 +1270,13 @@ export const steps = {
       }
     }
   }, {
-    "group": "4",
-    "title": "HTTP Status Code Categorization",
-    "description": "Match HTTP response status codes to their meanings.",
-    "isMatchPairs": true,
-    "question": {
-      "questionText": "Match each HTTP status code to its standard meaning:",
-      "pairs": [{
-        "left": "200 OK / 201 Created",
-        "right": "Request succeeded and resource was retrieved or created"
-      }, {
-        "left": "400 Bad Request",
-        "right": "Client sent invalid parameters or malformed JSON"
-      }, {
-        "left": "401 Unauthorized / 403 Forbidden",
-        "right": "Authentication required or permissions denied"
-      }, {
-        "left": "404 Not Found",
-        "right": "The requested endpoint or resource does not exist"
-      }, {
-        "left": "500 Internal Server Error",
-        "right": "Uncaught server-side exception occurred"
-      }],
-      "choices": ["Request succeeded and resource was retrieved or created", "Client sent invalid parameters or malformed JSON", "Authentication required or permissions denied", "The requested endpoint or resource does not exist", "Uncaught server-side exception occurred"],
-      "answer": {
-        "200 OK / 201 Created": "Request succeeded and resource was retrieved or created",
-        "400 Bad Request": "Client sent invalid parameters or malformed JSON",
-        "401 Unauthorized / 403 Forbidden": "Authentication required or permissions denied",
-        "404 Not Found": "The requested endpoint or resource does not exist",
-        "500 Internal Server Error": "Uncaught server-side exception occurred"
-      }
+    group: "4",
+    title: "Short Answer: Not Found HTTP Status",
+    description: "Identify the standard HTTP status code for missing resources.",
+    isSingleLineText: true,
+    question: {
+      questionText: "What standard 3-digit HTTP status code indicates that the requested server endpoint or resource could not be found?",
+      answer: "404"
     }
   }, {
     "group": "4",
@@ -1433,26 +1299,15 @@ export const steps = {
       "answer": ["async function getUser(id) {", "  const res = await fetch(`/users/${id}`);", "  if (!res.ok) throw new Error('Error');", "  const data = await res.json();", "  return data;", "}"]
     }
   }, {
-    "group": "4",
-    "title": "Express.js RESTful Route Definitions",
-    "description": "Complete an Express route definition that sends a JSON response.",
-    "isFillCodeBlanks": true,
-    "question": {
-      "questionText": "Complete the Express route to handle GET requests at '/api/posts':",
-      "template": "app.{{get}}(\"/api/posts\", async (req, res) => {\n  res.{{json}}({\n    posts: []\n  });\n});",
-      "blanks": [{
-        "key": "get",
-        "label": "HTTP Method",
-        "hint": "get"
-      }, {
-        "key": "json",
-        "label": "JSON response method",
-        "hint": "json"
-      }],
-      "answer": {
-        "get": "get",
-        "json": "json"
-      }
+    group: "4",
+    title: "Code Writing: Health Check API Route",
+    description: "Write an Express GET route returning a status JSON response.",
+    isCode: true,
+    question: {
+      questionText: "Write a function registerHealthRoute(app) that registers a GET route on '/api/health' returning a status 200 JSON object { status: 'healthy' }:",
+      starterCode: "function registerHealthRoute(app) {\n  app.get('/api/health', (req, res) => {\n    res.status(200).json({\n      status: 'healthy'\n    });\n  });\n}",
+      answer: "function registerHealthRoute(app) {\n  app.get('/api/health', (req, res) => {\n    res.status(200).json({\n      status: 'healthy'\n    });\n  });\n}",
+      tests: ["Registers GET /api/health", "Responds with 200 status and healthy JSON"]
     }
   }, {
     "group": "4",
@@ -1472,8 +1327,8 @@ export const steps = {
         "hint": "201"
       }],
       "answer": {
-        "201": "201",
-        "body": "body"
+        "body": "body",
+        "201": "201"
       }
     }
   }, {
@@ -1499,32 +1354,12 @@ export const steps = {
       "tests": ["Uses async/await syntax", "Returns resolved user object directly"]
     }
   }, {
-    "group": "4",
-    "title": "Relational (SQL) vs Document (NoSQL) Databases",
-    "description": "Match database paradigms to their architectural characteristics.",
-    "isMatchPairs": true,
-    "question": {
-      "questionText": "Match each database paradigm to its architectural model:",
-      "pairs": [{
-        "left": "Relational (SQL)",
-        "right": "Strict schemas with tables, rows, foreign keys, and JOINs"
-      }, {
-        "left": "Document (NoSQL)",
-        "right": "Flexible JSON-like documents grouped into collections"
-      }, {
-        "left": "Primary Key",
-        "right": "Unique identifier for a record in a table"
-      }, {
-        "left": "Foreign Key",
-        "right": "Reference linking a child row to a parent table"
-      }],
-      "choices": ["Strict schemas with tables, rows, foreign keys, and JOINs", "Flexible JSON-like documents grouped into collections", "Unique identifier for a record in a table", "Reference linking a child row to a parent table"],
-      "answer": {
-        "Relational (SQL)": "Strict schemas with tables, rows, foreign keys, and JOINs",
-        "Document (NoSQL)": "Flexible JSON-like documents grouped into collections",
-        "Primary Key": "Unique identifier for a record in a table",
-        "Foreign Key": "Reference linking a child row to a parent table"
-      }
+    group: "4",
+    title: "Open Response: SQL vs NoSQL Architecture",
+    description: "Compare relational tables and document stores for modern applications.",
+    isText: true,
+    question: {
+      questionText: "Compare relational (SQL) databases with document (NoSQL) databases like Firestore. In what scenarios is a flexible NoSQL schema preferable over a strict SQL schema?"
     }
   }, {
     "group": "4",
@@ -1568,15 +1403,16 @@ export const steps = {
       "tests": ["Returns status 404 when user is null", "Returns error message payload"]
     }
   }, {
-    "group": "4",
-    "title": "Refactoring Hardcoded Secrets to Environment Variables",
-    "description": "Replace hardcoded API keys with process.env references.",
-    "isRefactoringChallenge": true,
-    "question": {
-      "questionText": "Refactor the hardcoded JWT secret below to read from process.env.JWT_SECRET:",
-      "starterCode": "function generateToken(user) {\n  return jwt.sign(\n    user,\n    'super-secret-key-12345'\n  );\n}",
-      "answer": "function generateToken(user) {\n  return jwt.sign(\n    user,\n    process.env.JWT_SECRET\n  );\n}",
-      "tests": ["Uses process.env.JWT_SECRET", "Removes hardcoded secret string"]
+    group: "4",
+    title: "Environment Variables in JWT Signing",
+    description: "Fill in the environment variable reference for JWT secret signing.",
+    isFillCodeBlanks: true,
+    question: {
+      questionText: "Fill in the process.env reference to load the secret key dynamically without hardcoding:",
+      template: "function generateToken(user) {\n  return jwt.sign(\n    user,\n    {{process.env.JWT_SECRET}}\n  );\n}",
+      answer: {
+        "process.env.JWT_SECRET": "process.env.JWT_SECRET"
+      }
     }
   }, {
     "group": "4",
@@ -1668,54 +1504,24 @@ export const steps = {
       "answer": "Serverless abstracts away server provisioning, load balancing, and OS patches while scaling automatically per request."
     }
   }, {
-    "group": "5",
-    "title": "Configuring package.json Scripts",
-    "description": "Configure build and dev runner scripts inside package.json.",
-    "isFillCodeBlanks": true,
-    "question": {
-      "questionText": "Complete the npm scripts block for a modern Vite + React application:",
-      "template": "{\n  \"scripts\": {\n    \"dev\": \"{{vite}}\",\n    \"build\": \"{{vite build}}\"\n  }\n}",
-      "blanks": [{
-        "key": "vite",
-        "label": "Dev server command",
-        "hint": "vite"
-      }, {
-        "key": "vite build",
-        "label": "Build production bundle",
-        "hint": "vite build"
-      }],
-      "answer": {
-        "vite": "vite",
-        "vite build": "vite build"
-      }
+    group: "5",
+    title: "Code Writing: Environment Variable Loader",
+    description: "Write a helper function to safely extract configuration from process.env.",
+    isCode: true,
+    question: {
+      questionText: "Write a function getDatabaseConfig() that extracts DB_HOST and DB_PORT from process.env with default fallbacks ('localhost' and 5432):",
+      starterCode: "function getDatabaseConfig() {\n  return {\n    host: process.env.DB_HOST || 'localhost',\n    port: Number(process.env.DB_PORT) || 5432\n  };\n}",
+      answer: "function getDatabaseConfig() {\n  return {\n    host: process.env.DB_HOST || 'localhost',\n    port: Number(process.env.DB_PORT) || 5432\n  };\n}",
+      tests: ["Returns host and port keys", "Applies default fallbacks when env vars are missing"]
     }
   }, {
-    "group": "5",
-    "title": "Git Core Version Control Commands",
-    "description": "Match Git commands to their exact repository operations.",
-    "isMatchPairs": true,
-    "question": {
-      "questionText": "Match each Git command to its repository action:",
-      "pairs": [{
-        "left": "git status",
-        "right": "Displays modified, staged, and untracked files"
-      }, {
-        "left": "git add .",
-        "right": "Stages all changed files for the next commit"
-      }, {
-        "left": "git commit -m \"msg\"",
-        "right": "Snapshots staged changes into project history"
-      }, {
-        "left": "git push origin main",
-        "right": "Uploads local commits to the remote GitHub repository"
-      }],
-      "choices": ["Displays modified, staged, and untracked files", "Stages all changed files for the next commit", "Snapshots staged changes into project history", "Uploads local commits to the remote GitHub repository"],
-      "answer": {
-        "git status": "Displays modified, staged, and untracked files",
-        "git add .": "Stages all changed files for the next commit",
-        "git commit -m \"msg\"": "Snapshots staged changes into project history",
-        "git push origin main": "Uploads local commits to the remote GitHub repository"
-      }
+    group: "5",
+    title: "Short Answer: Git Snapshot Recording",
+    description: "Identify the Git command used to commit staged files to history.",
+    isSingleLineText: true,
+    question: {
+      questionText: "Which Git command is used to record staged file snapshots to repository history with an inline commit message (e.g. using the -m flag)?",
+      answer: "git commit"
     }
   }, {
     "group": "5",
@@ -1801,32 +1607,12 @@ export const steps = {
       "answer": "match /users/{userId} {\n  allow read, write:\n    if request.auth != null &&\n       request.auth.uid == userId;\n}"
     }
   }, {
-    "group": "5",
-    "title": "Cloud Ecosystem Architecture Components",
-    "description": "Match Firebase and cloud platform services to their architectural responsibilities.",
-    "isMatchPairs": true,
-    "question": {
-      "questionText": "Match each cloud service to its infrastructure role:",
-      "pairs": [{
-        "left": "Firebase Authentication",
-        "right": "User identity, session management, and OAuth"
-      }, {
-        "left": "Cloud Firestore",
-        "right": "Real-time, scalable NoSQL document database"
-      }, {
-        "left": "Cloud Storage",
-        "right": "Binary media storage for photos, audio, and videos"
-      }, {
-        "left": "Firebase Hosting",
-        "right": "Global edge CDN for fast static asset delivery"
-      }],
-      "choices": ["User identity, session management, and OAuth", "Real-time, scalable NoSQL document database", "Binary media storage for photos, audio, and videos", "Global edge CDN for fast static asset delivery"],
-      "answer": {
-        "Firebase Authentication": "User identity, session management, and OAuth",
-        "Cloud Firestore": "Real-time, scalable NoSQL document database",
-        "Cloud Storage": "Binary media storage for photos, audio, and videos",
-        "Firebase Hosting": "Global edge CDN for fast static asset delivery"
-      }
+    group: "5",
+    title: "Open Response: Frontend Security and Secrets",
+    description: "Explain why server secrets must never be embedded in client-side bundles.",
+    isText: true,
+    question: {
+      questionText: "Why is it dangerous to embed private API keys, database credentials, or secret signing tokens inside client-side frontend code or environment variables?"
     }
   }, {
     "group": "5",
@@ -1849,14 +1635,31 @@ export const steps = {
       "answer": 5
     }
   }, {
-    "group": "5",
-    "title": "Git Feature Branching and Merge Workflow",
-    "description": "Arrange lines to create a feature branch, commit changes, and merge back to main.",
-    "isParsonsProblem": true,
-    "question": {
-      "questionText": "Arrange the Git branching commands in correct workflow order:",
-      "lines": ["git checkout -b feature/auth-flow", "git commit -am 'feat: implement OAuth login'", "git checkout main", "git merge feature/auth-flow"],
-      "answer": ["git checkout -b feature/auth-flow", "git commit -am 'feat: implement OAuth login'", "git checkout main", "git merge feature/auth-flow"]
+    group: "5",
+    title: "Git Branching and Collaboration Actions",
+    description: "Match Git branch management commands with their specific development actions.",
+    isMatchPairs: true,
+    question: {
+      questionText: "Match each Git branch workflow command to its exact operation:",
+      pairs: [{
+        "left": "git checkout -b feature",
+        "right": "Creates and switches to a new feature branch"
+      }, {
+        "left": "git merge feature",
+        "right": "Combines feature branch commits into the current branch"
+      }, {
+        "left": "git branch -d feature",
+        "right": "Deletes a local branch that is already merged"
+      }, {
+        "left": "git pull origin main",
+        "right": "Fetches and merges latest remote commits"
+      }],
+      answer: {
+        "git checkout -b feature": "Creates and switches to a new feature branch",
+        "git merge feature": "Combines feature branch commits into the current branch",
+        "git branch -d feature": "Deletes a local branch that is already merged",
+        "git pull origin main": "Fetches and merges latest remote commits"
+      }
     }
   }, {
     "group": "5",
@@ -2069,7 +1872,10 @@ export const steps = {
     "isCode": true,
     "isTerminal": false,
     "question": {
-      "questionText": "Declara una variable llamada age con el valor 25."
+      "questionText": "Declara una variable llamada age con el valor 25.",
+      starterCode: "// Escribe tu c\xF3digo aqu\xED\n",
+      answer: "let edad = 25;",
+      tests: ["Declara la variable edad con el valor 25"]
     }
   }, {
     "group": "tutorial",
@@ -2146,26 +1952,15 @@ export const steps = {
       }
     }
   }, {
-    "group": "1",
-    "title": "Anatomía de una Función",
-    "description": "Completa la declaración de función con el nombre de la función y su parámetro.",
-    "isFillCodeBlanks": true,
-    "question": {
-      "questionText": "Completa la definición de la función para saludar a cualquier nombre recibido:",
-      "template": "function {{saludar}}({{nombre}}) {\n  return \"Hola, \" + {{nombre}};\n}",
-      "blanks": [{
-        "key": "saludar",
-        "label": "Nombre de Función",
-        "hint": "saludar"
-      }, {
-        "key": "nombre",
-        "label": "Parámetro",
-        "hint": "nombre"
-      }],
-      "answer": {
-        "saludar": "saludar",
-        "nombre": "nombre"
-      }
+    group: "1",
+    title: "Anatom\xEDa de una Declaraci\xF3n de Funci\xF3n",
+    description: "Selecciona la sintaxis correcta para declarar una funci\xF3n con par\xE1metros.",
+    isCodeCompletion: true,
+    question: {
+      questionText: "\xBFQu\xE9 fragmento de c\xF3digo define correctamente el encabezado de la funci\xF3n para recibir el par\xE1metro nombre?",
+      code: "function saludar(nombre) {\n  return 'Hola, ' + nombre;\n}",
+      options: ["function saludar(nombre)", "function saludar()", "def saludar(nombre)", "fun saludar(nombre)"],
+      answer: "function saludar(nombre)"
     }
   }, {
     "group": "1",
@@ -2248,14 +2043,17 @@ export const steps = {
       "answer": ["0", "\"\"", "null", "undefined", "NaN", "false"]
     }
   }, {
-    "group": "1",
-    "title": "Cláusulas de Guarda y Retornos Tempranos",
-    "description": "Localiza la cláusula de guarda que detiene la ejecución ante una entrada inválida.",
-    "isRelevantLine": true,
-    "question": {
-      "questionText": "Selecciona la línea que contiene la condición de guarda que evita pagos negativos inválidos:",
-      "code": "function procesarPago(monto) {\n  if (monto <= 0) {\n    return 'Monto inválido';\n  }\n  return 'Pago de $' + monto + ' aprobado';\n}",
-      "answer": 2
+    group: "1",
+    title: "Cl\xE1usulas de Guarda y Retornos Tempranos",
+    description: "Completa la condici\xF3n de la cl\xE1usula de guarda para detener entradas inv\xE1lidas.",
+    isFillCodeBlanks: true,
+    question: {
+      questionText: "Completa la cl\xE1usula de guarda para retornar temprano si el monto es menor o igual a cero:",
+      template: "function procesarPago(monto) {\n  if (monto {{<=}} {{0}}) {\n    return 'Monto inv\xE1lido';\n  }\n  return 'Aprobado';\n}",
+      answer: {
+        "<=": "<=",
+        "0": "0"
+      }
     }
   }, {
     "group": "1",
@@ -2267,31 +2065,13 @@ export const steps = {
       "questionText": "En un entorno de terminal Bash, ingresa el comando help para descubrir comandos básicos."
     }
   }, {
-    "group": "1",
-    "title": "Sintaxis y Estructura del Bucle For",
-    "description": "Completa la inicialización del contador, el límite y el incremento del bucle.",
-    "isFillCodeBlanks": true,
-    "question": {
-      "questionText": "Completa el bucle for estándar para contar de 0 hasta (sin incluir) 5:",
-      "template": "for (let {{i}} = 0; i < {{5}}; {{i++}}) {\n  console.log(i);\n}",
-      "blanks": [{
-        "key": "i",
-        "label": "Variable Contador",
-        "hint": "i"
-      }, {
-        "key": "5",
-        "label": "Límite del Bucle",
-        "hint": "5"
-      }, {
-        "key": "i++",
-        "label": "Expresión de Incremento",
-        "hint": "i++"
-      }],
-      "answer": {
-        "5": "5",
-        "i": "i",
-        "i++": "i++"
-      }
+    group: "1",
+    title: "Terminaci\xF3n de Ciclos con break",
+    description: "Identifica la palabra clave de control de flujo para salir temprano de ciclos.",
+    isSingleLineText: true,
+    question: {
+      questionText: "\xBFQu\xE9 palabra clave se usa en JavaScript para terminar y salir inmediatamente de un ciclo antes de que su condici\xF3n sea falsa?",
+      answer: "break"
     }
   }, {
     "group": "1",
@@ -2304,14 +2084,15 @@ export const steps = {
       "answer": ["1. Inicializar la variable contador una sola vez", "2. Evaluar la condición del bucle", "3. Ejecutar el bloque de código del cuerpo", "4. Incrementar la expresión del contador"]
     }
   }, {
-    "group": "1",
-    "title": "Patrón Acumulador en Bucles",
-    "description": "Ordena las líneas para acumular una suma a lo largo de varias iteraciones.",
-    "isParsonsProblem": true,
-    "question": {
-      "questionText": "Reordena las líneas para inicializar correctamente un acumulador, sumar los números del 1 al 4 y registrar el resultado:",
-      "lines": ["let total = 0;", "for (let i = 1; i <= 4; i++) {", "  total += i;", "}", "console.log(total);"],
-      "answer": ["let total = 0;", "for (let i = 1; i <= 4; i++) {", "  total += i;", "}", "console.log(total);"]
+    group: "1",
+    title: "Escritura de C\xF3digo: Acumulador de Suma",
+    description: "Escribe una funci\xF3n que recorra un arreglo para calcular su suma total.",
+    isCode: true,
+    question: {
+      questionText: "Escribe una funci\xF3n sumarNumeros(numeros) que recorra un arreglo de n\xFAmeros y devuelva la suma total:",
+      starterCode: "function sumarNumeros(numeros) {\n  let total = 0;\n  for (let n of numeros) {\n    total += n;\n  }\n  return total;\n}",
+      answer: "function sumarNumeros(numeros) {\n  let total = 0;\n  for (let n of numeros) {\n    total += n;\n  }\n  return total;\n}",
+      tests: ["sumarNumeros devuelve un n\xFAmero", "sumarNumeros([1, 2, 3, 4]) es igual a 10"]
     }
   }, {
     "group": "1",
@@ -2376,14 +2157,12 @@ export const steps = {
       "questionText": "En un entorno de terminal bash, crea un directorio llamado app usando el comando make directory."
     }
   }, {
-    "group": "1",
-    "title": "Iterando sobre Arreglos con For...Of",
-    "description": "Selecciona la sintaxis moderna y legible para recorrer directamente los valores de un arreglo.",
-    "isCodeCompletion": true,
-    "question": {
-      "questionText": "¿Qué fragmento de código itera más limpiamente sobre cada elemento de un arreglo productos?",
-      "options": ["for (const producto of productos) {\n  console.log(producto);\n}", "for (const producto in productos) {\n  console.log(producto);\n}", "for (let i = productos; i++;) {\n  console.log(i);\n}", "while (productos.length) {\n  productos.each();\n}"],
-      "answer": "for (const producto of productos) {\n  console.log(producto);\n}"
+    group: "1",
+    title: "Respuesta Abierta: Ciclo For vs For...Of",
+    description: "Explica las diferencias arquitect\xF3nicas entre ciclos con \xEDndice e iterables.",
+    isText: true,
+    question: {
+      questionText: "Explica la diferencia entre iterar un arreglo usando un ciclo for tradicional con \xEDndice vs un ciclo for...of. \xBFCu\xE1ndo se necesita el ciclo con \xEDndice?"
     }
   }, {
     "group": "1",
@@ -2423,31 +2202,15 @@ export const steps = {
       }
     }
   }, {
-    "group": "2",
-    "title": "Creación y Acceso a Objetos",
-    "description": "Completa la definición de un objeto y accede a sus propiedades.",
-    "isFillCodeBlanks": true,
-    "question": {
-      "questionText": "Completa la definición del objeto y accede a la propiedad nombre:",
-      "template": "const usuario = {\n  nombre: \"Alex\",\n  edad: {{28}},\n  esAdmin: {{true}}\n};\nconst nombreUsuario = usuario.{{nombre}};",
-      "blanks": [{
-        "key": "28",
-        "label": "Valor de edad",
-        "hint": "28"
-      }, {
-        "key": "true",
-        "label": "Valor booleano",
-        "hint": "true"
-      }, {
-        "key": "nombre",
-        "label": "Clave de propiedad",
-        "hint": "nombre"
-      }],
-      "answer": {
-        "28": "28",
-        "true": "true",
-        "nombre": "nombre"
-      }
+    group: "2",
+    title: "Escritura de C\xF3digo: F\xE1brica de Objetos",
+    description: "Escribe una funci\xF3n que construya y devuelva un objeto de usuario.",
+    isCode: true,
+    question: {
+      questionText: "Escribe una funci\xF3n crearUsuario(nombre, rol) que devuelva un objeto con nombre, rol y la propiedad isActive en true:",
+      starterCode: "function crearUsuario(nombre, rol) {\n  return {\n    nombre,\n    rol,\n    isActive: true\n  };\n}",
+      answer: "function crearUsuario(nombre, rol) {\n  return {\n    nombre,\n    rol,\n    isActive: true\n  };\n}",
+      tests: ["crearUsuario devuelve un objeto", "crearUsuario('Ana', 'admin').isActive es true"]
     }
   }, {
     "group": "2",
@@ -2504,14 +2267,14 @@ export const steps = {
       "answer": "Se crea un nuevo objeto en memoria, se ejecuta su constructor con 'this' vinculado a la instancia y se devuelve el objeto."
     }
   }, {
-    "group": "2",
-    "title": "Definiendo Métodos en una Clase",
-    "description": "Ordena las líneas para crear una clase con un método de depósito encapsulado.",
-    "isParsonsProblem": true,
-    "question": {
-      "questionText": "Ordena las líneas para definir la clase CuentaBancaria con el método depositar:",
-      "lines": ["class CuentaBancaria {", "  constructor(saldo) {", "    this.saldo = saldo;", "  }", "  depositar(monto) {", "    this.saldo += monto;", "  }", "}"],
-      "answer": ["class CuentaBancaria {", "  constructor(saldo) {", "    this.saldo = saldo;", "  }", "  depositar(monto) {", "    this.saldo += monto;", "  }", "}"]
+    group: "2",
+    title: "Ciclo de Ejecuci\xF3n de Clases y M\xE9todos",
+    description: "Ordena las fases cronol\xF3gicas para definir y usar instancias de clases.",
+    isSelectOrder: true,
+    question: {
+      questionText: "Ordena las fases para definir y usar una instancia de clase en orden cronol\xF3gico de ejecuci\xF3n:",
+      options: ["Definir el modelo de la clase con constructor y m\xE9todos", "Instanciar el objeto usando new NombreClase(args)", "El constructor inicializa las propiedades en this", "Invocar el m\xE9todo de la instancia (ej. usuario.obtenerDetalles())"],
+      answer: ["Definir el modelo de la clase con constructor y m\xE9todos", "Instanciar el objeto usando new NombreClase(args)", "El constructor inicializa las propiedades en this", "Invocar el m\xE9todo de la instancia (ej. usuario.obtenerDetalles())"]
     }
   }, {
     "group": "2",
@@ -2534,14 +2297,13 @@ export const steps = {
       "answer": "const nombres = usuarios\n  .filter((u) => u.estaActivo)\n  .map((u) => u.nombre);"
     }
   }, {
-    "group": "2",
-    "title": "Modelado de Datos con Arreglos de Objetos",
-    "description": "Representa listas de registros utilizando un arreglo de objetos estructurados.",
-    "isCodeCompletion": true,
-    "question": {
-      "questionText": "¿Qué fragmento de código modela correctamente una lista de usuarios como un arreglo de objetos?",
-      "options": ["const usuarios = [\n  {\n    id: 1,\n    nombre: \"Alice\",\n    rol: \"admin\"\n  },\n  {\n    id: 2,\n    nombre: \"Bob\",\n    rol: \"miembro\"\n  }\n];", "const usuarios = {\n  id: 1,\n  nombre: \"Alice\",\n  rol: \"admin\",\n  id: 2,\n  nombre: \"Bob\",\n  rol: \"miembro\"\n};", "const usuarios =\n  \"id: 1, nombre: Alice; id: 2, nombre: Bob\";", "const usuarios = [\n  1, \"Alice\", \"admin\",\n  2, \"Bob\", \"miembro\"\n];"],
-      "answer": "const usuarios = [\n  {\n    id: 1,\n    nombre: \"Alice\",\n    rol: \"admin\"\n  },\n  {\n    id: 2,\n    nombre: \"Bob\",\n    rol: \"miembro\"\n  }\n];"
+    group: "2",
+    title: "Respuesta Corta: M\xE9todo de Filtrado en Arreglos",
+    description: "Identifica el m\xE9todo de arreglos para filtrar elementos con un predicado.",
+    isSingleLineText: true,
+    question: {
+      questionText: "\xBFQu\xE9 m\xE9todo nativo de arreglos en JavaScript devuelve un nuevo arreglo con todos los elementos que cumplen con una funci\xF3n de prueba?",
+      answer: "filter"
     }
   }, {
     "group": "2",
@@ -2575,42 +2337,23 @@ export const steps = {
       "answer": ["class Empleado extends Persona {", "  constructor(nombre, puesto) {", "    super(nombre);", "    this.puesto = puesto;", "  }", "}"]
     }
   }, {
-    "group": "2",
-    "title": "Estructuras de Modelado y Casos de Uso",
-    "description": "Relaciona cada estructura de datos con su propósito principal.",
-    "isMatchPairs": true,
-    "question": {
-      "questionText": "Relaciona cada estructura de datos con su caso de uso ideal:",
-      "pairs": [{
-        "left": "Literal de Objeto {}",
-        "right": "Agrupar propiedades relacionadas de una sola entidad"
-      }, {
-        "left": "Arreglo de Objetos [{}, {}]",
-        "right": "Almacenar listas de registros como productos o usuarios"
-      }, {
-        "left": "Plano de Clase",
-        "right": "Instanciar objetos reutilizables con métodos compartidos"
-      }, {
-        "left": "Cadena JSON",
-        "right": "Transmitir datos estructurados a través de solicitudes de red HTTP"
-      }],
-      "choices": ["Agrupar propiedades relacionadas de una sola entidad", "Almacenar listas de registros como productos o usuarios", "Instanciar objetos reutilizables con métodos compartidos", "Transmitir datos estructurados a través de solicitudes de red HTTP"],
-      "answer": {
-        "Literal de Objeto {}": "Agrupar propiedades relacionadas de una sola entidad",
-        "Arreglo de Objetos [{}, {}]": "Almacenar listas de registros como productos o usuarios",
-        "Plano de Clase": "Instanciar objetos reutilizables con métodos compartidos",
-        "Cadena JSON": "Transmitir datos estructurados a través de solicitudes de red HTTP"
-      }
+    group: "2",
+    title: "Respuesta Abierta: Inmutabilidad en JavaScript",
+    description: "Explica por qu\xE9 evitar la mutaci\xF3n directa de objetos es cr\xEDtico.",
+    isText: true,
+    question: {
+      questionText: "\xBFPor qu\xE9 es importante la inmutabilidad al modificar objetos o arreglos en aplicaciones de JavaScript? Explica qu\xE9 problemas genera la mutaci\xF3n directa."
     }
   }, {
-    "group": "2",
-    "title": "Localizando Acceso Anidado No Seguro",
-    "description": "Encuentra la línea donde acceder a una propiedad de undefined provoca un error en tiempo de ejecución.",
-    "isRelevantLine": true,
-    "question": {
-      "questionText": "Selecciona la línea donde intentar leer ciudad desde una direccion indefinida lanza un TypeError:",
-      "code": "const usuario = { nombre: 'Alex' };\nconsole.log(usuario.nombre);\nconst ciudad = usuario.direccion.ciudad;\nconsole.log(ciudad);",
-      "answer": 3
+    group: "2",
+    title: "Encadenamiento Opcional para Acceso Seguro a Propiedades",
+    description: "Selecciona el operador que lee propiedades anidadas de forma segura.",
+    isCodeCompletion: true,
+    question: {
+      questionText: "\xBFQu\xE9 operador accede de forma segura a propiedades anidadas cuando una propiedad intermedia puede ser null o undefined?",
+      code: "const ciudad = usuario?.perfil?.direccion?.ciudad;",
+      options: ["?.", "??", "||", "&&"],
+      answer: "?."
     }
   }, {
     "group": "2",
@@ -2713,14 +2456,17 @@ export const steps = {
       "tests": ["Incluye la barra de autocierre />", "Componente JSX válido"]
     }
   }, {
-    "group": "3",
-    "title": "Ensamblando Marcado de Tarjeta",
-    "description": "Reordena las líneas de JSX para formar una tarjeta de producto estructurada.",
-    "isParsonsProblem": true,
-    "question": {
-      "questionText": "Ordena las líneas de JSX en un componente de tarjeta adecuadamente anidado:",
-      "lines": ["<article className=\"card\">", "  <img src=\"item.jpg\" alt=\"Item\" />", "  <div className=\"card-body\">", "    <h3>Audífonos Pro</h3>", "    <p>$199.99</p>", "  </div>", "</article>"],
-      "answer": ["<article className=\"card\">", "  <img src=\"item.jpg\" alt=\"Item\" />", "  <div className=\"card-body\">", "    <h3>Audífonos Pro</h3>", "    <p>$199.99</p>", "  </div>", "</article>"]
+    group: "3",
+    title: "Estructura de Tarjeta en JSX",
+    description: "Completa las etiquetas sem\xE1nticas para crear una tarjeta de producto interactiva.",
+    isFillCodeBlanks: true,
+    question: {
+      questionText: "Completa los elementos sem\xE1nticos de HTML/JSX para armar el componente de tarjeta de producto:",
+      template: "<article className=\"tarjeta\">\n  <{{h2}}>T\xEDtulo del Producto</{{h2}}>\n  <p>Descripci\xF3n del Producto</p>\n  <{{button}}>Comprar Ahora</{{button}}>\n</article>",
+      answer: {
+        "h2": "h2",
+        "button": "button"
+      }
     }
   }, {
     "group": "3",
@@ -2761,24 +2507,23 @@ export const steps = {
       }
     }
   }, {
-    "group": "3",
-    "title": "Unidades Responsivas en CSS con clamp()",
-    "description": "Selecciona el bloque CSS que escala la tipografía de forma fluida.",
-    "isCodeCompletion": true,
-    "question": {
-      "questionText": "¿Qué bloque CSS escala la tipografía de forma fluida entre 16px y 24px según la pantalla?",
-      "options": ["h1 {\n  font-size: clamp(\n    1rem,\n    2.5vw,\n    1.5rem\n  );\n}", "h1 {\n  font-size: 20px;\n}", "h1 {\n  font-size: 100%;\n}", "h1 {\n  font-size: scale(1.5);\n}"],
-      "answer": "h1 {\n  font-size: clamp(\n    1rem,\n    2.5vw,\n    1.5rem\n  );\n}"
+    group: "3",
+    title: "Respuesta Corta: Funci\xF3n de Dimensionamiento Fluido en CSS",
+    description: "Identifica la funci\xF3n matem\xE1tica de CSS para dise\xF1o responsivo fluido.",
+    isSingleLineText: true,
+    question: {
+      questionText: "\xBFQu\xE9 funci\xF3n matem\xE1tica de CSS acepta un valor m\xEDnimo, preferido y m\xE1ximo para lograr tama\xF1os fluidos sin media queries?",
+      answer: "clamp()"
     }
   }, {
-    "group": "3",
-    "title": "Identificando Desbordamiento de Diseño",
-    "description": "Localiza el ancho fijo que provoca desbordamiento horizontal en móviles.",
-    "isRelevantLine": true,
-    "question": {
-      "questionText": "Selecciona la línea con el ancho rígido en píxeles que rompe el diseño responsivo en móviles:",
-      "code": ".container {\n  display: flex;\n  width: 1200px;\n  padding: 16px;\n  box-sizing: border-box;\n}",
-      "answer": 3
+    group: "3",
+    title: "Reglas de Desbordamiento y Tama\xF1o en CSS",
+    description: "Selecciona todas las t\xE9cnicas v\xE1lidas para evitar desbordamientos horizontales.",
+    isMultipleAnswerChoice: true,
+    question: {
+      questionText: "\xBFQu\xE9 t\xE9cnicas ayudan a prevenir desbordamientos horizontales no deseados en pantallas m\xF3viles?",
+      options: ["Usar box-sizing: border-box globalmente en todos los elementos", "Usar max-width: 100% en im\xE1genes y contenedores multimedia", "Evitar anchos fijos grandes en p\xEDxeles (usar porcentajes, flex o rem)", "Colocar min-width: 2000px en todos los contenedores"],
+      answer: ["Usar box-sizing: border-box globalmente en todos los elementos", "Usar max-width: 100% en im\xE1genes y contenedores multimedia", "Evitar anchos fijos grandes en p\xEDxeles (usar porcentajes, flex o rem)"]
     }
   }, {
     "group": "3",
@@ -2791,16 +2536,15 @@ export const steps = {
       "answer": [".navbar {", "  display: flex;", "  justify-content: space-between;", "  align-items: center;", "  padding: 12px 24px;", "}"]
     }
   }, {
-    "group": "3",
-    "title": "Vinculación de Entrada Controlada",
-    "description": "Vincula el estado de React y el evento onChange para crear un campo de texto controlado.",
-    "showPreview": true,
-    "isCodeCompletion": true,
-    "question": {
-      "questionText": "¿Qué elemento input establece correctamente un enlace bidireccional con el estado de React?",
-      "previewCode": "function Demo() {\n  const [val, setVal] = React.useState('Escribe aquí...');\n  return (\n    <div style={{ padding: 16 }}>\n      <input\n        value={val}\n        onChange={e => setVal(e.target.value)}\n        style={{ padding: 8, borderRadius: 6, border: '1px solid #ccc', width: '100%' }}\n      />\n      <p style={{ marginTop: 8, color: '#666' }}>Salida: {val}</p>\n    </div>\n  );\n}",
-      "options": ["<input\n  value={query}\n  onChange={(e) =>\n    setQuery(e.target.value)\n  }\n/>", "<input\n  defaultValue={query}\n  onBlur={() => query}\n/>", "<input\n  value=\"query\"\n  onChange={setQuery}\n/>", "<input\n  state={query}\n  set={setQuery}\n/>"],
-      "answer": "<input\n  value={query}\n  onChange={(e) =>\n    setQuery(e.target.value)\n  }\n/>"
+    group: "3",
+    title: "Escritura de C\xF3digo: Input Controlado en React",
+    description: "Escribe un componente funcional de React que renderice un input controlado.",
+    isCode: true,
+    question: {
+      questionText: "Escribe un componente SearchInput({ query, setQuery }) que enlace value y onChange para controlar un input:",
+      starterCode: "function SearchInput({ query, setQuery }) {\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      placeholder=\"Buscar...\"\n    />\n  );\n}",
+      answer: "function SearchInput({ query, setQuery }) {\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      placeholder=\"Buscar...\"\n    />\n  );\n}",
+      tests: ["Renderiza un elemento input", "Enlaza value a query y actualiza mediante onChange"]
     }
   }, {
     "group": "3",
@@ -2836,26 +2580,15 @@ export const steps = {
       "tests": ["Utiliza useState('') para el nombre", "Vincula value y onChange al input"]
     }
   }, {
-    "group": "3",
-    "title": "Manejo de Formularios con Múltiples Campos",
-    "description": "Actualiza dinámicamente un objeto de estado usando nombres de propiedades computados.",
-    "isFillCodeBlanks": true,
-    "question": {
-      "questionText": "Completa el controlador handleChange genérico para formularios con varios campos:",
-      "template": "const handleChange = (e) => {\n  const { name, value } = e.{{target}};\n  setForm(prev => ({ ...prev, [{{name}}]: value }));\n};",
-      "blanks": [{
-        "key": "target",
-        "label": "Elemento objetivo del evento",
-        "hint": "target"
-      }, {
-        "key": "name",
-        "label": "Variable de clave computada",
-        "hint": "name"
-      }],
-      "answer": {
-        "target": "target",
-        "name": "name"
-      }
+    group: "3",
+    title: "Escritura de C\xF3digo: Actualizador Inmutable de Estado",
+    description: "Escribe una funci\xF3n auxiliar para actualizar campos de formulario de forma inmutable.",
+    isCode: true,
+    question: {
+      questionText: "Escribe una funci\xF3n actualizarCampo(formulario, campo, valor) que devuelva un nuevo objeto con el campo actualizado de forma inmutable:",
+      starterCode: "function actualizarCampo(formulario, campo, valor) {\n  return {\n    ...formulario,\n    [campo]: valor\n  };\n}",
+      answer: "function actualizarCampo(formulario, campo, valor) {\n  return {\n    ...formulario,\n    [campo]: valor\n  };\n}",
+      tests: ["Devuelve un nuevo objeto sin mutar el original", "Actualiza la clave din\xE1mica correctamente"]
     }
   }, {
     "group": "3",
@@ -2929,14 +2662,12 @@ export const steps = {
       "answer": "Una función JavaScript que acepta props y devuelve JSX describiendo lo que debe aparecer en pantalla."
     }
   }, {
-    "group": "3",
-    "title": "Conceptos Fundamentales de React",
-    "description": "Selecciona los principios fundamentales de la arquitectura basada en componentes.",
-    "isMultipleAnswerChoice": true,
-    "question": {
-      "questionText": "Selecciona todas las afirmaciones verdaderas sobre la arquitectura de React:",
-      "options": ["La interfaz de usuario se expresa como una función pura de estado y props", "React utiliza un Virtual DOM para minimizar mutaciones costosas en el DOM real", "Los componentes pueden componerse jerárquicamente como bloques de construcción", "Mutar directamente document.getElementById es la forma recomendada de actualizar la UI", "Los componentes de React no pueden aceptar ningún argumento"],
-      "answer": ["La interfaz de usuario se expresa como una función pura de estado y props", "React utiliza un Virtual DOM para minimizar mutaciones costosas en el DOM real", "Los componentes pueden componerse jerárquicamente como bloques de construcción"]
+    group: "3",
+    title: "Respuesta Abierta: Virtual DOM y Reconciliaci\xF3n",
+    description: "Explica c\xF3mo React optimiza el renderizado usando el Virtual DOM.",
+    isText: true,
+    question: {
+      questionText: "Explica c\xF3mo el algoritmo de reconciliaci\xF3n y el Virtual DOM de React optimizan los cambios en el DOM real. \xBFPor qu\xE9 es m\xE1s eficiente?"
     }
   }, {
     "group": "3",
@@ -2971,59 +2702,21 @@ export const steps = {
       "answer": "Para proporcionar un comportamiento y propiedades coherentes en todos los navegadores web."
     }
   }, {
-    "group": "3",
-    "title": "Gestión de Estado con el Hook useState",
-    "description": "Inicializa el estado y desempaqueta el valor y la función actualizadora.",
-    "isFillCodeBlanks": true,
-    "question": {
-      "questionText": "Completa la declaración de useState inicializada en 0:",
-      "template": "const [contador, {{setContador}}] = {{useState}}({{0}});",
-      "blanks": [{
-        "key": "setContador",
-        "label": "Función actualizadora de estado",
-        "hint": "setContador"
-      }, {
-        "key": "useState",
-        "label": "Nombre del hook de React",
-        "hint": "useState"
-      }, {
-        "key": "0",
-        "label": "Valor inicial",
-        "hint": "0"
-      }],
-      "answer": {
-        "0": "0",
-        "setContador": "setContador",
-        "useState": "useState"
-      }
+    group: "3",
+    title: "Respuesta Corta: Hook de Estado en React",
+    description: "Identifica el hook principal para manejo de estado en componentes funcionales.",
+    isSingleLineText: true,
+    question: {
+      questionText: "\xBFCu\xE1l es el nombre del hook est\xE1ndar de React utilizado para declarar y actualizar variables de estado local en componentes funcionales?",
+      answer: "useState"
     }
   }, {
-    "group": "3",
-    "title": "Props vs Estado vs Children",
-    "description": "Relaciona los conceptos de comunicación de datos en React con su función arquitectónica.",
-    "isMatchPairs": true,
-    "question": {
-      "questionText": "Relaciona cada concepto de React con su rol en el flujo de datos:",
-      "pairs": [{
-        "left": "Props",
-        "right": "Datos de solo lectura pasados hacia abajo desde un componente padre"
-      }, {
-        "left": "Estado",
-        "right": "Datos locales mutables gestionados internamente por el componente"
-      }, {
-        "left": "props.children",
-        "right": "Elementos anidados pasados dentro de las etiquetas de apertura y cierre"
-      }, {
-        "left": "Callbacks de Eventos",
-        "right": "Funciones pasadas hacia abajo para que los hijos notifiquen acciones al padre"
-      }],
-      "choices": ["Datos de solo lectura pasados hacia abajo desde un componente padre", "Datos locales mutables gestionados internamente por el componente", "Elementos anidados pasados dentro de las etiquetas de apertura y cierre", "Funciones pasadas hacia abajo para que los hijos notifiquen acciones al padre"],
-      "answer": {
-        "Props": "Datos de solo lectura pasados hacia abajo desde un componente padre",
-        "Estado": "Datos locales mutables gestionados internamente por el componente",
-        "props.children": "Elementos anidados pasados dentro de las etiquetas de apertura y cierre",
-        "Callbacks de Eventos": "Funciones pasadas hacia abajo para que los hijos notifiquen acciones al padre"
-      }
+    group: "3",
+    title: "Respuesta Abierta: Props vs Estado en React",
+    description: "Explica la diferencia entre props y estado en la arquitectura de componentes.",
+    isText: true,
+    question: {
+      questionText: "Explica las diferencias fundamentales entre props y state en React. \xBFC\xF3mo fluyen los datos entre componentes padre e hijo?"
     }
   }, {
     "group": "3",
@@ -3105,14 +2798,12 @@ export const steps = {
       "tests": ["Define const [consulta, setConsulta] en PaginaBusqueda", "Pasa la consulta a ResultadosBusqueda"]
     }
   }, {
-    "group": "3",
-    "title": "Efectos Secundarios en React",
-    "description": "Reconoce qué constituye un efecto secundario en aplicaciones frontend.",
-    "isMultipleChoice": true,
-    "question": {
-      "questionText": "¿Cuál de los siguientes es considerado un 'efecto secundario' en un componente de React?",
-      "options": ["Obtener datos de una API externa o configurar un temporizador en el navegador.", "Calcular la suma de dos números dentro de JSX.", "Devolver un elemento <h1> desde la función del componente.", "Pasar una prop de texto a un componente hijo."],
-      "answer": "Obtener datos de una API externa o configurar un temporizador en el navegador."
+    group: "3",
+    title: "Respuesta Abierta: Efectos Secundarios y useEffect",
+    description: "Explica qu\xE9 es un efecto secundario y por qu\xE9 se requiere useEffect.",
+    isText: true,
+    question: {
+      questionText: "\xBFQu\xE9 es un efecto secundario en React y por qu\xE9 operaciones como peticiones a APIs, suscripciones o temporizadores deben ir dentro de useEffect?"
     }
   }, {
     "group": "3",
@@ -3166,15 +2857,16 @@ export const steps = {
       "tests": ["Define la función useFetch(url)", "Devuelve el estado de datos obtenidos"]
     }
   }, {
-    "group": "3",
-    "title": "Corrigiendo Bucle Infinito de Renderizado en useEffect",
-    "description": "Agrega el arreglo de dependencias para evitar que el efecto se ejecute en cada render.",
-    "isFixBug": true,
-    "question": {
-      "questionText": "Corrige el hook useEffect para que solo se ejecute una vez en el montaje en lugar de ciclar infinitamente:",
-      "starterCode": "function Temporizador() {\n  const [segundos, setSegundos] = useState(0);\n  useEffect(() => {\n    setSegundos(s => s + 1);\n  });\n  return <div>{segundos}</div>;\n}",
-      "answer": "function Temporizador() {\n  const [segundos, setSegundos] = useState(0);\n  useEffect(() => {\n    setSegundos(s => s + 1);\n  }, []);\n  return <div>{segundos}</div>;\n}",
-      "tests": ["Agrega el arreglo de dependencias vacío []", "Evita el bucle infinito de re-renderizado"]
+    group: "3",
+    title: "Configuraci\xF3n del Arreglo de Dependencias en useEffect",
+    description: "Completa el arreglo de dependencias para evitar ciclos infinitos de re-renderizado.",
+    isFillCodeBlanks: true,
+    question: {
+      questionText: "Completa el arreglo de dependencias vac\xEDo para asegurar que el efecto se ejecute solo una vez al montar el componente:",
+      template: "useEffect(() => {\n  obtenerDatos();\n}, {{[]}});",
+      answer: {
+        "[]": "[]"
+      }
     }
   }, {
     "group": "3",
@@ -3207,14 +2899,13 @@ export const steps = {
       "answer": 5
     }
   }, {
-    "group": "3",
-    "title": "Patrón de Extracción de Custom Hooks",
-    "description": "Extrae lógica de estado reutilizable del ancho de ventana en un hook personalizado.",
-    "isCodeCompletion": true,
-    "question": {
-      "questionText": "¿Qué firma define correctamente un custom hook que devuelve las dimensiones de la ventana?",
-      "options": ["function useWindowSize() {\n  const [size, setSize] = useState(window.innerWidth);\n  return size;\n}", "class useWindowSize {\n  constructor() { return window.innerWidth; }\n}", "const useWindowSize = (width) => {\n  return <width />;\n};", "function getWindowSize() {\n  return useState(100);\n}"],
-      "answer": "function useWindowSize() {\n  const [size, setSize] = useState(window.innerWidth);\n  return size;\n}"
+    group: "3",
+    title: "Respuesta Corta: Convenci\xF3n de Nombre para Hooks Personalizados",
+    description: "Identifica el prefijo obligatorio para hooks personalizados en React.",
+    isSingleLineText: true,
+    question: {
+      questionText: "\xBFCon qu\xE9 prefijo de dos letras debe comenzar el nombre de cualquier hook personalizado en React por convenci\xF3n (ej. useWindowSize)?",
+      answer: "use"
     }
   }, {
     "group": "3",
@@ -3249,14 +2940,15 @@ export const steps = {
       "tests": ["Utiliza la bandera let isMounted = true", "Limpia con isMounted = false"]
     }
   }, {
-    "group": "3",
-    "title": "Construyendo un Panel Interactivo con Filtros",
-    "description": "Ensambla un panel reactivo con filtros de búsqueda y categoría.",
-    "isCodeCompletion": true,
-    "question": {
-      "questionText": "¿Qué patrón combina búsqueda, filtrado por categoría y conteo reactivo?",
-      "options": ["const filtrados = items\n  .filter(i => categoria === 'todos' || i.categoria === categoria)\n  .filter(i => i.titulo.toLowerCase().includes(query.toLowerCase()));", "const filtrados = items.push(query);", "const filtrados = items.sort(categoria);", "const filtrados = items.map(query);"],
-      "answer": "const filtrados = items\n  .filter(i => categoria === 'todos' || i.categoria === categoria)\n  .filter(i => i.titulo.toLowerCase().includes(query.toLowerCase()));"
+    group: "3",
+    title: "Escritura de C\xF3digo: Filtrado y Transformaci\xF3n de Datos",
+    description: "Escribe una funci\xF3n que filtre usuarios activos y obtenga sus nombres.",
+    isCode: true,
+    question: {
+      questionText: "Escribe una funci\xF3n obtenerNombresActivos(usuarios) que filtre los usuarios donde isActive sea true y devuelva un arreglo con sus nombres:",
+      starterCode: "function obtenerNombresActivos(usuarios) {\n  return usuarios\n    .filter((u) => u.isActive)\n    .map((u) => u.nombre || u.name);\n}",
+      answer: "function obtenerNombresActivos(usuarios) {\n  return usuarios\n    .filter((u) => u.isActive)\n    .map((u) => u.nombre || u.name);\n}",
+      tests: ["Filtra los usuarios inactivos", "Devuelve un arreglo con los nombres"]
     }
   }, {
     "group": "3",
@@ -3308,36 +3000,13 @@ export const steps = {
       }
     }
   }, {
-    "group": "4",
-    "title": "Categorización de Códigos de Estado HTTP",
-    "description": "Relaciona los códigos de estado de respuesta HTTP con sus significados.",
-    "isMatchPairs": true,
-    "question": {
-      "questionText": "Relaciona cada código de estado HTTP con su significado estándar:",
-      "pairs": [{
-        "left": "200 OK / 201 Created",
-        "right": "La solicitud tuvo éxito y el recurso fue recuperado o creado"
-      }, {
-        "left": "400 Bad Request",
-        "right": "El cliente envió parámetros inválidos o JSON mal formado"
-      }, {
-        "left": "401 Unauthorized / 403 Forbidden",
-        "right": "Se requiere autenticación o permisos denegados"
-      }, {
-        "left": "404 Not Found",
-        "right": "El endpoint o recurso solicitado no existe"
-      }, {
-        "left": "500 Internal Server Error",
-        "right": "Ocurrió una excepción no controlada en el servidor"
-      }],
-      "choices": ["La solicitud tuvo éxito y el recurso fue recuperado o creado", "El cliente envió parámetros inválidos o JSON mal formado", "Se requiere autenticación o permisos denegados", "El endpoint o recurso solicitado no existe", "Ocurrió una excepción no controlada en el servidor"],
-      "answer": {
-        "200 OK / 201 Created": "La solicitud tuvo éxito y el recurso fue recuperado o creado",
-        "400 Bad Request": "El cliente envió parámetros inválidos o JSON mal formado",
-        "401 Unauthorized / 403 Forbidden": "Se requiere autenticación o permisos denegados",
-        "404 Not Found": "El endpoint o recurso solicitado no existe",
-        "500 Internal Server Error": "Ocurrió una excepción no controlada en el servidor"
-      }
+    group: "4",
+    title: "Respuesta Corta: C\xF3digo de Estado HTTP No Encontrado",
+    description: "Identifica el c\xF3digo de estado HTTP est\xE1ndar para recursos no encontrados.",
+    isSingleLineText: true,
+    question: {
+      questionText: "\xBFQu\xE9 c\xF3digo de estado HTTP de 3 d\xEDgitos indica que el recurso o endpoint solicitado no fue encontrado en el servidor?",
+      answer: "404"
     }
   }, {
     "group": "4",
@@ -3360,26 +3029,15 @@ export const steps = {
       "answer": ["async function getUsuario(id) {", "  const res = await fetch(`/usuarios/${id}`);", "  if (!res.ok) throw new Error('Error');", "  const data = await res.json();", "  return data;", "}"]
     }
   }, {
-    "group": "4",
-    "title": "Definición de Rutas RESTful en Express.js",
-    "description": "Completa una ruta en Express que responda con un JSON.",
-    "isFillCodeBlanks": true,
-    "question": {
-      "questionText": "Completa la ruta en Express para manejar solicitudes GET en '/api/publicaciones':",
-      "template": "app.{{get}}(\"/api/publicaciones\", async (req, res) => {\n  res.{{json}}({\n    publicaciones: []\n  });\n});",
-      "blanks": [{
-        "key": "get",
-        "label": "Método HTTP",
-        "hint": "get"
-      }, {
-        "key": "json",
-        "label": "Método de respuesta JSON",
-        "hint": "json"
-      }],
-      "answer": {
-        "get": "get",
-        "json": "json"
-      }
+    group: "4",
+    title: "Escritura de C\xF3digo: Ruta API de Verificaci\xF3n de Estado",
+    description: "Escribe una ruta GET en Express que responda con JSON de estado.",
+    isCode: true,
+    question: {
+      questionText: "Escribe una funci\xF3n registrarRutaSalud(app) que registre una ruta GET en '/api/health' respondiendo con status 200 y JSON { status: 'healthy' }:",
+      starterCode: "function registrarRutaSalud(app) {\n  app.get('/api/health', (req, res) => {\n    res.status(200).json({\n      status: 'healthy'\n    });\n  });\n}",
+      answer: "function registrarRutaSalud(app) {\n  app.get('/api/health', (req, res) => {\n    res.status(200).json({\n      status: 'healthy'\n    });\n  });\n}",
+      tests: ["Registra GET /api/health", "Responde con status 200 y JSON correcto"]
     }
   }, {
     "group": "4",
@@ -3399,8 +3057,8 @@ export const steps = {
         "hint": "201"
       }],
       "answer": {
-        "201": "201",
-        "body": "body"
+        "body": "body",
+        "201": "201"
       }
     }
   }, {
@@ -3426,32 +3084,12 @@ export const steps = {
       "tests": ["Utiliza la sintaxis async/await", "Devuelve directamente el objeto usuario resuelto"]
     }
   }, {
-    "group": "4",
-    "title": "Bases de Datos Relacionales (SQL) vs Documentales (NoSQL)",
-    "description": "Relaciona los paradigmas de bases de datos con sus modelos arquitectónicos.",
-    "isMatchPairs": true,
-    "question": {
-      "questionText": "Relaciona cada paradigma de base de datos con su modelo arquitectónico:",
-      "pairs": [{
-        "left": "Relacional (SQL)",
-        "right": "Esquemas estrictos con tablas, filas, claves foráneas y JOINs"
-      }, {
-        "left": "Documental (NoSQL)",
-        "right": "Documentos flexibles tipo JSON agrupados en colecciones"
-      }, {
-        "left": "Clave Primaria",
-        "right": "Identificador único para un registro en una tabla"
-      }, {
-        "left": "Clave Foránea",
-        "right": "Referencia que vincula una fila hija con una tabla padre"
-      }],
-      "choices": ["Esquemas estrictos con tablas, filas, claves foráneas y JOINs", "Documentos flexibles tipo JSON agrupados en colecciones", "Identificador único para un registro en una tabla", "Referencia que vincula una fila hija con una tabla padre"],
-      "answer": {
-        "Relacional (SQL)": "Esquemas estrictos con tablas, filas, claves foráneas y JOINs",
-        "Documental (NoSQL)": "Documentos flexibles tipo JSON agrupados en colecciones",
-        "Primary Key": "Identificador único para un registro en una tabla",
-        "Clave Foránea": "Referencia que vincula una fila hija con una tabla padre"
-      }
+    group: "4",
+    title: "Respuesta Abierta: Arquitectura SQL vs NoSQL",
+    description: "Compara tablas relacionales y bases de datos documentales.",
+    isText: true,
+    question: {
+      questionText: "Compara bases de datos relacionales (SQL) con bases de datos documentales (NoSQL) como Firestore. \xBFEn qu\xE9 escenarios es preferible un esquema NoSQL flexible?"
     }
   }, {
     "group": "4",
@@ -3495,15 +3133,16 @@ export const steps = {
       "tests": ["Devuelve estado 404 cuando usuario es null", "Envía el mensaje de error correspondiente"]
     }
   }, {
-    "group": "4",
-    "title": "Refactorizando Secretos a Variables de Entorno",
-    "description": "Reemplaza claves API hardcodeadas por referencias a process.env.",
-    "isRefactoringChallenge": true,
-    "question": {
-      "questionText": "Refactoriza el secreto JWT para leerlo desde process.env.JWT_SECRET:",
-      "starterCode": "function generarToken(usuario) {\n  return jwt.sign(\n    usuario,\n    'clave-super-secreta-12345'\n  );\n}",
-      "answer": "function generarToken(usuario) {\n  return jwt.sign(\n    usuario,\n    process.env.JWT_SECRET\n  );\n}",
-      "tests": ["Utiliza process.env.JWT_SECRET", "Elimina la clave hardcodeada"]
+    group: "4",
+    title: "Variables de Entorno en la Firma de JWT",
+    description: "Completa la referencia a la variable de entorno para firmar el token JWT.",
+    isFillCodeBlanks: true,
+    question: {
+      questionText: "Completa la referencia a process.env para cargar la clave secreta din\xE1micamente sin dejarla en texto plano:",
+      template: "function generarToken(usuario) {\n  return jwt.sign(\n    usuario,\n    {{process.env.JWT_SECRET}}\n  );\n}",
+      answer: {
+        "process.env.JWT_SECRET": "process.env.JWT_SECRET"
+      }
     }
   }, {
     "group": "4",
@@ -3595,54 +3234,24 @@ export const steps = {
       "answer": "Serverless abstrae el aprovisionamiento de servidores, el balanceo de carga y parches del SO, escalando automáticamente por solicitud."
     }
   }, {
-    "group": "5",
-    "title": "Configuración de Scripts en package.json",
-    "description": "Configura los scripts de compilación y servidor dev en package.json.",
-    "isFillCodeBlanks": true,
-    "question": {
-      "questionText": "Completa el bloque de scripts npm para una aplicación moderna con Vite + React:",
-      "template": "{\n  \"scripts\": {\n    \"dev\": \"{{vite}}\",\n    \"build\": \"{{vite build}}\"\n  }\n}",
-      "blanks": [{
-        "key": "vite",
-        "label": "Comando del servidor dev",
-        "hint": "vite"
-      }, {
-        "key": "vite build",
-        "label": "Comando de compilación",
-        "hint": "vite build"
-      }],
-      "answer": {
-        "vite": "vite",
-        "vite build": "vite build"
-      }
+    group: "5",
+    title: "Escritura de C\xF3digo: Cargador de Variables de Entorno",
+    description: "Escribe una funci\xF3n auxiliar para extraer configuraci\xF3n de process.env con valores por defecto.",
+    isCode: true,
+    question: {
+      questionText: "Escribe una funci\xF3n obtenerConfigBD() que extraiga DB_HOST y DB_PORT de process.env con valores por defecto ('localhost' y 5432):",
+      starterCode: "function obtenerConfigBD() {\n  return {\n    host: process.env.DB_HOST || 'localhost',\n    port: Number(process.env.DB_PORT) || 5432\n  };\n}",
+      answer: "function obtenerConfigBD() {\n  return {\n    host: process.env.DB_HOST || 'localhost',\n    port: Number(process.env.DB_PORT) || 5432\n  };\n}",
+      tests: ["Devuelve claves host y port", "Aplica valores por defecto si no existen las variables"]
     }
   }, {
-    "group": "5",
-    "title": "Comandos Principales de Control de Versiones con Git",
-    "description": "Relaciona los comandos de Git con sus operaciones de repositorio.",
-    "isMatchPairs": true,
-    "question": {
-      "questionText": "Relaciona cada comando de Git con su acción en el repositorio:",
-      "pairs": [{
-        "left": "git status",
-        "right": "Muestra archivos modificados, preparados y sin seguimiento"
-      }, {
-        "left": "git add .",
-        "right": "Prepara todos los archivos modificados para el siguiente commit"
-      }, {
-        "left": "git commit -m \"msg\"",
-        "right": "Guarda una instantánea de los cambios en el historial"
-      }, {
-        "left": "git push origin main",
-        "right": "Sube los commits locales al repositorio remoto de GitHub"
-      }],
-      "choices": ["Muestra archivos modificados, preparados y sin seguimiento", "Prepara todos los archivos modificados para el siguiente commit", "Guarda una instantánea de los cambios en el historial", "Sube los commits locales al repositorio remoto de GitHub"],
-      "answer": {
-        "git status": "Muestra archivos modificados, preparados y sin seguimiento",
-        "git add .": "Prepara todos los archivos modificados para el siguiente commit",
-        "git commit -m \"msg\"": "Guarda una instantánea de los cambios en el historial",
-        "git push origin main": "Sube los commits locales al repositorio remoto de GitHub"
-      }
+    group: "5",
+    title: "Respuesta Corta: Registro de Cambios en Git",
+    description: "Identifica el comando de Git para guardar una versi\xF3n en el historial.",
+    isSingleLineText: true,
+    question: {
+      questionText: "\xBFQu\xE9 comando de Git se utiliza para registrar los archivos preparados en el historial con un mensaje descriptivo (ej. con la opci\xF3n -m)?",
+      answer: "git commit"
     }
   }, {
     "group": "5",
@@ -3692,7 +3301,7 @@ export const steps = {
     "isFillCodeBlanks": true,
     "question": {
       "questionText": "Completa la suscripción al observador de autenticación:",
-      "template": "const cancelar = {{onAuthStateChanged}}(\n  auth,\n  (usuarioActual) => {\n    {{setUser}}(usuarioActual);\n  }\n);",
+      "template": "const cancelar = {{onAuthStateChanged}}(\n  auth,\n  (usuarioActual) => {\n    {{setUsuario}}(usuarioActual);\n  }\n);",
       "blanks": [{
         "key": "onAuthStateChanged",
         "label": "Función observadora de Auth",
@@ -3728,32 +3337,12 @@ export const steps = {
       "answer": "match /usuarios/{usuarioId} {\n  allow read, write: if request.auth != null && request.auth.uid == usuarioId;\n}"
     }
   }, {
-    "group": "5",
-    "title": "Componentes Arquitectónicos del Ecosistema Cloud",
-    "description": "Relaciona los servicios cloud con sus responsabilidades en la infraestructura.",
-    "isMatchPairs": true,
-    "question": {
-      "questionText": "Relaciona cada servicio cloud con su función:",
-      "pairs": [{
-        "left": "Firebase Authentication",
-        "right": "Identidad de usuario, gestión de sesiones y OAuth"
-      }, {
-        "left": "Cloud Firestore",
-        "right": "Base de datos documental NoSQL escalable en tiempo real"
-      }, {
-        "left": "Cloud Storage",
-        "right": "Almacenamiento binario para fotos, audio y videos"
-      }, {
-        "left": "Firebase Hosting",
-        "right": "CDN global para entrega ultrarrápida de contenido web"
-      }],
-      "choices": ["Identidad de usuario, gestión de sesiones y OAuth", "Base de datos documental NoSQL escalable en tiempo real", "Almacenamiento binario para fotos, audio y videos", "CDN global para entrega ultrarrápida de contenido web"],
-      "answer": {
-        "Firebase Authentication": "Identidad de usuario, gestión de sesiones y OAuth",
-        "Cloud Firestore": "Base de datos documental NoSQL escalable en tiempo real",
-        "Cloud Storage": "Almacenamiento binario para fotos, audio y videos",
-        "Firebase Hosting": "CDN global para entrega ultrarrápida de contenido web"
-      }
+    group: "5",
+    title: "Respuesta Abierta: Seguridad de Secretos en el Frontend",
+    description: "Explica por qu\xE9 los secretos del servidor nunca deben incluirse en el c\xF3digo cliente.",
+    isText: true,
+    question: {
+      questionText: "\xBFPor qu\xE9 es peligroso incluir claves privadas de API, credenciales de base de datos o tokens secretos dentro del c\xF3digo frontend o variables de entorno del cliente?"
     }
   }, {
     "group": "5",
@@ -3776,14 +3365,31 @@ export const steps = {
       "answer": 5
     }
   }, {
-    "group": "5",
-    "title": "Flujo de Ramas y Fusión en Git",
-    "description": "Ordena las líneas para crear una rama, confirmar cambios y fusionar en main.",
-    "isParsonsProblem": true,
-    "question": {
-      "questionText": "Ordena los comandos de ramas en Git en el orden correcto:",
-      "lines": ["git checkout -b feature/auth-flow", "git commit -am 'feat: implement OAuth login'", "git checkout main", "git merge feature/auth-flow"],
-      "answer": ["git checkout -b feature/auth-flow", "git commit -am 'feat: implement OAuth login'", "git checkout main", "git merge feature/auth-flow"]
+    group: "5",
+    title: "Acciones de Ramas y Colaboraci\xF3n en Git",
+    description: "Relaciona comandos de gesti\xF3n de ramas en Git con sus operaciones.",
+    isMatchPairs: true,
+    question: {
+      questionText: "Relaciona cada comando de flujo de ramas en Git con su operaci\xF3n exacta:",
+      pairs: [{
+        "left": "git checkout -b funcion",
+        "right": "Crea y cambia a una nueva rama de funcionalidad"
+      }, {
+        "left": "git merge funcion",
+        "right": "Combina los commits de la rama en la rama actual"
+      }, {
+        "left": "git branch -d funcion",
+        "right": "Elimina una rama local que ya fue fusionada"
+      }, {
+        "left": "git pull origin main",
+        "right": "Descarga y combina los \xFAltimos cambios remotos"
+      }],
+      answer: {
+        "git checkout -b funcion": "Crea y cambia a una nueva rama de funcionalidad",
+        "git merge funcion": "Combina los commits de la rama en la rama actual",
+        "git branch -d funcion": "Elimina una rama local que ya fue fusionada",
+        "git pull origin main": "Descarga y combina los \xFAltimos cambios remotos"
+      }
     }
   }, {
     "group": "5",
