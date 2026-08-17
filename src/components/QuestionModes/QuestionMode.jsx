@@ -332,11 +332,11 @@ const FillCodeBlanks = ({ question, value, onChange, labels }) => {
                         mx="2px"
                         px="6px"
                         fontSize={{ base: "12px", md: "13px" }}
-                        fontWeight="semibold"
+                        fontWeight="bold"
                         textAlign="center"
-                        bg="whiteAlpha.100"
-                        color="pink.300"
-                        borderColor="pink.400"
+                        bg="#1e293b"
+                        color="#f59e0b"
+                        borderColor="#f97316"
                         borderWidth="1.5px"
                         borderRadius="md"
                         _placeholder={{
@@ -345,13 +345,28 @@ const FillCodeBlanks = ({ question, value, onChange, labels }) => {
                           fontStyle: "italic",
                         }}
                         _hover={{
-                          borderColor: "pink.300",
-                          bg: "whiteAlpha.200",
+                          borderColor: "#fb923c",
+                          bg: "#334155",
                         }}
                         _focus={{
-                          borderColor: "pink.400",
-                          bg: "whiteAlpha.250",
-                          boxShadow: "0 0 0 2px rgba(236, 72, 153, 0.4)",
+                          borderColor: "#f97316",
+                          bg: "#0f172a !important",
+                          color: "#fbbf24",
+                          boxShadow: "0 0 0 2px rgba(249, 115, 22, 0.45)",
+                        }}
+                        _focusVisible={{
+                          borderColor: "#f97316",
+                          bg: "#0f172a !important",
+                          color: "#fbbf24",
+                          boxShadow: "0 0 0 2px rgba(249, 115, 22, 0.45)",
+                          outline: "none",
+                        }}
+                        _active={{
+                          bg: "#0f172a !important",
+                        }}
+                        _autofill={{
+                          textFillColor: "#fbbf24",
+                          boxShadow: "0 0 0 1000px #0f172a inset !important",
                         }}
                         fontFamily="'Fira Code', 'JetBrains Mono', 'Menlo', 'Consolas', monospace"
                       />

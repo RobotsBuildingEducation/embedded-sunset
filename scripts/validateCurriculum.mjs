@@ -1,7 +1,5 @@
 import fs from "node:fs";
-import process from "node:process";
 import parser from "@babel/parser";
-import { revampCourse } from "../src/utility/curriculumRevamp.js";
 import {
   QUESTION_TYPE_DEFINITIONS,
   countQuestionTypes,
@@ -54,102 +52,143 @@ const readLocale = (locale) => {
   return property.value.elements.map(readValue).filter(Boolean);
 };
 
-const expectedTutorialTypes = QUESTION_TYPE_DEFINITIONS.map(({ key }) => key);
-const convertedTypes = [
-  "codeTracing",
-  "fillCodeBlanks",
-  "parsons",
-  "matchPairs",
-  "relevantLine",
-  "bestImplementation",
-  "fixBug",
-  "refactoring",
-  "projectCheckpoint",
-];
+const EXPECTED_QUESTION_COUNT = 149;
+const EXPECTED_CHAPTER_LENGTHS = { 1: 21, 2: 18, 3: 50, 4: 22, 5: 21 };
+const EXPECTED_TYPE_COUNTS = {
+  multipleChoice: 8,
+  multipleAnswer: 8,
+  matchPairs: 9,
+  selectOrder: 9,
+  relevantLine: 9,
+  codeTracing: 10,
+  fillCodeBlanks: 10,
+  codeCompletion: 8,
+  parsons: 9,
+  shortAnswer: 8,
+  openResponse: 8,
+  codeWriting: 8,
+  terminal: 8,
+  bestImplementation: 10,
+  fixBug: 11,
+  refactoring: 10,
+  conversationReview: 6,
+};
 
-const assertConvertedQuestionIsComplete = (step, index, locale) => {
+const isText = (value) => typeof value === "string" && value.trim().length > 0;
+const isStringArray = (value, minimum = 1) =>
+  Array.isArray(value) &&
+  value.length >= minimum &&
+  value.every((item) => typeof item === "string");
+const normalize = (value) => String(value ?? "").replace(/\s+/g, " ").trim();
+
+const assert = (condition, message) => {
+  if (!condition) throw new Error(message);
+};
+
+const validateQuestion = (step, index, locale) => {
   const type = getQuestionType(step);
-  if (!convertedTypes.includes(type)) return;
-  const label = `${locale} step ${index} (${type})`;
-  const prompt = step.question?.questionText;
-  if (typeof prompt !== "string" || prompt.trim().length < 45) {
-    throw new Error(`${label}: prompt is missing or too vague`);
-  }
-  if (typeof step.title !== "string" || !step.title.trim()) {
-    throw new Error(`${label}: title is missing`);
-  }
-  const q = step.question;
-  const requireArray = (field, minimum = 1) => {
-    if (!Array.isArray(q[field]) || q[field].length < minimum) {
-      throw new Error(`${label}: ${field} needs at least ${minimum} entries`);
-    }
-  };
-  if (type === "codeTracing") {
-    if (!q.code || q.answer === undefined)
-      throw new Error(`${label}: tracing requires code and an answer`);
+  const label = `${locale} question ${index} (${type})`;
+  const question = step.question;
+  assert(type !== "unknown", `${label}: unknown question type`);
+  assert(isText(step.title), `${label}: missing title`);
+  assert(question && typeof question === "object", `${label}: missing question`);
+  assert(isText(question.questionText), `${label}: missing question text`);
+
+  if (["multipleChoice", "codeCompletion", "bestImplementation"].includes(type)) {
+    assert(isStringArray(question.options, 3), `${label}: needs at least 3 options`);
+    assert(question.options.includes(question.answer), `${label}: answer must exactly match an option`);
+  } else if (type === "multipleAnswer") {
+    assert(isStringArray(question.options, 3), `${label}: needs at least 3 options`);
+    assert(isStringArray(question.answer), `${label}: needs answer options`);
+    assert(question.answer.every((answer) => question.options.includes(answer)), `${label}: every answer must match an option`);
+  } else if (type === "selectOrder") {
+    assert(isStringArray(question.options, 2), `${label}: needs order options`);
+    assert(isStringArray(question.answer, 2), `${label}: needs an ordered answer`);
+    assert([...question.options].sort().join("\u0000") === [...question.answer].sort().join("\u0000"), `${label}: ordered answer must contain every option exactly once`);
+  } else if (type === "shortAnswer") {
+    assert(question.answer !== undefined, `${label}: missing short answer`);
+  } else if (type === "codeWriting") {
+    assert(isText(question.starterCode), `${label}: missing starter code`);
+    assert(isText(question.answer), `${label}: missing reference answer`);
+    assert(isStringArray(question.tests), `${label}: missing success checks`);
+    assert(normalize(question.starterCode) !== normalize(question.answer), `${label}: starter code must not contain the completed answer`);
+  } else if (type === "codeTracing") {
+    assert(isText(question.code), `${label}: missing traceable code`);
+    assert(isStringArray(question.options, 2), `${label}: missing trace options`);
+    assert(question.options.includes(question.answer), `${label}: invalid trace answer`);
   } else if (type === "fillCodeBlanks") {
-    requireArray("blanks");
-    if (!q.template || !q.answer)
-      throw new Error(`${label}: fill-in requires a template and answer`);
+    assert(isText(question.template), `${label}: missing code template`);
+    assert(Array.isArray(question.blanks) && question.blanks.length, `${label}: missing blanks`);
+    assert(question.answer && typeof question.answer === "object", `${label}: missing blank answers`);
+    const tokens = [...new Set([...question.template.matchAll(/\{\{([^}]+)\}\}/g)].map((match) => match[1]))].sort();
+    const blankKeys = question.blanks.map((blank) => blank.key).sort();
+    const answerKeys = Object.keys(question.answer).sort();
+    assert(tokens.length > 0, `${label}: template has no blank tokens`);
+    assert(tokens.join("\u0000") === blankKeys.join("\u0000"), `${label}: blank metadata does not match template tokens`);
+    assert(tokens.join("\u0000") === answerKeys.join("\u0000"), `${label}: blank answers do not match template tokens`);
   } else if (type === "parsons") {
-    requireArray("lines", 2);
-    requireArray("answer", 2);
+    assert(isStringArray(question.lines, 2), `${label}: missing Parsons lines`);
+    assert(isStringArray(question.answer, 2), `${label}: missing Parsons answer`);
+    assert([...question.lines].sort().join("\u0000") === [...question.answer].sort().join("\u0000"), `${label}: Parsons answer must contain every line exactly once`);
   } else if (type === "matchPairs") {
-    requireArray("pairs", 2);
-    requireArray("choices", 2);
+    assert(Array.isArray(question.pairs) && question.pairs.length >= 2, `${label}: missing pairs`);
+    assert(question.answer && typeof question.answer === "object", `${label}: missing pair answers`);
+    question.pairs.forEach(({ left, right }) => {
+      assert(isText(left) && isText(right), `${label}: invalid pair`);
+      assert(question.answer[left] === right, `${label}: pair answer mismatch for ${left}`);
+    });
   } else if (type === "relevantLine") {
-    if (!q.code) throw new Error(`${label}: relevant-line requires code`);
-    requireArray("answer");
-  } else if (type === "bestImplementation") {
-    requireArray("options", 3);
-    if (q.answer === undefined)
-      throw new Error(`${label}: best-implementation requires an answer`);
-  } else if (["fixBug", "refactoring", "projectCheckpoint"].includes(type)) {
-    if (typeof q.starterCode !== "string" || !q.starterCode.trim())
-      throw new Error(`${label}: coding task requires string starter code`);
-    requireArray("tests", 2);
+    assert(isText(question.code), `${label}: missing source code`);
+    const answers = Array.isArray(question.answer) ? question.answer : [question.answer];
+    const lineCount = question.code.split("\n").length;
+    assert(answers.length > 0 && answers.every((line) => Number.isInteger(line) && line >= 1 && line <= lineCount), `${label}: relevant line answer is outside the code range`);
+  } else if (type === "fixBug") {
+    assert(isText(question.starterCode), `${label}: missing buggy starter code`);
+    assert(isText(question.answer), `${label}: missing fixed reference answer`);
+    assert(isStringArray(question.tests, 2), `${label}: needs at least 2 success checks`);
+  } else if (type === "refactoring") {
+    assert(isText(question.starterCode), `${label}: missing refactoring starter code`);
+    assert(isStringArray(question.tests, 2), `${label}: needs at least 2 success checks`);
+  } else if (type === "conversationReview") {
+    assert(Array.isArray(question.range) && question.range.length === 2 && question.range.every(Number.isInteger), `${label}: app progress step needs a two-number range`);
   }
 };
 
-for (const locale of ["en", "es"]) {
-  const course = revampCourse(readLocale(locale), locale);
-  const tutorial = course.filter((step) => step.group === "tutorial");
-  const chapterSteps = course.filter((step) =>
-    /^[1-5]$/.test(String(step.group)),
+const curricula = Object.fromEntries(
+  ["en", "es"].map((locale) => [locale, readLocale(locale)]),
+);
+
+for (const [locale, course] of Object.entries(curricula)) {
+  const questions = course.filter(
+    (step) => step.group === "tutorial" || /^[1-5]$/.test(String(step.group)),
   );
-  const tutorialTypes = tutorial.map(getQuestionType);
-  const chapterCounts = countQuestionTypes(chapterSteps);
+  const tutorial = questions.filter((step) => step.group === "tutorial");
+  const counts = countQuestionTypes(questions);
 
-  course.forEach((step, index) => {
-    if (/^[1-5]$/.test(String(step.group))) {
-      assertConvertedQuestionIsComplete(step, index, locale);
-    }
+  assert(questions.length === EXPECTED_QUESTION_COUNT, `${locale}: expected ${EXPECTED_QUESTION_COUNT} questions; found ${questions.length}`);
+  assert(tutorial.length === QUESTION_TYPE_DEFINITIONS.length, `${locale}: tutorial should demonstrate every mode exactly once`);
+  QUESTION_TYPE_DEFINITIONS.forEach(({ key }) => {
+    assert(tutorial.filter((step) => getQuestionType(step) === key).length === 1, `${locale}: tutorial must contain exactly one ${key} question`);
   });
-
-  if (tutorial.length !== expectedTutorialTypes.length) {
-    throw new Error(
-      `${locale}: tutorial has ${tutorial.length} modes; expected ${expectedTutorialTypes.length}`,
-    );
-  }
-  expectedTutorialTypes.forEach((type) => {
-    if (!tutorialTypes.includes(type))
-      throw new Error(`${locale}: tutorial is missing ${type}`);
+  Object.entries(EXPECTED_CHAPTER_LENGTHS).forEach(([group, expected]) => {
+    const actual = questions.filter((step) => String(step.group) === group).length;
+    assert(actual === expected, `${locale}: chapter ${group} expected ${expected}; found ${actual}`);
   });
-
-  convertedTypes.forEach((type) => {
-    if (chapterCounts[type] !== 5) {
-      throw new Error(
-        `${locale}: expected 5 ${type} questions; found ${chapterCounts[type] || 0}`,
-      );
-    }
-  });
-
-  if (chapterSteps.length !== 102) {
-    throw new Error(
-      `${locale}: chapter length changed from 102 to ${chapterSteps.length}`,
-    );
-  }
-
-  console.log(`${locale}: ${course.length} total steps`);
-  console.table(chapterCounts);
+  assert(JSON.stringify(counts) === JSON.stringify(EXPECTED_TYPE_COUNTS), `${locale}: question-mode distribution changed\nexpected ${JSON.stringify(EXPECTED_TYPE_COUNTS)}\nreceived ${JSON.stringify(counts)}`);
+  questions.forEach((step, index) => validateQuestion(step, index + 1, locale));
+  console.log(`${locale}: ${questions.length} learner-facing questions validated`);
+  console.table(counts);
 }
+
+const learnerQuestions = (course) =>
+  course.filter(
+    (step) => step.group === "tutorial" || /^[1-5]$/.test(String(step.group)),
+  );
+const englishQuestions = learnerQuestions(curricula.en);
+const spanishQuestions = learnerQuestions(curricula.es);
+englishQuestions.forEach((step, index) => {
+  assert(String(step.group) === String(spanishQuestions[index].group), `locale parity: group mismatch at question ${index + 1}`);
+  assert(getQuestionType(step) === getQuestionType(spanishQuestions[index]), `locale parity: mode mismatch at question ${index + 1}`);
+});
+
+console.log("English/Spanish order and question-mode parity validated");

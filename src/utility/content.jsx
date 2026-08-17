@@ -27,7 +27,7 @@ export const steps = {
     "description": "Choose every correct answer.",
     "isMultipleAnswerChoice": true,
     "question": {
-      "questionText": "Which names can declare a JavaScript variable?",
+      "questionText": "Which keywords can declare a JavaScript variable?",
       "options": ["let", "const", "style", "return"],
       "answer": ["let", "const"]
     }
@@ -57,12 +57,12 @@ export const steps = {
   }, {
     "group": "tutorial",
     "title": "Select Order",
-    "description": "Learn the correct order of program execution.",
+    "description": "Practice arranging visible program steps in execution order.",
     "isSelectOrder": true,
     "question": {
-      "questionText": "Arrange the steps to show how a program moves from an idea to execution.",
-      "options": ["Code Compilation", "Writing Code", "Executing Program", "Debugging"],
-      "answer": ["Writing Code", "Code Compilation", "Debugging", "Executing Program"]
+      "questionText": "Arrange the statements so the program creates a value, updates it, and then displays the result.",
+      "options": ["let total = 1;", "total += 2;", "console.log(total);"],
+      "answer": ["let total = 1;", "total += 2;", "console.log(total);"]
     }
   }, {
     "group": "tutorial",
@@ -173,7 +173,7 @@ export const steps = {
       "questionText": "Repair the bug while preserving the intended behavior.",
       "starterCode": "const score = 1;\nscore += 1;",
       "answer": "let score = 1;\nscore += 1;",
-      "tests": ["score can be updated"]
+      "tests": ["score can be updated", "The final score is 2"]
     }
   }, {
     "group": "tutorial",
@@ -190,7 +190,7 @@ export const steps = {
     "description": "Build an app with what you learned in this chapter.",
     "isConversationReview": true,
     "question": {
-      "questionText": "Enter an app idea and build it as you make progress!",
+      "questionText": "Choose and name a small app idea. We will help it grow as you progress!",
       "range": [1, 16]
     }
   }, {
@@ -239,8 +239,8 @@ export const steps = {
     "isMultipleChoice": true,
     "question": {
       "questionText": "What is the primary difference between returning a value from a function and calling console.log()?",
-      "options": ["return sends data back to the caller for code to use, whereas console.log only prints text to the terminal.", "return outputs text to the web browser screen, whereas console.log stores data in memory.", "return can only output numbers, whereas console.log can output any data type.", "There is no functional difference; both pass values to subsequent statements."],
-      "answer": "return sends data back to the caller for code to use, whereas console.log only prints text to the terminal."
+      "options": ["return sends data back to the caller for code to use, whereas console.log only displays a value for observation.", "console.log sends its displayed value back to the caller, whereas return only shows it in developer tools.", "return ends the entire JavaScript program, whereas console.log continues it.", "Both make the value available to later calculations in exactly the same way."],
+      "answer": "return sends data back to the caller for code to use, whereas console.log only displays a value for observation."
     }
   }, {
     "group": "1",
@@ -320,6 +320,13 @@ export const steps = {
     question: {
       questionText: "Complete the guard clause condition to return early if the payment amount is less than or equal to zero:",
       template: "function processPayment(amount) {\n  if (amount {{<=}} {{0}}) {\n    return 'Invalid amount';\n  }\n  return 'Approved';\n}",
+      blanks: [{
+        key: "<=",
+        hint: "Comparison operator that includes equality"
+      }, {
+        key: "0",
+        hint: "The boundary value"
+      }],
       answer: {
         "<=": "<=",
         "0": "0"
@@ -349,7 +356,7 @@ export const steps = {
     "description": "Order the lifecycle stages of a standard for loop during execution.",
     "isSelectOrder": true,
     "question": {
-      "questionText": "Arrange the chronological steps that occur during each iteration of a for loop:",
+      "questionText": "Arrange the execution steps from for-loop setup through the end of its first successful iteration:",
       "options": ["1. Initialize counter variable once", "2. Evaluate loop condition", "3. Execute loop body code block", "4. Increment counter expression"],
       "answer": ["1. Initialize counter variable once", "2. Evaluate loop condition", "3. Execute loop body code block", "4. Increment counter expression"]
     }
@@ -360,7 +367,7 @@ export const steps = {
     isCode: true,
     question: {
       questionText: "Write a function sumNumbers(numbers) that iterates through an array of numbers and returns their total sum:",
-      starterCode: "function sumNumbers(numbers) {\n  let total = 0;\n  for (let n of numbers) {\n    total += n;\n  }\n  return total;\n}",
+      starterCode: "function sumNumbers(numbers) {\n  // Start with a total, visit each number, and return the result.\n}",
       answer: "function sumNumbers(numbers) {\n  let total = 0;\n  for (let n of numbers) {\n    total += n;\n  }\n  return total;\n}",
       tests: ["sumNumbers returns a number", "sumNumbers([1, 2, 3, 4]) returns 10"]
     }
@@ -438,9 +445,9 @@ export const steps = {
     "group": "1",
     "title": "Build Your App",
     "isConversationReview": true,
-    "description": "Synthesize variables, functions, conditionals, loops, and arrays into your ongoing project.",
+    "description": "See your app gain its first logic with variables, functions, conditions, loops, and arrays.",
     "question": {
-      "questionText": "Let's chat about the core programming foundations you've mastered in Chapter 1!",
+      "questionText": "Your app can now make decisions and work with collections. Let's add that progress to your idea!",
       "range": [19, 38]
     }
   }, {
@@ -478,7 +485,7 @@ export const steps = {
     isCode: true,
     question: {
       questionText: "Write a function createUser(name, role) that returns an object containing name, role, and an isActive property set to true:",
-      starterCode: "function createUser(name, role) {\n  return {\n    name,\n    role,\n    isActive: true\n  };\n}",
+      starterCode: "function createUser(name, role) {\n  // Return an object with name, role, and isActive.\n}",
       answer: "function createUser(name, role) {\n  return {\n    name,\n    role,\n    isActive: true\n  };\n}",
       tests: ["createUser returns an object", "createUser('Alice', 'admin').isActive is true"]
     }
@@ -553,8 +560,8 @@ export const steps = {
     "isRelevantLine": true,
     "question": {
       "questionText": "Select the line where detaching the method from the instance causes 'this' context to be lost:",
-      "code": "const account = new BankAccount(100);\nconst detachedDeposit = account.deposit;\ndetachedDeposit(50);\nconsole.log(account.balance);",
-      "answer": 2
+      "code": "class BankAccount {\n  constructor(balance) {\n    this.balance = balance;\n  }\n  deposit(amount) {\n    this.balance += amount;\n  }\n}\nconst account = new BankAccount(100);\nconst detachedDeposit = account.deposit;\ndetachedDeposit(50);\nconsole.log(account.balance);",
+      "answer": 10
     }
   }, {
     "group": "2",
@@ -649,14 +656,14 @@ export const steps = {
     "group": "2",
     "title": "Build Your App",
     "isConversationReview": true,
-    "description": "Apply your knowledge of objects, classes, and collection methods to your project.",
+    "description": "See your app gain a structured data model with objects, classes, and collection methods.",
     "question": {
-      "questionText": "Let's chat about how data structures and objects power your applications!",
+      "questionText": "Your app now has structured data. Let's connect objects and collections to your idea!",
       "range": [40, 56]
     }
   }, {
     "group": "3",
-    "title": "Semantic HTML Elements",
+    "title": "HTML & CSS Phase: Semantic HTML Elements",
     "description": "Match semantic HTML elements to their appropriate layout and content roles.",
     "isMatchPairs": true,
     "question": {
@@ -716,23 +723,30 @@ export const steps = {
     }
   }, {
     "group": "3",
-    "title": "Fixing JSX Unclosed Tag Bug",
-    "description": "Fix the JSX syntax error caused by an unclosed image tag.",
+    "title": "Fixing Missing Image Alternative Text",
+    "description": "Add meaningful alternative text so an HTML image is accessible.",
     "isFixBug": true,
     "question": {
-      "questionText": "Fix the JSX below so that the self-closing image tag conforms to JSX rules:",
-      "starterCode": "function Avatar({ url }) {\n  return <img src={url} alt=\"Profile\">\n}",
-      "answer": "function Avatar({ url }) {\n  return <img src={url} alt=\"Profile\" />;\n}",
-      "tests": ["Includes self-closing slash />", "Valid JSX component"]
+      "questionText": "Fix the HTML image so a screen reader can communicate what it represents:",
+      "starterCode": "<img src=\"profile.jpg\">",
+      "answer": "<img src=\"profile.jpg\" alt=\"User profile\">",
+      "tests": ["Includes a meaningful alt attribute", "Keeps the original image source"]
     }
   }, {
     group: "3",
-    title: "Assembling Card Structure in JSX",
-    description: "Fill in the missing semantic tags to complete an interactive product card.",
+    title: "Assembling a Semantic HTML Card",
+    description: "Fill in the missing semantic HTML tags to complete an interactive product card.",
     isFillCodeBlanks: true,
     question: {
-      questionText: "Fill in the missing semantic HTML/JSX elements to complete the product card component:",
-      template: "<article className=\"card\">\n  <{{h2}}>Product Title</{{h2}}>\n  <p>Product Description</p>\n  <{{button}}>Buy Now</{{button}}>\n</article>",
+      questionText: "Fill in the missing semantic HTML elements to complete the product card:",
+      template: "<article class=\"card\">\n  <{{h2}}>Product Title</{{h2}}>\n  <p>Product Description</p>\n  <{{button}}>Buy Now</{{button}}>\n</article>",
+      blanks: [{
+        key: "h2",
+        hint: "A second-level heading"
+      }, {
+        key: "button",
+        hint: "The native interactive control"
+      }],
       answer: {
         "h2": "h2",
         "button": "button"
@@ -812,7 +826,7 @@ export const steps = {
     isCode: true,
     question: {
       questionText: "Write a React component SearchInput({ query, setQuery }) that binds value and onChange to control an HTML input:",
-      starterCode: "function SearchInput({ query, setQuery }) {\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      placeholder=\"Search...\"\n    />\n  );\n}",
+      starterCode: "function SearchInput({ query, setQuery }) {\n  // Return a controlled text input.\n}",
       answer: "function SearchInput({ query, setQuery }) {\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      placeholder=\"Search...\"\n    />\n  );\n}",
       tests: ["Renders an input element", "Binds value to query and updates via onChange"]
     }
@@ -856,7 +870,7 @@ export const steps = {
     isCode: true,
     question: {
       questionText: "Write a function updateField(formData, fieldName, value) that returns a new object with the specified field updated immutably:",
-      starterCode: "function updateField(formData, fieldName, value) {\n  return {\n    ...formData,\n    [fieldName]: value\n  };\n}",
+      starterCode: "function updateField(formData, fieldName, value) {\n  // Return a new object with the requested field updated.\n}",
       answer: "function updateField(formData, fieldName, value) {\n  return {\n    ...formData,\n    [fieldName]: value\n  };\n}",
       tests: ["Returns a new object without mutating original", "Updates the dynamic field key correctly"]
     }
@@ -923,12 +937,12 @@ export const steps = {
     }
   }, {
     "group": "3",
-    "title": "Understanding Functional React Components",
-    "description": "Understand the relationship between state, props, and rendered JSX.",
+    "title": "React Phase Begins: Functional Components",
+    "description": "Begin the React phase by connecting JavaScript functions, props, and rendered JSX.",
     "isMultipleChoice": true,
     "question": {
       "questionText": "What is a functional React component in modern web development?",
-      "options": ["A JavaScript function that accepts props and returns JSX describing what should appear on screen.", "A database table stored inside the browser localStorage.", "A CSS stylesheet with animated keyframe transitions.", "A compiled C++ binary that handles HTTP networking."],
+      "options": ["A JavaScript function that accepts props and returns JSX describing what should appear on screen.", "A custom hook that can only return state values and never JSX.", "An event handler that directly replaces the page DOM whenever state changes.", "A JavaScript class used only to store data and never render an interface."],
       "answer": "A JavaScript function that accepts props and returns JSX describing what should appear on screen."
     }
   }, {
@@ -945,7 +959,7 @@ export const steps = {
     "description": "Trace component re-execution when state is updated.",
     "isCodeTracing": true,
     "question": {
-      "questionText": "How many total times will 'Render App' log if the button is clicked twice?",
+      "questionText": "In a production build without a StrictMode wrapper, how many total times will 'Render App' log if the button is clicked twice?",
       "code": "function App() {\n  const [count, setCount] = React.useState(0);\n  console.log('Render App');\n  return (\n    <button onClick={() => setCount((c) => c + 1)}>\n      Click {count}\n    </button>\n  );\n}",
       "options": ["3 times (1 initial mount render + 2 click re-renders)", "2 times (only clicks re-render)", "1 time (components render once)", "0 times (functions don't run console logs)"],
       "answer": "3 times (1 initial mount render + 2 click re-renders)"
@@ -1107,13 +1121,13 @@ export const steps = {
     }
   }, {
     "group": "3",
-    "title": "React 18 Concurrent Root API",
-    "description": "Understand createRoot and concurrency in React 18.",
+    "title": "Avoiding Stale State in Queued Updates",
+    "description": "Choose the reliable state update form when the next value depends on the previous one.",
     "isMultipleChoice": true,
     "question": {
-      "questionText": "Why did React 18 introduce ReactDOM.createRoot over legacy ReactDOM.render?",
-      "options": ["To enable concurrent features, automatic batching of state updates, and smoother transitions.", "To permanently disable CSS styling in components.", "To force all React apps to run without any JavaScript.", "To compile React into WebAssembly binaries."],
-      "answer": "To enable concurrent features, automatic batching of state updates, and smoother transitions."
+      "questionText": "Why is setCount((current) => current + 1) safer than setCount(count + 1) when several updates may be queued?",
+      "options": ["React gives each updater the latest queued state, avoiding calculations from a stale render value.", "The updater directly mutates count without rendering.", "React state setters only accept functions, never values.", "The updater prevents the component from rendering again."],
+      "answer": "React gives each updater the latest queued state, avoiding calculations from a stale render value."
     }
   }, {
     "group": "3",
@@ -1134,6 +1148,10 @@ export const steps = {
     question: {
       questionText: "Fill in the empty dependency array to ensure the fetch effect runs only once when the component mounts:",
       template: "useEffect(() => {\n  fetchData();\n}, {{[]}});",
+      blanks: [{
+        key: "[]",
+        hint: "An empty dependency array"
+      }],
       answer: {
         "[]": "[]"
       }
@@ -1200,14 +1218,14 @@ export const steps = {
     }
   }, {
     "group": "3",
-    "title": "Fixing State Updates on Unmounted Component",
-    "description": "Add a cleanup flag to prevent memory leak warnings in async effects.",
+    "title": "Canceling a Request When a Component Unmounts",
+    "description": "Use AbortController to stop an in-flight request during effect cleanup.",
     "isFixBug": true,
     "question": {
-      "questionText": "Fix the effect cleanup below so it cancels state updates if the component unmounts before fetch completes:",
-      "starterCode": "useEffect(() => {\n  fetchData()\n    .then((data) => setData(data));\n}, []);",
-      "answer": "useEffect(() => {\n  let isMounted = true;\n  fetchData().then((data) => {\n    if (isMounted) setData(data);\n  });\n  return () => {\n    isMounted = false;\n  };\n}, []);",
-      "tests": ["Uses let isMounted = true flag", "Cleans up with isMounted = false"]
+      "questionText": "Fix the effect so its fetch request is aborted if the component unmounts before the response arrives:",
+      "starterCode": "useEffect(() => {\n  fetch('/api/profile')\n    .then((response) => response.json())\n    .then(setData);\n}, []);",
+      "answer": "useEffect(() => {\n  const controller = new AbortController();\n  fetch('/api/profile', { signal: controller.signal })\n    .then((response) => response.json())\n    .then(setData)\n    .catch((error) => {\n      if (error.name !== 'AbortError') throw error;\n    });\n  return () => controller.abort();\n}, []);",
+      "tests": ["Creates an AbortController", "Passes controller.signal to fetch", "Calls controller.abort during cleanup"]
     }
   }, {
     group: "3",
@@ -1216,7 +1234,7 @@ export const steps = {
     isCode: true,
     question: {
       questionText: "Write a function getActiveUserNames(users) that filters users where isActive is true and returns an array of their name strings:",
-      starterCode: "function getActiveUserNames(users) {\n  return users\n    .filter((u) => u.isActive)\n    .map((u) => u.name);\n}",
+      starterCode: "function getActiveUserNames(users) {\n  // Filter active users, then return their names.\n}",
       answer: "function getActiveUserNames(users) {\n  return users\n    .filter((u) => u.isActive)\n    .map((u) => u.name);\n}",
       tests: ["Filters out inactive users", "Returns an array of string names"]
     }
@@ -1236,9 +1254,9 @@ export const steps = {
     "group": "3",
     "title": "Build Your App",
     "isConversationReview": true,
-    "description": "Synthesize HTML, CSS flexbox, React state, hooks, and responsive components.",
+    "description": "See your app evolve from semantic HTML and responsive CSS into an interactive React interface.",
     "question": {
-      "questionText": "Let's review everything you've built across modern frontend and React architecture!",
+      "questionText": "Your app now has a responsive, interactive interface. Let's celebrate what changed!",
       "range": [58, 106]
     }
   }, {
@@ -1285,8 +1303,8 @@ export const steps = {
     "isMultipleChoice": true,
     "question": {
       "questionText": "Why does Node.js use non-blocking asynchronous I/O for network and database operations?",
-      "options": ["To handle thousands of concurrent client requests on a single thread without freezing the server.", "To compile JavaScript into machine code before running.", "To force database queries to execute synchronously one by one.", "To automatically restart the server whenever an error is thrown."],
-      "answer": "To handle thousands of concurrent client requests on a single thread without freezing the server."
+      "options": ["It lets JavaScript continue handling work while the runtime waits for I/O and later queues the callback or promise continuation.", "It makes every database operation finish at the same time and in any order.", "It guarantees that network requests cannot fail or time out.", "It moves every JavaScript function into its own operating-system process."],
+      "answer": "It lets JavaScript continue handling work while the runtime waits for I/O and later queues the callback or promise continuation."
     }
   }, {
     "group": "4",
@@ -1305,7 +1323,7 @@ export const steps = {
     isCode: true,
     question: {
       questionText: "Write a function registerHealthRoute(app) that registers a GET route on '/api/health' returning a status 200 JSON object { status: 'healthy' }:",
-      starterCode: "function registerHealthRoute(app) {\n  app.get('/api/health', (req, res) => {\n    res.status(200).json({\n      status: 'healthy'\n    });\n  });\n}",
+      starterCode: "function registerHealthRoute(app) {\n  // Register GET /api/health and return the required response.\n}",
       answer: "function registerHealthRoute(app) {\n  app.get('/api/health', (req, res) => {\n    res.status(200).json({\n      status: 'healthy'\n    });\n  });\n}",
       tests: ["Registers GET /api/health", "Responds with 200 status and healthy JSON"]
     }
@@ -1410,6 +1428,10 @@ export const steps = {
     question: {
       questionText: "Fill in the process.env reference to load the secret key dynamically without hardcoding:",
       template: "function generateToken(user) {\n  return jwt.sign(\n    user,\n    {{process.env.JWT_SECRET}}\n  );\n}",
+      blanks: [{
+        key: "process.env.JWT_SECRET",
+        hint: "Read JWT_SECRET from the server environment"
+      }],
       answer: {
         "process.env.JWT_SECRET": "process.env.JWT_SECRET"
       }
@@ -1476,8 +1498,8 @@ export const steps = {
     }
   }, {
     "group": "4",
-    "title": "Locating Missing CORS Headers",
-    "description": "Locate the line where missing CORS configuration blocks browser requests.",
+    "title": "Locating the CORS Origin Configuration",
+    "description": "Locate the line that grants a specific frontend origin permission through CORS.",
     "isRelevantLine": true,
     "question": {
       "questionText": "Select the line where CORS origin permission is configured:",
@@ -1488,20 +1510,20 @@ export const steps = {
     "group": "4",
     "title": "Build Your App",
     "isConversationReview": true,
-    "description": "Review backend engineering, API routes, database modeling, and authentication.",
+    "description": "See your app gain backend routes, persistent data, error handling, and authentication.",
     "question": {
-      "questionText": "Let's chat about backend architecture, databases, and APIs for your project!",
+      "questionText": "Your app can now communicate with a backend and protect data. Let's add that progress to your project!",
       "range": [108, 128]
     }
   }, {
     "group": "5",
-    "title": "Serverless Cloud Platforms and Infrastructure",
-    "description": "Understand modern serverless architectures vs traditional hosting.",
+    "title": "Managed Serverless Platforms and Infrastructure Trade-offs",
+    "description": "Compare managed backend platforms with infrastructure you provision yourself.",
     "isMultipleChoice": true,
     "question": {
-      "questionText": "What distinguishes a modern serverless backend (like Firebase/Supabase) from traditional VPS servers?",
-      "options": ["Serverless abstracts away server provisioning, load balancing, and OS patches while scaling automatically per request.", "Serverless cannot run database queries or authenticate users.", "Serverless requires you to install Linux kernel updates manually.", "Serverless only runs HTML files without JavaScript logic."],
-      "answer": "Serverless abstracts away server provisioning, load balancing, and OS patches while scaling automatically per request."
+      "questionText": "Which trade-off most accurately distinguishes a managed platform such as Firebase or Supabase from running your own VPS?",
+      "options": ["The provider handles much of the provisioning, scaling, and patching, while your app accepts more platform-specific constraints and pricing.", "Your team receives full operating-system control but must configure capacity and security patches manually.", "The platform can host static files but cannot provide authentication or database services.", "The platform is guaranteed to cost less than a VPS at every traffic level."],
+      "answer": "The provider handles much of the provisioning, scaling, and patching, while your app accepts more platform-specific constraints and pricing."
     }
   }, {
     group: "5",
@@ -1510,7 +1532,7 @@ export const steps = {
     isCode: true,
     question: {
       questionText: "Write a function getDatabaseConfig() that extracts DB_HOST and DB_PORT from process.env with default fallbacks ('localhost' and 5432):",
-      starterCode: "function getDatabaseConfig() {\n  return {\n    host: process.env.DB_HOST || 'localhost',\n    port: Number(process.env.DB_PORT) || 5432\n  };\n}",
+      starterCode: "function getDatabaseConfig() {\n  // Read DB_HOST and DB_PORT and provide both fallbacks.\n}",
       answer: "function getDatabaseConfig() {\n  return {\n    host: process.env.DB_HOST || 'localhost',\n    port: Number(process.env.DB_PORT) || 5432\n  };\n}",
       tests: ["Returns host and port keys", "Applies default fallbacks when env vars are missing"]
     }
@@ -1549,9 +1571,9 @@ export const steps = {
     "isFixBug": true,
     "question": {
       "questionText": "Fix the Firebase initialization config below so that projectId is included:",
-      "starterCode": "const firebaseConfig = {\n  apiKey: process.env.VITE_API_KEY,\n  authDomain: 'app.firebaseapp.com'\n};\nconst app = initializeApp(firebaseConfig);",
-      "answer": "const firebaseConfig = {\n  apiKey: process.env.VITE_API_KEY,\n  authDomain: 'app.firebaseapp.com',\n  projectId: process.env.VITE_PROJECT_ID\n};\nconst app = initializeApp(firebaseConfig);",
-      "tests": ["Includes projectId property", "Passes valid config to initializeApp"]
+      "starterCode": "const firebaseConfig = {\n  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,\n  authDomain: 'app.firebaseapp.com'\n};\nconst app = initializeApp(firebaseConfig);",
+      "answer": "const firebaseConfig = {\n  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,\n  authDomain: 'app.firebaseapp.com',\n  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID\n};\nconst app = initializeApp(firebaseConfig);",
+      "tests": ["Includes projectId from import.meta.env", "Passes valid Vite client configuration to initializeApp"]
     }
   }, {
     "group": "5",
@@ -1602,7 +1624,7 @@ export const steps = {
     "description": "Enforce that users can only read and write their own documents.",
     "isCodeCompletion": true,
     "question": {
-      "questionText": "Which Firestore security rule ensures that authenticated users can only write to their own user profile document?",
+      "questionText": "Which Firestore security rule ensures that authenticated users can only read and write their own profile document?",
       "options": ["match /users/{userId} {\n  allow read, write:\n    if request.auth != null &&\n       request.auth.uid == userId;\n}", "match /users/{userId} {\n  allow read, write: if true;\n}", "match /users/{userId} {\n  allow read, write:\n    if request.time > 0;\n}", "match /users/{userId} {\n  allow read: false;\n  allow write: false;\n}"],
       "answer": "match /users/{userId} {\n  allow read, write:\n    if request.auth != null &&\n       request.auth.uid == userId;\n}"
     }
@@ -1617,10 +1639,10 @@ export const steps = {
   }, {
     "group": "5",
     "title": "Best Implementation: Client Environment Variables",
-    "description": "Select the secure way to load Vite public environment variables.",
+    "description": "Read public Firebase client configuration correctly in a Vite application.",
     "isBestImplementation": true,
     "question": {
-      "questionText": "Which code snippet correctly reads client-side environment variables in a Vite project without leaking private server keys?",
+      "questionText": "Which snippet correctly reads public Firebase client configuration in Vite, where VITE_* values are bundled and visible to users?",
       "options": ["const firebaseConfig = {\n  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,\n  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID\n};", "const firebaseConfig = {\n  apiKey: process.env.SECRET_PRIVATE_KEY\n};", "const firebaseConfig = window.env;", "const firebaseConfig = {\n  apiKey: document.cookie\n};"],
       "answer": "const firebaseConfig = {\n  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,\n  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID\n};"
     }
@@ -1718,18 +1740,18 @@ export const steps = {
     "description": "Trace client authentication checking before querying protected documents.",
     "isCodeTracing": true,
     "question": {
-      "questionText": "Predict what this client auth check will log when no user is signed in:",
-      "code": "const user = null;\nconst status = user ? 'Authenticated' : 'Guest';\nconst canPost = user && user.verified;\nconsole.log(`${status} - ${Boolean(canPost)}`);",
-      "options": ["Guest - false", "Authenticated - true", "Guest - null", "Guest - true"],
-      "answer": "Guest - false"
+      "questionText": "Predict the authorization result after checking authentication, verification, and document ownership:",
+      "code": "const user = { uid: 'u1', verified: true };\nconst documentOwnerId = 'u1';\nconst canEdit = Boolean(\n  user &&\n  user.verified &&\n  user.uid === documentOwnerId\n);\nconsole.log(canEdit ? 'Query allowed' : 'Query blocked');",
+      "options": ["Query allowed", "Query blocked", "Guest - false", "undefined"],
+      "answer": "Query allowed"
     }
   }, {
     "group": "5",
     "title": "Build Your App",
     "isConversationReview": true,
-    "description": "Celebrate the completion of your full-stack journey and synthesize all 5 chapters!",
+    "description": "Celebrate how your app grew from an idea into a connected, release-ready full-stack project.",
     "question": {
-      "questionText": "Congratulations on reaching the final capstone! Let's review your complete full-stack app architecture.",
+      "questionText": "Your project has reached its release-ready milestone. Let's celebrate the full journey!",
       "range": [130, 149]
     }
   }],
@@ -1757,7 +1779,7 @@ export const steps = {
     "description": "Elige todas las respuestas correctas.",
     "isMultipleAnswerChoice": true,
     "question": {
-      "questionText": "¿Qué palabras pueden declarar una variable de JavaScript?",
+      "questionText": "¿Qué palabras clave pueden declarar una variable de JavaScript?",
       "options": ["let", "const", "style", "return"],
       "answer": ["let", "const"]
     }
@@ -1787,12 +1809,12 @@ export const steps = {
   }, {
     "group": "tutorial",
     "title": "Ordenar Pasos",
-    "description": "Aprende el orden correcto de la ejecución de programas.",
+    "description": "Practica cómo ordenar pasos visibles según su orden de ejecución.",
     "isSelectOrder": true,
     "question": {
-      "questionText": "Ordena los pasos para mostrar cómo un programa pasa de una idea a su ejecución.",
-      "options": ["Compilación del Código", "Escritura del Código", "Ejecución del Programa", "Depuración"],
-      "answer": ["Escritura del Código", "Compilación del Código", "Depuración", "Ejecución del Programa"]
+      "questionText": "Ordena las instrucciones para que el programa cree un valor, lo actualice y después muestre el resultado.",
+      "options": ["let total = 1;", "total += 2;", "console.log(total);"],
+      "answer": ["let total = 1;", "total += 2;", "console.log(total);"]
     }
   }, {
     "group": "tutorial",
@@ -1874,8 +1896,8 @@ export const steps = {
     "question": {
       "questionText": "Declara una variable llamada age con el valor 25.",
       starterCode: "// Escribe tu c\xF3digo aqu\xED\n",
-      answer: "let edad = 25;",
-      tests: ["Declara la variable edad con el valor 25"]
+      answer: "let age = 25;",
+      tests: ["Declara la variable age con el valor 25"]
     }
   }, {
     "group": "tutorial",
@@ -1903,7 +1925,7 @@ export const steps = {
       "questionText": "Corrige el error sin cambiar el comportamiento esperado.",
       "starterCode": "const score = 1;\nscore += 1;",
       "answer": "let score = 1;\nscore += 1;",
-      "tests": ["score se puede actualizar"]
+      "tests": ["score se puede actualizar", "El valor final de score es 2"]
     }
   }, {
     "group": "tutorial",
@@ -1920,7 +1942,7 @@ export const steps = {
     "description": "Construye una aplicación con lo aprendido en este capítulo.",
     "isConversationReview": true,
     "question": {
-      "questionText": "¡Ingresa una idea de aplicación y constrúyela a medida que avanzas!",
+      "questionText": "Elige y nombra una pequeña idea de aplicación. ¡La ayudaremos a crecer mientras avanzas!",
       "range": [1, 16]
     }
   }, {
@@ -1969,8 +1991,8 @@ export const steps = {
     "isMultipleChoice": true,
     "question": {
       "questionText": "¿Cuál es la diferencia principal entre retornar un valor desde una función y llamar a console.log()?",
-      "options": ["return devuelve datos al invocador para usarlos en el código, mientras que console.log solo imprime texto en la terminal.", "return muestra texto en la pantalla del navegador, mientras que console.log almacena datos en memoria.", "return solo puede devolver números, mientras que console.log puede mostrar cualquier tipo de dato.", "No hay diferencia funcional; ambos pasan valores a las siguientes instrucciones."],
-      "answer": "return devuelve datos al invocador para usarlos en el código, mientras que console.log solo imprime texto en la terminal."
+      "options": ["return devuelve datos al invocador para usarlos en el código, mientras console.log solo muestra un valor para observarlo.", "console.log devuelve el valor mostrado al invocador, mientras return solo lo enseña en las herramientas de desarrollo.", "return termina todo el programa de JavaScript, mientras console.log permite continuarlo.", "Ambos dejan el valor disponible para cálculos posteriores exactamente de la misma manera."],
+      "answer": "return devuelve datos al invocador para usarlos en el código, mientras console.log solo muestra un valor para observarlo."
     }
   }, {
     "group": "1",
@@ -2050,6 +2072,13 @@ export const steps = {
     question: {
       questionText: "Completa la cl\xE1usula de guarda para retornar temprano si el monto es menor o igual a cero:",
       template: "function procesarPago(monto) {\n  if (monto {{<=}} {{0}}) {\n    return 'Monto inv\xE1lido';\n  }\n  return 'Aprobado';\n}",
+      blanks: [{
+        key: "<=",
+        hint: "Operador de comparación que incluye igualdad"
+      }, {
+        key: "0",
+        hint: "El valor límite"
+      }],
       answer: {
         "<=": "<=",
         "0": "0"
@@ -2079,7 +2108,7 @@ export const steps = {
     "description": "Ordena las fases del ciclo de vida de un bucle for durante la ejecución.",
     "isSelectOrder": true,
     "question": {
-      "questionText": "Ordena los pasos cronológicos que ocurren durante cada iteración de un bucle for:",
+      "questionText": "Ordena los pasos desde la configuración del bucle for hasta el final de su primera iteración válida:",
       "options": ["1. Inicializar la variable contador una sola vez", "2. Evaluar la condición del bucle", "3. Ejecutar el bloque de código del cuerpo", "4. Incrementar la expresión del contador"],
       "answer": ["1. Inicializar la variable contador una sola vez", "2. Evaluar la condición del bucle", "3. Ejecutar el bloque de código del cuerpo", "4. Incrementar la expresión del contador"]
     }
@@ -2090,7 +2119,7 @@ export const steps = {
     isCode: true,
     question: {
       questionText: "Escribe una funci\xF3n sumarNumeros(numeros) que recorra un arreglo de n\xFAmeros y devuelva la suma total:",
-      starterCode: "function sumarNumeros(numeros) {\n  let total = 0;\n  for (let n of numeros) {\n    total += n;\n  }\n  return total;\n}",
+      starterCode: "function sumarNumeros(numeros) {\n  // Inicia un total, recorre cada número y devuelve el resultado.\n}",
       answer: "function sumarNumeros(numeros) {\n  let total = 0;\n  for (let n of numeros) {\n    total += n;\n  }\n  return total;\n}",
       tests: ["sumarNumeros devuelve un n\xFAmero", "sumarNumeros([1, 2, 3, 4]) es igual a 10"]
     }
@@ -2168,9 +2197,9 @@ export const steps = {
     "group": "1",
     "title": "Construye tu Aplicación",
     "isConversationReview": true,
-    "description": "Sintetiza variables, funciones, condicionales, bucles y arreglos en tu proyecto en curso.",
+    "description": "Observa cómo tu app obtiene su primera lógica con variables, funciones, condiciones, bucles y arreglos.",
     "question": {
-      "questionText": "¡Hablemos de los fundamentos de programación que has dominado en el Capítulo 1!",
+      "questionText": "Tu app ya puede tomar decisiones y trabajar con colecciones. ¡Agreguemos ese progreso a tu idea!",
       "range": [19, 38]
     }
   }, {
@@ -2208,7 +2237,7 @@ export const steps = {
     isCode: true,
     question: {
       questionText: "Escribe una funci\xF3n crearUsuario(nombre, rol) que devuelva un objeto con nombre, rol y la propiedad isActive en true:",
-      starterCode: "function crearUsuario(nombre, rol) {\n  return {\n    nombre,\n    rol,\n    isActive: true\n  };\n}",
+      starterCode: "function crearUsuario(nombre, rol) {\n  // Devuelve un objeto con nombre, rol e isActive.\n}",
       answer: "function crearUsuario(nombre, rol) {\n  return {\n    nombre,\n    rol,\n    isActive: true\n  };\n}",
       tests: ["crearUsuario devuelve un objeto", "crearUsuario('Ana', 'admin').isActive es true"]
     }
@@ -2283,8 +2312,8 @@ export const steps = {
     "isRelevantLine": true,
     "question": {
       "questionText": "Selecciona la línea donde desacoplar el método de la instancia provoca la pérdida del contexto 'this':",
-      "code": "const cuenta = new CuentaBancaria(100);\nconst depositoDesacoplado = cuenta.depositar;\ndepositoDesacoplado(50);\nconsole.log(cuenta.saldo);",
-      "answer": 2
+      "code": "class CuentaBancaria {\n  constructor(saldo) {\n    this.saldo = saldo;\n  }\n  depositar(monto) {\n    this.saldo += monto;\n  }\n}\nconst cuenta = new CuentaBancaria(100);\nconst depositoDesacoplado = cuenta.depositar;\ndepositoDesacoplado(50);\nconsole.log(cuenta.saldo);",
+      "answer": 10
     }
   }, {
     "group": "2",
@@ -2379,14 +2408,14 @@ export const steps = {
     "group": "2",
     "title": "Construye tu Aplicación",
     "isConversationReview": true,
-    "description": "Aplica tus conocimientos sobre objetos, clases y colecciones a tu proyecto.",
+    "description": "Observa cómo tu app obtiene un modelo de datos estructurado con objetos, clases y colecciones.",
     "question": {
-      "questionText": "¡Hablemos sobre cómo las estructuras de datos y objetos potencian tus aplicaciones!",
+      "questionText": "Tu app ya tiene datos estructurados. ¡Conectemos objetos y colecciones con tu idea!",
       "range": [40, 56]
     }
   }, {
     "group": "3",
-    "title": "Elementos Semánticos en HTML",
+    "title": "Fase HTML y CSS: Elementos Semánticos",
     "description": "Relaciona los elementos HTML semánticos con sus funciones de diseño y contenido.",
     "isMatchPairs": true,
     "question": {
@@ -2446,23 +2475,30 @@ export const steps = {
     }
   }, {
     "group": "3",
-    "title": "Corrigiendo Etiqueta No Cerrada en JSX",
-    "description": "Corrige el error de sintaxis en JSX provocado por una etiqueta de imagen sin cerrar.",
+    "title": "Corrigiendo Texto Alternativo Faltante",
+    "description": "Agrega texto alternativo significativo para que una imagen HTML sea accesible.",
     "isFixBug": true,
     "question": {
-      "questionText": "Corrige el JSX abajo para que la etiqueta de imagen se cierre automáticamente:",
-      "starterCode": "function Avatar({ url }) {\n  return <img src={url} alt=\"Perfil\">\n}",
-      "answer": "function Avatar({ url }) {\n  return <img src={url} alt=\"Perfil\" />;\n}",
-      "tests": ["Incluye la barra de autocierre />", "Componente JSX válido"]
+      "questionText": "Corrige la imagen HTML para que un lector de pantalla pueda comunicar lo que representa:",
+      "starterCode": "<img src=\"perfil.jpg\">",
+      "answer": "<img src=\"perfil.jpg\" alt=\"Perfil del usuario\">",
+      "tests": ["Incluye un atributo alt significativo", "Conserva la fuente original de la imagen"]
     }
   }, {
     group: "3",
-    title: "Estructura de Tarjeta en JSX",
-    description: "Completa las etiquetas sem\xE1nticas para crear una tarjeta de producto interactiva.",
+    title: "Estructura de una Tarjeta HTML Semántica",
+    description: "Completa las etiquetas sem\xE1nticas de HTML para crear una tarjeta de producto interactiva.",
     isFillCodeBlanks: true,
     question: {
-      questionText: "Completa los elementos sem\xE1nticos de HTML/JSX para armar el componente de tarjeta de producto:",
-      template: "<article className=\"tarjeta\">\n  <{{h2}}>T\xEDtulo del Producto</{{h2}}>\n  <p>Descripci\xF3n del Producto</p>\n  <{{button}}>Comprar Ahora</{{button}}>\n</article>",
+      questionText: "Completa los elementos sem\xE1nticos de HTML para armar la tarjeta de producto:",
+      template: "<article class=\"tarjeta\">\n  <{{h2}}>T\xEDtulo del Producto</{{h2}}>\n  <p>Descripci\xF3n del Producto</p>\n  <{{button}}>Comprar Ahora</{{button}}>\n</article>",
+      blanks: [{
+        key: "h2",
+        hint: "Un encabezado de segundo nivel"
+      }, {
+        key: "button",
+        hint: "El control interactivo nativo"
+      }],
       answer: {
         "h2": "h2",
         "button": "button"
@@ -2542,7 +2578,7 @@ export const steps = {
     isCode: true,
     question: {
       questionText: "Escribe un componente SearchInput({ query, setQuery }) que enlace value y onChange para controlar un input:",
-      starterCode: "function SearchInput({ query, setQuery }) {\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      placeholder=\"Buscar...\"\n    />\n  );\n}",
+      starterCode: "function SearchInput({ query, setQuery }) {\n  // Devuelve un input de texto controlado.\n}",
       answer: "function SearchInput({ query, setQuery }) {\n  return (\n    <input\n      type=\"text\"\n      value={query}\n      onChange={(e) => setQuery(e.target.value)}\n      placeholder=\"Buscar...\"\n    />\n  );\n}",
       tests: ["Renderiza un elemento input", "Enlaza value a query y actualiza mediante onChange"]
     }
@@ -2586,7 +2622,7 @@ export const steps = {
     isCode: true,
     question: {
       questionText: "Escribe una funci\xF3n actualizarCampo(formulario, campo, valor) que devuelva un nuevo objeto con el campo actualizado de forma inmutable:",
-      starterCode: "function actualizarCampo(formulario, campo, valor) {\n  return {\n    ...formulario,\n    [campo]: valor\n  };\n}",
+      starterCode: "function actualizarCampo(formulario, campo, valor) {\n  // Devuelve un objeto nuevo con el campo solicitado actualizado.\n}",
       answer: "function actualizarCampo(formulario, campo, valor) {\n  return {\n    ...formulario,\n    [campo]: valor\n  };\n}",
       tests: ["Devuelve un nuevo objeto sin mutar el original", "Actualiza la clave din\xE1mica correctamente"]
     }
@@ -2653,12 +2689,12 @@ export const steps = {
     }
   }, {
     "group": "3",
-    "title": "Entendiendo Componentes Funcionales en React",
-    "description": "Comprende la relación entre estado, props y el JSX renderizado.",
+    "title": "Inicio de la Fase React: Componentes Funcionales",
+    "description": "Inicia la fase de React conectando funciones de JavaScript, props y JSX renderizado.",
     "isMultipleChoice": true,
     "question": {
       "questionText": "¿Qué es un componente funcional de React en el desarrollo web moderno?",
-      "options": ["Una función JavaScript que acepta props y devuelve JSX describiendo lo que debe aparecer en pantalla.", "Una tabla de base de datos almacenada en el localStorage del navegador.", "Una hoja de estilos CSS con animaciones de fotogramas clave.", "Un binario compilado en C++ que gestiona la red HTTP."],
+      "options": ["Una función JavaScript que acepta props y devuelve JSX describiendo lo que debe aparecer en pantalla.", "Un custom hook que solo devuelve estado y nunca puede devolver JSX.", "Un controlador de eventos que reemplaza directamente el DOM cada vez que cambia el estado.", "Una clase de JavaScript utilizada únicamente para almacenar datos y nunca renderizar una interfaz."],
       "answer": "Una función JavaScript que acepta props y devuelve JSX describiendo lo que debe aparecer en pantalla."
     }
   }, {
@@ -2675,7 +2711,7 @@ export const steps = {
     "description": "Rastrea la reejecución de un componente cuando se actualiza el estado.",
     "isCodeTracing": true,
     "question": {
-      "questionText": "¿Cuántas veces se imprimirá 'Render App' si el botón se presiona dos veces?",
+      "questionText": "En una compilación de producción sin un contenedor StrictMode, ¿cuántas veces se imprimirá 'Render App' si el botón se presiona dos veces?",
       "code": "function App() {\n  const [count, setCount] = React.useState(0);\n  console.log('Render App');\n  return <button onClick={() => setCount(c => c + 1)}>Click {count}</button>;\n}",
       "options": ["3 veces (1 renderizado inicial de montaje + 2 re-renderizados por clic)", "2 veces (solo los clics re-renderizan)", "1 vez (los componentes se ejecutan una sola vez)", "0 veces (las funciones no ejecutan registros de consola)"],
       "answer": "3 veces (1 renderizado inicial de montaje + 2 re-renderizados por clic)"
@@ -2837,13 +2873,13 @@ export const steps = {
     }
   }, {
     "group": "3",
-    "title": "API Concurrent Root de React 18",
-    "description": "Comprende createRoot y la concurrencia en React 18.",
+    "title": "Evitar Estado Obsoleto en Actualizaciones en Cola",
+    "description": "Elige la forma confiable de actualizar estado cuando el siguiente valor depende del anterior.",
     "isMultipleChoice": true,
     "question": {
-      "questionText": "¿Por qué React 18 introdujo ReactDOM.createRoot en lugar del método heredado ReactDOM.render?",
-      "options": ["Para habilitar funciones concurrentes, agrupación automática de actualizaciones y transiciones más fluidas.", "Para deshabilitar permanentemente los estilos CSS en los componentes.", "Para forzar a todas las aplicaciones a ejecutarse sin JavaScript.", "Para compilar React a binarios de WebAssembly."],
-      "answer": "Para habilitar funciones concurrentes, agrupación automática de actualizaciones y transiciones más fluidas."
+      "questionText": "¿Por qué setCount((actual) => actual + 1) es más seguro que setCount(count + 1) cuando pueden acumularse varias actualizaciones?",
+      "options": ["React entrega a cada actualizador el estado más reciente de la cola y evita calcular desde un valor obsoleto.", "El actualizador modifica count directamente sin renderizar.", "Los setters de React solo aceptan funciones y nunca valores.", "El actualizador impide que el componente vuelva a renderizarse."],
+      "answer": "React entrega a cada actualizador el estado más reciente de la cola y evita calcular desde un valor obsoleto."
     }
   }, {
     "group": "3",
@@ -2864,6 +2900,10 @@ export const steps = {
     question: {
       questionText: "Completa el arreglo de dependencias vac\xEDo para asegurar que el efecto se ejecute solo una vez al montar el componente:",
       template: "useEffect(() => {\n  obtenerDatos();\n}, {{[]}});",
+      blanks: [{
+        key: "[]",
+        hint: "Un arreglo de dependencias vacío"
+      }],
       answer: {
         "[]": "[]"
       }
@@ -2930,14 +2970,14 @@ export const steps = {
     }
   }, {
     "group": "3",
-    "title": "Corrigiendo Actualizaciones en Componente Desmontado",
-    "description": "Agrega una bandera de limpieza para evitar fugas de memoria en efectos asíncronos.",
+    "title": "Cancelar una Solicitud al Desmontar el Componente",
+    "description": "Usa AbortController para detener una solicitud en curso durante la limpieza del efecto.",
     "isFixBug": true,
     "question": {
-      "questionText": "Corrige la limpieza del efecto para cancelar actualizaciones de estado si el componente se desmonta antes de finalizar el fetch:",
-      "starterCode": "useEffect(() => {\n  fetchData().then(data => setData(data));\n}, []);",
-      "answer": "useEffect(() => {\n  let isMounted = true;\n  fetchData().then(data => { if (isMounted) setData(data); });\n  return () => { isMounted = false; };\n}, []);",
-      "tests": ["Utiliza la bandera let isMounted = true", "Limpia con isMounted = false"]
+      "questionText": "Corrige el efecto para cancelar la solicitud fetch si el componente se desmonta antes de recibir la respuesta:",
+      "starterCode": "useEffect(() => {\n  fetch('/api/perfil')\n    .then((respuesta) => respuesta.json())\n    .then(setDatos);\n}, []);",
+      "answer": "useEffect(() => {\n  const controller = new AbortController();\n  fetch('/api/perfil', { signal: controller.signal })\n    .then((respuesta) => respuesta.json())\n    .then(setDatos)\n    .catch((error) => {\n      if (error.name !== 'AbortError') throw error;\n    });\n  return () => controller.abort();\n}, []);",
+      "tests": ["Crea un AbortController", "Pasa controller.signal a fetch", "Llama controller.abort durante la limpieza"]
     }
   }, {
     group: "3",
@@ -2946,7 +2986,7 @@ export const steps = {
     isCode: true,
     question: {
       questionText: "Escribe una funci\xF3n obtenerNombresActivos(usuarios) que filtre los usuarios donde isActive sea true y devuelva un arreglo con sus nombres:",
-      starterCode: "function obtenerNombresActivos(usuarios) {\n  return usuarios\n    .filter((u) => u.isActive)\n    .map((u) => u.nombre || u.name);\n}",
+      starterCode: "function obtenerNombresActivos(usuarios) {\n  // Filtra usuarios activos y después devuelve sus nombres.\n}",
       answer: "function obtenerNombresActivos(usuarios) {\n  return usuarios\n    .filter((u) => u.isActive)\n    .map((u) => u.nombre || u.name);\n}",
       tests: ["Filtra los usuarios inactivos", "Devuelve un arreglo con los nombres"]
     }
@@ -2966,9 +3006,9 @@ export const steps = {
     "group": "3",
     "title": "Construye tu Aplicación",
     "isConversationReview": true,
-    "description": "Sintetiza HTML, CSS flexbox, estado en React, hooks y componentes responsivos.",
+    "description": "Observa cómo tu app evoluciona de HTML semántico y CSS responsivo a una interfaz interactiva en React.",
     "question": {
-      "questionText": "¡Revisemos todo lo que has construido en la arquitectura frontend moderna con React!",
+      "questionText": "Tu app ya tiene una interfaz responsiva e interactiva. ¡Celebremos lo que cambió!",
       "range": [58, 106]
     }
   }, {
@@ -3015,8 +3055,8 @@ export const steps = {
     "isMultipleChoice": true,
     "question": {
       "questionText": "¿Por qué Node.js utiliza E/S asíncrona y sin bloqueo para operaciones de red y base de datos?",
-      "options": ["Para gestionar miles de solicitudes concurrentes en un solo hilo sin congelar el servidor.", "Para compilar JavaScript a código de máquina antes de ejecutarlo.", "Para forzar a las consultas de base de datos a ejecutarse de forma sincrónica una por una.", "Para reiniciar automáticamente el servidor cuando ocurre un error."],
-      "answer": "Para gestionar miles de solicitudes concurrentes en un solo hilo sin congelar el servidor."
+      "options": ["Permite que JavaScript continúe trabajando mientras el entorno espera la E/S y después encola el callback o la continuación de la promesa.", "Hace que todas las operaciones de base de datos terminen al mismo tiempo y en cualquier orden.", "Garantiza que las solicitudes de red nunca fallen ni agoten su tiempo.", "Mueve cada función de JavaScript a su propio proceso del sistema operativo."],
+      "answer": "Permite que JavaScript continúe trabajando mientras el entorno espera la E/S y después encola el callback o la continuación de la promesa."
     }
   }, {
     "group": "4",
@@ -3035,7 +3075,7 @@ export const steps = {
     isCode: true,
     question: {
       questionText: "Escribe una funci\xF3n registrarRutaSalud(app) que registre una ruta GET en '/api/health' respondiendo con status 200 y JSON { status: 'healthy' }:",
-      starterCode: "function registrarRutaSalud(app) {\n  app.get('/api/health', (req, res) => {\n    res.status(200).json({\n      status: 'healthy'\n    });\n  });\n}",
+      starterCode: "function registrarRutaSalud(app) {\n  // Registra GET /api/health y devuelve la respuesta solicitada.\n}",
       answer: "function registrarRutaSalud(app) {\n  app.get('/api/health', (req, res) => {\n    res.status(200).json({\n      status: 'healthy'\n    });\n  });\n}",
       tests: ["Registra GET /api/health", "Responde con status 200 y JSON correcto"]
     }
@@ -3140,6 +3180,10 @@ export const steps = {
     question: {
       questionText: "Completa la referencia a process.env para cargar la clave secreta din\xE1micamente sin dejarla en texto plano:",
       template: "function generarToken(usuario) {\n  return jwt.sign(\n    usuario,\n    {{process.env.JWT_SECRET}}\n  );\n}",
+      blanks: [{
+        key: "process.env.JWT_SECRET",
+        hint: "Lee JWT_SECRET del entorno del servidor"
+      }],
       answer: {
         "process.env.JWT_SECRET": "process.env.JWT_SECRET"
       }
@@ -3218,20 +3262,20 @@ export const steps = {
     "group": "4",
     "title": "Construye tu Aplicación",
     "isConversationReview": true,
-    "description": "Revisa arquitectura backend, rutas de API, modelos de base de datos y autenticación.",
+    "description": "Observa cómo tu app obtiene rutas backend, datos persistentes, manejo de errores y autenticación.",
     "question": {
-      "questionText": "¡Hablemos de arquitectura backend, bases de datos y APIs para tu proyecto!",
+      "questionText": "Tu app ya puede comunicarse con un backend y proteger datos. ¡Agreguemos ese progreso al proyecto!",
       "range": [108, 128]
     }
   }, {
     "group": "5",
-    "title": "Plataformas Serverless en la Nube e Infraestructura",
-    "description": "Comprende las arquitecturas serverless modernas frente al hosting tradicional.",
+    "title": "Plataformas Serverless Gestionadas y sus Compromisos",
+    "description": "Compara plataformas backend gestionadas con infraestructura aprovisionada por tu equipo.",
     "isMultipleChoice": true,
     "question": {
-      "questionText": "¿Qué distingue a un backend serverless moderno (como Firebase/Supabase) de los servidores VPS tradicionales?",
-      "options": ["Serverless abstrae el aprovisionamiento de servidores, el balanceo de carga y parches del SO, escalando automáticamente por solicitud.", "Serverless no puede ejecutar consultas a bases de datos ni autenticar usuarios.", "Serverless requiere instalar actualizaciones del kernel de Linux manualmente.", "Serverless solo ejecuta archivos HTML sin lógica en JavaScript."],
-      "answer": "Serverless abstrae el aprovisionamiento de servidores, el balanceo de carga y parches del SO, escalando automáticamente por solicitud."
+      "questionText": "¿Qué compromiso distingue mejor a una plataforma gestionada como Firebase o Supabase de operar tu propio VPS?",
+      "options": ["El proveedor gestiona gran parte del aprovisionamiento, escalado y parches, mientras la app acepta restricciones y precios específicos de la plataforma.", "Tu equipo obtiene control total del sistema operativo, pero debe configurar capacidad y parches manualmente.", "La plataforma puede alojar archivos estáticos, pero no ofrece autenticación ni bases de datos.", "La plataforma siempre cuesta menos que un VPS sin importar el nivel de tráfico."],
+      "answer": "El proveedor gestiona gran parte del aprovisionamiento, escalado y parches, mientras la app acepta restricciones y precios específicos de la plataforma."
     }
   }, {
     group: "5",
@@ -3240,7 +3284,7 @@ export const steps = {
     isCode: true,
     question: {
       questionText: "Escribe una funci\xF3n obtenerConfigBD() que extraiga DB_HOST y DB_PORT de process.env con valores por defecto ('localhost' y 5432):",
-      starterCode: "function obtenerConfigBD() {\n  return {\n    host: process.env.DB_HOST || 'localhost',\n    port: Number(process.env.DB_PORT) || 5432\n  };\n}",
+      starterCode: "function obtenerConfigBD() {\n  // Lee DB_HOST y DB_PORT e incluye ambos valores por defecto.\n}",
       answer: "function obtenerConfigBD() {\n  return {\n    host: process.env.DB_HOST || 'localhost',\n    port: Number(process.env.DB_PORT) || 5432\n  };\n}",
       tests: ["Devuelve claves host y port", "Aplica valores por defecto si no existen las variables"]
     }
@@ -3279,9 +3323,9 @@ export const steps = {
     "isFixBug": true,
     "question": {
       "questionText": "Corrige la configuración de Firebase abajo para incluir projectId:",
-      "starterCode": "const firebaseConfig = {\n  apiKey: process.env.VITE_API_KEY,\n  authDomain: 'app.firebaseapp.com'\n};\nconst app = initializeApp(firebaseConfig);",
-      "answer": "const firebaseConfig = {\n  apiKey: process.env.VITE_API_KEY,\n  authDomain: 'app.firebaseapp.com',\n  projectId: process.env.VITE_PROJECT_ID\n};\nconst app = initializeApp(firebaseConfig);",
-      "tests": ["Incluye la propiedad projectId", "Pasa una configuración válida a initializeApp"]
+      "starterCode": "const firebaseConfig = {\n  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,\n  authDomain: 'app.firebaseapp.com'\n};\nconst app = initializeApp(firebaseConfig);",
+      "answer": "const firebaseConfig = {\n  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,\n  authDomain: 'app.firebaseapp.com',\n  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID\n};\nconst app = initializeApp(firebaseConfig);",
+      "tests": ["Incluye projectId desde import.meta.env", "Pasa una configuración de cliente válida de Vite a initializeApp"]
     }
   }, {
     "group": "5",
@@ -3332,7 +3376,7 @@ export const steps = {
     "description": "Garantiza que los usuarios autenticados solo puedan leer y escribir su propio perfil.",
     "isCodeCompletion": true,
     "question": {
-      "questionText": "¿Qué regla de seguridad de Firestore garantiza que los usuarios solo escriban en su propio documento?",
+      "questionText": "¿Qué regla de seguridad garantiza que los usuarios autenticados solo lean y escriban su propio documento de perfil?",
       "options": ["match /usuarios/{usuarioId} {\n  allow read, write: if request.auth != null && request.auth.uid == usuarioId;\n}", "match /usuarios/{usuarioId} {\n  allow read, write: if true;\n}", "match /usuarios/{usuarioId} {\n  allow read, write: if request.time > 0;\n}", "match /usuarios/{usuarioId} {\n  allow read: false; allow write: false;\n}"],
       "answer": "match /usuarios/{usuarioId} {\n  allow read, write: if request.auth != null && request.auth.uid == usuarioId;\n}"
     }
@@ -3347,10 +3391,10 @@ export const steps = {
   }, {
     "group": "5",
     "title": "Mejor Implementación: Variables de Entorno en el Cliente",
-    "description": "Selecciona la forma segura de cargar variables de entorno en Vite.",
+    "description": "Lee correctamente la configuración pública de Firebase en una aplicación Vite.",
     "isBestImplementation": true,
     "question": {
-      "questionText": "¿Qué fragmento lee variables de entorno de Vite en el cliente de forma segura?",
+      "questionText": "¿Qué fragmento lee correctamente la configuración pública de Firebase en Vite, donde los valores VITE_* se incluyen en el bundle y son visibles?",
       "options": ["const firebaseConfig = {\n  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,\n  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID\n};", "const firebaseConfig = {\n  apiKey: process.env.SECRET_PRIVATE_KEY\n};", "const firebaseConfig = window.env;", "const firebaseConfig = {\n  apiKey: document.cookie\n};"],
       "answer": "const firebaseConfig = {\n  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,\n  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID\n};"
     }
@@ -3448,18 +3492,18 @@ export const steps = {
     "description": "Rastrea la verificación de sesión antes de consultar documentos protegidos.",
     "isCodeTracing": true,
     "question": {
-      "questionText": "Predice lo que registrará esta verificación de autenticación cuando no haya ningún usuario con sesión activa:",
-      "code": "const usuario = null;\nconst estado = usuario ? 'Autenticado' : 'Invitado';\nconst puedePublicar = usuario && usuario.verificado;\nconsole.log(`${estado} - ${Boolean(puedePublicar)}`);",
-      "options": ["Invitado - false", "Autenticado - true", "Invitado - null", "Invitado - true"],
-      "answer": "Invitado - false"
+      "questionText": "Predice el resultado de autorización después de comprobar autenticación, verificación y propiedad del documento:",
+      "code": "const usuario = { uid: 'u1', verificado: true };\nconst propietarioDocumento = 'u1';\nconst puedeEditar = Boolean(\n  usuario &&\n  usuario.verificado &&\n  usuario.uid === propietarioDocumento\n);\nconsole.log(puedeEditar ? 'Consulta permitida' : 'Consulta bloqueada');",
+      "options": ["Consulta permitida", "Consulta bloqueada", "Invitado - false", "undefined"],
+      "answer": "Consulta permitida"
     }
   }, {
     "group": "5",
     "title": "Construye tu Aplicación",
     "isConversationReview": true,
-    "description": "¡Celebra la culminación de tu viaje full-stack y sintetiza los 5 capítulos!",
+    "description": "Celebra cómo tu app creció desde una idea hasta convertirse en un proyecto full-stack conectado y listo para publicar.",
     "question": {
-      "questionText": "¡Felicitaciones por llegar al proyecto final! Revisemos la arquitectura de tu aplicación full-stack.",
+      "questionText": "Tu proyecto alcanzó su hito de publicación. ¡Celebremos todo el recorrido!",
       "range": [130, 149]
     }
   }]
