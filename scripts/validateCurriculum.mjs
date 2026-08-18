@@ -194,53 +194,117 @@ Object.entries(curricula).forEach(([locale, course]) => {
   });
 });
 
-const expectedChapterThreePreviewTitles = {
-  en: [
-    "HTML & CSS Phase: Semantic HTML Elements",
-    "HTML Attributes and Inputs",
-    "Best Implementation: Accessible Clickable Elements",
-    "Assembling a Semantic HTML Card",
-    "The CSS Box Model Layers",
-    "Flexbox Navbar Alignment",
-    "Code Writing: Controlled Search Input",
-    "Ternary Conditional Rendering",
-    "Best Implementation: Conditional Tab Switching",
-    "Building Flexbox Card Layout",
-    "Component Composition with props.children",
-    "Interval Timers and useEffect Cleanup",
-  ],
-  es: [
-    "Fase HTML y CSS: Elementos Semánticos",
-    "Atributos y Entradas en HTML",
-    "Mejor Implementación: Elementos Interactivos Accesibles",
-    "Estructura de una Tarjeta HTML Semántica",
-    "Capas del Modelo de Caja en CSS",
-    "Alineación de Barra de Navegación con Flexbox",
-    "Escritura de Código: Input Controlado en React",
-    "Renderizado Condicional Ternario",
-    "Mejor Implementación: Cambio Declarativo de Pestañas",
-    "Construyendo Diseños con Flexbox",
-    "Composición de Componentes con props.children",
-    "Temporizadores de Intervalo y Limpieza en useEffect",
-  ],
+const expectedPreviewTitlesByChapter = {
+  tutorial: {
+    en: [
+      "Multiple Choice",
+      "Multiple Answer",
+      "Code Tracing",
+      "Fix the Bug",
+    ],
+    es: [
+      "Opción Múltiple",
+      "Respuesta Múltiple",
+      "Seguimiento de Código",
+      "Corregir el Error",
+    ],
+  },
+  1: {
+    en: [
+      "Refactoring to Modern Arrow Functions",
+      "Constructing an If-Else Tree",
+      "Fixing an Off-By-One Comparison Bug",
+      "Truthy and Falsy Values",
+      "Guard Clauses and Early Returns",
+      "Code Tracing: Loop Counter Iteration",
+      "Refactoring String Concatenation to Template Literals",
+      "Locating Array Mutation Bug",
+    ],
+    es: [
+      "Refactorización a Funciones Flecha Modernas",
+      "Construyendo un Árbol If-Else",
+      "Corrigiendo un Error de Límite en Comparación",
+      "Valores Truthy y Falsy",
+      "Cláusulas de Guarda y Retornos Tempranos",
+      "Seguimiento de Código: Contador en Bucles",
+      "Refactorizando Concatenación a Plantillas Literales",
+      "Localizando Mutación de Arreglo",
+    ],
+  },
+  2: {
+    en: [
+      "Refactoring to Object Destructuring",
+      "The Object Spread Operator (Immutability)",
+      "Class Instantiation with the new Keyword",
+      "Locating Detached Method Context Bug",
+      "Best Implementation: Array of Objects Transformation",
+      "Code Tracing: Object Reference Mutation",
+      "Optional Chaining for Safe Property Access",
+      "Code Tracing: Object Methods and State",
+    ],
+    es: [
+      "Refactorización a Desestructuración de Objetos",
+      "El Operador Spread en Objetos (Inmutabilidad)",
+      "Instanciación de Clases con new",
+      "Localizando Pérdida de Contexto en Métodos",
+      "Mejor Implementación: Transformación de Arreglos de Objetos",
+      "Seguimiento de Código: Mutación por Referencia de Objetos",
+      "Encadenamiento Opcional para Acceso Seguro a Propiedades",
+      "Seguimiento de Código: Métodos de Objeto y Estado",
+    ],
+  },
+  3: {
+    en: [
+      "HTML & CSS Phase: Semantic HTML Elements",
+      "HTML Attributes and Inputs",
+      "Best Implementation: Accessible Clickable Elements",
+      "Assembling a Semantic HTML Card",
+      "The CSS Box Model Layers",
+      "Flexbox Navbar Alignment",
+      "Code Writing: Controlled Search Input",
+      "Ternary Conditional Rendering",
+      "Best Implementation: Conditional Tab Switching",
+      "Building Flexbox Card Layout",
+      "Component Composition with props.children",
+      "Interval Timers and useEffect Cleanup",
+    ],
+    es: [
+      "Fase HTML y CSS: Elementos Semánticos",
+      "Atributos y Entradas en HTML",
+      "Mejor Implementación: Elementos Interactivos Accesibles",
+      "Estructura de una Tarjeta HTML Semántica",
+      "Capas del Modelo de Caja en CSS",
+      "Alineación de Barra de Navegación con Flexbox",
+      "Escritura de Código: Input Controlado en React",
+      "Renderizado Condicional Ternario",
+      "Mejor Implementación: Cambio Declarativo de Pestañas",
+      "Construyendo Diseños con Flexbox",
+      "Composición de Componentes con props.children",
+      "Temporizadores de Intervalo y Limpieza en useEffect",
+    ],
+  },
 };
 
 Object.entries(curricula).forEach(([locale, course]) => {
-  const previews = course.filter(
-    (step) => String(step.group) === "3" && step.showPreview,
-  );
-  const actualTitles = previews.map((step) => step.title).sort();
-  const expectedTitles = [...expectedChapterThreePreviewTitles[locale]].sort();
+  ["tutorial", 1, 2, 3].forEach((chapterNum) => {
+    const previews = course.filter(
+      (step) => String(step.group) === String(chapterNum) && step.showPreview,
+    );
+    const actualTitles = previews.map((step) => step.title).sort();
+    const expectedTitles = [...expectedPreviewTitlesByChapter[chapterNum][locale]].sort();
 
-  assert(
-    actualTitles.length === expectedTitles.length,
-    `${locale}: chapter 3 must retain ${expectedTitles.length} component previews; found ${actualTitles.length}`,
-  );
-  assert(
-    actualTitles.join("\u0000") === expectedTitles.join("\u0000"),
-    `${locale}: chapter 3 component preview assignments changed`,
-  );
-  previews.forEach((step) => {
+    assert(
+      actualTitles.length === expectedTitles.length,
+      `${locale}: chapter ${chapterNum} must retain ${expectedTitles.length} component previews; found ${actualTitles.length}`,
+    );
+    assert(
+      actualTitles.join("\u0000") === expectedTitles.join("\u0000"),
+      `${locale}: chapter ${chapterNum} component preview assignments changed`,
+    );
+  });
+
+  const allPreviews = course.filter((step) => step.showPreview);
+  allPreviews.forEach((step) => {
     assert(
       isText(step.question?.previewCode),
       `${locale}: ${step.title} is missing its component preview code`,

@@ -29,6 +29,7 @@ CRITICAL INTERACTIVE WIDGET RULES:
 - The \`\`\`preview code block MUST be a single, complete React functional component (e.g. \`function ExampleSimulator() { const [state, setState] = React.useState(...); return ( <div ...> ... </div> ); }\`) returning valid JSX.
 - NEVER write raw statements, fragmented lines, or non-component code inside \`\`\`preview.
 - PERFORMANCE & LOOP SAFETY: NEVER create unthrottled infinite loops or rapid useEffect triggers. If demonstrating loops, counts, or async state, throttle intervals to at least 400ms, cap trigger counts at a safe visual maximum (e.g. stop at 20), and ALWAYS clean up timers on unmount (return () => clearInterval(...)).
+- RESPONSIVE MOBILE DESIGN: Ensure all widget containers and child elements are fully responsive and fit mobile screens under 360px. Always use flexWrap: 'wrap' or grid layouts for buttons and item groups, use width: '100%' and maxWidth: '100%', boxSizing: 'border-box', and ensure output/code boxes use whiteSpace: 'pre-wrap', wordBreak: 'break-word', or overflowX: 'auto'. Never allow UI elements or text to overflow or clip.
 - Use inline styles (style={{ ... }}) or standard HTML/Chakra tags with no external package imports (React and Chakra UI are available globally). All UI text/labels inside the widget must be in ${
         isEnglish ? "English" : "Spanish"
       }.`

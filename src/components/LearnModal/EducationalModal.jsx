@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
@@ -186,6 +186,7 @@ export const InteractivePreviewCard = ({
   return (
     <Box
       width="100%"
+      maxWidth="100%"
       my={4}
       borderRadius="xl"
       borderWidth="1px"
@@ -193,6 +194,7 @@ export const InteractivePreviewCard = ({
       bg="appSurface"
       boxShadow="sm"
       overflow="hidden"
+      boxSizing="border-box"
     >
       <HStack
         justify="space-between"
@@ -254,7 +256,7 @@ export const InteractivePreviewCard = ({
           </Button>
         </HStack>
       </HStack>
-      <Box p={{ base: 2, md: 3 }}>
+      <Box p={{ base: 1.5, md: 2.5 }} width="100%" maxWidth="100%" boxSizing="border-box">
         {showLoader ? (
           <HStack
             spacing={3}
@@ -263,8 +265,6 @@ export const InteractivePreviewCard = ({
             py={8}
             px={4}
             borderRadius="lg"
-            borderWidth="1px"
-            borderColor="appBorder"
             bg={colorMode === "dark" ? "gray.900" : "white"}
           >
             <Spinner
@@ -292,12 +292,25 @@ export const InteractivePreviewCard = ({
           >
             <Box
               borderRadius="lg"
-              borderWidth="1px"
-              borderColor="appBorder"
               overflow="hidden"
+              maxWidth="100%"
               bg={colorMode === "dark" ? "gray.900" : "white"}
-              p={{ base: 2, md: 3 }}
+              boxSizing="border-box"
               sx={{
+                "& > *": {
+                  maxWidth: "100%",
+                  boxSizing: "border-box",
+                },
+                "& .react-live-preview": {
+                  maxWidth: "100%",
+                  overflowX: "auto",
+                  overflowWrap: "anywhere",
+                  boxSizing: "border-box",
+                },
+                "& .react-live-preview > *": {
+                  maxWidth: "100%",
+                  boxSizing: "border-box",
+                },
                 "& .react-live-error": {
                   fontSize: "xs",
                   p: 2.5,
@@ -309,6 +322,8 @@ export const InteractivePreviewCard = ({
                   borderColor: "red.200",
                   fontFamily: "mono",
                   whiteSpace: "pre-wrap",
+                  wordBreak: "break-word",
+                  overflowX: "auto",
                 },
               }}
             >
@@ -335,6 +350,21 @@ export const InteractivePreviewCard = ({
     </Box>
   );
 };
+
+export const LearnMarkdownMessage = React.memo(
+  ({ content = "", userLanguage = "en", isLoading = false }) => {
+    const theme = useMemo(
+      () => ChakraUIRenderer(newTheme(userLanguage, isLoading)),
+      [userLanguage, isLoading],
+    );
+    const normalizedContent = useMemo(
+      () => normalizeLearnMarkdown(content),
+      [content],
+    );
+
+    return <Markdown components={theme}>{normalizedContent}</Markdown>;
+  },
+);
 
 export const newTheme = (userLanguage = "en", isLoading = false) => {
   let highlightIndex = 0;
@@ -984,14 +1014,10 @@ const EducationalModal = ({ isOpen, onClose, step, userLanguage }) => {
                           textAlign={"left"}
                           width="100%"
                         >
-                          <Markdown
-                            components={ChakraUIRenderer(
-                              newTheme(
-                                userLanguage,
-                                Boolean(content?.meta?.loading),
-                              ),
-                            )}
-                            children={normalizeLearnMarkdown(content.content)}
+                          <LearnMarkdownMessage
+                            content={content.content}
+                            userLanguage={userLanguage}
+                            isLoading={Boolean(content?.meta?.loading)}
                           />
                         </Box>
                       ))}
@@ -1016,13 +1042,11 @@ const EducationalModal = ({ isOpen, onClose, step, userLanguage }) => {
                               borderColor="appBorder"
                               boxShadow="sm"
                             >
-                              <Markdown
-                                components={ChakraUIRenderer(
-                                  newTheme(userLanguage, false),
-                                )}
-                              >
-                                {normalizeLearnMarkdown(msg.content)}
-                              </Markdown>
+                              <LearnMarkdownMessage
+                                content={msg.content}
+                                userLanguage={userLanguage}
+                                isLoading={false}
+                              />
                             </Box>
                           </Box>
                           <Box
@@ -1036,18 +1060,11 @@ const EducationalModal = ({ isOpen, onClose, step, userLanguage }) => {
                             boxShadow="sm"
                             width="100%"
                           >
-                            <Markdown
-                              components={ChakraUIRenderer(
-                                newTheme(
-                                  userLanguage,
-                                  Boolean(msg?.response?.meta?.loading),
-                                ),
-                              )}
-                            >
-                              {normalizeLearnMarkdown(
-                                msg?.response?.content || "",
-                              )}
-                            </Markdown>
+                            <LearnMarkdownMessage
+                              content={msg?.response?.content || ""}
+                              userLanguage={userLanguage}
+                              isLoading={Boolean(msg?.response?.meta?.loading)}
+                            />
                           </Box>
                         </>
                       );

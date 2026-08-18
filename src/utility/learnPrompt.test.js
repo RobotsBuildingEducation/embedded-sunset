@@ -38,6 +38,7 @@ test("buildLearnPrompt for Chapter 3+ includes single-widget and loop-safety rul
   assert.match(promptEn, /React functional component/i);
   assert.match(promptEn, /PERFORMANCE & LOOP SAFETY/i);
   assert.match(promptEn, /throttle intervals to at least 400ms/i);
+  assert.match(promptEn, /RESPONSIVE MOBILE DESIGN/i);
   assert.match(promptEn, /English/);
 
   const promptEs = buildLearnPrompt(stepCh3, "es");
