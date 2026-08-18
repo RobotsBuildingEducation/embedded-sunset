@@ -83,3 +83,32 @@ Each question keeps the standard `group`, `title`, `description`, and
 
 Exact modes compare against a defined answer. Refactoring and project work use
 their success checks as a grading rubric.
+
+## Loot alignment
+
+Course loot is generated from the live English and Spanish step arrays instead
+of maintained as a second positional curriculum. Every entry records its step
+index, chapter, question mode, and localized titles. Its detail text names the
+question it rewards, so reordering or editing a question cannot silently attach
+an unrelated legacy description.
+
+The study guide remains at $0. Chapter 0's 17 interaction tutorials participate
+in the loot conversation with smaller $25-scale changes before the numbered
+chapters accelerate:
+
+Each Chapter 0 reward describes the concept actually practiced—such as variable
+declarations, execution order, tracing, terminal navigation, debugging, or
+refactoring—instead of repeating a generic interaction-format message.
+
+| Chapter | Start   | End      |
+| ------: | ------: | -------: |
+|       0 |     $50 |   $1,000 |
+|       1 |  $1,250 |  $10,000 |
+|       2 | $11,000 |  $25,000 |
+|       3 | $27,000 |  $70,000 |
+|       4 | $72,000 |  $95,000 |
+|       5 | $97,000 | $120,000 |
+
+Curriculum validation requires one aligned loot entry for all 150 authored
+steps, matching English/Spanish titles and modes, a zero-value study guide,
+visible increases after every question, and the exact chapter endpoints above.

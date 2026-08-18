@@ -5,6 +5,11 @@ import {
   countQuestionTypes,
   getQuestionType,
 } from "../src/utility/questionTypes.js";
+import {
+  buildCourseLoot,
+  CHAPTER_SALARY_BANDS,
+  TUTORIAL_REWARD_COPY,
+} from "../src/utility/courseLoot.js";
 
 const source = fs.readFileSync(
   new URL("../src/utility/content.jsx", import.meta.url),
@@ -157,6 +162,91 @@ const validateQuestion = (step, index, locale) => {
 const curricula = Object.fromEntries(
   ["en", "es"].map((locale) => [locale, readLocale(locale)]),
 );
+
+const studyGuideMarkers = {
+  en: [
+    "### Advice",
+    "fail faster",
+    "my_custom_data",
+    "class House",
+    "function createHouse",
+    "CelebrationMessage",
+    "### Conclusion",
+  ],
+  es: [
+    "### Consejos",
+    "falla más rápido",
+    "mis_datos_personalizados",
+    "class Casa",
+    "function crearCasa",
+    "MensajeDeCelebracion",
+    "### Conclusion",
+  ],
+};
+
+Object.entries(curricula).forEach(([locale, course]) => {
+  const studyGuide = course.find((step) => step.isStudyGuide);
+  const metaData = studyGuide?.question?.metaData;
+  assert(studyGuide, `${locale}: missing study guide step`);
+  assert(isText(metaData) && metaData.length > 4000, `${locale}: study guide metadata is missing or truncated`);
+  studyGuideMarkers[locale].forEach((marker) => {
+    assert(metaData.includes(marker), `${locale}: study guide lost required material: ${marker}`);
+  });
+});
+
+const courseLoot = buildCourseLoot(curricula);
+
+assert(courseLoot.length === curricula.en.length, "loot must contain one entry for every authored course step");
+courseLoot.forEach((entry, index) => {
+  const englishStep = curricula.en[index];
+  const spanishStep = curricula.es[index];
+  const group = String(englishStep.group);
+  const type = getQuestionType(englishStep);
+  const label = `loot entry ${index} (${group}/${type})`;
+
+  assert(entry.stepIndex === index, `${label}: stored step index is misaligned`);
+  assert(entry.group === group, `${label}: chapter group is misaligned`);
+  assert(entry.questionType === type, `${label}: question mode is misaligned`);
+  assert(entry.enTitle === englishStep.title, `${label}: English title is misaligned`);
+  assert(entry.esTitle === spanishStep.title, `${label}: Spanish title is misaligned`);
+  assert(isText(entry.en), `${label}: missing English detail`);
+  assert(isText(entry.es), `${label}: missing Spanish detail`);
+  if (group === "tutorial") {
+    assert(entry.en === TUTORIAL_REWARD_COPY.en[type], `${label}: English tutorial detail must describe the question's actual concept`);
+    assert(entry.es === TUTORIAL_REWARD_COPY.es[type], `${label}: Spanish tutorial detail must describe the question's actual concept`);
+  } else {
+    assert(entry.en.includes(englishStep.title), `${label}: English detail must identify its question`);
+    assert(entry.es.includes(spanishStep.title), `${label}: Spanish detail must identify its question`);
+  }
+  assert(Number.isFinite(entry.monetaryValue), `${label}: monetary value must be numeric`);
+
+  if (type === "studyGuide") {
+    assert(entry.monetaryValue === 0, `${label}: the pre-course study guide must start at zero`);
+  }
+});
+
+const expectedTutorialTypes = QUESTION_TYPE_DEFINITIONS.map(({ key }) => key).sort();
+["en", "es"].forEach((locale) => {
+  const descriptorTypes = Object.keys(TUTORIAL_REWARD_COPY[locale]).sort();
+  const descriptors = Object.values(TUTORIAL_REWARD_COPY[locale]);
+  assert(descriptorTypes.join("\u0000") === expectedTutorialTypes.join("\u0000"), `${locale}: tutorial loot must describe every question mode exactly once`);
+  assert(new Set(descriptors).size === descriptors.length, `${locale}: tutorial loot descriptions must be unique`);
+});
+
+Object.entries(CHAPTER_SALARY_BANDS).forEach(([group, [start, end]]) => {
+  const chapterLoot = courseLoot.filter((entry) => entry.group === group);
+  const expectedLength = group === "tutorial"
+    ? QUESTION_TYPE_DEFINITIONS.length
+    : EXPECTED_CHAPTER_LENGTHS[group];
+  const chapterLabel = group === "tutorial" ? "0" : group;
+  assert(chapterLoot.length === expectedLength, `loot chapter ${chapterLabel}: wrong number of entries`);
+  assert(chapterLoot[0].monetaryValue === start, `loot chapter ${chapterLabel}: expected starting value ${start}`);
+  assert(chapterLoot.at(-1).monetaryValue === end, `loot chapter ${chapterLabel}: expected ending value ${end}`);
+  chapterLoot.forEach((entry, index) => {
+    if (index === 0) return;
+    assert(entry.monetaryValue > chapterLoot[index - 1].monetaryValue, `loot chapter ${chapterLabel}: every question must visibly increase value`);
+  });
+});
 
 for (const [locale, course] of Object.entries(curricula)) {
   const questions = course.filter(

@@ -196,6 +196,7 @@ import {
   RiCalendarScheduleFill,
   RiCodeAiFill,
   RiFlag2Line,
+  RiRecycleLine,
   RiRobot2Fill,
 } from "react-icons/ri";
 import { MdOutlineSchedule } from "react-icons/md";
@@ -2729,8 +2730,24 @@ const Step = ({
   } = useAdaptiveLearningGeminiChat();
 
   useEffect(() => {
-    setStep(steps[userLanguage][currentStep]);
-  }, [userLanguage]);
+    if (!isAILearningMode) {
+      setGeneratedQuestion(null);
+      resetNewQuestionMessages();
+      const stepContent = steps[userLanguage]?.[currentStep];
+      if (stepContent) {
+        setStep(stepContent);
+      }
+      setInputValue("");
+      setSelectedOption("");
+      setSelectedOptions([]);
+      setItems([]);
+      setModeAnswer(null);
+      setIsCorrect(null);
+      setFeedback("");
+      setGrade("");
+      setSimulatedTerminalOutput("");
+    }
+  }, [currentStep, userLanguage, isAILearningMode]);
 
   // Fetch user data and manage streaks and timers
   useEffect(() => {
@@ -3689,12 +3706,17 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
       }
     };
     const buildTransitionStats = () => {
-      const salaryVal = loot[currentStep]["monetaryValue"] || 0;
+      const completedStepLoot = loot[currentStep] || {
+        monetaryValue: loot.at(-1)?.monetaryValue || 0,
+        en: "",
+        es: "",
+      };
+      const salaryVal = completedStepLoot.monetaryValue || 0;
       const salaryProgress = (salaryVal / 120000) * 100;
       const totalSteps = steps[userLanguage].length;
       const stepProgress = ((currentStep + 1) / totalSteps) * 100;
       const balanceProgress = calculateBalance();
-      const salaryText = loot[currentStep][userLanguage];
+      const salaryText = completedStepLoot[userLanguage] || "";
       const dailyGoalTarget = dailyGoals ?? 5;
       const updatedDailyProgress = Math.min(dailyProgress + 1, dailyGoalTarget);
       const dailyGoalPercent = Math.min(
@@ -4741,7 +4763,7 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
                       background="pink.100"
                       opacity="0.75"
                       color="pink.600"
-                      icon={<RiAiGenerate padding="4px" fontSize="14px" />}
+                      icon={<RiRecycleLine padding="3px" fontSize="16px" />}
                       mr={2}
                       mt="-0.5"
                       boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
@@ -4902,6 +4924,9 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
                                     setSearchTerm("");
                                     if (isAILearningMode) {
                                       handleExitAILearningMode();
+                                    } else {
+                                      setGeneratedQuestion(null);
+                                      resetNewQuestionMessages();
                                     }
                                     navigate(`/q/${idx}`);
                                   }}
