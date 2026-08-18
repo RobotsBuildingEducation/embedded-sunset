@@ -318,6 +318,7 @@ import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWrit
 import QuestionMode, {
   CodePanel,
 } from "./components/QuestionModes/QuestionMode";
+import LiveReactEditorModal from "./components/LiveCodeEditor/LiveCodeEditor";
 import {
   getQuestionType,
   isNewQuestionType,
@@ -5015,6 +5016,33 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
             {step.question?.code && !isNewQuestionType(step) && (
               <Box width="100%" maxWidth="600px" mt={4}>
                 <CodePanel code={step.question.code} />
+              </Box>
+            )}
+            {Boolean(
+              (step.showPreview || step.question?.showPreview) &&
+                !isNewQuestionType(step) &&
+                (step.question?.previewCode || step.question?.starterCode),
+            ) && (
+              <Box
+                width="100%"
+                maxWidth="600px"
+                borderRadius="2xl"
+                borderWidth="1px"
+                borderColor="appBorder"
+                overflow="hidden"
+                bg="white"
+                boxShadow="sm"
+                p={{ base: 2, md: 3 }}
+                mt={4}
+                mb={2}
+              >
+                <LiveReactEditorModal
+                  code={step.question?.previewCode || step.question?.starterCode || ""}
+                  mode="preview"
+                  autoRun={true}
+                  hideRunButton={true}
+                  previewHeight="auto"
+                />
               </Box>
             )}
           </div>
