@@ -685,16 +685,15 @@ export default function QuestionMode({ step, value, onChange, userLanguage }) {
           borderColor="appBorder"
           overflow="hidden"
           bg="white"
-          height="180px"
           boxShadow="sm"
-          p={2}
+          p={{ base: 2, md: 3 }}
         >
           <LiveReactEditorModal
             code={previewSource}
             mode="preview"
             autoRun={true}
             hideRunButton={true}
-            previewHeight="100%"
+            previewHeight="auto"
           />
         </Box>
       )}

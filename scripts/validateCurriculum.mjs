@@ -194,6 +194,64 @@ Object.entries(curricula).forEach(([locale, course]) => {
   });
 });
 
+const expectedChapterThreePreviewTitles = {
+  en: [
+    "HTML & CSS Phase: Semantic HTML Elements",
+    "HTML Attributes and Inputs",
+    "Best Implementation: Accessible Clickable Elements",
+    "Assembling a Semantic HTML Card",
+    "Flexbox Navbar Alignment",
+    "Code Writing: Controlled Search Input",
+    "Ternary Conditional Rendering",
+    "Best Implementation: Conditional Tab Switching",
+    "Interval Timers and useEffect Cleanup",
+  ],
+  es: [
+    "Fase HTML y CSS: Elementos Semánticos",
+    "Atributos y Entradas en HTML",
+    "Mejor Implementación: Elementos Interactivos Accesibles",
+    "Estructura de una Tarjeta HTML Semántica",
+    "Alineación de Barra de Navegación con Flexbox",
+    "Escritura de Código: Input Controlado en React",
+    "Renderizado Condicional Ternario",
+    "Mejor Implementación: Cambio Declarativo de Pestañas",
+    "Temporizadores de Intervalo y Limpieza en useEffect",
+  ],
+};
+
+Object.entries(curricula).forEach(([locale, course]) => {
+  const previews = course.filter(
+    (step) => String(step.group) === "3" && step.showPreview,
+  );
+  const actualTitles = previews.map((step) => step.title).sort();
+  const expectedTitles = [...expectedChapterThreePreviewTitles[locale]].sort();
+
+  assert(
+    actualTitles.length === expectedTitles.length,
+    `${locale}: chapter 3 must retain ${expectedTitles.length} component previews; found ${actualTitles.length}`,
+  );
+  assert(
+    actualTitles.join("\u0000") === expectedTitles.join("\u0000"),
+    `${locale}: chapter 3 component preview assignments changed`,
+  );
+  previews.forEach((step) => {
+    assert(
+      isText(step.question?.previewCode),
+      `${locale}: ${step.title} is missing its component preview code`,
+    );
+    try {
+      parser.parse(step.question.previewCode, {
+        sourceType: "module",
+        plugins: ["jsx"],
+      });
+    } catch (error) {
+      throw new Error(
+        `${locale}: ${step.title} has invalid component preview code: ${error.message}`,
+      );
+    }
+  });
+});
+
 const courseLoot = buildCourseLoot(curricula);
 
 assert(courseLoot.length === curricula.en.length, "loot must contain one entry for every authored course step");

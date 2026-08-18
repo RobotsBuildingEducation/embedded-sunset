@@ -502,13 +502,13 @@ const LiveReactEditorModal = ({
       {showPreview && (
         <Box
           width="100%"
-          borderRadius="2xl"
-          mt="8px"
-          border="1px solid"
+          borderRadius={mode === "preview" ? "none" : "2xl"}
+          mt={mode === "preview" ? 0 : "8px"}
+          border={mode === "preview" ? "none" : "1px solid"}
           borderColor="appBorderStrong"
           boxSizing="border-box"
           height={previewHeight}
-          overflow="hidden"
+          overflow={mode === "preview" ? "visible" : "hidden"}
         >
           {/* React preview */}
           {looksLikeReact(codeForPreview) && (isPreviewing || autoRun) ? (
@@ -756,7 +756,12 @@ const LiveReactEditorModal = ({
                     onSnapshot,
                   }}
                 >
-                  <Box height="100%" overflow="auto" p={2}>
+                  <Box
+                    height="100%"
+                    width="100%"
+                    overflow={mode === "preview" ? "visible" : "auto"}
+                    p={mode === "preview" ? 0 : 2}
+                  >
                     <LivePreview />
                     <LiveError />
                   </Box>
