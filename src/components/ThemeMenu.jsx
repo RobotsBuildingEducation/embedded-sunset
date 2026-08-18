@@ -1,11 +1,5 @@
 import React, { useCallback, useRef } from "react";
 import {
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuList,
-  MenuItem,
-  IconButton,
   Button,
   HStack,
   Box,
@@ -13,10 +7,10 @@ import {
   VStack,
   Switch,
   useColorMode,
+  Divider,
 } from "@chakra-ui/react";
-import { FaMoon, FaPaintBrush, FaSun } from "react-icons/fa";
+import { FaMoon, FaSun } from "react-icons/fa";
 import { persistThemeMode, useThemeStore } from "../useThemeStore";
-import { ChevronDownIcon } from "@chakra-ui/icons";
 import { translation } from "../utility/translation";
 
 const colors = ["purple", "orange", "green", "blue", "pink"];
@@ -30,7 +24,7 @@ const bubbleColors = {
   pink: "#ed64a6",
 };
 
-const ThemeMenu = ({ userLanguage, isIcon = true, buttonProps = {} }) => {
+export const ThemeControls = ({ userLanguage }) => {
   const themeColor = useThemeStore((s) => s.themeColor);
   const setThemeColor = useThemeStore((s) => s.setThemeColor);
   const { colorMode, setColorMode } = useColorMode();
@@ -54,31 +48,12 @@ const ThemeMenu = ({ userLanguage, isIcon = true, buttonProps = {} }) => {
   );
 
   return (
-    <Menu closeOnSelect={false}>
-      <MenuButton
-        as={isIcon ? IconButton : Button}
-        aria-label={translation[userLanguage]["settings.theme.select"]}
-        icon={<FaPaintBrush padding="4px" fontSize="14px" />}
-        variant={"ghost"}
-        colorScheme={isIcon ? themeColor : "pink"}
-        // m={2}
-        rightIcon={isIcon ? undefined : <ChevronDownIcon />}
-        color={buttonProps.color}
-        // width="24px"
-        // height="30px"
-        padding="4px"
-        fontSize="14px"
-        {...buttonProps}
-      >
-        {isIcon ? null : translation[userLanguage]["settings.theme.select"]}
-      </MenuButton>
-      <MenuList>
-        <VStack align="stretch" spacing={1} px={3} py={1}>
-          <Text fontSize="xs" textTransform="uppercase" color="appTextSubtle">
-            {copy.appearance}
-          </Text>
-        </VStack>
-        <Box px={3} py={3}>
+    <VStack align="stretch" spacing={4} width="100%">
+      <VStack align="stretch" spacing={2}>
+        <Text fontSize="xs" textTransform="uppercase" color="appTextSubtle">
+          {copy.appearance}
+        </Text>
+        <Box>
           <HStack
             justify="space-between"
             spacing={3}
@@ -116,15 +91,19 @@ const ThemeMenu = ({ userLanguage, isIcon = true, buttonProps = {} }) => {
             </Box>
           </HStack>
         </Box>
-        <MenuDivider />
-        <VStack align="stretch" spacing={1} px={3} py={1}>
-          <Text fontSize="xs" textTransform="uppercase" color="appTextSubtle">
-            {copy.accents}
-          </Text>
-        </VStack>
+      </VStack>
+      <Divider borderColor="appBorder" />
+      <VStack align="stretch" spacing={2}>
+        <Text fontSize="xs" textTransform="uppercase" color="appTextSubtle">
+          {copy.accents}
+        </Text>
         {colors.map((c) => (
-          <MenuItem
+          <Button
             key={c}
+            variant="ghost"
+            justifyContent="stretch"
+            borderRadius="xl"
+            py={5}
             onPointerDown={(event) => {
               if (event.pointerType === "mouse") return;
               lastTouchColorRef.current = c;
@@ -146,11 +125,9 @@ const ThemeMenu = ({ userLanguage, isIcon = true, buttonProps = {} }) => {
               </HStack>
               <Box w={3} h={3} borderRadius="full" bg={bubbleColors[c]} />
             </HStack>
-          </MenuItem>
+          </Button>
         ))}
-      </MenuList>
-    </Menu>
+      </VStack>
+    </VStack>
   );
 };
-
-export default ThemeMenu;

@@ -12,20 +12,13 @@ import {
   useGeminiGradingChatCompletion,
   useSimpleGeminiChat,
 } from "../../hooks/useGeminiChat";
-import { translation } from "../../utility/translation";
-import { IoChatbubblesOutline } from "react-icons/io5";
-import { getInstantSurfacePressProps } from "../../utility/instantSurface";
 
 export default function PromptWritingQuestion({
   question,
-  onLearnClick,
-  userLanguage,
-  handleModalCheck,
   onSubmitPrompt, // we'll hook into Step’s submit logic
 }) {
   const [promptText, setPromptText] = useState("");
   const [aiMessages, setAiMessages] = useState("");
-  const learnPressRef = useRef({ key: "", at: 0 });
   const { messages: streamMsgs, submitPrompt: runPrompt } =
     useSimpleGeminiChat();
   const { submitPrompt: gradePrompt } = useGeminiGradingChatCompletion();
@@ -74,21 +67,6 @@ export default function PromptWritingQuestion({
   console.log("AI, messages:", aiMessages);
   return (
     <VStack spacing={4} width="100%" maxWidth="600px" align="stretch">
-      <Button
-        {...getInstantSurfacePressProps(learnPressRef, "learn", () =>
-          handleModalCheck(onLearnClick),
-        )}
-        alignSelf="center"
-        background="pink.400"
-        color="white"
-        boxShadow={actionShadow}
-        _hover={{ bg: "pink.500" }}
-        _active={{ bg: "pink.500" }}
-      >
-        <IoChatbubblesOutline />
-        &nbsp;
-        {translation[userLanguage]["app.button.learn"]}
-      </Button>
       <Textarea
         value={promptText}
         onChange={(e) => setPromptText(e.target.value)}

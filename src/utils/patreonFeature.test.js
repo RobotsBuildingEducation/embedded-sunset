@@ -1,6 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  CREATOR_NPUB,
+  isCreatorAccount,
   isPatreonAuthEnabled,
   resolveSubscriptionAccess,
 } from "./patreonFeature.js";
@@ -39,6 +41,21 @@ test("allows an authorized Patreon member", () => {
       legacyPasscodeVerified: false,
     }).authorized,
     true,
+  );
+});
+
+test("allows the creator account without Patreon authorization", () => {
+  assert.equal(isCreatorAccount(CREATOR_NPUB), true);
+  assert.equal(isCreatorAccount("npub1someoneelse"), false);
+  assert.deepEqual(
+    resolveSubscriptionAccess({
+      patreonEnabled: true,
+      creatorAuthorized: true,
+    }),
+    {
+      authorized: true,
+      requiresPatreonMigration: false,
+    },
   );
 });
 

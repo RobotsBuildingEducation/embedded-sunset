@@ -23,6 +23,7 @@ import {
   VStack,
   useDisclosure,
   useColorModeValue,
+  useToken,
 } from "@chakra-ui/react";
 import {
   CheckCircleIcon,
@@ -40,8 +41,19 @@ import {
   RiCodeSSlashLine,
   RiTerminalLine,
   RiBookOpenLine,
+  RiLayoutLine,
+  RiServerLine,
+  RiApps2Line,
+  RiRobot2Line,
+  RiDatabase2Line,
 } from "react-icons/ri";
-import { BsCodeSquare } from "react-icons/bs";
+import {
+  BsBoxes,
+  BsCodeSquare,
+  BsDiagram3,
+  BsWrenchAdjustable,
+} from "react-icons/bs";
+import { useThemeStore } from "../useThemeStore";
 
 /** -------------------- Styles & Kind Resolver -------------------- */
 
@@ -117,6 +129,7 @@ const QUESTION_KIND_ALIASES = {
   order: "order",
   selectorder: "order",
   dragorder: "order",
+  parsons: "order",
 
   // multiple choice
   multichoice: "multiChoice",
@@ -128,6 +141,7 @@ const QUESTION_KIND_ALIASES = {
   multipleanswer: "multiAnswer",
   multiselect: "multiAnswer",
   ismultipleanswerchoice: "multiAnswer",
+  matchpairs: "multiAnswer",
 
   // text
   text: "text",
@@ -144,12 +158,20 @@ const QUESTION_KIND_ALIASES = {
   code: "code",
   writecode: "code",
   iscode: "code",
+  codetracing: "code",
+  relevantline: "code",
+  fixbug: "code",
+  refactoring: "code",
 
   // code completion
   codecompletion: "codeCompletion",
   completecode: "codeCompletion",
   fillinthecode: "codeCompletion",
   iscodecompletion: "codeCompletion",
+  fillcodeblanks: "codeCompletion",
+
+  // implementation comparison
+  bestimplementation: "multiChoice",
 
   // terminal
   terminal: "terminal",
@@ -188,6 +210,64 @@ const getStyleForKind = (kind) => {
   );
 };
 
+const getChapterTopicIcon = (node, fallbackIcon = StarIcon) => {
+  const topic = [node?.chapterLabel, node?.title, node?.groupValue]
+    .filter(Boolean)
+    .join(" ")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+  if (/tutorial|introduction|introduccion|platform|plataforma/.test(topic)) {
+    return RiBookOpenLine;
+  }
+  if (
+    /object.?oriented|orientad[ao]s? a objetos|\boop\b|classes|clases|inheritance|herencia/.test(
+      topic,
+    )
+  ) {
+    return BsBoxes;
+  }
+  if (/front.?end|html|css|user interface|interfaz|react/.test(topic)) {
+    return RiLayoutLine;
+  }
+  if (/back.?end|server|servidor|\bapi\b/.test(topic)) {
+    return RiServerLine;
+  }
+  if (/database|base de datos|\bsql\b|storage|almacenamiento/.test(topic)) {
+    return RiDatabase2Line;
+  }
+  if (
+    /building apps|build.*app|app building|applications|aplicaciones|mobile|movil|android|\bios\b/.test(
+      topic,
+    )
+  ) {
+    return RiApps2Line;
+  }
+  if (
+    /algorithm|algoritmo|data structure|estructura de datos|graph|sorting|searching/.test(
+      topic,
+    )
+  ) {
+    return BsDiagram3;
+  }
+  if (/tooling|herramientas|\bnpm\b|\bnode\b|terminal|command line|\bgit\b/.test(topic)) {
+    return BsWrenchAdjustable;
+  }
+  if (/artificial intelligence|inteligencia artificial|machine learning|\bai\b/.test(topic)) {
+    return RiRobot2Line;
+  }
+  if (
+    /coding|code|programming|programacion|javascript|typescript|python|java|basic|basicos|fundamentals|fundamentos/.test(
+      topic,
+    )
+  ) {
+    return RiCodeSSlashLine;
+  }
+
+  return fallbackIcon;
+};
+
 /** -------------------- Skill-tree Flow Layout Helpers -------------------- */
 
 const FLOW_CARD_PATTERNS = [
@@ -206,7 +286,8 @@ const createFlowConnectorPath = (start, end, fallbackDirection = 1) => {
     Math.abs(deltaX) > 8 ? Math.sign(deltaX) : fallbackDirection;
   const wave = Math.min(72, Math.max(28, Math.abs(deltaX) * 0.22 + 24));
   const midpointX =
-    (start.x + end.x) / 2 + (Math.abs(deltaX) <= 8 ? direction * wave * 0.6 : 0);
+    (start.x + end.x) / 2 +
+    (Math.abs(deltaX) <= 8 ? direction * wave * 0.6 : 0);
   const midpointY = start.y + deltaY * 0.5;
 
   return [
@@ -254,6 +335,13 @@ const ChapterReview = ({
   const [connectorPaths, setConnectorPaths] = useState([]);
   const treeRef = useRef(null);
   const cardRefs = useRef([]);
+  const themeColor = useThemeStore((state) => state.themeColor);
+  const [accent300, accent500, accent600, accent700] = useToken("colors", [
+    `${themeColor}.300`,
+    `${themeColor}.500`,
+    `${themeColor}.600`,
+    `${themeColor}.700`,
+  ]);
   const chapterCardBg = useColorModeValue(
     "rgba(255,255,255,0.94)",
     "rgba(12,21,40,0.98)",
@@ -277,6 +365,28 @@ const ChapterReview = ({
   const drawerQuestionShadow = useColorModeValue(
     "0 18px 36px rgba(15,23,42,0.1)",
     "0 20px 40px rgba(2,6,23,0.34)",
+  );
+  const chapterJourneyAccent = useColorModeValue(
+    accent600 || "#DB2777",
+    accent300 || "#F9A8D4",
+  );
+  const expandControlColor = useColorModeValue("#000000", "#FFFFFF");
+  const startButtonBg = useColorModeValue(
+    accent500 || "#EC4899",
+    accent600 || "#BE185D",
+  );
+  const startButtonHoverBg = useColorModeValue(
+    accent600 || "#DB2777",
+    accent500 || "#EC4899",
+  );
+  const startButtonActiveBg = accent700 || "#9D174D";
+  const startButtonBorder = useColorModeValue(
+    accent600 || "#DB2777",
+    accent500 || "#EC4899",
+  );
+  const startButtonShadow = useColorModeValue(
+    "0 10px 22px rgba(15, 23, 42, 0.08)",
+    "0 14px 30px rgba(2, 6, 23, 0.36)",
   );
 
   const {
@@ -364,11 +474,7 @@ const ChapterReview = ({
         return {
           id: `${node.id || index}-${visibleNodes[index + 1]?.id || index + 1}`,
           accent: getStyleForKind(node.questionKind).accent,
-          d: createFlowConnectorPath(
-            start,
-            end,
-            index % 2 === 0 ? 1 : -1,
-          ),
+          d: createFlowConnectorPath(start, end, index % 2 === 0 ? 1 : -1),
         };
       })
       .filter(Boolean);
@@ -430,7 +536,7 @@ const ChapterReview = ({
             fontWeight="semibold"
             textTransform="uppercase"
             letterSpacing="widest"
-            color="purple.300"
+            color={chapterJourneyAccent}
             lineHeight="1.1"
             mb={0}
           >
@@ -450,12 +556,7 @@ const ChapterReview = ({
         </Box>
 
         {/* ---------- SKILL TREE (restored) ---------- */}
-        <Box
-          ref={treeRef}
-          w="100%"
-          px={{ base: 0, md: 3 }}
-          position="relative"
-        >
+        <Box ref={treeRef} w="100%" px={{ base: 0, md: 3 }} position="relative">
           {connectorPaths.length ? (
             <Box
               as="svg"
@@ -498,7 +599,10 @@ const ChapterReview = ({
           >
             {visibleNodes.map((node, index) => {
               const typeStyle = getStyleForKind(node.questionKind);
-              const IconComponent = typeStyle.icon || StarIcon;
+              const IconComponent = getChapterTopicIcon(
+                node,
+                typeStyle.icon || StarIcon,
+              );
               const accent = typeStyle.accent;
               const gradient = typeStyle.gradient;
               const pattern = resolvePattern(index);
@@ -625,7 +729,15 @@ const ChapterReview = ({
                   px={{ base: 4, md: 8 }}
                   py={{ base: 2, md: 5 }}
                   fontSize={{ base: "sm", md: "lg" }}
-                  colorScheme="purple"
+                  color={expandControlColor}
+                  _hover={{
+                    bg: "appSurfaceMuted",
+                    color: expandControlColor,
+                  }}
+                  _active={{
+                    bg: "appSurfaceInset",
+                    color: expandControlColor,
+                  }}
                   onClick={() => setIsExpanded(true)}
                 >
                   {text?.expand || "Show more"}
@@ -637,7 +749,22 @@ const ChapterReview = ({
 
         {showStartButton && text?.cta ? (
           <Button
-            colorScheme="purple"
+            bg={startButtonBg}
+            color="white"
+            borderWidth="1px"
+            borderColor={startButtonBorder}
+            fontWeight="700"
+            boxShadow={startButtonShadow}
+            _hover={{
+              bg: startButtonHoverBg,
+              color: "white",
+              transform: "translateY(-1px)",
+            }}
+            _active={{
+              bg: startButtonActiveBg,
+              color: "white",
+              transform: "translateY(0)",
+            }}
             size={{ base: "md", md: "lg" }}
             borderRadius="full"
             px={{ base: 6, md: 12 }}
@@ -681,7 +808,7 @@ const ChapterReview = ({
                   fontWeight="semibold"
                   letterSpacing="widest"
                   textTransform="uppercase"
-                  color="purple.300"
+                  color={chapterJourneyAccent}
                 >
                   {text?.drawerTitle || "Inside this chapter"}
                 </Text>

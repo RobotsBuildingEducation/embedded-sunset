@@ -5,14 +5,6 @@ import {
   Input,
   Text,
   VStack,
-  Heading,
-  UnorderedList,
-  ListItem,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
   HStack,
 } from "@chakra-ui/react";
 import Markdown from "react-markdown";
@@ -28,7 +20,7 @@ import { database } from "../../database/firebaseResources";
 import { useConversationReviewGeminiChat } from "../../hooks/useGeminiChat";
 import { translation } from "../../utility/translation";
 const LiveReactEditorModal = lazy(() => import("../LiveCodeEditor/LiveCodeEditor"));
-import { CloudCanvas, SunsetCanvas } from "../../elements/SunsetCanvas";
+import { CloudCanvas } from "../../elements/SunsetCanvas";
 import { soundManager } from "../../utility/soundManager";
 import {
   GENERATED_REACT_RUNTIME_REQUIREMENTS,
@@ -153,51 +145,11 @@ const CodeBlock = ({ inline, className, children, ...props }) => {
 };
 
 const newTheme = {
-  p: (props) => <Text mb={2} lineHeight="1.6" {...props} />,
-  ul: (props) => <UnorderedList pl={6} spacing={2} {...props} />,
-  ol: (props) => <UnorderedList as="ol" pl={6} spacing={2} {...props} />,
-  li: (props) => <ListItem mb={1} {...props} />,
-  h1: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  h2: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
-  h3: (props) => <Heading as="h4" mt={6} size="md" {...props} />,
+  p: (props) => <Text fontSize="sm" mb={2} lineHeight="1.6" {...props} />,
   code: CodeBlock,
 };
 
-const renderGroupedSteps = (steps, currentStep, userLanguage) => {
-  const groups = {};
-  steps[userLanguage].forEach((s, index) => {
-    if (!groups[s.group]) groups[s.group] = [];
-    groups[s.group].push({ ...s, index });
-  });
-
-  return Object.entries(groups).map(([group, items]) => {
-    if (group === "introduction") return null;
-    return (
-      <AccordionItem key={group}>
-        <AccordionButton p={6} justifyContent="space-between">
-          <Box flex="1" textAlign="left">
-            {transcriptDisplay[group]?.[userLanguage] || group}
-          </Box>
-          <AccordionIcon />
-        </AccordionButton>
-        <AccordionPanel pb={4}>
-          <VStack align="stretch">
-            {items.map(({ title, index }) => (
-              <Text
-                key={`step-${index}`}
-                color={index <= currentStep - 1 ? "green.500" : "gray.500"}
-              >
-                {index !== 0 ? index + ". " + title : ""}
-              </Text>
-            ))}
-          </VStack>
-        </AccordionPanel>
-      </AccordionItem>
-    );
-  });
-};
-
-const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
+const PreConversation = ({ steps, step, userLanguage, onSubmit, onBuildReady }) => {
   const [idea, setIdea] = useState("");
   const [savedIdea, setSavedIdea] = useState("");
   const [code, setCode] = useState("");
@@ -219,11 +171,11 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
             const data = snap.data();
             loadedIdea = data.userBuild || "";
             const buildCode = data.buildCode || {};
-            if (buildCode[step.group]) loadedCode = buildCode[step.group];
+            if (buildCode[step?.group]) loadedCode = buildCode[step?.group];
           }
 
           const codeSnap = await getDoc(
-            doc(database, "users", userId, "buildHistory", step.group)
+            doc(database, "users", userId, "buildHistory", step?.group)
           );
           if (codeSnap.exists()) {
             const data = codeSnap.data();
@@ -231,21 +183,24 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
           }
         }
 
-        const fallback = readBuildFallback(userId, step.group);
+        const fallback = readBuildFallback(userId, step?.group);
         if (!loadedIdea && fallback?.idea) loadedIdea = fallback.idea;
         if (!loadedCode && fallback?.code) loadedCode = fallback.code;
         loadedCode = normalizeGeneratedReactCode(loadedCode);
 
         setIdea(loadedIdea);
         setSavedIdea(loadedIdea);
-        if (loadedCode) setCode(loadedCode);
+        if (loadedCode) {
+          setCode(loadedCode);
+          onBuildReady?.(true);
+        }
       } catch (err) {
         console.error("Error fetching build data", err);
       }
     };
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step.group]);
+  }, [step?.group]);
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -253,6 +208,9 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
       const normalizedCode = normalizeGeneratedReactCode(last.content);
       setCode(normalizedCode);
       saveBuild(normalizedCode, "build");
+      if (normalizedCode.trim()) {
+        onBuildReady?.(true);
+      }
     }
   }, [messages]);
 
@@ -264,7 +222,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
       const docs = await getDocs(ref);
       return docs.docs
         .filter(
-          (d) => !isNaN(parseInt(d.id)) && parseInt(d.id) < parseInt(step.group)
+          (d) => !isNaN(parseInt(d.id)) && parseInt(d.id) < parseInt(step?.group)
         )
         .sort((a, b) => parseInt(a.id) - parseInt(b.id))
         .map((d) => d.data().code)
@@ -282,7 +240,6 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
     const completed = steps[userLanguage].slice(1, idx).map((s) => s.title);
     const history = await fetchHistory();
 
-    console.log("completed..", completed);
     let prompt =
       `Context for the prompt:
       The individual is using an education app and learning about computer science and how to code, starting with elementary knowledge and ending with the ability to create apps. Based on the user's completed steps: ${JSON.stringify(
@@ -303,11 +260,10 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
       - D. If you are writing firebase (with or without react), use v9, and you MUST use a unique document in the 'experiments' collection. Never use any other collection or your firebase software will fail. Never use imports or we will fail. Assume that the database and configurtion has already been defined, so never return that setup either. Refer to the database element as "database" and not "db" or anything else. Do not use auth. Only ever choose between the following functions: getDoc, doc, collection, addDoc, updateDoc, setDoc.\n  
       - E. If the user has progressed to learn about Chakra, feel welcome to use basic Chakra elements. Never use the ChakraProvider element.\n\n` +
       `3. Strictly return only code written by a formatted backticked code block. Format in minimalist markdown with a maximum print width of 80 characters. Finally do not add any language mentioning that you understand the request - it should the code only, without any exceptions. I repeat, do not return anything other than code or appropriate comments with the code. \n\n` +
-      `4. The user is speaking in ${userLanguage.includes("en") ? "English" : "Spanish"}. So theme the code that you're writing based on the language.` +
+      `4. The user is speaking in ${userLanguage?.includes("en") ? "English" : "Spanish"}. So theme the code that you're writing based on the language.` +
       `5. The user is also interested in building the following idea: ${idea}. Make the code about that theme in good faith.` +
       `6. The code you return MUST be responsive for both mobile and desktop views. Do not allow renders that awkwardly break out of containers, err on the side of being as mobile friendly as possible!`;
 
-    console.log("prompt", prompt);
     submitPrompt(prompt).then(() => setIsLoading(false));
   };
 
@@ -316,7 +272,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
     soundManager.play("submitAction");
     try {
       const userId = localStorage.getItem("local_npub");
-      writeBuildFallback(userId, step.group, {
+      writeBuildFallback(userId, step?.group, {
         idea,
         code,
         stage: "idea",
@@ -339,7 +295,7 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
   const saveBuild = async (content, stage = "build") => {
     try {
       const userId = localStorage.getItem("local_npub");
-      writeBuildFallback(userId, step.group, {
+      writeBuildFallback(userId, step?.group, {
         idea,
         code: content,
         stage,
@@ -354,12 +310,12 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
         userDocRef,
         {
           userBuild: idea,
-          buildCode: { ...buildCode, [step.group]: content },
+          buildCode: { ...buildCode, [step?.group]: content },
         },
         { merge: true },
       );
       await setDoc(
-        doc(database, "users", userId, "buildHistory", step.group),
+        doc(database, "users", userId, "buildHistory", step?.group),
         {
           code: content,
           updatedAt: Date.now(),
@@ -372,34 +328,27 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
     }
   };
 
-  const handleSave = async () => {
+  const handleCompleteChapter = async () => {
     window.scrollTo(0, 0);
-    await saveBuild(code, "conversation");
-    onContinue();
-  };
-
-  const handleSkip = () => {
     soundManager.resume();
-    soundManager.play("colorSwitch");
-    onContinue();
+    soundManager.play("submit");
+    await saveBuild(code, "build");
+    if (onSubmit) {
+      onSubmit();
+    }
   };
 
-  const currentIdx = steps[userLanguage].indexOf(step);
   return (
     <VStack
       spacing={4}
-      // alignItems="flex-start"
-
       width="100%"
       maxWidth="600px"
       mt="20px"
     >
-      {/* <Heading size="md">
-        {translation[userLanguage]["modal.adaptiveLearning.title"]}
-      </Heading> */}
-
       <Text fontSize="sm" fontWeight={"bold"} mb="12px">
-        Enter an app idea and build it as you make progress!
+        {userLanguage?.includes("es")
+          ? "¡Ingresa una idea de aplicación y constrúyela a medida que avanzas!"
+          : "Enter an app idea and build it as you make progress!"}
       </Text>
 
       <Input
@@ -411,44 +360,36 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
         marginTop="-20px"
         width="75%"
       />
-      <HStack>
+      <VStack spacing={3} mt={1}>
         <Button
           onClick={handleSaveIdeaAndGenerate}
           isDisabled={isLoading || idea.length < 1}
           colorScheme="pink"
           background="pink.300"
           data-sound-ignore-select="true"
+          isLoading={isLoading}
         >
           {savedIdea
             ? translation[userLanguage]["buildYourApp.button.label.2"]
             : translation[userLanguage]["buildYourApp.button.label.1"]}
         </Button>
         <Button
-          onClick={handleSave}
-          isDisabled={!code.trim()}
+          onClick={handleCompleteChapter}
+          isDisabled={!code?.trim() || isLoading}
           boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-        >
-          {translation[userLanguage]["nextStep"]}
-        </Button>
-        <Button
-          variant="outline"
-          onClick={handleSkip}
           data-sound-ignore-select="true"
         >
-          {translation[userLanguage]["skip"]}
+          {translation[userLanguage]["app.button.complete"]}
         </Button>
-      </HStack>
-      {/* {savedIdea && (
-        <Box>
-          {translation[userLanguage]["buildYourApp.idea.label"]} {savedIdea}
-        </Box>
-      )} */}
+      </VStack>
+
       {isLoading && (
         <>
           <CloudCanvas />
           <Text>{translation[userLanguage]["loading.suggestion"]}</Text>
         </>
       )}
+
       {code && (
         <Box
           display="flex"
@@ -467,15 +408,6 @@ const PreConversation = ({ steps, step, userLanguage, onContinue }) => {
               />
             </Box>
           </LiveEditorContext.Provider>
-          <HStack>
-            <Button
-              onClick={handleSave}
-              isDisabled={!code.trim()}
-              boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-            >
-              {translation[userLanguage]["nextStep"]}
-            </Button>
-          </HStack>
         </Box>
       )}
     </VStack>

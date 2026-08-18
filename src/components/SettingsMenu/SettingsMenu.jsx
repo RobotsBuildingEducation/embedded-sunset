@@ -19,6 +19,7 @@ import {
   Input,
   HStack,
   Select,
+  Tooltip,
   useColorModeValue,
   useToken,
 } from "@chakra-ui/react";
@@ -46,6 +47,7 @@ import { useNostrWalletStore } from "../../hooks/useNostrWalletStore";
 import { useThemeStore } from "../../useThemeStore";
 import StudyGuideModal from "../StudyGuideModal/StudyGuideModal";
 import { ChangeLanguageModal } from "../ChangeLanguageModal/ChangeLanguageModal";
+import ThemeModal from "./ThemeModal";
 import { soundManager } from "../../utility/soundManager";
 import { getInstantSurfacePressProps } from "../../utility/instantSurface";
 import {
@@ -73,8 +75,8 @@ const SettingsMenu = ({
   view,
   setView,
   step,
-  allowPosts,
-  setAllowPosts,
+  isAdaptiveLearning,
+  setIsAdaptiveLearning,
   soundEnabled,
   setSoundEnabled,
   onPatreonAuthorized,
@@ -94,22 +96,22 @@ const SettingsMenu = ({
     `${themeColor}.700`,
   ]);
   const primaryMenuButtonBg = useColorModeValue(
-    accent300 || "#F9A8D4",
-    accent700 || "#9D174D",
-  );
-  const primaryMenuButtonHoverBg = useColorModeValue(
     accent500 || "#EC4899",
     accent600 || "#BE185D",
   );
+  const primaryMenuButtonHoverBg = useColorModeValue(
+    accent600 || "#DB2777",
+    accent500 || "#EC4899",
+  );
   const primaryMenuButtonActiveBg = useColorModeValue(
-    accent500 || "#DB2777",
-    accent500 || "#DB2777",
+    accent700 || "#BE185D",
+    accent700 || "#9D174D",
   );
   const primaryMenuButtonBorder = useColorModeValue(
-    accent500 || "#DB2777",
-    accent500 || "#DB2777",
+    accent600 || "#DB2777",
+    accent500 || "#EC4899",
   );
-  const primaryMenuButtonColor = useColorModeValue("#1F2937", "#F8FAFC");
+  const primaryMenuButtonColor = "white";
   const primaryMenuButtonShadow = useColorModeValue(
     "0 10px 22px rgba(15, 23, 42, 0.08)",
     "0 14px 30px rgba(2, 6, 23, 0.36)",
@@ -117,6 +119,10 @@ const SettingsMenu = ({
   const secondaryMenuButtonShadow = useColorModeValue(
     "0 8px 18px rgba(15, 23, 42, 0.08)",
     "0 12px 24px rgba(2, 6, 23, 0.28)",
+  );
+  const overlayBorderColor = useColorModeValue(
+    "#000000",
+    "rgba(226, 232, 240, 0.82)",
   );
   const primaryMenuButtonProps = {
     p: 6,
@@ -218,6 +224,12 @@ const SettingsMenu = ({
   } = useDisclosure();
 
   const {
+    isOpen: isThemeOpen,
+    onOpen: onThemeOpen,
+    onClose: onThemeClose,
+  } = useDisclosure();
+
+  const {
     isOpen: isSubscriptionOpen,
     onOpen: onSubscriptionOpen,
     onClose: onSubscriptionClose,
@@ -315,15 +327,15 @@ const SettingsMenu = ({
     // onLangClose();
   };
 
-  const handleToggleAllowPosts = async (e) => {
+  const handleToggleAdaptiveLearning = async (e) => {
     soundManager.resume();
     soundManager.play("modeSwitch");
     const newValue = e.target.checked;
-    setAllowPosts(newValue);
+    setIsAdaptiveLearning(newValue);
     const npub = localStorage.getItem("local_npub");
     if (npub) {
       const userDocRef = doc(database, "users", npub);
-      await updateDoc(userDocRef, { allowPosts: newValue });
+      await updateDoc(userDocRef, { isAdaptiveLearning: newValue });
     }
   };
 
@@ -501,19 +513,66 @@ const SettingsMenu = ({
                 </Button>
               </HStack>
 
+              {/* The allow-posts switch is hidden while automatic Nostr
+                  posting is disabled. */}
+
               <FormControl display="flex" alignItems="center" width="100%">
-                <FormLabel
-                  htmlFor="allow-posts-menu-switch"
-                  mb="0"
-                  flex="1"
-                  color="appText"
-                >
-                  {translation[userLanguage]["tag.allowPosting"]}
-                </FormLabel>
+                <HStack flex="1" spacing={2}>
+                  <FormLabel
+                    htmlFor="adaptive-learning-menu-switch"
+                    mb="0"
+                    color="appText"
+                  >
+                    {
+                      translation[userLanguage][
+                        "settings.button.adaptiveLearning"
+                      ]
+                    }
+                  </FormLabel>
+                  <Tooltip
+                    label={
+                      userLanguage?.includes("es")
+                        ? "Muestra sugerencias y ejemplos personalizados según tu progreso después de cada ejercicio."
+                        : "Shows personalized suggestions and examples based on your progress after each exercise."
+                    }
+                    hasArrow
+                    placement="top"
+                    closeOnClick={false}
+                    px={3}
+                    py={2}
+                    borderRadius="lg"
+                    bg="appSurfaceElevated"
+                    color="appText"
+                    borderWidth="2px"
+                    borderStyle="solid"
+                    borderColor={overlayBorderColor}
+                    boxShadow="none"
+                  >
+                    <IconButton
+                      aria-label={
+                        userLanguage?.includes("es")
+                          ? "Acerca del aprendizaje proactivo"
+                          : "About proactive learning"
+                      }
+                      icon={
+                        <Text as="span" fontSize="xs" fontWeight="bold">
+                          ?
+                        </Text>
+                      }
+                      size="xs"
+                      minWidth="24px"
+                      width="24px"
+                      height="24px"
+                      borderRadius="full"
+                      variant="outline"
+                      borderColor="appBorderStrong"
+                    />
+                  </Tooltip>
+                </HStack>
                 <Switch
-                  id="allow-posts-menu-switch"
-                  isChecked={allowPosts}
-                  onChange={handleToggleAllowPosts}
+                  id="adaptive-learning-menu-switch"
+                  isChecked={isAdaptiveLearning}
+                  onChange={handleToggleAdaptiveLearning}
                   colorScheme="pink"
                 />
               </FormControl>
@@ -607,6 +666,10 @@ const SettingsMenu = ({
                 ref={firstButtonRef}
               >
                 {translation[userLanguage]["settings.button.changeLanguage"]}
+              </Button>
+
+              <Button {...primaryMenuButtonProps} onClick={onThemeOpen}>
+                {userLanguage?.includes("es") ? "Cambiar tema" : "Change Theme"}
               </Button>
 
               <Button
@@ -816,6 +879,14 @@ const SettingsMenu = ({
           isOpen={isLangOpen}
           onClose={onLangClose}
           onSelect={handleLanguageSelect}
+        />
+      ) : null}
+
+      {isThemeOpen ? (
+        <ThemeModal
+          userLanguage={userLanguage}
+          isOpen={isThemeOpen}
+          onClose={onThemeClose}
         />
       ) : null}
 

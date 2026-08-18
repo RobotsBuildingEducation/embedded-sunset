@@ -28,7 +28,7 @@ export let translation = {
     skillValue: "Your skill value: ",
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
-    "chapterReview.title": "Chapter Skill Journey",
+    "chapterReview.title": "Chapter Journey",
     "chapterReview.subtitle":
       "Preview the milestones you'll tackle in this chapter before diving in.",
     "chapterReview.cta": "Start chapter",
@@ -150,7 +150,7 @@ export let translation = {
     "settings.theme.pink": "Pink",
     "settings.theme.yellow": "Yellow",
     "search...": "Search…",
-    backToQuestion9: "Go back to question 9",
+    backToQuestion9: "Go back to the tutorial",
     completeTutorialFirst: "You have to finish the tutorial first.",
     askForHelp: "Ask for help",
     onboardingProgress: "Account setup progress",
@@ -259,13 +259,13 @@ export let translation = {
     questions: "questions",
     goal: "goal",
     completed: "completed",
-    "onboarding.chapter0.questions": "Questions 0-9",
-    "onboarding.chapter1.questions": "Questions 10-30",
-    "onboarding.chapter2.questions": "Questions 31-48",
-    "onboarding.chapter3.questions": "Questions 49-68",
-    "onboarding.chapter4.questions": "Questions 69-90",
-    "onboarding.chapter5.questions": "Questions 91-111",
-    "onboarding.chapter6.questions": "Questions 112-133",
+    "onboarding.chapter0.questions": "Questions 0-18",
+    "onboarding.chapter1.questions": "Questions 19-39",
+    "onboarding.chapter2.questions": "Questions 40-57",
+    "onboarding.chapter3.questions": "Questions 58-107",
+    "onboarding.chapter4.questions": "Questions 108-129",
+    "onboarding.chapter5.questions": "Questions 130-150",
+    "onboarding.chapter6.questions": "Questions 151+",
     "onboarding.chapter0.title": "Tutorial Chapter: Platform Introduction",
 
     "onboarding.chapter0.content":
@@ -1026,7 +1026,7 @@ reverse(head) {
     "landing.introduction": (
       <div>
         {/* Create scholarships with learning */}
-        Use AI to learn how to code better and faster than any other platform.
+        Your personal coding tutor
         {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
       </div>
     ),
@@ -1102,7 +1102,7 @@ reverse(head) {
     "settings.selfPace": "Self-pace",
     "settings.button.selfPace": "Self-pace",
     "settings.button.socialProgress": "Social Progress",
-    "settings.button.adaptiveLearning": "Adaptive Learning",
+    "settings.button.adaptiveLearning": "Proactive learning",
     "settings.button.bitcoinMode": "Wallet",
 
     "settings.button.tutor": "Open Tutor",
@@ -1180,7 +1180,7 @@ reverse(head) {
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
     "modal.learn.title": "Learn",
     "modal.learn.instructions":
-      "Give us a few seconds to generate notes based on your progress.",
+      "Give us a few seconds to generate lecture notes.",
     "modal.feedback.title": "Submit Feedback",
     "modal.feedback.contactLabel": "Contact",
     "modal.feedback.contactPlaceholder": "Enter your contact info",
@@ -1786,7 +1786,7 @@ reverse(head) {
     "settings.theme.select": "Seleccionar tema",
     startTutorialAndOnboarding:
       "Comencemos con el tutorial y la configuración de la cuenta a continuación.",
-    "chapterReview.title": "Recorrido de habilidades del capítulo",
+    "chapterReview.title": "Recorrido del capítulo",
     "chapterReview.subtitle":
       "Consulta los hitos que abordarás en este capítulo antes de comenzar.",
     "chapterReview.cta": "Comenzar capítulo",
@@ -1922,7 +1922,7 @@ reverse(head) {
     "onboarding.languages.description":
       "Elige los lenguajes de programación y las herramientas que quieras usar. ¡No lo pienses demasiado, también puedes cambiar de idioma cuando quieras desde el menú! Recomendamos Javascript para principiantes y para la mejor experiencia posible.",
     "search...": "Buscar…",
-    backToQuestion9: "Regresar a la pregunta 9",
+    backToQuestion9: "Regresar al tutorial",
 
     completeTutorialFirst: "Tienes que terminar el tutorial primero.",
 
@@ -2016,13 +2016,13 @@ reverse(head) {
     notifications_installation_directions:
       "Las instrucciones de instalación se pueden encontrar en el menú.",
     celebrateMessage: ". ¡Estás haciendo un gran trabajo! 🙌 🥳",
-    "onboarding.chapter0.questions": "Preguntas 0-9",
-    "onboarding.chapter1.questions": "Preguntas 10-30",
-    "onboarding.chapter2.questions": "Preguntas 31-48",
-    "onboarding.chapter3.questions": "Preguntas 49-68",
-    "onboarding.chapter4.questions": "Preguntas 69-90",
-    "onboarding.chapter5.questions": "Preguntas 91-111",
-    "onboarding.chapter6.questions": "Preguntas 112-133",
+    "onboarding.chapter0.questions": "Preguntas 0-18",
+    "onboarding.chapter1.questions": "Preguntas 19-39",
+    "onboarding.chapter2.questions": "Preguntas 40-57",
+    "onboarding.chapter3.questions": "Preguntas 58-107",
+    "onboarding.chapter4.questions": "Preguntas 108-129",
+    "onboarding.chapter5.questions": "Preguntas 130-150",
+    "onboarding.chapter6.questions": "Preguntas 151+",
     Progress: "Progreso",
     dailyGoal: "Meta diaria",
     questions: "preguntas",
@@ -2987,9 +2987,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "toast.description.addressCopied":
       "Tu dirección de Lightning ha sido copiada.",
     "landing.welcome": "Sunset",
-    "landing.introduction": (
-      <div>Usa la IA para aprender a programar mejor y más rápido.</div>
-    ),
+    "landing.introduction": <div>Tu tutor personal de programación</div>,
     "landing.promotion.title":
       "Termina todas las preguntas en 30 días y te reembolsaremos.",
     "landing.promotion.subtitle":
@@ -3047,7 +3045,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "settings.title": "Configuraciones",
     "settings.selfPace": "Auto ritmo",
     "settings.button.selfPace": "Auto ritmo",
-    "settings.button.adaptiveLearning": "Aprendizaje adaptativo",
+    "settings.button.adaptiveLearning": "Aprendizaje proactivo",
     "settings.button.bitcoinMode": "Billetera",
     "settings.button.tutor": "Abrir Tutor",
     "settings.button.tutorGPT": "Abrir Tutor (GPT)",
@@ -3087,7 +3085,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "modal.openSocialWallet.startButton": "Ir a la Billetera Social",
     "modal.learn.title": "Aprender",
     "modal.learn.instructions":
-      "Danos unos segundos para generar notas basadas en tu progreso.",
+      "Danos unos segundos para generar notas de la lección.",
     "modal.feedback.title": "Enviar comentarios",
     "modal.feedback.contactLabel": "Contacto",
     "modal.feedback.contactPlaceholder": "Ingrese su información de contacto",
@@ -3512,7 +3510,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
 
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
-    "chapterReview.title": "Chapter Skill Journey",
+    "chapterReview.title": "Chapter Journey",
     "chapterReview.subtitle":
       "Preview the milestones you'll tackle in this chapter before diving in.",
     "chapterReview.cta": "Start chapter",
@@ -3670,13 +3668,13 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     questions: "questions",
     goal: "goal",
     completed: "completed",
-    "onboarding.chapter0.questions": "Questions 0-9",
-    "onboarding.chapter1.questions": "Questions 10-30",
-    "onboarding.chapter2.questions": "Questions 31-48",
-    "onboarding.chapter3.questions": "Questions 49-68",
-    "onboarding.chapter4.questions": "Questions 69-90",
-    "onboarding.chapter5.questions": "Questions 91-111",
-    "onboarding.chapter6.questions": "Questions 112-133",
+    "onboarding.chapter0.questions": "Questions 0-18",
+    "onboarding.chapter1.questions": "Questions 19-39",
+    "onboarding.chapter2.questions": "Questions 40-57",
+    "onboarding.chapter3.questions": "Questions 58-107",
+    "onboarding.chapter4.questions": "Questions 108-129",
+    "onboarding.chapter5.questions": "Questions 130-150",
+    "onboarding.chapter6.questions": "Questions 151+",
     "onboarding.chapter0.title": "Tutorial Chapter: Platform Introduction",
 
     "onboarding.chapter0.content":
@@ -4403,7 +4401,7 @@ reverse(head) {
     "landing.introduction": (
       <div>
         {/* Create scholarships with learning */}
-        Use AI to learn how to code better and faster than any other platform.
+        Your personal coding tutor
         {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
       </div>
     ),
@@ -4478,7 +4476,7 @@ reverse(head) {
     "settings.selfPace": "Self-pace",
     "settings.button.selfPace": "Self-pace",
     "settings.button.socialProgress": "Social Progress",
-    "settings.button.adaptiveLearning": "Adaptive Learning",
+    "settings.button.adaptiveLearning": "Proactive learning",
     "settings.button.bitcoinMode": "Wallet",
 
     "settings.button.tutor": "Open Tutor",
@@ -4556,7 +4554,7 @@ reverse(head) {
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
     "modal.learn.title": "Learn",
     "modal.learn.instructions":
-      "Give us a few seconds to generate notes based on your progress.",
+      "Give us a few seconds to generate lecture notes.",
     "modal.feedback.title": "Submit Feedback",
     "modal.feedback.contactLabel": "Contact",
     "modal.feedback.contactPlaceholder": "Enter your contact info",
@@ -5133,7 +5131,7 @@ reverse(head) {
 
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
-    "chapterReview.title": "Chapter Skill Journey",
+    "chapterReview.title": "Chapter Journey",
     "chapterReview.subtitle":
       "Preview the milestones you'll tackle in this chapter before diving in.",
     "chapterReview.cta": "Start chapter",
@@ -5293,13 +5291,13 @@ reverse(head) {
     questions: "questions",
     goal: "goal",
     completed: "completed",
-    "onboarding.chapter0.questions": "Questions 0-9",
-    "onboarding.chapter1.questions": "Questions 10-30",
-    "onboarding.chapter2.questions": "Questions 31-48",
-    "onboarding.chapter3.questions": "Questions 49-68",
-    "onboarding.chapter4.questions": "Questions 69-90",
-    "onboarding.chapter5.questions": "Questions 91-111",
-    "onboarding.chapter6.questions": "Questions 112-133",
+    "onboarding.chapter0.questions": "Questions 0-18",
+    "onboarding.chapter1.questions": "Questions 19-39",
+    "onboarding.chapter2.questions": "Questions 40-57",
+    "onboarding.chapter3.questions": "Questions 58-107",
+    "onboarding.chapter4.questions": "Questions 108-129",
+    "onboarding.chapter5.questions": "Questions 130-150",
+    "onboarding.chapter6.questions": "Questions 151+",
     "onboarding.chapter0.title": "Tutorial Chapter: Platform Introduction",
 
     "onboarding.chapter0.content":
@@ -6026,7 +6024,7 @@ reverse(head) {
     "landing.introduction": (
       <div>
         {/* Create scholarships with learning */}
-        Use AI to learn how to code better and faster than any other platform.
+        Your personal coding tutor
         {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
       </div>
     ),
@@ -6101,7 +6099,7 @@ reverse(head) {
     "settings.selfPace": "Self-pace",
     "settings.button.selfPace": "Self-pace",
     "settings.button.socialProgress": "Social Progress",
-    "settings.button.adaptiveLearning": "Adaptive Learning",
+    "settings.button.adaptiveLearning": "Proactive learning",
     "settings.button.bitcoinMode": "Wallet",
 
     "settings.button.tutor": "Open Tutor",
@@ -6179,7 +6177,7 @@ reverse(head) {
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
     "modal.learn.title": "Learn",
     "modal.learn.instructions":
-      "Give us a few seconds to generate notes based on your progress.",
+      "Give us a few seconds to generate lecture notes.",
     "modal.feedback.title": "Submit Feedback",
     "modal.feedback.contactLabel": "Contact",
     "modal.feedback.contactPlaceholder": "Enter your contact info",
@@ -6772,7 +6770,7 @@ reverse(head) {
 
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
-    "chapterReview.title": "Chapter Skill Journey",
+    "chapterReview.title": "Chapter Journey",
     "chapterReview.subtitle":
       "Preview the milestones you'll tackle in this chapter before diving in.",
     "chapterReview.cta": "Start chapter",
@@ -6932,13 +6930,13 @@ reverse(head) {
     questions: "questions",
     goal: "goal",
     completed: "completed",
-    "onboarding.chapter0.questions": "Questions 0-9",
-    "onboarding.chapter1.questions": "Questions 10-30",
-    "onboarding.chapter2.questions": "Questions 31-48",
-    "onboarding.chapter3.questions": "Questions 49-68",
-    "onboarding.chapter4.questions": "Questions 69-90",
-    "onboarding.chapter5.questions": "Questions 91-111",
-    "onboarding.chapter6.questions": "Questions 112-133",
+    "onboarding.chapter0.questions": "Questions 0-18",
+    "onboarding.chapter1.questions": "Questions 19-39",
+    "onboarding.chapter2.questions": "Questions 40-57",
+    "onboarding.chapter3.questions": "Questions 58-107",
+    "onboarding.chapter4.questions": "Questions 108-129",
+    "onboarding.chapter5.questions": "Questions 130-150",
+    "onboarding.chapter6.questions": "Questions 151+",
     "onboarding.chapter0.title": "Tutorial Chapter: Platform Introduction",
 
     "onboarding.chapter0.content":
@@ -7665,7 +7663,7 @@ reverse(head) {
     "landing.introduction": (
       <div>
         {/* Create scholarships with learning */}
-        Use AI to learn how to code better and faster than any other platform.
+        Your personal coding tutor
         {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
       </div>
     ),
@@ -7740,7 +7738,7 @@ reverse(head) {
     "settings.selfPace": "Self-pace",
     "settings.button.selfPace": "Self-pace",
     "settings.button.socialProgress": "Social Progress",
-    "settings.button.adaptiveLearning": "Adaptive Learning",
+    "settings.button.adaptiveLearning": "Proactive learning",
     "settings.button.bitcoinMode": "Wallet",
 
     "settings.button.tutor": "Open Tutor",
@@ -7818,7 +7816,7 @@ reverse(head) {
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
     "modal.learn.title": "Learn",
     "modal.learn.instructions":
-      "Give us a few seconds to generate notes based on your progress.",
+      "Give us a few seconds to generate lecture notes.",
     "modal.feedback.title": "Submit Feedback",
     "modal.feedback.contactLabel": "Contact",
     "modal.feedback.contactPlaceholder": "Enter your contact info",
@@ -8410,7 +8408,7 @@ reverse(head) {
     "settings.theme.select": "Select Theme",
     startTutorialAndOnboarding:
       "Let's start the tutorial and account setup next.",
-    "chapterReview.title": "Chapter Skill Journey",
+    "chapterReview.title": "Chapter Journey",
     "chapterReview.subtitle":
       "Preview the milestones you'll tackle in this chapter before diving in.",
     "chapterReview.cta": "Start chapter",
@@ -8570,13 +8568,13 @@ reverse(head) {
     questions: "questions",
     goal: "goal",
     completed: "completed",
-    "onboarding.chapter0.questions": "Questions 0-9",
-    "onboarding.chapter1.questions": "Questions 10-30",
-    "onboarding.chapter2.questions": "Questions 31-48",
-    "onboarding.chapter3.questions": "Questions 49-68",
-    "onboarding.chapter4.questions": "Questions 69-90",
-    "onboarding.chapter5.questions": "Questions 91-111",
-    "onboarding.chapter6.questions": "Questions 112-133",
+    "onboarding.chapter0.questions": "Questions 0-18",
+    "onboarding.chapter1.questions": "Questions 19-39",
+    "onboarding.chapter2.questions": "Questions 40-57",
+    "onboarding.chapter3.questions": "Questions 58-107",
+    "onboarding.chapter4.questions": "Questions 108-129",
+    "onboarding.chapter5.questions": "Questions 130-150",
+    "onboarding.chapter6.questions": "Questions 151+",
     "onboarding.chapter0.title": "Tutorial Chapter: Platform Introduction",
 
     "onboarding.chapter0.content":
@@ -9303,7 +9301,7 @@ reverse(head) {
     "landing.introduction": (
       <div>
         {/* Create scholarships with learning */}
-        Use AI to learn how to code better and faster than any other platform.
+        Your personal coding tutor
       </div>
     ),
     "landing.promotion.title":
@@ -9377,7 +9375,7 @@ reverse(head) {
     "settings.selfPace": "Self-pace",
     "settings.button.selfPace": "Self-pace",
     "settings.button.socialProgress": "Social Progress",
-    "settings.button.adaptiveLearning": "Adaptive Learning",
+    "settings.button.adaptiveLearning": "Proactive learning",
     "settings.button.bitcoinMode": "Wallet",
 
     "settings.button.tutor": "Open Tutor",
@@ -9455,7 +9453,7 @@ reverse(head) {
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
     "modal.learn.title": "Learn",
     "modal.learn.instructions":
-      "Give us a few seconds to generate notes based on your progress.",
+      "Give us a few seconds to generate lecture notes.",
     "modal.feedback.title": "Submit Feedback",
     "modal.feedback.contactLabel": "Contact",
     "modal.feedback.contactPlaceholder": "Enter your contact info",

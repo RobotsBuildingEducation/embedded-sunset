@@ -51,6 +51,14 @@ service cloud.firestore {
       // Deny listing (query) access to the entire collection
       allow list: if false;
 
+      // Generated post-course questions are stored individually so the app
+      // can rebuild the learner's navigation history without growing the
+      // compact continuing-learning profile document indefinitely.
+      match /continuingLearning/{locale}/questions/{questionId} {
+        allow get, list, create, update: if get(/databases/$(database)/documents/users/$(userId)).data.npub == userId &&
+                                         isValidNpubID(userId);
+      }
+
       // Define access rules for all subcollections under each user's document
       match /{subcollection=**} {
 

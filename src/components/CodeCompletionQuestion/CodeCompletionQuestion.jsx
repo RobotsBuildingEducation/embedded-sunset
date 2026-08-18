@@ -5,30 +5,18 @@ import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
-import { translation } from "../../utility/translation";
 import Editor from "react-simple-code-editor";
-import { IoChatbubblesOutline } from "react-icons/io5";
 import { soundManager } from "../../utility/soundManager";
-import { getInstantSurfacePressProps } from "../../utility/instantSurface";
 
 const CodeCompletionQuestion = ({
   step,
   question,
   selectedOption,
   setSelectedOption,
-  onLearnClick,
-  userLanguage,
-  handleModalCheck,
 }) => {
   const [focusedIndex, setFocusedIndex] = useState(-1); // Track the currently focused option index (-1 means no option is focused)
   const [isComponentFocused, setIsComponentFocused] = useState(false); // Track if the component is focused or not
   const optionRefs = useRef([]); // Track references to each code block option
-  const learnButtonRef = useRef(null); // Reference to the Learn button
-  const learnPressRef = useRef({ key: "", at: 0 });
-  const actionShadow = useColorModeValue(
-    "0 12px 24px rgba(15, 23, 42, 0.12)",
-    "0 16px 34px rgba(2, 6, 23, 0.42)",
-  );
   const optionShadow = useColorModeValue(
     "0 16px 36px rgba(15, 23, 42, 0.08)",
     "0 22px 44px rgba(2, 6, 23, 0.45)",
@@ -125,30 +113,11 @@ const CodeCompletionQuestion = ({
 
   return (
     <VStack
-      spacing={6}
+      spacing={3.5}
       width="100%"
       maxWidth="600px"
       // Removed tabIndex, onFocus, onBlur, and onKeyDown from the container
     >
-      {/* Learn Button */}
-      <Button
-        ref={learnButtonRef}
-        {...getInstantSurfacePressProps(learnPressRef, "learn", () =>
-          handleModalCheck(onLearnClick),
-        )}
-        colorScheme="pink"
-        // Removed tabIndex={0} as Button is focusable by default
-        background="pink.400"
-        color="white"
-        boxShadow={actionShadow}
-        _hover={{ bg: "pink.500" }}
-        _active={{ bg: "pink.500" }}
-      >
-        <IoChatbubblesOutline />
-        &nbsp;
-        {translation[userLanguage]["app.button.learn"]}
-      </Button>
-
       {/* Code Block Options */}
       {question.options.map((option, index) => (
         <Box
@@ -166,7 +135,7 @@ const CodeCompletionQuestion = ({
           }}
           textAlign="left"
           width="100%"
-          p={4}
+          p={{ base: 2.5, md: 3.5 }}
           borderRadius="2xl"
           boxShadow={
             focusedIndex === index
@@ -187,22 +156,26 @@ const CodeCompletionQuestion = ({
           }}
         >
           {/* Render cleaned-up and highlighted code block */}
-          <Editor
-            value={option}
-            onValueChange={() => {}} // Disable editing
-            highlight={(code) => highlight(code, languages.js)}
-            padding={10}
-            style={{
-              fontFamily: '"Fira code", "Fira Mono", monospace',
-              fontSize: 14,
-              backgroundColor: "transparent", // Keep it transparent
-              whiteSpace: "pre-wrap", // Handle long lines
-              width: "100%",
-              color: "var(--chakra-colors-appCodeColor)",
-              pointerEvents: "none", // Prevent editor from blocking clicks
-            }}
-            disabled
-          />
+          <Box width="100%">
+            <Editor
+              value={option}
+              onValueChange={() => {}} // Disable editing
+              highlight={(code) => highlight(code, languages.js)}
+              padding={6}
+              style={{
+                fontFamily: '"Fira code", "Fira Mono", monospace',
+                fontSize: 13,
+                lineHeight: "1.6",
+                backgroundColor: "transparent", // Keep it transparent
+                whiteSpace: "pre-wrap", // Preserve explicit newlines and wrap gracefully
+                wordBreak: "break-word",
+                width: "100%",
+                color: "var(--chakra-colors-appCodeColor)",
+                pointerEvents: "none", // Prevent editor from blocking clicks
+              }}
+              disabled
+            />
+          </Box>
         </Box>
       ))}
     </VStack>

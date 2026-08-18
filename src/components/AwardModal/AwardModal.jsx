@@ -21,6 +21,7 @@ import {
 import { CloudCanvas } from "../../elements/SunsetCanvas";
 import { useSharedNostr } from "../../hooks/useNOSTR";
 import { soundManager } from "../../utility/soundManager";
+import { getDittoBadgeUrl } from "../../utility/badgeUrl";
 
 const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
   const langKey = useMemo(
@@ -40,53 +41,55 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
     badge.name ||
     "";
   const imageSrc = badge.imgSrc || badge.image || "";
-  const awarenessCopy =
-    translation?.[userLanguage]?.["modal.decentralizedTranscript.awareness"] ||
-    translation?.[langKey]?.["modal.decentralizedTranscript.awareness"] ||
-    "";
 
-  const npub =
-    typeof window !== "undefined" ? localStorage.getItem("local_npub") : null;
-  const nsec =
-    typeof window !== "undefined" ? localStorage.getItem("local_nsec") : null;
-
-  // ⚠️ This hook likely returns a new function identity each render
-  const { getUserBadges } = useSharedNostr(npub, nsec);
-
-  const [areBadgesLoading, setAreBadgesLoading] = useState(false);
-  const [badges, setBadges] = useState([]);
-  const inFlightRef = useRef(false);
-
+  // 🔔 Play fan-fare once on open
   useEffect(() => {
-    if (!isOpen) return;
-    soundManager.resume();
-    soundManager.play("sparkle");
+    if (isOpen) {
+      soundManager.play("fanFare");
+    }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (!isOpen || !getUserBadges) return;
-    if (inFlightRef.current) return;
-    inFlightRef.current = true;
-    setAreBadgesLoading(true);
+  const [badges, setBadges] = useState([]);
+  const [areBadgesLoading, setAreBadgesLoading] = useState(false);
+  const { getUserBadges } = useSharedNostr();
 
+  // Read creds from storage (or props, if you prefer)
+  const npub =
+    typeof window !== "undefined"
+      ? localStorage.getItem("local_npub") || ""
+      : "";
+  const nsec =
+    typeof window !== "undefined"
+      ? localStorage.getItem("local_nsec") || ""
+      : "";
+
+  useEffect(() => {
     let cancelled = false;
-    (async () => {
-      try {
-        const data = await getUserBadges();
-        console.log("badges....", data);
+
+    if (!isOpen) return;
+    if (!npub) {
+      setBadges([]);
+      return;
+    }
+
+    setAreBadgesLoading(true);
+    getUserBadges(npub)
+      .then((b) => {
         if (!cancelled) {
-          // optional: avoid pointless state churn
-          setBadges((prev) => {
-            const prevStr = JSON.stringify(prev || []);
-            const nextStr = JSON.stringify(data || []);
-            return prevStr === nextStr ? prev : data || [];
-          });
+          setBadges(b || []);
         }
-      } finally {
-        if (!cancelled) setAreBadgesLoading(false);
-        inFlightRef.current = false;
-      }
-    })();
+      })
+      .catch((e) => {
+        if (!cancelled) {
+          console.error("Failed to load badges:", e);
+          setBadges([]);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setAreBadgesLoading(false);
+        }
+      });
 
     return () => {
       cancelled = true;
@@ -97,9 +100,12 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
   // }, [isOpen, npub, nsec, userLanguage]);
 
   const badgeAddress = badge.address || badge.badgeAddress || null;
-  const badgeHref = badgeAddress
-    ? `https://badges.page/a/${badgeAddress}`
-    : null;
+  const badgeHref = getDittoBadgeUrl(badgeAddress);
+
+  const awarenessCopy =
+    translation?.[userLanguage]?.["modal.decentralizedTranscript.awareness"] ||
+    translation?.[langKey]?.["modal.decentralizedTranscript.awareness"] ||
+    "";
 
   return (
     <Modal
@@ -218,80 +224,65 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
               justifyContent="center"
               marginInline="auto"
             >
-              {badges.map((b) => (
-                <div
-                  key={b.badgeAddress || b.id || b.image}
-                  style={{
-                    margin: 6,
-                    width: 250,
-                    height: 100,
-                    display: "flex",
-                  }}
-                >
-                  <a
-                    href={`https://badges.page/a/${(() => {
-                      const parts = (b.badgeAddress || "").split(":");
-                      const badgeSlug = parts[2];
-                      const currentSlug = (badge?.name?.en || "").replace(
-                        /\s+/g,
-                        "-"
-                      );
-                      const isMatch = badgeSlug && badgeSlug === currentSlug;
-                      return isMatch
-                        ? badge.address || badge.badgeAddress || ""
-                        : "";
-                    })()}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        const url = `https://badges.page/a/${(() => {
-                          const parts = (b.badgeAddress || "").split(":");
-                          const badgeSlug = parts[2];
-                          const currentSlug = (badge?.name?.en || "").replace(
-                            /\s+/g,
-                            "-"
-                          );
-                          const isMatch =
-                            badgeSlug && badgeSlug === currentSlug;
-                          return isMatch
-                            ? badge.address || badge.badgeAddress || ""
-                            : "";
-                        })()}`;
-                        if (url)
-                          window.open(url, "_blank", "noopener,noreferrer");
-                      }
-                    }}
-                  >
-                    <Image
-                      loading="eager"
-                      src={b.image}
-                      width={100}
-                      style={{
-                        borderRadius: "33%",
-                        boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
-                        marginBottom: 4,
-                      }}
-                      alt={b.name || "Earned badge"}
-                    />
-                  </a>
-                  <div
+              {badges.map((b) => {
+                const bHref = getDittoBadgeUrl(b.badgeAddress || b.address);
+                const badgeImg = (
+                  <Image
+                    loading="eager"
+                    src={b.image}
+                    width={100}
                     style={{
-                      padding: 6,
-                      marginLeft: "12px",
+                      borderRadius: "33%",
+                      boxShadow: "0.5px 0.5px 1px 0px rgba(0,0,0,0.75)",
+                      marginBottom: 4,
+                    }}
+                    alt={b.name || "Earned badge"}
+                  />
+                );
 
+                return (
+                  <div
+                    key={b.badgeAddress || b.id || b.image}
+                    style={{
+                      margin: 6,
+                      width: 250,
+                      height: 100,
                       display: "flex",
                       alignItems: "center",
                     }}
                   >
-                    <Text fontSize="sm">
-                      {translation?.[userLanguage]?.[b.name] ||
-                        translation?.[langKey]?.[b.name] ||
-                        b.name}
-                    </Text>
+                    {bHref ? (
+                      <a
+                        href={bHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ")
+                            window.open(bHref, "_blank", "noopener,noreferrer");
+                        }}
+                      >
+                        {badgeImg}
+                      </a>
+                    ) : (
+                      badgeImg
+                    )}
+                    <div
+                      style={{
+                        padding: 6,
+                        marginLeft: "12px",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text fontSize="sm">
+                        {translation?.[userLanguage]?.[b.name] ||
+                          translation?.[langKey]?.[b.name] ||
+                          b.name}
+                      </Text>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </Box>
           )}
         </ModalBody>

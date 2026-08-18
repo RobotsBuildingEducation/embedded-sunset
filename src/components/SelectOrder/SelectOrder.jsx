@@ -1,23 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { VStack, Button, Text, Box, useColorModeValue } from "@chakra-ui/react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { translation } from "../../utility/translation";
-import { IoChatbubblesOutline } from "react-icons/io5";
-import { getInstantSurfacePressProps } from "../../utility/instantSurface";
 
-const SelectOrderQuestion = ({
-  step,
-  items,
-  setItems,
-  onLearnClick,
-  userLanguage,
-  handleModalCheck,
-}) => {
+const SelectOrderQuestion = ({ step, items, setItems }) => {
   const [borderSwitches, setBorderSwitches] = useState({});
   const [focusedIndex, setFocusedIndex] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [draggedIndex, setDraggedIndex] = useState(null);
-  const learnPressRef = useRef({ key: "", at: 0 });
   const cardShadow = useColorModeValue(
     "0 14px 30px rgba(15, 23, 42, 0.08)",
     "0px 4px 0px rgba(0, 0, 0, 0.58)",
@@ -29,10 +18,6 @@ const SelectOrderQuestion = ({
   const selectedCardShadow = useColorModeValue(
     "0 16px 34px rgba(15, 23, 42, 0.11)",
     "0px 4px 0px rgba(0, 0, 0, 0.68)",
-  );
-  const actionShadow = useColorModeValue(
-    "0 12px 24px rgba(15, 23, 42, 0.12)",
-    "0 16px 34px rgba(2, 6, 23, 0.42)",
   );
   const focusRing = useColorModeValue(
     "0 0 0 3px rgba(236, 72, 153, 0.22)",
@@ -123,22 +108,6 @@ const SelectOrderQuestion = ({
       onBlur={() => setFocusedIndex(null)}
       style={{ outline: "none" }} // Remove default focus outline
     >
-      <Button
-        {...getInstantSurfacePressProps(learnPressRef, "learn", () =>
-          handleModalCheck(onLearnClick),
-        )}
-        colorScheme="pink"
-        background="pink.400"
-        color="white"
-        boxShadow={actionShadow}
-        alignSelf="center"
-        _hover={{ bg: "pink.500" }}
-        _active={{ bg: "pink.500" }}
-      >
-        <IoChatbubblesOutline />
-        &nbsp;
-        {translation[userLanguage]["app.button.learn"]}
-      </Button>
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="droppable">
           {(provided) => (

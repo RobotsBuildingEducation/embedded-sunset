@@ -295,7 +295,11 @@ const LiveReactEditorModal = ({
     /render\s*\(/i.test(src) ||
     /ReactDOM\s*\.\s*render\s*\(/i.test(src) ||
     /createRoot\s*\(/i.test(src) ||
-    /ReactDOM\s*\.\s*createRoot\s*\(/i.test(src);
+    /ReactDOM\s*\.\s*createRoot\s*\(/i.test(src) ||
+    /<\s*[a-zA-Z]/i.test(src) ||
+    /useState|useEffect|useRef|useMemo/i.test(src) ||
+    /className\s*=/i.test(src) ||
+    /style\s*=\s*\{\{/i.test(src);
 
   const looksLikeHTML = (src = "") =>
     /<!DOCTYPE/i.test(src) ||
@@ -313,7 +317,7 @@ const LiveReactEditorModal = ({
 
   // Normalize React 18 root/render patterns to react-live's `render(el)`
   const normalizeReactEntry = (src = "") => {
-    let s = normalizeGeneratedReactCode(src);
+    let s = normalizeGeneratedReactCode(src).trim();
 
     // ReactDOM.createRoot(root).render(<App />)
     s = s.replace(
@@ -328,8 +332,22 @@ const LiveReactEditorModal = ({
       "render($1)"
     );
 
-    // Some models put a manual #root div; react-live supplies the container,
-    // so it's fine to leave extra HTML in strings; no-op here intentionally.
+    // If s does not have a top-level render( wrapper:
+    if (!/render\s*\(/i.test(s)) {
+      if (/^<[\s\S]+>$/i.test(s)) {
+        s = `render(${s})`;
+      } else {
+        const funcMatch = s.match(/function\s+([A-Z][a-zA-Z0-9_]*)/);
+        const constMatch = s.match(/(?:const|let|var)\s+([A-Z][a-zA-Z0-9_]*)\s*=/);
+        const compName = funcMatch ? funcMatch[1] : constMatch ? constMatch[1] : null;
+        if (compName) {
+          s = `${s}\nrender(<${compName} />)`;
+        } else if (/^<[\s\S]+/i.test(s)) {
+          s = `render(${s})`;
+        }
+      }
+    }
+
     return s;
   };
 
@@ -484,13 +502,13 @@ const LiveReactEditorModal = ({
       {showPreview && (
         <Box
           width="100%"
-          borderRadius="2xl"
-          mt="8px"
-          border="1px solid"
+          borderRadius={mode === "preview" ? "none" : "2xl"}
+          mt={mode === "preview" ? 0 : "8px"}
+          border={mode === "preview" ? "none" : "1px solid"}
           borderColor="appBorderStrong"
           boxSizing="border-box"
           height={previewHeight}
-          overflow="hidden"
+          overflow={mode === "preview" ? "visible" : "hidden"}
         >
           {/* React preview */}
           {looksLikeReact(codeForPreview) && (isPreviewing || autoRun) ? (
@@ -738,7 +756,12 @@ const LiveReactEditorModal = ({
                     onSnapshot,
                   }}
                 >
-                  <Box height="100%" overflow="auto" p={2}>
+                  <Box
+                    height="100%"
+                    width="100%"
+                    overflow={mode === "preview" ? "visible" : "auto"}
+                    p={mode === "preview" ? 0 : 2}
+                  >
                     <LivePreview />
                     <LiveError />
                   </Box>

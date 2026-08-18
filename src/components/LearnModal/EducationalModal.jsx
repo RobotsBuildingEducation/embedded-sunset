@@ -8,13 +8,12 @@ import {
   Button,
   VStack,
   Text,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerFooter,
+  DrawerBody,
+  DrawerCloseButton,
   useDisclosure,
   HStack,
   extendTheme,
@@ -51,29 +50,32 @@ import {
   getThemedCodeBlockStyles,
   getThemedSyntaxHighlightTheme,
 } from "../../theme";
-import {
-  nativeModalMotionProps,
-  nativeOverlayMotionProps,
-} from "../../utility/modalMotion";
 import { pickProgrammingLanguage } from "../../utility/translation";
 import { getObjectsByGroup, steps as allSteps } from "../../utility/content";
+import {
+  isInlineMarkdownCode,
+  normalizeLearnMarkdown,
+} from "../../utility/markdownCode";
 
 const buildLearnPrompt = (step, userLanguage) => {
   const languageName = pickProgrammingLanguage(userLanguage);
   const isEnglish = userLanguage?.includes("en");
 
   if (step?.isConversationReview) {
-    const relevantSteps = getObjectsByGroup(step?.group, allSteps[userLanguage]);
+    const relevantSteps = getObjectsByGroup(
+      step?.group,
+      allSteps[userLanguage],
+    );
     return `Generate educational material about ${JSON.stringify(
       relevantSteps,
-    )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally the ${languageName} or relevant code should consider line breaks and formatting and have a maximum print width of 80 characters and never start with a backticking markdown with triple backticks specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets.  Never specify the answer. Lastly the user is speaking in ${
+    )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Format short identifiers, class names, method names, properties, and single expressions with single backticks so they remain inline with prose. Always wrap entire multiline code examples in a single complete fenced code block (e.g. \`\`\`javascript ... \`\`\`). Fenced code blocks may contain source code only, never explanatory prose. Keep code lines within 80 characters, and never interrupt a code snippet with unformatted text or split it into fragmented blocks. Do not begin the response with a fenced code block. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
       isEnglish ? "english" : "spanish"
     }`;
   }
 
   return `Generate educational ${languageName} material about ${JSON.stringify(
     step,
-  )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Additionally any ${languageName} or relevant code should have a maximum print width of 80 characters and never start with a backticking markdown with triple backticks specifically as the format. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
+  )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Format short identifiers, class names, method names, properties, and single expressions with single backticks so they remain inline with prose. Always wrap entire multiline code examples in a single complete fenced code block (e.g. \`\`\`javascript ... \`\`\`). Fenced code blocks may contain source code only, never explanatory prose. Keep code lines within 80 characters, and never interrupt a code snippet with unformatted text or split it into fragmented blocks. Do not begin the response with a fenced code block. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
     isEnglish ? "english" : "spanish"
   }`;
 };
@@ -118,82 +120,7 @@ const darkHighlightColors = [
   "whiteAlpha.200",
 ];
 
-const markdownTextBlockRegexes = [
-  /^#{1,6}\s+/,
-  /^[-*+]\s+/,
-  /^\d+[.)]\s+/,
-  /^>\s+/,
-  /^\*\*[^*]+/,
-];
 
-const wordRegex = /[A-Za-zÀ-ÖØ-öø-ÿ]{2,}/g;
-
-const countWords = (value = "") => value.match(wordRegex)?.length || 0;
-
-const stripInlineCode = (value = "") => value.replace(/`[^`]*`/g, " ");
-
-const looksLikeDefiniteCodeLine = (value = "") => {
-  const syntaxValue = stripInlineCode(value).trim();
-
-  return (
-    /^(const|let|var|function|class|return|import|export|try|catch|async|await|throw|new)\b/.test(
-      syntaxValue,
-    ) ||
-    /^(if|else|for|while|switch)\s*(?:\(|{|$)/.test(syntaxValue) ||
-    /^console\./.test(syntaxValue) ||
-    /^[\w$.[\]'"]+\s*=\s*.+/.test(syntaxValue) ||
-    /^[\w$.]+\(.+\);?$/.test(syntaxValue) ||
-    /^[\w$]+\s*:\s*([`"'[{(]|\d|true|false|null|undefined)/.test(value) ||
-    /=>|<\/?[A-Z_a-z][^>]*>/.test(syntaxValue)
-  );
-};
-
-const looksLikeMarkdownTextBlock = (value = "") =>
-  markdownTextBlockRegexes.some((regex) => regex.test(value.trim()));
-
-const looksLikeProseLine = (line = "") => {
-  const value = line.trim();
-  if (!value) return false;
-  if (looksLikeMarkdownTextBlock(value)) return true;
-  if (looksLikeDefiniteCodeLine(value)) return false;
-
-  const withoutInlineCode = stripInlineCode(value);
-  const proseWords = countWords(withoutInlineCode);
-  const hasInlineCode = /`[^`]+`/.test(value);
-  const hasSentencePunctuation = /[.!?](?:\s|$)|[,;:]\s/.test(
-    withoutInlineCode,
-  );
-  const startsLikeSentence = /^[A-ZÀ-ÖØ-Þ¿¡]/.test(withoutInlineCode);
-
-  return (
-    (proseWords >= 4 &&
-      (hasInlineCode || hasSentencePunctuation || startsLikeSentence)) ||
-    (hasInlineCode && proseWords >= 2) ||
-    (proseWords >= 2 && hasSentencePunctuation && startsLikeSentence)
-  );
-};
-
-const looksLikeCodeContinuation = (line = "") => {
-  const value = line.trim();
-  if (!value || looksLikeProseLine(value)) return false;
-
-  return (
-    /^[}\])]/.test(value) ||
-    /^[\w$]+\s*:/.test(value) ||
-    /[,;]$/.test(value) ||
-    /^[+\-*/%]?=/.test(value)
-  );
-};
-
-const isFenceLine = (line = "") => line.trim().startsWith("```");
-
-const trimTrailingBlankLines = (lines) => {
-  const trimmed = [...lines];
-  while (trimmed.length > 0 && !trimmed[trimmed.length - 1].trim()) {
-    trimmed.pop();
-  }
-  return trimmed;
-};
 
 export const newTheme = () => {
   let highlightIndex = 0;
@@ -203,17 +130,17 @@ export const newTheme = () => {
         mb={4}
         color="appText"
         fontSize={{ base: "sm", md: "md" }}
-        lineHeight="1.7"
+        lineHeight="1.8"
         {...props}
       />
     ),
     ul: ({ node, ...props }) => (
-      <UnorderedList pl={5} spacing={2} mb={4} {...props} />
+      <UnorderedList pl={5} spacing={3} mb={5} {...props} />
     ),
     ol: ({ node, ...props }) => (
-      <UnorderedList as="ol" pl={5} spacing={2} mb={4} {...props} />
+      <UnorderedList as="ol" pl={5} spacing={3} mb={5} {...props} />
     ),
-    li: ({ node, ...props }) => <ListItem mb={1} {...props} />,
+    li: ({ node, ...props }) => <ListItem lineHeight="1.8" {...props} />,
     h1: ({ node, ...props }) => (
       <Heading
         as="h2"
@@ -288,8 +215,14 @@ export const newTheme = () => {
     code: ({ node, inline, className, children, ...props }) => {
       const { colorMode } = useColorMode();
       const match = /language-(\w+)/.exec(className || "");
+      const isInline = isInlineMarkdownCode({
+        inline,
+        className,
+        children,
+        node,
+      });
 
-      return !inline ? (
+      return !isInline ? (
         <SyntaxHighlighter
           language={match?.[1] || "javascript"}
           PreTag="div"
@@ -308,6 +241,8 @@ export const newTheme = () => {
           py={0.5}
           borderRadius="md"
           fontSize="0.92em"
+          display="inline"
+          boxDecorationBreak="clone"
           {...props}
         >
           {children}
@@ -317,166 +252,7 @@ export const newTheme = () => {
   };
 };
 
-const looksLikeLooseCode = (line = "") => {
-  const value = line.trim();
-  if (!value) return false;
-  if (looksLikeProseLine(value)) return false;
-  return (
-    looksLikeDefiniteCodeLine(value) ||
-    /^[{}[\](),;]+$/.test(value) ||
-    (/[;{}]/.test(value) && !looksLikeProseLine(value))
-  );
-};
 
-const getFencedLineKind = (line = "") => {
-  if (!line.trim()) return "blank";
-  if (looksLikeLooseCode(line) || looksLikeCodeContinuation(line)) {
-    return "code";
-  }
-  if (looksLikeProseLine(line)) return "text";
-  return "unknown";
-};
-
-const repairFencedMarkdown = (openingLine, bodyLines) => {
-  const segments = [];
-  let currentType = null;
-  let currentLines = [];
-  let currentHasCode = false;
-
-  const pushSegment = () => {
-    if (currentLines.length < 1) return;
-
-    if (currentType === "code") {
-      const codeLines = trimTrailingBlankLines(currentLines);
-      if (codeLines.some((line) => line.trim())) {
-        segments.push({ type: "code", lines: codeLines });
-      }
-    } else {
-      segments.push({ type: "text", lines: currentLines });
-    }
-
-    currentType = null;
-    currentLines = [];
-    currentHasCode = false;
-  };
-
-  bodyLines.forEach((line) => {
-    const kind = getFencedLineKind(line);
-
-    if (kind === "blank") {
-      currentLines.push(line);
-      return;
-    }
-
-    if (kind === "text") {
-      if (currentType === "code" && currentHasCode) {
-        pushSegment();
-      }
-
-      if (!currentType) {
-        currentType = "text";
-      }
-
-      currentLines.push(line);
-      return;
-    }
-
-    if (currentType === "text" && kind === "code") {
-      pushSegment();
-    }
-
-    if (!currentType) {
-      currentType = "code";
-    }
-
-    currentLines.push(line);
-    currentHasCode = currentHasCode || kind === "code";
-  });
-
-  pushSegment();
-
-  if (!segments.some((segment) => segment.type === "text")) {
-    return [openingLine, ...bodyLines, "```"];
-  }
-
-  return segments.flatMap((segment) => {
-    if (segment.type === "text") {
-      return segment.lines;
-    }
-
-    return [openingLine, ...segment.lines, "```"];
-  });
-};
-
-const normalizeLearnMarkdown = (content = "") => {
-  const lines = String(content || "").trimStart().split("\n");
-  const output = [];
-  let inFence = false;
-  let fenceOpeningLine = "";
-  let fenceBodyLines = [];
-  let inLooseCode = false;
-
-  const closeLooseCode = () => {
-    if (!inLooseCode) return;
-    output.push("```");
-    inLooseCode = false;
-  };
-
-  const appendContentLine = (line) => {
-    if (
-      looksLikeLooseCode(line) ||
-      (inLooseCode && looksLikeCodeContinuation(line))
-    ) {
-      if (!inLooseCode) {
-        output.push("```javascript");
-        inLooseCode = true;
-      }
-      output.push(line);
-      return;
-    }
-
-    closeLooseCode();
-    output.push(line);
-  };
-
-  const closeFence = () => {
-    output.push(...repairFencedMarkdown(fenceOpeningLine, fenceBodyLines));
-    inFence = false;
-    fenceOpeningLine = "";
-    fenceBodyLines = [];
-  };
-
-  lines.forEach((line) => {
-    if (isFenceLine(line)) {
-      closeLooseCode();
-
-      if (inFence) {
-        closeFence();
-      } else {
-        inFence = true;
-        fenceOpeningLine = line;
-        fenceBodyLines = [];
-      }
-
-      return;
-    }
-
-    if (inFence) {
-      fenceBodyLines.push(line);
-      return;
-    }
-
-    appendContentLine(line);
-  });
-
-  if (inFence) {
-    closeFence();
-  }
-
-  closeLooseCode();
-
-  return output.join("\n");
-};
 
 const LearnLoadingAnimation = ({ userLanguage }) => (
   <VStack
@@ -570,12 +346,35 @@ const LearnLoadingAnimation = ({ userLanguage }) => (
   </VStack>
 );
 
-const EducationalModal = ({
-  isOpen,
-  onClose,
-  step,
-  userLanguage,
-}) => {
+const LearnDrawerHeader = ({ userLanguage }) => (
+  <HStack
+    as="header"
+    width="100%"
+    justify="space-between"
+    align="center"
+    px={{ base: 4, md: 6 }}
+    py={3}
+    borderBottomWidth="1px"
+    borderBottomColor="appBorder"
+  >
+    <HStack spacing={3} minWidth={0}>
+      <Box width="fit-content" flexShrink={0}>
+        <RandomCharacter />
+      </Box>
+      <Text fontSize="xl" fontWeight="bold" noOfLines={1}>
+        {translation[userLanguage]["modal.learn.title"]}
+      </Text>
+    </HStack>
+    <DrawerCloseButton
+      position="static"
+      size="lg"
+      flexShrink={0}
+      aria-label={userLanguage === "es" ? "Cerrar aprendizaje" : "Close Learn"}
+    />
+  </HStack>
+);
+
+const EducationalModal = ({ isOpen, onClose, step, userLanguage }) => {
   const liteOverlayEffects = useLiteOverlayEffects();
   const topRef = useRef();
   const newMessageRef = useRef(null);
@@ -649,10 +448,7 @@ const EducationalModal = ({
     const lastMessage =
       generatedEducationalMessages[generatedEducationalMessages.length - 1];
 
-    if (
-      lastMessage?.content?.trim() &&
-      lastMessage?.meta?.loading === false
-    ) {
+    if (lastMessage?.content?.trim() && lastMessage?.meta?.loading === false) {
       cacheLearnLecture(learnCacheKey, generatedEducationalMessages);
       setCachedEducationalMessages(generatedEducationalMessages);
     }
@@ -877,67 +673,35 @@ const EducationalModal = ({
           vocalRequest={true}
         />
       ) : null}
-      <Modal
+      <Drawer
         isOpen={isOpen}
         onClose={onClose}
+        placement="right"
         size="full"
-        scrollBehavior={"inside"}
-        motionPreset="none"
         returnFocusOnClose={false}
       >
-        <ModalOverlay
-          motionProps={nativeOverlayMotionProps}
-          bg={liteOverlayEffects ? "blackAlpha.500" : "appOverlay"}
-          backdropFilter={liteOverlayEffects ? "none" : "blur(8px)"}
+        <DrawerOverlay
+          bg={liteOverlayEffects ? "blackAlpha.400" : "blackAlpha.300"}
+          backdropFilter="none"
         />
-
-        {educationalMessages.length < 1 ? (
-          <ModalContent
-            motionProps={nativeModalMotionProps}
-            bg="appSurfaceElevated"
-            color="appText"
-            borderWidth="1px"
-            borderColor="appBorder"
-            borderRadius="lg"
-            boxShadow="2xl"
-            p={0}
-            width="100%"
-            minH="100dvh"
-            display="flex"
-            flexDirection="column"
-            overflow="hidden"
-          >
-            <ModalHeader
-              fontSize="xl"
-              fontWeight="bold"
-              marginTop={0}
-              paddingTop={0}
-              pb={0}
-              borderBottomWidth="1px"
-              borderBottomColor="appBorder"
-            >
-              <ModalCloseButton size="lg" />
-
-              <HStack mb={0}>
-                <div style={{ width: "fit-content" }}>
-                  <RandomCharacter />
-                </div>
-                &nbsp;
-                <div>{translation[userLanguage]["modal.learn.title"]}</div>
-              </HStack>
-            </ModalHeader>
-            <ModalBody
-              p={0}
-              style={{ width: "100%" }}
-              display="flex"
-              flex="1"
-              minH="calc(100dvh - 72px)"
-            >
+        <DrawerContent
+          bg="appSurfaceElevated"
+          color="appText"
+          borderLeftWidth={{ base: 0, md: "1px" }}
+          borderLeftColor="appBorderStrong"
+          boxShadow="none"
+          width={{ base: "90vw", md: "78vw" }}
+          maxWidth={{ base: "90vw", md: "720px" }}
+          p={0}
+          overflow="hidden"
+        >
+          {educationalMessages.length < 1 ? (
+            <DrawerBody p={0} overflowY="auto">
+              <LearnDrawerHeader userLanguage={userLanguage} />
               <Box
                 color="appText"
                 width="100%"
-                flex="1"
-                minH="calc(100dvh - 72px)"
+                minH="calc(100dvh - 80px)"
                 display="flex"
                 alignItems="center"
                 justifyContent="center"
@@ -945,210 +709,170 @@ const EducationalModal = ({
               >
                 <LearnLoadingAnimation userLanguage={userLanguage} />
               </Box>
-            </ModalBody>
-          </ModalContent>
-        ) : (
-          <ModalContent
-            motionProps={nativeModalMotionProps}
-            bg="appSurfaceElevated"
-            color="appText"
-            borderWidth="1px"
-            borderColor="appBorder"
-            borderRadius="lg"
-            boxShadow="2xl"
-            p={0}
-            width="100%"
-            scrollBehavior={"inside"}
-            tabIndex={0}
-            outlineColor="transparent"
-
-            // style={{ fontFamily: "Roboto Serif, serif" }}
-          >
-            <ModalHeader
-              fontSize="xl"
-              fontWeight="bold"
-              marginTop={0}
-              paddingTop={0}
-              pb={0}
-              borderBottomWidth="1px"
-              borderBottomColor="appBorder"
-
-              // height="100%"
-            >
-              <ModalCloseButton size="lg" />
-
-              <HStack mb={0}>
-                <div style={{ width: "fit-content" }}>
-                  {/* {educationalMessages.length > 0 
-                &&
-                !educationalContent.length > 0 ? 
-                (
-                  <BigSunset />
-                ) : ( */}
-                  <RandomCharacter />
-                  {/* // )} */}
-                </div>
-                &nbsp;
-                <div>{translation[userLanguage]["modal.learn.title"]}</div>
-              </HStack>
-            </ModalHeader>
-
-            <ModalBody
-              p={2}
-              style={{
-                width: "100%",
-
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              <VStack
-                spacing={6}
-                alignItems="flex-start"
-                maxWidth="600px"
-                minWidth="300px"
-                width="100%"
-              >
-                {/* <Box ref={topRef}></Box> */}
-                {educationalMessages.length > 0 &&
-                  educationalMessages.map((content, index) => (
-                    <Box
-                      fontFamily={"Avenir"}
-                      key={index}
-                      p={4}
-                      bg="appSurface"
-                      borderRadius="md"
-                      borderWidth={1}
-                      borderColor="appBorder"
-                      boxShadow="sm"
-                      textAlign={"left"}
-                      width="100%"
-                    >
-                      <Markdown
-                        components={ChakraUIRenderer(newTheme())}
-                        children={normalizeLearnMarkdown(content.content)}
-                      />
-                    </Box>
-                  ))}
-                {[...conversation].map((msg, idx) => {
-                  const isNewest = idx === conversation.length - 1;
-
-                  return (
-                    <>
-                      <Box
-                        width="100%"
-                        display="flex"
-                        justifyContent={"flex-end"}
-                      >
+            </DrawerBody>
+          ) : (
+            <>
+              <DrawerBody p={0} overflowY="auto">
+                <LearnDrawerHeader userLanguage={userLanguage} />
+                <Box
+                  width="100%"
+                  display="flex"
+                  justifyContent="center"
+                  px={{ base: 3, md: 6 }}
+                  py={4}
+                >
+                  <VStack
+                    spacing={6}
+                    alignItems="flex-start"
+                    maxWidth="640px"
+                    width="100%"
+                  >
+                    {/* <Box ref={topRef}></Box> */}
+                    {educationalMessages.length > 0 &&
+                      educationalMessages.map((content, index) => (
                         <Box
-                          key={idx}
-                          p={3}
-                          bg="appSurfaceStrong"
-                          maxWidth="75%"
-                          width="fit-content"
-                          borderRadius="16px"
-                          borderWidth="1px"
+                          fontFamily={"Avenir"}
+                          key={index}
+                          p={4}
+                          bg="appSurface"
+                          borderRadius="md"
+                          borderWidth={1}
                           borderColor="appBorder"
                           boxShadow="sm"
+                          textAlign={"left"}
+                          width="100%"
                         >
-                          <Markdown components={ChakraUIRenderer(newTheme())}>
-                            {normalizeLearnMarkdown(msg.content)}
-                          </Markdown>
+                          <Markdown
+                            components={ChakraUIRenderer(newTheme())}
+                            children={normalizeLearnMarkdown(content.content)}
+                          />
                         </Box>
-                      </Box>
-                      <Box
-                        key={idx}
-                        ref={isNewest ? newMessageRef : null} // Add ref to latest message
-                        p={3}
-                        bg="appSurface"
-                        borderRadius="md"
-                        borderWidth="1px"
-                        borderColor="appBorder"
-                        boxShadow="sm"
-                        width="100%"
-                      >
-                        <Markdown components={ChakraUIRenderer(newTheme())}>
-                          {normalizeLearnMarkdown(msg?.response?.content || "")}
-                        </Markdown>
-                      </Box>
-                    </>
-                  );
-                })}
-              </VStack>
-            </ModalBody>
-            <ModalFooter
-              mb={1}
-              p={0}
-              borderTopWidth="1px"
-              borderTopColor="appBorder"
-            >
-              <Box width="100%" maxWidth="600px" mx="auto">
-                <HStack
-                  width="100%"
-                  justifyContent="space-between"
-                  alignItems="flex-end"
-                  pt={1}
-                  pb={4}
-                  pr={4}
-                  pl={4}
-                >
-                  <IconButton
-                    icon={
-                      listening ? <PiMicrophoneFill /> : <PiMicrophoneLight />
-                    }
-                    aria-label="Voice input"
-                    onClick={() => {
-                      if (isUnsupportedBrowser()) {
-                        onInstallModalOpen();
-                      } else {
-                        handleVoiceToggle();
-                      }
-                    }}
-                    bg={listening ? "appSurfaceStrong" : "appSurface"}
-                    color={listening ? "pink.300" : "appTextMuted"}
-                    borderWidth="1px"
-                    borderColor={listening ? "pink.400" : "appBorder"}
-                    boxShadow="sm"
-                    _hover={{ bg: "appSurfaceMuted" }}
-                    _active={{ bg: "appSurfaceInset" }}
-                  />
-                  <Textarea
-                    placeholder={translation[userLanguage]["askForHelp"]}
-                    value={inputValue}
-                    onChange={(e) => {
-                      setInputValue(e.target.value);
-                      e.target.style.height = "auto";
-                      e.target.style.height = `${e.target.scrollHeight}px`;
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && inputValue.trim()) {
-                        handleSend();
-                      }
-                    }}
-                    variant="outline"
-                    resize="none"
-                    overflowY="hidden"
-                    background="appSurface"
-                    boxShadow="sm"
-                    flex="1"
-                    minHeight="88px"
-                    maxHeight="300px"
-                    padding={3}
-                  />
-                  <Button
-                    onClick={handleSend}
-                    colorScheme="pink"
-                    isDisabled={!inputValue.trim()}
-                    boxShadow="sm"
+                      ))}
+                    {[...conversation].map((msg, idx) => {
+                      const isNewest = idx === conversation.length - 1;
+
+                      return (
+                        <>
+                          <Box
+                            width="100%"
+                            display="flex"
+                            justifyContent={"flex-end"}
+                          >
+                            <Box
+                              key={idx}
+                              p={3}
+                              bg="appSurfaceStrong"
+                              maxWidth="75%"
+                              width="fit-content"
+                              borderRadius="16px"
+                              borderWidth="1px"
+                              borderColor="appBorder"
+                              boxShadow="sm"
+                            >
+                              <Markdown
+                                components={ChakraUIRenderer(newTheme())}
+                              >
+                                {normalizeLearnMarkdown(msg.content)}
+                              </Markdown>
+                            </Box>
+                          </Box>
+                          <Box
+                            key={idx}
+                            ref={isNewest ? newMessageRef : null} // Add ref to latest message
+                            p={3}
+                            bg="appSurface"
+                            borderRadius="md"
+                            borderWidth="1px"
+                            borderColor="appBorder"
+                            boxShadow="sm"
+                            width="100%"
+                          >
+                            <Markdown components={ChakraUIRenderer(newTheme())}>
+                              {normalizeLearnMarkdown(
+                                msg?.response?.content || "",
+                              )}
+                            </Markdown>
+                          </Box>
+                        </>
+                      );
+                    })}
+                  </VStack>
+                </Box>
+              </DrawerBody>
+              <DrawerFooter
+                p={0}
+                borderTopWidth="1px"
+                borderTopColor="appBorder"
+                bg="appSurfaceElevated"
+              >
+                <Box width="100%" maxWidth="640px" mx="auto">
+                  <HStack
+                    width="100%"
+                    justifyContent="space-between"
+                    alignItems="flex-end"
+                    pt={1}
+                    pb={{ base: 3, md: 4 }}
+                    pr={4}
+                    pl={4}
                   >
-                    <LuSend />
-                  </Button>
-                </HStack>
-              </Box>
-            </ModalFooter>
-          </ModalContent>
-        )}
-      </Modal>
+                    <IconButton
+                      icon={
+                        listening ? <PiMicrophoneFill /> : <PiMicrophoneLight />
+                      }
+                      aria-label="Voice input"
+                      onClick={() => {
+                        if (isUnsupportedBrowser()) {
+                          onInstallModalOpen();
+                        } else {
+                          handleVoiceToggle();
+                        }
+                      }}
+                      bg={listening ? "appSurfaceStrong" : "appSurface"}
+                      color={listening ? "pink.300" : "appTextMuted"}
+                      borderWidth="1px"
+                      borderColor={listening ? "pink.400" : "appBorder"}
+                      boxShadow="sm"
+                      _hover={{ bg: "appSurfaceMuted" }}
+                      _active={{ bg: "appSurfaceInset" }}
+                    />
+                    <Textarea
+                      placeholder={translation[userLanguage]["askForHelp"]}
+                      value={inputValue}
+                      onChange={(e) => {
+                        setInputValue(e.target.value);
+                        e.target.style.height = "auto";
+                        e.target.style.height = `${e.target.scrollHeight}px`;
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && inputValue.trim()) {
+                          handleSend();
+                        }
+                      }}
+                      variant="outline"
+                      resize="none"
+                      overflowY="hidden"
+                      background="appSurface"
+                      boxShadow="sm"
+                      flex="1"
+                      minHeight="88px"
+                      maxHeight="300px"
+                      padding={3}
+                    />
+                    <Button
+                      onClick={handleSend}
+                      colorScheme="pink"
+                      isDisabled={!inputValue.trim()}
+                      boxShadow="sm"
+                    >
+                      <LuSend />
+                    </Button>
+                  </HStack>
+                </Box>
+              </DrawerFooter>
+            </>
+          )}
+        </DrawerContent>
+      </Drawer>
     </>
   );
 };

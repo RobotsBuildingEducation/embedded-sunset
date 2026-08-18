@@ -54,6 +54,7 @@ import {
   InputLeftElement,
   SimpleGrid,
   Stack,
+  Portal,
 } from "@chakra-ui/react";
 import ReactBash from "react-bash";
 import SpeechRecognition, {
@@ -62,6 +63,7 @@ import SpeechRecognition, {
 import { triggerHaptic } from "tactus";
 import {
   BrowserRouter as Router,
+  Navigate,
   Route,
   Routes,
   useNavigate,
@@ -83,7 +85,6 @@ const lazyWithPreload = (factory) => {
 };
 
 import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
-import ThemeMenu from "./components/ThemeMenu";
 import WaveBar from "./components/WaveBar";
 import ChapterReview from "./components/ChapterReview";
 import DailyGoalCelebrationModal from "./components/DailyGoalCelebrationModal/DailyGoalCelebrationModal";
@@ -96,12 +97,17 @@ import {
   createUser,
   deleteSpecificDocuments,
   getOnboardingStep,
+  getContinuingLearningQuestions,
+  getContinuingLearningState,
   getUserData,
   getUserStep,
   incrementToFinalAward,
   incrementToSubscription,
   incrementUserStep,
+  setUserOnboardingStep,
   setOnboardingToDone,
+  saveContinuingLearningQuestion,
+  saveContinuingLearningState,
   updateUserData,
   incrementQuestionsAnswered,
   subscribeToQuestionsAnswered,
@@ -113,6 +119,7 @@ import {
   getRandomCelebrationMessage,
   buildSuperLoot,
   steps,
+  tutorial_interface,
 } from "./utility/content";
 import { PrivateRoute } from "./PrivateRoute";
 import {
@@ -121,7 +128,6 @@ import {
   collection,
   doc,
   getDoc,
-  getDocs,
   increment,
   updateDoc,
 } from "firebase/firestore";
@@ -134,15 +140,42 @@ import {
 import { pickProgrammingLanguage, translation } from "./utility/translation";
 import { soundManager } from "./utility/soundManager";
 import { isNsecSecretKey } from "./utils/nostrKeyInput.js";
+import {
+  getContinuingQuestionRoute,
+  getProgressRoute,
+} from "./utils/progressRoute.js";
 
 const Dashboard = lazy(() =>
   import("./components/Dashboard/Dashboard").then((m) => ({
     default: m.Dashboard,
   })),
 );
+
+const resolveStoredProgressRoute = async (
+  savedStep,
+  userId,
+  userLanguage = "en",
+) => {
+  if (savedStep !== "award") {
+    return getProgressRoute(savedStep);
+  }
+
+  try {
+    const profile = await getContinuingLearningState(userId, userLanguage);
+    return getContinuingQuestionRoute(
+      steps[userLanguage]?.length || steps.en?.length || 0,
+      profile.questionCount,
+    );
+  } catch (error) {
+    console.error("Unable to restore continuing-learning progress", error);
+    return "/award";
+  }
+};
 import { isUnsupportedBrowser } from "./utility/browser";
 import {
   ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   EmailIcon,
   LockIcon,
   PlusSquareIcon,
@@ -163,6 +196,7 @@ import {
   RiCalendarScheduleFill,
   RiCodeAiFill,
   RiFlag2Line,
+  RiRecycleLine,
   RiRobot2Fill,
 } from "react-icons/ri";
 import { MdOutlineSchedule } from "react-icons/md";
@@ -211,6 +245,7 @@ import { hasPatreonOAuthReturn } from "./utils/patreonOAuthReturn.js";
 import { getPatreonStatus, restorePatreonSession } from "./utils/patreonApi.js";
 import { canSilentlySignPatreonProof } from "./utils/patreonNostrProof.js";
 import {
+  isCreatorAccount,
   PATREON_AUTH_ENABLED,
   resolveSubscriptionAccess,
 } from "./utils/patreonFeature.js";
@@ -263,7 +298,7 @@ const InstallAppModal = lazyWithPreload(() =>
   })),
 );
 
-import { motion, animate, useAnimation } from "framer-motion";
+import { motion, animate, useAnimation, useReducedMotion } from "framer-motion";
 import { keyframes } from "@emotion/react";
 import { Delaunay } from "d3-delaunay";
 const CodeEditor = lazy(() =>
@@ -280,6 +315,27 @@ const RoleCanvas = lazy(() =>
   })),
 );
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
+import QuestionMode, {
+  CodePanel,
+} from "./components/QuestionModes/QuestionMode";
+import LiveReactEditorModal from "./components/LiveCodeEditor/LiveCodeEditor";
+import {
+  getQuestionType,
+  isNewQuestionType,
+  scrambleArray,
+} from "./utility/questionTypes";
+import {
+  buildQuestionGenerationPrompt,
+  chooseQuestionGenerationType,
+  getInitialContinuingLearningSummary,
+  getQuestionGenerationInterface,
+  normalizeGeneratedQuestionContent,
+  normalizeContinuingLearningSummary,
+  validateGeneratedQuestion,
+} from "./utility/questionGeneration";
+import { buildProactiveLearningPrompt } from "./utility/proactiveLearning";
+import { simulateCliCommand } from "./utility/terminalSimulator";
+import { getTutorialEndIndex } from "./utility/curriculumRevamp";
 import CloudTransition from "./elements/CloudTransition";
 import { TbWorld } from "react-icons/tb";
 const SoundExperiment = lazy(() => import("./experiments/SoundExperiment"));
@@ -298,6 +354,83 @@ const preloadInteractiveModalChunks = () => {
 const adaptiveSuggestionVariants = {
   hidden: { scale: 0.8 },
   visible: { scale: 1, transition: { duration: 0.3 } },
+};
+
+const learnHaloDrift = keyframes`
+  0% { transform: rotate(0deg) scale(0.9); opacity: 0; }
+  18% { opacity: 0.72; }
+  62% { opacity: 0.9; }
+  100% { transform: rotate(210deg) scale(1.12); opacity: 0; }
+`;
+
+const learnSparkleFloat = keyframes`
+  0% { transform: translate3d(0, 5px, 0) scale(0.2) rotate(0deg); opacity: 0; }
+  22% { opacity: 1; }
+  58% { transform: translate3d(2px, -5px, 0) scale(1) rotate(24deg); opacity: 0.95; }
+  100% { transform: translate3d(-2px, -12px, 0) scale(0.35) rotate(58deg); opacity: 0; }
+`;
+
+const relabelProactiveLearningHeading = (
+  content,
+  userLanguage,
+  currentStep,
+) => {
+  const label = userLanguage?.includes("es")
+    ? "Aprendizaje proactivo"
+    : "Proactive Learning";
+  const fixedTopic =
+    currentStep === 0
+      ? userLanguage?.includes("es")
+        ? "Primeros pasos"
+        : "Getting Started"
+      : currentStep === 1
+        ? userLanguage?.includes("es")
+          ? "Fundamentos de programación"
+          : "Coding Basics"
+        : "";
+
+  if (fixedTopic) {
+    const genericHeading =
+      /\*\*(?:Next Steps|Next Topic(?:\s*:[^*\n]+)?|Welcome to Your Journey|Próximos pasos|Siguiente tema(?:\s*:[^*\n]+)?|Bienvenido a tu viaje)\*\*/i;
+
+    if (genericHeading.test(String(content || ""))) {
+      return String(content || "").replace(
+        genericHeading,
+        `**${label}: ${fixedTopic}**`,
+      );
+    }
+  }
+
+  return String(content || "").replace(
+    /(?:Next Topic|Next Steps|Siguiente tema|Próximo tema|Próximos pasos)\s*:/i,
+    `${label}:`,
+  );
+};
+
+const ACTION_BAR_TOUR_PENDING_PREFIX = "actionBarTourPending";
+const ACTION_BAR_TOUR_COMPLETE_PREFIX = "actionBarTourComplete";
+
+const getActionBarTourStorageKeys = (npub) => ({
+  pending: `${ACTION_BAR_TOUR_PENDING_PREFIX}:${npub}`,
+  complete: `${ACTION_BAR_TOUR_COMPLETE_PREFIX}:${npub}`,
+});
+
+const markActionBarTourPending = (npub) => {
+  if (typeof window === "undefined" || !npub) return;
+
+  const keys = getActionBarTourStorageKeys(npub);
+  localStorage.setItem(keys.pending, "true");
+  localStorage.removeItem(keys.complete);
+};
+
+const shouldStartActionBarTour = (npub) => {
+  if (typeof window === "undefined" || !npub) return false;
+
+  const keys = getActionBarTourStorageKeys(npub);
+  return (
+    localStorage.getItem(keys.pending) === "true" &&
+    localStorage.getItem(keys.complete) !== "true"
+  );
 };
 
 const runAfterNextPaint = (callback) => {
@@ -626,10 +759,29 @@ const AwardScreen = (userLanguage) => {
             colorScheme="pink"
             boxShadow="0.5px 0.5px 1px black"
             leftIcon={<RiAiGenerate />}
-            onClick={() => {
+            onClick={async () => {
+              const userId = localStorage.getItem("local_npub");
+              let profile = null;
+              try {
+                profile = await getContinuingLearningState(
+                  userId,
+                  userLanguage.userLanguage,
+                );
+              } catch (error) {
+                console.error(
+                  "Unable to initialize continuing-learning profile",
+                  error,
+                );
+              }
               localStorage.setItem("aiLearningMode", "true");
               const totalSteps = steps[userLanguage.userLanguage]?.length || 1;
-              navigate(`/q/${totalSteps - 1}`);
+              navigate(
+                getContinuingQuestionRoute(
+                  totalSteps,
+                  profile?.questionCount,
+                  `/q/${totalSteps - 1}`,
+                ),
+              );
             }}
           >
             {translation[userLanguage.userLanguage]?.[
@@ -715,7 +867,6 @@ export const VoiceInput = ({
   currentStep,
   steps = [],
   isSingleLineText = false,
-  handleModalCheck,
 }) => {
   const {
     transcript,
@@ -765,7 +916,6 @@ export const VoiceInput = ({
   const showAlert = useAlertStore((s) => s.showAlert);
 
   const pauseTimeoutRef = useRef(null);
-  const learnPressRef = useRef({ key: "", at: 0 });
   const toast = useToast();
   const actionShadow = useColorModeValue(
     "0 12px 24px rgba(15, 23, 42, 0.12)",
@@ -998,15 +1148,6 @@ export const VoiceInput = ({
     }
   }, [messages, onChange]);
 
-  // New function for handling the "Learn" button click
-  const handleLearnClick = () => {
-    runImmediateSurfaceUpdate(() => {
-      useSurfaceModalStore.getState().openLearnModal({
-        step,
-        userLanguage,
-      });
-    });
-  };
   // Dynamically adjust the height of the textarea as the content changes
   useEffect(() => {
     if (isTextInput) {
@@ -1107,21 +1248,6 @@ export const VoiceInput = ({
           >
             {" "}
             {translation[userLanguage]["app.button.voiceToAI"]}
-          </Button>
-          <Button
-            colorScheme="pink"
-            {...getInstantSurfacePressProps(learnPressRef, "learn", () =>
-              handleModalCheck(handleLearnClick),
-            )}
-            background="pink.400"
-            color="white"
-            boxShadow={actionShadow}
-            _hover={{ bg: "pink.500" }}
-            _active={{ bg: "pink.500" }}
-          >
-            <IoChatbubblesOutline />
-            &nbsp;
-            {translation[userLanguage]["app.button.learn"]}
           </Button>
         </HStack>
       ) : null}
@@ -1384,6 +1510,7 @@ function TerminalComponent({
   step,
   userLanguage,
   handleModalCheck,
+  simulatedTerminalOutput,
 }) {
   const [structure, setStructure] = useState(fileSystem);
   const [history, setHistory] = useState([
@@ -1403,6 +1530,12 @@ function TerminalComponent({
       executeCommand(inputValue);
     }
   }, [isSending]);
+
+  useEffect(() => {
+    if (simulatedTerminalOutput) {
+      setHistory((prev) => [...prev, { value: simulatedTerminalOutput }]);
+    }
+  }, [simulatedTerminalOutput]);
 
   const executeCommand = (command) => {
     const parts = command.split(" ");
@@ -1542,7 +1675,12 @@ function TerminalComponent({
     if (customSetup[cmd]) {
       customSetup[cmd].exec();
     } else {
-      setHistory([...history, { value: `bash: ${cmd}: command not found` }]);
+      const simulated = simulateCliCommand(command, userLanguage);
+      if (simulated) {
+        setHistory([...history, { value: simulated }]);
+      } else {
+        setHistory([...history, { value: `bash: ${cmd}: command not found` }]);
+      }
     }
   };
 
@@ -1766,8 +1904,10 @@ const detectChapterQuestionKind = (step) => {
   if (step.isMultipleChoice || q?.isMultipleChoice) return "multiChoice";
   if (step.isCodeCompletion || q?.isCodeCompletion) return "codeCompletion";
 
+  if (isNewQuestionType(step)) return getQuestionType(step);
+
   // 2) Code family
-  if (step.isCode || q?.isCode) {
+  if (step.isTerminal || q?.isTerminal || step.isCode || q?.isCode) {
     const isTerminal = Boolean(step.isTerminal ?? q?.isTerminal);
     return isTerminal ? "terminal" : "code";
   }
@@ -1820,8 +1960,12 @@ const deriveChapterLabel = (group, primaryMap, fallbackMap) => {
 
 const Step = ({
   currentStep,
+  startInContinuingMode = false,
+  requestedContinuingQuestionCount = null,
   userLanguage,
   setUserLanguage,
+  isAdaptiveLearning,
+  setIsAdaptiveLearning,
   postNostrContent,
   assignExistingBadgeToNpub,
   emailStep,
@@ -1850,6 +1994,7 @@ const Step = ({
   const [selectedOption, setSelectedOption] = useState(""); // For Multiple Choice
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [items, setItems] = useState([]); // For Select Order
+  const [modeAnswer, setModeAnswer] = useState(null);
   const [isSending, setIsSending] = useState(false);
   const [isCorrect, setIsCorrect] = useState(null);
   const [feedback, setFeedback] = useState("");
@@ -1867,14 +2012,238 @@ const Step = ({
   const cashuWallet = useNostrWalletStore((s) => s.cashuWallet);
   const [grade, setGrade] = useState("");
   const [isTimerExpired, setIsTimerExpired] = useState(true);
+  const [isBuildReady, setIsBuildReady] = useState(false);
+  const [simulatedTerminalOutput, setSimulatedTerminalOutput] = useState("");
 
   const nextQuestionPressLockRef = useRef(false);
 
+  const shouldInitiallyRestoreContinuingQuestion =
+    startInContinuingMode ||
+    (typeof window !== "undefined" &&
+      localStorage.getItem("aiLearningMode") === "true");
   const [step, setStep] = useState(steps[userLanguage][currentStep]);
-  const [isAILearningMode, setIsAILearningMode] = useState(false);
+  const [isAILearningMode, setIsAILearningMode] = useState(
+    shouldInitiallyRestoreContinuingQuestion,
+  );
+  const [isContinuingQuestionRestoring, setIsContinuingQuestionRestoring] =
+    useState(shouldInitiallyRestoreContinuingQuestion);
+  const [continuingLearningState, setContinuingLearningState] = useState(
+    () => ({
+      summary: getInitialContinuingLearningSummary(userLanguage),
+      questionCount: 0,
+      lastQuestionType: null,
+      currentQuestion: null,
+    }),
+  );
+  const continuingLearningStateRef = useRef(continuingLearningState);
+  const [continuingLearningQuestions, setContinuingLearningQuestions] =
+    useState([]);
+  const continuingLearningQuestionsRef = useRef([]);
+  const [viewedContinuingQuestionCount, setViewedContinuingQuestionCount] =
+    useState(requestedContinuingQuestionCount);
+  const continuingLearningProfileLoadedRef = useRef(false);
+  const pendingGeneratedQuestionTypeRef = useRef(null);
+  const pendingGenerationModeRef = useRef("reinforcement");
+  const pendingGenerationCountsAsNewRef = useRef(true);
+  const activeQuestionMenuItemRef = useRef(null);
+  const [actionBarTourIndex, setActionBarTourIndex] = useState(0);
+  const [isActionBarTourActive, setIsActionBarTourActive] = useState(
+    () =>
+      currentStep === 0 &&
+      typeof window !== "undefined" &&
+      shouldStartActionBarTour(localStorage.getItem("local_npub")),
+  );
+
+  useEffect(() => {
+    continuingLearningStateRef.current = continuingLearningState;
+  }, [continuingLearningState]);
+
+  useEffect(() => {
+    const initialState = {
+      summary: getInitialContinuingLearningSummary(userLanguage),
+      questionCount: 0,
+      lastQuestionType: null,
+      currentQuestion: null,
+    };
+    continuingLearningProfileLoadedRef.current = false;
+    continuingLearningStateRef.current = initialState;
+    continuingLearningQuestionsRef.current = [];
+    setContinuingLearningState(initialState);
+    setContinuingLearningQuestions([]);
+    setViewedContinuingQuestionCount(requestedContinuingQuestionCount);
+  }, [userLanguage]);
+
+  const loadContinuingLearningProfile = useCallback(async () => {
+    if (continuingLearningProfileLoadedRef.current) {
+      return continuingLearningStateRef.current;
+    }
+
+    const userId = localStorage.getItem("local_npub");
+    const [profile, storedQuestions] = await Promise.all([
+      getContinuingLearningState(userId, userLanguage),
+      getContinuingLearningQuestions(userId, userLanguage),
+    ]);
+    let questions = storedQuestions;
+
+    // Older profiles only retained the latest generated question. Preserve
+    // that real question in the new history collection so it immediately
+    // appears in navigation without inventing unavailable earlier entries.
+    if (
+      profile.currentQuestion &&
+      profile.questionCount > 0 &&
+      !questions.some((entry) => entry.questionCount === profile.questionCount)
+    ) {
+      const migratedQuestion = await saveContinuingLearningQuestion(
+        userId,
+        userLanguage,
+        {
+          questionCount: profile.questionCount,
+          questionType: profile.lastQuestionType,
+          question: profile.currentQuestion,
+        },
+      );
+      if (migratedQuestion) {
+        questions = [...questions, migratedQuestion].sort(
+          (a, b) => a.questionCount - b.questionCount,
+        );
+      }
+    }
+
+    continuingLearningProfileLoadedRef.current = true;
+    continuingLearningStateRef.current = profile;
+    continuingLearningQuestionsRef.current = questions;
+    setContinuingLearningState(profile);
+    setContinuingLearningQuestions(questions);
+    return profile;
+  }, [userLanguage]);
 
   const fallbackTranslation = translation.en || {};
   const translationMap = translation[userLanguage] || fallbackTranslation;
+  const metricTooltips = userLanguage?.includes("es")
+    ? {
+        chapter: "Capítulo actual del curso",
+        progress: "Progreso dentro del capítulo actual",
+        streak:
+          "Respuestas correctas completadas antes de que venza tu temporizador de racha",
+        goals: "Metas diarias completadas",
+      }
+    : {
+        chapter: "Your current course chapter",
+        progress: "Your progress through the current chapter",
+        streak: "Correct answers completed before your streak timer expires",
+        goals: "Daily learning goals completed",
+      };
+  const rawGroup = String(step?.group || "").trim();
+  const chapterMetricLabel =
+    ["introduction", "tutorial"].includes(rawGroup.toLowerCase())
+      ? "Tutorial"
+      : rawGroup
+        ? rawGroup.charAt(0).toUpperCase() + rawGroup.slice(1)
+        : "";
+  const metricTooltipStyle = {
+    hasArrow: true,
+    placement: "top",
+    openDelay: 200,
+    closeOnClick: false,
+    px: 4,
+    py: 3,
+    maxW: "260px",
+    borderRadius: "xl",
+    borderWidth: "1px",
+    borderColor: "pink.200",
+    bg: "appSurfaceElevated",
+    color: "appText",
+    boxShadow: "none",
+    fontSize: "sm",
+    fontWeight: "semibold",
+    lineHeight: "1.45",
+    textAlign: "center",
+  };
+  const actionBarTourSteps = userLanguage?.includes("es")
+    ? [
+        {
+          title: "Crea becas con el aprendizaje",
+          description:
+            "Crea y financia una pequeña billetera de Bitcoin con aproximadamente 10 centavos y crea becas con el aprendizaje mientras avanzas.",
+        },
+        {
+          title: "Modo a tu ritmo",
+          description: "Administra tus rachas, metas y notificaciones.",
+        },
+        {
+          title: "Tu tutor personal",
+          description:
+            "Genera notas para la pregunta actual o haz preguntas de seguimiento para obtener más apoyo.",
+        },
+        {
+          title: "Crea tu aplicación",
+          description:
+            "Genera código según lo que has aprendido, edítalo con una vista previa en vivo y conserva tu proyecto mientras avanzas.",
+        },
+        {
+          title: "Guía para crear aplicaciones",
+          description:
+            "Ponte a prueba y sigue un tutorial paso a paso para crear y lanzar tu aplicación.",
+        },
+      ]
+    : [
+        {
+          title: "Create scholarships with learning",
+          description:
+            "Create and fund a small Bitcoin wallet with ~10 cents and create scholarships with learning as you make progress.",
+        },
+        {
+          title: "Self-paced mode",
+          description: "Manage your streaks, goals and notifications.",
+        },
+        {
+          title: "Your personal tutor",
+          description:
+            "Generate notes for the current question or ask follow-up questions for more support.",
+        },
+        {
+          title:
+            userLanguage === "compsci-en"
+              ? "Algorithm practice"
+              : "Build your app",
+          description:
+            userLanguage === "compsci-en"
+              ? "Generate an interview problem, choose a solution path, view guidance and code examples, then request feedback."
+              : "Generate code matched to what you've learned, edit it beside a live preview, and keep your project as you progress.",
+        },
+        {
+          title: "App Building Guide",
+          description:
+            "Challenge yourself and follow a step-by-step tutorial to create and launch your app.",
+        },
+      ];
+
+  useEffect(() => {
+    if (typeof window === "undefined" || currentStep !== 0) {
+      setIsActionBarTourActive(false);
+      return;
+    }
+
+    const npub = localStorage.getItem("local_npub");
+    if (!npub) {
+      setIsActionBarTourActive(false);
+      return;
+    }
+
+    setActionBarTourIndex(0);
+    setIsActionBarTourActive(shouldStartActionBarTour(npub));
+  }, [currentStep]);
+
+  const finishActionBarTour = () => {
+    const npub = localStorage.getItem("local_npub");
+    if (npub) {
+      const keys = getActionBarTourStorageKeys(npub);
+      localStorage.setItem(keys.complete, "true");
+      localStorage.removeItem(keys.pending);
+    }
+
+    setIsActionBarTourActive(false);
+  };
   const { colorMode } = useColorMode();
 
   const themeColor = useThemeStore((state) => state.themeColor);
@@ -1945,6 +2314,22 @@ const Step = ({
     `0 8px 18px ${hexToRgba(actionPalette[300], 0.16)}`,
     "0 10px 24px rgba(2, 6, 23, 0.34)",
   );
+  const learnButtonGlowColor = useColorModeValue(
+    hexToRgba(actionPalette[600], 1),
+    hexToRgba(actionPalette[100], 1),
+  );
+  const learnButtonGlowSoft = useColorModeValue(
+    hexToRgba(actionPalette[300], 0.68),
+    hexToRgba(actionPalette[200], 0.58),
+  );
+  const actionBarTourBorderColor = useColorModeValue(
+    "#000000",
+    "rgba(226, 232, 240, 0.82)",
+  );
+  const actionBarTourDescriptionColor = useColorModeValue(
+    "appTextMuted",
+    "#E2E8F0",
+  );
   const showImmediateTransitionShell = useCallback(() => {
     if (typeof document === "undefined") return;
     const shellId = "immediate-cloud-transition-shell";
@@ -1977,8 +2362,8 @@ const Step = ({
   );
   const successFeedbackText = useColorModeValue("#166534", "#D1FAE5");
   const successFeedbackShadow = useColorModeValue(
-    "0 10px 22px rgba(34, 197, 94, 0.1)",
-    "0 12px 26px rgba(4, 120, 87, 0.22)",
+    "0 5px 12px rgba(34, 197, 94, 0.06)",
+    "0 6px 14px rgba(4, 120, 87, 0.1)",
   );
   const errorFeedbackBg = useColorModeValue(
     "linear-gradient(180deg, rgba(254, 242, 242, 0.98) 0%, rgba(254, 226, 226, 0.98) 100%)",
@@ -1990,8 +2375,8 @@ const Step = ({
   );
   const errorFeedbackText = useColorModeValue("#B91C1C", "#FFE4E6");
   const errorFeedbackShadow = useColorModeValue(
-    "0 10px 22px rgba(239, 68, 68, 0.09)",
-    "0 12px 26px rgba(127, 29, 29, 0.22)",
+    "0 5px 12px rgba(239, 68, 68, 0.06)",
+    "0 6px 14px rgba(127, 29, 29, 0.1)",
   );
   const feedbackHeartColor = useColorModeValue("#DC2626", "#FB7185");
 
@@ -2008,6 +2393,11 @@ const Step = ({
     }
     return [];
   }, [userLanguage]);
+
+  const tutorialEndIndex = useMemo(
+    () => getTutorialEndIndex(localeSteps),
+    [localeSteps],
+  );
 
   const chapterReviewChapters = useMemo(() => {
     if (!Array.isArray(localeSteps) || !localeSteps.length) {
@@ -2167,9 +2557,10 @@ const Step = ({
 
   const openPasscodeModal = usePasscodeModalStore((s) => s.openPasscodeModal);
   const [suggestionMessage, setSuggestionMessage] = useState("");
-  const lastSuggestionRef = useRef("");
   const [suggestionLoading, setSuggestionLoading] = useState(false);
-  const [isAdaptiveLearning, setIsAdaptiveLearning] = useState(false);
+  const [showLearnSparkles, setShowLearnSparkles] = useState(false);
+  const learnButtonControls = useAnimation();
+  const prefersReducedMotion = useReducedMotion();
 
   const [isExternalLinkModalOpen, setIsExternalLinkModalOpen] = useState(false);
   const [dontShowAgain, setDontShowAgain] = useState(false);
@@ -2275,15 +2666,36 @@ const Step = ({
 
   const handleContinueLearning = () => {
     setIsAILearningMode(true);
-    handleGenerateNewQuestion();
+    handleGenerateNewQuestion({ mode: "continuing" });
   };
 
   const handleExitAILearningMode = () => {
     setIsAILearningMode(false);
+    setIsContinuingQuestionRestoring(false);
     setGeneratedQuestion(null);
     resetNewQuestionMessages();
     // Reset to current step's content
     setStep(steps[userLanguage][currentStep]);
+    setIsBuildReady(false);
+    navigate(`/q/${currentStep}`, { replace: true });
+  };
+
+  const handleOpenContinuingQuestion = (entry) => {
+    if (!entry?.question || !entry?.questionCount) return;
+
+    triggerHaptic();
+    setSearchTerm("");
+    setIsAILearningMode(true);
+    setIsContinuingQuestionRestoring(false);
+    setGeneratedQuestion(entry.question);
+    setStep(entry.question);
+    setViewedContinuingQuestionCount(entry.questionCount);
+    navigate(
+      getContinuingQuestionRoute(
+        steps[userLanguage]?.length || 0,
+        entry.questionCount,
+      ),
+    );
   };
 
   const handleLectureModalClose = () => {
@@ -2319,43 +2731,24 @@ const Step = ({
   } = useAdaptiveLearningGeminiChat();
 
   useEffect(() => {
-    setStep(steps[userLanguage][currentStep]);
-    const generateSuggestionForNewStep = async () => {
-      setSuggestionLoading(true);
-      try {
-        const fetchUserAnswers = async () => {
-          const userId = localStorage.getItem("local_npub");
-          const answersRef = collection(database, `users/${userId}/answers`);
-          const answerDocs = await getDocs(answersRef);
-          const answers = answerDocs.docs.map((doc) => doc.data());
-          return answers;
-        };
-
-        // const userAnswers = await fetchUserAnswers();
-        const subjectsCompleted = steps[userLanguage]
-          .slice(1, currentStep) // All completed steps
-          .map((step) => step.title);
-
-        await submitSuggestionMessages(`
-            The user is on question ${currentStep}. If the question number is 0 offer some words of encouragement when it comes to learning journeys and do not proceed with further instruction. If the question is 1, suggest learning the very basics of coding in two sentences and ignore the rest of this instruction. Otherwise, for any other question, the user has completed the following subjects: ${JSON.stringify(subjectsCompleted)}. Based on their progress, suggest the next best topic to learn and explain why. Based on their progress, suggest the next best topic to learn and explain why while also providing a brief example of code too to expose the individual to the concept. This must always be in ${pickProgrammingLanguage(userLanguage)} when code is being expressed.           
-            
-            This applies to any question: Respond in minimalist markdown without any headers, only bold facing is allowed to indicate headers for new paragraphs. Never reference the user's subjects, that's for your eyes only. Never reference other businesses or organizations.
-              The user is speaking ${
-                userLanguage.includes("en") ? "English" : "Spanish"
-              }.
-            `);
-      } catch (error) {
-        console.error("Error generating suggestion:", error);
-        showAlert("warning", translation[userLanguage]["ai.error"]);
-      } finally {
-        setSuggestionLoading(false);
+    if (!isAILearningMode) {
+      setGeneratedQuestion(null);
+      resetNewQuestionMessages();
+      const stepContent = steps[userLanguage]?.[currentStep];
+      if (stepContent) {
+        setStep(stepContent);
       }
-    };
-
-    if (isAdaptiveLearning && isEmpty(suggestionMessage)) {
-      generateSuggestionForNewStep();
+      setInputValue("");
+      setSelectedOption("");
+      setSelectedOptions([]);
+      setItems([]);
+      setModeAnswer(null);
+      setIsCorrect(null);
+      setFeedback("");
+      setGrade("");
+      setSimulatedTerminalOutput("");
     }
-  }, [userLanguage]);
+  }, [currentStep, userLanguage, isAILearningMode]);
 
   // Fetch user data and manage streaks and timers
   useEffect(() => {
@@ -2367,7 +2760,7 @@ const Step = ({
       const userId = localStorage.getItem("local_npub");
       const userData = (await getUserData(userId)) || {};
 
-      setIsAdaptiveLearning(userData?.isAdaptiveLearning);
+      setIsAdaptiveLearning(userData?.isAdaptiveLearning !== false);
       setStreak(userData.streak || 0);
       const savedStartTime = userData.startTime
         ? new Date(userData.startTime)
@@ -2476,123 +2869,121 @@ const Step = ({
 
     // onAwardModalOpen();
 
-    // Check if we should enable AI learning mode from the award page
+    // Restore post-course learning from either its persisted route or the
+    // one-time handoff from the award screen.
     const aiLearningModeFlag = localStorage.getItem("aiLearningMode");
-    if (aiLearningModeFlag === "true") {
+    if (startInContinuingMode || aiLearningModeFlag === "true") {
       localStorage.removeItem("aiLearningMode");
       setIsAILearningMode(true);
-      // Trigger AI question generation after a short delay to ensure component is ready
+
       setTimeout(() => {
-        handleGenerateNewQuestion();
+        loadContinuingLearningProfile()
+          .then((profile) => {
+            const requestedQuestion =
+              Number(requestedContinuingQuestionCount) > 0
+                ? continuingLearningQuestionsRef.current.find(
+                    (entry) =>
+                      entry.questionCount ===
+                      Number(requestedContinuingQuestionCount),
+                  )
+                : null;
+            const restoredQuestion =
+              requestedQuestion?.question || profile.currentQuestion;
+            const restoredQuestionCount =
+              requestedQuestion?.questionCount || profile.questionCount;
+
+            if (restoredQuestion && restoredQuestionCount > 0) {
+              setGeneratedQuestion(restoredQuestion);
+              setStep(restoredQuestion);
+              setViewedContinuingQuestionCount(restoredQuestionCount);
+              setIsContinuingQuestionRestoring(false);
+              const restoredRoute = getContinuingQuestionRoute(
+                steps[userLanguage]?.length || 0,
+                restoredQuestionCount,
+              );
+              if (window.location.pathname !== restoredRoute) {
+                navigate(restoredRoute, { replace: true });
+              }
+              return;
+            }
+
+            handleGenerateNewQuestion({
+              mode: "continuing",
+              countAsNew: profile.questionCount < 1,
+            });
+          })
+          .catch((error) => {
+            console.error(
+              "Unable to restore the continuing-learning question",
+              error,
+            );
+            handleGenerateNewQuestion({ mode: "continuing" });
+          });
       }, 100);
     }
   }, []);
 
-  // Initialize items for Select Order question
-  const handleToggleChange = async () => {
-    soundManager.resume();
-    soundManager.play("modeSwitch");
-    const newValue = !isAdaptiveLearning;
-    setIsAdaptiveLearning(newValue);
-
-    try {
-      const userId = localStorage.getItem("local_npub");
-      const userDocRef = doc(database, "users", userId);
-      await updateDoc(userDocRef, { isAdaptiveLearning: newValue });
-    } catch (error) {
-      console.error("Error updating adaptive learning:", error);
-    }
-  };
-
   useEffect(() => {
-    // console.log("runrunrunrunrunrun");
-    if (step.isSelectOrder) {
-      setItems(step.question.options.sort(() => Math.random() - 0.5));
+    if (isContinuingQuestionRestoring) {
+      resetSuggestionMessages();
+      setSuggestionMessage("");
+      setSuggestionLoading(false);
+      return undefined;
     }
-    // console.log("newQuestionMessages", newQuestionMessages);
-    // console.log("generatedQuestion", generatedQuestion);
 
     if (isEmpty(generatedQuestion) && isEmpty(newQuestionMessages)) {
       const stepContent = steps[userLanguage][currentStep];
-      setStep(stepContent);
+      if (step !== stepContent) {
+        setStep(stepContent);
+        return;
+      }
     }
 
-    const generateSuggestionForNewStep = async () => {
+    resetSuggestionMessages();
+    setSuggestionMessage("");
+
+    if (!isAdaptiveLearning || step?.isTerminal) {
+      setSuggestionLoading(false);
+      return undefined;
+    }
+
+    let isCurrentQuestion = true;
+    const generateQuestionSupport = async () => {
       setSuggestionLoading(true);
       try {
-        const fetchUserAnswers = async () => {
-          const userId = localStorage.getItem("local_npub");
-          const answersRef = collection(database, `users/${userId}/answers`);
-          const answerDocs = await getDocs(answersRef);
-          const answers = answerDocs.docs.map((doc) => doc.data());
-          return answers;
-        };
-
-        const userAnswers = await fetchUserAnswers();
-        const subjectsCompleted = steps[userLanguage]
-          .slice(1, currentStep) // All completed steps
-          .map((step) => step.title);
-
-        await submitSuggestionMessages(`
-            The user is on question ${currentStep}. If the question number is 0 offer some words of encouragement when it comes to learning journeys and do not proceed with further instruction. If the question is 1, suggest learning the very basics of coding in two sentences and ignore the rest of this instruction. Otherwise, for any other question, the user has completed the following subjects: ${JSON.stringify(subjectsCompleted)}. Based on their progress, suggest the next best topic to learn and explain why.  Based on their progress, suggest the next best topic to learn and explain why while also providing a brief example of code too to expose the individual to the concept.
-
-            This applies to any question: Respond in minimalist markdown without any headers, only bold facing is allowed to indicate headers for new paragraphs. Never reference the user's subjects, that's for your eyes only. Never reference other businesses or organizations.
-              The user is speaking ${
-                userLanguage.includes("en") ? "English" : "Spanish"
-              }.
-
-              The user is using the following programming language: ${pickProgrammingLanguage(userLanguage)}
-            `);
+        await submitSuggestionMessages(
+          buildProactiveLearningPrompt({
+            step,
+            userLanguage,
+            programmingLanguage: pickProgrammingLanguage(userLanguage),
+          }),
+        );
       } catch (error) {
-        console.error("Error generating suggestion:", error);
-        showAlert("warning", translation[userLanguage]["ai.error"]);
+        if (isCurrentQuestion) {
+          console.error("Error generating proactive learning support:", error);
+          showAlert("warning", translation[userLanguage]["ai.error"]);
+        }
       } finally {
-        setSuggestionLoading(false);
+        if (isCurrentQuestion) {
+          setSuggestionLoading(false);
+        }
       }
     };
 
-    if (isAdaptiveLearning && !suggestionLoading) {
-      generateSuggestionForNewStep();
-    }
-  }, [currentStep, step]);
+    generateQuestionSupport();
 
-  useEffect(() => {
-    const generateSuggestionForNewStep = async () => {
-      setSuggestionLoading(true);
-      try {
-        const fetchUserAnswers = async () => {
-          const userId = localStorage.getItem("local_npub");
-          const answersRef = collection(database, `users/${userId}/answers`);
-          const answerDocs = await getDocs(answersRef);
-          const answers = answerDocs.docs.map((doc) => doc.data());
-          return answers;
-        };
-
-        const userAnswers = await fetchUserAnswers();
-        const subjectsCompleted = steps[userLanguage]
-          .slice(1, currentStep) // All completed steps
-          .map((step) => step.title);
-
-        await submitSuggestionMessages(`
-            The user is on question ${currentStep}. If the question number is 0 offer some words of encouragement when it comes to learning journeys and do not proceed with further instruction. If the question is 1, suggest learning the very basics of coding in two sentences and ignore the rest of this instruction. Otherwise, for any other question, the user has completed the following subjects: ${JSON.stringify(subjectsCompleted)}. Based on their progress, suggest the next best topic to learn and explain why while also providing a brief example of code too to expose the individual to the concept.
-            
-            This applies to any question: Respond in minimalist markdown without any headers, only bold facing is allowed to indicate headers for new paragraphs. Never reference the user's subjects, that's for your eyes only. Never reference other businesses or organizations.
-              The user is speaking ${
-                userLanguage.includes("en") ? "English" : "Spanish"
-              }.
-            `);
-      } catch (error) {
-        console.error("Error generating suggestion:", error);
-        showAlert("warning", translation[userLanguage]["ai.error"]);
-      } finally {
-        setSuggestionLoading(false);
-      }
+    return () => {
+      isCurrentQuestion = false;
+      resetSuggestionMessages();
     };
+  }, [
+    currentStep,
+    step,
+    userLanguage,
+    isAdaptiveLearning,
+    isContinuingQuestionRestoring,
+  ]);
 
-    if (isAdaptiveLearning && isEmpty(suggestionMessage)) {
-      generateSuggestionForNewStep();
-    }
-  }, [isAdaptiveLearning]);
   useEffect(() => {
     if (suggestionMessages?.length > 0) {
       try {
@@ -2601,21 +2992,74 @@ const Step = ({
           lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
 
         if (isLastMessage) {
-          setSuggestionMessage(lastMessage.content); // Store suggestion
+          setSuggestionMessage(
+            relabelProactiveLearningHeading(
+              lastMessage.content,
+              userLanguage,
+              currentStep,
+            ),
+          ); // Store suggestion
         }
       } catch (error) {
         console.error("Error processing suggestion response:", error);
         showAlert("warning", translation[userLanguage]["ai.error"]);
       }
     }
-  }, [suggestionMessages]);
+  }, [suggestionMessages, userLanguage, currentStep]);
 
   useEffect(() => {
     if (!suggestionMessage) return;
-    if (lastSuggestionRef.current === suggestionMessage) return;
-    lastSuggestionRef.current = suggestionMessage;
+    let isCurrentGlow = true;
     soundManager.resume();
     soundManager.play("pattern");
+    setShowLearnSparkles(!prefersReducedMotion);
+    learnButtonControls.stop();
+    learnButtonControls.set({
+      outlineColor: "rgba(0, 0, 0, 0)",
+      boxShadow: "0 0 0 0 rgba(0, 0, 0, 0)",
+      scale: 1,
+    });
+    learnButtonControls
+      .start({
+        outlineColor: prefersReducedMotion
+          ? ["rgba(0, 0, 0, 0)", learnButtonGlowColor, "rgba(0, 0, 0, 0)"]
+          : [
+              "rgba(0, 0, 0, 0)",
+              learnButtonGlowColor,
+              learnButtonGlowColor,
+              learnButtonGlowColor,
+              "rgba(0, 0, 0, 0)",
+            ],
+        boxShadow: prefersReducedMotion
+          ? [
+              "0 0 0 0 rgba(0, 0, 0, 0)",
+              `0 0 0 6px ${learnButtonGlowSoft}, 0 0 30px ${learnButtonGlowSoft}`,
+              "0 0 0 0 rgba(0, 0, 0, 0)",
+            ]
+          : [
+              "0 0 0 0 rgba(0, 0, 0, 0)",
+              `0 0 0 3px ${learnButtonGlowSoft}, 0 0 20px ${learnButtonGlowSoft}`,
+              `0 0 0 7px ${learnButtonGlowSoft}, 0 0 42px ${learnButtonGlowSoft}`,
+              `0 0 0 4px ${learnButtonGlowSoft}, 0 0 30px ${learnButtonGlowSoft}`,
+              "0 0 0 0 rgba(0, 0, 0, 0)",
+            ],
+        scale: prefersReducedMotion ? 1 : [1, 1.025, 1.06, 1.035, 1],
+        transition: {
+          duration: prefersReducedMotion ? 1.1 : 2.8,
+          ease: [0.22, 1, 0.36, 1],
+          times: prefersReducedMotion ? [0, 0.4, 1] : [0, 0.2, 0.5, 0.76, 1],
+        },
+      })
+      .then(() => {
+        if (isCurrentGlow) {
+          setShowLearnSparkles(false);
+        }
+      });
+
+    return () => {
+      isCurrentGlow = false;
+      setShowLearnSparkles(false);
+    };
   }, [suggestionMessage]);
 
   useEffect(() => {
@@ -2633,11 +3077,12 @@ const Step = ({
 
       getRecipient();
 
-      if (allowPosts) {
-        postNostrContent(
-          `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://robotsbuildingeducation.com \n\n${step.question?.questionText} #LearnWithNostr`,
-        );
-      }
+      // Per-question Nostr posting is intentionally disabled.
+      // if (allowPosts) {
+      //   postNostrContent(
+      //     `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://robotsbuildingeducation.com \n\n${step.question?.questionText} #LearnWithNostr`,
+      //   );
+      // }
       if (step.isConversationReview) {
         assignExistingBadgeToNpub(
           transcript[step.group]["name"].replace(/ /g, "-"),
@@ -2720,6 +3165,29 @@ const Step = ({
 
   const feedbackRef = useRef(null);
 
+  const submitQuestionGradingPrompt = (messages, ...options) => {
+    if (!isAILearningMode) {
+      return submitGradingPrompt(messages, ...options);
+    }
+
+    const summaryInstruction = `
+
+CONTINUING-LEARNING SUMMARY UPDATE:
+The learner's current rolling summary is:
+${continuingLearningStateRef.current.summary}
+
+In addition to the grading fields already requested, return updatedLearningSummary as a string containing the complete replacement summary after this attempt. Keep it under 1800 characters and in ${
+      userLanguage.includes("en") ? "English" : "Spanish"
+    }. Preserve the learner's completed-course foundation and unresolved weaknesses. Reflect improvement without declaring mastery from one answer. Mention only useful skills, difficulty, and recent practice; never include the learner's raw answer, the hidden correct answer, JSON, or a question-by-question transcript.`;
+    const enhancedMessages = messages.map((message, index) =>
+      index === messages.length - 1
+        ? { ...message, content: `${message.content}${summaryInstruction}` }
+        : message,
+    );
+
+    return submitGradingPrompt(enhancedMessages, ...options);
+  };
+
   // Handle answer submission
   const handleAnswerClick = async () => {
     // Retrieve the current count from localStorage
@@ -2753,20 +3221,47 @@ const Step = ({
       answer = finalConversation;
     } else if (step.isMultipleAnswerChoice) {
       answer = selectedOptions;
+    } else if (isNewQuestionType(step)) {
+      answer = modeAnswer;
+      // A Parsons board can render its source lines before its local answer
+      // state is initialized. Submit exactly those visible lines in that case.
+      if (step.isParsonsProblem && !Array.isArray(answer)) {
+        answer = step.question?.lines || [];
+      }
     }
 
-    if (step.isConversationReview) {
-      // console.log("review");
-      const relevantSteps = getObjectsByGroup(step?.group, steps[userLanguage]);
-
-      await submitGradingPrompt(
+    if (isNewQuestionType(step)) {
+      await submitQuestionGradingPrompt(
         [
           {
-            content: `The user is having a conversation and reviewing the following subjects"${JSON.stringify(
+            content: `The learner is completing a ${getQuestionType(step)} exercise.
+Question: ${JSON.stringify(step.question.questionText)}
+Expected answer, when the exercise has one: ${JSON.stringify(step.question.answer)}
+Success checks, when the exercise uses a rubric: ${JSON.stringify(step.question.tests || [])}
+Submitted answer: ${JSON.stringify(answer)}
+
+For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-implementation, and fix-the-bug questions with an expected answer, grade by comparing the submitted and expected values. Parsons order matters. Matching keys and values must all match. Relevant-line order does not matter. For refactoring challenges, judge whether the submitted code satisfies every success check while preserving valid, readable code. Return only JSON using { "isCorrect": boolean, "feedback": string, "grade": string }. Do not reveal the complete solution. If correct, grade 100. The learner is speaking ${
+              userLanguage === "es" ? "Spanish" : "English"
+            }.`,
+            role: "user",
+          },
+        ],
+        false,
+        true,
+      );
+    } else if (step.isConversationReview) {
+      const relevantSteps = getObjectsByGroup(step?.group, steps[userLanguage]);
+
+      await submitQuestionGradingPrompt(
+        [
+          {
+            content: `The learner has built their app for the chapter review based on the curriculum: ${JSON.stringify(
               relevantSteps,
-            )}". The user provided the following conversation "${JSON.stringify(
-              answer,
-            )}". The answer is always correct since this is just a check-in feature. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string  }. Do not mention the previous details. Your feedback will include a grade ranging from 0-100 based on the quality of the conversation. Be a tough grader and don't be afraid to give users a failing grade or even a 0 if a user inputs nothing relevant to the conversation. Be tough and fair and don't worry about being nice. If the information they put is irrelevant, straight up just flunk them with a 0. Always include the grade in every circumstance. Do not include the answer or solution in your feedback as there is none and the "answer" is always correct, therefore isCorrect is always true. The user is speaking ${
+            )}. The learner generated and completed their app build. Award full chapter completion. Return only JSON using { "isCorrect": true, "feedback": "${
+              userLanguage?.includes("es")
+                ? "¡Excelente trabajo construyendo tu aplicación y completando el capítulo!"
+                : "Great job building your app and completing the chapter!"
+            }", "grade": "100" }. The learner is speaking ${
               userLanguage === "es" ? "spanish" : "english"
             }.`,
             role: "user",
@@ -2776,7 +3271,7 @@ const Step = ({
         true,
       );
     } else if (step.isSelectOrder) {
-      await submitGradingPrompt(
+      await submitQuestionGradingPrompt(
         [
           {
             content: `The user is answering the following question "${
@@ -2794,7 +3289,7 @@ const Step = ({
     } else if (step.isMultipleChoice || step.isCodeCompletion) {
       // console.log("ANSWER", answer);
       // console.log("    step.question.answer", step.question.answer);
-      await submitGradingPrompt([
+      await submitQuestionGradingPrompt([
         {
           content: `The user is answering the following question "${
             step.question.questionText
@@ -2808,7 +3303,7 @@ const Step = ({
       ]);
     } else if (step.isPromptWriting) {
       // we delegate most grading to the component, but you could:
-      await submitGradingPrompt([
+      await submitQuestionGradingPrompt([
         {
           role: "user",
           content: `
@@ -2820,7 +3315,7 @@ const Step = ({
         },
       ]);
     } else if (step.isSingleLineText) {
-      await submitGradingPrompt(
+      await submitQuestionGradingPrompt(
         [
           {
             content: `The user is answering the following question "${
@@ -2837,7 +3332,7 @@ const Step = ({
         true,
       );
     } else if (step.isMultipleAnswerChoice) {
-      await submitGradingPrompt(
+      await submitQuestionGradingPrompt(
         [
           {
             content: `The user is answering the following question "${
@@ -2856,7 +3351,7 @@ const Step = ({
         true,
       );
     } else if (step.isText) {
-      await submitGradingPrompt(
+      await submitQuestionGradingPrompt(
         [
           {
             content: `The user is answering the following question "${
@@ -2871,18 +3366,18 @@ const Step = ({
         true,
       );
     } else if (step.isTerminal) {
-      await submitGradingPrompt([
+      await submitQuestionGradingPrompt([
         {
           content: `The user is answering the following question "${
             step.question.questionText
-          }" with the following answer "${answer}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction, also dont be super opinionated - if the user essentially got the answer right then just accept it. Your feedback will include a grade ranging from 0-100 based on the quality of the answer  - however if the answer is correct just award a 100. The user is speaking ${
+          }" with the following terminal command "${answer}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string, terminalOutput: string }. In terminalOutput, provide 1-4 lines of realistic terminal output/logs produced by running this command in bash (e.g. build logs, deploy status, git confirmation, or command output). The user is speaking ${
             userLanguage === "es" ? "spanish" : "english"
           }.`,
           role: "user",
         },
       ]);
     } else {
-      await submitGradingPrompt(
+      await submitQuestionGradingPrompt(
         [
           {
             content: `The user is answering the following question "${
@@ -3083,7 +3578,36 @@ const Step = ({
           setCelebrationMessage(getRandomCelebrationMessage(userLanguage));
 
           setFeedback(jsonResponse.feedback);
+          if (jsonResponse.terminalOutput) {
+            setSimulatedTerminalOutput(jsonResponse.terminalOutput);
+          }
           setIsSending(false); // <— only now clear it
+
+          if (
+            isAILearningMode &&
+            typeof jsonResponse.updatedLearningSummary === "string"
+          ) {
+            const normalizedSummary = normalizeContinuingLearningSummary(
+              jsonResponse.updatedLearningSummary,
+              userLanguage,
+            );
+            const nextProfile = {
+              ...continuingLearningStateRef.current,
+              summary: normalizedSummary,
+            };
+            continuingLearningStateRef.current = nextProfile;
+            setContinuingLearningState(nextProfile);
+            saveContinuingLearningState(
+              localStorage.getItem("local_npub"),
+              userLanguage,
+              { summary: normalizedSummary },
+            ).catch((error) =>
+              console.error(
+                "Unable to save continuing-learning summary",
+                error,
+              ),
+            );
+          }
 
           if (jsonResponse.isCorrect) {
             setGrade(jsonResponse.grade);
@@ -3135,6 +3659,20 @@ const Step = ({
   useEffect(() => {
     nextQuestionPressLockRef.current = false;
     setInputValue("");
+    setSelectedOption("");
+    setSelectedOptions([]);
+    setItems(
+      step.isSelectOrder
+        ? [...(step.question?.options || [])].sort(() => Math.random() - 0.5)
+        : [],
+    );
+    setModeAnswer(
+      step.isParsonsProblem
+        ? scrambleArray(step.question?.lines || [])
+        : typeof step.question?.starterCode === "string"
+          ? step.question.starterCode
+          : null,
+    );
 
     setSuggestionMessage("");
     setFeedback("");
@@ -3169,12 +3707,17 @@ const Step = ({
       }
     };
     const buildTransitionStats = () => {
-      const salaryVal = loot[currentStep]["monetaryValue"] || 0;
+      const completedStepLoot = loot[currentStep] || {
+        monetaryValue: loot.at(-1)?.monetaryValue || 0,
+        en: "",
+        es: "",
+      };
+      const salaryVal = completedStepLoot.monetaryValue || 0;
       const salaryProgress = (salaryVal / 120000) * 100;
       const totalSteps = steps[userLanguage].length;
       const stepProgress = ((currentStep + 1) / totalSteps) * 100;
       const balanceProgress = calculateBalance();
-      const salaryText = loot[currentStep][userLanguage];
+      const salaryText = completedStepLoot[userLanguage] || "";
       const dailyGoalTarget = dailyGoals ?? 5;
       const updatedDailyProgress = Math.min(dailyProgress + 1, dailyGoalTarget);
       const dailyGoalPercent = Math.min(
@@ -3221,6 +3764,7 @@ const Step = ({
       resetSuggestionMessages();
       resetEducationalMessages();
       setEducationalContent([]);
+      setSimulatedTerminalOutput("");
     };
     // const username = localStorage.getItem("displayName").toLowerCase() || '';
     // const bannedNames = [
@@ -3244,15 +3788,17 @@ const Step = ({
     const nextStep = currentStep + 1;
     const npub = localStorage.getItem("local_npub");
     const shouldGoToSubscription =
-      currentStep === 9 && !subscriptionAuthorized;
+      currentStep === tutorialEndIndex && !subscriptionAuthorized;
     const isFinalStep = currentStep >= steps[userLanguage].length - 1;
     const nextPath = shouldGoToSubscription
       ? "/subscription"
       : isFinalStep
         ? "/award"
-        : currentStep <= 4
-          ? `/onboarding/${currentStep + 2}`
-          : `/q/${currentStep + 1}`;
+        : currentStep === 2
+          ? "/q/3"
+          : currentStep <= 4
+            ? `/onboarding/${currentStep + 2}`
+            : `/q/${currentStep + 1}`;
 
     if (currentStep === 0) {
       setCurrentStep(nextStep);
@@ -3286,10 +3832,15 @@ const Step = ({
 
       if (isFinalStep) {
         await incrementToFinalAward(npub);
+        await getContinuingLearningState(npub, userLanguage);
         return;
       }
 
       await incrementUserStep(npub, currentStep);
+
+      if (currentStep === 2) {
+        await setUserOnboardingStep(npub, 5);
+      }
 
       if (currentStep > 0) {
         await storeCorrectAnswer(step, feedback);
@@ -3303,6 +3854,10 @@ const Step = ({
     }
 
     event?.preventDefault?.();
+
+    if (isActionBarTourActive) {
+      return;
+    }
 
     if (nextQuestionPressLockRef.current) {
       return;
@@ -3530,6 +4085,16 @@ const Step = ({
   // console.log("emailtext", emailText);
 
   const [generatedQuestion, setGeneratedQuestion] = useState(null); // For holding the new generated question
+  const displayedQuestionNumber =
+    isAILearningMode && !isEmpty(generatedQuestion)
+      ? Math.max(0, steps[userLanguage].length - 1) +
+        Math.max(
+          1,
+          Number(viewedContinuingQuestionCount) ||
+            Number(continuingLearningState.questionCount) ||
+            0,
+        )
+      : currentStep;
 
   useEffect(() => {
     try {
@@ -3539,19 +4104,102 @@ const Step = ({
           lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
 
         if (isLastMessage) {
-          // console.log("THE FINAL", lastMessage);
-
           const jsonResponse = JSON.parse(lastMessage.content);
+          const expectedType = pendingGeneratedQuestionTypeRef.current;
+          const normalizedQuestion = normalizeGeneratedQuestionContent(
+            {
+              ...jsonResponse,
+              group: jsonResponse.group || step?.group || "5",
+              description:
+                typeof jsonResponse.description === "string"
+                  ? jsonResponse.description
+                  : "",
+            },
+            expectedType,
+          );
 
-          // console.log("NEW QUESTION FINAL JSON", jsonResponse);
-          setGeneratedQuestion(jsonResponse);
-          setStep(jsonResponse);
+          if (
+            !expectedType ||
+            !validateGeneratedQuestion(normalizedQuestion, expectedType)
+          ) {
+            throw new Error(
+              `Generated question did not match the ${expectedType || "requested"} interface`,
+            );
+          }
+
+          setGeneratedQuestion(normalizedQuestion);
+          setStep(normalizedQuestion);
+          setIsContinuingQuestionRestoring(false);
+
+          if (pendingGenerationModeRef.current === "continuing") {
+            const previousProfile = continuingLearningStateRef.current;
+            const previousQuestionCount =
+              Number(previousProfile.questionCount) || 0;
+            const questionCount = pendingGenerationCountsAsNewRef.current
+              ? previousQuestionCount + 1
+              : Math.max(1, previousQuestionCount);
+            const nextProfile = {
+              ...previousProfile,
+              questionCount,
+              lastQuestionType: expectedType,
+              currentQuestion: normalizedQuestion,
+            };
+            continuingLearningStateRef.current = nextProfile;
+            setContinuingLearningState(nextProfile);
+            setViewedContinuingQuestionCount(questionCount);
+            const historyEntry = {
+              id: String(questionCount),
+              questionCount,
+              title: normalizedQuestion.title || "Generated practice",
+              questionType: expectedType,
+              question: normalizedQuestion,
+            };
+            const nextQuestions = [
+              ...continuingLearningQuestionsRef.current.filter(
+                (entry) => entry.questionCount !== questionCount,
+              ),
+              historyEntry,
+            ].sort((a, b) => a.questionCount - b.questionCount);
+            continuingLearningQuestionsRef.current = nextQuestions;
+            setContinuingLearningQuestions(nextQuestions);
+            const nextQuestionRoute = getContinuingQuestionRoute(
+              steps[userLanguage]?.length || 0,
+              nextProfile.questionCount,
+            );
+            const userId = localStorage.getItem("local_npub");
+            Promise.all([
+              saveContinuingLearningState(userId, userLanguage, {
+                questionCount: nextProfile.questionCount,
+                lastQuestionType: expectedType,
+                currentQuestion: normalizedQuestion,
+              }),
+              saveContinuingLearningQuestion(userId, userLanguage, {
+                questionCount,
+                questionType: expectedType,
+                question: normalizedQuestion,
+              }),
+            ])
+              .then(() => navigate(nextQuestionRoute, { replace: true }))
+              .catch((error) =>
+                console.error(
+                  "Unable to save continuing-learning generation state",
+                  error,
+                ),
+              );
+          }
+
+          pendingGeneratedQuestionTypeRef.current = null;
+          pendingGenerationCountsAsNewRef.current = true;
           resetNewQuestionMessages();
         }
       }
     } catch (error) {
       console.log("error", error);
       console.log("error", { error });
+      pendingGeneratedQuestionTypeRef.current = null;
+      pendingGenerationCountsAsNewRef.current = true;
+      setIsContinuingQuestionRestoring(false);
+      setGeneratedQuestion(null);
       resetNewQuestionMessages();
 
       showAlert("warning", translation[userLanguage]["ai.error"]);
@@ -3562,7 +4210,14 @@ const Step = ({
     }
   }, [newQuestionMessages]);
 
-  const handleGenerateNewQuestion = async () => {
+  const handleGenerateNewQuestion = async ({
+    mode,
+    countAsNew = true,
+  } = {}) => {
+    const generationMode =
+      mode === "continuing" || isAILearningMode
+        ? "continuing"
+        : "reinforcement";
     soundManager.resume();
     soundManager.play("submitAction");
     // Retrieve the current count from localStorage
@@ -3579,60 +4234,54 @@ const Step = ({
     localStorage.setItem("gnrtctrl", gnrtctrl);
     setGeneratedQuestion([]);
     resetNewQuestionMessages();
-    const fetchUserAnswers = async () => {
-      const userId = localStorage.getItem("local_npub");
-      const answersRef = collection(database, `users/${userId}/answers`);
-      const answerDocs = await getDocs(answersRef);
-      const answers = answerDocs.docs.map((doc) => doc.data());
-      return JSON.stringify({ answers: answers });
-    };
+    try {
+      const currentType = getQuestionType(step);
+      const profile =
+        generationMode === "continuing"
+          ? await loadContinuingLearningProfile()
+          : continuingLearningStateRef.current;
+      const targetType = chooseQuestionGenerationType({
+        currentType:
+          generationMode === "continuing"
+            ? profile.lastQuestionType || currentType
+            : currentType,
+        questionCount:
+          generationMode === "continuing" ? profile.questionCount : gnrtctrl,
+        seed: generationMode === "continuing" ? 0 : currentStep,
+      });
+      const targetInterface =
+        getQuestionGenerationInterface(targetType) ||
+        tutorial_interface.find(
+          (candidate) => getQuestionType(candidate) === targetType,
+        );
 
-    const getUserAnsweredSubjects = () => {
-      let list = steps[userLanguage];
-      let subjects = [];
-      for (let i = 1; i < list.length; i++) {
-        if (i <= currentStep - 1) {
-          subjects.push(list[i].title);
-        }
+      if (!targetInterface) {
+        throw new Error(`No generation interface found for ${targetType}`);
       }
 
-      return JSON.stringify({ solved: subjects });
-    };
-    try {
-      // Construct the prompt for generating a new question
-      // Thirdly, the user has answered the following questions and saved them: ${fetchUserAnswers()}
+      pendingGeneratedQuestionTypeRef.current = targetType;
+      pendingGenerationModeRef.current = generationMode;
+      pendingGenerationCountsAsNewRef.current = countAsNew;
 
-      //
-      const prompt = `
-        First, The user was working on the following step:
-        ${JSON.stringify(step)}.
+      const prompt = buildQuestionGenerationPrompt({
+        step,
+        targetType,
+        targetInterface,
+        userLanguage,
+        programmingLanguage: pickProgrammingLanguage(userLanguage),
+        generationMode,
+        profile,
+      });
 
-        Secondly, the user has answered the following subjects: ${getUserAnsweredSubjects()}.
-
-
-        The request: Create/invent a completely new and custom adaptive question and feel free to explore creativity using the same interface with group, title, description, <question_type> and the custom question object interface. Here are the types of question_types (e.g isMultipleChoice, isCodeCompletion) and their respective question objects that we've used in the tutorial group, so that you can understand how questions are designed to encourage variance in learning: ${JSON.stringify(getObjectsByGroup("tutorial", steps[userLanguage]))}. It is extremely important to understand that the data types used in the "answer" field are specific and must not change under any circumstance, or else the request will fail due to unexpected data type.
-        
-        Remember to design and inspire a new question, you must select a different but valid question_type than the one you've received, strictly based on the interfaces ive provided with the tutorials. Do not deviate and create a new question type or else the UI will fail with your response. 
-        
-        Remember, the types are things like isText, isTerminal, isMultipleChoice, isCodeCompletion, etc. But it must strictly be a different UI type than the step that the user started you off with. For example, if the user is sending you an isText: true question, you can't respond with an isText: true output.
-        
-        Return only the question as a valid JSON object, without Markdown or code fences, in ${userLanguage.includes("en") ? "English" : "Spanish"}.
-      `;
-
-      // console.log("PROMPT", prompt);
-      // Submit the prompt to the dedicated Gemini question-generation model.
       await submitNewQuestionMessages(prompt);
-
-      // // Process the API response once available
-      // if (messages?.length > 0) {
-      //   const lastMessage = messages[messages.length - 1];
-      //   if (!lastMessage.meta.loading) {
-      //     const jsonResponse = JSON.parse(lastMessage.content);
-      //     setGeneratedQuestion(jsonResponse); // Save the generated question
-      //   }
-      // }
     } catch (error) {
       console.error("Error generating new question:", error);
+      pendingGeneratedQuestionTypeRef.current = null;
+      pendingGenerationCountsAsNewRef.current = true;
+      setIsContinuingQuestionRestoring(false);
+      setGeneratedQuestion(null);
+      resetNewQuestionMessages();
+      showAlert("warning", translation[userLanguage]["ai.error"]);
     }
   };
 
@@ -3695,6 +4344,7 @@ const Step = ({
       bitcoin: "next",
       selfPaced: "colorSwitch",
       theme: "colorSwitch",
+      learn: "next",
       social: "next",
       helper: "submit",
       studyGuide: "next",
@@ -3712,6 +4362,128 @@ const Step = ({
       triggerHaptic();
       playActionBarSound(soundId);
     });
+  };
+
+  const renderActionBarTour = (trigger) => {
+    if (!isActionBarTourActive) {
+      return trigger;
+    }
+
+    const tourStep = actionBarTourSteps[actionBarTourIndex];
+    const isLastStep = actionBarTourIndex === actionBarTourSteps.length - 1;
+    const tailPosition = (actionBarTourIndex + 0.5) * 20;
+
+    return (
+      <>
+        {trigger}
+        <Portal>
+          <Box
+            position="fixed"
+            left="50%"
+            bottom={{ base: "88px", md: "82px" }}
+            transform="translateX(-50%)"
+            width={{ base: "calc(90vw - 24px)", sm: "400px" }}
+            maxWidth="calc(100vw - 24px)"
+            height={{ base: "250px", sm: "225px" }}
+            borderRadius="20px"
+            borderWidth="2px"
+            borderStyle="solid"
+            borderColor={actionBarTourBorderColor}
+            bg="appSurfaceElevated"
+            color="appText"
+            boxShadow="none"
+            _focusVisible={{ boxShadow: "none" }}
+            zIndex="popover"
+          >
+            <Box px={{ base: 4, sm: 5 }} py={4} height="100%">
+              <VStack
+                align="stretch"
+                justify="space-between"
+                spacing={3}
+                height="100%"
+              >
+                <Box>
+                  <Text
+                    fontSize={{ base: "15px", sm: "md", md: "lg" }}
+                    fontWeight="bold"
+                    lineHeight="1.25"
+                  >
+                    {tourStep.title}
+                  </Text>
+                  <Text
+                    mt={2}
+                    fontSize={{ base: "md", sm: "lg" }}
+                    lineHeight="1.55"
+                    color={actionBarTourDescriptionColor}
+                  >
+                    {tourStep.description}
+                  </Text>
+                </Box>
+                <HStack justify="space-between" width="100%">
+                  <IconButton
+                    aria-label={
+                      userLanguage?.includes("es")
+                        ? "Función anterior"
+                        : "Previous feature"
+                    }
+                    icon={<ChevronLeftIcon boxSize={7} />}
+                    width="52px"
+                    height="52px"
+                    minWidth="52px"
+                    borderRadius="full"
+                    variant="outline"
+                    borderColor="pink.200"
+                    isDisabled={actionBarTourIndex === 0}
+                    onClick={() =>
+                      setActionBarTourIndex((current) =>
+                        Math.max(0, current - 1),
+                      )
+                    }
+                  />
+                  <IconButton
+                    aria-label={
+                      isLastStep
+                        ? userLanguage?.includes("es")
+                          ? "Terminar recorrido"
+                          : "Finish tour"
+                        : userLanguage?.includes("es")
+                          ? "Siguiente función"
+                          : "Next feature"
+                    }
+                    icon={<ChevronRightIcon boxSize={7} />}
+                    width="52px"
+                    height="52px"
+                    minWidth="52px"
+                    borderRadius="full"
+                    colorScheme="pink"
+                    onClick={() => {
+                      if (isLastStep) {
+                        finishActionBarTour();
+                        return;
+                      }
+                      setActionBarTourIndex((current) => current + 1);
+                    }}
+                  />
+                </HStack>
+              </VStack>
+            </Box>
+            <Box
+              aria-hidden="true"
+              position="absolute"
+              bottom="-11px"
+              left={`calc(${tailPosition}% - 8px)`}
+              width="16px"
+              height="16px"
+              bg="appSurfaceElevated"
+              borderRight={`2px solid ${actionBarTourBorderColor}`}
+              borderBottom={`2px solid ${actionBarTourBorderColor}`}
+              transform="rotate(45deg)"
+              transition="left 180ms ease"
+            />
+          </Box>
+        </Portal>
+      </>
+    );
   };
 
   return (
@@ -3734,14 +4506,10 @@ const Step = ({
         completedGoalCount={dailyGoalCelebration.completedGoalCount}
       />
 
-      {showChapterReview && chapterReviewNodes.length > 0 ? (
-        <ChapterReview
-          nodes={chapterReviewNodes}
-          text={chapterReviewText}
-          onStart={dismissChapterReview}
-        />
-      ) : (isNewQuestionLoading || newQuestionMessages.length > 0) &&
-        isEmpty(generatedQuestion) ? (
+      {isEmpty(generatedQuestion) &&
+      (isContinuingQuestionRestoring ||
+        isNewQuestionLoading ||
+        newQuestionMessages.length > 0) ? (
         <Box
           width="100%"
           minH="calc(100dvh - 160px)"
@@ -3775,6 +4543,12 @@ const Step = ({
             />
           </Box>
         </Box>
+      ) : showChapterReview && chapterReviewNodes.length > 0 ? (
+        <ChapterReview
+          nodes={chapterReviewNodes}
+          text={chapterReviewText}
+          onStart={dismissChapterReview}
+        />
       ) : (
         <>
           <VStack
@@ -3794,59 +4568,118 @@ const Step = ({
                 alignItems="center"
                 width="100%"
               >
-                <HStack
-                  spacing={1.5}
-                  px={2}
-                  py={1}
-                  borderRadius="full"
-                  background="appInfoSubtle"
-                  border="1px solid rgba(102, 133, 255, 0.5)"
+                <Tooltip label={metricTooltips.chapter} {...metricTooltipStyle}>
+                  <HStack
+                    spacing={1.5}
+                    px={2}
+                    py={1}
+                    borderRadius="full"
+                    background="appInfoSubtle"
+                    border="1px solid rgba(102, 133, 255, 0.5)"
+                    tabIndex={0}
+                    cursor="help"
+                    aria-label={`${metricTooltips.chapter}: ${chapterMetricLabel}`}
+                    onPointerDown={(event) => {
+                      if (event.pointerType === "touch") {
+                        event.currentTarget.focus();
+                      }
+                    }}
+                  >
+                    <Icon as={RiBookOpenLine} color="blue.400" boxSize={3.5} />
+                    <Text
+                      fontSize="sm"
+                      fontWeight="medium"
+                      color="appTextMuted"
+                    >
+                      {chapterMetricLabel}
+                    </Text>
+                  </HStack>
+                </Tooltip>
+                <Tooltip
+                  label={metricTooltips.progress}
+                  {...metricTooltipStyle}
                 >
-                  <Icon as={RiBookOpenLine} color="blue.400" boxSize={3.5} />
-                  <Text fontSize="sm" fontWeight="medium" color="appTextMuted">
-                    {step.group}
-                  </Text>
-                </HStack>
-                <HStack
-                  spacing={1.5}
-                  px={2}
-                  py={1}
-                  borderRadius="full"
-                  background="appWarningSubtle"
-                  border="1px solid rgba(246, 173, 85, 0.4)"
-                >
-                  <Icon as={FiTrendingUp} color="orange.500" boxSize={3.5} />
-                  <Text fontSize="sm" fontWeight="medium" color="appTextMuted">
-                    {animatedProgress.toFixed(0)}%
-                  </Text>
-                </HStack>
+                  <HStack
+                    spacing={1.5}
+                    px={2}
+                    py={1}
+                    borderRadius="full"
+                    background="appWarningSubtle"
+                    border="1px solid rgba(246, 173, 85, 0.4)"
+                    tabIndex={0}
+                    cursor="help"
+                    aria-label={`${metricTooltips.progress}: ${animatedProgress.toFixed(0)}%`}
+                    onPointerDown={(event) => {
+                      if (event.pointerType === "touch") {
+                        event.currentTarget.focus();
+                      }
+                    }}
+                  >
+                    <Icon as={FiTrendingUp} color="orange.500" boxSize={3.5} />
+                    <Text
+                      fontSize="sm"
+                      fontWeight="medium"
+                      color="appTextMuted"
+                    >
+                      {animatedProgress.toFixed(0)}%
+                    </Text>
+                  </HStack>
+                </Tooltip>
 
-                <HStack
-                  spacing={1.5}
-                  px={2}
-                  py={1}
-                  borderRadius="full"
-                  background="appErrorSubtle"
-                  border="1px solid rgba(252, 129, 129, 0.45)"
-                >
-                  <Icon as={FaFire} color="red.400" boxSize={3.5} />
-                  <Text fontSize="sm" fontWeight="medium" color="appTextMuted">
-                    {streak}
-                  </Text>
-                </HStack>
-                <HStack
-                  spacing={1.5}
-                  px={2}
-                  py={1}
-                  borderRadius="full"
-                  background="appAccentSoft"
-                  border="1px solid rgba(183, 148, 244, 0.5)"
-                >
-                  <Icon as={RiFlag2Line} color="purple.400" boxSize={3.5} />
-                  <Text fontSize="sm" fontWeight="medium" color="appTextMuted">
-                    {String(goalCount) || "0"}
-                  </Text>
-                </HStack>
+                <Tooltip label={metricTooltips.streak} {...metricTooltipStyle}>
+                  <HStack
+                    spacing={1.5}
+                    px={2}
+                    py={1}
+                    borderRadius="full"
+                    background="appErrorSubtle"
+                    border="1px solid rgba(252, 129, 129, 0.45)"
+                    tabIndex={0}
+                    cursor="help"
+                    aria-label={`${metricTooltips.streak}: ${streak}`}
+                    onPointerDown={(event) => {
+                      if (event.pointerType === "touch") {
+                        event.currentTarget.focus();
+                      }
+                    }}
+                  >
+                    <Icon as={FaFire} color="red.400" boxSize={3.5} />
+                    <Text
+                      fontSize="sm"
+                      fontWeight="medium"
+                      color="appTextMuted"
+                    >
+                      {streak}
+                    </Text>
+                  </HStack>
+                </Tooltip>
+                <Tooltip label={metricTooltips.goals} {...metricTooltipStyle}>
+                  <HStack
+                    spacing={1.5}
+                    px={2}
+                    py={1}
+                    borderRadius="full"
+                    background="appAccentSoft"
+                    border="1px solid rgba(183, 148, 244, 0.5)"
+                    tabIndex={0}
+                    cursor="help"
+                    aria-label={`${metricTooltips.goals}: ${String(goalCount) || "0"}`}
+                    onPointerDown={(event) => {
+                      if (event.pointerType === "touch") {
+                        event.currentTarget.focus();
+                      }
+                    }}
+                  >
+                    <Icon as={RiFlag2Line} color="purple.400" boxSize={3.5} />
+                    <Text
+                      fontSize="sm"
+                      fontWeight="medium"
+                      color="appTextMuted"
+                    >
+                      {String(goalCount) || "0"}
+                    </Text>
+                  </HStack>
+                </Tooltip>
               </HStack>
               <MotionProgress
                 height="24px"
@@ -3931,7 +4764,7 @@ const Step = ({
                       background="pink.100"
                       opacity="0.75"
                       color="pink.600"
-                      icon={<RiAiGenerate padding="4px" fontSize="14px" />}
+                      icon={<RiRecycleLine padding="3px" fontSize="16px" />}
                       mr={2}
                       mt="-0.5"
                       boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
@@ -3971,7 +4804,19 @@ const Step = ({
                     {/* dropdown for jumping between questions */}
 
                     {currentStep > 0 && (
-                      <Menu>
+                      <Menu
+                        onOpen={() => {
+                          setTimeout(() => {
+                            if (activeQuestionMenuItemRef.current) {
+                              activeQuestionMenuItemRef.current.scrollIntoView({
+                                block: "center",
+                                inline: "nearest",
+                                behavior: "instant",
+                              });
+                            }
+                          }, 0);
+                        }}
+                      >
                         <MenuButton
                           as={Button}
                           variant="link"
@@ -3982,14 +4827,7 @@ const Step = ({
                           _hover={{ textDecoration: "none", opacity: 1 }}
                           mr={1}
                         >
-                          {isAILearningMode ? (
-                            <HStack spacing={1}>
-                              <Icon as={RiAiGenerate} boxSize={4} />
-                              <Text>AI</Text>
-                            </HStack>
-                          ) : (
-                            currentStep
-                          )}
+                          {displayedQuestionNumber}
                         </MenuButton>
                         <MenuList
                           maxH="450px"
@@ -4018,7 +4856,9 @@ const Step = ({
                               <MenuItem
                                 onClick={() => {
                                   triggerHaptic();
-                                  handleGenerateNewQuestion();
+                                  handleGenerateNewQuestion({
+                                    mode: "continuing",
+                                  });
                                 }}
                                 icon={<RiAiGenerate />}
                               >
@@ -4047,8 +4887,12 @@ const Step = ({
                             })
                             .map(({ s, idx }) => {
                               const disabled =
-                                idx >= 10 && !subscriptionAuthorized;
+                                idx > tutorialEndIndex &&
+                                !subscriptionAuthorized;
                               const label = `${idx > 0 ? idx + ". " : ""}${s.title}`;
+                              const isCurrent =
+                                !isAILearningMode && idx === currentStep;
+
                               return disabled ? (
                                 <Tooltip
                                   key={idx}
@@ -4069,10 +4913,21 @@ const Step = ({
                               ) : (
                                 <MenuItem
                                   key={idx}
+                                  ref={
+                                    isCurrent
+                                      ? activeQuestionMenuItemRef
+                                      : undefined
+                                  }
+                                  bg={isCurrent ? "appSurfaceMuted" : undefined}
+                                  fontWeight={isCurrent ? "bold" : "normal"}
+                                  color={isCurrent ? "pink.600" : undefined}
                                   onClick={() => {
                                     setSearchTerm("");
                                     if (isAILearningMode) {
                                       handleExitAILearningMode();
+                                    } else {
+                                      setGeneratedQuestion(null);
+                                      resetNewQuestionMessages();
                                     }
                                     navigate(`/q/${idx}`);
                                   }}
@@ -4082,51 +4937,70 @@ const Step = ({
                                 </MenuItem>
                               );
                             })}
+                          {continuingLearningQuestions.length > 0 && (
+                            <Divider my={2} />
+                          )}
+                          {continuingLearningQuestions
+                            .filter((entry) => {
+                              const absoluteQuestionNumber =
+                                Math.max(0, steps[userLanguage].length - 1) +
+                                entry.questionCount;
+                              const term = searchTerm.toLowerCase();
+                              return (
+                                String(absoluteQuestionNumber).includes(term) ||
+                                String(entry.title || "")
+                                  .toLowerCase()
+                                  .includes(term)
+                              );
+                            })
+                            .map((entry) => {
+                              const absoluteQuestionNumber =
+                                Math.max(0, steps[userLanguage].length - 1) +
+                                entry.questionCount;
+                              const isCurrentContinuing =
+                                isAILearningMode &&
+                                viewedContinuingQuestionCount ===
+                                  entry.questionCount;
+                              return (
+                                <MenuItem
+                                  key={`continuing-${entry.questionCount}`}
+                                  ref={
+                                    isCurrentContinuing
+                                      ? activeQuestionMenuItemRef
+                                      : undefined
+                                  }
+                                  onClick={() =>
+                                    handleOpenContinuingQuestion(entry)
+                                  }
+                                  bg={
+                                    isCurrentContinuing
+                                      ? "appSurfaceMuted"
+                                      : undefined
+                                  }
+                                  fontWeight={
+                                    isCurrentContinuing ? "bold" : "normal"
+                                  }
+                                  color={
+                                    isCurrentContinuing ? "pink.600" : undefined
+                                  }
+                                  whiteSpace="normal"
+                                >
+                                  {`${absoluteQuestionNumber}. ${entry.title}`}
+                                </MenuItem>
+                              );
+                            })}
                         </MenuList>
                       </Menu>
                     )}
 
                     {/* the question title */}
                     <Text fontSize="xl" fontWeight="bold">
-                      {isAILearningMode && !isEmpty(generatedQuestion) ? (
-                        <HStack spacing={2}>
-                          <Text
-                            as="span"
-                            fontSize="xs"
-                            bg="pink.100"
-                            color="pink.700"
-                            px={2}
-                            py={0.5}
-                            borderRadius="full"
-                          >
-                            {translation[userLanguage]?.["label.aiGenerated"] ||
-                              "AI Generated"}
-                          </Text>
-                          <Text as="span">{step.title}</Text>
-                        </HStack>
-                      ) : (
-                        step.title
-                      )}
+                      {step.title}
                     </Text>
                   </HStack>
                 </HStack>
               </b>
             </Text>
-
-            {step.question && (
-              <Text
-                width="100%"
-                maxWidth={step.isStudyGuide ? 600 : "600px"}
-                fontSize="sm"
-                color="appTextMuted"
-                mb={3}
-                textAlign={step.isStudyGuide ? "left" : "left"}
-              >
-                <span style={{ textDecoration: "none" }}>
-                  {step.description}
-                </span>
-              </Text>
-            )}
 
             {step.question && (
               <Text
@@ -4139,15 +5013,43 @@ const Step = ({
                 {step.question.questionText}
               </Text>
             )}
+            {step.question?.code && !isNewQuestionType(step) && (
+              <Box width="100%" maxWidth="600px" mt={4}>
+                <CodePanel code={step.question.code} />
+              </Box>
+            )}
+            {Boolean(
+              (step.showPreview || step.question?.showPreview) &&
+                !isNewQuestionType(step) &&
+                (step.question?.previewCode || step.question?.starterCode),
+            ) && (
+              <Box
+                width="100%"
+                maxWidth="600px"
+                borderRadius="2xl"
+                borderWidth="1px"
+                borderColor="appBorder"
+                overflow="hidden"
+                bg="white"
+                boxShadow="sm"
+                p={{ base: 2, md: 3 }}
+                mt={4}
+                mb={2}
+              >
+                <LiveReactEditorModal
+                  code={step.question?.previewCode || step.question?.starterCode || ""}
+                  mode="preview"
+                  autoRun={true}
+                  hideRunButton={true}
+                  previewHeight="auto"
+                />
+              </Box>
+            )}
           </div>
 
           <>
             {step.isStudyGuide && (
               <VStack>
-                <Text>
-                  {translation[userLanguage]["startTutorialAndOnboarding"]}
-                </Text>
-
                 <HStack>
                   <Button
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
@@ -4194,7 +5096,7 @@ const Step = ({
                         handleNextQuestionButtonPress(e);
                       }
                     }}
-                    disabled={isPostingWithNostr}
+                    disabled={isPostingWithNostr || isActionBarTourActive}
                   >
                     {translation[userLanguage]["app.button.nextQuestion"]}{" "}
                   </Button>
@@ -4204,7 +5106,6 @@ const Step = ({
 
             {step.isSingleLineText && (
               <VoiceInput
-                handleModalCheck={handleModalCheck}
                 value={inputValue}
                 onChange={setInputValue}
                 isCodeEditor={false}
@@ -4221,7 +5122,6 @@ const Step = ({
             )}
             {step.isText && (
               <VoiceInput
-                handleModalCheck={handleModalCheck}
                 value={inputValue}
                 onChange={setInputValue}
                 isCodeEditor={false}
@@ -4241,14 +5141,10 @@ const Step = ({
                 question={step.question}
                 selectedOption={selectedOption}
                 setSelectedOption={setSelectedOption}
-                onLearnClick={handleLearnClick}
-                userLanguage={userLanguage}
-                handleModalCheck={handleModalCheck}
               />
             )}
-            {step.isCode && !step.isTerminal && (
+            {Boolean(step.isCode && !step.isTerminal) && (
               <VoiceInput
-                handleModalCheck={handleModalCheck}
                 value={inputValue}
                 onChange={setInputValue}
                 isCodeEditor={true}
@@ -4262,7 +5158,7 @@ const Step = ({
                 currentStep={currentStep}
               />
             )}
-            {step.isCode && step.isTerminal && (
+            {Boolean(step.isTerminal) && (
               <Box
                 width="100%"
                 justifyContent="center"
@@ -4284,6 +5180,7 @@ const Step = ({
                   step={step}
                   userLanguage={userLanguage}
                   handleModalCheck={handleModalCheck}
+                  simulatedTerminalOutput={simulatedTerminalOutput}
                 />
               </Box>
             )}
@@ -4292,9 +5189,6 @@ const Step = ({
                 question={step.question}
                 selectedOption={selectedOption}
                 setSelectedOption={setSelectedOption}
-                userLanguage={userLanguage}
-                onLearnClick={handleLearnClick}
-                handleModalCheck={handleModalCheck}
               />
             )}
             {step.isMultipleAnswerChoice && (
@@ -4302,28 +5196,28 @@ const Step = ({
                 question={step.question}
                 selectedOptions={selectedOptions}
                 setSelectedOptions={setSelectedOptions}
-                onLearnClick={handleLearnClick}
-                userLanguage={userLanguage}
-                handleModalCheck={handleModalCheck}
               />
             )}
             {step.isSelectOrder && (
               <SelectOrderQuestion
                 items={items}
                 setItems={setItems}
-                onLearnClick={handleLearnClick}
-                userLanguage={userLanguage}
                 step={step}
-                handleModalCheck={handleModalCheck}
               />
             )}
             {step.isPromptWriting && (
               <PromptWritingQuestion
                 question={step.question}
-                userLanguage={userLanguage}
-                handleModalCheck={handleModalCheck}
-                onLearnClick={handleLearnClick}
                 onSubmitPrompt={handleAnswerClick}
+              />
+            )}
+            {isNewQuestionType(step) && (
+              <QuestionMode
+                key={`${currentStep}-${step.title}-${userLanguage}`}
+                step={step}
+                value={modeAnswer}
+                onChange={setModeAnswer}
+                userLanguage={userLanguage}
               />
             )}
             {step.isConversationReview && (
@@ -4335,10 +5229,11 @@ const Step = ({
                   userLanguage={userLanguage}
                   steps={steps}
                   step={step}
-                  onSubmit={handleAnswerClick} // Or any other relevant logic
+                  onSubmit={handleAnswerClick}
                   setFinalConversation={setFinalConversation}
                   finalConversation={finalConversation}
                   handleModalCheck={handleModalCheck}
+                  onBuildReady={setIsBuildReady}
                 />
               </Suspense>
             )}
@@ -4467,6 +5362,7 @@ const Step = ({
                 paddingBottom={step.isTerminal ? 24 : null}
               >
                 {step.question &&
+                !step.isConversationReview &&
                 currentStep > 0 &&
                 !isCorrect &&
                 !isSending &&
@@ -4493,9 +5389,7 @@ const Step = ({
                       }
                     }}
                   >
-                    {step.isConversationReview
-                      ? translation[userLanguage]["app.button.complete"]
-                      : translation[userLanguage]["app.button.answer"]}
+                    {translation[userLanguage]["app.button.answer"]}
                   </Button>
                 ) : null}
 
@@ -4527,7 +5421,7 @@ const Step = ({
                           setInputValue("");
                           setSelectedOption("");
                           setSelectedOptions([]);
-                          handleGenerateNewQuestion();
+                          handleGenerateNewQuestion({ mode: "continuing" });
                         }}
                         mb={4}
                         boxShadow={"0.5px 0.5px 1px 0px black"}
@@ -4539,13 +5433,11 @@ const Step = ({
                             setInputValue("");
                             setSelectedOption("");
                             setSelectedOptions([]);
-                            handleGenerateNewQuestion();
+                            handleGenerateNewQuestion({ mode: "continuing" });
                           }
                         }}
-                        leftIcon={<RiAiGenerate />}
                       >
-                        {translation[userLanguage]?.["button.nextAIQuestion"] ||
-                          "Next AI Question"}
+                        {userLanguage?.startsWith("es") ? "Siguiente" : "Next"}
                       </Button>
                     ) : (
                       <Button
@@ -4579,7 +5471,7 @@ const Step = ({
                             });
                           }
                         }}
-                        disabled={isPostingWithNostr}
+                        disabled={isPostingWithNostr || isActionBarTourActive}
                       >
                         {
                           translation[userLanguage]["app.button.nextQuestion"]
@@ -4592,34 +5484,14 @@ const Step = ({
             </>
             {/* )} */}
           </>
-          {!step.isTerminal && (
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              width="100%"
-              mb={24}
-            >
-              <Switch
-                isChecked={isAdaptiveLearning}
-                onChange={handleToggleChange}
-                colorScheme="yellow"
-              />
-              &nbsp;
-              <Text fontSize="md">
-                {!isAdaptiveLearning
-                  ? translation[userLanguage]["adaptive_learning_off"]
-                  : translation[userLanguage]["adaptive_learning_on"]}
-              </Text>
-            </Box>
-          )}
+          {/* Adaptive learning is controlled from the settings menu. */}
 
           {(suggestionLoading ||
             isSuggestionModelLoading ||
             suggestionMessages.length > 0) &&
           isEmpty(suggestionMessage) &&
           !step?.isTerminal ? (
-            <Box p={4} textAlign="center" mt="-86px">
+            <Box p={4} textAlign="center" mt={4}>
               {/* <CloudCanvas isLoader={true} /> */}
               <Box marginTop={"-52px"}>
                 <Suspense
@@ -4645,7 +5517,7 @@ const Step = ({
             </Box>
           ) : !isAdaptiveLearning ||
             step.isTerminal ? null : suggestionMessage.length > 0 ? (
-            <Box maxWidth="600px" width="100%" pb={12} mt="-86px">
+            <Box maxWidth="600px" width="100%" pb={12}>
               <Box
                 as={motion.div}
                 mt={4}
@@ -4705,96 +5577,173 @@ const Step = ({
                   paddingBottom={6}
                   paddingTop={4}
                 >
-                  <HStack spacing={0} justify="space-around" width="100%">
-                    <IconButton
-                      {...actionBarButtonProps}
-                      data-sound-ignore-select="true"
-                      aria-label="Open Bitcoin mode"
-                      icon={<FaBitcoin fontSize="20px" />}
-                      {...getInstantSurfacePressProps(
-                        actionBarPressRef,
-                        "bitcoin",
-                        () =>
-                          openSurfaceModal(
-                            "bitcoin",
-                            { userLanguage },
-                            "bitcoin",
-                          ),
-                      )}
-                    />
-                    <IconButton
-                      {...actionBarButtonProps}
-                      data-sound-ignore-select="true"
-                      aria-label="Open self-paced mode"
-                      icon={<PiClockCountdownFill fontSize="22px" />}
-                      {...getInstantSurfacePressProps(
-                        actionBarPressRef,
-                        "selfPaced",
-                        () =>
-                          openSurfaceModal(
-                            "selfPaced",
-                            {
-                              interval,
-                              userId: localStorage.getItem("local_npub"),
-                              userLanguage,
-                              onSettingsSaved: handleSelfPacedSettingsSaved,
+                  {renderActionBarTour(
+                    <HStack spacing={0} justify="space-around" width="100%">
+                      <IconButton
+                        {...actionBarButtonProps}
+                        data-sound-ignore-select="true"
+                        aria-label="Open Bitcoin mode"
+                        icon={<FaBitcoin fontSize="20px" />}
+                        {...getInstantSurfacePressProps(
+                          actionBarPressRef,
+                          "bitcoin",
+                          () =>
+                            openSurfaceModal(
+                              "bitcoin",
+                              { userLanguage },
+                              "bitcoin",
+                            ),
+                        )}
+                      />
+                      <IconButton
+                        {...actionBarButtonProps}
+                        data-sound-ignore-select="true"
+                        aria-label="Open self-paced mode"
+                        icon={<PiClockCountdownFill fontSize="22px" />}
+                        {...getInstantSurfacePressProps(
+                          actionBarPressRef,
+                          "selfPaced",
+                          () =>
+                            openSurfaceModal(
+                              "selfPaced",
+                              {
+                                interval,
+                                userId: localStorage.getItem("local_npub"),
+                                userLanguage,
+                                onSettingsSaved: handleSelfPacedSettingsSaved,
+                              },
+                              "selfPaced",
+                            ),
+                        )}
+                      />
+                      <Box
+                        as={motion.div}
+                        animate={learnButtonControls}
+                        display="inline-flex"
+                        position="relative"
+                        overflow="visible"
+                        borderRadius="14px"
+                        outline="3px solid transparent"
+                        outlineOffset="3px"
+                      >
+                        {showLearnSparkles && (
+                          <>
+                            <Box
+                              aria-hidden="true"
+                              position="absolute"
+                              inset="-9px"
+                              borderRadius="19px"
+                              bg={`conic-gradient(from 20deg, transparent 0deg, ${learnButtonGlowSoft} 75deg, transparent 145deg, ${learnButtonGlowColor} 235deg, transparent 315deg)`}
+                              filter="blur(5px)"
+                              pointerEvents="none"
+                              animation={`${learnHaloDrift} 2.8s cubic-bezier(0.22, 1, 0.36, 1) both`}
+                              zIndex={0}
+                            />
+                            {[
+                              {
+                                top: "-15px",
+                                right: "1px",
+                                fontSize: "17px",
+                                delay: "0.08s",
+                              },
+                              {
+                                bottom: "-14px",
+                                left: "3px",
+                                fontSize: "13px",
+                                delay: "0.48s",
+                              },
+                              {
+                                top: "5px",
+                                right: "-14px",
+                                fontSize: "11px",
+                                delay: "0.82s",
+                              },
+                            ].map((sparkle, index) => (
+                              <Text
+                                key={index}
+                                aria-hidden="true"
+                                position="absolute"
+                                top={sparkle.top}
+                                right={sparkle.right}
+                                bottom={sparkle.bottom}
+                                left={sparkle.left}
+                                color={learnButtonGlowColor}
+                                fontSize={sparkle.fontSize}
+                                lineHeight="1"
+                                textShadow={`0 0 10px ${learnButtonGlowSoft}`}
+                                pointerEvents="none"
+                                animation={`${learnSparkleFloat} 1.65s ease-out ${sparkle.delay} both`}
+                                zIndex={2}
+                              >
+                                ✦
+                              </Text>
+                            ))}
+                          </>
+                        )}
+                        <IconButton
+                          {...actionBarButtonProps}
+                          position="relative"
+                          zIndex={1}
+                          data-sound-ignore-select="true"
+                          aria-label={
+                            translation[userLanguage]?.["app.button.learn"] ||
+                            "Learn"
+                          }
+                          icon={<IoChatbubblesOutline fontSize="22px" />}
+                          {...getInstantSurfacePressProps(
+                            actionBarPressRef,
+                            "learn",
+                            () => {
+                              handleModalCheck(handleLearnClick);
+                              runAfterNextPaint(() => {
+                                triggerHaptic();
+                                playActionBarSound("learn");
+                              });
                             },
-                            "selfPaced",
-                          ),
-                      )}
-                    />
-                    <ThemeMenu
-                      userLanguage={userLanguage}
-                      buttonProps={{
-                        ...actionBarButtonProps,
-                        color: actionBarButtonProps.color,
-                        "data-sound-ignore-select": "true",
-                        onClick: () => {
+                          )}
+                        />
+                      </Box>
+                      <IconButton
+                        {...actionBarButtonProps}
+                        data-sound-ignore-select="true"
+                        aria-label={
+                          translation[userLanguage]?.[
+                            "settings.button.algorithmHelper"
+                          ] || "Open build your app"
+                        }
+                        icon={<RiCodeAiFill fontSize="22px" />}
+                        {...getInstantSurfacePressProps(
+                          actionBarPressRef,
+                          "helper",
+                          () =>
+                            openSurfaceModal(
+                              "helper",
+                              {
+                                currentStep,
+                                step,
+                                steps,
+                                userLanguage,
+                              },
+                              "helper",
+                            ),
+                        )}
+                      />
+                      <IconButton
+                        {...actionBarButtonProps}
+                        data-sound-ignore-select="true"
+                        aria-label="Support on Patreon"
+                        icon={<PiPatreonLogoFill fontSize="20px" />}
+                        // boxShadow={patreonButtonShadow}
+                        borderColor={hexToRgba(actionPalette[200], 0.85)}
+                        onClick={() => {
                           triggerHaptic();
-                          playActionBarSound("theme");
-                        },
-                      }}
-                    />
-                    <IconButton
-                      {...actionBarButtonProps}
-                      data-sound-ignore-select="true"
-                      aria-label={
-                        translation[userLanguage]?.[
-                          "settings.button.algorithmHelper"
-                        ] || "Open build your app"
-                      }
-                      icon={<RiCodeAiFill fontSize="22px" />}
-                      {...getInstantSurfacePressProps(
-                        actionBarPressRef,
-                        "helper",
-                        () =>
-                          openSurfaceModal(
-                            "helper",
-                            {
-                              currentStep,
-                              step,
-                              steps,
-                              userLanguage,
-                            },
-                            "helper",
-                          ),
-                      )}
-                    />
-                    <IconButton
-                      {...actionBarButtonProps}
-                      data-sound-ignore-select="true"
-                      aria-label="Support on Patreon"
-                      icon={<PiPatreonLogoFill fontSize="20px" />}
-                      // boxShadow={patreonButtonShadow}
-                      borderColor={hexToRgba(actionPalette[200], 0.85)}
-                      onClick={() => {
-                        triggerHaptic();
-                        playActionBarSound("patreon");
-                        window.location.href =
-                          "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
-                      }}
-                    />
-                  </HStack>
+                          playActionBarSound("patreon");
+                          window.location.href =
+                            "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
+                        }}
+                      />
+                    </HStack>,
+                  )}
                 </Box>
               </Box>
             </Flex>
@@ -4871,6 +5820,14 @@ const SPLASH_GRADIENT_COLORS = [
   "#fcd4a4",
 ];
 
+const SPLASH_GRADIENT_COLORS_DARK = [
+  "#294f7c",
+  "#455a93",
+  "#69518a",
+  "#8c536f",
+  "#a56558",
+];
+
 const createSeededRandom = (seed) => {
   let state = seed >>> 0;
 
@@ -4884,6 +5841,11 @@ const createSeededRandom = (seed) => {
 };
 
 const SplashScreen = React.memo(({ numPoints = 50 }) => {
+  const { colorMode } = useColorMode();
+  const isDarkSplash = colorMode === "dark";
+  const splashGradientColors = isDarkSplash
+    ? SPLASH_GRADIENT_COLORS_DARK
+    : SPLASH_GRADIENT_COLORS;
   const initialDims = useRef({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -4972,15 +5934,14 @@ const SplashScreen = React.memo(({ numPoints = 50 }) => {
     return fragments.map((_, i) => {
       const random = createSeededRandom(splashSeed + i * 1103515245 + 17);
       // Cycle through the palette.
-      const startColor =
-        SPLASH_GRADIENT_COLORS[i % SPLASH_GRADIENT_COLORS.length];
+      const startColor = splashGradientColors[i % splashGradientColors.length];
       const endColor =
-        SPLASH_GRADIENT_COLORS[(i + 1) % SPLASH_GRADIENT_COLORS.length];
+        splashGradientColors[(i + 1) % splashGradientColors.length];
       // Set an initial random angle for the gradient.
       const angle = random() * 360;
       return { startColor, endColor, angle };
     });
-  }, [fragments, splashSeed]);
+  }, [fragments, splashGradientColors, splashSeed]);
 
   return (
     <motion.svg
@@ -4997,7 +5958,7 @@ const SplashScreen = React.memo(({ numPoints = 50 }) => {
       <motion.rect
         width={screenWidth}
         height={screenHeight}
-        fill="#fbf7fb"
+        fill={isDarkSplash ? "#0e1628" : "#fbf7fb"}
         initial={{ opacity: 1 }}
         animate={{ opacity: 0 }}
         transition={{ duration: 1.5, ease: "easeOut" }}
@@ -5035,7 +5996,9 @@ const SplashScreen = React.memo(({ numPoints = 50 }) => {
             ease: "easeOut",
           }}
           fill={`url(#gradient-${i})`}
-          stroke="rgba(0,0,0,0.8)"
+          stroke={
+            isDarkSplash ? "rgba(226, 232, 240, 0.5)" : "rgba(0, 0, 0, 0.8)"
+          }
           strokeWidth="2"
           style={{
             transformBox: "fill-box",
@@ -5088,6 +6051,7 @@ const Home = ({
   view,
   setView,
   setCurrentStep,
+  setIsAdaptiveLearning,
 }) => {
   const bgUrl =
     "https://res.cloudinary.com/dtkeyccga/image/upload/v1755215290/Untitled_800_x_600_px_1_dmtcwn.gif";
@@ -5387,6 +6351,7 @@ const Home = ({
         userLanguage,
       );
       applyUserThemePreferences(createdUserData, setColorMode);
+      setIsAdaptiveLearning(createdUserData?.isAdaptiveLearning !== false);
       await updateUserData(
         newKeys.npub,
         defaultInterval, // Set the default interval for the streak
@@ -5398,6 +6363,7 @@ const Home = ({
         0,
         0, // End time, 48 hours from start time
       );
+      markActionBarTourPending(newKeys.npub);
       // console.log("run analytics");
       // logEvent(analytics, "select_content", {
       //   content_type: "button",
@@ -5451,6 +6417,7 @@ const Home = ({
       await ensureAppCheckReady();
       const userData = await createUser(npub, userName, userLanguage);
       applyUserThemePreferences(userData, setColorMode);
+      setIsAdaptiveLearning(userData?.isAdaptiveLearning !== false);
 
       const defaultInterval = 2880;
       const existingUserData = await getUserData(npub).catch((error) => {
@@ -5499,7 +6466,15 @@ const Home = ({
       ) {
         navigate(`/onboarding/${parseInt(onboardingProgress, 10)}`);
       } else {
-        navigate(`/q/${currentStep}`);
+        const resumeRoute = await resolveStoredProgressRoute(
+          currentStep,
+          npub,
+          userLanguage,
+        );
+        if (currentStep === "award" && resumeRoute.startsWith("/q/")) {
+          setCurrentStep((steps[userLanguage]?.length || 1) - 1);
+        }
+        navigate(resumeRoute);
       }
     } catch (error) {
       console.error("Error signing in", error);
@@ -5538,6 +6513,7 @@ const Home = ({
       await ensureAppCheckReady();
       const userData = await createUser(npub, userName, userLanguage);
       applyUserThemePreferences(userData, setColorMode);
+      setIsAdaptiveLearning(userData?.isAdaptiveLearning !== false);
 
       const defaultInterval = 2880;
       const existingUserData = await getUserData(npub).catch((error) => {
@@ -5586,7 +6562,15 @@ const Home = ({
       ) {
         navigate(`/onboarding/${parseInt(onboardingProgress, 10)}`);
       } else {
-        navigate(`/q/${currentStep}`);
+        const resumeRoute = await resolveStoredProgressRoute(
+          currentStep,
+          npub,
+          userLanguage,
+        );
+        if (currentStep === "award" && resumeRoute.startsWith("/q/")) {
+          setCurrentStep((steps[userLanguage]?.length || 1) - 1);
+        }
+        navigate(resumeRoute);
       }
     } catch (error) {
       console.error("Error signing in with extension", error);
@@ -5793,7 +6777,7 @@ const Home = ({
                 </HStack>
 
                 <Text fontSize="3xl">{renderContentBasedOnURL()}</Text>
-                <Text fontSize="sm" mt="-5" width="80%">
+                <Text fontSize="md" mt="-5" width="80%">
                   {translation[userLanguage]["landing.introduction"]}
                 </Text>
               </VStack>
@@ -5840,7 +6824,10 @@ const Home = ({
                   backgroundColor="appAccentSoft"
                   variant="outline"
                   border="1px solid var(--chakra-colors-appBorder)"
-                  style={{ width: "150px" }}
+                  minWidth="150px"
+                  width="fit-content"
+                  maxWidth="100%"
+                  px={6}
                   onMouseDown={() => setView("signIn")}
                   onKeyDown={(e) =>
                     (e.key === "Enter" || e.key === " ") && setView("signIn")
@@ -6418,7 +7405,10 @@ const Home = ({
                   backgroundColor="appAccentSoft"
                   variant="outline"
                   border="1px solid var(--chakra-colors-appBorder)"
-                  style={{ width: "150px" }}
+                  minWidth="150px"
+                  width="fit-content"
+                  maxWidth="100%"
+                  px={6}
                   onMouseDown={() => setView("signIn")}
                   onKeyDown={(e) =>
                     (e.key === "Enter" || e.key === " ") && setView("signIn")
@@ -6790,6 +7780,7 @@ const SUBSCRIPTION_COPY = {
     accountError: "We couldn't find your account. Please sign in again.",
     verifying: "Verifying",
     submit: "Unlock the app",
+    backToTutorial: "Go back to the tutorial",
   },
   es: {
     title: "¡Gracias por probar mi app!",
@@ -6823,6 +7814,7 @@ const SUBSCRIPTION_COPY = {
     accountError: "No encontramos tu cuenta. Inicia sesión de nuevo.",
     verifying: "Verificando",
     submit: "Desbloquear la app",
+    backToTutorial: "Volver al tutorial",
   },
 };
 
@@ -6834,6 +7826,7 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
   const navigate = useNavigate();
   const showAlert = useAlertStore((s) => s.showAlert);
   const copy = SUBSCRIPTION_COPY[userLanguage === "es" ? "es" : "en"];
+  const tutorialEndIndex = getTutorialEndIndex(steps[userLanguage] || []);
   const clarifyUsd = (text) =>
     userLanguage === "en" ? text : text.replace(/(\$\d+(?:\.\d+)?)/, "$1 USD");
 
@@ -7266,9 +8259,9 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
                   h="auto"
                   py={5}
                   _hover={{ bg: "appSurfaceMuted" }}
-                  onClick={() => navigate("/q/9")}
+                  onClick={() => navigate(`/q/${tutorialEndIndex}`)}
                 >
-                  {translation[userLanguage]["backToQuestion9"]}
+                  {copy.backToTutorial}
                 </Button>
               </Stack>
             </Stack>
@@ -7285,6 +8278,7 @@ function App({ isShutDown }) {
   const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(0); // State to store current step
   const [userLanguage, setUserLanguage] = useState("en"); // State to store user language preference
+  const tutorialEndIndex = getTutorialEndIndex(steps[userLanguage] || []);
   const { setColorMode } = useColorMode();
   const navigate = useNavigate();
   const location = useLocation();
@@ -7295,14 +8289,16 @@ function App({ isShutDown }) {
   const [hasSubmittedPasscode, setHasSubmittedPasscode] = useState(false);
   const [patreonAuthorizedNpub, setPatreonAuthorizedNpub] = useState("");
   const handlePatreonAuthorized = useCallback(
-    () => setPatreonAuthorizedNpub(
-      String(localStorage.getItem("local_npub") || "").trim(),
-    ),
+    () =>
+      setPatreonAuthorizedNpub(
+        String(localStorage.getItem("local_npub") || "").trim(),
+      ),
     [],
   );
   const activePatreonNpub = String(
     localStorage.getItem("local_npub") || "",
   ).trim();
+  const creatorAuthorized = isCreatorAccount(activePatreonNpub);
   const patreonAuthorized = Boolean(
     activePatreonNpub && patreonAuthorizedNpub === activePatreonNpub,
   );
@@ -7314,9 +8310,11 @@ function App({ isShutDown }) {
     patreonEnabled: PATREON_AUTH_ENABLED,
     patreonAuthorized,
     legacyPasscodeVerified,
+    creatorAuthorized,
   }).authorized;
 
   const [allowPosts, setAllowPosts] = useState(true);
+  const [isAdaptiveLearning, setIsAdaptiveLearning] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(() => {
     if (typeof window === "undefined") return true;
     const stored = localStorage.getItem("soundEnabled");
@@ -7542,6 +8540,7 @@ function App({ isShutDown }) {
         window.location.search,
       );
       const npub = localStorage.getItem("local_npub");
+      const startupCreatorAuthorized = isCreatorAccount(npub);
       let startupLegacyPasscodeVerified =
         localStorage.getItem("passcode") ===
         import.meta.env.VITE_PATREON_PASSCODE;
@@ -7563,6 +8562,7 @@ function App({ isShutDown }) {
             const matchnumber = windowurl.match(/\/q\/(\d+)$/);
 
             let step = matchnumber ? matchnumber[1] : null;
+            let continuingResumeRoute = null;
 
             if (!step) {
               step = await getUserStep(npub); // Fetch the current step
@@ -7575,7 +8575,7 @@ function App({ isShutDown }) {
 
             if (location.pathname === "/about") {
               // Do nothing if on /about
-            } else if (step > -1) {
+            } else if (step === "award" || step > -1) {
               const storedNsec = localStorage.getItem("local_nsec");
               if (storedNsec && storedNsec !== "nip07") {
                 const restoredAuth = await auth(storedNsec);
@@ -7596,6 +8596,50 @@ function App({ isShutDown }) {
               if (userSnapshot.exists()) {
                 const userData = userSnapshot.data();
                 applyUserThemePreferences(userData, setColorMode);
+
+                const restoredLanguage =
+                  userData.userLanguage ||
+                  userData.language ||
+                  localStorage.getItem("userLanguage") ||
+                  "en";
+                const authoredQuestionCount =
+                  steps[restoredLanguage]?.length || steps.en?.length || 0;
+                const lastAuthoredStep = Math.max(0, authoredQuestionCount - 1);
+                const requestedStep = matchnumber
+                  ? Number(matchnumber[1])
+                  : null;
+
+                if (
+                  userData.step === "award" &&
+                  (requestedStep === null || requestedStep >= lastAuthoredStep)
+                ) {
+                  const [profile, storedQuestions] = await Promise.all([
+                    getContinuingLearningState(npub, restoredLanguage),
+                    getContinuingLearningQuestions(npub, restoredLanguage),
+                  ]);
+                  const requestedContinuingCount =
+                    requestedStep === null
+                      ? null
+                      : requestedStep - lastAuthoredStep;
+                  const hasRequestedQuestion =
+                    requestedContinuingCount > 0 &&
+                    storedQuestions.some(
+                      (entry) =>
+                        entry.questionCount === requestedContinuingCount,
+                    );
+                  continuingResumeRoute = hasRequestedQuestion
+                    ? `/q/${requestedStep}`
+                    : getContinuingQuestionRoute(
+                        authoredQuestionCount,
+                        profile.questionCount,
+                      );
+                  step = lastAuthoredStep;
+                  setCurrentStep(lastAuthoredStep);
+                } else if (requestedStep > lastAuthoredStep) {
+                  continuingResumeRoute = getProgressRoute(userData.step);
+                  step = userData.step;
+                  setCurrentStep(userData.step);
+                }
 
                 setHasSubmittedPasscode(userData?.hasSubmittedPasscode);
                 startupLegacyPasscodeVerified =
@@ -7634,13 +8678,31 @@ function App({ isShutDown }) {
                       console.error("Error updating allowPosts:", error),
                     );
                 }
+
+                if (typeof userData.isAdaptiveLearning === "boolean") {
+                  setIsAdaptiveLearning(userData.isAdaptiveLearning);
+                } else {
+                  setIsAdaptiveLearning(true);
+                  updateDoc(userDoc, { isAdaptiveLearning: true }).catch(
+                    (error) =>
+                      console.error(
+                        "Error adding adaptive learning preference:",
+                        error,
+                      ),
+                  );
+                }
               } else {
                 localStorage.setItem("userLanguage", "en");
                 setUserLanguage("en");
               }
 
               let startupPatreonAuthorized = false;
-              if (PATREON_AUTH_ENABLED && step > 9 && npub) {
+              if (
+                PATREON_AUTH_ENABLED &&
+                step > tutorialEndIndex &&
+                npub &&
+                !startupCreatorAuthorized
+              ) {
                 try {
                   let patreonStatus = await getPatreonStatus(npub);
                   if (localStorage.getItem("local_npub") !== npub) {
@@ -7658,9 +8720,7 @@ function App({ isShutDown }) {
                       patreonStatus = { authorized: false };
                     }
                   }
-                  startupPatreonAuthorized = Boolean(
-                    patreonStatus.authorized,
-                  );
+                  startupPatreonAuthorized = Boolean(patreonStatus.authorized);
                 } catch (patreonError) {
                   console.warn(
                     "Unable to restore Patreon access during startup",
@@ -7668,16 +8728,14 @@ function App({ isShutDown }) {
                   );
                 }
               }
-              setPatreonAuthorizedNpub(
-                startupPatreonAuthorized ? npub : "",
-              );
+              setPatreonAuthorizedNpub(startupPatreonAuthorized ? npub : "");
 
-              const startupSubscriptionAuthorized =
-                resolveSubscriptionAccess({
-                  patreonEnabled: PATREON_AUTH_ENABLED,
-                  patreonAuthorized: startupPatreonAuthorized,
-                  legacyPasscodeVerified: startupLegacyPasscodeVerified,
-                }).authorized;
+              const startupSubscriptionAuthorized = resolveSubscriptionAccess({
+                patreonEnabled: PATREON_AUTH_ENABLED,
+                patreonAuthorized: startupPatreonAuthorized,
+                legacyPasscodeVerified: startupLegacyPasscodeVerified,
+                creatorAuthorized: startupCreatorAuthorized,
+              }).authorized;
 
               if (preservePatreonReturnRoute) {
                 // The OAuth callback deliberately returned to this exact
@@ -7688,15 +8746,30 @@ function App({ isShutDown }) {
               } else if (location.pathname === "/about") {
                 // Do nothing if on /about
               } else if (
-                step === "subscription" ||
-                (step > 9 && !startupSubscriptionAuthorized)
+                (step === "subscription" && !startupSubscriptionAuthorized) ||
+                (step > tutorialEndIndex && !startupSubscriptionAuthorized)
               ) {
                 if (location.pathname !== "/subscription") {
                   navigate("/subscription");
                 }
+              } else if (continuingResumeRoute) {
+                navigate(continuingResumeRoute, { replace: true });
               } else if (step === "award") {
-                navigate("/award");
-              } else if (location.pathname === "/subscription" && step < 10) {
+                navigate(
+                  await resolveStoredProgressRoute(step, npub, userLanguage),
+                  { replace: true },
+                );
+              } else if (
+                step === "subscription" &&
+                startupSubscriptionAuthorized
+              ) {
+                const firstChapterStep = tutorialEndIndex + 1;
+                setCurrentStep(firstChapterStep);
+                navigate(`/q/${firstChapterStep}`);
+              } else if (
+                location.pathname === "/subscription" &&
+                step <= tutorialEndIndex
+              ) {
                 showAlert(
                   "error",
                   translation[userLanguage]["completeTutorialFirst"],
@@ -7727,7 +8800,11 @@ function App({ isShutDown }) {
             } else {
               //step is probably onboarding?
               if (step === "subscription") {
-                if (location.pathname !== "/subscription") {
+                if (startupCreatorAuthorized) {
+                  const firstChapterStep = tutorialEndIndex + 1;
+                  setCurrentStep(firstChapterStep);
+                  navigate(`/q/${firstChapterStep}`);
+                } else if (location.pathname !== "/subscription") {
                   navigate("/subscription");
                 }
               } else if (step === "onboarding") {
@@ -7842,6 +8919,20 @@ function App({ isShutDown }) {
   const testurl = window.location.href;
 
   const testIsMatch = /\/q\/\d+$/.test(testurl);
+  const questionRouteMatch = location.pathname.match(/^\/q\/(\d+)$/);
+  const requestedQuestionStep = questionRouteMatch
+    ? Number(questionRouteMatch[1])
+    : null;
+  const lastAuthoredStep = Math.max(
+    0,
+    (steps?.[userLanguage]?.length || 1) - 1,
+  );
+  const isContinuingQuestionRoute =
+    Number.isInteger(requestedQuestionStep) &&
+    requestedQuestionStep > lastAuthoredStep;
+  const routedAuthoredStep = isContinuingQuestionRoute
+    ? lastAuthoredStep
+    : requestedQuestionStep;
 
   return (
     <Box ref={topRef} minH="100dvh" position="relative" bg="transparent">
@@ -7918,8 +9009,8 @@ function App({ isShutDown }) {
             view={view}
             setView={setView}
             step={steps?.[userLanguage]?.[currentStep]}
-            allowPosts={allowPosts}
-            setAllowPosts={setAllowPosts}
+            isAdaptiveLearning={isAdaptiveLearning}
+            setIsAdaptiveLearning={setIsAdaptiveLearning}
             soundEnabled={soundEnabled}
             setSoundEnabled={setSoundEnabled}
             onPatreonAuthorized={handlePatreonAuthorized}
@@ -7954,6 +9045,7 @@ function App({ isShutDown }) {
                   view={view}
                   setView={setView}
                   setCurrentStep={setCurrentStep}
+                  setIsAdaptiveLearning={setIsAdaptiveLearning}
                 />
               }
             />
@@ -7964,7 +9056,6 @@ function App({ isShutDown }) {
                   isSignedIn={isSignedIn}
                   setIsSignedIn={setIsSignedIn}
                   userLanguage={userLanguage}
-                  setUserLanguage={setUserLanguage}
                   generateNostrKeys={generateNostrKeys}
                   auth={auth}
                   view={view}
@@ -7976,7 +9067,9 @@ function App({ isShutDown }) {
             <Route
               path="/subscription"
               element={
-                PATREON_AUTH_ENABLED ? (
+                subscriptionAuthorized ? (
+                  <Navigate to={`/q/${tutorialEndIndex + 1}`} replace />
+                ) : PATREON_AUTH_ENABLED ? (
                   <PatreonAuthDevGate
                     userLanguage={userLanguage}
                     currentStep={currentStep}
@@ -7987,7 +9080,7 @@ function App({ isShutDown }) {
                   <PasscodePage
                     userLanguage={userLanguage}
                     isOldAccount={
-                      currentStep > 9 &&
+                      currentStep > tutorialEndIndex &&
                       localStorage.getItem("passcode") !==
                         import.meta.env.VITE_PATREON_PASSCODE
                     }
@@ -7995,37 +9088,48 @@ function App({ isShutDown }) {
                 )
               }
             />
-            {location.pathname !== "/about" &&
-              steps?.[userLanguage]?.map((_, index) => (
-                <Route
-                  key={index}
-                  path={`/q/${index}`}
-                  element={
-                    <PrivateRoute>
-                      <Step
-                        allowPosts={allowPosts}
-                        setAllowPosts={setAllowPosts}
-                        currentStep={index}
-                        userLanguage={userLanguage}
-                        setUserLanguage={setUserLanguage}
-                        postNostrContent={postNostrContent}
-                        assignExistingBadgeToNpub={assignExistingBadgeToNpub}
-                        emailStep={clonedStep}
-                        subscriptionAuthorized={subscriptionAuthorized}
-                        setCurrentStep={setCurrentStep}
-                        navigateWithTransition={navigateWithTransition}
-                        setTransitionStats={setTransitionStats}
-                        incorrectAttempts={incorrectAttempts}
-                        setIncorrectAttempts={setIncorrectAttempts}
-                        lectureNextPath={lectureNextPath}
-                        setLectureNextPath={setLectureNextPath}
-                        lectureNextStep={lectureNextPath}
-                        setLectureNextStep={setLectureNextStep}
-                      />
-                    </PrivateRoute>
-                  }
-                />
-              ))}
+            <Route path="/q/award" element={<Navigate to="/award" replace />} />
+            <Route
+              path="/q/:stepIndex"
+              element={
+                Number.isInteger(routedAuthoredStep) &&
+                routedAuthoredStep >= 0 &&
+                routedAuthoredStep <= lastAuthoredStep ? (
+                  <PrivateRoute>
+                    <Step
+                      isAdaptiveLearning={isAdaptiveLearning}
+                      setIsAdaptiveLearning={setIsAdaptiveLearning}
+                      allowPosts={allowPosts}
+                      setAllowPosts={setAllowPosts}
+                      currentStep={routedAuthoredStep}
+                      startInContinuingMode={isContinuingQuestionRoute}
+                      requestedContinuingQuestionCount={
+                        isContinuingQuestionRoute
+                          ? requestedQuestionStep - lastAuthoredStep
+                          : null
+                      }
+                      userLanguage={userLanguage}
+                      setUserLanguage={setUserLanguage}
+                      postNostrContent={postNostrContent}
+                      assignExistingBadgeToNpub={assignExistingBadgeToNpub}
+                      emailStep={clonedStep}
+                      subscriptionAuthorized={subscriptionAuthorized}
+                      setCurrentStep={setCurrentStep}
+                      navigateWithTransition={navigateWithTransition}
+                      setTransitionStats={setTransitionStats}
+                      incorrectAttempts={incorrectAttempts}
+                      setIncorrectAttempts={setIncorrectAttempts}
+                      lectureNextPath={lectureNextPath}
+                      setLectureNextPath={setLectureNextPath}
+                      lectureNextStep={lectureNextPath}
+                      setLectureNextStep={setLectureNextStep}
+                    />
+                  </PrivateRoute>
+                ) : (
+                  <Navigate to={getProgressRoute(currentStep)} replace />
+                )
+              }
+            />
             <Route
               path="/award"
               element={<AwardScreen userLanguage={userLanguage} />}

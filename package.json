@@ -8,6 +8,7 @@
     "dev": "node scripts/startLocalDev.mjs",
     "dev:ui": "vite",
     "build": "vite build",
+    "validate:curriculum": "node scripts/validateCurriculum.mjs",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "breaking-change": "npm run dev"
@@ -72,6 +73,7 @@
     "zustand": "^4.5.5"
   },
   "devDependencies": {
+    "@babel/parser": "^7.28.5",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
