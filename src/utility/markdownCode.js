@@ -222,6 +222,16 @@ export const repairFencedMarkdown = (openingLine, bodyLines) => {
     return [openingLine, "```"];
   }
 
+  // Interactive preview blocks contain full React/JSX components. Text lines
+  // inside JSX (such as headings, paragraphs, and button copy) are component markup,
+  // not explanatory prose, and must never be split into separate fragments.
+  if (
+    openingLine.trim().startsWith("```preview") ||
+    /```\s*preview/i.test(openingLine)
+  ) {
+    return [openingLine, ...bodyLines, "```"];
+  }
+
   let braceDepth = 0;
   const lineTypes = bodyLines.map((line) => {
     const trimmed = line.trim();

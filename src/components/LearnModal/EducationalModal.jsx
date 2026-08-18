@@ -26,6 +26,7 @@ import {
   Textarea,
   IconButton,
   useColorMode,
+  Spinner,
 } from "@chakra-ui/react";
 
 import { highlight, languages } from "prismjs/components/prism-core";
@@ -56,10 +57,18 @@ import {
   isInlineMarkdownCode,
   normalizeLearnMarkdown,
 } from "../../utility/markdownCode";
+import LiveReactEditorModal from "../LiveCodeEditor/LiveCodeEditor";
 
-const buildLearnPrompt = (step, userLanguage) => {
+export const buildLearnPrompt = (step, userLanguage) => {
   const languageName = pickProgrammingLanguage(userLanguage);
   const isEnglish = userLanguage?.includes("en");
+  const isGroupThreeOrHigher = Number(step?.group) >= 3 || step?.showPreview;
+
+  const visualWidgetInstruction = isGroupThreeOrHigher
+    ? ` For visual concepts (such as HTML document structure, forms, CSS box model, Flexbox layouts, React components, useState hooks, controlled inputs, conditional rendering, or interactive simulations), include a single self-contained interactive preview widget wrapped in a \`\`\`preview ... \`\`\` code block. The preview widget MUST be a runnable React functional component (e.g. \`function ExampleWidget() { ... return ( ... ); }\`) using inline styles and React hooks (useState, useEffect) with no external imports, and all UI text/labels inside the widget must be in ${
+        isEnglish ? "English" : "Spanish"
+      }. For non-visual, purely algorithmic, or terminal concepts, use standard \`\`\`${languageName.toLowerCase()} code blocks instead.`
+    : "";
 
   if (step?.isConversationReview) {
     const relevantSteps = getObjectsByGroup(
@@ -68,14 +77,14 @@ const buildLearnPrompt = (step, userLanguage) => {
     );
     return `Generate educational material about ${JSON.stringify(
       relevantSteps,
-    )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Format short identifiers, class names, method names, properties, and single expressions with single backticks so they remain inline with prose. Always wrap entire multiline code examples in a single complete fenced code block (e.g. \`\`\`javascript ... \`\`\`). Fenced code blocks may contain source code only, never explanatory prose. Keep code lines within 80 characters, and never interrupt a code snippet with unformatted text or split it into fragmented blocks. Do not begin the response with a fenced code block. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
+    )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Format short identifiers, class names, method names, properties, and single expressions with single backticks so they remain inline with prose. Always wrap entire multiline code examples in a single complete fenced code block (e.g. \`\`\`javascript ... \`\`\`).${visualWidgetInstruction} Fenced code blocks may contain source code only, never explanatory prose. Keep code lines within 80 characters, and never interrupt a code snippet with unformatted text or split it into fragmented blocks. Do not begin the response with a fenced code block. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
       isEnglish ? "english" : "spanish"
     }`;
   }
 
   return `Generate educational ${languageName} material about ${JSON.stringify(
     step,
-  )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Format short identifiers, class names, method names, properties, and single expressions with single backticks so they remain inline with prose. Always wrap entire multiline code examples in a single complete fenced code block (e.g. \`\`\`javascript ... \`\`\`). Fenced code blocks may contain source code only, never explanatory prose. Keep code lines within 80 characters, and never interrupt a code snippet with unformatted text or split it into fragmented blocks. Do not begin the response with a fenced code block. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
+  )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. Format short identifiers, class names, method names, properties, and single expressions with single backticks so they remain inline with prose. Always wrap entire multiline code examples in a single complete fenced code block (e.g. \`\`\`javascript ... \`\`\`).${visualWidgetInstruction} Fenced code blocks may contain source code only, never explanatory prose. Keep code lines within 80 characters, and never interrupt a code snippet with unformatted text or split it into fragmented blocks. Do not begin the response with a fenced code block. Do not reference these instructions, simply display the educational content and do not use comments in the code snippets. Never specify the answer. Lastly the user is speaking in ${
     isEnglish ? "english" : "spanish"
   }`;
 };
@@ -120,9 +129,214 @@ const darkHighlightColors = [
   "whiteAlpha.200",
 ];
 
+class PreviewErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
 
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
 
-export const newTheme = () => {
+  componentDidCatch(error, errorInfo) {
+    console.error("Learn preview widget error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback ?? null;
+    }
+    return this.props.children;
+  }
+}
+
+export const InteractivePreviewCard = ({
+  code = "",
+  userLanguage = "en",
+  isLoading = false,
+}) => {
+  const [activeTab, setActiveTab] = useState("preview");
+  const { colorMode } = useColorMode();
+  const isSpanish = String(userLanguage).toLowerCase().includes("es");
+
+  const previewLabel = isSpanish ? "Vista Previa" : "Live Preview";
+  const codeLabel = isSpanish ? "Código" : "Code";
+  const widgetBadgeLabel = isSpanish
+    ? "Widget Interactivo"
+    : "Interactive Widget";
+  const generatingLabel = isSpanish
+    ? "Generando vista interactiva..."
+    : "Generating interactive preview...";
+
+  const isCodeComplete = React.useMemo(() => {
+    const trimmed = code.trim();
+    if (!trimmed) return false;
+    const openBraces = (trimmed.match(/{/g) || []).length;
+    const closeBraces = (trimmed.match(/}/g) || []).length;
+    const openParens = (trimmed.match(/\(/g) || []).length;
+    const closeParens = (trimmed.match(/\)/g) || []).length;
+    if (openBraces !== closeBraces || openParens !== closeParens) return false;
+    return true;
+  }, [code]);
+
+  const showLoader = isLoading || (!isCodeComplete && isLoading);
+  const showCodeFallback = !isLoading && !isCodeComplete;
+
+  return (
+    <Box
+      width="100%"
+      my={4}
+      borderRadius="xl"
+      borderWidth="1px"
+      borderColor="appBorder"
+      bg="appSurface"
+      boxShadow="sm"
+      overflow="hidden"
+    >
+      <HStack
+        justify="space-between"
+        align="center"
+        px={3}
+        py={2}
+        borderBottomWidth="1px"
+        borderBottomColor="appBorder"
+        bg={colorMode === "dark" ? "whiteAlpha.50" : "blackAlpha.50"}
+      >
+        <HStack spacing={2}>
+          <Box
+            w={2}
+            h={2}
+            borderRadius="full"
+            bg="pink.400"
+            boxShadow="0 0 8px rgba(236,72,153,0.6)"
+          />
+          <Text
+            fontSize="xs"
+            fontWeight="700"
+            color="appTextMuted"
+            letterSpacing="0.02em"
+          >
+            {widgetBadgeLabel}
+          </Text>
+        </HStack>
+        <HStack spacing={1}>
+          <Button
+            size="xs"
+            variant={
+              activeTab === "preview" && !showCodeFallback ? "solid" : "ghost"
+            }
+            colorScheme={
+              activeTab === "preview" && !showCodeFallback ? "pink" : "gray"
+            }
+            onClick={() => setActiveTab("preview")}
+            borderRadius="md"
+            fontSize="xs"
+            fontWeight="600"
+            isDisabled={showCodeFallback}
+          >
+            {previewLabel}
+          </Button>
+          <Button
+            size="xs"
+            variant={
+              activeTab === "code" || showCodeFallback ? "solid" : "ghost"
+            }
+            colorScheme={
+              activeTab === "code" || showCodeFallback ? "pink" : "gray"
+            }
+            onClick={() => setActiveTab("code")}
+            borderRadius="md"
+            fontSize="xs"
+            fontWeight="600"
+          >
+            {codeLabel}
+          </Button>
+        </HStack>
+      </HStack>
+      <Box p={{ base: 2, md: 3 }}>
+        {showLoader ? (
+          <HStack
+            spacing={3}
+            justify="center"
+            align="center"
+            py={8}
+            px={4}
+            borderRadius="lg"
+            borderWidth="1px"
+            borderColor="appBorder"
+            bg={colorMode === "dark" ? "gray.900" : "white"}
+          >
+            <Spinner
+              size="sm"
+              color="pink.400"
+              thickness="2px"
+              speed="0.8s"
+            />
+            <Text fontSize="xs" fontWeight="600" color="appTextMuted">
+              {generatingLabel}
+            </Text>
+          </HStack>
+        ) : activeTab === "preview" && !showCodeFallback ? (
+          <PreviewErrorBoundary
+            fallback={
+              <SyntaxHighlighter
+                language="javascript"
+                PreTag="div"
+                style={getThemedSyntaxHighlightTheme(colorMode)}
+                customStyle={getThemedCodeBlockStyles(colorMode)}
+              >
+                {code}
+              </SyntaxHighlighter>
+            }
+          >
+            <Box
+              borderRadius="lg"
+              borderWidth="1px"
+              borderColor="appBorder"
+              overflow="hidden"
+              bg={colorMode === "dark" ? "gray.900" : "white"}
+              p={{ base: 2, md: 3 }}
+              sx={{
+                "& .react-live-error": {
+                  fontSize: "xs",
+                  p: 2.5,
+                  my: 2,
+                  borderRadius: "md",
+                  bg: "red.50",
+                  color: "red.700",
+                  border: "1px solid",
+                  borderColor: "red.200",
+                  fontFamily: "mono",
+                  whiteSpace: "pre-wrap",
+                },
+              }}
+            >
+              <LiveReactEditorModal
+                code={code}
+                mode="preview"
+                autoRun={true}
+                hideRunButton={true}
+                previewHeight="auto"
+              />
+            </Box>
+          </PreviewErrorBoundary>
+        ) : (
+          <SyntaxHighlighter
+            language="javascript"
+            PreTag="div"
+            style={getThemedSyntaxHighlightTheme(colorMode)}
+            customStyle={getThemedCodeBlockStyles(colorMode)}
+          >
+            {code}
+          </SyntaxHighlighter>
+        )}
+      </Box>
+    </Box>
+  );
+};
+
+export const newTheme = (userLanguage = "en", isLoading = false) => {
   let highlightIndex = 0;
   return {
     p: ({ node, ...props }) => (
@@ -215,6 +429,7 @@ export const newTheme = () => {
     code: ({ node, inline, className, children, ...props }) => {
       const { colorMode } = useColorMode();
       const match = /language-(\w+)/.exec(className || "");
+      const lang = (match?.[1] || "").toLowerCase();
       const isInline = isInlineMarkdownCode({
         inline,
         className,
@@ -222,15 +437,40 @@ export const newTheme = () => {
         node,
       });
 
+      const rawCode = String(children).replace(/\n$/, "");
+      const hasComponentStructure =
+        /(?:function\s+[A-Z]|const\s+[A-Z][a-zA-Z0-9_]*\s*=\s*(?:\([^)]*\)|[a-zA-Z0-9_]+)?\s*=>|<\s*[A-Za-z][a-zA-Z0-9_]*|render\s*\()/.test(
+          rawCode,
+        ) &&
+        (/(?:return\s*\(?|<[a-zA-Z][\s\S]*>|style\s*=\s*\{\{)/.test(rawCode) ||
+          rawCode.includes("useState") ||
+          rawCode.includes("useEffect"));
+
+      const isPreview =
+        !isInline &&
+        (lang === "preview" ||
+          /(?:^|\s)language-preview(?:\s|$)/.test(className || "")) &&
+        hasComponentStructure;
+
+      if (isPreview) {
+        return (
+          <InteractivePreviewCard
+            code={rawCode}
+            userLanguage={userLanguage}
+            isLoading={isLoading}
+          />
+        );
+      }
+
       return !isInline ? (
         <SyntaxHighlighter
-          language={match?.[1] || "javascript"}
+          language={lang === "preview" ? "javascript" : lang || "javascript"}
           PreTag="div"
           style={getThemedSyntaxHighlightTheme(colorMode)}
           customStyle={getThemedCodeBlockStyles(colorMode)}
           {...props}
         >
-          {String(children).replace(/\n$/, "")}
+          {rawCode}
         </SyntaxHighlighter>
       ) : (
         <Box
@@ -243,6 +483,10 @@ export const newTheme = () => {
           fontSize="0.92em"
           display="inline"
           boxDecorationBreak="clone"
+          whiteSpace="pre-wrap"
+          wordBreak="break-word"
+          overflowWrap="anywhere"
+          maxWidth="100%"
           {...props}
         >
           {children}
@@ -251,8 +495,6 @@ export const newTheme = () => {
     },
   };
 };
-
-
 
 const LearnLoadingAnimation = ({ userLanguage }) => (
   <VStack
@@ -743,7 +985,12 @@ const EducationalModal = ({ isOpen, onClose, step, userLanguage }) => {
                           width="100%"
                         >
                           <Markdown
-                            components={ChakraUIRenderer(newTheme())}
+                            components={ChakraUIRenderer(
+                              newTheme(
+                                userLanguage,
+                                Boolean(content?.meta?.loading),
+                              ),
+                            )}
                             children={normalizeLearnMarkdown(content.content)}
                           />
                         </Box>
@@ -770,7 +1017,9 @@ const EducationalModal = ({ isOpen, onClose, step, userLanguage }) => {
                               boxShadow="sm"
                             >
                               <Markdown
-                                components={ChakraUIRenderer(newTheme())}
+                                components={ChakraUIRenderer(
+                                  newTheme(userLanguage, false),
+                                )}
                               >
                                 {normalizeLearnMarkdown(msg.content)}
                               </Markdown>
@@ -787,7 +1036,14 @@ const EducationalModal = ({ isOpen, onClose, step, userLanguage }) => {
                             boxShadow="sm"
                             width="100%"
                           >
-                            <Markdown components={ChakraUIRenderer(newTheme())}>
+                            <Markdown
+                              components={ChakraUIRenderer(
+                                newTheme(
+                                  userLanguage,
+                                  Boolean(msg?.response?.meta?.loading),
+                                ),
+                              )}
+                            >
                               {normalizeLearnMarkdown(
                                 msg?.response?.content || "",
                               )}

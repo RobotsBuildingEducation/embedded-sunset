@@ -261,3 +261,57 @@ test("extracts obvious prose even when generated code has an open brace", () => 
     /```\n\nLet us pause here to understand why this value is displayed\./,
   );
 });
+
+test("preserves interactive preview code fences for dynamic lecture widgets", () => {
+  const lectureWithPreview = [
+    "Here is an interactive demonstration of a React counter:",
+    "```preview",
+    "function CounterDemo() {",
+    "  const [count, setCount] = React.useState(0);",
+    "  return (",
+    "    <button onClick={() => setCount(c => c + 1)}>",
+    "      Clicks: {count}",
+    "    </button>",
+    "  );",
+    "}",
+    "```",
+    "Try clicking the button above to observe state changes.",
+  ].join("\n");
+
+  const normalized = normalizeLearnMarkdown(lectureWithPreview);
+
+  assert.match(normalized, /```preview\nfunction CounterDemo\(\) \{/);
+  assert.match(normalized, /Clicks: \{count\}/);
+  assert.match(normalized, /```\nTry clicking the button above/);
+});
+
+test("never splits preview code blocks even when JSX contains long explanatory sentences", () => {
+  const lectureWithLongProseInJSX = [
+    "```preview",
+    "function AuthSimulator() {",
+    "  return (",
+    "    <div style={{ padding: '20px' }}>",
+    "      <h3>Authentication Flow</h3>",
+    "      <p>",
+    "        Test how your application handles completed logins versus user-initiated popup closures.",
+    "      </p>",
+    "      <button onClick={() => alert('ok')}>Click Me</button>",
+    "    </div>",
+    "  );",
+    "}",
+    "```",
+  ].join("\n");
+
+  const normalized = normalizeLearnMarkdown(lectureWithLongProseInJSX);
+
+  // Must remain a single intact ```preview block with no markdown text split
+  assert.equal(normalized.split("```preview").length, 2);
+  assert.equal(normalized.split("```").length, 3);
+  assert.match(
+    normalized,
+    /Test how your application handles completed logins versus user-initiated popup closures\./,
+  );
+  assert.match(normalized, /<button onClick=/);
+});
+
+
