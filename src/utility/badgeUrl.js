@@ -27,7 +27,7 @@ export const getDittoBadgeUrl = (address) => {
             kind,
             pubkey,
             identifier,
-            relays: ["wss://relay.damus.io"],
+            relays: ["wss://relay.ditto.pub"],
           });
           return `https://ditto.pub/${naddr}`;
         } catch {

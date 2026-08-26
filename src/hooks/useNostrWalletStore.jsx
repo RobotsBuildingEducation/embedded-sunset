@@ -28,7 +28,7 @@ if (typeof window !== "undefined") {
 // Default configuration
 const DEFAULT_MINT = "https://mint.minibits.cash/Bitcoin";
 const DEFAULT_RELAYS = [
-  "wss://relay.damus.io",
+  "wss://relay.ditto.pub",
   "wss://relay.primal.net",
   "wss://nos.lol",
 ];
@@ -357,7 +357,7 @@ export const useNostrWalletStore = create((set, get) => ({
       if (!pk && nostrPrivKey && nostrPrivKey.startsWith("nsec")) {
         pk = decodeKey(nostrPrivKey);
         console.log(
-          "[Wallet] Using manually provided private key for NIP-07 user"
+          "[Wallet] Using manually provided private key for NIP-07 user",
         );
       }
 
@@ -650,7 +650,7 @@ export const useNostrWalletStore = create((set, get) => ({
   // Send 1 sat via nutzap
   sendOneSatToNpub: async (
     recipientNpub = DEFAULT_RECEIVER,
-    retryCount = 0
+    retryCount = 0,
   ) => {
     const {
       cashuWallet,
@@ -764,7 +764,7 @@ export const useNostrWalletStore = create((set, get) => ({
 
       if (isSpentError && retryCount < MAX_RETRIES) {
         console.log(
-          `[Wallet] Retrying... attempt ${retryCount + 1}/${MAX_RETRIES}`
+          `[Wallet] Retrying... attempt ${retryCount + 1}/${MAX_RETRIES}`,
         );
         await new Promise((resolve) => setTimeout(resolve, 500));
         return get().sendOneSatToNpub(recipientNpub, retryCount + 1);
