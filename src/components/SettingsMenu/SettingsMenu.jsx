@@ -38,6 +38,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { FaRegUser } from "react-icons/fa";
 
 import TranscriptModal from "./TranscriptModal/TranscriptModal";
+import AnalyticsModal from "./AnalyticsModal/AnalyticsModal";
 import { InstallAppModal } from "../InstallModal/InstallModal";
 import { AlgorithmHelper } from "../AlgorithmHelper/AlgorithmHelper";
 
@@ -203,6 +204,12 @@ const SettingsMenu = ({
     isOpen: isTranscriptOpen,
     onOpen: onTranscriptOpen,
     onClose: onTranscriptClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isAnalyticsOpen,
+    onOpen: onAnalyticsOpen,
+    onClose: onAnalyticsClose,
   } = useDisclosure();
 
   const {
@@ -683,6 +690,20 @@ const SettingsMenu = ({
               >
                 {translation[userLanguage]["settings.button.studyGuide"]}
               </Button>
+              {/* Analytics button temporarily hidden while the feature is in progress.
+              <Button
+                {...primaryMenuButtonProps}
+                onClick={onAnalyticsOpen}
+                onMouseDown={onAnalyticsOpen}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    onAnalyticsOpen();
+                  }
+                }}
+              >
+                📊 {translation[userLanguage]?.["settings.button.analytics"] || "Analytics"}
+              </Button>
+              */}
               <Button
                 {...primaryMenuButtonProps}
                 onMouseDown={onTranscriptOpen}
@@ -839,12 +860,12 @@ const SettingsMenu = ({
         />
       ) : null}
 
-      {isTranscriptOpen ? (
-        <TranscriptModal
+      {isAnalyticsOpen ? (
+        <AnalyticsModal
           userLanguage={userLanguage}
-          isOpen={isTranscriptOpen}
-          onClose={onTranscriptClose}
-          step={step}
+          isOpen={isAnalyticsOpen}
+          onClose={onAnalyticsClose}
+          steps={steps}
         />
       ) : null}
 

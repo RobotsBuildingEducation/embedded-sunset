@@ -10,6 +10,15 @@ import NDK, {
 import { NDKCashuWallet } from "@nostr-dev-kit/ndk-wallet";
 import { Buffer } from "buffer";
 import { bech32 } from "bech32";
+import {
+  checkUnspentProofs,
+  createBolt11MintQuote,
+  getMintWallet,
+  getProofsMissingFromState,
+  sumProofAmounts,
+  toNdkProofs,
+  waitForBolt11MintQuote,
+} from "../utils/cashuMintClient.js";
 
 // Polyfill Buffer for browser
 if (typeof window !== "undefined") {
@@ -25,18 +34,65 @@ const DEFAULT_RELAYS = [
 ];
 const DEFAULT_RECEIVER =
   "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt";
+const PENDING_DEPOSIT_PREFIX = "cashu_pending_deposit_v1:";
+const depositMonitors = new Map();
 
-/**
- * Safely extract total balance from wallet.balance response
- */
-function extractBalance(bal) {
-  if (bal === null || bal === undefined) return 0;
-  if (typeof bal === "number") return bal;
-  if (typeof bal === "object" && typeof bal.amount === "number") {
-    return bal.amount;
+function pendingDepositKey(ownerPubkey) {
+  return `${PENDING_DEPOSIT_PREFIX}${ownerPubkey}`;
+}
+
+function readPendingDeposit(ownerPubkey) {
+  if (typeof localStorage === "undefined") return null;
+
+  const serialized = localStorage.getItem(pendingDepositKey(ownerPubkey));
+  if (!serialized) return null;
+
+  try {
+    const record = JSON.parse(serialized);
+    if (
+      record?.ownerPubkey !== ownerPubkey ||
+      record?.mint !== DEFAULT_MINT ||
+      !record?.quote?.quote
+    ) {
+      return null;
+    }
+    return record;
+  } catch {
+    return null;
   }
-  const parsed = Number(bal);
-  return isNaN(parsed) ? 0 : parsed;
+}
+
+function writePendingDeposit(record) {
+  if (typeof localStorage === "undefined") {
+    throw new Error("Browser storage is unavailable");
+  }
+
+  localStorage.setItem(
+    pendingDepositKey(record.ownerPubkey),
+    JSON.stringify(record),
+  );
+}
+
+function removePendingDeposit(ownerPubkey) {
+  if (typeof localStorage !== "undefined") {
+    localStorage.removeItem(pendingDepositKey(ownerPubkey));
+  }
+}
+
+function abortDepositMonitors(exceptOwnerPubkey = null) {
+  for (const [ownerPubkey, monitor] of depositMonitors) {
+    if (ownerPubkey !== exceptOwnerPubkey) monitor.controller.abort();
+  }
+}
+
+function callDepositCallback(callback, value) {
+  if (typeof callback !== "function") return;
+
+  try {
+    callback(value);
+  } catch {
+    console.error("[Wallet] Deposit callback failed");
+  }
 }
 
 /**
@@ -56,29 +112,13 @@ function decodeKey(key) {
  * Verify proofs with mint and return only unspent balance
  */
 async function verifyBalanceWithMint(wallet, mintUrl) {
-  try {
-    const proofs = wallet.state?.getProofs({ mint: mintUrl }) || [];
-    console.log("[Wallet] Proofs from state:", proofs.length);
+  const proofs = wallet.state?.getProofs({ mint: mintUrl }) || [];
+  console.log("[Wallet] Proofs from state:", proofs.length);
 
-    if (proofs.length === 0) {
-      return 0;
-    }
-
-    const cashuWallet = await wallet.getCashuWallet(mintUrl);
-    const proofStates = await cashuWallet.checkProofsStates(proofs);
-
-    const unspentProofs = proofs.filter((proof, i) => {
-      const state = proofStates[i];
-      return state?.state === "UNSPENT";
-    });
-
-    const balance = unspentProofs.reduce((sum, p) => sum + p.amount, 0);
-    console.log("[Wallet] Verified balance from mint:", balance);
-    return balance;
-  } catch (e) {
-    console.error("[Wallet] Error verifying with mint:", e);
-    return extractBalance(wallet.balance);
-  }
+  const unspentProofs = await checkUnspentProofs(mintUrl, proofs);
+  const balance = sumProofAmounts(unspentProofs);
+  console.log("[Wallet] Verified balance from mint:", balance);
+  return balance;
 }
 
 export const useNostrWalletStore = create((set, get) => ({
@@ -95,6 +135,7 @@ export const useNostrWalletStore = create((set, get) => ({
   invoice: "",
   isCreatingWallet: false,
   isWalletReady: false,
+  isRefreshingAfterDeposit: false,
 
   // Setters
   setError: (msg) => set({ errorMessage: msg }),
@@ -123,9 +164,14 @@ export const useNostrWalletStore = create((set, get) => ({
     const { cashuWallet } = get();
     if (!cashuWallet) return 0;
 
-    const balance = await verifyBalanceWithMint(cashuWallet, DEFAULT_MINT);
-    set({ walletBalance: balance });
-    return balance;
+    try {
+      const balance = await verifyBalanceWithMint(cashuWallet, DEFAULT_MINT);
+      set({ walletBalance: balance });
+      return balance;
+    } catch (error) {
+      console.error("[Wallet] Error verifying with mint:", error);
+      return get().walletBalance;
+    }
   },
 
   // Connect to Nostr relays
@@ -222,6 +268,7 @@ export const useNostrWalletStore = create((set, get) => ({
 
     try {
       const user = await signer.user();
+      abortDepositMonitors(user.pubkey);
       console.log("[Wallet] Looking for wallet for pubkey:", user.pubkey);
 
       // Check for wallet events - try multiple possible kinds
@@ -257,15 +304,9 @@ export const useNostrWalletStore = create((set, get) => ({
 
       console.log("[Wallet] Wallet status:", wallet.status);
       console.log("[Wallet] Wallet relaySet:", wallet.relaySet);
-      wallet.on("balance_updated", (balance) => {
-        console.log("[Wallet] >>> BALANCE EVENT FIRED:", balance);
-        console.log("[Wallet] Balance updated event:", balance);
-        if (balance?.amount !== undefined) {
-          set({ walletBalance: balance.amount });
-        } else {
-          // Fallback to manual check
-          verifyAndUpdateBalance();
-        }
+      wallet.on("balance_updated", () => {
+        console.log("[Wallet] Balance update received; verifying with mint");
+        void verifyAndUpdateBalance();
       });
 
       wallet.on("ready", () => {
@@ -281,6 +322,7 @@ export const useNostrWalletStore = create((set, get) => ({
       set({ cashuWallet: wallet, isWalletReady: true });
 
       await verifyAndUpdateBalance();
+      void get().resumePendingDeposit(user.pubkey);
 
       return wallet;
     } catch (err) {
@@ -335,6 +377,7 @@ export const useNostrWalletStore = create((set, get) => ({
       ndkInstance.wallet = wallet;
 
       const user = await signer.user();
+      abortDepositMonitors(user.pubkey);
       await wallet.start({ pubkey: user.pubkey });
       console.log("[Wallet] Wallet started");
 
@@ -352,6 +395,7 @@ export const useNostrWalletStore = create((set, get) => ({
       });
 
       await verifyAndUpdateBalance();
+      void get().resumePendingDeposit(user.pubkey);
 
       return wallet;
     } catch (err) {
@@ -411,53 +455,194 @@ export const useNostrWalletStore = create((set, get) => ({
     }
   },
 
+  // Resume a deposit after quote creation, refresh, or identity restoration.
+  resumePendingDeposit: async (ownerPubkey, options = {}) => {
+    const activeMonitor = depositMonitors.get(ownerPubkey);
+    if (activeMonitor) {
+      activeMonitor.options = { ...activeMonitor.options, ...options };
+      return activeMonitor.promise;
+    }
+
+    const initialRecord = readPendingDeposit(ownerPubkey);
+    if (!initialRecord) return null;
+
+    const controller = new AbortController();
+    const monitor = { controller, options, promise: null };
+
+    monitor.promise = (async () => {
+      let record = initialRecord;
+
+      try {
+        const { cashuWallet } = get();
+        if (!cashuWallet) return false;
+
+        if (!record.proofs?.length) {
+          set({ invoice: record.quote.request || "" });
+
+          const mintWallet = await getMintWallet(record.mint);
+          const result = await waitForBolt11MintQuote(
+            mintWallet,
+            record.quote,
+            {
+              signal: controller.signal,
+              onQuote: (quote) => {
+                record = { ...record, quote };
+                writePendingDeposit(record);
+              },
+            },
+          );
+
+          if (result.state === "EXPIRED") {
+            removePendingDeposit(ownerPubkey);
+            set({
+              invoice: "",
+              isRefreshingAfterDeposit: false,
+              errorMessage: "Deposit invoice expired",
+            });
+            callDepositCallback(
+              monitor.options.onError,
+              new Error("Deposit invoice expired"),
+            );
+            return false;
+          }
+
+          if (result.state === "ISSUED") {
+            set({
+              invoice: "",
+              isRefreshingAfterDeposit: false,
+              errorMessage:
+                "This deposit was issued but its proofs could not be recovered",
+            });
+            callDepositCallback(
+              monitor.options.onError,
+              new Error("Issued deposit proofs are unavailable"),
+            );
+            return false;
+          }
+
+          set({ isRefreshingAfterDeposit: true });
+          const modernProofs = await mintWallet.mintProofsBolt11(
+            record.amount,
+            result.quote,
+          );
+
+          // These proofs are bearer ecash. Persist them before the relay write so
+          // a refresh can finish the operation without minting twice.
+          record = {
+            ...record,
+            quote: result.quote,
+            proofs: toNdkProofs(modernProofs),
+          };
+          writePendingDeposit(record);
+        } else {
+          set({ isRefreshingAfterDeposit: true });
+        }
+
+        // If the user switched identities while the mint request was in flight,
+        // leave the recoverable record for that identity instead of writing its
+        // bearer proofs into the newly active NDK wallet.
+        if (controller.signal.aborted || get().cashuWallet !== cashuWallet) {
+          return false;
+        }
+
+        const existingProofs =
+          cashuWallet.state?.getProofs({ mint: record.mint }) || [];
+        const proofsToStore = getProofsMissingFromState(
+          record.proofs,
+          existingProofs,
+        );
+
+        if (proofsToStore.length > 0) {
+          await cashuWallet.state.update({
+            store: proofsToStore,
+            mint: record.mint,
+          });
+        }
+
+        removePendingDeposit(ownerPubkey);
+        const newBalance = await get().verifyAndUpdateBalance();
+        set({
+          invoice: "",
+          isRefreshingAfterDeposit: false,
+          errorMessage: null,
+        });
+        callDepositCallback(monitor.options.onSuccess, newBalance);
+        return true;
+      } catch (error) {
+        if (error?.name === "AbortError") return false;
+
+        console.error("[Wallet] Deposit recovery failed");
+        set({
+          isRefreshingAfterDeposit: false,
+          errorMessage: error.message || "Deposit failed",
+        });
+        callDepositCallback(monitor.options.onError, error);
+        return false;
+      } finally {
+        if (depositMonitors.get(ownerPubkey) === monitor) {
+          depositMonitors.delete(ownerPubkey);
+        }
+      }
+    })();
+
+    depositMonitors.set(ownerPubkey, monitor);
+    return monitor.promise;
+  },
+
   // Deposit sats
   initiateDeposit: async (amountInSats = 10, options = {}) => {
-    const { cashuWallet, setError, setInvoice, verifyAndUpdateBalance } = get();
+    const { cashuWallet, signer, setError, setInvoice } = get();
     const { onSuccess, onError } = options;
 
     if (!cashuWallet) {
-      setError("Wallet not initialized");
+      const error = new Error("Wallet not initialized");
+      setError(error.message);
+      callDepositCallback(onError, error);
+      return null;
+    }
+
+    if (!signer) {
+      const error = new Error("Nostr signer not initialized");
+      setError(error.message);
+      callDepositCallback(onError, error);
       return null;
     }
 
     try {
-      const deposit = cashuWallet.deposit(amountInSats, DEFAULT_MINT);
+      const user = await signer.user();
+      abortDepositMonitors(user.pubkey);
 
-      deposit.on("success", async (token) => {
-        console.log("[Wallet] Deposit successful!", token.proofs);
+      const pending = readPendingDeposit(user.pubkey);
+      if (pending) {
+        const request = pending.quote.request || "";
+        setInvoice(request);
+        void get().resumePendingDeposit(user.pubkey, options);
+        return request || null;
+      }
 
-        // Save proofs to relay
-        await cashuWallet.state.update({
-          store: token.proofs,
-          mint: DEFAULT_MINT,
-        });
+      const quote = await createBolt11MintQuote(
+        DEFAULT_MINT,
+        amountInSats,
+        "Deposit",
+      );
+      const record = {
+        ownerPubkey: user.pubkey,
+        mint: DEFAULT_MINT,
+        amount: amountInSats,
+        createdAt: Date.now(),
+        quote,
+      };
 
-        // Verify balance with mint
-        const newBalance = await verifyAndUpdateBalance();
-        set({ invoice: "" });
-
-        if (typeof onSuccess === "function") {
-          onSuccess(newBalance);
-        }
-      });
-
-      deposit.on("error", (e) => {
-        console.error("[Wallet] Deposit error:", e);
-        setError(e.message || "Deposit failed");
-        setInvoice("");
-        if (typeof onError === "function") {
-          onError(e);
-        }
-      });
-
-      const pr = await deposit.start();
+      writePendingDeposit(record);
       console.log("[Wallet] Invoice created");
-      setInvoice(pr);
-      return pr;
+      set({ invoice: quote.request, errorMessage: null });
+      void get().resumePendingDeposit(user.pubkey, { onSuccess, onError });
+      return quote.request;
     } catch (e) {
-      console.error("[Wallet] Error initiating deposit:", e);
-      setError(e.message);
+      console.error("[Wallet] Could not initiate deposit");
+      setError(e.message || "Deposit failed");
+      setInvoice("");
+      callDepositCallback(onError, e);
       return null;
     }
   },
@@ -506,8 +691,7 @@ export const useNostrWalletStore = create((set, get) => ({
       const { p2pkPubkey } = await fetchUserPaymentInfo(recipientNpub);
       console.log("[Wallet] Sending 1 sat to:", recipientNpub);
 
-      const cashuWalletInstance =
-        await freshWallet.getCashuWallet(DEFAULT_MINT);
+      const cashuWalletInstance = await getMintWallet(DEFAULT_MINT);
 
       // Get proofs from wallet state
       let proofs = freshWallet.state?.getProofs({ mint: DEFAULT_MINT }) || [];
@@ -516,13 +700,7 @@ export const useNostrWalletStore = create((set, get) => ({
       }
 
       // Check which proofs are actually still spendable at the mint
-      const proofStates = await cashuWalletInstance.checkProofsStates(proofs);
-
-      // Filter to only unspent proofs
-      const validProofs = proofs.filter((proof, index) => {
-        const state = proofStates[index];
-        return state?.state === "UNSPENT";
-      });
+      const validProofs = await checkUnspentProofs(DEFAULT_MINT, proofs);
 
       console.log("[Wallet] Total proofs:", proofs.length);
       console.log("[Wallet] Valid proofs:", validProofs.length);
@@ -532,7 +710,7 @@ export const useNostrWalletStore = create((set, get) => ({
       }
 
       // Check if we have enough balance with valid proofs
-      const validBalance = validProofs.reduce((sum, p) => sum + p.amount, 0);
+      const validBalance = sumProofAmounts(validProofs);
       if (validBalance < amount) {
         throw new Error(`Insufficient valid balance: ${validBalance}`);
       }
@@ -540,16 +718,12 @@ export const useNostrWalletStore = create((set, get) => ({
       const recipientHex = decodeKey(recipientNpub);
 
       // Use only valid proofs for the send
-      const { keep, send } = await cashuWalletInstance.send(
-        amount,
-        validProofs,
-        {
-          pubkey: p2pkPubkey,
-        }
-      );
-
-      console.log("[Wallet] Keep proofs:", keep);
-      console.log("[Wallet] Send proofs:", send);
+      const result = await cashuWalletInstance.ops
+        .send(amount, validProofs)
+        .asP2PK({ pubkey: p2pkPubkey })
+        .run();
+      const keep = toNdkProofs(result.keep);
+      const send = toNdkProofs(result.send);
 
       // Destroy ALL original proofs (including spent ones), store the change
       await freshWallet.state.update({
@@ -605,6 +779,7 @@ export const useNostrWalletStore = create((set, get) => ({
 
   // Reset state (logout)
   resetState: () => {
+    abortDepositMonitors();
     set({
       isConnected: false,
       errorMessage: null,
@@ -618,6 +793,7 @@ export const useNostrWalletStore = create((set, get) => ({
       invoice: "",
       isCreatingWallet: false,
       isWalletReady: false,
+      isRefreshingAfterDeposit: false,
     });
   },
 }));
