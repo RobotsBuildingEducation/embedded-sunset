@@ -690,6 +690,7 @@ const SettingsMenu = ({
               >
                 {translation[userLanguage]["settings.button.studyGuide"]}
               </Button>
+              {/* Analytics button temporarily hidden while the feature is in progress.
               <Button
                 {...primaryMenuButtonProps}
                 onClick={onAnalyticsOpen}
@@ -702,6 +703,7 @@ const SettingsMenu = ({
               >
                 📊 {translation[userLanguage]?.["settings.button.analytics"] || "Analytics"}
               </Button>
+              */}
               <Button
                 {...primaryMenuButtonProps}
                 onMouseDown={onTranscriptOpen}

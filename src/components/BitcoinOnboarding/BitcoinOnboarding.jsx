@@ -15,6 +15,7 @@ import {
   Radio,
   Spinner,
   Input,
+  useDisclosure,
 } from "@chakra-ui/react";
 import QRCode from "qrcode.react";
 import { SiCashapp } from "react-icons/si";
@@ -28,9 +29,15 @@ import { doc, updateDoc } from "firebase/firestore";
 import { IdentityCard } from "../../elements/IdentityCard";
 import { soundManager } from "../../utility/soundManager";
 import { triggerHaptic } from "tactus";
+import NutzapTransactionsDrawer from "../NutzapTransactionsDrawer/NutzapTransactionsDrawer";
 
 const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
   const toast = useToast();
+  const {
+    isOpen: isTransactionsOpen,
+    onOpen: openTransactions,
+    onClose: closeTransactions,
+  } = useDisclosure();
   const [isGenerateNewQR, setIsGeneratingNewQR] = useState(false);
   const [depositing, setDepositing] = useState(false);
   const [selectedIdentity, setSelectedIdentity] = useState(""); // State to track selected identity
@@ -43,12 +50,6 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
           "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt",
         label: "robotsbuildingeducation.com",
         href: "https://robotsbuildingeducation.com",
-      },
-      {
-        value:
-          "npub166md04uzz4ksy4zv2c8maz4lprrezmtfkwq6yfevtqel3tchkthsemwtwm",
-        label: "ladderly.io",
-        href: "https://ladderly.io",
       },
       {
         value:
@@ -323,6 +324,20 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
                 ))}
               </VStack>
             </RadioGroup>
+            {selectedIdentityOption ? (
+              <Link
+                display="block"
+                mt={3}
+                fontSize="sm"
+                target="_blank"
+                rel="noopener noreferrer"
+                textDecoration="underline"
+                textAlign="center"
+                href={selectedIdentityOption.href}
+              >
+                {selectedIdentityOption.href}
+              </Link>
+            ) : null}
           </AccordionPanel>
         </AccordionItem>
       </Accordion>
@@ -490,8 +505,9 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
                 ]
               }{" "}
               <Link
-                href="https://nutlife.lol"
-                target="_blank"
+                as="button"
+                onClick={openTransactions}
+                type="button"
                 style={{ textDecoration: "underline" }}
               >
                 {
@@ -502,20 +518,22 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
               </Link>
             </Text>
           </Text>
+          <NutzapTransactionsDrawer
+            isOpen={isTransactionsOpen}
+            onClose={closeTransactions}
+            userLanguage={userLanguage}
+          />
           <VStack fontSize="sm">
             <IdentityCard
               number={cashuWallet.walletId}
               name={
                 <div>
-                  {translation[userLanguage]["modal.bitcoinMode.cardNameLabel"]}
-                  <div>
-                    {
-                      translation[userLanguage][
-                        "modal.bitcoinMode.balanceLabel"
-                      ]
-                    }
-                    : {totalBalance || 0} sats
-                  </div>
+                  {
+                    translation[userLanguage][
+                      "modal.bitcoinMode.balanceLabel"
+                    ]
+                  }
+                  : ₿{totalBalance || 0}
                 </div>
               }
               theme={totalBalance > 0 ? "nostr" : "BTC"}
