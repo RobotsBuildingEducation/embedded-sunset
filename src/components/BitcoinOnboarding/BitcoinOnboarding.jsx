@@ -47,25 +47,25 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
     () => [
       {
         value:
-          "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt",
+          "npub1auhch9697q3jxjjtj7jq3glqtl2eyf7quu357ppja2fr5fvvhlxsqla9n5",
         label: "robotsbuildingeducation.com",
         href: "https://robotsbuildingeducation.com",
       },
       {
         value:
-          "npub1ae02dvwewx8w0z2sftpcg2ta4xyu6hc00mxuq03x2aclta6et76q90esq2",
+          "npub1nfs0vz2pnwdmdu4rw06v9xw82vr7zvvuclez9wvw2dqml0wuff6sddkngx",
         label: "girlsoncampus.org",
         href: "https://www.girlsoncampus.org/",
       },
     ],
-    []
+    [],
   );
 
   const selectedIdentityOption = useMemo(
     () =>
       recipientOptions.find((option) => option.value === selectedIdentity) ||
       null,
-    [recipientOptions, selectedIdentity]
+    [recipientOptions, selectedIdentity],
   );
 
   const depositOptions = useMemo(() => {
@@ -162,7 +162,7 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
       const userDocRef = doc(
         database,
         "users",
-        localStorage.getItem("local_npub")
+        localStorage.getItem("local_npub"),
       ); // Replace "users" with your Firestore collection
       await updateDoc(userDocRef, { identity: value });
     } catch (error) {
@@ -203,7 +203,7 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
       const userDocRef = doc(
         database,
         "users",
-        localStorage.getItem("local_npub")
+        localStorage.getItem("local_npub"),
       ); // Replace "users" with your Firestore collection
       await updateDoc(userDocRef, { createdWallet: true });
       createNewWallet();
@@ -528,12 +528,8 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
               number={cashuWallet.walletId}
               name={
                 <div>
-                  {
-                    translation[userLanguage][
-                      "modal.bitcoinMode.balanceLabel"
-                    ]
-                  }
-                  : ₿{totalBalance || 0}
+                  {translation[userLanguage]["modal.bitcoinMode.balanceLabel"]}:
+                  ₿{totalBalance || 0}
                 </div>
               }
               theme={totalBalance > 0 ? "nostr" : "BTC"}
@@ -606,7 +602,7 @@ const BitcoinOnboarding = ({ userLanguage, from, onDepositComplete }) => {
                     {renderButtonText(
                       translation[userLanguage][
                         "modal.bitcoinMode.instructions.createWallet.3"
-                      ]
+                      ],
                     )}
                   </Text>
                 </>
