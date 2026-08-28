@@ -144,6 +144,10 @@ import {
   getContinuingQuestionRoute,
   getProgressRoute,
 } from "./utils/progressRoute.js";
+import {
+  getInitialUserLanguage,
+  resolveAccountLanguage,
+} from "./utils/defaultLanguage.js";
 
 const Dashboard = lazy(() =>
   import("./components/Dashboard/Dashboard").then((m) => ({
@@ -4384,7 +4388,10 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
             transform="translateX(-50%)"
             width={{ base: "calc(90vw - 24px)", sm: "400px" }}
             maxWidth="calc(100vw - 24px)"
-            height={{ base: "250px", sm: "225px" }}
+            height={{
+              base: userLanguage?.includes("es") ? "290px" : "250px",
+              sm: userLanguage?.includes("es") ? "250px" : "225px",
+            }}
             borderRadius="20px"
             borderWidth="2px"
             borderStyle="solid"
@@ -4395,7 +4402,12 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
             _focusVisible={{ boxShadow: "none" }}
             zIndex="popover"
           >
-            <Box px={{ base: 4, sm: 5 }} py={4} height="100%">
+            <Box
+              px={{ base: 4, sm: 5 }}
+              pt={4}
+              pb={{ base: 5, sm: 4 }}
+              height="100%"
+            >
               <VStack
                 align="stretch"
                 justify="space-between"
@@ -4419,17 +4431,23 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
                     {tourStep.description}
                   </Text>
                 </Box>
-                <HStack justify="space-between" width="100%">
+                <HStack
+                  justify="space-between"
+                  width="100%"
+                  px={{ base: 1, sm: 2 }}
+                  pb={1}
+                  flexShrink={0}
+                >
                   <IconButton
                     aria-label={
                       userLanguage?.includes("es")
                         ? "Función anterior"
                         : "Previous feature"
                     }
-                    icon={<ChevronLeftIcon boxSize={7} />}
-                    width="52px"
-                    height="52px"
-                    minWidth="52px"
+                    icon={<ChevronLeftIcon boxSize={6} />}
+                    width={{ base: "40px", sm: "44px" }}
+                    height={{ base: "40px", sm: "44px" }}
+                    minWidth={{ base: "40px", sm: "44px" }}
                     borderRadius="full"
                     variant="outline"
                     borderColor="pink.200"
@@ -4450,10 +4468,10 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
                           ? "Siguiente función"
                           : "Next feature"
                     }
-                    icon={<ChevronRightIcon boxSize={7} />}
-                    width="52px"
-                    height="52px"
-                    minWidth="52px"
+                    icon={<ChevronRightIcon boxSize={6} />}
+                    width={{ base: "40px", sm: "44px" }}
+                    height={{ base: "40px", sm: "44px" }}
+                    minWidth={{ base: "40px", sm: "44px" }}
                     borderRadius="full"
                     colorScheme="pink"
                     onClick={() => {
@@ -6165,6 +6183,8 @@ const LandingHeader = ({
             <HStack spacing={{ base: 1, md: 2 }}>
               <Button
                 size="sm"
+                height="32px"
+                minHeight="32px"
                 colorScheme={colorScheme}
                 onClick={onCreateAccount}
                 isDisabled={isCreatingAccount}
@@ -6176,6 +6196,8 @@ const LandingHeader = ({
               </Button>
               <Button
                 size="sm"
+                height="32px"
+                minHeight="32px"
                 colorScheme="pink"
                 variant="outline"
                 bg="appAccentSoft"
@@ -6870,6 +6892,7 @@ const Home = ({
         accountName,
         userLanguage,
       );
+      localStorage.setItem("userLanguage", userLanguage);
       applyUserThemePreferences(createdUserData, setColorMode);
       setIsAdaptiveLearning(createdUserData?.isAdaptiveLearning !== false);
       await updateUserData(
@@ -6942,6 +6965,7 @@ const Home = ({
 
       await ensureAppCheckReady();
       const userData = await createUser(npub, userName, userLanguage);
+      localStorage.setItem("userLanguage", userLanguage);
       applyUserThemePreferences(userData, setColorMode);
       setIsAdaptiveLearning(userData?.isAdaptiveLearning !== false);
 
@@ -7038,6 +7062,7 @@ const Home = ({
 
       await ensureAppCheckReady();
       const userData = await createUser(npub, userName, userLanguage);
+      localStorage.setItem("userLanguage", userLanguage);
       applyUserThemePreferences(userData, setColorMode);
       setIsAdaptiveLearning(userData?.isAdaptiveLearning !== false);
 
@@ -7954,7 +7979,7 @@ const Home = ({
                   <SecretKeyDetectedMessage userLanguage={userLanguage} />
                 ) : null}
               </Box>
-              <HStack w="100%" mt={4} mb={12} justifyContent="center">
+              <VStack w="100%" mt={4} mb={12} spacing={3}>
                 <Button
                   onKeyDown={(e) =>
                     (e.key === "Enter" || e.key === " ") && televise()
@@ -7963,10 +7988,11 @@ const Home = ({
                   colorScheme={themeColor}
                   variant="outline"
                   isDisabled={userName.trim().length < 2 || secretKeyDetected}
-                  style={{ width: "150px" }}
+                  width="150px"
                 >
                   {translation[userLanguage]["landing.button.telemetry"]}
                 </Button>
+                <Text fontSize="xs">{translation[userLanguage]["or"]}</Text>
                 <Button
                   colorScheme="pink"
                   backgroundColor="appAccentSoft"
@@ -7983,7 +8009,7 @@ const Home = ({
                 >
                   {translation[userLanguage]["landing.button.signIn"]}
                 </Button>
-              </HStack>
+              </VStack>
             </VStack>
           </>
         )}
@@ -8844,7 +8870,7 @@ function App({ isShutDown }) {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(0); // State to store current step
-  const [userLanguage, setUserLanguage] = useState("en"); // State to store user language preference
+  const [userLanguage, setUserLanguage] = useState(getInitialUserLanguage);
   const tutorialEndIndex = getTutorialEndIndex(steps[userLanguage] || []);
   const { setColorMode } = useColorMode();
   const navigate = useNavigate();
@@ -9164,11 +9190,12 @@ function App({ isShutDown }) {
                 const userData = userSnapshot.data();
                 applyUserThemePreferences(userData, setColorMode);
 
-                const restoredLanguage =
-                  userData.userLanguage ||
-                  userData.language ||
-                  localStorage.getItem("userLanguage") ||
-                  "en";
+                const restoredLanguage = resolveAccountLanguage({
+                  accountLanguage: userData.language,
+                  legacyAccountLanguage: userData.userLanguage,
+                  localLanguage: localStorage.getItem("userLanguage"),
+                  detectedLanguage: getInitialUserLanguage(),
+                });
                 const authoredQuestionCount =
                   steps[restoredLanguage]?.length || steps.en?.length || 0;
                 const lastAuthoredStep = Math.max(0, authoredQuestionCount - 1);
@@ -9213,18 +9240,8 @@ function App({ isShutDown }) {
                   startupLegacyPasscodeVerified ||
                   Boolean(userData?.hasSubmittedPasscode);
 
-                setUserLanguage(
-                  userData.userLanguage ||
-                    localStorage.getItem("userLanguage") ||
-                    "en",
-                );
-
-                localStorage.setItem(
-                  "userLanguage",
-                  userData.language ||
-                    localStorage.getItem("userLanguage") ||
-                    "en",
-                );
+                setUserLanguage(restoredLanguage);
+                localStorage.setItem("userLanguage", restoredLanguage);
 
                 if (userData.hasOwnProperty("allowPosts")) {
                   // Use the value from Firestore (even if it's false)
@@ -9259,8 +9276,9 @@ function App({ isShutDown }) {
                   );
                 }
               } else {
-                localStorage.setItem("userLanguage", "en");
-                setUserLanguage("en");
+                const fallbackLanguage = getInitialUserLanguage();
+                localStorage.setItem("userLanguage", fallbackLanguage);
+                setUserLanguage(fallbackLanguage);
               }
 
               let startupPatreonAuthorized = false;
@@ -9388,11 +9406,14 @@ function App({ isShutDown }) {
                   const userData = userSnapshot.data();
                   applyUserThemePreferences(userData, setColorMode);
 
-                  setUserLanguage(
-                    userData.userLanguage ||
-                      localStorage.getItem("userLanguage") ||
-                      "en",
-                  );
+                  const restoredUserLanguage = resolveAccountLanguage({
+                    accountLanguage: userData.language,
+                    legacyAccountLanguage: userData.userLanguage,
+                    localLanguage: localStorage.getItem("userLanguage"),
+                    detectedLanguage: getInitialUserLanguage(),
+                  });
+                  setUserLanguage(restoredUserLanguage);
+                  localStorage.setItem("userLanguage", restoredUserLanguage);
                 }
                 // x
                 if (step > 6) {
