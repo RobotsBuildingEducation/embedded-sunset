@@ -1030,6 +1030,10 @@ reverse(head) {
         {/* Use intelligent assistance to learn how to code quickly and efficiently. */}
       </div>
     ),
+    "landing.hero.title": "Your Personal",
+    "landing.hero.titleAccent": "Coding Tutor",
+    "landing.hero.subtitle":
+      "Learn the foundations of software engineering so you can build your ideas with coding agents quickly.",
     "landing.promotion.title":
       "Finish every question in 30 days and we'll refund you.",
     "landing.promotion.subtitle":
@@ -2989,6 +2993,10 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
       "Tu dirección de Lightning ha sido copiada.",
     "landing.welcome": "Sunset",
     "landing.introduction": <div>Tu tutor personal de programación</div>,
+    "landing.hero.title": "Tu Tutor Personal",
+    "landing.hero.titleAccent": "de Programación",
+    "landing.hero.subtitle":
+      "Aprende los fundamentos de la ingeniería de software para que puedas desarrollar tus ideas rápidamente con agentes de programación.",
     "landing.promotion.title":
       "Termina todas las preguntas en 30 días y te reembolsaremos.",
     "landing.promotion.subtitle":

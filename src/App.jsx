@@ -144,6 +144,10 @@ import {
   getContinuingQuestionRoute,
   getProgressRoute,
 } from "./utils/progressRoute.js";
+import {
+  getInitialUserLanguage,
+  resolveAccountLanguage,
+} from "./utils/defaultLanguage.js";
 
 const Dashboard = lazy(() =>
   import("./components/Dashboard/Dashboard").then((m) => ({
@@ -4384,7 +4388,10 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
             transform="translateX(-50%)"
             width={{ base: "calc(90vw - 24px)", sm: "400px" }}
             maxWidth="calc(100vw - 24px)"
-            height={{ base: "250px", sm: "225px" }}
+            height={{
+              base: userLanguage?.includes("es") ? "290px" : "250px",
+              sm: userLanguage?.includes("es") ? "250px" : "225px",
+            }}
             borderRadius="20px"
             borderWidth="2px"
             borderStyle="solid"
@@ -4395,7 +4402,12 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
             _focusVisible={{ boxShadow: "none" }}
             zIndex="popover"
           >
-            <Box px={{ base: 4, sm: 5 }} py={4} height="100%">
+            <Box
+              px={{ base: 4, sm: 5 }}
+              pt={4}
+              pb={{ base: 5, sm: 4 }}
+              height="100%"
+            >
               <VStack
                 align="stretch"
                 justify="space-between"
@@ -4419,17 +4431,23 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
                     {tourStep.description}
                   </Text>
                 </Box>
-                <HStack justify="space-between" width="100%">
+                <HStack
+                  justify="space-between"
+                  width="100%"
+                  px={{ base: 1, sm: 2 }}
+                  pb={1}
+                  flexShrink={0}
+                >
                   <IconButton
                     aria-label={
                       userLanguage?.includes("es")
                         ? "Función anterior"
                         : "Previous feature"
                     }
-                    icon={<ChevronLeftIcon boxSize={7} />}
-                    width="52px"
-                    height="52px"
-                    minWidth="52px"
+                    icon={<ChevronLeftIcon boxSize={6} />}
+                    width={{ base: "40px", sm: "44px" }}
+                    height={{ base: "40px", sm: "44px" }}
+                    minWidth={{ base: "40px", sm: "44px" }}
                     borderRadius="full"
                     variant="outline"
                     borderColor="pink.200"
@@ -4450,10 +4468,10 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
                           ? "Siguiente función"
                           : "Next feature"
                     }
-                    icon={<ChevronRightIcon boxSize={7} />}
-                    width="52px"
-                    height="52px"
-                    minWidth="52px"
+                    icon={<ChevronRightIcon boxSize={6} />}
+                    width={{ base: "40px", sm: "44px" }}
+                    height={{ base: "40px", sm: "44px" }}
+                    minWidth={{ base: "40px", sm: "44px" }}
                     borderRadius="full"
                     colorScheme="pink"
                     onClick={() => {
@@ -6040,6 +6058,489 @@ const SecretKeyDetectedMessage = ({ userLanguage }) => (
   </Text>
 );
 
+const LandingThemeToggle = ({ colorMode, onToggle, fixed = false }) => {
+  const isDark = colorMode === "dark";
+
+  return (
+    <IconButton
+      type="button"
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      icon={isDark ? <FaSun /> : <FaMoon />}
+      onClick={onToggle}
+      size="sm"
+      minW="36px"
+      h="36px"
+      borderRadius="12px"
+      color="appText"
+      bg="appSurface"
+      border="1px solid"
+      borderColor="appBorder"
+      boxShadow={fixed ? "sm" : "none"}
+      _hover={{ bg: "appSurfaceMuted" }}
+      data-sound-ignore-select="true"
+      {...(fixed
+        ? {
+            position: "fixed",
+            top: { base: 3, md: 5 },
+            right: { base: 3, md: 5 },
+            zIndex: "popover",
+          }
+        : {})}
+    />
+  );
+};
+
+const LandingHeader = ({
+  brand,
+  colorMode,
+  colorScheme,
+  createLabel,
+  signInLabel,
+  isScrolled,
+  showActions,
+  isCreatingAccount,
+  onCreateAccount,
+  onSignIn,
+  onToggleTheme,
+}) => (
+  <Box
+    as="header"
+    position="fixed"
+    top={0}
+    left={0}
+    right={0}
+    zIndex="popover"
+    px={{ base: 2.5, md: 5 }}
+    py={{ base: 2, md: 2.5 }}
+    bg={isScrolled ? "appBg" : "transparent"}
+    borderBottom="1px solid"
+    borderColor={isScrolled ? "appBorder" : "transparent"}
+    boxShadow="none"
+    sx={{
+      backdropFilter: isScrolled ? "blur(18px)" : "none",
+      WebkitBackdropFilter: isScrolled ? "blur(18px)" : "none",
+      transition:
+        "background-color 180ms ease, border-color 180ms ease",
+    }}
+  >
+    <HStack minH={{ base: "40px", md: "44px" }} justify="space-between">
+      <HStack spacing={{ base: 1.5, md: 2.5 }} minW={0} textAlign="left">
+        <Box
+          width={{ base: "36px", md: "42px" }}
+          height={{ base: "36px", md: "42px" }}
+          flex="0 0 auto"
+          overflow="hidden"
+          aria-hidden="true"
+          sx={{
+            "& > div, & > div > div": {
+              width: "100%",
+              height: "100%",
+            },
+            "& canvas": {
+              width: "100% !important",
+              height: "100% !important",
+              display: "block",
+            },
+          }}
+        >
+          <CloudCanvas
+            outlineColor={colorMode === "dark" ? "#f8fafc" : "#111827"}
+          />
+        </Box>
+        <Text
+          fontSize={{ base: "11px", sm: "13px", md: "14px" }}
+          fontWeight="700"
+          lineHeight="1.05"
+          letterSpacing="-0.01em"
+          whiteSpace="nowrap"
+        >
+          {brand === "Robots Building Education" ? (
+            <>
+              <Text as="span" display="block">
+                Robots
+              </Text>
+              <Text as="span" display="block">
+                Building
+              </Text>
+              <Text as="span" display="block">
+                Education
+              </Text>
+            </>
+          ) : (
+            brand
+          )}
+        </Text>
+      </HStack>
+
+      <HStack spacing={{ base: 1, md: 2 }} justify="flex-end">
+        {showActions ? (
+          <motion.div
+            initial={{ opacity: 0, x: 12 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <HStack spacing={{ base: 1, md: 2 }}>
+              <Button
+                size="sm"
+                height="32px"
+                minHeight="32px"
+                colorScheme={colorScheme}
+                onClick={onCreateAccount}
+                isDisabled={isCreatingAccount}
+                px={{ base: 2, sm: 3, md: 4 }}
+                fontSize={{ base: "10px", sm: "xs", md: "sm" }}
+                whiteSpace="nowrap"
+              >
+                {createLabel}
+              </Button>
+              <Button
+                size="sm"
+                height="32px"
+                minHeight="32px"
+                colorScheme="pink"
+                variant="outline"
+                bg="appAccentSoft"
+                borderColor="appBorder"
+                onClick={onSignIn}
+                px={{ base: 2, sm: 3, md: 4 }}
+                fontSize={{ base: "10px", sm: "xs", md: "sm" }}
+                whiteSpace="nowrap"
+              >
+                {signInLabel}
+              </Button>
+            </HStack>
+          </motion.div>
+        ) : null}
+
+        <LandingThemeToggle colorMode={colorMode} onToggle={onToggleTheme} />
+      </HStack>
+    </HStack>
+  </Box>
+);
+
+const CODING_BUILD_MODULES = [
+  { x: 66, y: 104, width: 154, height: 64, delay: 0 },
+  { x: 980, y: 100, width: 154, height: 64, delay: 0.7 },
+  { x: 48, y: 574, width: 162, height: 66, delay: 1.4 },
+  { x: 990, y: 570, width: 162, height: 66, delay: 0.4 },
+];
+
+const CODING_BUILD_ROUTES = [
+  {
+    d: "M220 136 H305 V78 H470",
+    points: [
+      ["18.3%", "17%"],
+      ["25.4%", "17%"],
+      ["25.4%", "9.75%"],
+      ["39.2%", "9.75%"],
+    ],
+    duration: 7.5,
+    delay: 0,
+  },
+  {
+    d: "M980 132 H900 V74 H735",
+    points: [
+      ["81.7%", "16.5%"],
+      ["75%", "16.5%"],
+      ["75%", "9.25%"],
+      ["61.25%", "9.25%"],
+    ],
+    duration: 8.5,
+    delay: 1.1,
+  },
+  {
+    d: "M210 607 H292 V720 H478",
+    points: [
+      ["17.5%", "75.9%"],
+      ["24.3%", "75.9%"],
+      ["24.3%", "90%"],
+      ["39.8%", "90%"],
+    ],
+    duration: 9.5,
+    delay: 0.6,
+  },
+  {
+    d: "M990 603 H910 V716 H732",
+    points: [
+      ["82.5%", "75.4%"],
+      ["75.8%", "75.4%"],
+      ["75.8%", "89.5%"],
+      ["61%", "89.5%"],
+    ],
+    duration: 8,
+    delay: 1.7,
+  },
+  {
+    d: "M142 168 V306 H62 V476 H210",
+    points: [
+      ["11.8%", "21%"],
+      ["11.8%", "38.25%"],
+      ["5.2%", "38.25%"],
+      ["5.2%", "59.5%"],
+      ["17.5%", "59.5%"],
+    ],
+    duration: 10,
+    delay: 2.2,
+  },
+  {
+    d: "M1058 164 V302 H1138 V470 H990",
+    points: [
+      ["88.2%", "20.5%"],
+      ["88.2%", "37.75%"],
+      ["94.8%", "37.75%"],
+      ["94.8%", "58.75%"],
+      ["82.5%", "58.75%"],
+    ],
+    duration: 9,
+    delay: 0.9,
+  },
+];
+
+const CODING_BUILD_NODES = [
+  { cx: 305, cy: 78, delay: 0 },
+  { cx: 430, cy: 78, delay: 0.8 },
+  { cx: 900, cy: 74, delay: 1.4 },
+  { cx: 765, cy: 74, delay: 0.4 },
+  { cx: 292, cy: 720, delay: 1.8 },
+  { cx: 450, cy: 720, delay: 1.1 },
+  { cx: 910, cy: 716, delay: 0.5 },
+  { cx: 755, cy: 716, delay: 1.6 },
+  { cx: 62, cy: 306, delay: 1 },
+  { cx: 1138, cy: 302, delay: 2 },
+];
+
+const CodingHeroBackdrop = ({ themeColor }) => {
+  const prefersReducedMotion = useReducedMotion();
+  const { colorMode } = useColorMode();
+  const accentToken =
+    colorMode === "dark" ? `${themeColor}.300` : `${themeColor}.500`;
+  const [accentColor] = useToken("colors", [accentToken]);
+  const gridColor = hexToRgba(
+    accentColor,
+    colorMode === "dark" ? 0.12 : 0.1,
+  );
+  const pathColor = hexToRgba(
+    accentColor,
+    colorMode === "dark" ? 0.28 : 0.2,
+  );
+  const moduleFill =
+    colorMode === "dark" ? "rgba(8, 15, 32, 0.28)" : "rgba(255, 252, 247, 0.3)";
+
+  return (
+    <Box
+      aria-hidden="true"
+      position="absolute"
+      inset={0}
+      overflow="hidden"
+      pointerEvents="none"
+    >
+      <motion.div
+        animate={
+          prefersReducedMotion
+            ? undefined
+            : { backgroundPosition: ["0px 0px", "72px 72px"] }
+        }
+        transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+        style={{
+          position: "absolute",
+          inset: "-15%",
+          backgroundImage: `linear-gradient(${gridColor} 1px, transparent 1px), linear-gradient(90deg, ${gridColor} 1px, transparent 1px)`,
+          backgroundSize: "72px 72px",
+          maskImage:
+            "radial-gradient(ellipse 82% 72% at 50% 48%, black 30%, transparent 82%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 82% 72% at 50% 48%, black 30%, transparent 82%)",
+        }}
+      />
+
+      <Box
+        position="absolute"
+        inset={0}
+        background={`radial-gradient(circle at 50% 45%, ${hexToRgba(
+          accentColor,
+          colorMode === "dark" ? 0.09 : 0.07,
+        )} 0%, transparent 42%)`}
+      />
+
+      <motion.div
+        animate={
+          prefersReducedMotion
+            ? undefined
+            : { x: ["-5vw", "105vw"], opacity: [0, 0.36, 0] }
+        }
+        transition={{ duration: 11, repeat: Infinity, ease: "linear" }}
+        style={{
+          position: "absolute",
+          top: "8%",
+          bottom: "8%",
+          width: "1px",
+          background: `linear-gradient(to bottom, transparent, ${hexToRgba(
+            accentColor,
+            0.55,
+          )}, transparent)`,
+        }}
+      />
+
+      <Box
+        as="svg"
+        position="absolute"
+        inset={0}
+        width="100%"
+        height="100%"
+        viewBox="0 0 1200 800"
+        preserveAspectRatio="none"
+        display="block"
+        opacity={{ base: 0.68, md: 1 }}
+      >
+        {CODING_BUILD_ROUTES.map((route) => (
+          <path
+            key={route.d}
+            d={route.d}
+            fill="none"
+            stroke={pathColor}
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        ))}
+
+        {CODING_BUILD_MODULES.map((module) => (
+          <motion.g
+            key={`${module.x}-${module.y}`}
+            animate={
+              prefersReducedMotion
+                ? undefined
+                : { opacity: [0.28, 0.62, 0.28] }
+            }
+            transition={{
+              duration: 4.5,
+              delay: module.delay,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            <rect
+              x={module.x}
+              y={module.y}
+              width={module.width}
+              height={module.height}
+              rx="14"
+              fill={moduleFill}
+              stroke={pathColor}
+              strokeWidth="1.5"
+            />
+            {[0, 1, 2].map((index) => (
+              <rect
+                key={index}
+                x={module.x + 16 + index * 22}
+                y={module.y + 16}
+                width="12"
+                height="12"
+                rx="3"
+                fill={index === 1 ? accentColor : "transparent"}
+                fillOpacity={index === 1 ? 0.45 : 0}
+                stroke={pathColor}
+              />
+            ))}
+            <rect
+              x={module.x + 16}
+              y={module.y + 42}
+              width={module.width - 52}
+              height="4"
+              rx="2"
+              fill={pathColor}
+            />
+            <circle
+              cx={module.x + module.width}
+              cy={module.y + module.height / 2}
+              r="4"
+              fill={accentColor}
+              fillOpacity="0.7"
+            />
+            <circle
+              cx={module.x}
+              cy={module.y + module.height / 2}
+              r="4"
+              fill={accentColor}
+              fillOpacity="0.7"
+            />
+          </motion.g>
+        ))}
+
+      </Box>
+
+      {CODING_BUILD_NODES.map((node) => (
+        <Box
+          key={`${node.cx}-${node.cy}`}
+          position="absolute"
+          left={`${node.cx / 12}%`}
+          top={`${node.cy / 8}%`}
+          transform="translate(-50%, -50%)"
+          width={{ base: "5px", md: "7px" }}
+          height={{ base: "5px", md: "7px" }}
+        >
+          <motion.div
+            animate={
+              prefersReducedMotion
+                ? { scale: 1, opacity: 0.3 }
+                : { scale: [0.75, 1.25, 0.75], opacity: [0.2, 0.65, 0.2] }
+            }
+            transition={{
+              duration: 3.6,
+              delay: node.delay,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            style={{
+              width: "100%",
+              height: "100%",
+              borderRadius: "999px",
+              background: accentColor,
+            }}
+          />
+        </Box>
+      ))}
+
+      {!prefersReducedMotion
+        ? CODING_BUILD_ROUTES.map((route) => (
+            <motion.div
+              key={`packet-${route.d}`}
+              initial={{
+                left: route.points[0][0],
+                top: route.points[0][1],
+              }}
+              animate={{
+                left: route.points.map(([left]) => left),
+                top: route.points.map(([, top]) => top),
+                opacity: [0, 0.9, 0.9, 0],
+              }}
+              transition={{
+                duration: route.duration,
+                delay: route.delay,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+              style={{
+                position: "absolute",
+                width: 0,
+                height: 0,
+              }}
+            >
+              <Box
+                width={{ base: "5px", md: "8px" }}
+                height={{ base: "5px", md: "8px" }}
+                borderRadius="full"
+                background={accentColor}
+                transform="translate(-50%, -50%)"
+              />
+            </motion.div>
+          ))
+        : null}
+    </Box>
+  );
+};
+
 const Home = ({
   isSignedIn,
   setIsSignedIn,
@@ -6084,12 +6585,15 @@ const Home = ({
   const socket = "socket";
   const [role, setRole] = useState("chores");
   const topRef = useRef();
+  const landingHeroRef = useRef(null);
+  const [isLandingHeaderScrolled, setIsLandingHeaderScrolled] = useState(false);
+  const [showLandingHeaderActions, setShowLandingHeaderActions] =
+    useState(false);
   const themeColor = useThemeStore((s) => s.themeColor);
   const { colorMode, setColorMode } = useColorMode();
-  const landingThemeToggleColor = useColorModeValue("#1f2937", "#f8fafc");
-  const landingThemeToggleMutedColor = useColorModeValue(
-    "rgba(31, 41, 55, 0.42)",
-    "rgba(248, 250, 252, 0.42)",
+  const landingHeroAccentColor = useColorModeValue(
+    `${themeColor}.600`,
+    `${themeColor}.300`,
   );
 
   const [questionsAnswered, setQuestionsAnswered] =
@@ -6245,6 +6749,44 @@ const Home = ({
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (view !== "buttons") {
+      setIsLandingHeaderScrolled(false);
+      setShowLandingHeaderActions(false);
+      return undefined;
+    }
+
+    let frameId = 0;
+    const updateLandingHeader = () => {
+      frameId = 0;
+      setIsLandingHeaderScrolled(window.scrollY > 4);
+
+      const hero = landingHeroRef.current;
+      if (!hero) {
+        setShowLandingHeaderActions(false);
+        return;
+      }
+
+      setShowLandingHeaderActions(hero.getBoundingClientRect().bottom <= 96);
+    };
+    const scheduleLandingHeaderUpdate = () => {
+      if (frameId) return;
+      frameId = window.requestAnimationFrame(updateLandingHeader);
+    };
+
+    updateLandingHeader();
+    window.addEventListener("scroll", scheduleLandingHeaderUpdate, {
+      passive: true,
+    });
+    window.addEventListener("resize", scheduleLandingHeaderUpdate);
+
+    return () => {
+      if (frameId) window.cancelAnimationFrame(frameId);
+      window.removeEventListener("scroll", scheduleLandingHeaderUpdate);
+      window.removeEventListener("resize", scheduleLandingHeaderUpdate);
+    };
+  }, [view]);
+
   // localStorage.getItem("local_npub"),
   // localStorage.getItem("local_nsec")
 
@@ -6262,8 +6804,8 @@ const Home = ({
     setView("signIn");
   }, [isSignedIn, navigate, setView]);
 
-  const televise = async () => {
-    if (isNsecSecretKey(userName)) {
+  const createLandingAccount = async (accountName) => {
+    if (isCreatingAccount || isNsecSecretKey(accountName)) {
       setErrorMessage("");
       return;
     }
@@ -6322,7 +6864,7 @@ const Home = ({
       accs += 1;
       localStorage.setItem("accs", accs);
       const newKeys = await generateNostrKeys(
-        userName,
+        accountName,
         setLoadingMessage,
         translation[userLanguage]["nostrContent.onboardedProfileAbout"],
         translation[userLanguage]["nostrContent.introductionPost"],
@@ -6336,7 +6878,7 @@ const Home = ({
 
       setKeys(newKeys);
 
-      localStorage.setItem("displayName", userName);
+      localStorage.setItem("displayName", accountName);
 
       const defaultInterval = 2880;
       const currentTime = new Date();
@@ -6347,9 +6889,10 @@ const Home = ({
       // Create user in Firestore with language and theme preferences.
       const createdUserData = await createUser(
         newKeys.npub,
-        userName,
+        accountName,
         userLanguage,
       );
+      localStorage.setItem("userLanguage", userLanguage);
       applyUserThemePreferences(createdUserData, setColorMode);
       setIsAdaptiveLearning(createdUserData?.isAdaptiveLearning !== false);
       await updateUserData(
@@ -6395,6 +6938,12 @@ const Home = ({
     }
   };
 
+  const televise = () => createLandingAccount(userName);
+
+  const handleLandingHeaderCreate = () => {
+    createLandingAccount("");
+  };
+
   const handleSignIn = async () => {
     setErrorMessage("");
     setIsSigningIn(true);
@@ -6416,6 +6965,7 @@ const Home = ({
 
       await ensureAppCheckReady();
       const userData = await createUser(npub, userName, userLanguage);
+      localStorage.setItem("userLanguage", userLanguage);
       applyUserThemePreferences(userData, setColorMode);
       setIsAdaptiveLearning(userData?.isAdaptiveLearning !== false);
 
@@ -6512,6 +7062,7 @@ const Home = ({
 
       await ensureAppCheckReady();
       const userData = await createUser(npub, userName, userLanguage);
+      localStorage.setItem("userLanguage", userLanguage);
       applyUserThemePreferences(userData, setColorMode);
       setIsAdaptiveLearning(userData?.isAdaptiveLearning !== false);
 
@@ -6635,6 +7186,14 @@ const Home = ({
     }
   };
 
+  const handleLandingThemeToggle = () => {
+    const nextColorMode = colorMode === "dark" ? "light" : "dark";
+    soundManager.resume();
+    soundManager.play("modeSwitch");
+    setColorMode(nextColorMode);
+    persistThemeMode(nextColorMode);
+  };
+
   const handleCopyKeys = () => {
     const keysToCopy = `${localStorage.getItem("local_nsec")}`;
     navigator.clipboard.writeText(keysToCopy);
@@ -6701,172 +7260,205 @@ const Home = ({
           paddingTop: 16,
         }}
       >
-        <HStack
-          position="fixed"
-          top={{ base: 4, md: 5 }}
-          right={{ base: 4, md: 5 }}
-          zIndex="popover"
-          spacing={2}
-          px={2}
-          py={1.5}
-          borderRadius="full"
-          color={landingThemeToggleColor}
-          data-sound-ignore-select="true"
-        >
-          <Box
-            as={FaSun}
-            fontSize="13px"
-            color={
-              colorMode === "light"
-                ? landingThemeToggleColor
-                : landingThemeToggleMutedColor
-            }
-          />
-          <Switch
-            aria-label={
-              colorMode === "dark"
-                ? "Switch to light mode"
-                : "Switch to dark mode"
-            }
-            isChecked={colorMode === "dark"}
-            size="sm"
+        {view === "buttons" ? (
+          <LandingHeader
+            brand={renderContentBasedOnURL()}
+            colorMode={colorMode}
             colorScheme={themeColor}
-            onChange={(event) => {
-              const nextColorMode = event.target.checked ? "dark" : "light";
-              soundManager.resume();
-              soundManager.play("modeSwitch");
-              setColorMode(nextColorMode);
-              persistThemeMode(nextColorMode);
-            }}
+            createLabel={translation[userLanguage]["landing.button.telemetry"]}
+            signInLabel={translation[userLanguage]["landing.button.signIn"]}
+            isScrolled={isLandingHeaderScrolled}
+            showActions={showLandingHeaderActions}
+            isCreatingAccount={isCreatingAccount}
+            onCreateAccount={handleLandingHeaderCreate}
+            onSignIn={() => setView("signIn")}
+            onToggleTheme={handleLandingThemeToggle}
           />
-          <Box
-            as={FaMoon}
-            fontSize="12px"
-            color={
-              colorMode === "dark"
-                ? landingThemeToggleColor
-                : landingThemeToggleMutedColor
-            }
+        ) : (
+          <LandingThemeToggle
+            colorMode={colorMode}
+            onToggle={handleLandingThemeToggle}
+            fixed
           />
-        </HStack>
+        )}
 
         {view === "buttons" && (
           <>
-            <VStack spacing={4} height="85vh">
-              <VStack spacing={4} width="95%" maxWidth="600px" mb={4}>
-                <HStack spacing={2} alignItems="center" pt={8}>
-                  <CloudCanvas />
-                  {isCreatingAccount && (
-                    <Text
-                      fontSize="smaller"
-                      backgroundColor="appSurface"
-                      color="appText"
-                      fontWeight="bold"
-                      borderRadius="8px"
-                      padding="10px"
-                      width="250px"
-                      height="110px"
-                      display="flex"
-                      alignItems="center"
-                      textAlign="left"
-                      justifyContent="center"
-                    >
-                      {translation[userLanguage][loadingMessage]}
-                    </Text>
-                  )}
-                </HStack>
+            <Box
+              as="section"
+              ref={landingHeroRef}
+              minH={{ base: "92dvh", md: "88dvh" }}
+              width="100%"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              px={{ base: 5, md: 8 }}
+              pt={{ base: 24, md: 28 }}
+              pb={{ base: 14, md: 16 }}
+              position="relative"
+              overflow="hidden"
+            >
+              <CodingHeroBackdrop themeColor={themeColor} />
 
-                <Text fontSize="3xl">{renderContentBasedOnURL()}</Text>
-                <Text fontSize="md" mt="-5" width="80%">
-                  {translation[userLanguage]["landing.introduction"]}
-                </Text>
-              </VStack>
-
-              <Text fontSize="md" maxWidth="600px" pt={0} mb={0}>
-                <b>{translation[userLanguage]["createAccount.instructions"]}</b>
-              </Text>
-
-              <Input
-                mt="-3"
-                pt={0}
-                style={{
-                  maxWidth: 300,
-                  boxShadow: "0.5px 0.5px 1px rgba(0,0,0,0.75)",
-                }}
-                placeholder={
-                  translation[userLanguage]["createAccount.input.placeholder"]
-                }
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                backgroundColor="appSurface"
-              />
-
-              {secretKeyDetected ? (
-                <SecretKeyDetectedMessage userLanguage={userLanguage} />
-              ) : null}
-
-              <VStack>
-                <Button
-                  onKeyDown={(e) =>
-                    (e.key === "Enter" || e.key === " ") && televise()
-                  }
-                  onMouseDown={televise}
-                  colorScheme="purple"
-                  variant="outline"
-                  isDisabled={userName.trim().length < 2 || secretKeyDetected}
-                  style={{ width: "150px" }}
-                >
-                  {translation[userLanguage]["landing.button.telemetry"]}
-                </Button>
-                <Text fontSize="xs">{translation[userLanguage]["or"]}</Text>
-                <Button
-                  colorScheme="pink"
-                  backgroundColor="appAccentSoft"
-                  variant="outline"
-                  border="1px solid var(--chakra-colors-appBorder)"
-                  minWidth="150px"
-                  width="fit-content"
-                  maxWidth="100%"
-                  px={6}
-                  onMouseDown={() => setView("signIn")}
-                  onKeyDown={(e) =>
-                    (e.key === "Enter" || e.key === " ") && setView("signIn")
-                  }
-                >
-                  {translation[userLanguage]["landing.button.signIn"]}
-                </Button>
-
-                {errorMessage ? (
-                  <Text color="red.500" fontSize="sm" maxWidth="320px">
-                    {getErrorMessage(errorMessage)}
+              <VStack
+                spacing={{ base: 5, md: 6 }}
+                width="100%"
+                maxWidth="780px"
+                position="relative"
+                zIndex={1}
+              >
+                {isCreatingAccount ? (
+                  <Text
+                    fontSize="sm"
+                    backgroundColor="appSurface"
+                    color="appText"
+                    fontWeight="bold"
+                    borderRadius="12px"
+                    px={4}
+                    py={3}
+                  >
+                    {translation[userLanguage][loadingMessage]}
                   </Text>
                 ) : null}
 
-                <FormControl
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  m={2}
+                <motion.div
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45 }}
                 >
-                  <FormLabel htmlFor="language-toggle" mb="0">
-                    {
-                      translation[userLanguage][
-                        userLanguage === "en"
-                          ? "languageToggle.english"
-                          : "languageToggle.spanish"
-                      ]
-                    }
-                  </FormLabel>
-                  <Switch
-                    colorScheme="pink"
-                    id="language-toggle"
-                    isChecked={userLanguage === "es"}
-                    onChange={handleToggle}
-                    onKeyDown={(e) => e.key === "Enter" && handleToggle()}
-                  />
-                </FormControl>
+                  <Heading
+                    as="h1"
+                    fontSize="clamp(2.5rem, 7vw, 4.75rem)"
+                    fontWeight="600"
+                    lineHeight="1.04"
+                    letterSpacing="-0.045em"
+                  >
+                    {landingTranslationMap["landing.hero.title"] ||
+                      "Your Personal"}
+                    <br />
+                    <Text as="span" color={landingHeroAccentColor}>
+                      {landingTranslationMap["landing.hero.titleAccent"] ||
+                        "Coding Tutor"}
+                    </Text>
+                  </Heading>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45, delay: 0.1 }}
+                >
+                  <Text
+                    fontSize={{ base: "md", md: "lg" }}
+                    color="appTextMuted"
+                    maxWidth="680px"
+                    lineHeight="1.65"
+                  >
+                    {landingTranslationMap["landing.hero.subtitle"] ||
+                      "Learn the foundations of software engineering so you can build your ideas with coding agents quickly."}
+                  </Text>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.45, delay: 0.2 }}
+                  style={{ width: "100%" }}
+                >
+                  <VStack spacing={3} width="100%">
+                    <Text fontSize="md" maxWidth="600px">
+                      <b>
+                        {
+                          translation[userLanguage][
+                            "createAccount.instructions"
+                          ]
+                        }
+                      </b>
+                    </Text>
+
+                    <Input
+                      maxWidth="340px"
+                      boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.5)"
+                      placeholder={
+                        translation[userLanguage][
+                          "createAccount.input.placeholder"
+                        ]
+                      }
+                      value={userName}
+                      onChange={(e) => setUserName(e.target.value)}
+                      backgroundColor="appSurface"
+                    />
+
+                    {secretKeyDetected ? (
+                      <SecretKeyDetectedMessage userLanguage={userLanguage} />
+                    ) : null}
+
+                    <Button
+                      onKeyDown={(e) =>
+                        (e.key === "Enter" || e.key === " ") && televise()
+                      }
+                      onMouseDown={televise}
+                      colorScheme={themeColor}
+                      variant="outline"
+                      isDisabled={
+                        userName.trim().length < 2 || secretKeyDetected
+                      }
+                      width="150px"
+                    >
+                      {translation[userLanguage]["landing.button.telemetry"]}
+                    </Button>
+                    <Text fontSize="xs">{translation[userLanguage]["or"]}</Text>
+                    <Button
+                      colorScheme="pink"
+                      backgroundColor="appAccentSoft"
+                      variant="outline"
+                      border="1px solid var(--chakra-colors-appBorder)"
+                      minWidth="150px"
+                      width="fit-content"
+                      maxWidth="100%"
+                      px={6}
+                      onMouseDown={() => setView("signIn")}
+                      onKeyDown={(e) =>
+                        (e.key === "Enter" || e.key === " ") &&
+                        setView("signIn")
+                      }
+                    >
+                      {translation[userLanguage]["landing.button.signIn"]}
+                    </Button>
+
+                    {errorMessage ? (
+                      <Text color="red.500" fontSize="sm" maxWidth="320px">
+                        {getErrorMessage(errorMessage)}
+                      </Text>
+                    ) : null}
+
+                    <FormControl
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      m={2}
+                    >
+                      <FormLabel htmlFor="language-toggle" mb="0">
+                        {
+                          translation[userLanguage][
+                            userLanguage === "en"
+                              ? "languageToggle.english"
+                              : "languageToggle.spanish"
+                          ]
+                        }
+                      </FormLabel>
+                      <Switch
+                        colorScheme="pink"
+                        id="language-toggle"
+                        isChecked={userLanguage === "es"}
+                        onChange={handleToggle}
+                        onKeyDown={(e) => e.key === "Enter" && handleToggle()}
+                      />
+                    </FormControl>
+                  </VStack>
+                </motion.div>
               </VStack>
-            </VStack>
+            </Box>
 
             {/* "https://res.cloudinary.com/dtkeyccga/image/upload/v1755215290/Untitled_800_x_600_px_1_dmtcwn.gif" */}
 
@@ -7387,19 +7979,20 @@ const Home = ({
                   <SecretKeyDetectedMessage userLanguage={userLanguage} />
                 ) : null}
               </Box>
-              <HStack w="100%" mt={4} mb={12} justifyContent="center">
+              <VStack w="100%" mt={4} mb={12} spacing={3}>
                 <Button
                   onKeyDown={(e) =>
                     (e.key === "Enter" || e.key === " ") && televise()
                   }
                   onMouseDown={televise}
-                  colorScheme="purple"
+                  colorScheme={themeColor}
                   variant="outline"
                   isDisabled={userName.trim().length < 2 || secretKeyDetected}
-                  style={{ width: "150px" }}
+                  width="150px"
                 >
                   {translation[userLanguage]["landing.button.telemetry"]}
                 </Button>
+                <Text fontSize="xs">{translation[userLanguage]["or"]}</Text>
                 <Button
                   colorScheme="pink"
                   backgroundColor="appAccentSoft"
@@ -7416,7 +8009,7 @@ const Home = ({
                 >
                   {translation[userLanguage]["landing.button.signIn"]}
                 </Button>
-              </HStack>
+              </VStack>
             </VStack>
           </>
         )}
@@ -8277,7 +8870,7 @@ function App({ isShutDown }) {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(0); // State to store current step
-  const [userLanguage, setUserLanguage] = useState("en"); // State to store user language preference
+  const [userLanguage, setUserLanguage] = useState(getInitialUserLanguage);
   const tutorialEndIndex = getTutorialEndIndex(steps[userLanguage] || []);
   const { setColorMode } = useColorMode();
   const navigate = useNavigate();
@@ -8597,11 +9190,12 @@ function App({ isShutDown }) {
                 const userData = userSnapshot.data();
                 applyUserThemePreferences(userData, setColorMode);
 
-                const restoredLanguage =
-                  userData.userLanguage ||
-                  userData.language ||
-                  localStorage.getItem("userLanguage") ||
-                  "en";
+                const restoredLanguage = resolveAccountLanguage({
+                  accountLanguage: userData.language,
+                  legacyAccountLanguage: userData.userLanguage,
+                  localLanguage: localStorage.getItem("userLanguage"),
+                  detectedLanguage: getInitialUserLanguage(),
+                });
                 const authoredQuestionCount =
                   steps[restoredLanguage]?.length || steps.en?.length || 0;
                 const lastAuthoredStep = Math.max(0, authoredQuestionCount - 1);
@@ -8646,18 +9240,8 @@ function App({ isShutDown }) {
                   startupLegacyPasscodeVerified ||
                   Boolean(userData?.hasSubmittedPasscode);
 
-                setUserLanguage(
-                  userData.userLanguage ||
-                    localStorage.getItem("userLanguage") ||
-                    "en",
-                );
-
-                localStorage.setItem(
-                  "userLanguage",
-                  userData.language ||
-                    localStorage.getItem("userLanguage") ||
-                    "en",
-                );
+                setUserLanguage(restoredLanguage);
+                localStorage.setItem("userLanguage", restoredLanguage);
 
                 if (userData.hasOwnProperty("allowPosts")) {
                   // Use the value from Firestore (even if it's false)
@@ -8692,8 +9276,9 @@ function App({ isShutDown }) {
                   );
                 }
               } else {
-                localStorage.setItem("userLanguage", "en");
-                setUserLanguage("en");
+                const fallbackLanguage = getInitialUserLanguage();
+                localStorage.setItem("userLanguage", fallbackLanguage);
+                setUserLanguage(fallbackLanguage);
               }
 
               let startupPatreonAuthorized = false;
@@ -8821,11 +9406,14 @@ function App({ isShutDown }) {
                   const userData = userSnapshot.data();
                   applyUserThemePreferences(userData, setColorMode);
 
-                  setUserLanguage(
-                    userData.userLanguage ||
-                      localStorage.getItem("userLanguage") ||
-                      "en",
-                  );
+                  const restoredUserLanguage = resolveAccountLanguage({
+                    accountLanguage: userData.language,
+                    legacyAccountLanguage: userData.userLanguage,
+                    localLanguage: localStorage.getItem("userLanguage"),
+                    detectedLanguage: getInitialUserLanguage(),
+                  });
+                  setUserLanguage(restoredUserLanguage);
+                  localStorage.setItem("userLanguage", restoredUserLanguage);
                 }
                 // x
                 if (step > 6) {
