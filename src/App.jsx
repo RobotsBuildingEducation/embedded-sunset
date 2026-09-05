@@ -2138,12 +2138,13 @@ const Step = ({
         goals: "Daily learning goals completed",
       };
   const rawGroup = String(step?.group || "").trim();
-  const chapterMetricLabel =
-    ["introduction", "tutorial"].includes(rawGroup.toLowerCase())
-      ? "Tutorial"
-      : rawGroup
-        ? rawGroup.charAt(0).toUpperCase() + rawGroup.slice(1)
-        : "";
+  const chapterMetricLabel = ["introduction", "tutorial"].includes(
+    rawGroup.toLowerCase(),
+  )
+    ? "Tutorial"
+    : rawGroup
+      ? rawGroup.charAt(0).toUpperCase() + rawGroup.slice(1)
+      : "";
   const metricTooltipStyle = {
     hasArrow: true,
     placement: "top",
@@ -5038,8 +5039,8 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
             )}
             {Boolean(
               (step.showPreview || step.question?.showPreview) &&
-                !isNewQuestionType(step) &&
-                (step.question?.previewCode || step.question?.starterCode),
+              !isNewQuestionType(step) &&
+              (step.question?.previewCode || step.question?.starterCode),
             ) && (
               <Box
                 width="100%"
@@ -5055,7 +5056,11 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
                 mb={2}
               >
                 <LiveReactEditorModal
-                  code={step.question?.previewCode || step.question?.starterCode || ""}
+                  code={
+                    step.question?.previewCode ||
+                    step.question?.starterCode ||
+                    ""
+                  }
                   mode="preview"
                   autoRun={true}
                   hideRunButton={true}
@@ -6120,8 +6125,7 @@ const LandingHeader = ({
     sx={{
       backdropFilter: isScrolled ? "blur(18px)" : "none",
       WebkitBackdropFilter: isScrolled ? "blur(18px)" : "none",
-      transition:
-        "background-color 180ms ease, border-color 180ms ease",
+      transition: "background-color 180ms ease, border-color 180ms ease",
     }}
   >
     <HStack minH={{ base: "40px", md: "44px" }} justify="space-between">
@@ -6316,14 +6320,8 @@ const CodingHeroBackdrop = ({ themeColor }) => {
   const accentToken =
     colorMode === "dark" ? `${themeColor}.300` : `${themeColor}.500`;
   const [accentColor] = useToken("colors", [accentToken]);
-  const gridColor = hexToRgba(
-    accentColor,
-    colorMode === "dark" ? 0.12 : 0.1,
-  );
-  const pathColor = hexToRgba(
-    accentColor,
-    colorMode === "dark" ? 0.28 : 0.2,
-  );
+  const gridColor = hexToRgba(accentColor, colorMode === "dark" ? 0.12 : 0.1);
+  const pathColor = hexToRgba(accentColor, colorMode === "dark" ? 0.28 : 0.2);
   const moduleFill =
     colorMode === "dark" ? "rgba(8, 15, 32, 0.28)" : "rgba(255, 252, 247, 0.3)";
 
@@ -6409,9 +6407,7 @@ const CodingHeroBackdrop = ({ themeColor }) => {
           <motion.g
             key={`${module.x}-${module.y}`}
             animate={
-              prefersReducedMotion
-                ? undefined
-                : { opacity: [0.28, 0.62, 0.28] }
+              prefersReducedMotion ? undefined : { opacity: [0.28, 0.62, 0.28] }
             }
             transition={{
               duration: 4.5,
@@ -6467,7 +6463,6 @@ const CodingHeroBackdrop = ({ themeColor }) => {
             />
           </motion.g>
         ))}
-
       </Box>
 
       {CODING_BUILD_NODES.map((node) => (
