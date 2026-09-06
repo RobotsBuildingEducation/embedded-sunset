@@ -394,82 +394,34 @@ test("parseModelResponse preserves distinct thoughtSummary, empty thoughts, and 
   assert.equal(parsed.thoughtSignature, "sig_opaque_token_999");
 });
 
-test("generateBotMove seamlessly falls back to fallbackModel if chessModel fails", async () => {
-  const game = gameFromMoves(["e4"]);
-  const brokenChessModel = {
+test("generateBotMove fails after one request without consulting another model", async () => {
+  const calls = [];
+  const chessModel = {
     generateContentStream: async () => {
+      calls.push("stream");
       throw new Error("400 Bad Request: Model not available");
     },
-    generateContent: async () => {
-      throw new Error("400 Bad Request: Model not available");
-    },
+    generateContent: async () => calls.push("non-stream"),
   };
-  const workingFallbackModel = {
-    generateContent: async () => ({
-      response: {
-        candidates: [
-          {
-            thoughtSignature: "sig_fallback_ok",
-            content: {
-              parts: [
-                { thought: "Paso 1: Desarrollar caballo." },
-                {
-                  text: JSON.stringify({
-                    thoughtSummary: "Caballo a f6.",
-                    move: "Nf6",
-                  }),
-                },
-              ],
-            },
-          },
-        ],
-      },
-    }),
-  };
-
-  const emitted = [];
-  const result = await generateBotMove({
-    game,
-    botElo: 1500,
-    chessModel: brokenChessModel,
-    fallbackModel: workingFallbackModel,
-    stepDelayMs: 2,
-    onThoughtStep: (step, index) => {
-      emitted.push({ step, index });
-    },
-  });
-
-  assert.equal(result.move, "Nf6");
-  assert.equal(result.thoughtSummary, "Caballo a f6.");
-  assert.deepEqual(result.thoughts, ["Paso 1: Desarrollar caballo."]);
-  assert.deepEqual(result.thoughtSignatures, ["sig_fallback_ok"]);
+  const fallbackModel = { generateContent: async () => calls.push("fallback") };
+  await assert.rejects(generateBotMove({
+    game: gameFromMoves(["e4"]), botElo: 1500, chessModel, fallbackModel,
+  }), /Model not available/);
+  assert.deepEqual(calls, ["stream"]);
 });
 
-test("generateBotMove fallback preserves distinct deliberation steps separate from summary", async () => {
+test("generateBotMove propagates errors without inventing a move or deliberation", async () => {
   const game = new Chess();
-  const failingModel = {
-    generateContentStream: () => {
-      throw new Error("Quota exceeded");
-    },
-    generateContent: () => {
-      throw new Error("Quota exceeded");
-    },
-  };
-
-  const result = await generateBotMove({
+  const before = game.fen();
+  const emitted = [];
+  await assert.rejects(generateBotMove({
     game,
     botElo: 900,
-    chessModel: failingModel,
-    fallbackModel: failingModel,
-    stepDelayMs: 2,
-  });
-
-  assert.ok(result.move);
-  assert.ok(result.thought);
-  assert.ok(result.thoughtSummary);
-  assert.ok(Array.isArray(result.thoughts));
-  assert.ok(result.thoughts.length >= 2);
-  assert.notEqual(result.thoughts[0], result.thoughtSummary);
+    chessModel: { generateContent: async () => { throw new Error("Quota exceeded"); } },
+    onThoughtStep: (step) => emitted.push(step),
+  }), /Quota exceeded/);
+  assert.deepEqual(emitted, []);
+  assert.equal(game.fen(), before);
 });
 
 test("streamed thoughts are preserved in result.thoughts even if final response omits thought parts", async () => {

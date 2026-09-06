@@ -48,6 +48,23 @@ because they are defended. Selected pieces show their actual legal moves.
 
 ## Gemini
 
+The current bot UI calls `chessModel` (`gemini-3.7-flash`) directly through
+Firebase Vertex AI. Each turn attempt makes one generation request, including
+forced moves. It requests native thought summaries with `includeThoughts: true`
+and an Elo-dependent thinking level. Completed lines from the stream drive both
+the loader and the saved steps verbatim. The final JSON contains the legal move
+and a short explanation, without requesting a second set of steps. Thought
+signatures are opaque metadata, not readable reasoning.
+
+`chessBot.js` assembles answer JSON from non-thought stream parts because the
+installed Vertex AI SDK loses thought flags and can reject signature-only parts
+when aggregating a response. Stream failures or invalid moves leave the board
+unchanged and expose the existing manual retry button. There are no automatic
+generation retries, alternate models, random moves, or canned reasoning steps.
+
+The following describes the legacy server bot endpoint, which the current bot UI
+does not call:
+
 The `chessApi` Cloud Function calls Gemini on Vertex AI using its service account.
 It supplies the FEN, full move history, exact legal SAN choices, and a prompt
 targeting the room's selected Elo (1500 by default). This is an unrated target, not a calibrated engine

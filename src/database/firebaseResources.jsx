@@ -174,7 +174,7 @@ const gradingModel = getGenerativeModel(vertexAI, {
 });
 
 const chessModel = getGenerativeModel(vertexAI, {
-  model: "gemini-3.5-flash-lite",
+  model: "gemini-3.7-flash",
   generationConfig: {
     responseMimeType: "application/json",
   },

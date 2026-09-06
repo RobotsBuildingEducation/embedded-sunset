@@ -43,7 +43,7 @@ test("translate helper retrieves localized strings and formats dynamic values", 
 
   assert.equal(
     translate("es", "thought.viewChainSteps", 3),
-    "Ver cadena de razonamiento (3 pasos)",
+    "Ver resúmenes del razonamiento (3 pasos)",
   );
 });
 

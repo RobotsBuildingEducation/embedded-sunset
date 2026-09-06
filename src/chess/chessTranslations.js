@@ -81,10 +81,10 @@ export const chessTranslations = {
       `View chain of thoughts (${steps} steps) & signatures (${sigs})`,
     "thought.viewSignaturesOnly": (sigs) =>
       `View reasoning signatures (${sigs})`,
-    "thought.viewChainSteps": (n) => `View chain of thoughts (${n} steps)`,
+    "thought.viewChainSteps": (n) => `View thought summaries (${n} steps)`,
     "thought.viewChainDetails": "View chain of thoughts (details)",
     "thought.step": (n) => `Step ${n}`,
-    "thought.chainHeading": "Internal Chain of Thoughts",
+    "thought.chainHeading": "Thought summaries",
     "thought.signaturesHeading": "Cryptographic Reasoning Signatures",
     "thought.signaturesExplainer":
       "Opaque cryptographic proofs emitted by Gemini Thinking verifying that this move was produced through internal deliberation.",
@@ -247,10 +247,10 @@ export const chessTranslations = {
     "thought.viewSignaturesOnly": (sigs) =>
       `Ver firmas de razonamiento (${sigs})`,
     "thought.viewChainSteps": (n) =>
-      `Ver cadena de razonamiento (${n} pasos)`,
+      `Ver resúmenes del razonamiento (${n} pasos)`,
     "thought.viewChainDetails": "Ver cadena de razonamiento (detalles)",
     "thought.step": (n) => `Paso ${n}`,
-    "thought.chainHeading": "Cadena interna de razonamiento",
+    "thought.chainHeading": "Resúmenes del razonamiento",
     "thought.signaturesHeading": "Firmas criptográficas de razonamiento",
     "thought.signaturesExplainer":
       "Pruebas criptográficas opacas generadas por Gemini Thinking que verifican que esta jugada fue calculada mediante deliberación interna.",

@@ -32,10 +32,9 @@ import {
   squares,
   territoryFor,
 } from "./chessLogic.js";
-import { generateBotMove, splitIntoThoughtSteps } from "./chessBot.js";
+import { generateBotMove } from "./chessBot.js";
 import {
   chessModel,
-  model as fallbackModel,
   ensureAppCheckReady,
 } from "../database/firebaseResources.jsx";
 import ChessPiece from "./ChessPiece.jsx";
@@ -191,7 +190,10 @@ function ChessRoom() {
   const displaySignatures = useMemo(() => {
     if (botThoughtSignatures && botThoughtSignatures.length > 0)
       return botThoughtSignatures;
-    if (room?.lastBotThoughtSignatures && room.lastBotThoughtSignatures.length > 0)
+    if (
+      room?.lastBotThoughtSignatures &&
+      room.lastBotThoughtSignatures.length > 0
+    )
       return room.lastBotThoughtSignatures;
     if (botThoughtSignature) return [botThoughtSignature];
     if (room?.lastBotThoughtSignature) return [room.lastBotThoughtSignature];
@@ -311,7 +313,6 @@ function ChessRoom() {
     setChainOpen(false);
     setError("");
 
-    const streamedSteps = [];
     ensureAppCheckReady()
       .catch(() => {})
       .then(() =>
@@ -319,15 +320,11 @@ function ChessRoom() {
           game,
           botElo,
           chessModel,
-          fallbackModel,
           userLanguage,
           onThoughtStep: (step, index, meta) => {
             if (step) {
               setActiveThinkingStep(step);
               setActiveThinkingStepIndex(index);
-              if (!streamedSteps.includes(step)) {
-                streamedSteps.push(step);
-              }
             }
             if (meta?.signatures?.length) {
               setBotThoughtSignatures(meta.signatures);
@@ -340,12 +337,7 @@ function ChessRoom() {
         if (!result?.move) {
           throw new Error(t("error.noLegalMove"));
         }
-        const finalThoughts =
-          result.thoughts && result.thoughts.length > 0
-            ? result.thoughts
-            : streamedSteps.length > 0
-              ? [...streamedSteps]
-              : [];
+        const finalThoughts = result.thoughts;
         const finalSignatures =
           result.thoughtSignatures && result.thoughtSignatures.length > 0
             ? result.thoughtSignatures
@@ -357,9 +349,7 @@ function ChessRoom() {
           setBotThought(result.thought);
         }
         setBotThoughts(finalThoughts);
-        if (result.thoughtSignature || finalSignatures[0]) {
-          setBotThoughtSignature(result.thoughtSignature || finalSignatures[0]);
-        }
+        setBotThoughtSignature(result.thoughtSignature || finalSignatures[0] || "");
         setBotThoughtSignatures(finalSignatures);
         const next = applyLocalMove(room, result.move, {
           thoughtSummary: result.thought,
@@ -643,7 +633,7 @@ function ChessRoom() {
                     {t("action.playBotTitle")}
                   </span>
                   <span className="chess-bot-btn-elo">
-                    ({formatElo(botElo, userLanguage)} ELO)
+                    &nbsp;({formatElo(botElo, userLanguage)} ELO)
                   </span>
                 </span>
               </button>
@@ -715,7 +705,9 @@ function ChessRoom() {
                 className={`chess-thought-card ${thinking ? "is-thinking" : displayThoughts.length > 0 ? "is-clickable" : ""} ${chainOpen ? "is-chain-open" : ""}`}
                 role="region"
                 aria-label="Gemini thought process"
-                tabIndex={!thinking && displayThoughts.length > 0 ? 0 : undefined}
+                tabIndex={
+                  !thinking && displayThoughts.length > 0 ? 0 : undefined
+                }
                 onClick={() => {
                   if (!thinking && displayThoughts.length > 0) {
                     setChainOpen((prev) => !prev);
