@@ -7,6 +7,7 @@ const { pipeline } = require("stream");
 const { promisify } = require("util");
 const pipelineAsync = promisify(pipeline);
 const admin = require("firebase-admin"); // Import Firebase Admin SDK
+const { createChessHandler } = require("./chess");
 const fireFunctions = require("firebase-functions/v1"); // Imports v1 functions
 const { onRequest } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
@@ -739,6 +740,36 @@ exports.patreonAuth = onRequest(
           process.env.PATREON_WEBHOOK_SECRET,
       }),
   })
+);
+
+exports.chessApi = onRequest(
+  { region: "us-central1", timeoutSeconds: 90, memory: "256MiB", maxInstances: 10 },
+  createChessHandler({
+    db: admin.firestore(),
+    logger: functions.logger,
+    generate: async (prompt) => {
+      const { access_token: token } = await admin.app().options.credential.getAccessToken();
+      const project = process.env.GCLOUD_PROJECT || "test-data-895e2";
+      const model = process.env.CHESS_GEMINI_MODEL || "gemini-3.5-flash-lite";
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 25000);
+      try {
+        const response = await fetch(
+          `https://aiplatform.googleapis.com/v1/projects/${project}/locations/global/publishers/google/models/${model}:generateContent`,
+          {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+            signal: controller.signal,
+            body: JSON.stringify({ contents: [{ role: "user", parts: [{ text: prompt }] }],
+              generationConfig: { responseMimeType: "application/json", temperature: 0.5, maxOutputTokens: 2048 } }),
+          },
+        );
+        if (!response.ok) throw new Error(`Chess Gemini request failed (${response.status})`);
+        const result = await response.json();
+        return (result.candidates?.[0]?.content?.parts || []).map((part) => part.text || "").join("");
+      } finally { clearTimeout(timeout); }
+    },
+  }),
 );
 
 exports.app = fireFunctions.https.onRequest(app);

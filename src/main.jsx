@@ -7,6 +7,9 @@ import "./index.css";
 const AppWrapper = lazy(() =>
   import("./App.jsx").then((module) => ({ default: module.AppWrapper })),
 );
+// Chess has its own public entry point, independent of learning/onboarding redirects.
+const ChessApp = lazy(() => import("./chess/ChessApp.jsx"));
+const isChessRoute = /^\/chess(?:\/|$)/.test(window.location.pathname);
 
 const BootFallback = () => (
   <div
@@ -59,6 +62,6 @@ if ("serviceWorker" in navigator) {
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Suspense fallback={<BootFallback />}>
-    <AppWrapper />
+    {isChessRoute ? <ChessApp /> : <AppWrapper />}
   </Suspense>,
 );

@@ -1,0 +1,48 @@
+{
+  "min": 400,
+  "max": 2400,
+  "step": 100,
+  "defaultElo": 1500,
+  "bands": [
+    {
+      "max": 700,
+      "label": "First moves",
+      "tagline": "A little room to learn.",
+      "description": "A gentle starting point while you learn how the pieces move. Expect simple plans, missed threats, and chances to try things out.",
+      "focus": "Get comfortable moving pieces and spotting captures.",
+      "guidance": "Play like a new learner: use simple one-move plans, sometimes overlook threats or leave pieces unprotected, and avoid deep combinations. Do not consistently choose the strongest move."
+    },
+    {
+      "max": 1100,
+      "label": "Finding your feet",
+      "tagline": "Build your chess confidence.",
+      "description": "A relaxed challenge with more purposeful moves. Gemini looks for obvious captures but can still miss a fork or leave an opening.",
+      "focus": "Protect your pieces and notice your opponent’s threats.",
+      "guidance": "Use basic development and obvious captures. Notice immediate threats, but sometimes miss forks, combinations, or positional weaknesses. Keep plans short and allow occasional natural inaccuracies."
+    },
+    {
+      "max": 1500,
+      "label": "Club practice",
+      "tagline": "Your everyday thinking game.",
+      "description": "A balanced opponent that develops pieces, protects its king, and spots simple tactics. Good for practicing a plan a few moves ahead.",
+      "focus": "Look for forks, pins, and a plan for your next few moves.",
+      "guidance": "Choose sound intermediate-level moves: develop pieces, keep your king safe, avoid hanging material, and look for simple tactics. Consider short sequences, with occasional positional inaccuracies."
+    },
+    {
+      "max": 1900,
+      "label": "Tactical challenge",
+      "tagline": "Give your next move a second look.",
+      "description": "A sharper opponent that looks for combinations and puts loose pieces under pressure. You’ll need to check what your opponent can do in reply.",
+      "focus": "Calculate replies and turn small advantages into a plan.",
+      "guidance": "Calculate forcing checks, captures, threats, and the opponent's best replies several moves ahead. Seek tactical combinations and exploit loose pieces. Maintain sound positional play and avoid simple blunders."
+    },
+    {
+      "max": 2400,
+      "label": "Stretch yourself",
+      "tagline": "Bring your best ideas.",
+      "description": "The most demanding setting: Gemini aims for careful calculation and patient positional play, giving you fewer easy opportunities.",
+      "focus": "Anticipate plans, calculate carefully, and practice endgames.",
+      "guidance": "Aim for your strongest play. Compare candidate moves using concrete calculation of forcing lines and best defensive replies. Consider king safety, pawn structure, long-term plans, prophylaxis, and endgame technique. Avoid deliberate mistakes."
+    }
+  ]
+}

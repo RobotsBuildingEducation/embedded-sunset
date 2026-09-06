@@ -1,6 +1,11 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Chess rooms can be created, read, and updated directly by players with the room code.
+    match /chessRooms/{code} {
+      allow get, write: if code.matches('^[A-Za-z0-9]{6}$');
+      allow list: if false;
+    }
 
     match /experiments/{experimentId} {
       allow read, write: if true;
