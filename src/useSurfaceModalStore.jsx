@@ -3,6 +3,9 @@ import create from "zustand";
 export const useSurfaceModalStore = create((set) => ({
   learnModal: null,
   actionModal: null,
+  isSettingsOpen: false,
+  openSettings: () => set({ isSettingsOpen: true }),
+  closeSettings: () => set({ isSettingsOpen: false }),
   openLearnModal: (payload) =>
     set({
       learnModal: {

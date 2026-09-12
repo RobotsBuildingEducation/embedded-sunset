@@ -46,6 +46,7 @@ import { CareerAgent } from "../CareerAgent/CareerAgent";
 
 import { useNostrWalletStore } from "../../hooks/useNostrWalletStore";
 import { useThemeStore } from "../../useThemeStore";
+import { useSurfaceModalStore } from "../../useSurfaceModalStore";
 import StudyGuideModal from "../StudyGuideModal/StudyGuideModal";
 import { ChangeLanguageModal } from "../ChangeLanguageModal/ChangeLanguageModal";
 import ThemeModal from "./ThemeModal";
@@ -81,8 +82,30 @@ const SettingsMenu = ({
   soundEnabled,
   setSoundEnabled,
   onPatreonAuthorized,
+  isOpen: controlledIsOpen,
+  onOpen: controlledOnOpen,
+  onClose: controlledOnClose,
+  showFixedTrigger = false,
 }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const internalDisclosure = useDisclosure();
+  const isSettingsOpenFromStore = useSurfaceModalStore((s) => s.isSettingsOpen);
+  const closeSettingsFromStore = useSurfaceModalStore((s) => s.closeSettings);
+  const openSettingsFromStore = useSurfaceModalStore((s) => s.openSettings);
+
+  const isOpen =
+    controlledIsOpen !== undefined
+      ? controlledIsOpen
+      : isSettingsOpenFromStore || internalDisclosure.isOpen;
+  const onOpen = () => {
+    openSettingsFromStore();
+    controlledOnOpen?.();
+    internalDisclosure.onOpen();
+  };
+  const onClose = () => {
+    closeSettingsFromStore();
+    controlledOnClose?.();
+    internalDisclosure.onClose();
+  };
   const navigate = useNavigate();
   const location = useLocation();
   const btnRef = useRef(); // Reference to the settings icon button
@@ -431,7 +454,7 @@ const SettingsMenu = ({
 
   return (
     <>
-      {isSignedIn && localStorage.getItem("local_npub") ? menuButton : null}
+      {showFixedTrigger && isSignedIn && localStorage.getItem("local_npub") ? menuButton : null}
       {/* {isSignedIn && testIsMatch ? (
         <IconButton
           ref={btnRef}
