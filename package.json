@@ -36,6 +36,7 @@
     "buffer": "^6.0.3",
     "cashu-ts-v4": "npm:@cashu/cashu-ts@4.9.0",
     "chakra-ui-markdown-renderer": "^4.1.0",
+    "chess.js": "^1.4.0",
     "crypto-js": "^4.2.0",
     "d3-delaunay": "^6.0.4",
     "firebase": "^11.10.0",

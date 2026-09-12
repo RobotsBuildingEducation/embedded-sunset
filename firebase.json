@@ -8,6 +8,10 @@
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
+        "source": "/api/chess{,/**}",
+        "function": { "region": "us-central1", "functionId": "chessApi" }
+      },
+      {
         "source": "/api/patreon/**",
         "function": {
           "region": "us-central1",

@@ -224,11 +224,13 @@ const characterImagesMap = {
 
 const RandomCharacter = ({
   width = "50px",
+  height = null,
   speed = 1.33,
   borderRadius = null,
   notSoRandomCharacter = null,
   noSoRancomCharacter = null,
   isTimed = false,
+  style = {},
 }) => {
   const [image, setImage] = useState("");
   const [showSplash, setShowSplash] = useState(isTimed);
@@ -302,11 +304,12 @@ const RandomCharacter = ({
   return (
     <div
       style={{
-        height: 100,
+        height: height ?? 100,
         display: "flex",
         flexDirection: "column",
         alignContent: "center",
         justifyContent: "center",
+        ...style,
       }}
     >
       <div>
@@ -317,6 +320,10 @@ const RandomCharacter = ({
           alt=""
           width={width}
           height={width}
+          style={{
+            display: "block",
+            borderRadius: borderRadius || undefined,
+          }}
         />
       </div>
     </div>

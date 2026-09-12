@@ -85,6 +85,7 @@ const lazyWithPreload = (factory) => {
 };
 
 import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
+import BottomActionBar from "./components/BottomActionBar/BottomActionBar";
 import WaveBar from "./components/WaveBar";
 import ChapterReview from "./components/ChapterReview";
 import DailyGoalCelebrationModal from "./components/DailyGoalCelebrationModal/DailyGoalCelebrationModal";
@@ -2172,7 +2173,7 @@ const Step = ({
             "Crea y financia una pequeña billetera de Bitcoin con aproximadamente 10 centavos y crea becas con el aprendizaje mientras avanzas.",
         },
         {
-          title: "Modo a tu ritmo",
+          title: "A tu ritmo",
           description: "Administra tus rachas, metas y notificaciones.",
         },
         {
@@ -2181,12 +2182,12 @@ const Step = ({
             "Genera notas para la pregunta actual o haz preguntas de seguimiento para obtener más apoyo.",
         },
         {
-          title: "Crea tu aplicación",
+          title: "Crea tu app",
           description:
             "Genera código según lo que has aprendido, edítalo con una vista previa en vivo y conserva tu proyecto mientras avanzas.",
         },
         {
-          title: "Guía para crear aplicaciones",
+          title: "Tutorial para crear aplicaciones",
           description:
             "Ponte a prueba y sigue un tutorial paso a paso para crear y lanzar tu aplicación.",
         },
@@ -2198,7 +2199,7 @@ const Step = ({
             "Create and fund a small Bitcoin wallet with ~10 cents and create scholarships with learning as you make progress.",
         },
         {
-          title: "Self-paced mode",
+          title: "Self-pace",
           description: "Manage your streaks, goals and notifications.",
         },
         {
@@ -2207,17 +2208,14 @@ const Step = ({
             "Generate notes for the current question or ask follow-up questions for more support.",
         },
         {
-          title:
-            userLanguage === "compsci-en"
-              ? "Algorithm practice"
-              : "Build your app",
+          title: "Build your app",
           description:
             userLanguage === "compsci-en"
               ? "Generate an interview problem, choose a solution path, view guidance and code examples, then request feedback."
               : "Generate code matched to what you've learned, edit it beside a live preview, and keep your project as you progress.",
         },
         {
-          title: "App Building Guide",
+          title: "App Building Tutorial",
           description:
             "Challenge yourself and follow a step-by-step tutorial to create and launch your app.",
         },
@@ -4570,200 +4568,6 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
         />
       ) : (
         <>
-          <VStack
-            textAlign={"left"}
-            style={{
-              width: "100%",
-              maxWidth: 400,
-              alignItems: "flex-start",
-              paddingBottom: "14px",
-            }}
-          >
-            <VStack width="100%" spacing={2} alignItems="flex-start">
-              <HStack
-                spacing={2}
-                flexWrap="wrap"
-                rowGap={1.5}
-                alignItems="center"
-                width="100%"
-              >
-                <Tooltip label={metricTooltips.chapter} {...metricTooltipStyle}>
-                  <HStack
-                    spacing={1.5}
-                    px={2}
-                    py={1}
-                    borderRadius="full"
-                    background="appInfoSubtle"
-                    border="1px solid rgba(102, 133, 255, 0.5)"
-                    tabIndex={0}
-                    cursor="help"
-                    aria-label={`${metricTooltips.chapter}: ${chapterMetricLabel}`}
-                    onPointerDown={(event) => {
-                      if (event.pointerType === "touch") {
-                        event.currentTarget.focus();
-                      }
-                    }}
-                  >
-                    <Icon as={RiBookOpenLine} color="blue.400" boxSize={3.5} />
-                    <Text
-                      fontSize="sm"
-                      fontWeight="medium"
-                      color="appTextMuted"
-                    >
-                      {chapterMetricLabel}
-                    </Text>
-                  </HStack>
-                </Tooltip>
-                <Tooltip
-                  label={metricTooltips.progress}
-                  {...metricTooltipStyle}
-                >
-                  <HStack
-                    spacing={1.5}
-                    px={2}
-                    py={1}
-                    borderRadius="full"
-                    background="appWarningSubtle"
-                    border="1px solid rgba(246, 173, 85, 0.4)"
-                    tabIndex={0}
-                    cursor="help"
-                    aria-label={`${metricTooltips.progress}: ${animatedProgress.toFixed(0)}%`}
-                    onPointerDown={(event) => {
-                      if (event.pointerType === "touch") {
-                        event.currentTarget.focus();
-                      }
-                    }}
-                  >
-                    <Icon as={FiTrendingUp} color="orange.500" boxSize={3.5} />
-                    <Text
-                      fontSize="sm"
-                      fontWeight="medium"
-                      color="appTextMuted"
-                    >
-                      {animatedProgress.toFixed(0)}%
-                    </Text>
-                  </HStack>
-                </Tooltip>
-
-                <Tooltip label={metricTooltips.streak} {...metricTooltipStyle}>
-                  <HStack
-                    spacing={1.5}
-                    px={2}
-                    py={1}
-                    borderRadius="full"
-                    background="appErrorSubtle"
-                    border="1px solid rgba(252, 129, 129, 0.45)"
-                    tabIndex={0}
-                    cursor="help"
-                    aria-label={`${metricTooltips.streak}: ${streak}`}
-                    onPointerDown={(event) => {
-                      if (event.pointerType === "touch") {
-                        event.currentTarget.focus();
-                      }
-                    }}
-                  >
-                    <Icon as={FaFire} color="red.400" boxSize={3.5} />
-                    <Text
-                      fontSize="sm"
-                      fontWeight="medium"
-                      color="appTextMuted"
-                    >
-                      {streak}
-                    </Text>
-                  </HStack>
-                </Tooltip>
-                <Tooltip label={metricTooltips.goals} {...metricTooltipStyle}>
-                  <HStack
-                    spacing={1.5}
-                    px={2}
-                    py={1}
-                    borderRadius="full"
-                    background="appAccentSoft"
-                    border="1px solid rgba(183, 148, 244, 0.5)"
-                    tabIndex={0}
-                    cursor="help"
-                    aria-label={`${metricTooltips.goals}: ${String(goalCount) || "0"}`}
-                    onPointerDown={(event) => {
-                      if (event.pointerType === "touch") {
-                        event.currentTarget.focus();
-                      }
-                    }}
-                  >
-                    <Icon as={RiFlag2Line} color="purple.400" boxSize={3.5} />
-                    <Text
-                      fontSize="sm"
-                      fontWeight="medium"
-                      color="appTextMuted"
-                    >
-                      {String(goalCount) || "0"}
-                    </Text>
-                  </HStack>
-                </Tooltip>
-              </HStack>
-              <MotionProgress
-                height="24px"
-                initial={{ scale: 1 }}
-                animate={progressControls}
-                opacity={0.8}
-                value={animatedProgress}
-                size="sm"
-                colorScheme={getColorScheme(step.group)}
-                width="100%"
-                hasStripe
-                isAnimated
-                borderRadius="4px"
-                border="1px solid rgba(236, 236, 236, 0.8)"
-                background={getBackgroundScheme(step.group)}
-                mb={userLanguage !== "compsci-en" ? 1 : 2}
-                sx={{
-                  "& > div": {
-                    background:
-                      "linear-gradient(270deg, #f6ad55, #fbd38d, #f6ad55)",
-                    backgroundSize: "200% 200%",
-                    animation: `${progressGradient} 7s ease-in-out infinite`,
-                  },
-                }}
-              />
-              {/* {userLanguage !== "compsci-en" ? (
-                <Text
-                  color="yellow.600"
-                  fontWeight={"bold"}
-                  style={{ fontSize: "50%", marginBottom: "4px" }}
-                >
-                  {translation[userLanguage]["skillValue"]}$
-                  {currentStep === 0 || currentStep === 1
-                    ? 0
-                    : loot[currentStep - 1]["monetaryValue"]}
-                  /{translation[userLanguage]["year"]}
-                </Text>
-              ) : null} */}
-            </VStack>
-            {/* {calculateBalance() > 0 ? (
-              <HStack
-                style={{ marginTop: "-12px", width: "100%" }}
-                display="flex"
-                justifyContent={"flex-start"}
-                alignItems={"flex-start"}
-              >
-                <Progress
-                  opacity="0.8"
-                  border="1px solid #ececec"
-                  // boxShadow="0px 0px 0.5px 2px #ececec"
-                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                  value={calculateBalance()}
-                  size="md"
-                  colorScheme={"yellow"}
-                  width="80%"
-                  mb={4}
-                  borderRadius="4px"
-                  background={getBackgroundScheme(step.group)}
-                >
-                  <span style={{ fontSize: "50%" }}>₿</span>
-                </Progress>
-              </HStack>
-            ) : null} */}
-          </VStack>
-
           <div
             style={{
               zoom: 0.8,
@@ -5072,58 +4876,39 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
 
           <>
             {step.isStudyGuide && (
-              <VStack>
-                <HStack>
-                  <Button
-                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                    {...getInstantSurfacePressProps(
-                      actionBarPressRef,
-                      "studyGuide",
-                      () =>
-                        openSurfaceModal(
-                          "studyGuide",
-                          {
-                            content: step.question.metaData,
-                            userLanguage,
-                          },
-                          "studyGuide",
-                        ),
-                    )}
-                    mb={4}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        openSurfaceModal(
-                          "studyGuide",
-                          {
-                            content: step.question.metaData,
-                            userLanguage,
-                          },
-                          "studyGuide",
-                        );
-                      }
-                    }}
-                    variant={"outline"}
-                  >
-                    {translation[userLanguage]["settings.button.studyGuide"]}
-                  </Button>
-                  &nbsp;&nbsp; &nbsp;&nbsp;
-                  <Button
-                    onPointerDown={handleNextQuestionButtonPress}
-                    onClick={handleNextQuestionButtonPress}
-                    mb={4}
-                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                    style={{ touchAction: "manipulation" }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        handleNextQuestionButtonPress(e);
-                      }
-                    }}
-                    disabled={isPostingWithNostr || isActionBarTourActive}
-                  >
-                    {translation[userLanguage]["app.button.nextQuestion"]}{" "}
-                  </Button>
-                </HStack>
+              <VStack width="100%" align="center" my={2}>
+                <Button
+                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
+                  {...getInstantSurfacePressProps(
+                    actionBarPressRef,
+                    "studyGuide",
+                    () =>
+                      openSurfaceModal(
+                        "studyGuide",
+                        {
+                          content: step.question.metaData,
+                          userLanguage,
+                        },
+                        "studyGuide",
+                      ),
+                  )}
+                  mb={4}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      openSurfaceModal(
+                        "studyGuide",
+                        {
+                          content: step.question.metaData,
+                          userLanguage,
+                        },
+                        "studyGuide",
+                      );
+                    }
+                  }}
+                  variant={"outline"}
+                >
+                  {translation[userLanguage]["settings.button.studyGuide"]}
+                </Button>
               </VStack>
             )}
 
@@ -5264,246 +5049,21 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
               <CloudCanvas />
             ) : ( */}
             <>
-              {incorrectAttempts >= 5 && !isTimerExpired ? (
-                <>
-                  <div style={{ maxWidth: 600 }}>
-                    <Text
-                      fontSize="smaller"
-                      background="appSurface"
-                      borderRadius={12}
-                      padding={4}
-                    >
-                      <FaHeartBroken
-                        style={{
-                          display: "inline",
-                          marginRight: 4,
-                          color: "red",
-                        }}
-                      />
-                      {translation[userLanguage]["lockout.message"]} <br />
-                      <br />
-                      <CountdownTimer
-                        onTimerExpire={handleTimerExpire}
-                        userLanguage={userLanguage}
-                      />
-                    </Text>
-                  </div>
-                  <RandomCharacter />
-                </>
-              ) : null}
-              {/* {messages.length > 0 && !feedback && (
-                  <Box
-                    mt={0}
-                    p={4}
-                    borderRadius="lg"
-                    width="100%"
-                    maxWidth={"600px"}
-                  >
-                    <Text textAlign={"left"}>
-                      {messages[messages.length - 1]?.content}
-                    </Text>
-                  </Box>
-                )} */}
-              {feedback && (
-                <RiseUpAnimation>
-                  <Box
-                    mt={0}
-                    p={4}
-                    borderRadius="3xl"
-                    width="100%"
-                    maxWidth="600px"
-                    background={isCorrect ? successFeedbackBg : errorFeedbackBg}
-                    transition="0.2s all ease-in-out"
-                    borderWidth="1px"
-                    borderColor={
-                      isCorrect ? successFeedbackBorder : errorFeedbackBorder
-                    }
-                    boxShadow={
-                      isCorrect ? successFeedbackShadow : errorFeedbackShadow
-                    }
-                    borderBottomRightRadius={"0px"}
-                  >
-                    {!isCorrect &&
-                      incorrectAttempts > 0 &&
-                      incorrectAttempts < 5 && (
-                        <HStack
-                          mb={2}
-                          spacing={1}
-                          justify="center"
-                          width="100%"
-                        >
-                          {Array.from({ length: 5 }, (_, i) =>
-                            i < 5 - incorrectAttempts ? (
-                              <FaHeart key={i} color={feedbackHeartColor} />
-                            ) : (
-                              <FaRegHeart key={i} color={feedbackHeartColor} />
-                            ),
-                          )}
-                        </HStack>
-                      )}
-                    <Text
-                      textAlign={"left"}
-                      color={
-                        isCorrect ? successFeedbackText : errorFeedbackText
-                      }
-                      fontWeight="medium"
-                      lineHeight="1.55"
-                    >
-                      {feedback}{" "}
-                      {grade ? (
-                        <DataTags
-                          userLanguage={userLanguage}
-                          grade={
-                            translation[userLanguage]["tags.grade"] + grade
-                          }
-                        />
-                      ) : null}
-                    </Text>
-                  </Box>
-                </RiseUpAnimation>
-              )}{" "}
-              {feedback && (
+              {isSending ? (
                 <div
                   style={{
                     width: "100%",
                     maxWidth: "600px",
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    padding: 0,
-                    marginTop: "-36px",
+                    textAlign: "left",
                   }}
                 >
-                  <RiseUpAnimation speed="0.1s">
-                    <RandomCharacter />
-                  </RiseUpAnimation>
+                  <CloudCanvas
+                    speed={"0.25"}
+                    isLoader={true}
+                    regulateWidth={false}
+                  />
                 </div>
-              )}
-              <HStack
-                spacing={4}
-                width="100%"
-                justifyContent={"center"}
-                paddingBottom={step.isTerminal ? 24 : null}
-              >
-                {step.question &&
-                !step.isConversationReview &&
-                currentStep > 0 &&
-                !isCorrect &&
-                !isSending &&
-                !(incorrectAttempts >= 5) &&
-                isTimerExpired ? (
-                  <Button
-                    fontSize="sm"
-                    data-sound-ignore-select="true"
-                    onMouseDown={() => {
-                      triggerHaptic();
-                      soundManager.resume();
-                      soundManager.play("submit");
-                      handleAnswerClick();
-                    }}
-                    isLoading={isSending}
-                    mb={4}
-                    boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        triggerHaptic();
-                        soundManager.resume();
-                        soundManager.play("submit");
-                        handleAnswerClick();
-                      }
-                    }}
-                  >
-                    {translation[userLanguage]["app.button.answer"]}
-                  </Button>
-                ) : null}
-
-                {isSending ? (
-                  <div
-                    style={{
-                      width: "100%",
-                      maxWidth: "600px",
-                      textAlign: "left",
-                    }}
-                  >
-                    <CloudCanvas
-                      speed={"0.25"}
-                      isLoader={true}
-                      regulateWidth={false}
-                    />
-                  </div>
-                ) : null}
-                {isCorrect && (
-                  <>
-                    {isAILearningMode ? (
-                      <Button
-                        background="appSurface"
-                        variant={"outline"}
-                        onClick={() => {
-                          triggerHaptic();
-                          setIsCorrect(null);
-                          setFeedback("");
-                          setInputValue("");
-                          setSelectedOption("");
-                          setSelectedOptions([]);
-                          handleGenerateNewQuestion({ mode: "continuing" });
-                        }}
-                        mb={4}
-                        boxShadow={"0.5px 0.5px 1px 0px black"}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            triggerHaptic();
-                            setIsCorrect(null);
-                            setFeedback("");
-                            setInputValue("");
-                            setSelectedOption("");
-                            setSelectedOptions([]);
-                            handleGenerateNewQuestion({ mode: "continuing" });
-                          }
-                        }}
-                      >
-                        {userLanguage?.startsWith("es") ? "Siguiente" : "Next"}
-                      </Button>
-                    ) : (
-                      <Button
-                        background="appSurface"
-                        variant={"outline"}
-                        data-sound-ignore-select="true"
-                        style={{ touchAction: "manipulation" }}
-                        onPointerDown={(event) =>
-                          handleNextQuestionButtonPress(event, () => {
-                            triggerHaptic();
-                            soundManager.resume();
-                            soundManager.play("next");
-                          })
-                        }
-                        onClick={(event) => {
-                          handleNextQuestionButtonPress(event, () => {
-                            triggerHaptic();
-                            soundManager.resume();
-                            soundManager.play("next");
-                          });
-                        }}
-                        mb={4}
-                        boxShadow={"0.5px 0.5px 1px 0px black"}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" || e.key === " ") {
-                            e.preventDefault();
-                            handleNextQuestionButtonPress(e, () => {
-                              triggerHaptic();
-                              soundManager.resume();
-                              soundManager.play("next");
-                            });
-                          }
-                        }}
-                        disabled={isPostingWithNostr || isActionBarTourActive}
-                      >
-                        {
-                          translation[userLanguage]["app.button.nextQuestion"]
-                        }{" "}
-                      </Button>
-                    )}
-                  </>
-                )}
-              </HStack>
+              ) : null}
             </>
             {/* )} */}
           </>
@@ -5567,210 +5127,43 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
             </Box>
           ) : null}
 
-          <Box
-            position="fixed"
-            bottom="0"
-            left="0"
-            width="100%"
-            // zIndex="popover"
-          >
-            <Flex justify="center" width="100%">
-              <Box
-                width={{ base: "100%", md: "440px" }}
-                px={{ base: 0, md: 4 }}
-              >
-                <Box
-                  bg={actionBarShellBg}
-                  borderTopLeftRadius={{ base: "20px", md: "24px" }}
-                  borderTopRightRadius={{ base: "20px", md: "24px" }}
-                  borderBottomLeftRadius="0px"
-                  borderBottomRightRadius="0px"
-                  px={{ base: 3, md: 4 }}
-                  py={{ base: 2, md: 2.5 }}
-                  border={`1px solid ${actionBarShellBorder}`}
-                  borderBottom="0"
-                  boxShadow={`0 -2px 0px ${actionBarShellGlow}, ${actionBarShadow}`}
-                  // backdrop-filter removed - shell bg is ~0.96 opaque so the
-                  // blur is visually negligible, but on iOS Safari it forces
-                  // a layer rasterization every time the composition behind
-                  // the action bar changes (i.e. every modal open). That
-                  // rasterization is cheap on a "clean" composition (first
-                  // press of session) and progressively slower as the layer
-                  // cache accumulates state from prior modal mounts.
-                  paddingBottom={6}
-                  paddingTop={4}
-                >
-                  {renderActionBarTour(
-                    <HStack spacing={0} justify="space-around" width="100%">
-                      <IconButton
-                        {...actionBarButtonProps}
-                        data-sound-ignore-select="true"
-                        aria-label="Open Bitcoin mode"
-                        icon={<FaBitcoin fontSize="20px" />}
-                        {...getInstantSurfacePressProps(
-                          actionBarPressRef,
-                          "bitcoin",
-                          () =>
-                            openSurfaceModal(
-                              "bitcoin",
-                              { userLanguage },
-                              "bitcoin",
-                            ),
-                        )}
-                      />
-                      <IconButton
-                        {...actionBarButtonProps}
-                        data-sound-ignore-select="true"
-                        aria-label="Open self-paced mode"
-                        icon={<PiClockCountdownFill fontSize="22px" />}
-                        {...getInstantSurfacePressProps(
-                          actionBarPressRef,
-                          "selfPaced",
-                          () =>
-                            openSurfaceModal(
-                              "selfPaced",
-                              {
-                                interval,
-                                userId: localStorage.getItem("local_npub"),
-                                userLanguage,
-                                onSettingsSaved: handleSelfPacedSettingsSaved,
-                              },
-                              "selfPaced",
-                            ),
-                        )}
-                      />
-                      <Box
-                        as={motion.div}
-                        animate={learnButtonControls}
-                        display="inline-flex"
-                        position="relative"
-                        overflow="visible"
-                        borderRadius="14px"
-                        outline="3px solid transparent"
-                        outlineOffset="3px"
-                      >
-                        {showLearnSparkles && (
-                          <>
-                            <Box
-                              aria-hidden="true"
-                              position="absolute"
-                              inset="-9px"
-                              borderRadius="19px"
-                              bg={`conic-gradient(from 20deg, transparent 0deg, ${learnButtonGlowSoft} 75deg, transparent 145deg, ${learnButtonGlowColor} 235deg, transparent 315deg)`}
-                              filter="blur(5px)"
-                              pointerEvents="none"
-                              animation={`${learnHaloDrift} 2.8s cubic-bezier(0.22, 1, 0.36, 1) both`}
-                              zIndex={0}
-                            />
-                            {[
-                              {
-                                top: "-15px",
-                                right: "1px",
-                                fontSize: "17px",
-                                delay: "0.08s",
-                              },
-                              {
-                                bottom: "-14px",
-                                left: "3px",
-                                fontSize: "13px",
-                                delay: "0.48s",
-                              },
-                              {
-                                top: "5px",
-                                right: "-14px",
-                                fontSize: "11px",
-                                delay: "0.82s",
-                              },
-                            ].map((sparkle, index) => (
-                              <Text
-                                key={index}
-                                aria-hidden="true"
-                                position="absolute"
-                                top={sparkle.top}
-                                right={sparkle.right}
-                                bottom={sparkle.bottom}
-                                left={sparkle.left}
-                                color={learnButtonGlowColor}
-                                fontSize={sparkle.fontSize}
-                                lineHeight="1"
-                                textShadow={`0 0 10px ${learnButtonGlowSoft}`}
-                                pointerEvents="none"
-                                animation={`${learnSparkleFloat} 1.65s ease-out ${sparkle.delay} both`}
-                                zIndex={2}
-                              >
-                                ✦
-                              </Text>
-                            ))}
-                          </>
-                        )}
-                        <IconButton
-                          {...actionBarButtonProps}
-                          position="relative"
-                          zIndex={1}
-                          data-sound-ignore-select="true"
-                          aria-label={
-                            translation[userLanguage]?.["app.button.learn"] ||
-                            "Learn"
-                          }
-                          icon={<IoChatbubblesOutline fontSize="22px" />}
-                          {...getInstantSurfacePressProps(
-                            actionBarPressRef,
-                            "learn",
-                            () => {
-                              handleModalCheck(handleLearnClick);
-                              runAfterNextPaint(() => {
-                                triggerHaptic();
-                                playActionBarSound("learn");
-                              });
-                            },
-                          )}
-                        />
-                      </Box>
-                      <IconButton
-                        {...actionBarButtonProps}
-                        data-sound-ignore-select="true"
-                        aria-label={
-                          translation[userLanguage]?.[
-                            "settings.button.algorithmHelper"
-                          ] || "Open build your app"
-                        }
-                        icon={<RiCodeAiFill fontSize="22px" />}
-                        {...getInstantSurfacePressProps(
-                          actionBarPressRef,
-                          "helper",
-                          () =>
-                            openSurfaceModal(
-                              "helper",
-                              {
-                                currentStep,
-                                step,
-                                steps,
-                                userLanguage,
-                              },
-                              "helper",
-                            ),
-                        )}
-                      />
-                      <IconButton
-                        {...actionBarButtonProps}
-                        data-sound-ignore-select="true"
-                        aria-label="Support on Patreon"
-                        icon={<PiPatreonLogoFill fontSize="20px" />}
-                        // boxShadow={patreonButtonShadow}
-                        borderColor={hexToRgba(actionPalette[200], 0.85)}
-                        onClick={() => {
-                          triggerHaptic();
-                          playActionBarSound("patreon");
-                          window.location.href =
-                            "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link";
-                        }}
-                      />
-                    </HStack>,
-                  )}
-                </Box>
-              </Box>
-            </Flex>
-          </Box>
+          <BottomActionBar
+            currentStep={currentStep}
+            step={step}
+            steps={steps}
+            userLanguage={userLanguage}
+            translation={translation}
+            isCorrect={isCorrect}
+            feedback={feedback}
+            grade={grade}
+            incorrectAttempts={incorrectAttempts}
+            isSending={isSending}
+            isTimerExpired={isTimerExpired}
+            handleTimerExpire={handleTimerExpire}
+            isAILearningMode={isAILearningMode}
+            animatedProgress={animatedProgress}
+            chapterMetricLabel={chapterMetricLabel}
+            metricTooltips={metricTooltips}
+            streak={streak}
+            goalCount={goalCount}
+            handleAnswerClick={handleAnswerClick}
+            handleNextQuestionButtonPress={handleNextQuestionButtonPress}
+            handleGenerateNewQuestion={handleGenerateNewQuestion}
+            handleLearnClick={handleLearnClick}
+            handleModalCheck={handleModalCheck}
+            openSurfaceModal={openSurfaceModal}
+            showLearnSparkles={showLearnSparkles}
+            learnSparkleFloat={learnSparkleFloat}
+            learnHaloDrift={learnHaloDrift}
+            triggerHaptic={triggerHaptic}
+            playActionBarSound={playActionBarSound}
+            soundManager={soundManager}
+            interval={interval}
+            handleSelfPacedSettingsSaved={handleSelfPacedSettingsSaved}
+            isPostingWithNostr={isPostingWithNostr}
+            isActionBarTourActive={isActionBarTourActive}
+            renderActionBarTour={renderActionBarTour}
+          />
 
           <Suspense fallback={null}>
             {isLectureModalOpen ? (

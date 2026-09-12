@@ -16,6 +16,16 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
       allowedHosts: [".trycloudflare.com"],
       proxy: {
+        // Firestore's persistent WebChannel stream, forwarded to the local emulator.
+        "/google.firestore.v1.Firestore": {
+          target: "http://127.0.0.1:8080",
+          changeOrigin: true,
+        },
+        "/api/chess": {
+          target: "http://127.0.0.1:5001",
+          changeOrigin: true,
+          rewrite: (path) => `/${projectId}/us-central1/chessApi${path}`,
+        },
         "/api/patreon": {
           target: "http://127.0.0.1:5001",
           changeOrigin: true,
