@@ -25,7 +25,7 @@ import {
 } from "@chakra-ui/react";
 
 import { useLocation, useNavigate } from "react-router-dom";
-import { IoAppsOutline } from "react-icons/io5";
+import { IoAppsOutline, IoInformationCircleOutline } from "react-icons/io5";
 
 import BitcoinModeModal from "./BitcoinModeModal/BitcoinModeModal";
 import RoxModal from "./RoxModal/RoxModal";
@@ -50,6 +50,7 @@ import { useSurfaceModalStore } from "../../useSurfaceModalStore";
 import StudyGuideModal from "../StudyGuideModal/StudyGuideModal";
 import { ChangeLanguageModal } from "../ChangeLanguageModal/ChangeLanguageModal";
 import ThemeModal from "./ThemeModal";
+import DecentralizedIdentityModal from "./DecentralizedIdentityModal";
 import { soundManager } from "../../utility/soundManager";
 import { getInstantSurfacePressProps } from "../../utility/instantSurface";
 import {
@@ -82,6 +83,8 @@ const SettingsMenu = ({
   soundEnabled,
   setSoundEnabled,
   onPatreonAuthorized,
+  allowPosts,
+  setAllowPosts,
   isOpen: controlledIsOpen,
   onOpen: controlledOnOpen,
   onClose: controlledOnClose,
@@ -260,6 +263,12 @@ const SettingsMenu = ({
   } = useDisclosure();
 
   const {
+    isOpen: isIdentityModalOpen,
+    onOpen: onIdentityModalOpen,
+    onClose: onIdentityModalClose,
+  } = useDisclosure();
+
+  const {
     isOpen: isSubscriptionOpen,
     onOpen: onSubscriptionOpen,
     onClose: onSubscriptionClose,
@@ -355,6 +364,18 @@ const SettingsMenu = ({
       await updateDoc(userDoc, { language: value });
     }
     // onLangClose();
+  };
+
+  const handleToggleAllowPosts = async (e) => {
+    soundManager.resume();
+    soundManager.play("modeSwitch");
+    const newValue = e.target.checked;
+    setAllowPosts(newValue);
+    const npub = localStorage.getItem("local_npub");
+    if (npub) {
+      const userDocRef = doc(database, "users", npub);
+      await updateDoc(userDocRef, { allowPosts: newValue });
+    }
   };
 
   const handleToggleAdaptiveLearning = async (e) => {
@@ -543,8 +564,43 @@ const SettingsMenu = ({
                 </Button>
               </HStack>
 
-              {/* The allow-posts switch is hidden while automatic Nostr
-                  posting is disabled. */}
+              <FormControl display="flex" alignItems="center" width="100%">
+                <HStack flex="1" spacing={2}>
+                  <FormLabel
+                    htmlFor="allow-posts-menu-switch"
+                    mb="0"
+                    color="appText"
+                    cursor="pointer"
+                  >
+                    {translation[userLanguage]?.["tag.allowPosting"] || "Allow posts"}
+                  </FormLabel>
+                  <IconButton
+                    aria-label={
+                      translation[userLanguage]?.[
+                        "settings.decentralizedIdentity.infoLabel"
+                      ] ||
+                      (userLanguage?.includes("es")
+                        ? "Acerca de la identidad descentralizada"
+                        : "About decentralized identity")
+                    }
+                    icon={<IoInformationCircleOutline fontSize="16px" />}
+                    size="xs"
+                    minWidth="24px"
+                    width="24px"
+                    height="24px"
+                    borderRadius="full"
+                    variant="outline"
+                    borderColor="appBorderStrong"
+                    onClick={onIdentityModalOpen}
+                  />
+                </HStack>
+                <Switch
+                  id="allow-posts-menu-switch"
+                  isChecked={allowPosts}
+                  onChange={handleToggleAllowPosts}
+                  colorScheme="pink"
+                />
+              </FormControl>
 
               <FormControl display="flex" alignItems="center" width="100%">
                 <HStack flex="1" spacing={2}>
@@ -931,6 +987,14 @@ const SettingsMenu = ({
           userLanguage={userLanguage}
           isOpen={isThemeOpen}
           onClose={onThemeClose}
+        />
+      ) : null}
+
+      {isIdentityModalOpen ? (
+        <DecentralizedIdentityModal
+          userLanguage={userLanguage}
+          isOpen={isIdentityModalOpen}
+          onClose={onIdentityModalClose}
         />
       ) : null}
 

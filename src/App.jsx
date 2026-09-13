@@ -3080,12 +3080,11 @@ const Step = ({
 
       getRecipient();
 
-      // Per-question Nostr posting is intentionally disabled.
-      // if (allowPosts) {
-      //   postNostrContent(
-      //     `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://robotsbuildingeducation.com \n\n${step.question?.questionText} #LearnWithNostr`,
-      //   );
-      // }
+      if (allowPosts) {
+        postNostrContent(
+          `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://robotsbuildingeducation.com \n\n${step.question?.questionText} #LearnWithNostr`,
+        );
+      }
       if (step.isConversationReview) {
         assignExistingBadgeToNpub(
           transcript[step.group]["name"].replace(/ /g, "-"),
@@ -8294,7 +8293,7 @@ function App({ isShutDown }) {
     creatorAuthorized,
   }).authorized;
 
-  const [allowPosts, setAllowPosts] = useState(true);
+  const [allowPosts, setAllowPosts] = useState(false);
   const [isAdaptiveLearning, setIsAdaptiveLearning] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(() => {
     if (typeof window === "undefined") return true;
@@ -8635,7 +8634,7 @@ function App({ isShutDown }) {
                   // Use the value from Firestore (even if it's false)
                   setAllowPosts(userData.allowPosts);
                 } else {
-                  // If the field doesn't exist, update the document to set allowPosts to true
+                  // If the field doesn't exist, update the document to set allowPosts to false
                   setAllowPosts(false);
                   const userDocRef = doc(
                     database,
@@ -8644,7 +8643,7 @@ function App({ isShutDown }) {
                   );
                   updateDoc(userDocRef, { allowPosts: false })
                     .then(() =>
-                      console.log("allowPosts field added with value true"),
+                      console.log("allowPosts field added with value false"),
                     )
                     .catch((error) =>
                       console.error("Error updating allowPosts:", error),
@@ -8964,6 +8963,7 @@ function App({ isShutDown }) {
         </Alert>
       )}
       <Box
+        className="app-container"
         textAlign="center"
         fontSize="xl"
         p={0}
@@ -8990,6 +8990,8 @@ function App({ isShutDown }) {
             soundEnabled={soundEnabled}
             setSoundEnabled={setSoundEnabled}
             onPatreonAuthorized={handlePatreonAuthorized}
+            allowPosts={allowPosts}
+            setAllowPosts={setAllowPosts}
           />
         )}
 

@@ -339,7 +339,7 @@ export const createUser = async (npub, userName, language) => {
     previousStep: 0,
     curriculumVersion: CURRICULUM_VERSION,
     language,
-    allowPosts: true,
+    allowPosts: false,
     themeColor: getLocalThemeColor(),
     colorMode: localThemeMode,
     themeMode: localThemeMode,

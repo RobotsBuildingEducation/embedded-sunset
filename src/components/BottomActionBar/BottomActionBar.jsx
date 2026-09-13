@@ -12,7 +12,9 @@ import {
   useToken,
   Progress,
   Tooltip,
+  Portal,
 } from "@chakra-ui/react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { keyframes } from "@emotion/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaHeart, FaRegHeart, FaFire } from "react-icons/fa";
@@ -143,6 +145,10 @@ export const BottomActionBar = ({
   renderActionBarTour = (child) => child,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isLessonRoute = Boolean(location?.pathname?.startsWith("/q/"));
+  const handleExitLesson = isLessonRoute ? () => navigate("/") : null;
   const themeColor = useThemeStore((state) => state.themeColor);
 
   const [
@@ -367,7 +373,7 @@ export const BottomActionBar = ({
       justifyContent="center"
       alignItems="center"
       pointerEvents="none"
-      zIndex={1300}
+      zIndex={1450}
       px={{ base: 3, sm: 4 }}
     >
       <MotionBox
@@ -417,6 +423,7 @@ export const BottomActionBar = ({
           onOpenSelfPaced={handleOpenSelfPaced}
           onOpenHelper={handleOpenHelper}
           onOpenPatreon={handleOpenPatreon}
+          onExitLesson={handleExitLesson}
           userLanguage={userLanguage}
           translation={translation}
         />
@@ -866,7 +873,7 @@ export const BottomActionBar = ({
     </Box>
   );
 
-  return renderActionBarTour(barContent);
+  return <Portal>{renderActionBarTour(barContent)}</Portal>;
 };
 
 export default BottomActionBar;

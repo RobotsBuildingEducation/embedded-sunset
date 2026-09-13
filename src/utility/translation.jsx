@@ -1102,6 +1102,7 @@ reverse(head) {
     "app.button.learn": "Learn",
     "app.listening": "Listening...",
     "app.input.placeholder": "Type your response or use vocal requests",
+    "menu.exitLesson": "Exit lesson",
     "settings.title": "Settings",
     "settings.selfPace": "Self-pace",
     "settings.button.selfPace": "Self-pace",
@@ -1770,6 +1771,12 @@ reverse(head) {
       </>
     ),
     "tag.allowPosting": "Allow posts",
+    "settings.decentralizedIdentity.header": "Decentralized identity",
+    "settings.decentralizedIdentity.body":
+      "Here we use decentralized identity, so your progress is published to your profile feed.",
+    "settings.decentralizedIdentity.viewProfile": "View profile on Ditto",
+    "settings.decentralizedIdentity.infoLabel":
+      "About decentralized identity",
   },
   es: {
     communityGoal: "Meta comunitaria: ",
@@ -2099,7 +2106,13 @@ reverse(head) {
       "Elige cuántas preguntas completar para alcanzar tu meta diaria. El temporizador de la meta se reinicia cada 24 horas.",
     "toast.title.idCopied": "ID copiada.",
     "toast.description.idCopied": "Tu ID ha sido copiada.",
-    "tag.allowPosting": "No publicar mi progreso",
+    "tag.allowPosting": "Permitir publicaciones",
+    "settings.decentralizedIdentity.header": "Identidad descentralizada",
+    "settings.decentralizedIdentity.body":
+      "Aquí usamos identidad descentralizada, por lo que tu progreso se publica en el feed de tu perfil.",
+    "settings.decentralizedIdentity.viewProfile": "Ver perfil en Ditto",
+    "settings.decentralizedIdentity.infoLabel":
+      "Acerca de la identidad descentralizada",
     "subscription.nudge": (
       <>
         <b>¿Estás disfrutando la experiencia?</b>
@@ -3051,6 +3064,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "app.button.learn": "Aprender",
     "app.listening": "Escuchando...",
     "app.input.placeholder": "Escriba su respuesta o use la voz",
+    "menu.exitLesson": "Salir de la lección",
     "settings.title": "Configuraciones",
     "settings.selfPace": "Auto ritmo",
     "settings.button.selfPace": "Auto ritmo",
@@ -4482,6 +4496,7 @@ reverse(head) {
     "app.button.learn": "Learn",
     "app.listening": "Listening...",
     "app.input.placeholder": "Type your response or use vocal requests",
+    "menu.exitLesson": "Exit lesson",
     "settings.title": "Settings",
     "settings.selfPace": "Self-pace",
     "settings.button.selfPace": "Self-pace",
@@ -5118,6 +5133,12 @@ reverse(head) {
       </>
     ),
     "tag.allowPosting": "Allow posts",
+    "settings.decentralizedIdentity.header": "Decentralized identity",
+    "settings.decentralizedIdentity.body":
+      "Here we use decentralized identity, so your progress is published to your profile feed.",
+    "settings.decentralizedIdentity.viewProfile": "View profile on Ditto",
+    "settings.decentralizedIdentity.infoLabel":
+      "About decentralized identity",
   },
   "swift-en": {
     communityGoal: "Community goal: ",
@@ -6106,6 +6127,7 @@ reverse(head) {
     "app.button.learn": "Learn",
     "app.listening": "Listening...",
     "app.input.placeholder": "Type your response or use vocal requests",
+    "menu.exitLesson": "Exit lesson",
     "settings.title": "Settings",
     "settings.selfPace": "Self-pace",
     "settings.button.selfPace": "Self-pace",
@@ -6758,6 +6780,12 @@ reverse(head) {
       </>
     ),
     "tag.allowPosting": "Allow posts",
+    "settings.decentralizedIdentity.header": "Decentralized identity",
+    "settings.decentralizedIdentity.body":
+      "Here we use decentralized identity, so your progress is published to your profile feed.",
+    "settings.decentralizedIdentity.viewProfile": "View profile on Ditto",
+    "settings.decentralizedIdentity.infoLabel":
+      "About decentralized identity",
   },
   "android-en": {
     communityGoal: "Community goal: ",
@@ -7746,6 +7774,7 @@ reverse(head) {
     "app.button.learn": "Learn",
     "app.listening": "Listening...",
     "app.input.placeholder": "Type your response or use vocal requests",
+    "menu.exitLesson": "Exit lesson",
     "settings.title": "Settings",
     "settings.selfPace": "Self-pace",
     "settings.button.selfPace": "Self-pace",
@@ -8398,6 +8427,12 @@ reverse(head) {
       </>
     ),
     "tag.allowPosting": "Allow posts",
+    "settings.decentralizedIdentity.header": "Decentralized identity",
+    "settings.decentralizedIdentity.body":
+      "Here we use decentralized identity, so your progress is published to your profile feed.",
+    "settings.decentralizedIdentity.viewProfile": "View profile on Ditto",
+    "settings.decentralizedIdentity.infoLabel":
+      "About decentralized identity",
   },
   "compsci-en": {
     communityGoal: "Community goal: ",
@@ -9384,6 +9419,7 @@ reverse(head) {
     "app.button.learn": "Learn",
     "app.listening": "Listening...",
     "app.input.placeholder": "Type your response or use vocal requests",
+    "menu.exitLesson": "Exit lesson",
     "settings.title": "Settings",
     "settings.selfPace": "Self-pace",
     "settings.button.selfPace": "Self-pace",
@@ -10036,5 +10072,11 @@ reverse(head) {
       </>
     ),
     "tag.allowPosting": "Allow posts",
+    "settings.decentralizedIdentity.header": "Decentralized identity",
+    "settings.decentralizedIdentity.body":
+      "Here we use decentralized identity, so your progress is published to your profile feed.",
+    "settings.decentralizedIdentity.viewProfile": "View profile on Ditto",
+    "settings.decentralizedIdentity.infoLabel":
+      "About decentralized identity",
   },
 };
