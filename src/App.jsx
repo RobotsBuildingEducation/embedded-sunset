@@ -428,15 +428,7 @@ const markActionBarTourPending = (npub) => {
   localStorage.removeItem(keys.complete);
 };
 
-const shouldStartActionBarTour = (npub) => {
-  if (typeof window === "undefined" || !npub) return false;
-
-  const keys = getActionBarTourStorageKeys(npub);
-  return (
-    localStorage.getItem(keys.pending) === "true" &&
-    localStorage.getItem(keys.complete) !== "true"
-  );
-};
+const shouldStartActionBarTour = () => false;
 
 const runAfterNextPaint = (callback) => {
   if (typeof window === "undefined") {
@@ -2052,12 +2044,7 @@ const Step = ({
   const pendingGenerationCountsAsNewRef = useRef(true);
   const activeQuestionMenuItemRef = useRef(null);
   const [actionBarTourIndex, setActionBarTourIndex] = useState(0);
-  const [isActionBarTourActive, setIsActionBarTourActive] = useState(
-    () =>
-      currentStep === 0 &&
-      typeof window !== "undefined" &&
-      shouldStartActionBarTour(localStorage.getItem("local_npub")),
-  );
+  const [isActionBarTourActive, setIsActionBarTourActive] = useState(false);
 
   useEffect(() => {
     continuingLearningStateRef.current = continuingLearningState;
@@ -4366,141 +4353,7 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
     });
   };
 
-  const renderActionBarTour = (trigger) => {
-    if (!isActionBarTourActive) {
-      return trigger;
-    }
-
-    const tourStep = actionBarTourSteps[actionBarTourIndex];
-    const isLastStep = actionBarTourIndex === actionBarTourSteps.length - 1;
-    const tailPosition = (actionBarTourIndex + 0.5) * 20;
-
-    return (
-      <>
-        {trigger}
-        <Portal>
-          <Box
-            position="fixed"
-            left="50%"
-            bottom={{ base: "88px", md: "82px" }}
-            transform="translateX(-50%)"
-            width={{ base: "calc(90vw - 24px)", sm: "400px" }}
-            maxWidth="calc(100vw - 24px)"
-            height={{
-              base: userLanguage?.includes("es") ? "290px" : "250px",
-              sm: userLanguage?.includes("es") ? "250px" : "225px",
-            }}
-            borderRadius="20px"
-            borderWidth="2px"
-            borderStyle="solid"
-            borderColor={actionBarTourBorderColor}
-            bg="appSurfaceElevated"
-            color="appText"
-            boxShadow="none"
-            _focusVisible={{ boxShadow: "none" }}
-            zIndex="popover"
-          >
-            <Box
-              px={{ base: 4, sm: 5 }}
-              pt={4}
-              pb={{ base: 5, sm: 4 }}
-              height="100%"
-            >
-              <VStack
-                align="stretch"
-                justify="space-between"
-                spacing={3}
-                height="100%"
-              >
-                <Box>
-                  <Text
-                    fontSize={{ base: "15px", sm: "md", md: "lg" }}
-                    fontWeight="bold"
-                    lineHeight="1.25"
-                  >
-                    {tourStep.title}
-                  </Text>
-                  <Text
-                    mt={2}
-                    fontSize={{ base: "md", sm: "lg" }}
-                    lineHeight="1.55"
-                    color={actionBarTourDescriptionColor}
-                  >
-                    {tourStep.description}
-                  </Text>
-                </Box>
-                <HStack
-                  justify="space-between"
-                  width="100%"
-                  px={{ base: 1, sm: 2 }}
-                  pb={1}
-                  flexShrink={0}
-                >
-                  <IconButton
-                    aria-label={
-                      userLanguage?.includes("es")
-                        ? "Función anterior"
-                        : "Previous feature"
-                    }
-                    icon={<ChevronLeftIcon boxSize={6} />}
-                    width={{ base: "40px", sm: "44px" }}
-                    height={{ base: "40px", sm: "44px" }}
-                    minWidth={{ base: "40px", sm: "44px" }}
-                    borderRadius="full"
-                    variant="outline"
-                    borderColor="pink.200"
-                    isDisabled={actionBarTourIndex === 0}
-                    onClick={() =>
-                      setActionBarTourIndex((current) =>
-                        Math.max(0, current - 1),
-                      )
-                    }
-                  />
-                  <IconButton
-                    aria-label={
-                      isLastStep
-                        ? userLanguage?.includes("es")
-                          ? "Terminar recorrido"
-                          : "Finish tour"
-                        : userLanguage?.includes("es")
-                          ? "Siguiente función"
-                          : "Next feature"
-                    }
-                    icon={<ChevronRightIcon boxSize={6} />}
-                    width={{ base: "40px", sm: "44px" }}
-                    height={{ base: "40px", sm: "44px" }}
-                    minWidth={{ base: "40px", sm: "44px" }}
-                    borderRadius="full"
-                    colorScheme="pink"
-                    onClick={() => {
-                      if (isLastStep) {
-                        finishActionBarTour();
-                        return;
-                      }
-                      setActionBarTourIndex((current) => current + 1);
-                    }}
-                  />
-                </HStack>
-              </VStack>
-            </Box>
-            <Box
-              aria-hidden="true"
-              position="absolute"
-              bottom="-11px"
-              left={`calc(${tailPosition}% - 8px)`}
-              width="16px"
-              height="16px"
-              bg="appSurfaceElevated"
-              borderRight={`2px solid ${actionBarTourBorderColor}`}
-              borderBottom={`2px solid ${actionBarTourBorderColor}`}
-              transform="rotate(45deg)"
-              transition="left 180ms ease"
-            />
-          </Box>
-        </Portal>
-      </>
-    );
-  };
+  const renderActionBarTour = (trigger) => trigger;
 
   return (
     <VStack
@@ -5044,27 +4897,6 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
                 />
               </Suspense>
             )}
-            {/* {isPostingWithNostr ? (
-              <CloudCanvas />
-            ) : ( */}
-            <>
-              {isSending ? (
-                <div
-                  style={{
-                    width: "100%",
-                    maxWidth: "600px",
-                    textAlign: "left",
-                  }}
-                >
-                  <CloudCanvas
-                    speed={"0.25"}
-                    isLoader={true}
-                    regulateWidth={false}
-                  />
-                </div>
-              ) : null}
-            </>
-            {/* )} */}
           </>
           {/* Adaptive learning is controlled from the settings menu. */}
 

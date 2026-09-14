@@ -180,17 +180,4 @@ html[data-theme-mode="dark"] .style .token.string {
   background: transparent !important;
 }
 
-/* Activity Menu: Body Scroll Lock & Page Pull Prevention */
-html[data-activity-menu-open="true"],
-body[data-activity-menu-open="true"] {
-  overflow: hidden !important;
-  touch-action: none !important;
-  overscroll-behavior: none !important;
-}
-
-/* Activity Menu: Selective Background Blur */
-html[data-activity-menu-open="true"] #root > .app-container {
-  filter: blur(12px);
-  transition: filter 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
 

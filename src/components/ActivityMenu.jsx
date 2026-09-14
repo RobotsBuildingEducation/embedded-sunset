@@ -1,14 +1,15 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   HStack,
   IconButton,
+  Portal,
   Text,
   useColorModeValue,
   useToken,
 } from "@chakra-ui/react";
-import { motion, AnimatePresence } from "framer-motion";
-import { IoSettingsOutline, IoClose, IoArrowBackOutline } from "react-icons/io5";
+import { motion, AnimatePresence, useMotionValue, animate } from "framer-motion";
+import { IoSettingsOutline, IoClose } from "react-icons/io5";
 import { FaBitcoin } from "react-icons/fa";
 import { PiClockCountdownFill, PiPatreonLogoFill } from "react-icons/pi";
 import { RiCodeAiFill } from "react-icons/ri";
@@ -26,7 +27,8 @@ const MotionBox = motion(Box);
  */
 export function useMenuSwipeDismiss({ isOpen, onClose }) {
   const cardRef = useRef(null);
-  const backdropRef = useRef(null);
+  const dragY = useMotionValue(0);
+  const dismissTimeoutRef = useRef(null);
   const gestureRef = useRef({
     startX: 0,
     startY: 0,
@@ -43,38 +45,72 @@ export function useMenuSwipeDismiss({ isOpen, onClose }) {
 
   useEffect(() => {
     if (!isOpen) {
-      document.documentElement.removeAttribute("data-activity-menu-open");
-      document.body.removeAttribute("data-activity-menu-open");
-      if (cardRef.current) {
-        cardRef.current.style.transform = "";
-        cardRef.current.style.transition = "";
+      if (dismissTimeoutRef.current) {
+        clearTimeout(dismissTimeoutRef.current);
+        dismissTimeoutRef.current = null;
       }
-      if (backdropRef.current) {
-        backdropRef.current.style.opacity = "";
-        backdropRef.current.style.transition = "";
+      if (!isClosingRef.current) {
+        dragY.set(0);
+        if (cardRef.current) {
+          cardRef.current.style.pointerEvents = "";
+        }
       }
-      isClosingRef.current = false;
       return;
     }
 
-    document.documentElement.setAttribute("data-activity-menu-open", "true");
-    document.body.setAttribute("data-activity-menu-open", "true");
+    isClosingRef.current = false;
+    if (cardRef.current) {
+      cardRef.current.style.pointerEvents = "";
+    }
+
+    // Fluid subtle entrance slide from 16px to 0
+    dragY.set(16);
+    animate(dragY, 0, { duration: 0.22, ease: [0.16, 1, 0.3, 1] });
 
     const handleTouchMove = (e) => {
-      if (gestureRef.current?.hasActivated) {
+      // If dragging or downward drag activated, lock all background scrolling
+      if (gestureRef.current?.hasActivated || gestureRef.current?.isDragging) {
         e.preventDefault();
+        return;
+      }
+      // Prevent touch on backdrop from scrolling background app
+      if (e.target.closest?.("[data-activity-menu-backdrop='true']")) {
+        e.preventDefault();
+        return;
+      }
+      // Prevent touch on drag handle from scrolling background app
+      if (e.target.closest?.("[data-drag-handle='true']")) {
+        e.preventDefault();
+        return;
+      }
+      // If touching card at top and moving downward, prevent background pull
+      if (e.target.closest?.("[data-activity-menu-card='true']")) {
+        const card = cardRef.current;
+        if (!card || card.scrollTop <= 0) {
+          const touch = e.touches?.[0];
+          if (
+            touch &&
+            gestureRef.current?.startY &&
+            touch.clientY > gestureRef.current.startY
+          ) {
+            e.preventDefault();
+          }
+        }
       }
     };
     window.addEventListener("touchmove", handleTouchMove, { passive: false });
 
     return () => {
-      document.documentElement.removeAttribute("data-activity-menu-open");
-      document.body.removeAttribute("data-activity-menu-open");
       window.removeEventListener("touchmove", handleTouchMove);
+      if (dismissTimeoutRef.current) {
+        clearTimeout(dismissTimeoutRef.current);
+      }
     };
-  }, [isOpen]);
+  }, [isOpen, dragY]);
 
   const onPointerDown = (e) => {
+    if (isClosingRef.current) return;
+
     // Skip gesture tracking if close button was pressed
     if (e.target.closest?.("button[aria-label='Close menu']")) {
       return;
@@ -100,9 +136,16 @@ export function useMenuSwipeDismiss({ isOpen, onClose }) {
       isHandle,
       pointerId: e.pointerId,
     };
+
+    if (card) {
+      try {
+        card.setPointerCapture?.(e.pointerId);
+      } catch (_) {}
+    }
   };
 
   const onPointerMove = (e) => {
+    if (isClosingRef.current) return;
     const g = gestureRef.current;
     if (!g || g.pointerId !== e.pointerId) return;
 
@@ -110,7 +153,6 @@ export function useMenuSwipeDismiss({ isOpen, onClose }) {
     const deltaY = e.clientY - g.startY;
 
     const card = cardRef.current;
-    const backdrop = backdropRef.current;
     if (!card) return;
 
     if (g.isDragging) {
@@ -121,38 +163,34 @@ export function useMenuSwipeDismiss({ isOpen, onClose }) {
       g.lastTime = now;
 
       const offsetY = Math.max(0, deltaY);
-      card.style.transform = `translateY(${offsetY}px)`;
-      card.style.transition = "none";
-      if (backdrop) {
-        backdrop.style.opacity = String(Math.max(0.1, 1 - offsetY / 240));
-        backdrop.style.transition = "none";
-      }
+      dragY.set(offsetY);
       return;
     }
 
     // Only activate on downward drag
     if (deltaY <= 0) return;
 
-    // Directional Ratio Guard: vertical must exceed horizontal by > 1.15
-    if (deltaY <= deltaX * 1.15) return;
+    // Directional Ratio Guard: vertical must exceed horizontal by > 1.1
+    if (deltaY <= deltaX * 1.1) return;
 
-    // Threshold detection (10px for pill handle, 14px for card body)
-    const threshold = g.isHandle ? 10 : 14;
+    // Threshold detection (4px for pill handle, 8px for card body)
+    const threshold = g.isHandle ? 4 : 8;
     if (deltaY > threshold) {
       g.hasActivated = true;
       g.isDragging = true;
       try {
         card.setPointerCapture?.(e.pointerId);
       } catch (_) {}
+      dragY.set(Math.max(0, deltaY));
     }
   };
 
   const endDrag = (e) => {
+    if (isClosingRef.current) return;
     const g = gestureRef.current;
     if (!g) return;
 
     const card = cardRef.current;
-    const backdrop = backdropRef.current;
 
     if (g.isDragging && card) {
       try {
@@ -162,20 +200,41 @@ export function useMenuSwipeDismiss({ isOpen, onClose }) {
       } catch (_) {}
 
       const offsetY = Math.max(0, e.clientY - g.startY);
-      const isDismiss = offsetY > 90 || g.velocityY > 0.45;
+      const totalDt = Math.max(1, Date.now() - g.startTime);
+      const totalVelocityY = (e.clientY - g.startY) / totalDt;
+      const isDismiss =
+        offsetY > 50 || g.velocityY > 0.25 || totalVelocityY > 0.25;
 
       if (isDismiss) {
-        // Zero-bounce dismissal: keep current offset and invoke onClose
         isClosingRef.current = true;
-        onClose();
+        card.style.pointerEvents = "none";
+
+        const currentY = dragY.get();
+        const targetY = Math.max(currentY + 300, 520);
+        const velocity = Math.max(
+          0.6,
+          Math.abs(g.velocityY),
+          Math.abs(totalVelocityY),
+        );
+        const duration = Math.min(
+          0.22,
+          Math.max(0.15, 160 / (velocity * 1000)),
+        );
+
+        animate(dragY, targetY, {
+          duration,
+          ease: [0.2, 0.9, 0.3, 1],
+        });
+
+        dismissTimeoutRef.current = setTimeout(() => {
+          onClose();
+        }, duration * 1000);
       } else {
-        // Smooth spring snap-back
-        card.style.transition = "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)";
-        card.style.transform = "translateY(0)";
-        if (backdrop) {
-          backdrop.style.transition = "opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1)";
-          backdrop.style.opacity = "1";
-        }
+        // Snap back cleanly to 0 with zero bounce
+        animate(dragY, 0, {
+          duration: 0.2,
+          ease: [0.16, 1, 0.3, 1],
+        });
       }
     }
 
@@ -195,7 +254,8 @@ export function useMenuSwipeDismiss({ isOpen, onClose }) {
 
   return {
     cardRef,
-    backdropRef,
+    dragY,
+    isClosingRef,
     onPointerDown,
     onPointerMove,
     onPointerUp: endDrag,
@@ -217,7 +277,6 @@ export const ActivityMenu = ({
   onOpenSelfPaced,
   onOpenHelper,
   onOpenPatreon,
-  onExitLesson,
   userLanguage = "en",
   translation = {},
 }) => {
@@ -282,7 +341,8 @@ export const ActivityMenu = ({
 
   const {
     cardRef,
-    backdropRef,
+    dragY,
+    isClosingRef,
     onPointerDown,
     onPointerMove,
     onPointerUp,
@@ -290,12 +350,6 @@ export const ActivityMenu = ({
   } = useMenuSwipeDismiss({ isOpen, onClose });
 
   const bentoGridItems = [
-    {
-      id: "settings",
-      label: translation[userLanguage]?.["settings.title"] || "Settings",
-      icon: <IoSettingsOutline fontSize="20px" color={themeIconColor} />,
-      onClick: onOpenSettings,
-    },
     {
       id: "bitcoin",
       label:
@@ -317,32 +371,50 @@ export const ActivityMenu = ({
       icon: <RiCodeAiFill fontSize="20px" color={themeIconColor} />,
       onClick: onOpenHelper,
     },
+    {
+      id: "patreon",
+      label:
+        userLanguage?.startsWith("es")
+          ? "Tutorial para crear tu app"
+          : "App Building Tutorial",
+      icon: <PiPatreonLogoFill fontSize="20px" color={themeIconColor} />,
+      onClick: onOpenPatreon,
+    },
   ];
 
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop (z-index: 1390) */}
-          <Box
-            ref={backdropRef}
-            position="fixed"
-            top="0"
-            left="0"
-            right="0"
-            bottom="0"
-            zIndex={1390}
-            bg="rgba(0, 0, 0, 0.4)"
-            onClick={onClose}
-          />
+          {/* Transparent Backdrop to capture outside clicks and prevent background dragging without flicker */}
+          <Portal>
+            <Box
+              data-activity-menu-backdrop="true"
+              position="fixed"
+              top="0"
+              left="0"
+              right="0"
+              bottom="0"
+              zIndex={1390}
+              pointerEvents="auto"
+              touchAction="none"
+              bg="transparent"
+              onClick={onClose}
+            />
+          </Portal>
 
           {/* Floating Liquid Glass Bento Card (z-index: 1500) */}
           <MotionBox
             ref={cardRef}
-            initial={{ opacity: 0, scale: 0.95, y: 16 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 16 }}
-            transition={{ type: "spring", stiffness: 420, damping: 30 }}
+            data-activity-menu-card="true"
+            style={{ y: dragY }}
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.96 }}
+            transition={{
+              duration: isClosingRef.current ? 0.01 : 0.18,
+              ease: [0.16, 1, 0.3, 1],
+            }}
             position="absolute"
             bottom="calc(100% + 12px)"
             left="0"
@@ -361,7 +433,7 @@ export const ActivityMenu = ({
             p={{ base: 3, sm: 3.5 }}
             maxH="min(580px, calc(100dvh - 96px))"
             overflowY="auto"
-            touchAction="pan-y"
+            touchAction="none"
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
@@ -369,37 +441,48 @@ export const ActivityMenu = ({
           >
             {/* Header: Centered Pill Handle & Close 'X' Button */}
             <Box
-              minH="32px"
+              minH="48px"
               pt={{ base: 1.5, sm: 2 }}
-              pb={{ base: 3.5, sm: 4 }}
+              mb={{ base: 6, sm: 7 }}
               position="relative"
               display="flex"
               alignItems="center"
               justifyContent="center"
+              touchAction="none"
+              data-drag-handle="true"
+              cursor="grab"
+              _active={{ cursor: "grabbing" }}
             >
-              {/* Centered Pill Drag Handle (48px × 5px) */}
+              {/* Centered Pill Drag Handle with expanded touch padding */}
               <Box
-                w="48px"
-                h="5px"
-                borderRadius="full"
-                bg={dragHandleBg}
-                data-drag-handle="true"
+                py={2}
+                px={6}
                 cursor="grab"
                 _active={{ cursor: "grabbing" }}
-              />
+                data-drag-handle="true"
+                touchAction="none"
+              >
+                <Box
+                  w="48px"
+                  h="5px"
+                  borderRadius="full"
+                  bg={dragHandleBg}
+                  data-drag-handle="true"
+                />
+              </Box>
 
-              {/* Close Button (32px × 32px) */}
+              {/* Close Button */}
               <IconButton
                 aria-label="Close menu"
-                icon={<IoClose fontSize="16px" />}
-                size="sm"
+                icon={<IoClose fontSize="28px" />}
+                size="md"
                 position="absolute"
                 right="0"
                 top="50%"
                 transform="translateY(-50%)"
-                w="32px"
-                h="32px"
-                minW="32px"
+                w={{ base: "44px", sm: "48px" }}
+                h={{ base: "44px", sm: "48px" }}
+                minW={{ base: "44px", sm: "48px" }}
                 borderRadius="full"
                 variant="ghost"
                 color="appText"
@@ -408,60 +491,6 @@ export const ActivityMenu = ({
                 onClick={onClose}
               />
             </Box>
-
-            {/* Top Full-Width Row: Exit Lesson (when in lesson) */}
-            {onExitLesson && (
-              <HStack
-                as="button"
-                type="button"
-                w="100%"
-                mb={{ base: 2, sm: 2.5 }}
-                p={3}
-                borderRadius="18px"
-                bg={tileBg}
-                border="1px solid"
-                borderColor={tileBorder}
-                cursor="pointer"
-                transition="all 0.15s ease"
-                _hover={{ bg: tileHoverBg, transform: "translateY(-1px)" }}
-                _active={{ transform: "scale(0.97)" }}
-                _focusVisible={{ outline: "2px solid", outlineColor: "pink.400" }}
-                onClick={() => {
-                  onClose();
-                  onExitLesson();
-                }}
-                spacing={3}
-              >
-                <Box
-                  w="38px"
-                  h="38px"
-                  borderRadius="12px"
-                  bg={themeIconBg}
-                  border="1px solid"
-                  borderColor={themeIconBorder}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  color={themeIconColor}
-                  flexShrink={0}
-                  boxShadow="0 2px 6px rgba(0, 0, 0, 0.04)"
-                >
-                  <IoArrowBackOutline fontSize="20px" color={themeIconColor} />
-                </Box>
-                <Text
-                  fontSize="sm"
-                  fontWeight="600"
-                  color="appText"
-                  textAlign="left"
-                  noOfLines={1}
-                >
-                  {translation[userLanguage]?.["menu.exitLesson"] ||
-                    (userLanguage?.startsWith("es")
-                      ? "Salir de la lección"
-                      : "Exit lesson")}
-                </Text>
-              </HStack>
-            )}
 
             {/* 2-Column Bento Grid */}
             <Box
@@ -533,7 +562,7 @@ export const ActivityMenu = ({
               ))}
             </Box>
 
-            {/* Bottom Full-Width Row: App Building Tutorial */}
+            {/* Bottom Full-Width Row: Settings */}
             <HStack
               as="button"
               type="button"
@@ -550,7 +579,7 @@ export const ActivityMenu = ({
               _focusVisible={{ outline: "2px solid", outlineColor: "pink.400" }}
               onClick={() => {
                 onClose();
-                onOpenPatreon();
+                onOpenSettings();
               }}
               spacing={3}
             >
@@ -568,7 +597,7 @@ export const ActivityMenu = ({
                 flexShrink={0}
                 boxShadow="0 2px 6px rgba(0, 0, 0, 0.04)"
               >
-                <PiPatreonLogoFill fontSize="20px" color={themeIconColor} />
+                <IoSettingsOutline fontSize="20px" color={themeIconColor} />
               </Box>
               <Text
                 fontSize="sm"
@@ -577,9 +606,8 @@ export const ActivityMenu = ({
                 textAlign="left"
                 noOfLines={1}
               >
-                {userLanguage?.startsWith("es")
-                  ? "Tutorial para crear tu app"
-                  : "App Building Tutorial"}
+                {translation[userLanguage]?.["settings.title"] ||
+                  (userLanguage?.startsWith("es") ? "Configuraciones" : "Settings")}
               </Text>
             </HStack>
           </MotionBox>

@@ -14,7 +14,7 @@ import {
   Tooltip,
   Portal,
 } from "@chakra-ui/react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { keyframes } from "@emotion/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaHeart, FaRegHeart, FaFire } from "react-icons/fa";
@@ -146,9 +146,6 @@ export const BottomActionBar = ({
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
-  const isLessonRoute = Boolean(location?.pathname?.startsWith("/q/"));
-  const handleExitLesson = isLessonRoute ? () => navigate("/") : null;
   const themeColor = useThemeStore((state) => state.themeColor);
 
   const [
@@ -423,7 +420,6 @@ export const BottomActionBar = ({
           onOpenSelfPaced={handleOpenSelfPaced}
           onOpenHelper={handleOpenHelper}
           onOpenPatreon={handleOpenPatreon}
-          onExitLesson={handleExitLesson}
           userLanguage={userLanguage}
           translation={translation}
         />
