@@ -73,6 +73,14 @@ export function useMenuSwipeDismiss({ isOpen, onClose }) {
         e.preventDefault();
         return;
       }
+      // Never interfere with interactive elements
+      if (
+        e.target.closest?.(
+          "button, [role='button'], a, input, select, textarea, [data-interactive='true']",
+        )
+      ) {
+        return;
+      }
       // Prevent touch on backdrop from scrolling background app
       if (e.target.closest?.("[data-activity-menu-backdrop='true']")) {
         e.preventDefault();
@@ -91,7 +99,7 @@ export function useMenuSwipeDismiss({ isOpen, onClose }) {
           if (
             touch &&
             gestureRef.current?.startY &&
-            touch.clientY > gestureRef.current.startY
+            touch.clientY > gestureRef.current.startY + 10
           ) {
             e.preventDefault();
           }
@@ -111,8 +119,12 @@ export function useMenuSwipeDismiss({ isOpen, onClose }) {
   const onPointerDown = (e) => {
     if (isClosingRef.current) return;
 
-    // Skip gesture tracking if close button was pressed
-    if (e.target.closest?.("button[aria-label='Close menu']")) {
+    // Do NOT capture or initiate gestures on interactive elements (buttons, links, inputs)
+    if (
+      e.target.closest?.(
+        "button, [role='button'], a, input, select, textarea, [data-interactive='true']",
+      )
+    ) {
       return;
     }
 
@@ -136,12 +148,6 @@ export function useMenuSwipeDismiss({ isOpen, onClose }) {
       isHandle,
       pointerId: e.pointerId,
     };
-
-    if (card) {
-      try {
-        card.setPointerCapture?.(e.pointerId);
-      } catch (_) {}
-    }
   };
 
   const onPointerMove = (e) => {
@@ -191,6 +197,14 @@ export function useMenuSwipeDismiss({ isOpen, onClose }) {
     if (!g) return;
 
     const card = cardRef.current;
+
+    if (card) {
+      try {
+        if (card.hasPointerCapture?.(e.pointerId)) {
+          card.releasePointerCapture?.(e.pointerId);
+        }
+      } catch (_) {}
+    }
 
     if (g.isDragging && card) {
       try {
@@ -395,7 +409,7 @@ export const ActivityMenu = ({
               left="0"
               right="0"
               bottom="0"
-              zIndex={1390}
+              zIndex={1190}
               pointerEvents="auto"
               touchAction="none"
               bg="transparent"
@@ -403,7 +417,7 @@ export const ActivityMenu = ({
             />
           </Portal>
 
-          {/* Floating Liquid Glass Bento Card (z-index: 1500) */}
+          {/* Floating Liquid Glass Bento Card (z-index: 1210) */}
           <MotionBox
             ref={cardRef}
             data-activity-menu-card="true"
@@ -422,7 +436,7 @@ export const ActivityMenu = ({
             width="100%"
             maxW={{ base: "100%", sm: "460px", md: "500px" }}
             margin="0 auto"
-            zIndex={1500}
+            zIndex={1210}
             bg={cardBg}
             backdropFilter="blur(24px) saturate(180%)"
             WebkitBackdropFilter="blur(24px) saturate(180%)"
@@ -433,7 +447,8 @@ export const ActivityMenu = ({
             p={{ base: 3, sm: 3.5 }}
             maxH="min(580px, calc(100dvh - 96px))"
             overflowY="auto"
-            touchAction="none"
+            pointerEvents="auto"
+            touchAction="pan-y"
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
@@ -488,7 +503,12 @@ export const ActivityMenu = ({
                 color="appText"
                 _hover={{ bg: "appSurfaceMuted" }}
                 _active={{ bg: "appSurfaceInset" }}
-                onClick={onClose}
+                data-interactive="true"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClose?.();
+                }}
               />
             </Box>
 
@@ -504,9 +524,12 @@ export const ActivityMenu = ({
                   key={item.id}
                   as="button"
                   type="button"
-                  onClick={() => {
-                    onClose();
-                    item.onClick();
+                  data-interactive="true"
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    item.onClick?.();
+                    onClose?.();
                   }}
                   p={3.5}
                   minH="88px"
@@ -566,6 +589,7 @@ export const ActivityMenu = ({
             <HStack
               as="button"
               type="button"
+              data-interactive="true"
               w="100%"
               p={3}
               borderRadius="18px"
@@ -577,9 +601,11 @@ export const ActivityMenu = ({
               _hover={{ bg: tileHoverBg, transform: "translateY(-1px)" }}
               _active={{ transform: "scale(0.97)" }}
               _focusVisible={{ outline: "2px solid", outlineColor: "pink.400" }}
-              onClick={() => {
-                onClose();
-                onOpenSettings();
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenSettings?.();
+                onClose?.();
               }}
               spacing={3}
             >

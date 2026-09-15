@@ -8805,27 +8805,25 @@ function App({ isShutDown }) {
         position="relative"
         zIndex={1}
       >
-        {isSignedIn && (
-          <SettingsMenu
-            testIsMatch={testIsMatch}
-            isSignedIn={isSignedIn}
-            setIsSignedIn={setIsSignedIn}
-            steps={steps}
-            userLanguage={userLanguage}
-            setUserLanguage={setUserLanguage}
-            currentStep={currentStep}
-            view={view}
-            setView={setView}
-            step={steps?.[userLanguage]?.[currentStep]}
-            isAdaptiveLearning={isAdaptiveLearning}
-            setIsAdaptiveLearning={setIsAdaptiveLearning}
-            soundEnabled={soundEnabled}
-            setSoundEnabled={setSoundEnabled}
-            onPatreonAuthorized={handlePatreonAuthorized}
-            allowPosts={allowPosts}
-            setAllowPosts={setAllowPosts}
-          />
-        )}
+        <SettingsMenu
+          testIsMatch={testIsMatch}
+          isSignedIn={isSignedIn}
+          setIsSignedIn={setIsSignedIn}
+          steps={steps}
+          userLanguage={userLanguage}
+          setUserLanguage={setUserLanguage}
+          currentStep={currentStep}
+          view={view}
+          setView={setView}
+          step={steps?.[userLanguage]?.[currentStep]}
+          isAdaptiveLearning={isAdaptiveLearning}
+          setIsAdaptiveLearning={setIsAdaptiveLearning}
+          soundEnabled={soundEnabled}
+          setSoundEnabled={setSoundEnabled}
+          onPatreonAuthorized={handlePatreonAuthorized}
+          allowPosts={allowPosts}
+          setAllowPosts={setAllowPosts}
+        />
 
         <Suspense
           fallback={

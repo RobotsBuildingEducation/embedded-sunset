@@ -326,33 +326,41 @@ export const BottomActionBar = ({
 
   // Menu action handlers
   const handleOpenBitcoin = () => {
-    openSurfaceModal("bitcoin", { userLanguage }, "bitcoin");
+    if (typeof openSurfaceModal === "function") {
+      openSurfaceModal("bitcoin", { userLanguage }, "bitcoin");
+    } else {
+      useSurfaceModalStore.getState().openActionModal("bitcoin", { userLanguage });
+    }
   };
 
   const handleOpenSelfPaced = () => {
-    openSurfaceModal(
-      "selfPaced",
-      {
-        interval,
-        userId: localStorage.getItem("local_npub"),
-        userLanguage,
-        onSettingsSaved: handleSelfPacedSettingsSaved,
-      },
-      "selfPaced",
-    );
+    const payload = {
+      interval,
+      userId: localStorage.getItem("local_npub"),
+      userLanguage,
+      onSettingsSaved: handleSelfPacedSettingsSaved,
+    };
+    if (typeof openSurfaceModal === "function") {
+      openSurfaceModal("selfPaced", payload, "selfPaced");
+    } else {
+      useSurfaceModalStore.getState().openActionModal("selfPaced", payload);
+    }
   };
 
   const handleOpenHelper = () => {
-    openSurfaceModal(
-      "helper",
-      { currentStep, step, steps, userLanguage },
-      "helper",
-    );
+    const payload = { currentStep, step, steps, userLanguage };
+    if (typeof openSurfaceModal === "function") {
+      openSurfaceModal("helper", payload, "helper");
+    } else {
+      useSurfaceModalStore.getState().openActionModal("helper", payload);
+    }
   };
 
   const handleOpenPatreon = () => {
-    triggerHaptic();
-    playActionBarSound("patreon");
+    try {
+      triggerHaptic?.();
+      playActionBarSound?.("patreon");
+    } catch (_) {}
     window.open(
       "https://www.patreon.com/posts/building-app-by-93082226?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link",
       "_blank",
@@ -370,11 +378,11 @@ export const BottomActionBar = ({
       justifyContent="center"
       alignItems="center"
       pointerEvents="none"
-      zIndex={1450}
+      zIndex={1200}
       px={{ base: 3, sm: 4 }}
     >
       <MotionBox
-        layout
+        layout="size"
         transition={{ type: "spring", stiffness: 380, damping: 28 }}
         pointerEvents="auto"
         position="relative"
