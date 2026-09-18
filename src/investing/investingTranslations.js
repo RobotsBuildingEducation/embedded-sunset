@@ -88,6 +88,8 @@ export const translations = {
     "plan.returnHelp": "Conservative: 4% · Historical stock market average: ~7-10%",
     "plan.inflation": "Estimated annual inflation",
     "plan.inflationHelp": "Historical long-term average: ~2-3%",
+    "plan.applyInflation": "Apply inflation to calculation",
+    "plan.inflationRate": "Annual inflation rate",
     "plan.match": "Employer contribution ({frequency})",
     "plan.matchHelp": "Matches your deposits up to the combined limit.",
 
@@ -167,7 +169,7 @@ export const translations = {
     "details.pReturns":
       "Returns are effective annual rates, converted to equivalent monthly growth. Monthly contributions arrive at month-end, yearly contributions at year-end, and one-time contributions at the start. An existing balance and any selected seed are invested at the start. New contributions stop when the chosen age is reached.",
     "details.pYears":
-      "Each year in this age-based illustration is a full 12-month period. 2026 contribution limits are the starting baseline. If enabled, future limits rise with the annual limit growth estimate (starting in modeled 2028 for 530A); actual IRS indexing, rounding, calendar-year timing, compensation limits, and eligibility can differ. Only modeled eligible deposits earn returns.",
+      "Each year in this age-based illustration is a full 12-month period. Projections use official 2026 IRS contribution limits as the baseline ($24,500 for 401(k), $7,500 for IRA, $5,000 for 530A). Only modeled eligible deposits earn returns.",
     "details.pFutureDollars":
       "All amounts are shown in future dollars. Growth assumes reinvestment and your selected return net of investment fees. No withdrawal taxes are subtracted.",
     "details.inflationMath":
@@ -264,6 +266,8 @@ export const translations = {
     "plan.returnHelp": "Conservador: 4% · Promedio histórico de bolsa: ~7-10%",
     "plan.inflation": "Inflación anual estimada",
     "plan.inflationHelp": "Promedio histórico a largo plazo: ~2-3%",
+    "plan.applyInflation": "Aplicar inflación al cálculo",
+    "plan.inflationRate": "Tasa anual de inflación",
     "plan.match": "Aportación del empleador ({frequency})",
     "plan.matchHelp": "Aporta junto contigo hasta el límite combinado.",
 
@@ -343,7 +347,7 @@ export const translations = {
     "details.pReturns":
       "Los rendimientos son tasas efectivas anuales convertidas a crecimiento mensual. Las aportaciones mensuales llegan a fin de mes, las anuales a fin de año y las únicas al inicio. Saldo existente y semilla se invierten al inicio. Los aportes nuevos se detienen a la edad seleccionada.",
     "details.pYears":
-      "Cada año en esta ilustración es un periodo completo de 12 meses. Los límites de 2026 son la base inicial. Si se activan, los límites futuros crecen con la tasa anual estimada.",
+      "Cada año en esta ilustración es un periodo completo de 12 meses. Las proyecciones utilizan los límites de aportación oficiales del IRS de 2026 como base ($24,500 para 401(k), $7,500 para IRA, $5,000 para 530A). Solo los depósitos elegibles modelados generan rendimientos.",
     "details.pFutureDollars":
       "Todas las cifras se muestran en dólares futuros. El crecimiento asume reinversión y el rendimiento neto seleccionado sin restar impuestos de retiro.",
     "details.inflationMath":

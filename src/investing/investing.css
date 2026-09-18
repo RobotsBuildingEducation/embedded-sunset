@@ -636,7 +636,14 @@ body:has(.investing-page[data-theme="dark"]) {
 .inv-more {
   border-top: 1px solid var(--inv-line);
   margin-top: 22px;
-  padding-top: 3px;
+  padding-top: 4px;
+}
+.inv-more-title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--inv-ink);
+  padding: 12px 0 0;
 }
 .investing-page summary {
   list-style: none;
@@ -645,20 +652,13 @@ body:has(.investing-page[data-theme="dark"]) {
 .investing-page summary::-webkit-details-marker {
   display: none;
 }
-.inv-more summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 13px 0 0;
-  font-size: 11px;
-}
 .investing-page details[open] > summary > svg:last-child {
   transform: rotate(180deg);
 }
 .inv-more-content {
   display: grid;
   gap: 16px;
-  padding: 17px 0 0;
+  padding: 14px 0 0;
 }
 .inv-max-amount {
   padding: 11px 13px;
@@ -686,9 +686,16 @@ body:has(.investing-page[data-theme="dark"]) {
   min-width: 0;
   scroll-margin-top: 18px;
 }
-.inv-mobile-settings,
-.inv-show-chart {
+.inv-mobile-settings {
   display: none;
+}
+.inv-inflation-toggle {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--inv-line);
+}
+.inv-inflation-input {
+  margin-top: 10px;
 }
 .inv-ira-note {
   font-size: 11px;
@@ -1210,19 +1217,39 @@ body:has(.investing-page[data-theme="dark"]) {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     width: 100%;
     border: 0;
     background: transparent;
-    font-size: 12px !important;
-    padding: 14px 0 0;
+    font-size: 13px !important;
+    padding: 16px 0 10px;
     text-align: left;
   }
-  .inv-mobile-settings > span:last-child {
-    display: flex;
-    gap: 7px;
+  .inv-mobile-settings > span:first-child {
+    line-height: 1.45;
+  }
+  .inv-mobile-settings > span:last-child,
+  .inv-mobile-edit-btn {
+    display: inline-flex;
     align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
     color: var(--inv-green);
+    border: 1.5px solid var(--inv-green);
+    border-radius: 8px;
+    background: var(--inv-surface, #fff);
+    white-space: nowrap;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.15s ease;
+  }
+  .inv-mobile-settings > span:last-child:hover,
+  .inv-mobile-settings > span:last-child:active,
+  .inv-mobile-edit-btn:hover,
+  .inv-mobile-edit-btn:active {
+    background: rgba(38, 88, 64, 0.08);
   }
   .inv-mobile-settings b {
     font-weight: 500;
@@ -1235,18 +1262,6 @@ body:has(.investing-page[data-theme="dark"]) {
   }
   .inv-controls.is-expanded .inv-mobile-settings svg {
     transform: rotate(180deg);
-  }
-  .inv-show-chart {
-    display: flex !important;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    background: var(--inv-green);
-    color: white !important;
-    padding: 13px;
-    border-radius: 7px;
-    margin-top: 20px;
-    font-size: 12px;
   }
   .inv-account-fieldset {
     margin-top: 20px;
@@ -1313,8 +1328,8 @@ body:has(.investing-page[data-theme="dark"]) {
   .inv-range-labels {
     font-size: 11px;
   }
-  .inv-more summary {
-    font-size: 12px;
+  .inv-more-title {
+    font-size: 13px;
     padding-top: 14px;
   }
   .inv-chart-card {
@@ -1486,12 +1501,26 @@ body:has(.investing-page[data-theme="dark"]) {
 }
 @media (max-width: 760px) {
   .inv-mobile-edit {
-    display: block;
-    font-size: 11px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
     color: var(--inv-green) !important;
-    text-decoration: underline !important;
-    text-underline-offset: 3px;
+    text-decoration: none !important;
+    border: 1.5px solid var(--inv-green);
+    border-radius: 8px;
+    background: var(--inv-surface, #fff);
     white-space: nowrap;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-left: auto;
+    transition: all 0.15s ease;
+  }
+  .inv-mobile-edit:hover,
+  .inv-mobile-edit:active {
+    background: rgba(38, 88, 64, 0.08);
   }
   .inv-chart-toolbar {
     flex-wrap: wrap;
@@ -1499,6 +1528,25 @@ body:has(.investing-page[data-theme="dark"]) {
   .inv-legend {
     gap: 10px;
   }
+}
+
+.investing-page[data-theme="dark"] .inv-mobile-settings > span:last-child,
+.investing-page[data-theme="dark"] .inv-mobile-edit-btn,
+[data-theme="dark"] .inv-mobile-settings > span:last-child,
+[data-theme="dark"] .inv-mobile-edit-btn,
+.investing-page[data-theme="dark"] .inv-mobile-edit,
+[data-theme="dark"] .inv-mobile-edit {
+  color: #7ecb9a !important;
+  border-color: #7ecb9a;
+  background: rgba(126, 203, 154, 0.08);
+}
+.investing-page[data-theme="dark"] .inv-mobile-settings > span:last-child:hover,
+.investing-page[data-theme="dark"] .inv-mobile-edit-btn:hover,
+[data-theme="dark"] .inv-mobile-settings > span:last-child:hover,
+[data-theme="dark"] .inv-mobile-edit-btn:hover,
+.investing-page[data-theme="dark"] .inv-mobile-edit:hover,
+[data-theme="dark"] .inv-mobile-edit:hover {
+  background: rgba(126, 203, 154, 0.16);
 }
 
 /* Dark Mode Component Overrides */

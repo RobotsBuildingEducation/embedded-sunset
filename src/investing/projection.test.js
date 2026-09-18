@@ -22,7 +22,11 @@ test("seed-only compounding uses the effective annual rate, not rate / 12", () =
 });
 
 test("monthly savings match the closed-form annuity and coast after the stop age", () => {
-  const { points } = projectInvestment({ ...defaultPlan(), annualReturn: 7 });
+  const { points } = projectInvestment({
+    ...defaultPlan(),
+    amount: 100,
+    annualReturn: 7,
+  });
   const r = 1.07 ** (1 / 12) - 1;
   const at18 = 1000 * 1.07 ** 18 + (100 * ((1 + r) ** 216 - 1)) / r;
   near(points[18].balance, at18);
@@ -65,7 +69,7 @@ test("zero and negative returns remain finite and preserve deposit accounting", 
         point.personal + point.seed + point.employer + point.growth,
       );
     }
-    if (annualReturn === 0) near(points.at(-1).balance, 22600);
+    if (annualReturn === 0) near(points.at(-1).balance, 6400);
     else assert.ok(points.at(-1).growth < 0);
   }
 });
@@ -168,7 +172,14 @@ test("malformed saved inputs cannot produce invalid horizons or NaN projections"
   assert.equal(plan.endAge, 18);
   assert.equal(plan.stopAge, 17);
   assert.equal(plan.employerMonthly, 0);
-  assert.equal(plan.annualReturn, 7);
+  assert.equal(plan.annualReturn, 10);
+  assert.equal(defaultPlan().annualReturn, 10);
+  assert.equal(defaultPlan().amount, 25);
+  assert.equal(defaultPlan("child").amount, 25);
+  assert.equal(defaultPlan("401k").amount, 25);
+  assert.equal(defaultPlan("ira").amount, 25);
+  assert.equal(defaultPlan().inflation, 3);
+  assert.equal(defaultPlan().applyInflation, false);
   assert.ok(
     projectInvestment(plan).points.every((p) => Number.isFinite(p.balance)),
   );
@@ -182,4 +193,23 @@ test("malformed saved inputs cannot produce invalid horizons or NaN projections"
     false,
   );
   assert.equal(projectInvestment(null).points.length, 61);
+});
+
+test("applyInflation discounts balances and deposits to today's buying power", () => {
+  const base = {
+    ...defaultPlan(),
+    startAge: 0,
+    endAge: 10,
+    amount: 0,
+    annualReturn: 10,
+    inflation: 3,
+    applyInflation: true,
+  };
+  const { points } = projectInvestment(base);
+  near(points[0].balance, 1000);
+  near(points[1].balance, (1000 * 1.1) / 1.03);
+  near(points[10].balance, (1000 * 1.1 ** 10) / (1.03 ** 10));
+  for (const p of points) {
+    near(p.balance, p.personal + p.employer + p.seed + p.growth);
+  }
 });

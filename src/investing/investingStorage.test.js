@@ -52,8 +52,36 @@ test("corrupt scenarios recover while corrupt identity keys are preserved", () =
   const storage = memoryStorage();
   const session = openInvestingSession(storage);
   storage.setItem(planStorageKey(session.profile.npub), "broken json");
-  assert.equal(openInvestingSession(storage).plans.child.amount, 100);
+  assert.equal(openInvestingSession(storage).plans.child.amount, 25);
   storage.setItem("local_nsec", "damaged");
   assert.throws(() => openInvestingSession(storage), /could not be read/);
   assert.equal(storage.getItem("local_nsec"), "damaged");
 });
+
+test("saved sessions with legacy 7% return migrate to 10% default across all versions", () => {
+  for (const version of [1, 2, undefined]) {
+    const storage = memoryStorage();
+    const session = openInvestingSession(storage);
+    const key = planStorageKey(session.profile.npub);
+    storage.setItem(
+      key,
+      JSON.stringify({
+        version,
+        plans: {
+          child: { annualReturn: 7, amount: 100 },
+          ira: { annualReturn: 12, amount: 200 },
+          "401k": { amount: 250 },
+        },
+        account: "child",
+      }),
+    );
+    const reloaded = openInvestingSession(storage);
+    assert.equal(reloaded.plans.child.annualReturn, 10);
+    assert.equal(reloaded.plans.child.amount, 25);
+    assert.equal(reloaded.plans.ira.annualReturn, 12);
+    assert.equal(reloaded.plans.ira.amount, 200);
+    assert.equal(reloaded.plans["401k"].amount, 25);
+    assert.equal(reloaded.plans.child.inflation, 3);
+  }
+});
+

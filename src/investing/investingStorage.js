@@ -13,10 +13,18 @@ export function openInvestingSession(storage = localStorage) {
     const saved = JSON.parse(
       storage.getItem(planStorageKey(profile.npub)) || "null",
     );
-    if (saved && saved.version === 1) {
+    if (saved && typeof saved === "object") {
       for (const type of ACCOUNT_TYPES) {
-        if (saved.plans?.[type])
-          plans[type] = normalizePlan({ ...saved.plans[type], account: type });
+        if (saved.plans?.[type]) {
+          const planData = { ...saved.plans[type], account: type };
+          if (planData.annualReturn === 7 || !planData.annualReturn) {
+            planData.annualReturn = 10;
+          }
+          if (planData.amount === 100 || planData.amount === 250) {
+            planData.amount = 25;
+          }
+          plans[type] = normalizePlan(planData);
+        }
       }
       if (ACCOUNT_TYPES.includes(saved.account)) account = saved.account;
     }
@@ -31,7 +39,7 @@ export function saveInvestingSession(session, storage = localStorage) {
   storage.setItem(
     planStorageKey(session.profile.npub),
     JSON.stringify({
-      version: 1,
+      version: 2,
       plans: session.plans,
       account: session.account,
     }),

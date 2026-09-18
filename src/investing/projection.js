@@ -3,9 +3,36 @@
 export const RULES_YEAR = 2026;
 export const ACCOUNT_TYPES = ["child", "401k", "ira"];
 export const DEFAULTS = {
-  child: { startAge: 0, stopAge: 18, endAge: 60, amount: 100, seed: true },
-  "401k": { startAge: 25, stopAge: 65, endAge: 65, amount: 250, seed: false },
-  ira: { startAge: 25, stopAge: 65, endAge: 65, amount: 100, seed: false },
+  child: {
+    startAge: 0,
+    stopAge: 18,
+    endAge: 60,
+    amount: 25,
+    seed: true,
+    annualReturn: 10,
+    inflation: 3,
+    applyInflation: false,
+  },
+  "401k": {
+    startAge: 25,
+    stopAge: 65,
+    endAge: 65,
+    amount: 25,
+    seed: false,
+    annualReturn: 10,
+    inflation: 3,
+    applyInflation: false,
+  },
+  ira: {
+    startAge: 25,
+    stopAge: 65,
+    endAge: 65,
+    amount: 25,
+    seed: false,
+    annualReturn: 10,
+    inflation: 3,
+    applyInflation: false,
+  },
 };
 
 const number = (value, fallback, min, max) => {
@@ -48,8 +75,9 @@ export function normalizePlan(input = {}) {
     frequency: ["monthly", "yearly", "once"].includes(input.frequency)
       ? input.frequency
       : "monthly",
-    annualReturn: number(input.annualReturn, 7, -20, 20),
+    annualReturn: number(input.annualReturn, 10, -20, 20),
     inflation: number(input.inflation, 3, 0, 15),
+    applyInflation: input.applyInflation === true,
     contributionGrowth: number(input.contributionGrowth, 0, 0, 15),
     seed:
       account === "child" &&
@@ -86,23 +114,30 @@ export function projectInvestment(input) {
   let balance = personal + seed;
   let limited = false;
   if (plan.frequency === "once") {
-    const deposit = Math.min(plan.amount, annualLimit(plan, plan.startAge));
+    const deposit = Math.min(plan.amount, annualLimit(plan, plan.startAge, 0));
     personal += deposit;
     balance += deposit;
     limited = deposit < plan.amount;
   }
   const points = [];
   function record(year) {
-    const added = personal + employer + seed;
+    const factor = plan.applyInflation
+      ? (1 + plan.inflation / 100) ** year
+      : 1;
+    const recBalance = balance / factor;
+    const recPersonal = personal / factor;
+    const recEmployer = employer / factor;
+    const recSeed = seed / factor;
+    const added = recPersonal + recEmployer + recSeed;
     points.push({
       age: plan.startAge + year,
       year,
-      balance,
-      personal,
-      employer,
-      seed,
+      balance: recBalance,
+      personal: recPersonal,
+      employer: recEmployer,
+      seed: recSeed,
       added,
-      growth: balance - added,
+      growth: recBalance - added,
     });
   }
   record(0);
@@ -122,7 +157,7 @@ export function projectInvestment(input) {
           (1 + plan.contributionGrowth / 100) ** year;
     const annualPersonal = canContribute ? Math.min(requested, limit) : 0;
     if (canContribute && requested > limit + 0.001) limited = true;
-    // 2026 combined 401(k) limit excludes catch-up contributions.
+    // 2026 combined 401(k) limit ($72,000 baseline) excludes catch-up contributions.
     const factor = plan.growLimits ? (1 + plan.inflation / 100) ** year : 1;
     const oneTimeThisYear =
       year === 0 && plan.frequency === "once"

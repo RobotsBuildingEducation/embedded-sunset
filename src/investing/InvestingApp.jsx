@@ -137,9 +137,28 @@ function Toggle({ checked, onChange, title, description }) {
   );
 }
 
+function sanitizePlans(plans) {
+  if (!plans) return plans;
+  const sanitized = { ...plans };
+  for (const key of Object.keys(sanitized)) {
+    if (sanitized[key]) {
+      let updated = sanitized[key];
+      if (updated.annualReturn === 7 || !updated.annualReturn) {
+        updated = { ...updated, annualReturn: 10 };
+      }
+      if (updated.amount === 100 || updated.amount === 250) {
+        updated = { ...updated, amount: 25 };
+      }
+      sanitized[key] = updated;
+    }
+  }
+  return sanitized;
+}
+
 function initialSession() {
   try {
-    return { ...openInvestingSession(), error: "" };
+    const session = openInvestingSession();
+    return { ...session, plans: sanitizePlans(session.plans), error: "" };
   } catch (error) {
     return {
       profile: null,
@@ -155,12 +174,16 @@ function initialSession() {
 export default function InvestingApp() {
   const [session] = useState(initialSession);
   const [account, setAccount] = useState(session.account);
-  const [plans, setPlans] = useState(session.plans);
+  const [plans, setPlans] = useState(() => sanitizePlans(session.plans));
   const [saveError, setSaveError] = useState(session.error);
   const [selectedAge, setSelectedAge] = useState(
     session.plans[session.account].endAge,
   );
   const [controlsOpen, setControlsOpen] = useState(false);
+
+  useEffect(() => {
+    setPlans((current) => sanitizePlans(current));
+  }, []);
 
   // Language & Theme State
   const [userLanguage, setUserLanguage] = useState(() =>
@@ -387,7 +410,7 @@ export default function InvestingApp() {
                   ? t("plan.annualMaximum")
                   : `${money(plan.amount)} ${plan.frequency === "monthly" ? t("plan.perMonth") : plan.frequency === "yearly" ? t("plan.perYear") : t("plan.oneTime")}`}
               </span>
-              <span>
+              <span className="inv-mobile-edit-btn">
                 {controlsOpen ? t("projection.close") : t("projection.edit")}
                 <FiChevronDown />
               </span>
@@ -592,10 +615,36 @@ export default function InvestingApp() {
                 </div>
                 <small>{t("plan.assumptionNote")}</small>
               </div>
-              <details className="inv-more">
-                <summary>
-                  {t("plan.fineTune")} <FiChevronDown />
-                </summary>
+              <div className="inv-inflation-toggle">
+                <label className="inv-checkbox-row">
+                  <input
+                    type="checkbox"
+                    checked={plan.applyInflation}
+                    onChange={(event) =>
+                      update({ applyInflation: event.target.checked })
+                    }
+                  />
+                  <span>{t("plan.applyInflation")}</span>
+                </label>
+                {plan.applyInflation && (
+                  <div className="inv-inflation-input">
+                    <NumberField
+                      label={t("plan.inflationRate")}
+                      value={plan.inflation}
+                      min={0}
+                      max={15}
+                      step={0.1}
+                      suffix="%"
+                      onChange={(inflation) => update({ inflation })}
+                      help={t("plan.inflationHelp")}
+                    />
+                  </div>
+                )}
+              </div>
+              <div className="inv-more">
+                <div className="inv-more-title">
+                  {t("plan.fineTune")}
+                </div>
                 <div className="inv-more-content">
                   <NumberField
                     label={t("plan.alreadyInvested")}
@@ -622,13 +671,14 @@ export default function InvestingApp() {
                     onChange={(annualReturn) => update({ annualReturn })}
                   />
                   <NumberField
-                    label={t("plan.annualLimitGrowth")}
+                    label={t("plan.inflationRate")}
                     value={plan.inflation}
+                    min={0}
                     max={15}
                     step={0.1}
                     suffix="%"
                     onChange={(inflation) => update({ inflation })}
-                    help={t("plan.annualLimitGrowthHelp")}
+                    help={t("plan.inflationHelp")}
                   />
                   {!plan.maxContributions && plan.frequency !== "once" && (
                     <NumberField
@@ -655,21 +705,8 @@ export default function InvestingApp() {
                       help={t("plan.employerContributionHelp")}
                     />
                   )}
-                  <Toggle
-                    checked={plan.growLimits}
-                    onChange={(growLimits) => update({ growLimits })}
-                    title={t("plan.estimateFutureLimits")}
-                    description={t("plan.estimateFutureLimitsHelp")}
-                  />
                 </div>
-              </details>
-              <a
-                className="inv-show-chart"
-                href="#inv-projection"
-                onClick={() => setControlsOpen(false)}
-              >
-                {t("plan.seeProjection")} <FiArrowUpRight />
-              </a>
+              </div>
             </div>
           </aside>
 
@@ -726,7 +763,10 @@ export default function InvestingApp() {
                   </p>
                   <div className="inv-balance">{money(selected.balance)}</div>
                   <p className="inv-summary-note">
-                    {t("projection.inFuture")} <span>·</span> {t("projection.beforeTaxes")}
+                    {plan.applyInflation
+                      ? t("projection.inReal")
+                      : t("projection.inFuture")}{" "}
+                    <span>·</span> {t("projection.beforeTaxes")}
                   </p>
                 </div>
               </div>
@@ -772,6 +812,7 @@ export default function InvestingApp() {
                 selectedAge={age}
                 onSelectAge={setSelectedAge}
                 stopAge={depositsEndAge}
+                plan={plan}
                 t={t}
               />
               <div className="inv-milestones">
@@ -888,7 +929,11 @@ export default function InvestingApp() {
             <div className="inv-details-content">
               <p>{t("details.pReturns")}</p>
               <p>{t("details.pYears")}</p>
-              <p>{t("details.pFutureDollars")}</p>
+              <p>
+                {plan.applyInflation
+                  ? t("details.inflationMath")
+                  : t("details.pFutureDollars")}
+              </p>
               <p>{t("details.disclaimer")}</p>
             </div>
           </details>

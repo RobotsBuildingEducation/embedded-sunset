@@ -12,6 +12,7 @@ export default function GrowthChart({
   selectedAge,
   onSelectAge,
   stopAge,
+  plan,
   t,
 }) {
   const host = useRef(null);
@@ -169,7 +170,7 @@ export default function GrowthChart({
         viewBox={`0 0 ${width} ${height}`}
         className="inv-chart-svg"
         role="img"
-        aria-label={`Investment projection from age ${start} to ${end}. At age ${selectedAge}: ${money(selected.balance)} in future dollars. Use the age slider below to explore.`}
+        aria-label={`Investment projection from age ${start} to ${end}. At age ${selectedAge}: ${money(selected.balance)} in ${plan?.applyInflation ? (t ? t("projection.todayDollars") : "today's dollars") : (t ? t("projection.futureDollars") : "future dollars")}. Use the age slider below to explore.`}
         onPointerDown={(event) => {
           if (event.pointerType !== "mouse")
             event.currentTarget.setPointerCapture(event.pointerId);
@@ -265,7 +266,15 @@ export default function GrowthChart({
       </svg>
       <div className="inv-chart-hint">
         <span>{t ? t("chart.hint") : "Age · tap or move across the chart"}</span>
-        <span>{t ? t("chart.currencyHint") : "Future dollars · USD"}</span>
+        <span>
+          {plan?.applyInflation
+            ? t
+              ? `${t("projection.todayDollars")} · USD`
+              : "Today’s dollars · USD"
+            : t
+              ? t("chart.currencyHint")
+              : "Future dollars · USD"}
+        </span>
       </div>
       <div className="inv-scrubber">
         <button
