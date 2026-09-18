@@ -1,6 +1,6 @@
 export const translations = {
   en: {
-    "brand.title": "Sunset",
+    "brand.title": "Robots Building Education",
     "brand.subtitle": "Investing",
     "header.langToggle": "Switch language",
     "header.themeLight": "Switch to light mode",
@@ -33,8 +33,10 @@ export const translations = {
     "ira.taxTreatment": "IRA tax treatment",
     "ira.traditional": "Traditional IRA",
     "ira.roth": "Roth IRA",
-    "ira.rothNote": "Contribute after-tax money; qualified withdrawals are tax-free.",
-    "ira.tradNote": "You may get a tax deduction now; withdrawals are generally taxable.",
+    "ira.rothNote":
+      "Contribute after-tax money; qualified withdrawals are tax-free.",
+    "ira.tradNote":
+      "You may get a tax deduction now; withdrawals are generally taxable.",
     "ira.growthNote": "The chart shows growth before taxes.",
 
     "plan.frequency": "How often will you add money?",
@@ -63,11 +65,13 @@ export const translations = {
     "plan.assumptionNote": "An assumption, not a promised return.",
     "plan.fineTune": "Fine-tune your plan",
     "plan.alreadyInvested": "Already invested",
-    "plan.existingBalanceHelp": "An existing balance, separate from new contributions.",
+    "plan.existingBalanceHelp":
+      "An existing balance, separate from new contributions.",
     "plan.projectThroughAge": "Project through age",
     "plan.yearlyGrowthAssumption": "Yearly growth assumption",
     "plan.annualLimitGrowth": "Annual limit growth",
-    "plan.annualLimitGrowthHelp": "Estimated yearly increase in contribution limits.",
+    "plan.annualLimitGrowthHelp":
+      "Estimated yearly increase in contribution limits.",
     "plan.increaseContributionsYearly": "Increase your contributions yearly",
     "plan.employerContribution": "Employer contribution",
     "plan.employerContributionHelp":
@@ -85,7 +89,8 @@ export const translations = {
     "plan.stopHelp": "Coast without adding new money after this age",
     "plan.endAge": "Project until age",
     "plan.return": "Expected annual return",
-    "plan.returnHelp": "Conservative: 4% · Historical stock market average: ~7-10%",
+    "plan.returnHelp":
+      "Conservative: 4% · Historical stock market average: ~7-10%",
     "plan.inflation": "Estimated annual inflation",
     "plan.inflationHelp": "Historical long-term average: ~2-3%",
     "plan.applyInflation": "Apply inflation to calculation",
@@ -98,10 +103,13 @@ export const translations = {
     "preset.monthly": "$100 a month",
     "preset.max": "Max it out",
 
-    "insight.canKeepGrowing": "Your money can keep growing after you stop adding.",
+    "insight.canKeepGrowing":
+      "Your money can keep growing after you stop adding.",
     "insight.habitSmall": "The habit is small. The possibilities aren’t.",
-    "insight.coastText": "At age {stopAge}, this plan has {stopBalance}. Leave it invested until {endAge}, and it could reach {finalBalance} with no more personal deposits.",
-    "insight.contributeText": "By age {endAge}, {personal} in your own money could help build a balance of {finalBalance}.",
+    "insight.coastText":
+      "At age {stopAge}, this plan has {stopBalance}. Leave it invested until {endAge}, and it could reach {finalBalance} with no more personal deposits.",
+    "insight.contributeText":
+      "By age {endAge}, {personal} in your own money could help build a balance of {finalBalance}.",
 
     "projection.live": "Live projection",
     "projection.edit": "Edit plan",
@@ -175,10 +183,10 @@ export const translations = {
     "details.inflationMath":
       "Today’s dollars = future balance ÷ (1 + inflation rate)years. The displayed money added and growth are divided by that same factor so they sum to the balance; this is not a real-return or tax-basis calculation. Growth assumes reinvestment and your selected return net of investment fees. No withdrawal taxes are subtracted.",
     "details.disclaimer":
-      "This is an educational illustration, not a forecast or personal financial advice. Markets fluctuate, investments can lose value, and steady growth is not guaranteed. Account rules checked against IRS guidance for 2026."
+      "This is an educational illustration, not a forecast or personal financial advice. Markets fluctuate, investments can lose value, and steady growth is not guaranteed. Account rules checked against IRS guidance for 2026.",
   },
   es: {
-    "brand.title": "Sunset",
+    "brand.title": "Robots Building Education",
     "brand.subtitle": "Inversiones",
     "header.langToggle": "Cambiar idioma",
     "header.themeLight": "Cambiar a modo claro",
@@ -211,8 +219,10 @@ export const translations = {
     "ira.taxTreatment": "Tratamiento fiscal de IRA",
     "ira.traditional": "IRA Tradicional",
     "ira.roth": "Roth IRA",
-    "ira.rothNote": "Aporta dinero después de impuestos; retiros calificados libres de impuestos.",
-    "ira.tradNote": "Puedes deducir impuestos ahora; los retiros pagan impuestos después.",
+    "ira.rothNote":
+      "Aporta dinero después de impuestos; retiros calificados libres de impuestos.",
+    "ira.tradNote":
+      "Puedes deducir impuestos ahora; los retiros pagan impuestos después.",
     "ira.growthNote": "La gráfica muestra el crecimiento antes de impuestos.",
 
     "plan.frequency": "¿Con qué frecuencia agregarás dinero?",
@@ -235,17 +245,20 @@ export const translations = {
     "plan.lookAheadTo": "Mirar hacia los",
     "plan.stopAddingAt": "Dejar de aportar a los",
     "plan.seedHeadStart": "Incluir la semilla de $1,000",
-    "plan.seedQualifies": "Asume que el menor califica para la semilla federal.",
+    "plan.seedQualifies":
+      "Asume que el menor califica para la semilla federal.",
     "plan.avgYearlyGrowth": "Rendimiento anual promedio",
     "plan.tryPossibilities": "Prueba distintas posibilidades",
     "plan.assumptionNote": "Una suposición, no un rendimiento garantizado.",
     "plan.fineTune": "Ajustes avanzados",
     "plan.alreadyInvested": "Ya invertido",
-    "plan.existingBalanceHelp": "Un saldo existente, independiente de nuevos aportes.",
+    "plan.existingBalanceHelp":
+      "Un saldo existente, independiente de nuevos aportes.",
     "plan.projectThroughAge": "Proyectar hasta la edad",
     "plan.yearlyGrowthAssumption": "Suposición de crecimiento anual",
     "plan.annualLimitGrowth": "Crecimiento del límite anual",
-    "plan.annualLimitGrowthHelp": "Aumento estimado anual en los límites de aportación.",
+    "plan.annualLimitGrowthHelp":
+      "Aumento estimado anual en los límites de aportación.",
     "plan.increaseContributionsYearly": "Aumentar tus aportaciones anualmente",
     "plan.employerContribution": "Aportación del empleador",
     "plan.employerContributionHelp":
@@ -276,10 +289,13 @@ export const translations = {
     "preset.monthly": "$100 al mes",
     "preset.max": "Al máximo",
 
-    "insight.canKeepGrowing": "Tu dinero puede seguir creciendo después de dejar de aportar.",
+    "insight.canKeepGrowing":
+      "Tu dinero puede seguir creciendo después de dejar de aportar.",
     "insight.habitSmall": "El hábito es pequeño. Las posibilidades no.",
-    "insight.coastText": "A los {stopAge} años, este plan tiene {stopBalance}. Déjalo invertido hasta los {endAge} años y podría alcanzar {finalBalance} sin más aportaciones personales.",
-    "insight.contributeText": "A los {endAge} años, {personal} de tu propio dinero podrían ayudar a construir un saldo de {finalBalance}.",
+    "insight.coastText":
+      "A los {stopAge} años, este plan tiene {stopBalance}. Déjalo invertido hasta los {endAge} años y podría alcanzar {finalBalance} sin más aportaciones personales.",
+    "insight.contributeText":
+      "A los {endAge} años, {personal} de tu propio dinero podrían ayudar a construir un saldo de {finalBalance}.",
 
     "projection.live": "Proyección en vivo",
     "projection.edit": "Editar plan",
@@ -353,8 +369,8 @@ export const translations = {
     "details.inflationMath":
       "Dólares de hoy = saldo futuro ÷ (1 + tasa de inflación)años. El dinero aportado y el crecimiento mostrados se dividen por ese mismo factor para sumar el saldo. El crecimiento asume reinversión de utilidades y la tasa neta elegida.",
     "details.disclaimer":
-      "Esta es una ilustración educativa, no un pronóstico ni asesoramiento financiero. Los mercados fluctúan y el crecimiento constante no está garantizado. Reglas verificadas con las pautas del IRS para 2026."
-  }
+      "Esta es una ilustración educativa, no un pronóstico ni asesoramiento financiero. Los mercados fluctúan y el crecimiento constante no está garantizado. Reglas verificadas con las pautas del IRS para 2026.",
+  },
 };
 
 export function translate(lang, key, params = {}) {
