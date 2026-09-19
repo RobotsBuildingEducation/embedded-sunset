@@ -34,7 +34,8 @@ export const PATREON_FLOW_COPY = {
     membershipTitle: "Membership",
     membershipPrice: "$8/mo",
     annualRecommended: "ANNUAL · 50% OFF",
-    annualValue: "or $4/mo for annual subscriptions ($48/year)",
+    annualValue: "Or $4/mo for annual subscriptions ($48/year)",
+    refundFriendly: "Refund friendly",
     membershipCta: "Subscribe with Patreon",
   },
   es: {
@@ -45,7 +46,8 @@ export const PATREON_FLOW_COPY = {
     membershipTitle: "Membresía",
     membershipPrice: "$8/mes",
     annualRecommended: "ANUAL · 50% DE DESCUENTO",
-    annualValue: "o $4/mes con la suscripción anual ($48/año)",
+    annualValue: "O $4/mes con la suscripción anual ($48/año)",
+    refundFriendly: "Amigable con reembolsos",
     membershipCta: "Suscribirse con Patreon",
   },
 };

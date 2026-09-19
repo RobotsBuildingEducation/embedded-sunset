@@ -121,6 +121,7 @@ export default function SubscriptionSettingsPanel({ appLanguage = "en", statusPa
           <Text color={accent300} fontWeight="black" fontSize="sm" textAlign="center">{flowCopy.membershipTitle}</Text>
           <Text fontSize="2xl" fontWeight="black" mt={1} textAlign="center">{clarifyUsd(flowCopy.membershipPrice)}</Text>
           <Text color="appTextMuted" fontSize="sm" mt={1} textAlign="center">{clarifyUsd(flowCopy.annualValue)}</Text>
+          <Text color="appTextMuted" fontSize="sm" mt={1} textAlign="center">{flowCopy.refundFriendly}</Text>
           <Box mt="auto" pt={4}>
             <Button
               type="button"

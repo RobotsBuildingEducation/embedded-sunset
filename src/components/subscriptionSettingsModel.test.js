@@ -30,3 +30,12 @@ test("pending Patreon checkout does not collapse back into the pricing state", (
 test("USD entitlement remains explicitly denominated", () => {
   assert.match(formatUsdEntitlement(1000, "es"), /USD/);
 });
+
+test("subscription flow copy includes refund friendly copy in en and es", async () => {
+  const { PATREON_FLOW_COPY } = await import("./patreonSubscriptionCopy.js");
+  assert.equal(PATREON_FLOW_COPY.en.annualValue, "Or $4/mo for annual subscriptions ($48/year)");
+  assert.equal(PATREON_FLOW_COPY.en.refundFriendly, "Refund friendly");
+  assert.equal(PATREON_FLOW_COPY.es.annualValue, "O $4/mes con la suscripción anual ($48/año)");
+  assert.equal(PATREON_FLOW_COPY.es.refundFriendly, "Amigable con reembolsos");
+});
+

@@ -194,9 +194,10 @@ export default function SubscriptionGate({
           <SimpleGrid columns={1} spacing={3} maxW="520px" w="100%" mx="auto">
             <Box bg="transparent" borderWidth="1px" borderColor="purple.300" borderRadius="28px" style={{ cornerShape: APP_SQUIRCLE_SHAPE }} p={4} position="relative" display="flex" flexDirection="column" minH="230px">
               <Text position="absolute" top="-12px" left="50%" transform="translateX(-50%)" bg="purple.500" color="white" borderRadius="full" px={3} py={1} fontSize="xs" fontWeight="black" lineHeight="short" whiteSpace="nowrap">{flowCopy.annualRecommended}</Text>
-              <Text color="purple.300" fontWeight="black" fontSize="sm">{flowCopy.membershipTitle}</Text>
-              <Text fontSize="2xl" fontWeight="black" mt={1}>{clarifyUsd(flowCopy.membershipPrice)}</Text>
-              <Text color="appTextMuted" fontSize="sm" mt={1}>{clarifyUsd(flowCopy.annualValue)}</Text>
+              <Text color="purple.300" fontWeight="black" fontSize="sm" textAlign="center">{flowCopy.membershipTitle}</Text>
+              <Text fontSize="2xl" fontWeight="black" mt={1} textAlign="center">{clarifyUsd(flowCopy.membershipPrice)}</Text>
+              <Text color="appTextMuted" fontSize="sm" mt={1} textAlign="center">{clarifyUsd(flowCopy.annualValue)}</Text>
+              <Text color="appTextMuted" fontSize="sm" mt={1} textAlign="center">{flowCopy.refundFriendly}</Text>
               <Box mt="auto" pt={4}>
                 <Button
                   type="button"
