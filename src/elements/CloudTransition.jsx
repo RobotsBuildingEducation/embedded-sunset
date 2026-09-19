@@ -685,6 +685,13 @@ const CloudTransition = ({
     [skillTreeNodes],
   );
   const hasSkillTree = skillTreeNodes.length > 0;
+  const hasTransitionData = Boolean(
+    message ||
+      detail ||
+      salaryProgress ||
+      stepProgress ||
+      (displaySalary && displaySalary > 0),
+  );
 
   // Only show current + upcoming (no previous)
   const displayNodes = useMemo(() => {
@@ -1120,7 +1127,7 @@ const CloudTransition = ({
               boxShadow={isDarkMode ? "0 30px 80px rgba(2,6,23,0.32)" : "none"}
               backdropFilter={isDarkMode ? "blur(14px)" : "none"}
             >
-              {message && (
+              {hasTransitionData && (
                 <Text
                   as={motion.p}
                   fontSize="md"
@@ -1236,7 +1243,7 @@ const CloudTransition = ({
                     />
                   </Box>
 
-                  {message}
+                  {message ? message : null}
                 </Text>
               )}
 

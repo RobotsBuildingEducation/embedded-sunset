@@ -26,6 +26,10 @@ import {
   GENERATED_REACT_RUNTIME_REQUIREMENTS,
   normalizeGeneratedReactCode,
 } from "../../utility/generatedReactCode";
+import {
+  useConversationReviewStore,
+  calculateConversationReviewState,
+} from "../../useConversationReviewStore";
 
 const getBuildStorageKey = (userId, groupId) =>
   `buildYourApp:${userId || "local"}:${groupId}`;
@@ -193,6 +197,9 @@ const PreConversation = ({ steps, step, userLanguage, onSubmit, onBuildReady }) 
         if (loadedCode) {
           setCode(loadedCode);
           onBuildReady?.(true);
+        } else {
+          setCode("");
+          onBuildReady?.(false);
         }
       } catch (err) {
         console.error("Error fetching build data", err);
@@ -328,15 +335,40 @@ const PreConversation = ({ steps, step, userLanguage, onSubmit, onBuildReady }) 
     }
   };
 
-  const handleCompleteChapter = async () => {
+  const handleCompleteChapter = () => {
     window.scrollTo(0, 0);
     soundManager.resume();
     soundManager.play("submit");
-    await saveBuild(code, "build");
+    saveBuild(code, "build").catch((err) =>
+      console.error("Error saving build on completion", err),
+    );
     if (onSubmit) {
       onSubmit();
     }
   };
+
+  useEffect(() => {
+    const { status, isDisabled } = calculateConversationReviewState({
+      idea,
+      savedIdea,
+      code,
+      isLoading,
+    });
+
+    useConversationReviewStore.getState().setReviewState({
+      status,
+      isLoading,
+      isDisabled,
+      onCreateOrUpdate: handleSaveIdeaAndGenerate,
+      onComplete: handleCompleteChapter,
+    });
+  }, [idea, savedIdea, code, isLoading]);
+
+  useEffect(() => {
+    return () => {
+      useConversationReviewStore.getState().resetReviewState();
+    };
+  }, []);
 
   return (
     <VStack
@@ -355,33 +387,16 @@ const PreConversation = ({ steps, step, userLanguage, onSubmit, onBuildReady }) 
         placeholder={translation[userLanguage]["buildYourApp.input.label"]}
         value={idea}
         onChange={(e) => setIdea(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && idea.trim().length > 0 && !isLoading) {
+            handleSaveIdeaAndGenerate();
+          }
+        }}
         backgroundColor="appSurface"
         boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
         marginTop="-20px"
         width="75%"
       />
-      <VStack spacing={3} mt={1}>
-        <Button
-          onClick={handleSaveIdeaAndGenerate}
-          isDisabled={isLoading || idea.length < 1}
-          colorScheme="pink"
-          background="pink.300"
-          data-sound-ignore-select="true"
-          isLoading={isLoading}
-        >
-          {savedIdea
-            ? translation[userLanguage]["buildYourApp.button.label.2"]
-            : translation[userLanguage]["buildYourApp.button.label.1"]}
-        </Button>
-        <Button
-          onClick={handleCompleteChapter}
-          isDisabled={!code?.trim() || isLoading}
-          boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-          data-sound-ignore-select="true"
-        >
-          {translation[userLanguage]["app.button.complete"]}
-        </Button>
-      </VStack>
 
       {isLoading && (
         <>

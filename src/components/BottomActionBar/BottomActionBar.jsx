@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -27,6 +27,7 @@ import ThinkingOrb from "../../elements/ThinkingOrb";
 import NineDotMenu from "./NineDotMenu";
 import { useThemeStore } from "../../useThemeStore";
 import { useSurfaceModalStore } from "../../useSurfaceModalStore";
+import { useConversationReviewStore } from "../../useConversationReviewStore";
 
 const progressGradient = keyframes`
   0% { background-position: 0% 50%; }
@@ -147,6 +148,46 @@ export const BottomActionBar = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const themeColor = useThemeStore((state) => state.themeColor);
+  const conversationReviewStatus = useConversationReviewStore(
+    (s) => s.status,
+  );
+  const isConversationReviewLoading = useConversationReviewStore(
+    (s) => s.isLoading,
+  );
+  const isConversationReviewDisabled = useConversationReviewStore(
+    (s) => s.isDisabled,
+  );
+
+  const [feedbackHeight, setFeedbackHeight] = useState(0);
+  const feedbackContentRef = useRef(null);
+
+  const isFeedbackActive = Boolean(feedback || isCorrect !== null);
+  const hasFeedback = Boolean(isSending || isCorrect || isFeedbackActive);
+
+  useEffect(() => {
+    if (!feedbackContentRef.current) return;
+    const el = feedbackContentRef.current;
+    const update = () => {
+      if (el) {
+        const h = el.offsetHeight;
+        if (h > 0) setFeedbackHeight(h);
+      }
+    };
+    update();
+    if (typeof ResizeObserver !== "undefined") {
+      const ro = new ResizeObserver(update);
+      ro.observe(el);
+      return () => ro.disconnect();
+    }
+  }, [hasFeedback, isSending, isCorrect, isFeedbackActive, feedback]);
+
+  const targetFeedbackHeight = isSending
+    ? feedbackHeight || 54
+    : isCorrect
+      ? feedbackHeight || 250
+      : isFeedbackActive
+        ? feedbackHeight || 110
+        : 0;
 
   const [
     accent50,
@@ -240,7 +281,6 @@ export const BottomActionBar = ({
   const learnGlowColor = accent400 || "#a78bfa";
   const learnGlowSoft = accent300 || "#c4b5fd";
 
-  const isFeedbackActive = Boolean(feedback || isCorrect !== null);
   const isQuestionZero = currentStep === 0 || Boolean(step?.isStudyGuide);
   const isLockout = incorrectAttempts >= 5 && !isTimerExpired;
 
@@ -376,14 +416,12 @@ export const BottomActionBar = ({
       width="100%"
       display="flex"
       justifyContent="center"
-      alignItems="center"
+      alignItems="flex-end"
       pointerEvents="none"
       zIndex={1200}
       px={{ base: 3, sm: 4 }}
     >
-      <MotionBox
-        layout="size"
-        transition={{ type: "spring", stiffness: 380, damping: 28 }}
+      <Box
         pointerEvents="auto"
         position="relative"
         width={{ base: "100%", sm: "460px", md: "500px" }}
@@ -411,6 +449,7 @@ export const BottomActionBar = ({
                 : { base: 2.5, sm: 3 }
         }
         overflow="visible"
+        transition="background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, padding 0.2s ease"
       >
         {/* 9-dot flyout popover menu */}
         <NineDotMenu
@@ -433,50 +472,67 @@ export const BottomActionBar = ({
         />
 
         {/* Dynamic Island Expandable Feedback Section */}
-        <AnimatePresence mode="wait">
-          {isSending ? (
+        <AnimatePresence>
+          {hasFeedback && (
             <MotionBox
-              key="loading-feedback"
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.18 }}
-              mb={3}
-              pt={1}
+              key="feedback-rail"
+              initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+              animate={{
+                opacity: 1,
+                height: targetFeedbackHeight,
+                marginBottom: 12,
+              }}
+              exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+              transition={{
+                height: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
+                marginBottom: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
+                opacity: { duration: 0.2 },
+              }}
+              style={{ overflow: "hidden" }}
               width="100%"
             >
-              <HStack
-                spacing={3.5}
-                align="center"
-                justify="center"
-                py={1.5}
-                px={{ base: 2, sm: 3 }}
-              >
-                <ThinkingOrb size={36} />
-                <HStack spacing={0.5} align="baseline">
-                  <Text
-                    fontWeight="700"
-                    fontSize={{ base: "md", sm: "lg" }}
-                    color="appText"
-                    letterSpacing="-0.01em"
-                  >
-                    {userLanguage?.startsWith("es") ? "Pensando" : "Thinking"}
-                  </Text>
-                  <AnimatedEllipsis />
-                </HStack>
-              </HStack>
-            </MotionBox>
-          ) : isCorrect ? (
-            <MotionBox
-              key="correct-feedback"
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.18 }}
-              mb={3}
-              pt={1}
-              width="100%"
-            >
+              <Box ref={feedbackContentRef} width="100%">
+                <AnimatePresence mode="wait">
+                  {isSending ? (
+                    <motion.div
+                      key="loading-content"
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.15 }}
+                      style={{ width: "100%" }}
+                    >
+                      <HStack
+                        spacing={3.5}
+                        align="center"
+                        justify="center"
+                        py={2}
+                        px={{ base: 2, sm: 3 }}
+                      >
+                        <ThinkingOrb size={36} />
+                        <HStack spacing={0.5} align="baseline">
+                          <Text
+                            fontWeight="700"
+                            fontSize={{ base: "md", sm: "lg" }}
+                            color="appText"
+                            letterSpacing="-0.01em"
+                          >
+                            {userLanguage?.startsWith("es") ? "Pensando" : "Thinking"}
+                          </Text>
+                          <AnimatedEllipsis />
+                        </HStack>
+                      </HStack>
+                    </motion.div>
+                  ) : isCorrect ? (
+                    <motion.div
+                      key="correct-content"
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.18 }}
+                      style={{ width: "100%" }}
+                    >
+                      <Box pt={1} width="100%">
               {/* Row 1: Chapter Badges matching top header */}
               <HStack
                 spacing={2}
@@ -650,54 +706,59 @@ export const BottomActionBar = ({
                   <RandomCharacter width="46px" height="auto" />
                 </Box>
               </Box>
-            </MotionBox>
+              </Box>
+            </motion.div>
           ) : isFeedbackActive && !isCorrect ? (
-            <MotionBox
-              key="incorrect-feedback"
-              initial={{ opacity: 0, y: -6 }}
+            <motion.div
+              key="incorrect-content"
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
+              exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.18 }}
-              mb={3}
-              pt={1}
-              width="100%"
+              style={{ width: "100%" }}
             >
-              <VStack spacing={2} align="center" width="100%" px={{ base: 2, sm: 3 }}>
-                {/* Hearts row: top, vertically stacked over text, centered */}
-                <HStack spacing={1.5} justify="center" align="center">
-                  {Array.from({ length: 5 }, (_, i) =>
-                    i < 5 - incorrectAttempts ? (
-                      <Icon as={FaHeart} key={i} color={feedbackHeartColor} boxSize={4} />
-                    ) : (
-                      <Icon as={FaRegHeart} key={i} color={feedbackHeartColor} boxSize={4} />
-                    ),
-                  )}
-                </HStack>
+              <Box pt={1} width="100%">
+                <VStack spacing={2} align="center" width="100%" px={{ base: 2, sm: 3 }}>
+                  {/* Hearts row: top, vertically stacked over text, centered */}
+                  <HStack spacing={1.5} justify="center" align="center">
+                    {Array.from({ length: 5 }, (_, i) =>
+                      i < 5 - incorrectAttempts ? (
+                        <Icon as={FaHeart} key={i} color={feedbackHeartColor} boxSize={4} />
+                      ) : (
+                        <Icon as={FaRegHeart} key={i} color={feedbackHeartColor} boxSize={4} />
+                      ),
+                    )}
+                  </HStack>
 
-                {/* Feedback message: centered, no leading '✕' */}
-                <Text
-                  fontWeight="700"
-                  fontSize={{ base: "sm", sm: "md" }}
-                  color={errorText}
-                  lineHeight="short"
-                  textAlign="center"
-                  wordBreak="break-word"
-                >
-                  {feedback || (userLanguage?.startsWith("es") ? "Intenta de nuevo" : "Try again")}
-                </Text>
-              </VStack>
+                  {/* Feedback message: centered, no leading '✕' */}
+                  <Text
+                    fontWeight="700"
+                    fontSize={{ base: "sm", sm: "md" }}
+                    color={errorText}
+                    lineHeight="short"
+                    textAlign="center"
+                    wordBreak="break-word"
+                  >
+                    {feedback || (userLanguage?.startsWith("es") ? "Intenta de nuevo" : "Try again")}
+                  </Text>
+                </VStack>
 
-              {/* Lockout countdown message if attempts >= 5 */}
-              {isLockout && (
-                <Box mt={2} p={2} bg="appSurface" borderRadius="xl" fontSize="xs">
-                  <CountdownTimer
-                    onTimerExpire={handleTimerExpire}
-                    userLanguage={userLanguage}
-                  />
-                </Box>
-              )}
-            </MotionBox>
+                {/* Lockout countdown message if attempts >= 5 */}
+                {isLockout && (
+                  <Box mt={2} p={2} bg="appSurface" borderRadius="xl" fontSize="xs">
+                    <CountdownTimer
+                      onTimerExpire={handleTimerExpire}
+                      userLanguage={userLanguage}
+                    />
+                  </Box>
+                )}
+              </Box>
+            </motion.div>
           ) : null}
+                </AnimatePresence>
+              </Box>
+            </MotionBox>
+          )}
         </AnimatePresence>
 
         {/* Action Bar Bottom Row: 9-Dot Button | Learn Icon | Answer / Next */}
@@ -819,7 +880,7 @@ export const BottomActionBar = ({
                 />
               </Box>
 
-              {/* Primary Button: Answer / Next (for Question 0) */}
+              {/* Primary Button: Answer / Next (for Question 0) / Chapter Review actions */}
               {isQuestionZero ? (
                 <Button
                   flex="1"
@@ -841,6 +902,62 @@ export const BottomActionBar = ({
                   disabled={isPostingWithNostr || isActionBarTourActive}
                 >
                   {translation[userLanguage]?.["app.button.nextQuestion"] || "Next question"} →
+                </Button>
+              ) : step?.isConversationReview ? (
+                <Button
+                  flex="1"
+                  height={{ base: "44px", sm: "48px" }}
+                  borderRadius="8px"
+                  bg={primaryButtonBg}
+                  color="white"
+                  fontWeight="700"
+                  fontSize="md"
+                  boxShadow={primaryButtonShadow}
+                  _hover={{ bg: primaryButtonHoverBg }}
+                  _active={{
+                    bg: primaryButtonHoverBg,
+                    transform: "translateY(2px)",
+                    boxShadow: primaryButtonActiveShadow,
+                  }}
+                  isLoading={isConversationReviewLoading || isSending}
+                  isDisabled={
+                    isConversationReviewDisabled ||
+                    isLockout ||
+                    isPostingWithNostr ||
+                    isActionBarTourActive
+                  }
+                  onClick={() => {
+                    triggerHaptic();
+                    soundManager?.resume?.();
+                    const { status, onComplete, onCreateOrUpdate } =
+                      useConversationReviewStore.getState();
+                    if (status === "complete") {
+                      soundManager?.play?.("submit");
+                      if (onComplete) {
+                        onComplete();
+                      } else {
+                        handleAnswerClick?.();
+                      }
+                    } else {
+                      soundManager?.play?.("submitAction");
+                      onCreateOrUpdate?.();
+                    }
+                  }}
+                >
+                  {conversationReviewStatus === "complete"
+                    ? translation[userLanguage]?.["app.button.complete"] ||
+                      (userLanguage?.startsWith("es")
+                        ? "Completar capítulo"
+                        : "Complete chapter")
+                    : conversationReviewStatus === "update"
+                      ? translation[userLanguage]?.["app.button.updateApp"] ||
+                        (userLanguage?.startsWith("es")
+                          ? "Actualizar app"
+                          : "Update app")
+                      : translation[userLanguage]?.["app.button.createApp"] ||
+                        (userLanguage?.startsWith("es")
+                          ? "Crear app"
+                          : "Create app")}
                 </Button>
               ) : (
                 <Button
@@ -873,7 +990,7 @@ export const BottomActionBar = ({
             </>
           )}
         </HStack>
-      </MotionBox>
+      </Box>
     </Box>
   );
 

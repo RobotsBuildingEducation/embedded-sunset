@@ -448,17 +448,20 @@ class SoundManager {
 
     paint: () => {
       // Quick brush stroke
-      const synth = this.getSynth({
-        type: "triangle",
-        attack: 0.001,
-        decay: 0.06,
-        sustain: 0,
-        release: 0.04,
-      });
-      synth.volume.value = VOL.SOFT;
-      synth.triggerAttackRelease("E4", "32n");
-      setTimeout(() => synth.triggerAttackRelease("G4", "32n"), 40);
-      this.releaseSynth(synth, 200);
+      const synth = this.createDisposablePolySynth(
+        {
+          type: "triangle",
+          attack: 0.001,
+          decay: 0.06,
+          sustain: 0,
+          release: 0.04,
+        },
+        VOL.SOFT,
+        200
+      );
+      const now = Tone.now();
+      synth.triggerAttackRelease("E4", "32n", now);
+      synth.triggerAttackRelease("G4", "32n", now + 0.04);
     },
 
     erase: () => {
@@ -473,19 +476,22 @@ class SoundManager {
 
     pattern: () => {
       // Ascending arpeggio
-      const synth = this.getSynth({
-        type: "sine",
-        attack: 0.001,
-        decay: 0.04,
-        sustain: 0,
-        release: 0.03,
-      });
-      synth.volume.value = VOL.PROMINENT;
+      const synth = this.createDisposablePolySynth(
+        {
+          type: "sine",
+          attack: 0.001,
+          decay: 0.04,
+          sustain: 0,
+          release: 0.03,
+        },
+        VOL.PROMINENT,
+        400
+      );
       const notes = ["C5", "E5", "G5", "C6"];
+      const now = Tone.now();
       notes.forEach((note, i) => {
-        setTimeout(() => synth.triggerAttackRelease(note, "64n"), i * 40);
+        synth.triggerAttackRelease(note, "64n", now + i * 0.04);
       });
-      this.releaseSynth(synth, 400);
     },
 
     clear: () => {

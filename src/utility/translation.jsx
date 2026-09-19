@@ -172,6 +172,8 @@ export let translation = {
     "badBrowser.install":
       "This browser doesn't support speech recognition. Privately install the app on your phone to access this feature.",
     "app.button.complete": "Complete chapter",
+    "app.button.createApp": "Create app",
+    "app.button.updateApp": "Update app",
     optional: "(optional)",
     faq_1_question: "What about AI?",
     faq_1_item_1:
@@ -1957,6 +1959,8 @@ reverse(head) {
     "badBrowser.install":
       "Este navegador no admite el reconocimiento de voz. Instala la app en tu teléfono para acceder a esta función de forma privada.",
     "app.button.complete": "Completar capítulo",
+    "app.button.createApp": "Crear app",
+    "app.button.updateApp": "Actualizar app",
     optional: "(opcional)",
     faq_1_question: "¿Qué pasa con la IA?",
     faq_1_item_1:
@@ -3615,6 +3619,8 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "badBrowser.install":
       "This browser doesn't support speech recognition. Privately install the app on your phone to access this feature.",
     "app.button.complete": "Complete chapter",
+    "app.button.createApp": "Create app",
+    "app.button.updateApp": "Update app",
     optional: "(optional)",
     faq_1_question: "What about AI?",
     faq_1_item_1:
@@ -5246,6 +5252,8 @@ reverse(head) {
     "badBrowser.install":
       "This browser doesn't support speech recognition. Privately install the app on your phone to access this feature.",
     "app.button.complete": "Complete chapter",
+    "app.button.createApp": "Create app",
+    "app.button.updateApp": "Update app",
     optional: "(optional)",
     faq_1_question: "What about AI?",
     faq_1_item_1:
@@ -6893,6 +6901,8 @@ reverse(head) {
     "badBrowser.install":
       "This browser doesn't support speech recognition. Privately install the app on your phone to access this feature.",
     "app.button.complete": "Complete chapter",
+    "app.button.createApp": "Create app",
+    "app.button.updateApp": "Update app",
     optional: "(optional)",
     faq_1_question: "What about AI?",
     faq_1_item_1:
@@ -8539,6 +8549,8 @@ reverse(head) {
     "badBrowser.install":
       "This browser doesn't support speech recognition. Privately install the app on your phone to access this feature.",
     "app.button.complete": "Complete chapter",
+    "app.button.createApp": "Create app",
+    "app.button.updateApp": "Update app",
     optional: "(optional)",
     faq_1_question: "What about AI?",
     faq_1_item_1:

@@ -255,6 +255,7 @@ import {
   resolveSubscriptionAccess,
 } from "./utils/patreonFeature.js";
 import { usePasscodeModalStore } from "./usePasscodeModalStore";
+import { useConversationReviewStore } from "./useConversationReviewStore";
 
 import { OrbCanvas } from "./elements/OrbCanvas";
 const LectureModal = lazy(
@@ -3072,13 +3073,6 @@ const Step = ({
           `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://robotsbuildingeducation.com \n\n${step.question?.questionText} #LearnWithNostr`,
         );
       }
-      if (step.isConversationReview) {
-        assignExistingBadgeToNpub(
-          transcript[step.group]["name"].replace(/ /g, "-"),
-        );
-
-        onAwardModalOpen();
-      }
     }
   }, [isCorrect]);
 
@@ -3179,6 +3173,66 @@ In addition to the grading fields already requested, return updatedLearningSumma
 
   // Handle answer submission
   const handleAnswerClick = async () => {
+    if (step?.isConversationReview) {
+      soundManager?.resume?.();
+      soundManager?.play?.("correct");
+      localStorage.setItem("incorrectAttempts", 0);
+      setIncorrectAttempts(0);
+      setCelebrationMessage(getRandomCelebrationMessage(userLanguage));
+
+      const nextStep = currentStep + 1;
+      const shouldGoToSubscription =
+        currentStep === tutorialEndIndex && !subscriptionAuthorized;
+      const isFinalStep = currentStep >= steps[userLanguage].length - 1;
+      const nextPath = shouldGoToSubscription
+        ? "/subscription"
+        : isFinalStep
+          ? "/award"
+          : currentStep === 2
+            ? "/q/3"
+            : currentStep <= 4
+              ? `/onboarding/${currentStep + 2}`
+              : `/q/${currentStep + 1}`;
+
+      setLectureNextPath(nextPath);
+      setLectureNextStep(nextStep);
+
+      setIsSending(false);
+      setIsCorrect(null);
+      setFeedback("");
+      setGrade("");
+
+      const npub = localStorage.getItem("local_npub");
+      if (npub) {
+        getUserData(npub)
+          .then((userData) => {
+            if (userData?.identity) {
+              sendOneSatToNpub(userData.identity);
+            }
+          })
+          .catch((err) => console.error("Error sending sat", err));
+      }
+
+      if (allowPosts) {
+        postNostrContent(
+          `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} 100% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://robotsbuildingeducation.com \n\n${step.question?.questionText} #LearnWithNostr`,
+        );
+      }
+
+      const badgeName = transcript[step?.group]?.name;
+      const rawBadgeName =
+        typeof badgeName === "string"
+          ? badgeName
+          : badgeName?.en || badgeName?.es || "";
+      if (rawBadgeName) {
+        assignExistingBadgeToNpub(rawBadgeName.replace(/ /g, "-"));
+      }
+
+      useConversationReviewStore?.getState?.()?.resetReviewState?.();
+      onAwardModalOpen();
+      return;
+    }
+
     // Retrieve the current count from localStorage
     // let ansrctrl = parseInt(localStorage.getItem("ansrctrl") || "0", 10);
 
@@ -3206,8 +3260,6 @@ In addition to the grading fields already requested, return updatedLearningSumma
       answer = selectedOption;
     } else if (step.isSelectOrder) {
       answer = items;
-    } else if (step.isConversationReview) {
-      answer = finalConversation;
     } else if (step.isMultipleAnswerChoice) {
       answer = selectedOptions;
     } else if (isNewQuestionType(step)) {
@@ -3231,27 +3283,6 @@ Submitted answer: ${JSON.stringify(answer)}
 
 For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-implementation, and fix-the-bug questions with an expected answer, grade by comparing the submitted and expected values. Parsons order matters. Matching keys and values must all match. Relevant-line order does not matter. For refactoring challenges, judge whether the submitted code satisfies every success check while preserving valid, readable code. Return only JSON using { "isCorrect": boolean, "feedback": string, "grade": string }. Do not reveal the complete solution. If correct, grade 100. The learner is speaking ${
               userLanguage === "es" ? "Spanish" : "English"
-            }.`,
-            role: "user",
-          },
-        ],
-        false,
-        true,
-      );
-    } else if (step.isConversationReview) {
-      const relevantSteps = getObjectsByGroup(step?.group, steps[userLanguage]);
-
-      await submitQuestionGradingPrompt(
-        [
-          {
-            content: `The learner has built their app for the chapter review based on the curriculum: ${JSON.stringify(
-              relevantSteps,
-            )}. The learner generated and completed their app build. Award full chapter completion. Return only JSON using { "isCorrect": true, "feedback": "${
-              userLanguage?.includes("es")
-                ? "¡Excelente trabajo construyendo tu aplicación y completando el capítulo!"
-                : "Great job building your app and completing the chapter!"
-            }", "grade": "100" }. The learner is speaking ${
-              userLanguage === "es" ? "spanish" : "english"
             }.`,
             role: "user",
           },
@@ -3723,7 +3754,7 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
         dailyProgress: updatedDailyProgress,
         dailyGoals: dailyGoalTarget,
         dailyGoalLabel: translation[userLanguage]["dailyGoal"],
-        message: celebrationMessage,
+        message: celebrationMessage || getRandomCelebrationMessage(userLanguage),
         detail: salaryText,
       };
     };
@@ -3806,11 +3837,12 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
       setLectureNextStep(nextStep);
     }
 
+    const nextTransitionStats = buildTransitionStats();
+    setTransitionStats(nextTransitionStats);
     showImmediateTransitionShell();
-    navigateWithTransition(nextPath, nextStep);
+    navigateWithTransition(nextPath, nextStep, nextTransitionStats);
 
     runAfterTransitionPaint(async () => {
-      setTransitionStats(buildTransitionStats());
       recordQuestionCompletion();
       clearQuestionState();
 
@@ -4958,43 +4990,45 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
             </Box>
           ) : null}
 
-          <BottomActionBar
-            currentStep={currentStep}
-            step={step}
-            steps={steps}
-            userLanguage={userLanguage}
-            translation={translation}
-            isCorrect={isCorrect}
-            feedback={feedback}
-            grade={grade}
-            incorrectAttempts={incorrectAttempts}
-            isSending={isSending}
-            isTimerExpired={isTimerExpired}
-            handleTimerExpire={handleTimerExpire}
-            isAILearningMode={isAILearningMode}
-            animatedProgress={animatedProgress}
-            chapterMetricLabel={chapterMetricLabel}
-            metricTooltips={metricTooltips}
-            streak={streak}
-            goalCount={goalCount}
-            handleAnswerClick={handleAnswerClick}
-            handleNextQuestionButtonPress={handleNextQuestionButtonPress}
-            handleGenerateNewQuestion={handleGenerateNewQuestion}
-            handleLearnClick={handleLearnClick}
-            handleModalCheck={handleModalCheck}
-            openSurfaceModal={openSurfaceModal}
-            showLearnSparkles={showLearnSparkles}
-            learnSparkleFloat={learnSparkleFloat}
-            learnHaloDrift={learnHaloDrift}
-            triggerHaptic={triggerHaptic}
-            playActionBarSound={playActionBarSound}
-            soundManager={soundManager}
-            interval={interval}
-            handleSelfPacedSettingsSaved={handleSelfPacedSettingsSaved}
-            isPostingWithNostr={isPostingWithNostr}
-            isActionBarTourActive={isActionBarTourActive}
-            renderActionBarTour={renderActionBarTour}
-          />
+          {!isAwardModalOpen && !isLectureModalOpen && (
+            <BottomActionBar
+              currentStep={currentStep}
+              step={step}
+              steps={steps}
+              userLanguage={userLanguage}
+              translation={translation}
+              isCorrect={isCorrect}
+              feedback={feedback}
+              grade={grade}
+              incorrectAttempts={incorrectAttempts}
+              isSending={isSending}
+              isTimerExpired={isTimerExpired}
+              handleTimerExpire={handleTimerExpire}
+              isAILearningMode={isAILearningMode}
+              animatedProgress={animatedProgress}
+              chapterMetricLabel={chapterMetricLabel}
+              metricTooltips={metricTooltips}
+              streak={streak}
+              goalCount={goalCount}
+              handleAnswerClick={handleAnswerClick}
+              handleNextQuestionButtonPress={handleNextQuestionButtonPress}
+              handleGenerateNewQuestion={handleGenerateNewQuestion}
+              handleLearnClick={handleLearnClick}
+              handleModalCheck={handleModalCheck}
+              openSurfaceModal={openSurfaceModal}
+              showLearnSparkles={showLearnSparkles}
+              learnSparkleFloat={learnSparkleFloat}
+              learnHaloDrift={learnHaloDrift}
+              triggerHaptic={triggerHaptic}
+              playActionBarSound={playActionBarSound}
+              soundManager={soundManager}
+              interval={interval}
+              handleSelfPacedSettingsSaved={handleSelfPacedSettingsSaved}
+              isPostingWithNostr={isPostingWithNostr}
+              isActionBarTourActive={isActionBarTourActive}
+              renderActionBarTour={renderActionBarTour}
+            />
+          )}
 
           <Suspense fallback={null}>
             {isLectureModalOpen ? (
@@ -8227,19 +8261,15 @@ function App({ isShutDown }) {
 
     setPendingPath(path);
     setPendingStep(nextStep);
+    if (nextTransitionStats) {
+      setTransitionStats(nextTransitionStats);
+    }
     setShowClouds(true);
 
     if (typeof window !== "undefined") {
       window.requestAnimationFrame(() => {
         scrollToTopInstantly();
-        if (nextTransitionStats) {
-          window.setTimeout(() => {
-            setTransitionStats(nextTransitionStats);
-          }, 0);
-        }
       });
-    } else if (nextTransitionStats) {
-      setTransitionStats(nextTransitionStats);
     }
   };
 
@@ -8929,7 +8959,7 @@ function App({ isShutDown }) {
                       setIncorrectAttempts={setIncorrectAttempts}
                       lectureNextPath={lectureNextPath}
                       setLectureNextPath={setLectureNextPath}
-                      lectureNextStep={lectureNextPath}
+                      lectureNextStep={lectureNextStep}
                       setLectureNextStep={setLectureNextStep}
                     />
                   </PrivateRoute>
