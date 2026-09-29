@@ -17,6 +17,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Skeleton,
   Spinner,
   Text,
   VStack,
@@ -26,6 +27,7 @@ import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { ImExit } from "react-icons/im";
 import { doc, onSnapshot } from "firebase/firestore";
 import { database } from "../../database/firebaseResources";
+import { useSurfaceModalStore } from "../../useSurfaceModalStore";
 import {
   deleteLearningTeam,
   leaveLearningTeam,
@@ -95,6 +97,7 @@ function MemberCard({
   salary,
   language,
   copy,
+  isLoading = false,
 }) {
   const chapter = data?.chapters?.find(
     (item) => item.id === data.currentChapterId,
@@ -104,6 +107,11 @@ function MemberCard({
     course?.percent == null
       ? percent(course?.completed, course?.total)
       : clampPercent(course.percent);
+
+  const resolvedName =
+    usableProfileName(displayName) ||
+    usableProfileName(data?.name);
+
   return (
     <Box
       bg="appSurfaceElevated"
@@ -114,14 +122,55 @@ function MemberCard({
       boxShadow="sm"
     >
       <HStack justify="space-between" align="start" gap={2}>
-        <Text fontWeight="bold" overflowWrap="anywhere">
-          {usableProfileName(displayName) ||
-            usableProfileName(data?.name) ||
-            copy.nameNotSet}
-          {pubkey === viewer ? ` (${copy.you})` : ""}
-        </Text>
+        {isLoading && !resolvedName ? (
+          <Skeleton height="20px" width="140px" borderRadius="md" />
+        ) : (
+          <Text fontWeight="bold" overflowWrap="anywhere">
+            {resolvedName || copy.nameNotSet}
+            {pubkey === viewer ? ` (${copy.you})` : ""}
+          </Text>
+        )}
       </HStack>
-      {!data ? (
+      {isLoading ? (
+        <VStack align="stretch" spacing={4} mt={4}>
+          <Box
+            display="grid"
+            gridTemplateColumns={{
+              base: "1fr",
+              sm: "repeat(2, minmax(0, 1fr))",
+              md: "repeat(3, minmax(0, 1fr))",
+            }}
+            gap={2}
+          >
+            <Box bg="appSurfaceMuted" p={3} borderRadius="lg">
+              <Skeleton height="12px" width="70px" mb={2} />
+              <Skeleton height="18px" width="90px" />
+            </Box>
+            <Box bg="appSurfaceMuted" p={3} borderRadius="lg">
+              <Skeleton height="12px" width="70px" mb={2} />
+              <Skeleton height="18px" width="50px" />
+            </Box>
+            <Box bg="appSurfaceMuted" p={3} borderRadius="lg">
+              <Skeleton height="12px" width="50px" mb={2} />
+              <Skeleton height="18px" width="70px" />
+            </Box>
+          </Box>
+          <Box>
+            <HStack justify="space-between" mb={2}>
+              <Skeleton height="14px" width="110px" />
+              <Skeleton height="14px" width="40px" />
+            </HStack>
+            <Skeleton height="8px" borderRadius="full" />
+          </Box>
+          <Box>
+            <HStack justify="space-between" mb={2}>
+              <Skeleton height="14px" width="90px" />
+              <Skeleton height="14px" width="40px" />
+            </HStack>
+            <Skeleton height="14px" borderRadius="full" />
+          </Box>
+        </VStack>
+      ) : !data ? (
         <Text mt={3} fontSize="sm" color="appTextMuted">
           {copy.noProgress}
         </Text>
@@ -213,9 +262,20 @@ export const TeamView = ({
   const [teams, setTeams] = useState(initialTeams);
   const [progress, setProgress] = useState(initialProgress);
   const [profileNames, setProfileNames] = useState(initialProfiles);
-  const [ownProgress, setOwnProgress] = useState(initialOwnProgress);
-  const [ownSalary, setOwnSalary] = useState(initialOwnSalary);
+  const [ownProgress, setOwnProgress] = useState(
+    () =>
+      initialOwnProgress ||
+      useSurfaceModalStore.getState().preloadedOwnProgress,
+  );
+  const [ownSalary, setOwnSalary] = useState(
+    () =>
+      initialOwnSalary ||
+      useSurfaceModalStore.getState().preloadedOwnSalary,
+  );
   const [loading, setLoading] = useState(false);
+  const [progressLoading, setProgressLoading] = useState(
+    () => Boolean(isOpen && (!initialProgress || initialProgress.size === 0)),
+  );
   const [memberError, setMemberError] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [busyId, setBusyId] = useState(null);
@@ -250,17 +310,26 @@ export const TeamView = ({
   const refresh = useCallback(async () => {
     if (!accountNpub) {
       setLoading(false);
+      setProgressLoading(false);
       return;
     }
     setLoading(true);
+    setProgressLoading(true);
     setLoadError(false);
     try {
       const nextTeams = await loadVisibleTeams(accountNpub);
-      setTeams(nextTeams);
-      onTeamsChange?.(nextTeams);
+      setTeams((current) => {
+        const existingIds = new Set(nextTeams.map((t) => t.id));
+        const optimistic = (current || []).filter((t) => !existingIds.has(t.id));
+        const merged = [...optimistic, ...nextTeams];
+        onTeamsChange?.(merged);
+        return merged;
+      });
       setMemberError(false);
+      const storeTeams = useSurfaceModalStore.getState().preloadedTeams || [];
+      const combinedTeams = [...storeTeams, ...nextTeams];
       const memberHexes = [
-        ...new Set(nextTeams.flatMap((team) => team.members)),
+        ...new Set(combinedTeams.flatMap((team) => team.members || [])),
       ];
       loadNostrProfileNames(memberHexes)
         .then((names) => {
@@ -269,12 +338,16 @@ export const TeamView = ({
         })
         .catch(() => {});
       try {
-        setProgress(await loadCourseProgress(memberHexes));
+        const nextProgress = await loadCourseProgress(memberHexes);
+        setProgress(nextProgress);
       } catch {
         setMemberError(true);
+      } finally {
+        setProgressLoading(false);
       }
     } catch {
       setLoadError(true);
+      setProgressLoading(false);
     } finally {
       setLoading(false);
     }
@@ -424,18 +497,26 @@ export const TeamView = ({
       {memberError ? (
         <Text>{copy.memberLoadFailed}</Text>
       ) : team.members.length ? (
-        team.members.map((pubkey) => (
-          <MemberCard
-            key={pubkey}
-            pubkey={pubkey}
-            viewer={viewer}
-            data={pubkey === viewer ? ownProgress : progress.get(pubkey)}
-            displayName={profileNames.get(pubkey)}
-            salary={pubkey === viewer ? ownSalary : null}
-            language={userLanguage}
-            copy={copy}
-          />
-        ))
+        team.members.map((pubkey) => {
+          const isViewer = pubkey === viewer;
+          const memberData = isViewer ? ownProgress : progress.get(pubkey);
+          const isLoading = isViewer
+            ? !ownProgress && progressLoading
+            : !progress.has(pubkey) && progressLoading;
+          return (
+            <MemberCard
+              key={pubkey}
+              pubkey={pubkey}
+              viewer={viewer}
+              data={memberData}
+              displayName={profileNames.get(pubkey)}
+              salary={isViewer ? ownSalary : null}
+              language={userLanguage}
+              copy={copy}
+              isLoading={isLoading}
+            />
+          );
+        })
       ) : (
         <Text>{copy.noMembers}</Text>
       )}

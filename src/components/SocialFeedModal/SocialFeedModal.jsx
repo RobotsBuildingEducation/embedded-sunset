@@ -80,7 +80,12 @@ const SocialFeedModal = ({ isOpen, onClose, userLanguage }) => {
     if (!accountNpub) return;
     try {
       const result = await loadVisibleTeams(accountNpub);
-      useSurfaceModalStore.getState().setPreloadedTeams(accountNpub, result);
+      const current = useSurfaceModalStore.getState().preloadedTeams || [];
+      const resultIds = new Set(result.map((t) => t.id));
+      const optimistic = current.filter((t) => !resultIds.has(t.id));
+      useSurfaceModalStore
+        .getState()
+        .setPreloadedTeams(accountNpub, [...optimistic, ...result]);
     } catch {
       toast({ title: copy.loadFailed, status: "error" });
       if (!useSurfaceModalStore.getState().preloadedTeams.length) {
