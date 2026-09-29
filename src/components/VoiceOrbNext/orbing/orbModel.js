@@ -63,6 +63,16 @@ export const ORB_PALETTES = [
   { id: "pink", name: "Pink", swatch: "#ed64a6", colors: ["#b83280", "#f687b3", "#fff0f7"] },
 ];
 
+export const DEFAULT_ORB_PALETTE = "orange";
+export const DEFAULT_ORB_COLORS = ORB_PALETTES.find((palette) => palette.id === DEFAULT_ORB_PALETTE)?.colors
+  || ["#c05621", "#f6ad55", "#fff1d6"];
+
+export const LOADER_ORB = {
+  mood: "neutral",
+  state: "thinking",
+  reaction: null,
+};
+
 export const REACTION_DURATION = { boop: 1.4, wave: 2.3, bounce: 2.2, spin: 2.4, celebrate: 3.4 };
 export const REACTION_SETTLE_DURATION = 0.65;
 export const ORB_FLOW = {

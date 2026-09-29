@@ -64,6 +64,11 @@ service cloud.firestore {
                                          isValidNpubID(userId);
       }
 
+      // Saved charts subcollection for the user
+      match /charts/{chartId} {
+        allow get, list, create, update, delete: if isValidNpubID(userId);
+      }
+
       // Define access rules for all subcollections under each user's document
       match /{subcollection=**} {
 

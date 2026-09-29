@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { createOrbScene } from "./orbing/createOrbScene.js";
-import { REACTION_DURATION } from "./orbing/orbModel.js";
+import { DEFAULT_ORB_PALETTE, REACTION_DURATION } from "./orbing/orbModel.js";
 
 /** The original idle/listening/speaking API, plus a separate expressive layer.
  * audioLevelRef accepts normalized live amplitude without React frame updates.
  * With no audio source, listening/speaking use a local animated preview.
  */
 export default function VoiceOrb3D({
-  state = "idle", mood = "joy", palette = "mint", colors, energy = 0.7,
+  state = "idle", mood = "joy", palette = DEFAULT_ORB_PALETTE, colors, energy = 0.7,
   voiceLevel = 0.65, audioLevelRef, reaction, paused = false,
   reducedMotion = false, followPointer = true, dark = false, onInteract, onReactionComplete,
   interactive = true, compact = false, showShadow = true, fallback = null,

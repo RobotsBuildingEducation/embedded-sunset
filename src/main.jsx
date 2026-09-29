@@ -1,9 +1,5 @@
 import React, { Suspense, lazy } from "react";
 import ReactDOM from "react-dom/client";
-import { ChakraProvider } from "@chakra-ui/react";
-import { appTheme } from "./theme.js";
-import AppLoadingScreen from "./components/AppLoadingScreen.jsx";
-
 import "./index.css";
 // localStorage.clear();
 
@@ -13,14 +9,28 @@ const AppWrapper = lazy(() =>
 // Chess has its own public entry point, independent of learning/onboarding redirects.
 const ChessApp = lazy(() => import("./chess/ChessApp.jsx"));
 const InvestingApp = lazy(() => import("./investing/InvestingApp.jsx"));
+const ChartsApp = lazy(() => import("./charts/ChartsApp.jsx"));
 const isInvestingRoute = /^\/investing(?:\/|$)/.test(window.location.pathname);
 const isChessRoute = /^\/chess(?:\/|$)/.test(window.location.pathname);
+const isChartsRoute = /^\/charts(?:\/|$)/.test(window.location.pathname);
 
-const BootFallback = () => (
-  <ChakraProvider theme={appTheme}>
-    <AppLoadingScreen />
-  </ChakraProvider>
-);
+const BootFallback = () => {
+  const isDark =
+    typeof window !== "undefined" &&
+    localStorage.getItem("chakra-ui-color-mode") === "dark";
+  return (
+    <div
+      style={{
+        minHeight: "100dvh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: isDark ? "#050815" : "#f8f5f0",
+        color: isDark ? "#ffffff" : "#1f2937",
+      }}
+    />
+  );
+};
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
@@ -42,13 +52,21 @@ if ("serviceWorker" in navigator) {
 // localStorage.setItem("passcode", "ZEPHYR");
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <Suspense fallback={<BootFallback />}>
-    {isInvestingRoute ? (
+  isInvestingRoute ? (
+    <Suspense fallback={<BootFallback />}>
       <InvestingApp />
-    ) : isChessRoute ? (
+    </Suspense>
+  ) : isChessRoute ? (
+    <Suspense fallback={<BootFallback />}>
       <ChessApp />
-    ) : (
+    </Suspense>
+  ) : isChartsRoute ? (
+    <Suspense fallback={<BootFallback />}>
+      <ChartsApp />
+    </Suspense>
+  ) : (
+    <Suspense fallback={<BootFallback />}>
       <AppWrapper />
-    )}
-  </Suspense>,
+    </Suspense>
+  ),
 );

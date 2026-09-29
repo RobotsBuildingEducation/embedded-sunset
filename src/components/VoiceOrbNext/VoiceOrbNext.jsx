@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useColorMode, useToken } from "@chakra-ui/react";
 import { useThemeStore } from "../../useThemeStore";
 import VoiceOrb3D from "./VoiceOrb3D.jsx";
-import { ORB_PALETTES, randomDisplayOrb, randomLoaderOrb, randomTutorFeedback, REACTION_DURATION, REACTION_SETTLE_DURATION, TUTOR_DEFAULT_MOODS } from "./orbing/orbModel.js";
+import { DEFAULT_ORB_COLORS, DEFAULT_ORB_PALETTE, ORB_PALETTES, randomDisplayOrb, randomLoaderOrb, randomTutorFeedback, REACTION_DURATION, REACTION_SETTLE_DURATION, TUTOR_DEFAULT_MOODS } from "./orbing/orbModel.js";
 import "./voiceOrbNext.css";
 
 function MiniOrb({ state, palette, mood, reaction }) {
@@ -16,14 +16,16 @@ function MiniOrb({ state, palette, mood, reaction }) {
 }
 
 /** Display and loader orbs choose their own personality; tutor orbs follow the live voice state. */
-export default function VoiceOrbNext({ state = "idle", theme, palette, size = 75, centered = true, variant = "display", excludeThinking = false, callActive = true, feedback = null, force3D = false, showShadow = true }) {
+export default function VoiceOrbNext({ state: explicitState, theme, palette, size = 75, centered = true, variant = "display", excludeThinking = false, callActive = true, feedback = null, force3D = false, showShadow = true, mood: explicitMood }) {
   const { colorMode } = useColorMode();
   const themeColor = useThemeStore((store) => store.themeColor);
   const dark = (theme || colorMode) === "dark";
-  const resolvedPalette = palette || themeColor;
-  const themeColors = useToken("colors", [`${themeColor}.700`, `${themeColor}.300`, `${themeColor}.50`]);
+  const resolvedPalette = palette || themeColor || DEFAULT_ORB_PALETTE;
+  const themeColors = useToken("colors", [`${themeColor || DEFAULT_ORB_PALETTE}.700`, `${themeColor || DEFAULT_ORB_PALETTE}.300`, `${themeColor || DEFAULT_ORB_PALETTE}.50`]);
+  const fallbackPaletteColors = ORB_PALETTES.find((entry) => entry.id === resolvedPalette)?.colors
+    || DEFAULT_ORB_COLORS;
   const paletteColors = (palette && ORB_PALETTES.find((entry) => entry.id === palette)?.colors)
-    || (themeColors.every(Boolean) ? themeColors : ORB_PALETTES[0].colors);
+    || (themeColors.every(Boolean) ? themeColors : fallbackPaletteColors);
   const isDisplay = variant === "display";
   const isLoader = variant === "loader";
   const isRandomized = isDisplay || isLoader;
@@ -34,8 +36,18 @@ export default function VoiceOrbNext({ state = "idle", theme, palette, size = 75
   const [defaultTutorMood] = useState(() => TUTOR_DEFAULT_MOODS[Math.floor(Math.random() * TUTOR_DEFAULT_MOODS.length)]);
   const [tutorFeedback, setTutorFeedback] = useState(null);
   const reactionId = useRef(1);
-  const voiceState = isRandomized ? (isDisplay && excludeThinking && personality.state === "thinking" ? "idle" : personality.state) : (callActive && ["idle", "listening", "thinking", "speaking"].includes(state) ? state : "idle");
-  const mood = isRandomized ? personality.mood : tutorFeedback?.mood || (callActive ? defaultTutorMood : "sleepy");
+  const voiceState = isRandomized
+    ? (explicitState !== undefined
+        ? explicitState
+        : isDisplay && excludeThinking && personality.state === "thinking"
+          ? "idle"
+          : personality.state)
+    : (callActive && ["idle", "listening", "thinking", "speaking"].includes(explicitState || "idle")
+        ? (explicitState || "idle")
+        : "idle");
+  const mood = isRandomized
+    ? (explicitMood !== undefined ? explicitMood : personality.mood)
+    : tutorFeedback?.mood || (callActive ? defaultTutorMood : "sleepy");
   const currentReaction = isRandomized ? reaction : tutorFeedback?.reaction;
 
   useEffect(() => {

@@ -42,7 +42,7 @@ export default defineConfig(({ mode }) => {
       react(),
       VitePWA({
         workbox: {
-          maximumFileSizeToCacheInBytes: 7250000, // Set to 4MB or any higher value
+          maximumFileSizeToCacheInBytes: 10000000, // Set to 10MB to accommodate large bundles
           // OAuth callbacks and API requests must always reach the Function.
           navigateFallbackDenylist: [/^\/api(?:\/|$)/],
         },

@@ -324,6 +324,7 @@ const ProgressModal = lazy(
 const VoiceOrbNext = lazy(
   () => import("./components/VoiceOrbNext/VoiceOrbNext.jsx"),
 );
+const ChartsPage = lazy(() => import("./charts/ChartsPage"));
 import VoiceOrbLoader from "./components/VoiceOrbNext/VoiceOrbLoader.jsx";
 import AppLoadingScreen from "./components/AppLoadingScreen.jsx";
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
@@ -8407,7 +8408,11 @@ function App({ isShutDown }) {
         // let count = await getTotalUsers();
         // window.alert("wtf");
 
-        if (npub && window.location.pathname !== "/dashboard") {
+        if (
+          npub &&
+          window.location.pathname !== "/dashboard" &&
+          !window.location.pathname.startsWith("/charts")
+        ) {
           setIsSignedIn(true);
 
           try {
@@ -8592,8 +8597,11 @@ function App({ isShutDown }) {
                 // with the next onboarding/question route before Patreon is
                 // resolved by the gate or subscription modal.
               } else if (location.pathname === "/experiment") {
-              } else if (location.pathname === "/about") {
-                // Do nothing if on /about
+              } else if (
+                location.pathname === "/about" ||
+                location.pathname.startsWith("/charts")
+              ) {
+                // Do nothing if on /about or /charts
               } else if (
                 (step === "subscription" && !startupSubscriptionAuthorized) ||
                 (step > tutorialEndIndex && !startupSubscriptionAuthorized)
@@ -8629,6 +8637,9 @@ function App({ isShutDown }) {
 
                 navigate(`/q/${step}`);
               } else {
+                if (location.pathname.startsWith("/charts")) {
+                  return;
+                }
                 // if (step !== 0) {
 
                 // topRef.current?.scrollIntoView();
@@ -8970,6 +8981,7 @@ function App({ isShutDown }) {
               element={<AwardScreen userLanguage={userLanguage} />}
             />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/charts" element={<ChartsPage />} />
             <Route
               path="/about"
               element={

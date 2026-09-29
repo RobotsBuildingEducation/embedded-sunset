@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
-import { clamp, ORB_FLOW, ORB_PALETTES, REACTION_DURATION, REACTION_SETTLE_DURATION, reactionPose, resolveOrbMood, simulatedVoiceLevel } from "./orbModel.js";
+import { clamp, DEFAULT_ORB_PALETTE, ORB_FLOW, ORB_PALETTES, REACTION_DURATION, REACTION_SETTLE_DURATION, reactionPose, resolveOrbMood, simulatedVoiceLevel } from "./orbModel.js";
 import { drawOrbFace } from "./orbFace.js";
 import { createEyeMorph, advanceEyeMorph } from "./orbEyeMorph.js";
 
@@ -98,15 +98,32 @@ export function createOrbScene(host, initialOptions, onFailure) {
   const targetScale = new THREE.Vector3();
   const targetRotation = new THREE.Euler();
   const targetQuaternion = new THREE.Quaternion();
+  const paletteColors = ORB_PALETTES.map((palette) => palette.colors.map((color) => new THREE.Color(color)));
+  let activePaletteKey;
+  let activePaletteColors;
+  function resolvePaletteColors() {
+    const paletteKey = options.colors?.join("|") || options.palette || DEFAULT_ORB_PALETTE;
+    if (paletteKey === activePaletteKey) return activePaletteColors;
+    activePaletteKey = paletteKey;
+    const targetPaletteId = options.palette || DEFAULT_ORB_PALETTE;
+    const foundIndex = ORB_PALETTES.findIndex((palette) => palette.id === targetPaletteId);
+    const defaultIndex = Math.max(0, ORB_PALETTES.findIndex((palette) => palette.id === DEFAULT_ORB_PALETTE));
+    const paletteIndex = foundIndex >= 0 ? foundIndex : defaultIndex;
+    activePaletteColors = options.colors?.length === 3
+      ? options.colors.map((color) => new THREE.Color(color))
+      : paletteColors[paletteIndex];
+    return activePaletteColors;
+  }
+  const initialColors = resolvePaletteColors();
   const uniforms = {
     orbTime: { value: 0 },
     orbListening: { value: 0 },
     orbThinking: { value: 0 },
     orbSpeaking: { value: 0 },
     orbVoice: { value: 0 },
-    orbDeep: { value: new THREE.Color(ORB_PALETTES[0].colors[0]) },
-    orbMid: { value: new THREE.Color(ORB_PALETTES[0].colors[1]) },
-    orbLight: { value: new THREE.Color(ORB_PALETTES[0].colors[2]) },
+    orbDeep: { value: new THREE.Color(initialColors[0]) },
+    orbMid: { value: new THREE.Color(initialColors[1]) },
+    orbLight: { value: new THREE.Color(initialColors[2]) },
   };
   const material = new THREE.MeshPhysicalMaterial({
     color: 0xffffff, roughness: 0.28, metalness: 0.02,
@@ -196,7 +213,7 @@ export function createOrbScene(host, initialOptions, onFailure) {
     return spark;
   });
   const thinkingDots = Array.from({ length: 3 }, (_, index) => {
-    const dot = new THREE.Mesh(new THREE.SphereGeometry(0.042, 12, 8), new THREE.MeshStandardMaterial({ color: 0x378e7b }));
+    const dot = new THREE.Mesh(new THREE.SphereGeometry(0.042, 12, 8), new THREE.MeshStandardMaterial({ color: initialColors[0] }));
     dot.position.set((index - 1) * 0.2 + 0.68, 1.38, 0);
     dot.visible = false;
     scene.add(dot);
@@ -220,19 +237,6 @@ export function createOrbScene(host, initialOptions, onFailure) {
   let blinkAt = 2.4;
   let tilt = 0, turn = 0, pitch = 0, level = 0;
   let flowSpeed = ORB_FLOW.idle.speed;
-  const paletteColors = ORB_PALETTES.map((palette) => palette.colors.map((color) => new THREE.Color(color)));
-  let activePaletteKey;
-  let activePaletteColors;
-  function resolvePaletteColors() {
-    const paletteKey = options.colors?.join("|") || options.palette;
-    if (paletteKey === activePaletteKey) return activePaletteColors;
-    activePaletteKey = paletteKey;
-    const paletteIndex = Math.max(0, ORB_PALETTES.findIndex((palette) => palette.id === options.palette));
-    activePaletteColors = options.colors?.length === 3
-      ? options.colors.map((color) => new THREE.Color(color))
-      : paletteColors[paletteIndex];
-    return activePaletteColors;
-  }
 
   function resize() {
     const width = host.clientWidth;
@@ -378,6 +382,7 @@ export function createOrbScene(host, initialOptions, onFailure) {
     shadow.material.opacity = (options.dark ? 0.48 : 0.9) - pose.y * 0.4;
     thinkingDots.forEach((dot, index) => {
       dot.visible = options.state === "thinking";
+      if (dot.visible) dot.material.color.copy(colors[0]);
       dot.position.y = 1.32 + Math.sin(time * 4 - index * 0.7) * 0.065 * amount;
     });
     sparks.forEach((spark, index) => {

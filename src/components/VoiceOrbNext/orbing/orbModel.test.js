@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { DISPLAY_MOODS, DISPLAY_REACTIONS, ORB_MOODS, ORB_STATES, REACTION_DURATION, TUTOR_CORRECT_MOODS, TUTOR_WRONG_MOODS, randomDisplayOrb, randomLoaderOrb, randomTutorFeedback, reactionPose, resolveOrbMood, simulatedVoiceLevel } from "./orbModel.js";
+import { DEFAULT_ORB_COLORS, DEFAULT_ORB_PALETTE, DISPLAY_MOODS, DISPLAY_REACTIONS, LOADER_ORB, ORB_MOODS, ORB_PALETTES, ORB_STATES, REACTION_DURATION, TUTOR_CORRECT_MOODS, TUTOR_WRONG_MOODS, randomDisplayOrb, randomLoaderOrb, randomTutorFeedback, reactionPose, resolveOrbMood, simulatedVoiceLevel } from "./orbModel.js";
 
 test("reactions settle back to the base pose and stay bounded throughout", () => {
   const limits = { x: 0.3, y: 1.6, squash: 0.4, roll: 0.4, turn: 10, pitch: 0.3, burst: 1.5 };
@@ -124,3 +124,21 @@ test("simulated voice amplitude is finite, normalized, and varies over time", ()
   assert.ok(levels.every((value) => Number.isFinite(value) && value >= 0 && value <= 1));
   assert.ok(Math.max(...levels) - Math.min(...levels) > 0.5);
 });
+
+test("default palette is orange and resolves to three valid hex tones", () => {
+  assert.equal(DEFAULT_ORB_PALETTE, "orange");
+  const orangePalette = ORB_PALETTES.find((p) => p.id === "orange");
+  assert.ok(orangePalette, "Orange palette must exist in ORB_PALETTES");
+  assert.deepEqual(DEFAULT_ORB_COLORS, orangePalette.colors);
+  assert.equal(DEFAULT_ORB_COLORS.length, 3);
+  for (const color of DEFAULT_ORB_COLORS) {
+    assert.match(color, /^#[0-9a-fA-F]{6}$/);
+  }
+});
+
+test("LOADER_ORB defines a single steady expression for loaders", () => {
+  assert.equal(LOADER_ORB.mood, "neutral");
+  assert.equal(LOADER_ORB.state, "thinking");
+  assert.equal(LOADER_ORB.reaction, null);
+});
+

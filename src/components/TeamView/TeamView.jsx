@@ -23,6 +23,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { ImExit } from "react-icons/im";
 import { doc, onSnapshot } from "firebase/firestore";
 import { database } from "../../database/firebaseResources";
 import {
@@ -454,7 +455,7 @@ export const TeamView = ({
             team.creatorHex === viewer ? copy.deleteTeam : copy.leaveTeam
           }
           title={team.creatorHex === viewer ? copy.deleteTeam : copy.leaveTeam}
-          icon={<DeleteIcon />}
+          icon={team.creatorHex === viewer ? <DeleteIcon /> : <ImExit />}
           isLoading={busyId === team.id}
           onClick={() =>
             act(team, team.creatorHex === viewer ? "delete" : "leave")
