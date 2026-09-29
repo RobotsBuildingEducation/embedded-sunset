@@ -102,11 +102,16 @@ const SocialFeedModal = ({ isOpen, onClose, userLanguage }) => {
     setCreateOpen(false);
     onClose();
   };
-  const created = async () => {
+  const created = async (newTeam) => {
     setCreateOpen(false);
-    await reloadTeams();
+    if (newTeam?.id) {
+      const current = useSurfaceModalStore.getState().preloadedTeams || [];
+      const updated = [newTeam, ...current.filter((t) => t.id !== newTeam.id)];
+      useSurfaceModalStore.getState().setPreloadedTeams(accountNpub, updated);
+    }
     setSelectedTab(0);
     setRefreshTrigger((count) => count + 1);
+    await reloadTeams();
   };
   const copyId = async () => {
     try {

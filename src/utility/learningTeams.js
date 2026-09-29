@@ -136,10 +136,56 @@ export function parseTeams(teamEvents, leaveEvents, viewerHex) {
   });
 }
 
+export async function activeSigner(accountNpub) {
+  const expected = accountNpub ? toHexPubkey(accountNpub) : null;
+  const storedNsec =
+    typeof localStorage !== "undefined"
+      ? localStorage.getItem("local_nsec")
+      : null;
+  const isNip07 =
+    typeof localStorage !== "undefined" &&
+    (localStorage.getItem("nip07_signer") === "true" || storedNsec === "nip07");
+
+  if (isNip07) {
+    const nostrExtension = typeof window !== "undefined" ? window.nostr : null;
+    if (!nostrExtension?.signEvent) {
+      throw new Error("Nostr extension signer is unavailable");
+    }
+    if (expected && nostrExtension.getPublicKey) {
+      const actual = await nostrExtension.getPublicKey();
+      if (actual !== expected) {
+        throw new Error("Nostr signer does not match this account");
+      }
+    }
+    return (template) => nostrExtension.signEvent(template);
+  }
+
+  if (!storedNsec) {
+    throw new Error("Nostr key is unavailable");
+  }
+  const secret = nip19.decode(storedNsec || "");
+  if (secret.type !== "nsec" || (expected && getPublicKey(secret.data) !== expected)) {
+    throw new Error("Nostr key does not match this account");
+  }
+  return (template) => finalizeEvent(template, secret.data);
+}
+
 export async function queryTeamEvents(
   filter,
-  { timeoutMs = 7000, failOnTimeout = false } = {},
+  { timeoutMs = 7000, failOnTimeout = false, onauth = null } = {},
 ) {
+  let authHandler = onauth;
+  if (!authHandler && typeof window !== "undefined" && typeof localStorage !== "undefined") {
+    const npub = localStorage.getItem("local_npub");
+    if (npub) {
+      try {
+        authHandler = await activeSigner(npub);
+      } catch {
+        authHandler = null;
+      }
+    }
+  }
+
   return new Promise((resolve, reject) => {
     const events = [];
     let done = false;
@@ -164,6 +210,7 @@ export async function queryTeamEvents(
         closedBeforeEose = true;
         finish(true);
       },
+      ...(authHandler ? { onauth: authHandler } : {}),
     });
     if (done) subscription.close("query complete");
   });
@@ -215,21 +262,8 @@ async function signAndPublish(
     (lastPublished.get(key) || 0) + 1,
   );
   const template = { kind: KIND, created_at, tags, content };
-  let event;
-  const storedNsec = localStorage.getItem("local_nsec");
-  if (
-    localStorage.getItem("nip07_signer") === "true" ||
-    storedNsec === "nip07"
-  ) {
-    if (!window.nostr?.signEvent)
-      throw new Error("Nostr extension signer is unavailable");
-    event = await window.nostr.signEvent(template);
-  } else {
-    const secret = nip19.decode(storedNsec || "");
-    if (secret.type !== "nsec" || getPublicKey(secret.data) !== expected)
-      throw new Error("Nostr key does not match this account");
-    event = finalizeEvent(template, secret.data);
-  }
+  const sign = await activeSigner(accountNpub);
+  const event = await sign(template);
   if (event.pubkey !== expected || !verifyEvent(event))
     throw new Error("Nostr signature does not match this account");
   lastPublished.set(key, created_at);
@@ -253,12 +287,16 @@ async function signAndPublish(
 
 export async function loadTeams(accountNpub) {
   const viewer = toHexPubkey(accountNpub);
-  const events = await queryTeamEvents({
-    kinds: [KIND],
-    "#t": ["learning-team"],
-    "#p": [viewer],
-    limit: 100,
-  });
+  const sign = await activeSigner(accountNpub).catch(() => undefined);
+  const events = await queryTeamEvents(
+    {
+      kinds: [KIND],
+      "#t": ["learning-team"],
+      "#p": [viewer],
+      limit: 100,
+    },
+    { onauth: sign },
+  );
   const latest = newestReplaceable(events);
   const leaveIds = latest.flatMap((event) => {
     const d = event.tags.find((tag) => tag[0] === "d")?.[1];
@@ -267,7 +305,10 @@ export async function loadTeams(accountNpub) {
       : [];
   });
   const leaves = leaveIds.length
-    ? await queryTeamEvents({ kinds: [KIND], "#d": leaveIds, limit: 500 })
+    ? await queryTeamEvents(
+        { kinds: [KIND], "#d": leaveIds, limit: 500 },
+        { onauth: sign },
+      )
     : [];
   return parseTeams(events, leaves, viewer);
 }
@@ -294,7 +335,17 @@ export async function createLearningTeam(accountNpub, name, memberNpubs) {
     JSON.stringify({ name: name.trim(), createdAt }),
     accountNpub,
   );
-  return { id, event };
+  return {
+    id,
+    creatorHex: event.pubkey,
+    name: name.trim(),
+    members,
+    allMembers: members,
+    createdAt,
+    eventCreatedAt: event.created_at,
+    naddr: teamNaddr(event.pubkey, id),
+    event,
+  };
 }
 
 export async function renameLearningTeam(accountNpub, team, name) {
@@ -438,14 +489,25 @@ export async function publishCourseProgress(accountNpub, snapshot) {
   );
 }
 
-export async function loadCourseProgress(memberHexes) {
+export async function loadCourseProgress(memberHexes, accountNpub = null) {
   if (!memberHexes.length) return new Map();
-  const events = await queryTeamEvents({
-    kinds: [KIND],
-    "#d": ["course-progress"],
-    authors: memberHexes,
-    limit: Math.max(50, memberHexes.length * 2),
-  });
+  const npub =
+    accountNpub ||
+    (typeof window !== "undefined" && typeof localStorage !== "undefined"
+      ? localStorage.getItem("local_npub")
+      : null);
+  const sign = npub
+    ? await activeSigner(npub).catch(() => undefined)
+    : undefined;
+  const events = await queryTeamEvents(
+    {
+      kinds: [KIND],
+      "#d": ["course-progress"],
+      authors: memberHexes,
+      limit: Math.max(50, memberHexes.length * 2),
+    },
+    { onauth: sign },
+  );
   return new Map(
     newestReplaceable(events).flatMap((event) => {
       if (!memberHexes.includes(event.pubkey)) return [];

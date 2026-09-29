@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { finalizeEvent, getPublicKey, nip19 } from "nostr-tools";
-import { loadNostrProfileNames, makeProgressSnapshot, newestReplaceable, parseTeams, teamNaddr, toHexPubkey, usableProfileName } from "./learningTeams.js";
+import { activeSigner, loadNostrProfileNames, makeProgressSnapshot, newestReplaceable, parseTeams, teamNaddr, toHexPubkey, usableProfileName } from "./learningTeams.js";
 
 const creatorSecret = new Uint8Array(32).fill(1);
 const memberSecret = new Uint8Array(32).fill(2);
@@ -61,4 +61,25 @@ test("missing names and identifier placeholders are not treated as names", () =>
   assert.equal(usableProfileName(`${member.slice(0, 12)}…`), "");
   assert.equal(usableProfileName(nip19.npubEncode(member).slice(0, 12)), "");
   assert.equal(usableProfileName("  Sheilfer Zepeda  "), "Sheilfer Zepeda");
+});
+
+test("activeSigner signs events using stored nsec", async () => {
+  const nsec = nip19.nsecEncode(memberSecret);
+  const originalLocalStorage = global.localStorage;
+  global.localStorage = {
+    getItem: (key) => (key === "local_nsec" ? nsec : null),
+  };
+  try {
+    const signer = await activeSigner(nip19.npubEncode(member));
+    const event = await signer({
+      kind: 22242,
+      created_at: 100,
+      tags: [["relay", "wss://relay.ditto.pub"]],
+      content: "",
+    });
+    assert.equal(event.pubkey, member);
+    assert.equal(typeof event.sig, "string");
+  } finally {
+    global.localStorage = originalLocalStorage;
+  }
 });

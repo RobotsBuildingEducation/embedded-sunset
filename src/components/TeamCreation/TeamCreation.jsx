@@ -66,6 +66,7 @@ export const TeamCreation = ({ userLanguage, onTeamCreated, team }) => {
       return toast({ title: copy.memberRequired, status: "error" });
     setSaving(true);
     try {
+      let newTeam = null;
       if (team?.legacy) {
         const creator = await getUserData(accountNpub);
         await Promise.all(
@@ -79,8 +80,11 @@ export const TeamCreation = ({ userLanguage, onTeamCreated, team }) => {
             ),
           ),
         );
-      } else if (team) await addLearningTeamMembers(accountNpub, team, members);
-      else await createLearningTeam(accountNpub, teamName.trim(), members);
+      } else if (team) {
+        await addLearningTeamMembers(accountNpub, team, members);
+      } else {
+        newTeam = await createLearningTeam(accountNpub, teamName.trim(), members);
+      }
       toast({
         title: team?.legacy
           ? copy.invitesSent
@@ -93,7 +97,7 @@ export const TeamCreation = ({ userLanguage, onTeamCreated, team }) => {
       setTeamName("");
       setMemberNpub("");
       setMembers([]);
-      onTeamCreated?.();
+      onTeamCreated?.(newTeam);
     } catch (error) {
       toast({
         title: copy.updateFailed,

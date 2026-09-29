@@ -227,6 +227,11 @@ export const TeamView = ({
   const ownProfileName = profileNames.get(viewer);
 
   useEffect(() => {
+    if (Array.isArray(initialTeams)) {
+      setTeams(initialTeams);
+    }
+  }, [initialTeams]);
+  useEffect(() => {
     setProfileNames(initialProfiles || new Map());
   }, [accountNpub, initialProfiles]);
   useEffect(() => {
