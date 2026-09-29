@@ -2,12 +2,6 @@
   color-scheme: light;
 }
 
-@keyframes appBootSpin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 html[data-theme-mode="dark"] {
   color-scheme: dark;
 }
@@ -179,5 +173,4 @@ html[data-theme-mode="dark"] .language-css .token.string,
 html[data-theme-mode="dark"] .style .token.string {
   background: transparent !important;
 }
-
 

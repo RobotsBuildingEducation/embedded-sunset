@@ -222,6 +222,28 @@ const characterImagesMap = {
   40: character41,
 };
 
+const getNextCharacterImage = () => {
+  try {
+    const storedIndices = JSON.parse(localStorage.getItem("usedIndices"));
+    const usedIndices = Array.isArray(storedIndices) ? storedIndices : [];
+    const availableCharacters = characterImages.filter(
+      (_, index) => !usedIndices.includes(index),
+    );
+    const randomImage =
+      availableCharacters[Math.floor(Math.random() * availableCharacters.length)] ||
+      characterImages[0];
+    const nextIndices = [...usedIndices, characterImages.indexOf(randomImage)];
+
+    localStorage.setItem(
+      "usedIndices",
+      JSON.stringify(nextIndices.length >= characterImages.length ? [] : nextIndices),
+    );
+    return randomImage;
+  } catch {
+    return characterImages[Math.floor(Math.random() * characterImages.length)];
+  }
+};
+
 const RandomCharacter = ({
   width = "50px",
   height = null,
@@ -232,74 +254,19 @@ const RandomCharacter = ({
   isTimed = false,
   style = {},
 }) => {
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(characterImages[0]);
   const [showSplash, setShowSplash] = useState(isTimed);
   const selectedCharacter = notSoRandomCharacter || noSoRancomCharacter;
 
   useEffect(() => {
+    if (selectedCharacter) return;
     if (showSplash && isTimed) {
       const timer = setTimeout(() => setShowSplash(false), 3000); // Adjust the delay as needed
       return () => clearTimeout(timer);
     } else {
-      const usedIndices = JSON.parse(localStorage.getItem("usedIndices")) || [];
-
-      // Filter out used characters
-      const availableCharacters = characterImages.filter(
-        (_, index) => !usedIndices.includes(index),
-      );
-
-      // Select a random character from the available ones
-      const randomIndex = Math.floor(
-        Math.random() * availableCharacters.length,
-      );
-      const randomImage = availableCharacters[randomIndex];
-
-      // Update used indices
-      const newUsedIndices = [
-        ...usedIndices,
-        characterImages?.indexOf(randomImage) || 1,
-      ];
-      if (newUsedIndices.length === characterImages.length) {
-        // Reset if all characters have been used
-        localStorage.setItem("usedIndices", JSON.stringify([]));
-      } else {
-        localStorage.setItem("usedIndices", JSON.stringify(newUsedIndices));
-      }
-
-      setImage(randomImage);
+      setImage(getNextCharacterImage());
     }
-  }, [showSplash, isTimed]);
-
-  useEffect(() => {
-    if (!isTimed) {
-      const usedIndices = JSON.parse(localStorage.getItem("usedIndices")) || [];
-
-      // Filter out used characters
-      const availableCharacters = characterImages.filter(
-        (_, index) => !usedIndices.includes(index),
-      );
-
-      // Select a random character from the available ones
-      const randomIndex = Math.floor(
-        Math.random() * availableCharacters.length,
-      );
-      const randomImage = availableCharacters[randomIndex];
-
-      // Update used indices
-      const newUsedIndices = [
-        ...usedIndices,
-        characterImages?.indexOf(randomImage) || 1,
-      ];
-      if (newUsedIndices.length === characterImages.length) {
-        // Reset if all characters have been used
-        localStorage.setItem("usedIndices", JSON.stringify([]));
-      } else {
-        localStorage.setItem("usedIndices", JSON.stringify(newUsedIndices));
-      }
-
-      setImage(randomImage);
-    }
-  }, [isTimed]);
+  }, [showSplash, isTimed, selectedCharacter]);
 
   return (
     <div
@@ -322,6 +289,8 @@ const RandomCharacter = ({
           height={width}
           style={{
             display: "block",
+            width,
+            height: height ?? width,
             borderRadius: borderRadius || undefined,
           }}
         />

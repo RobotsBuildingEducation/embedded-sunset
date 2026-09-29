@@ -12,7 +12,7 @@ import {
   Image,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { CloudCanvas } from "../../elements/SunsetCanvas";
+import VoiceOrbLoader from "../VoiceOrbNext/VoiceOrbLoader.jsx";
 
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
@@ -183,8 +183,7 @@ const AwardModalOnboarding = ({
               justifyContent="center"
               gap={3}
             >
-              <CloudCanvas />
-              <Text>{translation[userLanguage]["loading"]}</Text>
+              <VoiceOrbLoader label={translation[userLanguage]["loading"]} size={80} />
             </Box>
           ) : badges.length < 1 ? (
             <div>{translation[userLanguage]["noTranscriptFound"]}</div>

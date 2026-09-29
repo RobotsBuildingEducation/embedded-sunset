@@ -332,7 +332,11 @@ const ChapterReview = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [selectedChapter, setSelectedChapter] = useState(null);
-  const [connectorPaths, setConnectorPaths] = useState([]);
+  const [connectorLayout, setConnectorLayout] = useState({
+    width: 0,
+    height: 0,
+    paths: [],
+  });
   const treeRef = useRef(null);
   const cardRefs = useRef([]);
   const themeColor = useThemeStore((state) => state.themeColor);
@@ -371,6 +375,10 @@ const ChapterReview = ({
     accent300 || "#F9A8D4",
   );
   const expandControlColor = useColorModeValue("#000000", "#FFFFFF");
+  const expandControlBorder = useColorModeValue(
+    "blackAlpha.300",
+    "whiteAlpha.400",
+  );
   const startButtonBg = useColorModeValue(
     accent500 || "#EC4899",
     accent600 || "#BE185D",
@@ -409,10 +417,10 @@ const ChapterReview = ({
   const isShowingExpandButton =
     showExpandControl && hasHiddenNodes && !isExpanded;
   const startButtonMarginTop = isExpanded
-    ? { base: 0, md: 2 }
+    ? { base: 4, md: 2 }
     : isShowingExpandButton
-      ? { base: -2, md: -4 }
-      : { base: -4, md: -8 };
+      ? { base: 4, md: 2 }
+      : { base: 2, md: 0 };
 
   const closeChapterDrawer = useCallback(() => {
     setSelectedChapter(null);
@@ -446,8 +454,8 @@ const ChapterReview = ({
   const updateConnectorPaths = useCallback(() => {
     const treeElement = treeRef.current;
     if (!treeElement || visibleNodes.length < 2) {
-      setConnectorPaths((previousPaths) =>
-        previousPaths.length ? [] : previousPaths,
+      setConnectorLayout((previous) =>
+        previous.paths.length ? { width: 0, height: 0, paths: [] } : previous,
       );
       return;
     }
@@ -479,10 +487,13 @@ const ChapterReview = ({
       })
       .filter(Boolean);
 
-    setConnectorPaths((previousPaths) => {
-      const previousSignature = JSON.stringify(previousPaths);
-      const nextSignature = JSON.stringify(nextPaths);
-      return previousSignature === nextSignature ? previousPaths : nextPaths;
+    setConnectorLayout((previous) => {
+      const next = {
+        width: treeRect.width,
+        height: treeRect.height,
+        paths: nextPaths,
+      };
+      return JSON.stringify(previous) === JSON.stringify(next) ? previous : next;
     });
   }, [visibleNodes]);
 
@@ -522,7 +533,7 @@ const ChapterReview = ({
       justifyContent="center"
       pt={{ base: 0, md: 4 }}
       pb={{ base: 0, md: 4 }}
-      px={{ base: 1, md: 6 }}
+      px={{ base: 4, md: 6 }}
     >
       <VStack
         spacing={{ base: 3, md: 8 }}
@@ -532,7 +543,7 @@ const ChapterReview = ({
       >
         <Box textAlign="center" px={{ base: 2, md: 6 }}>
           <Text
-            fontSize={{ base: "xs", md: "sm" }}
+            fontSize={{ base: "sm", md: "sm" }}
             fontWeight="semibold"
             textTransform="uppercase"
             letterSpacing="widest"
@@ -543,13 +554,12 @@ const ChapterReview = ({
             {text?.title}
           </Text>
           <Text
-            fontSize="xs"
+            fontSize={{ base: "sm", md: "sm" }}
             lineHeight="1.2"
             color="appTextMuted"
             maxW={{ base: "340px", md: "460px" }}
             mx="auto"
             mt={1}
-            sx={{ fontSize: "var(--chakra-fontSizes-xs) !important" }}
           >
             {text?.subtitle}
           </Text>
@@ -557,9 +567,11 @@ const ChapterReview = ({
 
         {/* ---------- SKILL TREE (restored) ---------- */}
         <Box ref={treeRef} w="100%" px={{ base: 0, md: 3 }} position="relative">
-          {connectorPaths.length ? (
+          {connectorLayout.paths.length ? (
             <Box
               as="svg"
+              viewBox={`0 0 ${connectorLayout.width} ${connectorLayout.height}`}
+              preserveAspectRatio="none"
               position="absolute"
               inset={0}
               width="100%"
@@ -568,7 +580,7 @@ const ChapterReview = ({
               pointerEvents="none"
               zIndex={0}
             >
-              {connectorPaths.map((connector) => (
+              {connectorLayout.paths.map((connector) => (
                 <g key={connector.id}>
                   <path
                     d={connector.d}
@@ -592,7 +604,7 @@ const ChapterReview = ({
 
           <VStack
             align="stretch"
-            spacing={{ base: 4, md: 10 }}
+            spacing={{ base: 8, md: 10 }}
             w="100%"
             position="relative"
             zIndex={1}
@@ -627,8 +639,12 @@ const ChapterReview = ({
                       initial={{ opacity: 0, y: 24, scale: 0.94 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       transition={{ duration: 0.45, delay: index * 0.06 }}
+                      onAnimationComplete={updateConnectorPaths}
                       px={{ base: 3, md: 5 }}
                       py={{ base: 3, md: 5 }}
+                      maxW="100%"
+                      minW={0}
+                      boxSizing="border-box"
                       borderRadius="full"
                       bg={chapterCardBg}
                       borderWidth="1px"
@@ -680,6 +696,7 @@ const ChapterReview = ({
                         <Box
                           w={{ base: "44px", md: "64px" }}
                           h={{ base: "44px", md: "64px" }}
+                          flexShrink={0}
                           borderRadius="full"
                           display="flex"
                           alignItems="center"
@@ -694,7 +711,8 @@ const ChapterReview = ({
                           />
                         </Box>
                         <Text
-                          fontSize={{ base: "md", md: "xl" }}
+                          minW={0}
+                          fontSize={{ base: "lg", md: "xl" }}
                           lineHeight={{ base: "1.2", md: "1.3" }}
                           fontWeight={node.isActive ? "extrabold" : "semibold"}
                           color="appText"
@@ -726,6 +744,8 @@ const ChapterReview = ({
                   variant="ghost"
                   size={{ base: "sm", md: "lg" }}
                   borderRadius="full"
+                  borderWidth="1px"
+                  borderColor={expandControlBorder}
                   px={{ base: 4, md: 8 }}
                   py={{ base: 2, md: 5 }}
                   fontSize={{ base: "sm", md: "lg" }}

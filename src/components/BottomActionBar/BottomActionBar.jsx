@@ -10,29 +10,24 @@ import {
   Icon,
   useColorModeValue,
   useToken,
-  Progress,
   Tooltip,
   Portal,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { keyframes } from "@emotion/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaHeart, FaRegHeart, FaFire } from "react-icons/fa";
 import { FiTrendingUp } from "react-icons/fi";
 import { RiBookOpenLine, RiFlag2Line } from "react-icons/ri";
 import { IoChatbubblesOutline } from "react-icons/io5";
-import RandomCharacter from "../../elements/RandomCharacter";
+import VoiceOrbNext from "../VoiceOrbNext/VoiceOrbNext.jsx";
 import CountdownTimer from "../../elements/CountdownTimer";
 import ThinkingOrb from "../../elements/ThinkingOrb";
 import NineDotMenu from "./NineDotMenu";
 import { useThemeStore } from "../../useThemeStore";
 import { useSurfaceModalStore } from "../../useSurfaceModalStore";
+import { subscribeToTeamInvites } from "../../utility/nosql";
 import { useConversationReviewStore } from "../../useConversationReviewStore";
-
-const progressGradient = keyframes`
-  0% { background-position: 0% 50%; }
-  100% { background-position: 200% 50%; }
-`;
+import ChapterProgressBar from "../ChapterProgressBar";
 
 const AnimatedEllipsis = () => (
   <Box as="span" display="inline-flex" alignItems="center" ml={1}>
@@ -146,6 +141,13 @@ export const BottomActionBar = ({
   renderActionBarTour = (child) => child,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const teamAccountNpub = localStorage.getItem("local_npub");
+  useEffect(() => {
+    if (!teamAccountNpub) return;
+    return subscribeToTeamInvites(teamAccountNpub, (invites) => {
+      useSurfaceModalStore.getState().setTeamInvites(invites);
+    });
+  }, [teamAccountNpub]);
   const navigate = useNavigate();
   const themeColor = useThemeStore((state) => state.themeColor);
   const conversationReviewStatus = useConversationReviewStore(
@@ -464,6 +466,7 @@ export const BottomActionBar = ({
             }
           }}
           onOpenBitcoin={handleOpenBitcoin}
+          onOpenTeams={() => useSurfaceModalStore.getState().openTeams()}
           onOpenSelfPaced={handleOpenSelfPaced}
           onOpenHelper={handleOpenHelper}
           onOpenPatreon={handleOpenPatreon}
@@ -649,34 +652,13 @@ export const BottomActionBar = ({
 
               {/* Row 2: Chapter Progress Bar - Golden Bar Style */}
               <Box width="100%" px={{ base: 1, sm: 2 }} mb={3}>
-                <Progress
+                <ChapterProgressBar
                   value={displayProgress}
-                  height="22px"
-                  borderRadius="6px"
-                  border="1px solid"
-                  borderColor={useColorModeValue(
-                    "#ececec",
-                    "rgba(255, 255, 255, 0.15)",
-                  )}
-                  background={useColorModeValue("#f4f4f5", "#1f2937")}
-                  boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.15)"
-                  width="100%"
-                  sx={{
-                    "& > div:first-of-type": {
-                      background:
-                        "linear-gradient(270deg, #f6ad55, #fbd38d, #f6ad55)",
-                      backgroundSize: "200% 200%",
-                      animation: `${progressGradient} 20s linear infinite`,
-                      transitionProperty: "width",
-                      transitionDuration: "0.8s",
-                      transitionTimingFunction: "ease-in-out",
-                      borderRadius: "5px",
-                    },
-                  }}
+                  label={tooltips.progress}
                 />
               </Box>
 
-              {/* Row 3: Proactive learning style speech bubble and snug RandomCharacter */}
+              {/* Row 3: Proactive learning style speech bubble and voice orb */}
               <Box width="100%" px={{ base: 1, sm: 2 }} mb={2}>
                 <Box
                   px={{ base: 3.5, sm: 4 }}
@@ -703,7 +685,13 @@ export const BottomActionBar = ({
                   </Text>
                 </Box>
                 <Box mt="4px" pl={1} display="flex" justifyContent="flex-start">
-                  <RandomCharacter width="46px" height="auto" />
+                  <VoiceOrbNext
+                    size={46}
+                    centered={false}
+                    variant="tutor"
+                    force3D
+                    feedback={{ id: `${feedback || "correct"}-${incorrectAttempts}`, result: "correct" }}
+                  />
                 </Box>
               </Box>
               </Box>
@@ -742,6 +730,15 @@ export const BottomActionBar = ({
                     {feedback || (userLanguage?.startsWith("es") ? "Intenta de nuevo" : "Try again")}
                   </Text>
                 </VStack>
+
+                <Box display="flex" justifyContent="center" mt={1}>
+                  <VoiceOrbNext
+                    size={46}
+                    variant="tutor"
+                    force3D
+                    feedback={{ id: `${feedback || "incorrect"}-${incorrectAttempts}`, result: "wrong" }}
+                  />
+                </Box>
 
                 {/* Lockout countdown message if attempts >= 5 */}
                 {isLockout && (

@@ -224,7 +224,7 @@ export const IdentityCard = ({
       app. QR codes soon!
       <a
         target="_blank"
-        href="https://primal.net/p/npub1mgt5c7qh6dm9rg57mrp89rqtzn64958nj5w9g2d2h9dng27hmp0sww7u2v"
+        href="https://ditto.pub/npub1mgt5c7qh6dm9rg57mrp89rqtzn64958nj5w9g2d2h9dng27hmp0sww7u2v"
       >
         you'll be connected to a shared account with rox.
       </a>
@@ -245,7 +245,7 @@ export const IdentityCard = ({
       name,{" "}
       <a
         target="_blank"
-        href="https://primal.net/p/npub1mgt5c7qh6dm9rg57mrp89rqtzn64958nj5w9g2d2h9dng27hmp0sww7u2v"
+        href="https://ditto.pub/npub1mgt5c7qh6dm9rg57mrp89rqtzn64958nj5w9g2d2h9dng27hmp0sww7u2v"
       >
         you'll be connected to a shared account with rox.
       </a>

@@ -2,22 +2,15 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
-  FormControl,
-  FormLabel,
   Image,
   Link,
   Progress,
-  Switch,
   Text,
-  useToast,
 } from "@chakra-ui/react";
 import { useSharedNostr } from "../hooks/useNOSTR";
 import { steps } from "../utility/content";
 import { CloudCanvas, SunsetCanvas } from "../elements/SunsetCanvas";
 import { translation } from "../utility/translation";
-import { doc, updateDoc } from "firebase/firestore";
-import { database } from "../database/firebaseResources";
-import { soundManager } from "../utility/soundManager";
 let totalSteps = steps["en"].length;
 
 const getColorScheme = (group) => {
@@ -128,8 +121,7 @@ function ReplaceHashtagWithLink({ text }) {
   );
 }
 
-export const TestFeed = ({ userLanguage, allowPosts, setAllowPosts }) => {
-  const toast = useToast();
+export const TestFeed = ({ userLanguage }) => {
   const [localLoad, setLocalLoad] = useState(false);
   const [profiles, setProfiles] = useState([]);
 
@@ -161,62 +153,10 @@ export const TestFeed = ({ userLanguage, allowPosts, setAllowPosts }) => {
     return match ? parseInt(match[1], 10) : null;
   };
 
-  const handleToggleAllowPosts = async (e) => {
-    soundManager.resume();
-    soundManager.play("modeSwitch");
-    const newValue = e.target.checked;
-    setAllowPosts(newValue);
-    const userDocRef = doc(
-      database,
-      "users",
-      localStorage.getItem("local_npub")
-    );
-    await updateDoc(userDocRef, { allowPosts: newValue });
-  };
-
-  const handleCopyKeys = () => {
-    const keysToCopy = `${localStorage.getItem("local_nsec")}`;
-    navigator.clipboard.writeText(keysToCopy);
-    toast({
-      title: translation[userLanguage]["toast.title.keysCopied"],
-      description: translation[userLanguage]["toast.description.keysCopied"],
-      status: "info",
-      duration: 1500,
-      isClosable: true,
-      position: "top",
-      render: () => (
-        <Box
-          color="black"
-          p={3}
-          bg="#FEEBC8" // Custom background color here!
-          borderRadius="md"
-          boxShadow="lg"
-        >
-          <Text fontWeight="bold">
-            {translation[userLanguage]["toast.title.keysCopied"]}
-          </Text>
-          <Text>
-            {translation[userLanguage]["toast.description.keysCopied"]}
-          </Text>
-        </Box>
-      ),
-    });
-  };
-
   if (localLoad) return <CloudCanvas />;
 
   return (
     <div>
-      <FormControl display="flex" alignItems="center" mb={4}>
-        <FormLabel htmlFor="allow-posts-switch" mb="0">
-          {translation[userLanguage]["tag.allowPosting"]}
-        </FormLabel>
-        <Switch
-          id="allow-posts-switch"
-          isChecked={allowPosts}
-          onChange={handleToggleAllowPosts}
-        />
-      </FormControl>
       {profiles.map((profile, index) => {
         const questionNumber = extractQuestionNumber(profile.content);
 
@@ -255,7 +195,7 @@ export const TestFeed = ({ userLanguage, allowPosts, setAllowPosts }) => {
                 />
                 &nbsp;
                 <Link
-                  href={"https://primal.net/p/" + profile.npub}
+                  href={"https://ditto.pub/" + profile.npub}
                   textDecoration={"underline"}
                   target="_blank"
                 >

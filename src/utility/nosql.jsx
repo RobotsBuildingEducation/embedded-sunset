@@ -339,7 +339,7 @@ export const createUser = async (npub, userName, language) => {
     previousStep: 0,
     curriculumVersion: CURRICULUM_VERSION,
     language,
-    allowPosts: false,
+    allowPosts: true,
     themeColor: getLocalThemeColor(),
     colorMode: localThemeMode,
     themeMode: localThemeMode,
@@ -403,7 +403,7 @@ export const createUser = async (npub, userName, language) => {
   }
 
   if (typeof data.allowPosts === "undefined") {
-    updates.allowPosts = false;
+    updates.allowPosts = true;
   }
 
   if (!themeColors.includes(data.themeColor)) {
@@ -697,6 +697,15 @@ export const createTeam = async (creatorNpub, teamName) => {
 
   await setDoc(teamRef, teamData);
   return teamId;
+};
+
+export const renameLegacyTeam = async (creatorNpub, teamId, teamName) => {
+  if (!creatorNpub || !teamId || !teamName?.trim() || teamName.trim().length > 80) {
+    throw new Error("Team name must be 1–80 characters");
+  }
+  await updateDoc(doc(database, "users", creatorNpub, "teams", teamId), {
+    teamName: teamName.trim(),
+  });
 };
 
 /**

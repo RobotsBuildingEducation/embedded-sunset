@@ -1,0 +1,230 @@
+.orbing-page {
+  --orb-ink: #283e35;
+  --orb-muted: #7c8177;
+  --orb-line: #e2e5db;
+  --orb-paper: #f9faf5;
+  min-height: 100dvh;
+  background: var(--orb-paper);
+  color: var(--orb-ink);
+  font-family: "DM Sans", sans-serif;
+  font-size: 14px;
+  color-scheme: light;
+}
+.orbing-page *, .orbing-page *::before, .orbing-page *::after { box-sizing: border-box; }
+.orbing-page button, .orbing-page a { -webkit-tap-highlight-color: transparent; }
+.orbing-page button { font-family: inherit; font-size: inherit; color: inherit; border: 1px solid transparent; font-weight: 400; line-height: 1.3; transition: background .18s, color .18s, border-color .18s, transform .18s; }
+.orbing-page button:focus { outline: none; }
+.orbing-page button:focus-visible, .orbing-page a:focus-visible, .orbing-page [tabindex]:focus-visible, .orbing-page input:focus-visible { outline: 2px solid #318a70; outline-offset: 4px; }
+.orbing-page button:active { transform: translateY(1px); }
+.orbing-page a { color: inherit; text-decoration: none; }
+.orbing-page a:hover { color: #2d896b; }
+.orbing-header { height: 83px; padding: 0 4.4%; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--orb-line); gap: 24px; }
+.orbing-wordmark { display: flex; align-items: center; gap: 8px; font-size: 26px; font-weight: 700; letter-spacing: -1.3px; }
+.orbing-logo { display: flex; align-items: center; justify-content: center; gap: 5px; width: 31px; height: 32px; background: #d4e8cb; border-radius: 50% 50% 44% 44%; transform: rotate(-8deg); margin-right: 1px; }
+.orbing-logo i { width: 4px; height: 10px; background: #335a44; border-radius: 5px; }
+.orbing-wordmark-divider { height: 21px; width: 1px; background: #cfd6c9; margin: 0 9px 0 13px; }
+.orbing-lab-name { font-size: 12px; font-weight: 400; letter-spacing: .2px; color: #6f786d; }
+.orbing-header-note { font-size: 11px; color: #858b80; display: flex; align-items: center; gap: 8px; }
+.orbing-header-note > span { width: 5px; height: 5px; border-radius: 50%; background: #93aa87; }
+.orbing-back { display: flex; align-items: center; gap: 7px; font-size: 11px; }
+.orbing-content { max-width: 1440px; padding: 0 4.4%; margin: auto; }
+.orbing-intro { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 38px 0 30px; }
+.orbing-eyebrow { display: flex; align-items: center; gap: 10px; font-size: 9px; font-weight: 700; letter-spacing: 1.5px; color: #8b9185; margin-bottom: 12px; }
+.orbing-eyebrow > span:first-child { color: #b08159; }
+.orbing-eyebrow-rule { width: 19px; height: 1px; background: #c4cbbd; }
+.orbing-intro h1 { font-size: clamp(32px, 3.5vw, 51px); letter-spacing: -2.5px; line-height: 1.13; font-weight: 400; margin: 0 0 12px; position: relative; width: fit-content; }
+.orbing-intro h1 > span { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-weight: 400; color: #567e5a; }
+.orbing-intro h1 > svg { width: 25px; height: 33px; position: absolute; right: -30px; top: -9px; stroke: #b5be80; fill: none; stroke-width: 2.8; stroke-linecap: round; transform: rotate(9deg); }
+.orbing-intro p { margin: 0; color: #7e8479; font-size: 12px; }
+.orbing-page .orbing-tour-button { display: flex; align-items: center; gap: 9px; border-radius: 9px; background: #edf1e7; border-color: #dce4d3; padding: 13px 16px; font-size: 11px; margin-top: 23px; white-space: nowrap; }
+.orbing-page .orbing-tour-button:hover { background: #e0e9d8; border-color: #bdcdb3; }
+.orbing-tour-button > span { font-size: 10px; color: #8a9481; border-left: 1px solid #cdd8c3; padding-left: 11px; margin-left: 6px; }
+.orbing-tour-button.is-playing { color: #267559; }
+.orbing-layout { display: grid; grid-template-columns: minmax(0, 1fr) 322px; gap: 22px; align-items: stretch; }
+.orbing-studio { border: 1px solid #dfe4d7; border-radius: 17px; overflow: hidden; background: #f0f3e9; display: flex; flex-direction: column; align-self: start; }
+.orbing-stage { position: relative; height: 560px; flex-shrink: 0; isolation: isolate; background: radial-gradient(ellipse at 50% 46%, #f9fcf0 0%, #eef3e5 60%, #e9eee0 100%); overflow: hidden; transition: background .3s; }
+.orbing-stage::before { content: ""; position: absolute; inset: 0; background-image: radial-gradient(#869377 0.55px, transparent 0.55px); background-size: 18px 18px; opacity: .16; z-index: -1; mask-image: linear-gradient(to bottom, #000, transparent 85%); }
+.orbing-stage::after { content: ""; width: 74%; aspect-ratio: 1; border: 1px solid #dce5d230; border-radius: 50%; position: absolute; left: 13%; top: 6%; pointer-events: none; z-index: -1; }
+.orbing-stage-header { position: absolute; top: 22px; left: 24px; right: 24px; display: flex; align-items: center; justify-content: space-between; z-index: 2; pointer-events: none; }
+.orbing-model-label { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.orbing-model-version { font-size: 9px; border: 1px solid #cbd7c0; padding: 2px 4px; border-radius: 4px; color: #7c8d70; margin-left: 4px; }
+.orbing-live-dot { width: 6px; height: 6px; border-radius: 50%; background: #659d71; box-shadow: 0 0 0 4px #689a7412; }
+.orbing-stage-tools { display: flex; gap: 5px; pointer-events: auto; }
+.orbing-page .orbing-stage-tools button { display: grid; place-items: center; padding: 0; width: 31px; height: 31px; border-radius: 8px; background: #fafcf28c; border-color: #dce3d4; color: #728268; }
+.orbing-page .orbing-stage-tools button:hover, .orbing-page .orbing-stage-tools button[aria-pressed="true"] { background: #fff; color: #2d654c; border-color: #aabca0; }
+.orbing-stage-word { position: absolute; top: 25%; left: 0; right: 0; text-align: center; font-size: clamp(70px, 8.6vw, 138px); font-family: Georgia, "Times New Roman", serif; font-style: italic; letter-spacing: -7px; color: #d8e3cb; opacity: .6; white-space: nowrap; pointer-events: none; z-index: -1; }
+.voice-orb-3d { position: absolute; inset: 38px 0 47px; cursor: grab; touch-action: pan-y; outline: none; }
+.voice-orb-3d canvas { display: block; width: 100%; height: 100%; }
+.voice-orb-3d:focus-visible { outline-offset: -6px !important; border-radius: 12px; }
+.orbing-orbit-label { position: absolute; right: 7%; top: 49%; font-size: 10px; line-height: 1.6; color: #87947b; transform: rotate(-8deg); pointer-events: none; }
+.orbing-orbit-label > span:first-child { display: block; width: 30px; height: 19px; border-top: 1px solid #b1bfa5; border-radius: 50%; transform: rotate(20deg); position: absolute; top: -7px; left: -42px; }
+.orbing-handwritten { font-family: Georgia, serif; font-style: italic; font-size: 12px; }
+.orbing-stage-caption { position: absolute; bottom: 59px; left: 25px; right: 25px; display: flex; align-items: center; flex-direction: column; gap: 11px; pointer-events: none; }
+.orbing-stage-caption p { font-size: 14px; letter-spacing: -.2px; text-align: center; color: #54654e; margin: 0; }
+.orbing-state-badge { display: flex; align-items: center; gap: 6px; border: 1px solid #d6e0cb; border-radius: 20px; padding: 4px 9px; font-size: 9px; color: #6e8461; background: #f9fbf385; }
+.orbing-state-badge > span { width: 4px; height: 4px; border-radius: 50%; background: #80a775; }
+.orbing-state-badge.is-speaking > span { background: #4b98c5; }
+.orbing-state-badge.is-thinking > span { background: #9c8fb7; }
+.orbing-state-badge.is-listening > span { background: #c18d51; }
+.orbing-stage-corner, .orbing-stage-edition { position: absolute; bottom: 19px; color: #8b9681; font-size: 9px; pointer-events: none; }
+.orbing-stage-corner { left: 24px; display: flex; gap: 6px; align-items: center; }
+.orbing-stage-edition { right: 24px; font-size: 7px; letter-spacing: 1.6px; }
+.orbing-reactions { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #f5f7ef; padding: 20px 24px; min-height: 91px; border-top: 1px solid #dee5d5; }
+.orbing-small-label { font-size: 8px; letter-spacing: 1.6px; color: #788970; }
+.orbing-reactions p { margin: 5px 0 0; font-size: 11px; color: #96a08c; }
+.orbing-reaction-buttons { display: flex; gap: 7px; }
+.orbing-page .orbing-reaction-buttons button { display: flex; align-items: center; gap: 7px; border: 1px solid #dce3d3; border-radius: 8px; padding: 10px 11px; background: #fcfdf9; color: #5a6e51; font-size: 10px; white-space: nowrap; }
+.orbing-page .orbing-reaction-buttons button:hover, .orbing-page .orbing-reaction-buttons button.is-active { border-color: #9fbb91; background: #eaf2e1; transform: translateY(-2px); }
+.orbing-controls { border: 1px solid var(--orb-line); border-radius: 17px; background: #ffffff87; padding: 23px 23px 15px; }
+.orbing-controls-title { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; padding-bottom: 20px; }
+.orbing-controls-title h2 { margin: 0 0 5px; font-size: 18px; font-weight: 400; letter-spacing: -.6px; }
+.orbing-controls-title p { font-size: 10px; color: #8a8f82; margin: 0; }
+.orbing-controls-title > svg { color: #94a585; margin-top: 2px; }
+.orbing-control-section { padding: 16px 0; border-top: 1px solid #e9ebe2; }
+.orbing-section-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.orbing-section-label h3 { margin: 0; font-size: 11px; font-weight: 700; color: #627057; }
+.orbing-section-label > span { font-family: monospace; font-size: 9px; color: #b7bdb0; }
+.orbing-moods { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.orbing-page .orbing-moods button { display: flex; align-items: center; flex-direction: column; justify-content: center; gap: 2px; height: 57px; padding: 3px 0 6px; border-radius: 8px; font-size: 9px; color: #87927d; background: #f5f7f0; border-color: #f0f2e9; }
+.orbing-moods svg { width: 34px; height: 27px; }
+.orbing-page .orbing-moods button:hover { background: #eaf0e1; border-color: #ccd9bc; }
+.orbing-page .orbing-moods button.is-selected { background: #eaf1e0; border-color: #adc596; color: #42632e; box-shadow: 0 0 0 1px #bdcca22a; }
+.orbing-voice-states { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; background: #f1f3ed; padding: 4px; border-radius: 8px; }
+.orbing-page .orbing-voice-states button { padding: 7px 0 6px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: transparent; font-size: 9px; color: #8b9383; border-radius: 6px; }
+.orbing-page .orbing-voice-states button.is-selected { background: #fff; border-color: #e5e9de; box-shadow: 0 1px 3px #354c2a0a; color: #405c35; }
+.orbing-state-symbol { height: 13px; display: flex; align-items: center; gap: 2px; }
+.orbing-state-symbol i { width: 3px; height: 5px; border-radius: 3px; background: currentColor; }
+.orbing-state-symbol.is-idle i:not(:nth-child(2)) { display: none; }
+.orbing-state-symbol.is-idle i { width: 7px; height: 7px; }
+.orbing-state-symbol.is-listening i:nth-child(2) { height: 12px; }
+.orbing-state-symbol.is-listening i { height: 8px; }
+.orbing-state-symbol.is-speaking i { height: 11px; }
+.orbing-state-symbol.is-speaking i:nth-child(2) { height: 6px; }
+.orbing-state-symbol.is-thinking i { height: 3px; }
+.orbing-voice-options { margin-top: 15px; }
+.orbing-page .orbing-mic-button { font-size: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px; background: #eef3e7; border-color: #dde7d2; width: 100%; margin-top: 12px; }
+.orbing-page .orbing-mic-button:hover, .orbing-page .orbing-mic-button.is-on { background: #e0ecce; }
+.orbing-voice-options > p { font-size: 9px; line-height: 1.5; color: #87907c; margin: 8px 0 0; }
+.orbing-mic-error { font-size: 10px; line-height: 1.5; color: #9d643e; margin-top: 10px; }
+.orbing-palette { display: flex; align-items: center; gap: 7px; }
+.orbing-page .orbing-palette button { background: var(--swatch); display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; padding: 0; border: 3px solid #fff; color: #325e4b; box-shadow: 0 0 0 1px #e3e6de; flex-shrink: 0; }
+.orbing-page .orbing-palette button.is-selected { box-shadow: 0 0 0 1px #90a481; }
+.orbing-page .orbing-palette button:hover { transform: translateY(-2px); }
+.orbing-palette > span { font-size: 9px; color: #8b9282; margin-left: auto; max-width: 54px; line-height: 1.4; }
+.orbing-range-label { display: grid; grid-template-columns: 1fr auto; gap: 13px 5px; font-size: 11px; color: #6a7760; }
+.orbing-range-label > span:nth-child(2) { font-size: 10px; color: #9b9f91; }
+.orbing-range-label input { grid-column: 1 / -1; width: 100%; accent-color: #688854; cursor: pointer; height: 4px; margin: 1px 0 7px; }
+.orbing-range-label input:disabled { opacity: .35; cursor: default; }
+.orbing-page .orbing-toggle-row { display: flex; width: 100%; justify-content: space-between; align-items: center; padding: 14px 0 0; background: transparent; border-radius: 0; font-size: 10px; }
+.orbing-toggle-row > span:first-child { display: flex; gap: 7px; align-items: center; color: #7a8770; }
+.orbing-switch { display: block; width: 29px; height: 17px; border-radius: 12px; background: #d6dcca; padding: 3px; transition: background .2s; }
+.orbing-switch > span { display: block; height: 11px; width: 11px; border-radius: 50%; background: white; transition: transform .2s; box-shadow: 0 1px 2px #42513922; }
+.orbing-toggle-row[aria-checked="true"] .orbing-switch { background: #769565; }
+.orbing-toggle-row[aria-checked="true"] .orbing-switch > span { transform: translateX(12px); }
+.orbing-motion-note { font-size: 10px; color: #849275; margin: 12px 0 0; }
+.orbing-page .orbing-reset { display: flex; align-items: center; justify-content: center; gap: 7px; width: 100%; background: transparent; border-top: 1px solid #e9ebe2; color: #8f9787; padding: 16px 0 1px; font-size: 10px; border-radius: 0; }
+.orbing-page .orbing-reset:hover { color: #4c6b3c; }
+.orbing-footer { display: flex; justify-content: space-between; align-items: center; padding: 20px 0 25px; color: #9ca392; gap: 20px; }
+.orbing-footer p { display: flex; align-items: center; gap: 7px; font-size: 10px; margin: 0; }
+.orbing-footer > span { font-size: 7px; letter-spacing: 1.7px; }
+.orbing-mic-live { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: #2d5443; box-shadow: 0 8px 30px #263c3440; color: white; padding: 9px 10px 9px 15px; border-radius: 30px; display: flex; align-items: center; gap: 9px; z-index: 10; font-size: 11px; white-space: nowrap; }
+.orbing-page .orbing-mic-live button { background: #ffffff20; padding: 5px; border-radius: 50%; margin-left: 4px; display: grid; place-items: center; }
+.is-dark .orbing-stage { background: radial-gradient(ellipse at 50% 40%, #253f68 0%, #162941 60%, #0c192d 100%); }
+.is-dark .orbing-stage-word { color: #7aa9e5; opacity: .11; }
+.is-dark .orbing-model-label { color: #c0d9fa; }
+.is-dark .orbing-stage-caption p { color: #c0d9fa; }
+.is-dark .orbing-state-badge { background: #a9cfff0d; border-color: #7ea9e055; color: #a8cef9; }
+.orbing-page .is-dark .orbing-stage-tools button { background: #ffffff08; border-color: #ffffff13; color: #a8cef9; }
+.orbing-page .is-dark .orbing-stage-tools button:hover { background: #ffffff12; }
+.is-dark .orbing-stage-corner, .is-dark .orbing-stage-edition, .is-dark .orbing-orbit-label { color: #91add0; }
+.is-dark .orbing-model-version { border-color: #ffffff26; }
+.is-fallback { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px; }
+.orb-fallback-character { width: 220px; height: 215px; background: radial-gradient(circle at 30% 22%, #f6ffec, #72e8c3 36%, #239b82 80%); box-shadow: inset -8px -12px 25px #17675225, 0 45px 22px -34px #123a443b; border-radius: 48% 48% 44% 44%; display: flex; align-items: center; justify-content: center; gap: 34px; }
+.orb-fallback-character i { background: #183d30; width: 16px; height: 34px; border-radius: 20px; }
+.orb-fallback-character[data-palette="blue"] { filter: hue-rotate(65deg); }
+.orb-fallback-character[data-palette="lilac"] { filter: hue-rotate(125deg); }
+.orb-fallback-character[data-palette="peach"] { filter: hue-rotate(245deg); }
+.orb-fallback-character[data-palette="pearl"] { filter: grayscale(1); }
+.orb-fallback-character[data-mood="sleepy"] i { height: 5px; width: 25px; }
+.orb-fallback-notice { max-width: 210px; text-align: center; font-size: 10px; color: #6c8060; }
+@media (min-width: 1500px) { .orbing-stage { height: 575px; } }
+@media (max-width: 1150px) {
+  .orbing-content { padding: 0 3%; }
+  .orbing-layout { grid-template-columns: minmax(0, 1fr) 298px; gap: 16px; }
+  .orbing-controls { padding-left: 18px; padding-right: 18px; }
+  .orbing-reactions { flex-direction: column; align-items: flex-start; gap: 12px; padding: 16px 20px; }
+  .orbing-reactions > div:first-child { display: flex; align-items: center; gap: 10px; }
+  .orbing-reactions p { margin: 0; }
+  .orbing-reaction-buttons { width: 100%; }
+  .orbing-page .orbing-reaction-buttons button { flex: 1; padding: 10px 7px; justify-content: center; gap: 5px; }
+  .orbing-stage { height: 540px; }
+  .orbing-orbit-label { right: 5%; top: 63%; }
+  .orbing-stage-word { font-size: 9vw; }
+}
+@media (max-width: 820px) {
+  .orbing-header { height: 68px; padding: 0 24px; }
+  .orbing-header-note { display: none; }
+  .orbing-content { padding: 0 24px; }
+  .orbing-intro { padding: 30px 0 25px; gap: 24px; }
+  .orbing-intro h1 { font-size: 40px; letter-spacing: -1.8px; }
+  .orbing-intro p { max-width: 265px; line-height: 1.7; }
+  .orbing-tour-button > span { display: none; }
+  .orbing-layout { grid-template-columns: 1fr; }
+  .orbing-stage { height: 500px; }
+  .orbing-stage-word { font-size: 15vw; }
+  .orbing-orbit-label { top: 46%; right: 10%; }
+  .orbing-reactions { flex-direction: row; align-items: center; padding: 20px; }
+  .orbing-reactions > div:first-child { display: block; min-width: 112px; }
+  .orbing-reactions p { margin-top: 5px; }
+  .orbing-reaction-buttons { width: auto; }
+  .orbing-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; padding: 24px; }
+  .orbing-controls-title, .orbing-reset { grid-column: 1 / -1; }
+  .orbing-control-section { padding: 20px 0; }
+  .orbing-controls-title { padding-bottom: 19px; }
+  .orbing-moods { gap: 6px; }
+  .orbing-motion-section { grid-column: 2; grid-row: 3; }
+  .orbing-footer > span { display: none; }
+}
+@media (max-width: 540px) {
+  .orbing-header { padding: 0 18px; height: 63px; }
+  .orbing-wordmark { font-size: 23px; }
+  .orbing-logo { width: 26px; height: 28px; }
+  .orbing-back { font-size: 0; gap: 0; padding: 10px; }
+  .orbing-back svg { width: 17px; height: 17px; }
+  .orbing-wordmark-divider { margin: 0 5px 0 9px; }
+  .orbing-content { padding: 0 16px; }
+  .orbing-intro { display: block; padding: 28px 6px 22px; }
+  .orbing-intro h1 { font-size: 39px; }
+  .orbing-intro p { font-size: 11px; max-width: 290px; }
+  .orbing-eyebrow { font-size: 8px; letter-spacing: 1.15px; }
+  .orbing-page .orbing-tour-button { margin-top: 18px; padding: 10px 12px; font-size: 10px; }
+  .orbing-tour-button > span { display: block; }
+  .orbing-stage { height: 435px; }
+  .orbing-stage-header { top: 18px; left: 17px; right: 17px; }
+  .orbing-stage-word { top: 27%; font-size: 19vw; letter-spacing: -4px; }
+  .voice-orb-3d { inset: 32px -10px 48px; }
+  .orbing-orbit-label { display: none; }
+  .orbing-stage-caption { bottom: 45px; left: 10px; right: 10px; }
+  .orbing-stage-caption p { font-size: 12px; }
+  .orbing-stage-corner { bottom: 16px; left: 0; right: 0; justify-content: center; font-size: 8px; }
+  .orbing-stage-edition { display: none; }
+  .orbing-reactions { flex-direction: column; align-items: flex-start; gap: 13px; padding: 17px; }
+  .orbing-reactions > div:first-child { display: flex; align-items: center; gap: 10px; }
+  .orbing-reactions p { margin: 0; font-size: 10px; }
+  .orbing-reaction-buttons { width: 100%; gap: 6px; }
+  .orbing-page .orbing-reaction-buttons button { flex-direction: column; gap: 7px; padding: 10px 3px; font-size: 9px; }
+  .orbing-controls { display: block; padding: 24px; }
+  .orbing-moods { gap: 7px; }
+  .orbing-page .orbing-moods button { height: 62px; font-size: 10px; }
+  .orbing-control-section { padding: 18px 0; }
+  .orbing-controls-title h2 { font-size: 21px; }
+  .orbing-palette { gap: 10px; }
+  .orbing-page .orbing-palette button { width: 31px; height: 31px; }
+  .orbing-palette > span { max-width: 65px; }
+  .orbing-footer { padding: 20px 5px 30px; }
+  .orbing-footer p { font-size: 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbing-page *, .orbing-page *::before, .orbing-page *::after { transition: none !important; animation: none !important; }
+  .orbing-page button:hover { transform: none !important; }
+}

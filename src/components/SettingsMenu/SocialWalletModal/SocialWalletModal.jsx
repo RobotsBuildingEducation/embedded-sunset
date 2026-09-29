@@ -97,12 +97,12 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
           </Button>
           <br />
           {/* <ActionButton
-            href={`https://primal.net/p/${localStorage.getItem("local_npub")}`}
+            href={`https://ditto.pub/${localStorage.getItem("local_npub")}`}
             text={translation[userLanguage]["settings.button.yourProfile"]}
             userLanguage={userLanguage}
           /> */}
           <ActionButton
-            href={`https://primal.net/p/${localStorage.getItem("local_npub")}`}
+            href={`https://ditto.pub/${localStorage.getItem("local_npub")}`}
             text={translation[userLanguage]["settings.button.yourProfile"]}
             userLanguage={userLanguage}
           />
@@ -111,18 +111,18 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
             text={translation[userLanguage]["settings.button.yourTutor"]}
             userLanguage={userLanguage}
           />
-          <ActionButton
-            href="https://primal.net/home"
+          {/* <ActionButton
+            href="https://ditto.pub"
             text={
               translation[userLanguage]["modal.openSocialWallet.startButton"]
             }
             userLanguage={userLanguage}
-          />
-          <ActionButton
+          /> */}
+          {/* <ActionButton
             href="https://otherstuff.app"
             text={translation[userLanguage]["settings.button.nostrApps"]}
             userLanguage={userLanguage}
-          />
+          /> */}
         </ModalBody>
         <ModalFooter>
           <Button

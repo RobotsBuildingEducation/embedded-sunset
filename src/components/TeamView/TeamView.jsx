@@ -1,541 +1,609 @@
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Badge,
   Box,
   Button,
+  HStack,
+  IconButton,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  Spinner,
   Text,
   VStack,
-  HStack,
   useToast,
-  Badge,
-  Divider,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
-  Progress,
-  Spinner,
-  Alert,
-  AlertIcon,
 } from "@chakra-ui/react";
+import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { doc, onSnapshot } from "firebase/firestore";
+import { database } from "../../database/firebaseResources";
 import {
-  getUserTeams,
-  getUserTeamInvites,
-  acceptTeamInvite,
-  rejectTeamInvite,
-  subscribeToTeamInvites,
-  subscribeToTeamUpdates,
-  getTeamMemberProgress,
-  deleteTeam,
-  leaveTeam,
+  deleteLearningTeam,
+  leaveLearningTeam,
+  loadCourseProgress,
+  loadNostrProfileNames,
+  publishCourseProgress,
+  renameLearningTeam,
+  toHexPubkey,
+  usableProfileName,
+} from "../../utility/learningTeams";
+import { loadVisibleTeams } from "../../utility/teamDirectory";
+import {
+  deleteTeam as deleteLegacyTeam,
+  leaveTeam as leaveLegacyTeam,
+  renameLegacyTeam,
 } from "../../utility/nosql";
-import { steps } from "../../utility/content";
-import { translation } from "../../utility/translation";
+import {
+  clampPercent,
+  makeCourseProgressSnapshot,
+  ownSalaryValue,
+} from "../../utility/courseTeamProgress";
+import { teamCopy } from "../../utility/teamCopy";
+import { TeamCreation } from "../TeamCreation/TeamCreation";
+import WaveBar from "../WaveBar";
+import ChapterProgressBar from "../ChapterProgressBar";
 
-const totalSteps = steps["en"].length;
+const percent = (part, total) =>
+  Number.isFinite(part) && Number.isFinite(total) && total > 0
+    ? clampPercent(Math.round((part / total) * 100))
+    : null;
+const EMPTY_PROFILES = new Map();
 
-const getColorScheme = (group) => {
-  const colorMap = {
-    tutorial: "gray",
-    1: "pink",
-    2: "pink",
-    3: "cyan",
-    4: "blue",
-    5: "teal",
-    6: "green",
-  };
-  return colorMap[group] || "pink";
-};
+function Measure({ label, completed, total, copy, variant = "chapter" }) {
+  const value = percent(completed, total);
+  return (
+    <Box>
+      <HStack justify="space-between" align="start" gap={2} mb={2}>
+        <Text fontSize="sm" fontWeight="semibold">
+          {label}
+        </Text>
+        <Text fontSize="sm" textAlign="right">
+          {value === null
+            ? copy.unavailable
+            : `${value}%`}
+        </Text>
+      </HStack>
+      {value !== null &&
+        (variant === "dailyGoal" ? (
+          <WaveBar
+            value={value}
+            height={14}
+            start="#03f4fc"
+            end="#fef37b"
+          />
+        ) : (
+          <ChapterProgressBar value={value} label={label} />
+        ))}
+    </Box>
+  );
+}
 
-export const TeamView = ({ userLanguage, refreshTrigger }) => {
+function MemberCard({
+  pubkey,
+  viewer,
+  data,
+  displayName,
+  salary,
+  language,
+  copy,
+}) {
+  const chapter = data?.chapters?.find(
+    (item) => item.id === data.currentChapterId,
+  );
+  const course = data?.courseProgress;
+  const coursePct =
+    course?.percent == null
+      ? percent(course?.completed, course?.total)
+      : clampPercent(course.percent);
+  return (
+    <Box
+      bg="appSurfaceElevated"
+      borderWidth="1px"
+      borderColor="appBorder"
+      borderRadius="xl"
+      p={{ base: 3, sm: 4 }}
+      boxShadow="sm"
+    >
+      <HStack justify="space-between" align="start" gap={2}>
+        <Text fontWeight="bold" overflowWrap="anywhere">
+          {usableProfileName(displayName) ||
+            usableProfileName(data?.name) ||
+            copy.nameNotSet}
+          {pubkey === viewer ? ` (${copy.you})` : ""}
+        </Text>
+      </HStack>
+      {!data ? (
+        <Text mt={3} fontSize="sm" color="appTextMuted">
+          {copy.noProgress}
+        </Text>
+      ) : (
+        <VStack align="stretch" spacing={4} mt={4}>
+          <Box
+            display="grid"
+            gridTemplateColumns={{
+              base: "1fr",
+              sm: "repeat(2, minmax(0, 1fr))",
+              md: "repeat(3, minmax(0, 1fr))",
+            }}
+            gap={2}
+          >
+            <Box bg="appSurfaceMuted" p={3} borderRadius="lg">
+              <Text fontSize="xs" color="appTextMuted">
+                {copy.currentChapter}
+              </Text>
+              <Text fontWeight="semibold" overflowWrap="anywhere">
+                {data.currentChapterId
+                  ? ["introduction", "tutorial"].includes(
+                      String(data.currentChapterId).toLowerCase(),
+                    )
+                    ? "Tutorial"
+                    : String(data.currentChapterId)
+                  : copy.noChapter}
+              </Text>
+            </Box>
+            <Box bg="appSurfaceMuted" p={3} borderRadius="lg">
+              <Text fontSize="xs" color="appTextMuted">
+                {copy.courseProgress}
+              </Text>
+              <Text fontWeight="semibold">
+                {coursePct == null ? "—" : `${coursePct}%`}
+              </Text>
+            </Box>
+            <Box bg="appSurfaceMuted" p={3} borderRadius="lg">
+              <Text fontSize="xs" color="appTextMuted">
+                {copy.salary}
+              </Text>
+              <Text fontWeight="semibold" overflowWrap="anywhere">
+                {salary
+                  ? `$${new Intl.NumberFormat(language?.startsWith("es") ? "es-MX" : "en-US", { maximumFractionDigits: 0 }).format(salary.amount)}`
+                  : "—"}
+              </Text>
+            </Box>
+          </Box>
+          {chapter ? (
+            <Measure
+              label={copy.chapterProgress}
+              completed={chapter.completed}
+              total={chapter.total}
+              copy={copy}
+            />
+          ) : (
+            <Text fontSize="sm">{copy.noChapter}</Text>
+          )}
+          {data.dailyGoal?.target > 0 ? (
+            <Measure
+              label={copy.dailyGoal}
+              completed={data.dailyGoal.completed}
+              total={data.dailyGoal.target}
+              copy={copy}
+              variant="dailyGoal"
+            />
+          ) : (
+            <Text fontSize="sm">{copy.noGoal}</Text>
+          )}
+        </VStack>
+      )}
+    </Box>
+  );
+}
+
+export const TeamView = ({
+  userLanguage,
+  refreshTrigger,
+  isOpen,
+  initialTeams = [],
+  initialProgress = new Map(),
+  initialProfiles = EMPTY_PROFILES,
+  initialOwnProgress = null,
+  initialOwnSalary = null,
+  onTeamsChange,
+}) => {
+  const copy = teamCopy(userLanguage);
   const toast = useToast();
-  const [myTeams, setMyTeams] = useState([]);
-  const [teamInvites, setTeamInvites] = useState([]);
-  const [teamMemberProgress, setTeamMemberProgress] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [processingInvite, setProcessingInvite] = useState(null);
-  const t = translation?.[userLanguage] || translation?.en || {};
+  const accountNpub = localStorage.getItem("local_npub");
+  const [teams, setTeams] = useState(initialTeams);
+  const [progress, setProgress] = useState(initialProgress);
+  const [profileNames, setProfileNames] = useState(initialProfiles);
+  const [ownProgress, setOwnProgress] = useState(initialOwnProgress);
+  const [ownSalary, setOwnSalary] = useState(initialOwnSalary);
+  const [loading, setLoading] = useState(false);
+  const [memberError, setMemberError] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+  const [busyId, setBusyId] = useState(null);
+  const [editingTeam, setEditingTeam] = useState(null);
+  const [addingTo, setAddingTo] = useState(null);
+  const [name, setName] = useState("");
+  const lastProgressRef = useRef("");
+  const viewer = accountNpub ? toHexPubkey(accountNpub) : "";
+  const ownProfileName = profileNames.get(viewer);
 
-  const userNpub = localStorage.getItem("local_npub");
+  useEffect(() => {
+    setProfileNames(initialProfiles || new Map());
+  }, [accountNpub, initialProfiles]);
+  useEffect(() => {
+    if (initialProgress?.size)
+      setProgress((current) => (current.size ? current : initialProgress));
+  }, [initialProgress]);
+  useEffect(() => {
+    if (initialOwnProgress)
+      setOwnProgress((current) => current || initialOwnProgress);
+  }, [initialOwnProgress]);
+  useEffect(() => {
+    if (initialOwnSalary)
+      setOwnSalary((current) => current || initialOwnSalary);
+  }, [initialOwnSalary]);
 
-  // Load initial data
-  const loadData = async () => {
+  const refresh = useCallback(async () => {
+    if (!accountNpub) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
+    setLoadError(false);
     try {
-      const [teams, invites] = await Promise.all([
-        getUserTeams(userNpub),
-        getUserTeamInvites(userNpub),
-      ]);
-
-      setMyTeams(teams);
-      setTeamInvites(invites);
-
-      // Load progress for each team
-      const progressData = {};
-      for (const team of teams) {
-        try {
-          // Use the correct creator npub for fetching progress
-          const creatorNpub = team.isCreator ? userNpub : team.createdBy;
-          const progress = await getTeamMemberProgress(creatorNpub, team.id);
-          progressData[team.id] = progress;
-        } catch (error) {
-          console.error(`Error loading progress for team ${team.id}:`, error);
-        }
+      const nextTeams = await loadVisibleTeams(accountNpub);
+      setTeams(nextTeams);
+      onTeamsChange?.(nextTeams);
+      setMemberError(false);
+      const memberHexes = [
+        ...new Set(nextTeams.flatMap((team) => team.members)),
+      ];
+      loadNostrProfileNames(memberHexes)
+        .then((names) => {
+          if (localStorage.getItem("local_npub") === accountNpub && names.size)
+            setProfileNames(names);
+        })
+        .catch(() => {});
+      try {
+        setProgress(await loadCourseProgress(memberHexes));
+      } catch {
+        setMemberError(true);
       }
-      setTeamMemberProgress(progressData);
-    } catch (error) {
-      console.error("Error loading team data:", error);
-      toast({
-        title: t["teamView.errorTitle"] || "Error",
-        description:
-          t["teamView.loadError"] || "Failed to load team data",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+    } catch {
+      setLoadError(true);
     } finally {
       setLoading(false);
     }
-  };
+  }, [accountNpub, onTeamsChange]);
 
   useEffect(() => {
-    loadData();
-  }, [userNpub, refreshTrigger]);
-
-  // Subscribe to real-time team invite updates
+    if (isOpen) refresh();
+  }, [isOpen, refresh, refreshTrigger]);
   useEffect(() => {
-    const unsubscribe = subscribeToTeamInvites(userNpub, (invites) => {
-      setTeamInvites(invites);
-    });
-
-    return () => unsubscribe();
-  }, [userNpub]);
-
-  // Subscribe to real-time team updates
-  useEffect(() => {
-    const unsubscribers = myTeams.map((team) =>
-      subscribeToTeamUpdates(userNpub, team.id, async (updatedTeam) => {
-        if (updatedTeam) {
-          // Update teams list
-          setMyTeams((prevTeams) =>
-            prevTeams.map((t) =>
-              t.id === updatedTeam.id ? updatedTeam : t
-            )
-          );
-
-          // Refresh progress for this team
-          try {
-            const progress = await getTeamMemberProgress(userNpub, team.id);
-            setTeamMemberProgress((prev) => ({
-              ...prev,
-              [team.id]: progress,
-            }));
-          } catch (error) {
-            console.error(
-              `Error refreshing progress for team ${team.id}:`,
-              error
-            );
-          }
-        }
-      })
-    );
-
-    return () => {
-      unsubscribers.forEach((unsub) => unsub());
+    if (!isOpen || !teams.length) return;
+    let active = true;
+    const syncProgress = async () => {
+      const memberHexes = [...new Set(teams.flatMap((team) => team.members))];
+      try {
+        const latest = await loadCourseProgress(memberHexes);
+        if (active) setProgress(latest);
+      } catch {
+        if (active) setMemberError(true);
+      }
     };
-  }, [myTeams.length, userNpub]);
-
-  const handleAcceptInvite = async (inviteId) => {
-    setProcessingInvite(inviteId);
-    try {
-      await acceptTeamInvite(userNpub, inviteId);
-      toast({
-        title: t["teamView.inviteAcceptedTitle"] || "Invite Accepted",
-        description:
-          t["teamView.inviteAcceptedDescription"] ||
-          "You've joined the team!",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-
-      // Reload all team data to show newly accepted team
-      await loadData();
-    } catch (error) {
-      console.error("Error accepting invite:", error);
-      toast({
-        title: t["teamView.errorTitle"] || "Error",
-        description:
-          error.message ||
-          t["teamView.acceptError"] ||
-          "Failed to accept invite",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    } finally {
-      setProcessingInvite(null);
-    }
-  };
-
-  const handleRejectInvite = async (inviteId) => {
-    setProcessingInvite(inviteId);
-    try {
-      await rejectTeamInvite(userNpub, inviteId);
-      toast({
-        title: t["teamView.inviteRejectedTitle"] || "Invite Rejected",
-        description:
-          t["teamView.inviteRejectedDescription"] ||
-          "You've declined the team invitation",
-        status: "info",
-        duration: 3000,
-        isClosable: true,
-      });
-    } catch (error) {
-      console.error("Error rejecting invite:", error);
-      toast({
-        title: t["teamView.errorTitle"] || "Error",
-        description:
-          error.message ||
-          t["teamView.rejectError"] ||
-          "Failed to reject invite",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    } finally {
-      setProcessingInvite(null);
-    }
-  };
-
-  const handleDeleteTeam = async (teamId, teamName) => {
-    const confirmMessage = (
-      t["teamView.deleteConfirm"] ||
-      `Are you sure you want to delete the team "{teamName}"? This action cannot be undone.`
-    ).replace("{teamName}", teamName);
-
-    if (!window.confirm(confirmMessage)) {
-      return;
-    }
-
-    try {
-      await deleteTeam(userNpub, teamId);
-      toast({
-        title: t["teamView.teamDeletedTitle"] || "Team Deleted",
-        description:
-          (t["teamView.teamDeletedDescription"] ||
-            `Team "{teamName}" has been deleted`).replace(
-            "{teamName}",
-            teamName
-          ),
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-
-      // Remove from local state
-      setMyTeams(myTeams.filter((t) => t.id !== teamId));
-      const newProgress = { ...teamMemberProgress };
-      delete newProgress[teamId];
-      setTeamMemberProgress(newProgress);
-    } catch (error) {
-      console.error("Error deleting team:", error);
-      toast({
-        title: t["teamView.errorTitle"] || "Error",
-        description:
-          error.message ||
-          t["teamView.deleteError"] ||
-          "Failed to delete team",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  const handleLeaveTeam = async (teamId, teamName, creatorNpub) => {
-    const leaveConfirm = (
-      t["teamView.leaveConfirm"] ||
-      `Are you sure you want to leave the team "{teamName}"?`
-    ).replace("{teamName}", teamName);
-
-    if (!window.confirm(leaveConfirm)) {
-      return;
-    }
-
-    try {
-      await leaveTeam(userNpub, creatorNpub, teamId);
-      toast({
-        title: t["teamView.leftTeamTitle"] || "Left Team",
-        description:
-          (t["teamView.leftTeamDescription"] ||
-            `You've left the team "{teamName}"`).replace(
-            "{teamName}",
-            teamName
-          ),
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-
-      // Reload all team data
-      await loadData();
-    } catch (error) {
-      console.error("Error leaving team:", error);
-      toast({
-        title: t["teamView.errorTitle"] || "Error",
-        description:
-          error.message ||
-          t["teamView.leaveError"] ||
-          "Failed to leave team",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
-  const getProgressPercentage = (step) => {
-    if (typeof step === "number") {
-      return (step / totalSteps) * 100;
-    }
-    return 0;
-  };
-
-  if (loading) {
-    return (
-      <Box textAlign="center" py={8}>
-        <Spinner size="xl" />
-        <Text mt={4}>{t["teamView.loading"] || "Loading teams..."}</Text>
-      </Box>
+    const interval = setInterval(syncProgress, 15000);
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
+  }, [isOpen, teams]);
+  useEffect(() => {
+    if (!isOpen || !accountNpub) return;
+    lastProgressRef.current = "";
+    let first = true;
+    let timer;
+    let active = true;
+    const unsubscribe = onSnapshot(
+      doc(database, "users", accountNpub),
+      (snapshot) => {
+        const source = snapshot.data() || {};
+        const value = makeCourseProgressSnapshot({
+          ...source,
+          name: ownProfileName || source.name,
+        });
+        setOwnProgress(value);
+        setOwnSalary(ownSalaryValue(source));
+        const comparable = JSON.stringify({ ...value, updatedAt: 0 });
+        if (comparable === lastProgressRef.current) return;
+        lastProgressRef.current = comparable;
+        clearTimeout(timer);
+        const publish = async () => {
+          try {
+            await publishCourseProgress(accountNpub, value);
+          } catch (error) {
+            if (active)
+              toast({
+                title: copy.syncFailed,
+                description: error.message,
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+              });
+          }
+        };
+        if (first) {
+          first = false;
+          publish();
+        } else timer = setTimeout(publish, 700);
+      },
+      () => {
+        if (active) toast({ title: copy.syncFailed, status: "error" });
+      },
     );
-  }
+    return () => {
+      active = false;
+      clearTimeout(timer);
+      unsubscribe();
+    };
+  }, [accountNpub, isOpen, copy, toast, ownProfileName]);
 
-  const pendingInvites = teamInvites.filter(
-    (invite) => invite.status === "pending"
+  const act = async (team, operation) => {
+    if (
+      !window.confirm(
+        operation === "delete"
+          ? copy.confirmDelete(team.name)
+          : copy.confirmLeave(team.name),
+      )
+    )
+      return;
+    setBusyId(team.id);
+    try {
+      if (team.legacy) {
+        if (operation === "delete")
+          await deleteLegacyTeam(accountNpub, team.id);
+        else await leaveLegacyTeam(accountNpub, team.creatorNpub, team.id);
+      } else if (operation === "delete")
+        await deleteLearningTeam(accountNpub, team);
+      else await leaveLearningTeam(accountNpub, team);
+      const next = teams.filter((item) => item.id !== team.id);
+      setTeams(next);
+      onTeamsChange?.(next);
+      toast({
+        title: operation === "delete" ? copy.deleted : copy.left,
+        status: "success",
+      });
+    } catch (error) {
+      toast({
+        title: copy.updateFailed,
+        description: error.message,
+        status: "error",
+      });
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const rename = async () => {
+    if (!editingTeam || !name.trim() || name.trim() === editingTeam.name)
+      return;
+    setBusyId(editingTeam.id);
+    try {
+      if (editingTeam.legacy)
+        await renameLegacyTeam(accountNpub, editingTeam.id, name.trim());
+      else await renameLearningTeam(accountNpub, editingTeam, name.trim());
+      setEditingTeam(null);
+      toast({ title: copy.renamed, status: "success" });
+      await refresh();
+    } catch (error) {
+      toast({
+        title: copy.updateFailed,
+        description: error.message,
+        status: "error",
+      });
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const teamContent = (team) => (
+    <VStack align="stretch" spacing={4} p={{ base: 3, sm: 4 }}>
+      {team.creatorHex === viewer && (
+        <Button
+          size="sm"
+          colorScheme="teal"
+          alignSelf="end"
+          onClick={() => setAddingTo(team)}
+        >
+          {copy.addMember}
+        </Button>
+      )}
+      {memberError ? (
+        <Text>{copy.memberLoadFailed}</Text>
+      ) : team.members.length ? (
+        team.members.map((pubkey) => (
+          <MemberCard
+            key={pubkey}
+            pubkey={pubkey}
+            viewer={viewer}
+            data={pubkey === viewer ? ownProgress : progress.get(pubkey)}
+            displayName={profileNames.get(pubkey)}
+            salary={pubkey === viewer ? ownSalary : null}
+            language={userLanguage}
+            copy={copy}
+          />
+        ))
+      ) : (
+        <Text>{copy.noMembers}</Text>
+      )}
+      {team.pendingMembers?.length > 0 && (
+        <Box>
+          <Text fontSize="sm" fontWeight="semibold">
+            {copy.pendingInvitations}
+          </Text>
+          {team.pendingMembers.map((member) => (
+            <Text key={member} fontSize="sm" overflowWrap="anywhere">
+              {member}
+            </Text>
+          ))}
+        </Box>
+      )}
+      <HStack justify="end">
+        <IconButton
+          size="sm"
+          variant="outline"
+          colorScheme="red"
+          aria-label={
+            team.creatorHex === viewer ? copy.deleteTeam : copy.leaveTeam
+          }
+          title={team.creatorHex === viewer ? copy.deleteTeam : copy.leaveTeam}
+          icon={<DeleteIcon />}
+          isLoading={busyId === team.id}
+          onClick={() =>
+            act(team, team.creatorHex === viewer ? "delete" : "leave")
+          }
+        />
+      </HStack>
+    </VStack>
+  );
+  const heading = (team) => (
+    <HStack minW={0} flex="1">
+      <Text fontWeight="bold" isTruncated>
+        {team.name}
+      </Text>
+      {team.creatorHex === viewer && (
+        <IconButton
+          size="xs"
+          variant="ghost"
+          icon={<EditIcon />}
+          aria-label={copy.editName}
+          onClick={(event) => {
+            event.stopPropagation();
+            setName(team.name);
+            setEditingTeam(team);
+          }}
+        />
+      )}
+      <Badge>
+        {team.members.length}{" "}
+        {team.members.length === 1
+          ? copy.memberCountSingular
+          : copy.memberCount}
+      </Badge>
+    </HStack>
   );
 
   return (
-    <VStack spacing={6} align="stretch">
-      {/* Pending Invites Section */}
-      {pendingInvites.length > 0 && (
-        <Box>
-          <Text fontSize="lg" fontWeight="bold" mb={3}>
-            {t["teamView.pendingInvitations"] || "Pending Invitations"}
-          </Text>
-          <VStack spacing={3}>
-            {pendingInvites.map((invite) => (
-              <Box
-                key={invite.id}
-                p={4}
-                borderWidth="1px"
-                borderRadius="md"
-                width="100%"
-                bg="yellow.50"
-              >
-                <Text fontWeight="bold">{invite.teamName}</Text>
-                <Text fontSize="sm" color="gray.600">
-                  {(t["teamView.invitedBy"] || "Invited by:") + " "}
-                  {invite.invitedByName}
-                </Text>
-                <HStack mt={3} spacing={2}>
-                  <Button
-                    size="sm"
-                    colorScheme="green"
-                    onClick={() => handleAcceptInvite(invite.id)}
-                    isLoading={processingInvite === invite.id}
-                  >
-                    {t["teamView.acceptButton"] || "Accept"}
-                  </Button>
-                  <Button
-                    size="sm"
-                    colorScheme="red"
-                    variant="outline"
-                    onClick={() => handleRejectInvite(invite.id)}
-                    isLoading={processingInvite === invite.id}
-                  >
-                    {t["teamView.declineButton"] || "Decline"}
-                  </Button>
-                </HStack>
-              </Box>
-            ))}
-          </VStack>
-        </Box>
+    <VStack align="stretch" spacing={4}>
+      <Text fontSize="lg" fontWeight="bold">
+        {copy.myTeams} ({teams.length}){" "}
+        {loading && <Spinner size="xs" ml={2} />}
+      </Text>
+      {loadError && teams.length > 0 && (
+        <Text color="red.500">{copy.loadFailed}</Text>
       )}
-
-      {/* My Teams Section */}
-      <Box>
-        <Text fontSize="lg" fontWeight="bold" mb={3}>
-          {`${t["teamView.myTeams"] || "My Teams"} (${myTeams.length})`}
-        </Text>
-
-        {myTeams.length === 0 ? (
-          <Alert status="info">
-            <AlertIcon />
-            {(t["teamView.noTeamsAlert"] ||
-              `You haven't created any teams yet. Use "{createTeam}" to get started!`
-            ).replace(
-              "{createTeam}",
-              t["socialFeed.tab.createTeam"] || "Create Team"
+      {loadError && !teams.length ? (
+        <Box>
+          <Text>{copy.loadFailed}</Text>
+          <Button mt={2} onClick={refresh}>
+            {copy.refresh}
+          </Button>
+        </Box>
+      ) : teams.length === 0 ? (
+        <Text>{copy.emptyTeams}</Text>
+      ) : teams.length === 1 ? (
+        <Box
+          borderWidth="1px"
+          borderColor="appBorder"
+          borderRadius="xl"
+          bg="appBgMuted"
+        >
+          <HStack p={4}>{heading(teams[0])}</HStack>
+          {teamContent(teams[0])}
+        </Box>
+      ) : (
+        <Accordion allowMultiple>
+          {teams.map((team) => (
+            <AccordionItem
+              key={`${team.creatorHex}:${team.id}`}
+              borderWidth="1px"
+              borderColor="appBorder"
+              borderRadius="xl"
+              mb={3}
+              bg="appBgMuted"
+            >
+              <h2>
+                <AccordionButton py={4}>
+                  {heading(team)}
+                  <AccordionIcon />
+                </AccordionButton>
+              </h2>
+              <AccordionPanel p={0}>{teamContent(team)}</AccordionPanel>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      )}
+      <Modal
+        isOpen={Boolean(editingTeam)}
+        onClose={() => {
+          if (!busyId) setEditingTeam(null);
+        }}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent bg="appSurfaceElevated" color="appText">
+          <ModalHeader>{copy.editName}</ModalHeader>
+          <ModalCloseButton isDisabled={Boolean(busyId)} />
+          <ModalBody pb={6}>
+            <Input
+              autoFocus
+              value={name}
+              maxLength={80}
+              onChange={(event) => setName(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") rename();
+              }}
+            />
+            <HStack justify="end" mt={4}>
+              <Button
+                variant="outline"
+                isDisabled={Boolean(busyId)}
+                onClick={() => setEditingTeam(null)}
+              >
+                {copy.cancel}
+              </Button>
+              <Button
+                colorScheme="teal"
+                isLoading={Boolean(busyId)}
+                isDisabled={!name.trim() || name.trim() === editingTeam?.name}
+                onClick={rename}
+              >
+                {copy.save}
+              </Button>
+            </HStack>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      <Modal
+        isOpen={Boolean(addingTo)}
+        onClose={() => setAddingTo(null)}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent bg="appSurfaceElevated" color="appText">
+          <ModalHeader>{copy.addMember}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
+            {addingTo && (
+              <TeamCreation
+                team={addingTo}
+                userLanguage={userLanguage}
+                onTeamCreated={() => {
+                  setAddingTo(null);
+                  refresh();
+                }}
+              />
             )}
-          </Alert>
-        ) : (
-          <Accordion allowMultiple>
-            {myTeams.map((team) => {
-              // Use the isCreator flag from getUserTeams
-              const isCreator = team.isCreator === true || team.createdBy === userNpub;
-              const acceptedMembers =
-                team.members?.filter((m) => m.status === "accepted") || [];
-              const pendingMembers =
-                team.members?.filter((m) => m.status === "pending") || [];
-              const progress = teamMemberProgress[team.id] || [];
-              // Total members includes creator + accepted members
-              const totalMembers = acceptedMembers.length + 1;
-
-              return (
-                <AccordionItem key={team.id}>
-                  <h2>
-                    <AccordionButton>
-                      <Box flex="1" textAlign="left">
-                        <HStack>
-                          <Text fontWeight="bold">{team.teamName}</Text>
-                          {isCreator && (
-                            <Badge colorScheme="purple">
-                              {t["teamView.badge.creator"] || "Creator"}
-                            </Badge>
-                          )}
-                          {!isCreator && (
-                            <Badge colorScheme="green">
-                              {t["teamView.badge.member"] || "Member"}
-                            </Badge>
-                          )}
-                          <Badge colorScheme="blue">
-                            {totalMembers}{" "}
-                            {totalMembers === 1
-                              ? t["teamView.memberCountSingular"] || "member"
-                              : t["teamView.memberCountPlural"] || "members"}
-                          </Badge>
-                        </HStack>
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel pb={4}>
-                    <VStack align="stretch" spacing={4}>
-                      {/* Team Members Progress */}
-                      {progress.length > 0 ? (
-                        <Box>
-                          <Text fontSize="sm" fontWeight="bold" mb={2}>
-                            {t["teamView.teamProgress"] || "Team Progress"}
-                          </Text>
-                          {progress.map((member) => (
-                            <Box key={member.npub} mb={3}>
-                              <HStack justify="space-between" mb={1}>
-                                <HStack spacing={2}>
-                                  <Text fontSize="sm" fontWeight="medium">
-                                    {member.name}
-                                  </Text>
-                                  {member.isCreator && (
-                                    <Badge colorScheme="purple" fontSize="xs">
-                                      {t["teamView.badge.creator"] || "Creator"}
-                                    </Badge>
-                                  )}
-                                </HStack>
-                                <HStack spacing={2}>
-                                  <Badge colorScheme="orange">
-                                    {(t["teamView.streakLabel"] ||
-                                      "{count} day streak").replace(
-                                      "{count}",
-                                      member.streak
-                                    )}
-                                  </Badge>
-                                  <Badge colorScheme="green">
-                                    {(t["teamView.questionsLabel"] ||
-                                      "{count} questions").replace(
-                                      "{count}",
-                                      member.answeredStepsCount
-                                    )}
-                                  </Badge>
-                                </HStack>
-                              </HStack>
-                              <Progress
-                                value={getProgressPercentage(member.step)}
-                                colorScheme={getColorScheme(
-                                  typeof member.step === "number" &&
-                                    steps["en"][member.step]
-                                    ? steps["en"][member.step]["group"]
-                                    : 1
-                                )}
-                                size="sm"
-                                borderRadius="md"
-                              />
-                            </Box>
-                          ))}
-                        </Box>
-                      ) : (
-                        <Text fontSize="sm" color="gray.500">
-                          {t["teamView.noMembers"] ||
-                            "No members have accepted yet"}
-                        </Text>
-                      )}
-
-                      {/* Pending Members */}
-                      {pendingMembers.length > 0 && (
-                        <Box>
-                          <Text fontSize="sm" fontWeight="bold" mb={2}>
-                            {`${t["teamView.pendingMembers"] ||
-                              "Pending Invitations"} (${pendingMembers.length})`}
-                          </Text>
-                          {pendingMembers.map((member) => (
-                            <Text
-                              key={member.npub}
-                              fontSize="xs"
-                              color="gray.500"
-                            >
-                              {member.npub.substring(0, 20)}...
-                            </Text>
-                          ))}
-                        </Box>
-                      )}
-
-                      <Divider />
-
-                      {/* Actions */}
-                      {isCreator ? (
-                        <Button
-                          size="sm"
-                          colorScheme="red"
-                          variant="outline"
-                          onClick={() =>
-                            handleDeleteTeam(team.id, team.teamName)
-                          }
-                        >
-                          {t["teamView.deleteTeamButton"] || "Delete Team"}
-                        </Button>
-                      ) : (
-                        <Button
-                          size="sm"
-                          colorScheme="orange"
-                          variant="outline"
-                          onClick={() =>
-                            handleLeaveTeam(
-                              team.id,
-                              team.teamName,
-                              team.createdBy
-                            )
-                          }
-                        >
-                          {t["teamView.leaveTeamButton"] || "Leave Team"}
-                        </Button>
-                      )}
-                    </VStack>
-                  </AccordionPanel>
-                </AccordionItem>
-              );
-            })}
-          </Accordion>
-        )}
-      </Box>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </VStack>
   );
 };

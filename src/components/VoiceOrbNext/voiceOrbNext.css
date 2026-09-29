@@ -1,0 +1,156 @@
+.voice-orb-next {
+  display: block;
+  position: relative;
+  flex: none;
+  max-width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.voice-orb-next .voice-orb-3d {
+  position: absolute;
+  inset: 0;
+  cursor: default;
+  touch-action: auto;
+  pointer-events: none;
+}
+.voice-orb-next.is-interactive .voice-orb-3d { cursor: pointer; pointer-events: auto; touch-action: pan-y; }
+.voice-orb-next.is-interactive { cursor: pointer; }
+.voice-orb-next.is-interactive:focus-visible,
+.voice-orb-next.is-interactive .voice-orb-3d:focus-visible { outline: 2px solid #328c77; outline-offset: 2px; border-radius: 50%; }
+
+.voice-orb-next .voice-orb-3d canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.voice-orb-next-mini {
+  position: absolute;
+  inset: 8%;
+  display: grid;
+  place-items: center;
+  border-radius: 48% 48% 46% 46%;
+  overflow: hidden;
+  isolation: isolate;
+  background: radial-gradient(circle at 25% 16%, #fff 0%, var(--orb-light) 25%, var(--orb-mid) 62%, var(--orb-deep) 100%);
+  box-shadow: inset -2px -4px 7px color-mix(in srgb, var(--orb-deep), transparent 65%);
+  animation: voice-orb-next-breathe 2.8s ease-in-out infinite;
+}
+
+.voice-orb-next-pigment,
+.voice-orb-next-wash {
+  position: absolute;
+  inset: -20%;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.voice-orb-next-pigment {
+  background:
+    radial-gradient(ellipse 31% 32% at 25% 30%, var(--orb-deep) 0%, var(--orb-mid) 54%, transparent 82%),
+    radial-gradient(ellipse 34% 29% at 79% 71%, var(--orb-deep) 0%, var(--orb-mid) 52%, transparent 82%),
+    radial-gradient(ellipse 24% 26% at 72% 19%, var(--orb-light) 0%, transparent 78%);
+  filter: blur(3px);
+  animation: voice-orb-next-flow 7s ease-in-out infinite alternate;
+}
+
+.voice-orb-next-wash {
+  background:
+    radial-gradient(ellipse 24% 44% at 53% 42%, #ffffffed 0%, #ffffffd6 52%, transparent 86%),
+    radial-gradient(ellipse 26% 34% at 16% 78%, #fafffbdb 0%, transparent 86%),
+    radial-gradient(ellipse 18% 33% at 91% 16%, #ffffffd9 0%, transparent 88%);
+  filter: blur(3px);
+  transform: rotate(-24deg);
+  animation: voice-orb-next-wash 9s ease-in-out infinite alternate;
+}
+
+.voice-orb-next-mini::before {
+  content: "";
+  position: absolute;
+  inset: 2%;
+  z-index: 1;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 28% 16%, #ffffffa8 0%, transparent 43%);
+  pointer-events: none;
+}
+
+.voice-orb-next-face {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18%;
+  width: 64%;
+  height: 36%;
+}
+
+.voice-orb-next-face i {
+  display: block;
+  opacity: .62;
+  width: 25%;
+  height: 55%;
+  border-top: max(2px, .13em) solid var(--orb-deep);
+  border-radius: 50% 50% 0 0;
+  transform: translateY(15%);
+}
+
+.voice-orb-next-mini[data-mood="curious"] .voice-orb-next-face i:first-child { height: 35%; }
+.voice-orb-next-mini[data-mood="sleepy"] .voice-orb-next-face i { height: 2px; border-top-width: 2px; border-radius: 50%; transform: translateY(15%); }
+.voice-orb-next-mini[data-mood="love"] .voice-orb-next-face i { width: 23%; height: 32%; border: 0; border-radius: 50% 50% 4px 4px; background: #e85d78; transform: rotate(45deg); }
+.voice-orb-next-mini[data-mood="excited"] .voice-orb-next-face i { transform: translateY(15%) rotate(25deg); }
+.voice-orb-next-mini[data-mood="excited"] .voice-orb-next-face i:last-child { transform: translateY(15%) rotate(-25deg); }
+.voice-orb-next-mini[data-mood="surprised"] .voice-orb-next-face i { width: 23%; height: 49%; border: 0; border-radius: 50%; background: #000; transform: none; }
+.voice-orb-next-mini[data-mood="sad"] .voice-orb-next-face i { height: 47%; border: 0; border-radius: 50%; background: var(--orb-deep); transform: rotate(16deg); }
+.voice-orb-next-mini[data-mood="sad"] .voice-orb-next-face i:last-child { transform: rotate(-16deg); }
+.voice-orb-next-mini[data-mood="neutral"] .voice-orb-next-face i { height: 50%; border: 0; border-radius: 50%; background: var(--orb-deep); transform: none; }
+.voice-orb-next-mini[data-state="listening"] { animation-duration: 1.55s; }
+.voice-orb-next-mini[data-state="speaking"] { animation-duration: .8s; }
+.voice-orb-next-mini[data-state="thinking"] { animation-duration: 1.15s; }
+.voice-orb-next-mini[data-reaction="wave"] { animation: voice-orb-next-wave 2.3s ease-in-out 1; }
+.voice-orb-next-mini[data-reaction="bounce"] { animation: voice-orb-next-hop 2.2s ease-in-out 1; }
+.voice-orb-next-mini[data-reaction="spin"] { animation: voice-orb-next-spin 2.4s ease-in-out 1; }
+.voice-orb-next-mini[data-reaction="celebrate"] { animation: voice-orb-next-hop 3.4s ease-in-out 1; }
+.voice-orb-next-mini[data-reaction="boop"] { animation: voice-orb-next-boop 1.4s ease-in-out 1; }
+.voice-orb-next .voice-orb-3d.is-fallback { display: grid; place-items: center; }
+.voice-orb-next .orb-fallback-character {
+  width: 75%;
+  height: 75%;
+  gap: 14%;
+  border-radius: 48%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 28% 22%, #fff, var(--orb-light) 31%, var(--orb-mid) 69%, var(--orb-deep));
+}
+.voice-orb-next .orb-fallback-character i {
+  width: 9%;
+  height: 14%;
+  opacity: .62;
+  border-top: 2px solid var(--orb-deep);
+  border-radius: 50% 50% 0 0;
+}
+.voice-orb-next .orb-fallback-notice { display: none; }
+
+@keyframes voice-orb-next-breathe {
+  0%, 100% { transform: scale(.96); }
+  50% { transform: scale(1.03); }
+}
+@keyframes voice-orb-next-flow {
+  from { transform: translate(-5%, 4%) rotate(-12deg) scale(1.08); }
+  to { transform: translate(5%, -4%) rotate(12deg) scale(1.08); }
+}
+@keyframes voice-orb-next-wash {
+  from { transform: translate(-4%, 2%) rotate(-30deg); }
+  to { transform: translate(4%, -3%) rotate(-18deg); }
+}
+@keyframes voice-orb-next-wave { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-17deg); } 60% { transform: rotate(13deg); } }
+@keyframes voice-orb-next-hop { 0%, 100% { transform: translateY(0) scale(1); } 18% { transform: scale(1.09, .89); } 45% { transform: translateY(-13%) scale(.94, 1.06); } }
+@keyframes voice-orb-next-spin { from { transform: rotateY(0); } to { transform: rotateY(360deg); } }
+@keyframes voice-orb-next-boop { 0%, 100% { transform: scale(1); } 25% { transform: scale(1.12, .85); } 55% { transform: scale(.95, 1.05); } }
+@media (prefers-reduced-motion: reduce) {
+  .voice-orb-next-mini,
+  .voice-orb-next-pigment, .voice-orb-next-wash { animation: none; }
+}

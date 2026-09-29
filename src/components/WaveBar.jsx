@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { Box, useColorModeValue } from "@chakra-ui/react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 const clampPct = (n) => Math.max(0, Math.min(100, Number(n) || 0));
 const MotionG = motion.g;
@@ -14,6 +14,7 @@ const WaveBar = ({
   bg,
   border,
 }) => {
+  const reducedMotion = useReducedMotion();
   const id = useRef(`wave-${Math.random().toString(36).slice(2, 9)}`).current;
   const widthPct = `${clampPct(value)}%`;
   const defaultTrackBg = useColorModeValue(
@@ -36,9 +37,13 @@ const WaveBar = ({
       backdropFilter="saturate(120%) blur(4px)"
     >
       <motion.div
-        initial={{ width: 0 }}
+        initial={reducedMotion ? false : { width: 0 }}
         animate={{ width: widthPct }}
-        transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
+        transition={{
+          duration: reducedMotion ? 0 : 0.8,
+          delay: reducedMotion ? 0 : delay,
+          ease: [0.22, 1, 0.36, 1],
+        }}
         style={{ position: "absolute", top: 0, left: 0, bottom: 0 }}
       >
         <Box
@@ -55,11 +60,20 @@ const WaveBar = ({
               <stop offset="100%" stopColor={end} />
             </linearGradient>
           </defs>
-          <rect width="120" height="30" fill={`url(#grad-${id})`} opacity="0.9" />
+          <rect
+            width="120"
+            height="30"
+            fill={`url(#grad-${id})`}
+            opacity="0.9"
+          />
           <MotionG
-            initial={{ x: 0 }}
-            animate={{ x: [-10, 0, -10] }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay }}
+            initial={false}
+            animate={reducedMotion ? { x: 0 } : { x: [-10, 0, -10] }}
+            transition={
+              reducedMotion
+                ? { duration: 0 }
+                : { duration: 10, repeat: Infinity, ease: "easeInOut", delay }
+            }
             opacity={0.18}
           >
             <path

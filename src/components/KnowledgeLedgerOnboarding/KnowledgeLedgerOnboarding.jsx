@@ -27,7 +27,7 @@ import { usePasscodeModalStore } from "../../usePasscodeModalStore";
 import RandomCharacter, {
   PanRightComponent,
 } from "../../elements/RandomCharacter";
-import { CloudCanvas } from "../../elements/SunsetCanvas";
+import VoiceOrbLoader from "../VoiceOrbNext/VoiceOrbLoader.jsx";
 import { translation } from "../../utility/translation";
 import { doc, updateDoc } from "firebase/firestore";
 import { database } from "../../database/firebaseResources";
@@ -359,8 +359,7 @@ export default function KnowledgeLedgerOnboarding({
 
         {isLoading && (
           <>
-            <CloudCanvas />
-            {translation[userLanguage]["generatingCode"]}
+            <VoiceOrbLoader label={translation[userLanguage]["generatingCode"]} />
 
             <br />
           </>

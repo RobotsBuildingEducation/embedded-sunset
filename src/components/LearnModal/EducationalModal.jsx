@@ -34,7 +34,7 @@ import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
 import { translation } from "../../utility/translation";
-import RandomCharacter from "../../elements/RandomCharacter";
+import VoiceOrbNext from "../VoiceOrbNext/VoiceOrbNext.jsx";
 import { CopyButtonIcon } from "../../elements/CopyButtonIcon";
 import { animateBorderLoading } from "../../utility/animations";
 import Markdown from "react-markdown";
@@ -631,7 +631,7 @@ const LearnDrawerHeader = ({ userLanguage }) => (
   >
     <HStack spacing={3} minWidth={0}>
       <Box width="fit-content" flexShrink={0}>
-        <RandomCharacter />
+        <VoiceOrbNext size={50} centered={false} force3D />
       </Box>
       <Text fontSize="xl" fontWeight="bold" noOfLines={1}>
         {translation[userLanguage]["modal.learn.title"]}

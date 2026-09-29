@@ -4,294 +4,184 @@ import {
   Button,
   FormControl,
   FormLabel,
-  Input,
-  Text,
-  VStack,
   HStack,
-  useToast,
   IconButton,
+  Input,
   List,
   ListItem,
+  Text,
+  VStack,
+  useToast,
 } from "@chakra-ui/react";
 import { CloseIcon } from "@chakra-ui/icons";
 import {
-  createTeam,
-  inviteUserToTeam,
-  checkUserExists,
-  getUserData,
-} from "../../utility/nosql";
-import { useSharedNostr } from "../../hooks/useNOSTR";
-import { translation } from "../../utility/translation";
+  addLearningTeamMembers,
+  createLearningTeam,
+  toHexPubkey,
+} from "../../utility/learningTeams";
+import { teamCopy } from "../../utility/teamCopy";
+import { getUserData, inviteUserToTeam } from "../../utility/nosql";
 
-export const TeamCreation = ({ userLanguage, onTeamCreated }) => {
+export const TeamCreation = ({ userLanguage, onTeamCreated, team }) => {
+  const copy = teamCopy(userLanguage);
   const toast = useToast();
   const [teamName, setTeamName] = useState("");
   const [memberNpub, setMemberNpub] = useState("");
-  const [membersToInvite, setMembersToInvite] = useState([]);
-  const [isCreating, setIsCreating] = useState(false);
-  const t = translation?.[userLanguage] || translation?.en || {};
+  const [members, setMembers] = useState([]);
+  const [saving, setSaving] = useState(false);
+  const accountNpub = localStorage.getItem("local_npub");
 
-  const { sendDirectMessage } = useSharedNostr(
-    localStorage.getItem("local_npub"),
-    localStorage.getItem("local_nsec")
-  );
-
-  const handleAddMember = () => {
-    if (!memberNpub.trim()) {
-      toast({
-        title: t["teamCreation.errorTitle"] || "Error",
-        description:
-          t["teamCreation.invalidNpub"] || "Please enter a valid npub",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+  const stageMember = () => {
+    const value = memberNpub.trim();
+    if (!value.startsWith("npub")) {
+      toast({ title: copy.invalidNpub, status: "error", duration: 3500 });
       return;
     }
-
-    // Basic npub validation
-    if (!memberNpub.startsWith("npub")) {
-      toast({
-        title: t["teamCreation.errorTitle"] || "Error",
-        description:
-          t["teamCreation.invalidNpubFormat"] ||
-          "Invalid npub format. It should start with 'npub'",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+    let hex;
+    try {
+      hex = toHexPubkey(value);
+    } catch {
+      toast({ title: copy.invalidNpub, status: "error", duration: 3500 });
       return;
     }
-
-    // Check if already added
-    if (membersToInvite.includes(memberNpub)) {
-      toast({
-        title: t["teamCreation.errorTitle"] || "Error",
-        description:
-          t["teamCreation.duplicateMember"] ||
-          "This user is already in the invite list",
-        status: "warning",
-        duration: 3000,
-        isClosable: true,
-      });
+    if (hex === toHexPubkey(accountNpub)) {
+      toast({ title: copy.selfInvite, status: "warning", duration: 3500 });
       return;
     }
-
-    setMembersToInvite([...membersToInvite, memberNpub]);
+    if (
+      members.some((member) => toHexPubkey(member) === hex) ||
+      team?.members?.includes(hex)
+    ) {
+      toast({ title: copy.duplicateMember, status: "warning", duration: 3500 });
+      return;
+    }
+    setMembers((current) => [...current, value]);
     setMemberNpub("");
   };
 
-  const handleRemoveMember = (npub) => {
-    setMembersToInvite(membersToInvite.filter((m) => m !== npub));
-  };
-
-  const handleCreateTeam = async () => {
-    if (!teamName.trim()) {
-      toast({
-        title: t["teamCreation.errorTitle"] || "Error",
-        description:
-          t["teamCreation.missingTeamName"] || "Please enter a team name",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    if (membersToInvite.length === 0) {
-      toast({
-        title: t["teamCreation.errorTitle"] || "Error",
-        description:
-          t["teamCreation.missingMember"] ||
-          "Please add at least one member to invite",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    setIsCreating(true);
-
+  const submit = async () => {
+    if (!team && !teamName.trim())
+      return toast({ title: copy.nameRequired, status: "error" });
+    if (!members.length)
+      return toast({ title: copy.memberRequired, status: "error" });
+    setSaving(true);
     try {
-      const creatorNpub = localStorage.getItem("local_npub");
-      const creatorData = await getUserData(creatorNpub);
-      const creatorName =
-        creatorData?.name || t["teamCreation.unknownUser"] || "Unknown User";
-
-      // Create the team
-      const teamId = await createTeam(creatorNpub, teamName);
-
-      // Send invites to all members
-      const invitePromises = membersToInvite.map(async (inviteeNpub) => {
-        try {
-          // Check if user exists in Firestore
-          const userExists = await checkUserExists(inviteeNpub);
-
-          // Send invite to Firestore
-          await inviteUserToTeam(
-            creatorNpub,
-            teamId,
-            teamName,
-            inviteeNpub,
-            creatorName
-          );
-
-          // If user doesn't exist, send NOSTR DM
-          if (!userExists) {
-            const dmTemplate =
-              t["teamCreation.dmMessage"] ||
-              `Hi! You've been invited to join the team "{teamName}" on Robots Building Education (https://robotsbuildingeducation.com). Create an account to accept the invite and track your progress with your team!`;
-            const dmMessage = dmTemplate.replace("{teamName}", teamName);
-            await sendDirectMessage(inviteeNpub, dmMessage);
-          }
-
-          return { npub: inviteeNpub, success: true };
-        } catch (error) {
-          console.error(`Error inviting ${inviteeNpub}:`, error);
-          return { npub: inviteeNpub, success: false, error };
-        }
-      });
-
-      const results = await Promise.all(invitePromises);
-      const successCount = results.filter((r) => r.success).length;
-      const failCount = results.filter((r) => !r.success).length;
-
-      const successDescription = (
-        t["teamCreation.successDescription"] ||
-        `Team "{teamName}" created successfully. {successCount} invites sent`
-      )
-        .replace("{teamName}", teamName)
-        .replace("{successCount}", successCount);
-      const failSuffix = (
-        t["teamCreation.successFailSuffix"] || ", {failCount} failed"
-      ).replace("{failCount}", failCount);
-
+      if (team?.legacy) {
+        const creator = await getUserData(accountNpub);
+        await Promise.all(
+          members.map((member) =>
+            inviteUserToTeam(
+              accountNpub,
+              team.id,
+              team.name,
+              member,
+              creator?.name || "",
+            ),
+          ),
+        );
+      } else if (team) await addLearningTeamMembers(accountNpub, team, members);
+      else await createLearningTeam(accountNpub, teamName.trim(), members);
       toast({
-        title: t["teamCreation.successTitle"] || "Team Created!",
-        description: successDescription + (failCount > 0 ? failSuffix : ""),
+        title: team?.legacy
+          ? copy.invitesSent
+          : team
+            ? copy.membersAdded
+            : copy.teamCreated,
         status: "success",
-        duration: 5000,
-        isClosable: true,
+        duration: 3500,
       });
-
-      // Reset form
       setTeamName("");
-      setMembersToInvite([]);
-
-      // Notify parent component
-      if (onTeamCreated) {
-        onTeamCreated(teamId);
-      }
+      setMemberNpub("");
+      setMembers([]);
+      onTeamCreated?.();
     } catch (error) {
-      console.error("Error creating team:", error);
       toast({
-        title: t["teamCreation.errorTitle"] || "Error",
-        description:
-          error.message ||
-          t["teamCreation.errorCreate"] ||
-          "Failed to create team",
+        title: copy.updateFailed,
+        description: error.message,
         status: "error",
         duration: 5000,
         isClosable: true,
       });
     } finally {
-      setIsCreating(false);
+      setSaving(false);
     }
   };
 
   return (
-    <Box>
-      <Text fontSize="lg" fontWeight="bold" mb={4}>
-        {t["teamCreation.heading"] || "Create a New Team"}
-      </Text>
-
-      <VStack spacing={4} align="stretch">
-        <FormControl>
-          <FormLabel>
-            {t["teamCreation.teamNameLabel"] || "Team Name"}
-          </FormLabel>
+    <VStack align="stretch" spacing={4}>
+      {!team && (
+        <FormControl isRequired>
+          <FormLabel>{copy.teamName}</FormLabel>
           <Input
             value={teamName}
-            onChange={(e) => setTeamName(e.target.value)}
-            placeholder={
-              t["teamCreation.teamNamePlaceholder"] || "Enter team name"
-            }
+            maxLength={80}
+            onChange={(event) => setTeamName(event.target.value)}
+            placeholder={copy.teamName}
           />
         </FormControl>
-
-        <FormControl>
-          <FormLabel>
-            {t["teamCreation.addMembersLabel"] || "Add Team Members"}
-          </FormLabel>
-          <HStack>
-            <Input
-              value={memberNpub}
-              onChange={(e) => setMemberNpub(e.target.value)}
-              placeholder={
-                t["teamCreation.npubPlaceholder"] ||
-                "Enter npub (e.g., npub1...)"
+      )}
+      <FormControl isRequired>
+        <FormLabel>{copy.inviteTeammates}</FormLabel>
+        <HStack align="stretch">
+          <Input
+            value={memberNpub}
+            onChange={(event) => setMemberNpub(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                stageMember();
               }
-              onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                  handleAddMember();
-                }
-              }}
-            />
-            <Button
-              onClick={handleAddMember}
-              boxShadow="0.5px 0.5px 1px rgba(0,0,0,0.75)"
-            >
-              {t["teamCreation.addButton"] || "Add"}
-            </Button>
-          </HStack>
-        </FormControl>
-
-        {membersToInvite.length > 0 && (
-          <Box>
-            <Text fontSize="sm" fontWeight="bold" mb={2}>
-              {`${t["teamCreation.membersToInvite"] || "Members to Invite"} (${
-                membersToInvite.length
-              })`}
-            </Text>
-            <List spacing={2}>
-              {membersToInvite.map((npub) => (
-                <ListItem key={npub}>
-                  <HStack
-                    justify="space-between"
-                    p={2}
-                    borderWidth="1px"
-                    borderRadius="md"
-                  >
-                    <Text fontSize="sm" isTruncated maxWidth="80%">
-                      {npub}
-                    </Text>
-                    <IconButton
-                      size="xs"
-                      icon={<CloseIcon />}
-                      onClick={() => handleRemoveMember(npub)}
-                      aria-label={
-                        t["teamCreation.removeMemberAria"] || "Remove member"
-                      }
-                    />
-                  </HStack>
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        )}
-
-        <Button
-          // variant={"outline"}
-          colorScheme="pink"
-          onClick={handleCreateTeam}
-          isLoading={isCreating}
-          loadingText={t["teamCreation.creatingButton"] || "Creating Team..."}
-          isDisabled={!teamName.trim() || membersToInvite.length === 0}
-        >
-          {t["teamCreation.createButton"] || "Create Team"}
-        </Button>
-      </VStack>
-    </Box>
+            }}
+            placeholder="npub1…"
+          />
+          <Button variant="outline" onClick={stageMember}>
+            {copy.invite}
+          </Button>
+        </HStack>
+      </FormControl>
+      {members.length > 0 && (
+        <Box>
+          <Text fontWeight="semibold" mb={2}>
+            {copy.membersToInvite} ({members.length})
+          </Text>
+          <List spacing={2}>
+            {members.map((npub) => (
+              <ListItem key={npub}>
+                <HStack
+                  p={2}
+                  borderWidth="1px"
+                  borderRadius="md"
+                  justify="space-between"
+                >
+                  <Text fontSize="sm" isTruncated minW={0}>
+                    {npub}
+                  </Text>
+                  <IconButton
+                    size="sm"
+                    variant="ghost"
+                    icon={<CloseIcon />}
+                    aria-label={copy.removeMember}
+                    onClick={() =>
+                      setMembers((current) =>
+                        current.filter((member) => member !== npub),
+                      )
+                    }
+                  />
+                </HStack>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      )}
+      <Button
+        colorScheme="teal"
+        w="full"
+        isLoading={saving}
+        isDisabled={!members.length || (!team && !teamName.trim())}
+        onClick={submit}
+      >
+        {team ? copy.addMember : copy.createTeam}
+      </Button>
+    </VStack>
   );
 };

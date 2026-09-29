@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
-  HStack,
   IconButton,
   Portal,
   Text,
@@ -10,10 +9,12 @@ import {
 } from "@chakra-ui/react";
 import { motion, AnimatePresence, useMotionValue, animate } from "framer-motion";
 import { IoSettingsOutline, IoClose } from "react-icons/io5";
+import { TbHeartHandshake } from "react-icons/tb";
 import { FaBitcoin } from "react-icons/fa";
 import { PiClockCountdownFill, PiPatreonLogoFill } from "react-icons/pi";
 import { RiCodeAiFill } from "react-icons/ri";
 import { useThemeStore } from "../useThemeStore";
+import { useSurfaceModalStore } from "../useSurfaceModalStore";
 
 const MotionBox = motion(Box);
 
@@ -287,6 +288,7 @@ export const ActivityMenu = ({
   isOpen,
   onClose,
   onOpenSettings,
+  onOpenTeams,
   onOpenBitcoin,
   onOpenSelfPaced,
   onOpenHelper,
@@ -295,6 +297,7 @@ export const ActivityMenu = ({
   translation = {},
 }) => {
   const themeColor = useThemeStore((state) => state.themeColor);
+  const unseenTeamInvite = useSurfaceModalStore((state) => state.unseenTeamInvite);
 
   const [theme50, theme100, theme200, theme300, theme500, theme600] = useToken(
     "colors",
@@ -365,13 +368,12 @@ export const ActivityMenu = ({
 
   const bentoGridItems = [
     {
-      id: "bitcoin",
+      id: "settings",
       label:
-        userLanguage?.startsWith("es")
-          ? "Billetera"
-          : translation[userLanguage]?.["settings.button.bitcoinMode"] || "Wallet",
-      icon: <FaBitcoin fontSize="20px" color={themeIconColor} />,
-      onClick: onOpenBitcoin,
+        translation[userLanguage]?.["settings.title"] ||
+        (userLanguage?.startsWith("es") ? "Configuraciones" : "Settings"),
+      icon: <IoSettingsOutline fontSize="20px" color={themeIconColor} />,
+      onClick: onOpenSettings,
     },
     {
       id: "selfPaced",
@@ -393,6 +395,21 @@ export const ActivityMenu = ({
           : "App Building Tutorial",
       icon: <PiPatreonLogoFill fontSize="20px" color={themeIconColor} />,
       onClick: onOpenPatreon,
+    },
+    {
+      id: "bitcoin",
+      label:
+        userLanguage?.startsWith("es")
+          ? "Billetera"
+          : translation[userLanguage]?.["settings.button.bitcoinMode"] || "Wallet",
+      icon: <FaBitcoin fontSize="20px" color={themeIconColor} />,
+      onClick: onOpenBitcoin,
+    },
+    {
+      id: "teams",
+      label: translation[userLanguage]?.["settings.button.teams"] || "Teams",
+      icon: <TbHeartHandshake fontSize="20px" color={themeIconColor} />,
+      onClick: onOpenTeams,
     },
   ];
 
@@ -532,6 +549,7 @@ export const ActivityMenu = ({
                     onClose?.();
                   }}
                   p={3.5}
+                  position="relative"
                   minH="88px"
                   borderRadius="18px"
                   bg={tileBg}
@@ -567,6 +585,7 @@ export const ActivityMenu = ({
                     boxShadow="0 2px 6px rgba(0, 0, 0, 0.04)"
                   >
                     {item.icon}
+                    {item.id === "teams" && unseenTeamInvite && <Box position="absolute" top="8px" right="8px" w="8px" h="8px" bg="red.500" borderRadius="full" aria-label={userLanguage?.startsWith("es") ? "Invitación nueva" : "New invitation"} />}
                   </Box>
 
                   {/* Bottom: Pinned Text */}
@@ -585,57 +604,6 @@ export const ActivityMenu = ({
               ))}
             </Box>
 
-            {/* Bottom Full-Width Row: Settings */}
-            <HStack
-              as="button"
-              type="button"
-              data-interactive="true"
-              w="100%"
-              p={3}
-              borderRadius="18px"
-              bg={tileBg}
-              border="1px solid"
-              borderColor={tileBorder}
-              cursor="pointer"
-              transition="all 0.15s ease"
-              _hover={{ bg: tileHoverBg, transform: "translateY(-1px)" }}
-              _active={{ transform: "scale(0.97)" }}
-              _focusVisible={{ outline: "2px solid", outlineColor: "pink.400" }}
-              onPointerDown={(e) => e.stopPropagation()}
-              onClick={(e) => {
-                e.stopPropagation();
-                onOpenSettings?.();
-                onClose?.();
-              }}
-              spacing={3}
-            >
-              <Box
-                w="38px"
-                h="38px"
-                borderRadius="12px"
-                bg={themeIconBg}
-                border="1px solid"
-                borderColor={themeIconBorder}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                color={themeIconColor}
-                flexShrink={0}
-                boxShadow="0 2px 6px rgba(0, 0, 0, 0.04)"
-              >
-                <IoSettingsOutline fontSize="20px" color={themeIconColor} />
-              </Box>
-              <Text
-                fontSize="sm"
-                fontWeight="600"
-                color="appText"
-                textAlign="left"
-                noOfLines={1}
-              >
-                {translation[userLanguage]?.["settings.title"] ||
-                  (userLanguage?.startsWith("es") ? "Configuraciones" : "Settings")}
-              </Text>
-            </HStack>
           </MotionBox>
         </>
       )}

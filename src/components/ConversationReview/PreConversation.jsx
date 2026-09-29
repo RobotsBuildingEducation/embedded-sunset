@@ -20,7 +20,7 @@ import { database } from "../../database/firebaseResources";
 import { useConversationReviewGeminiChat } from "../../hooks/useGeminiChat";
 import { translation } from "../../utility/translation";
 const LiveReactEditorModal = lazy(() => import("../LiveCodeEditor/LiveCodeEditor"));
-import { CloudCanvas } from "../../elements/SunsetCanvas";
+import VoiceOrbLoader from "../VoiceOrbNext/VoiceOrbLoader.jsx";
 import { soundManager } from "../../utility/soundManager";
 import {
   GENERATED_REACT_RUNTIME_REQUIREMENTS,
@@ -120,13 +120,14 @@ export const transcriptDisplay = {
 const LiveEditorContext = React.createContext({
   hideRunButton: false,
   autoRun: false,
+  loadingLabel: "Loading",
 });
 
 const CodeBlock = ({ inline, className, children, ...props }) => {
-  const { hideRunButton, autoRun } = React.useContext(LiveEditorContext);
+  const { hideRunButton, autoRun, loadingLabel } = React.useContext(LiveEditorContext);
   const match = /language-(\w+)/.exec(className || "");
   return !inline && match ? (
-    <Suspense fallback={<CloudCanvas isLoader={true} regulateWidth={false} />}>
+    <Suspense fallback={<VoiceOrbLoader label={loadingLabel} />}>
       <LiveReactEditorModal
         code={String(children).replace(/\n$/, "")}
         hideRunButton={hideRunButton}
@@ -399,10 +400,7 @@ const PreConversation = ({ steps, step, userLanguage, onSubmit, onBuildReady }) 
       />
 
       {isLoading && (
-        <>
-          <CloudCanvas />
-          <Text>{translation[userLanguage]["loading.suggestion"]}</Text>
-        </>
+        <VoiceOrbLoader label={translation[userLanguage]["loading.suggestion"]} />
       )}
 
       {code && (
@@ -414,7 +412,11 @@ const PreConversation = ({ steps, step, userLanguage, onSubmit, onBuildReady }) 
           justifyContent={"center"}
         >
           <LiveEditorContext.Provider
-            value={{ hideRunButton: isLoading, autoRun: !isLoading }}
+            value={{
+              hideRunButton: isLoading,
+              autoRun: !isLoading,
+              loadingLabel: translation[userLanguage]["loading"],
+            }}
           >
             <Box width="100%" p={4} borderRadius="md">
               <Markdown

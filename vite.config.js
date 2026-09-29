@@ -29,8 +29,7 @@ export default defineConfig(({ mode }) => {
         "/api/patreon": {
           target: "http://127.0.0.1:5001",
           changeOrigin: true,
-          rewrite: (path) =>
-            `/${projectId}/us-central1/patreonAuth${path}`,
+          rewrite: (path) => `/${projectId}/us-central1/patreonAuth${path}`,
         },
       },
     },
@@ -38,50 +37,46 @@ export default defineConfig(({ mode }) => {
       "process.env": process.env,
     },
     plugins: [
-    process.env.ANALYZE === "true" &&
-      visualizer({ open: true, filename: "stats.html", gzipSize: true }),
-    react(),
-    VitePWA({
-      workbox: {
-        maximumFileSizeToCacheInBytes: 7250000, // Set to 4MB or any higher value
-        // OAuth callbacks and API requests must always reach the Function.
-        navigateFallbackDenylist: [/^\/api(?:\/|$)/],
-      },
-      manifest: {
-        name: "Robots Building Education",
-        short_name: "Robots Building Education",
-        start_url: "./",
-        display: "standalone",
-        theme_color: "#FDDEE6",
-        background_color: "#ffffff",
-        description:
-          "PWA install handler package for Robots Building Education",
-        icons: [
-          {
-            src: "https://res.cloudinary.com/dtkeyccga/image/upload/v1743209424/FFFEF5_d4weow.png",
-            sizes: "192x192",
-            type: "image/png",
-            purpose: "any",
-          },
-          {
-            src: "https://res.cloudinary.com/dtkeyccga/image/upload/v1743209424/FFFEF5_d4weow.png",
-            sizes: "256x256",
-            type: "image/png",
-            purpose: "any",
-          },
-          {
-            src: "https://res.cloudinary.com/dtkeyccga/image/upload/v1743209424/FFFEF5_d4weow.png",
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "any",
-          },
-        ],
-      },
-      registerType: "autoUpdate",
-      devOptions: {
-        enabled: true,
-      },
-    }),
+      process.env.ANALYZE === "true" &&
+        visualizer({ open: true, filename: "stats.html", gzipSize: true }),
+      react(),
+      VitePWA({
+        workbox: {
+          maximumFileSizeToCacheInBytes: 7250000, // Set to 4MB or any higher value
+          // OAuth callbacks and API requests must always reach the Function.
+          navigateFallbackDenylist: [/^\/api(?:\/|$)/],
+        },
+        manifest: {
+          name: "Robots Building Education",
+          short_name: "Robots Building Education",
+          start_url: "./",
+          display: "standalone",
+
+          theme_color: "#FDDEE6",
+          background_color: "#ffffff",
+
+          description: "Robots Building Education",
+
+          icons: [
+            {
+              src: "https://res.cloudinary.com/dtkeyccga/image/upload/v1790620879/logos_512_x_512_px_14_nj2igp.png",
+              sizes: "512x512",
+              type: "image/png",
+              purpose: "any",
+            },
+            {
+              src: "https://res.cloudinary.com/dtkeyccga/image/upload/v1790620879/logos_512_x_512_px_14_nj2igp.png",
+              sizes: "512x512",
+              type: "image/png",
+              purpose: "maskable",
+            },
+          ],
+        },
+        registerType: "autoUpdate",
+        devOptions: {
+          enabled: true,
+        },
+      }),
     ],
     base: "/",
   };

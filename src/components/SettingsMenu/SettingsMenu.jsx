@@ -58,6 +58,17 @@ import {
   nativeRightDrawerMotionProps,
 } from "../../utility/modalMotion";
 import PatreonSubscriptionSettingsModal from "../PatreonSubscriptionSettingsModal.jsx";
+import SocialFeedModal from "../SocialFeedModal/SocialFeedModal";
+import { loadVisibleTeams } from "../../utility/teamDirectory";
+import {
+  loadCourseProgress,
+  loadNostrProfileNames,
+} from "../../utility/learningTeams";
+import { getUserData } from "../../utility/nosql";
+import {
+  makeCourseProgressSnapshot,
+  ownSalaryValue,
+} from "../../utility/courseTeamProgress";
 import {
   clearPatreonModalReopen,
   consumePatreonModalReturn,
@@ -92,8 +103,76 @@ const SettingsMenu = ({
 }) => {
   const internalDisclosure = useDisclosure();
   const isSettingsOpenFromStore = useSurfaceModalStore((s) => s.isSettingsOpen);
+  const isTeamsOpen = useSurfaceModalStore((s) => s.isTeamsOpen);
+  const closeTeams = useSurfaceModalStore((s) => s.closeTeams);
   const closeSettingsFromStore = useSurfaceModalStore((s) => s.closeSettings);
   const openSettingsFromStore = useSurfaceModalStore((s) => s.openSettings);
+  const teamAccountNpub = isSignedIn
+    ? localStorage.getItem("local_npub")
+    : null;
+
+  useEffect(() => {
+    if (!teamAccountNpub) {
+      useSurfaceModalStore.getState().resetTeamPreload();
+      return;
+    }
+    const store = useSurfaceModalStore.getState();
+    if (
+      store.teamPreloadAccount === teamAccountNpub &&
+      store.teamPreloadStatus !== "idle" &&
+      store.teamPreloadStatus !== "error"
+    )
+      return;
+    store.startTeamPreload(teamAccountNpub);
+    let active = true;
+    (async () => {
+      try {
+        const ownDataPromise = getUserData(teamAccountNpub).catch(() => null);
+        const teams = await loadVisibleTeams(teamAccountNpub);
+        if (!active) return;
+        useSurfaceModalStore
+          .getState()
+          .setPreloadedTeams(teamAccountNpub, teams);
+        const memberHexes = [...new Set(teams.flatMap((team) => team.members))];
+        loadNostrProfileNames(memberHexes)
+          .then((profiles) => {
+            if (active)
+              useSurfaceModalStore
+                .getState()
+                .setPreloadedTeamProfiles(teamAccountNpub, profiles);
+          })
+          .catch(() => {});
+        const ownData = await ownDataPromise;
+        if (!active) return;
+        useSurfaceModalStore
+          .getState()
+          .setPreloadedTeamProgress(
+            teamAccountNpub,
+            new Map(),
+            ownData ? makeCourseProgressSnapshot(ownData) : null,
+            ownData ? ownSalaryValue(ownData) : null,
+          );
+        const memberProgress = await loadCourseProgress(memberHexes).catch(
+          () => new Map(),
+        );
+        if (!active) return;
+        useSurfaceModalStore
+          .getState()
+          .setPreloadedTeamProgress(
+            teamAccountNpub,
+            memberProgress,
+            ownData ? makeCourseProgressSnapshot(ownData) : null,
+            ownData ? ownSalaryValue(ownData) : null,
+          );
+      } catch {
+        if (active)
+          useSurfaceModalStore.getState().failTeamPreload(teamAccountNpub);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [teamAccountNpub]);
 
   const isOpen =
     controlledIsOpen !== undefined
@@ -475,7 +554,9 @@ const SettingsMenu = ({
 
   return (
     <>
-      {showFixedTrigger && isSignedIn && localStorage.getItem("local_npub") ? menuButton : null}
+      {showFixedTrigger && isSignedIn && localStorage.getItem("local_npub")
+        ? menuButton
+        : null}
       {/* {isSignedIn && testIsMatch ? (
         <IconButton
           ref={btnRef}
@@ -572,7 +653,8 @@ const SettingsMenu = ({
                     color="appText"
                     cursor="pointer"
                   >
-                    {translation[userLanguage]?.["tag.allowPosting"] || "Allow posts"}
+                    {translation[userLanguage]?.["tag.allowPosting"] ||
+                      "Allow posts"}
                   </FormLabel>
                   <IconButton
                     aria-label={
@@ -817,6 +899,7 @@ const SettingsMenu = ({
               >
                 {translation[userLanguage]["settings.button.socialWallet"]}
               </Button>
+              {/* Open Tutor (GPT) is outdated and no longer supported.
               <Button
                 {...secondaryMenuButtonProps}
                 // as="a"
@@ -829,6 +912,7 @@ const SettingsMenu = ({
               >
                 {translation[userLanguage]["settings.button.tutorGPT"]}
               </Button>
+              */}
 
               <Button
                 {...ghostMenuButtonProps}
@@ -853,6 +937,7 @@ const SettingsMenu = ({
                   const translateValue = localStorage.getItem("userLanguage");
                   localStorage.removeItem("local_nsec");
                   localStorage.removeItem("local_npub");
+                  localStorage.removeItem("displayName");
                   if (translateValue) {
                     localStorage.setItem("userLanguage", translateValue);
                   }
@@ -1005,6 +1090,15 @@ const SettingsMenu = ({
           appLanguage={userLanguage}
           onAuthorized={onPatreonAuthorized}
           returnResult={patreonReturnResult}
+        />
+      ) : null}
+
+      {isTeamsOpen ? (
+        <SocialFeedModal
+          isOpen={isTeamsOpen}
+          onClose={closeTeams}
+          currentStep={currentStep}
+          userLanguage={userLanguage}
         />
       ) : null}
     </>

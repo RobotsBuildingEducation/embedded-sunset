@@ -1,5 +1,8 @@
 import React, { Suspense, lazy } from "react";
 import ReactDOM from "react-dom/client";
+import { ChakraProvider } from "@chakra-ui/react";
+import { appTheme } from "./theme.js";
+import AppLoadingScreen from "./components/AppLoadingScreen.jsx";
 
 import "./index.css";
 // localStorage.clear();
@@ -14,33 +17,9 @@ const isInvestingRoute = /^\/investing(?:\/|$)/.test(window.location.pathname);
 const isChessRoute = /^\/chess(?:\/|$)/.test(window.location.pathname);
 
 const BootFallback = () => (
-  <div
-    style={{
-      minHeight: "100dvh",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: 24,
-      position: "relative",
-      zIndex: 1,
-      background: "#f8f5f0",
-      color: "#1f2937",
-      fontFamily:
-        'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-    }}
-  >
-    <div
-      aria-label="Loading"
-      style={{
-        width: 44,
-        height: 44,
-        borderRadius: "999px",
-        border: "3px solid rgba(148, 163, 184, 0.28)",
-        borderTopColor: "currentColor",
-        animation: "appBootSpin 0.9s linear infinite",
-      }}
-    />
-  </div>
+  <ChakraProvider theme={appTheme}>
+    <AppLoadingScreen />
+  </ChakraProvider>
 );
 
 if ("serviceWorker" in navigator) {

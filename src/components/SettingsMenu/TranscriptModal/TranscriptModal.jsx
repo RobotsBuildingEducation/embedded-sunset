@@ -20,7 +20,7 @@ import {
   computerScienceTranscript,
 } from "../../../utility/transcript";
 import { useSharedNostr } from "../../../hooks/useNOSTR";
-import { CloudCanvas } from "../../../elements/SunsetCanvas";
+import VoiceOrbLoader from "../../VoiceOrbNext/VoiceOrbLoader.jsx";
 import { getDittoBadgeUrl } from "../../../utility/badgeUrl";
 
 const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
@@ -141,12 +141,12 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
           </Text>
 
           {areBadgesLoading ? (
-            <div style={{ width: "fit-content", margin: "8px auto 0" }}>
-              <CloudCanvas />{" "}
-              {translation?.[userLanguage]?.["loading"] ||
+            <VoiceOrbLoader
+              size={80}
+              label={translation?.[userLanguage]?.["loading"] ||
                 translation?.[langKey]?.["loading"] ||
                 "Loading"}
-            </div>
+            />
           ) : badges.length < 1 ? (
             <Box mt={2} color="appTextMuted">
               {translation?.[userLanguage]?.["noTranscriptFound"] ||

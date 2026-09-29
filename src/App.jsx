@@ -73,7 +73,6 @@ import {
 
 import {
   // CloudCanvas,
-  SunsetCanvas,
   BigSunset,
   CloudCanvas,
 } from "./elements/SunsetCanvas";
@@ -115,6 +114,14 @@ import {
   BASE_QUESTION_COUNT,
   generatePromotionCode,
 } from "./utility/nosql";
+import {
+  loadNostrProfileNames,
+  publishCourseProgress,
+  toHexPubkey,
+  usableProfileName,
+} from "./utility/learningTeams";
+import { makeCourseProgressSnapshot } from "./utility/courseTeamProgress";
+
 import {
   getObjectsByGroup,
   getRandomCelebrationMessage,
@@ -257,7 +264,6 @@ import {
 import { usePasscodeModalStore } from "./usePasscodeModalStore";
 import { useConversationReviewStore } from "./useConversationReviewStore";
 
-import { OrbCanvas } from "./elements/OrbCanvas";
 const LectureModal = lazy(
   () => import("./components/LectureModal/LectureModal"),
 );
@@ -315,11 +321,11 @@ const CodeEditor = lazy(() =>
 const ProgressModal = lazy(
   () => import("./components/ProgressModal/ProgressModal"),
 );
-const RoleCanvas = lazy(() =>
-  import("./components/RoleCanvas/RoleCanvas").then((m) => ({
-    default: m.RoleCanvas,
-  })),
+const VoiceOrbNext = lazy(
+  () => import("./components/VoiceOrbNext/VoiceOrbNext.jsx"),
 );
+import VoiceOrbLoader from "./components/VoiceOrbNext/VoiceOrbLoader.jsx";
+import AppLoadingScreen from "./components/AppLoadingScreen.jsx";
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
 import QuestionMode, {
   CodePanel,
@@ -350,6 +356,20 @@ import {
   getInstantSurfacePressProps,
   runImmediateSurfaceUpdate,
 } from "./utility/instantSurface";
+
+async function nameForSignedInAccount(npub) {
+  const pubkey = toHexPubkey(npub);
+  const [savedUser, profiles] = await Promise.all([
+    getUserData(npub).catch(() => null),
+    loadNostrProfileNames([pubkey]).catch(() => new Map()),
+  ]);
+  return {
+    savedUser,
+    name:
+      usableProfileName(profiles.get(pubkey)) ||
+      usableProfileName(savedUser?.name),
+  };
+}
 
 const preloadInteractiveModalChunks = () => {
   [InstallAppModal].forEach((Component) => {
@@ -834,8 +854,8 @@ const AwardScreen = (userLanguage) => {
           {documentIds.length > 0 ? (
             documentIds.map((id) => (
               <li key={id}>
-                <a href={`https://primal.net/p/${id}`} target="_blank">
-                  https://primal.net/p/{id.substr(0, 8)}
+                <a href={`https://ditto.pub/${id}`} target="_blank">
+                  https://ditto.pub/{id.substr(0, 8)}
                 </a>
               </li>
             ))
@@ -3515,6 +3535,16 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
         const hasRecordedStep = answeredIds.includes(currentStep);
         const updates = {};
         const nowIso = currentTime.toISOString();
+        const localDay = [
+          currentTime.getFullYear(),
+          String(currentTime.getMonth() + 1).padStart(2, "0"),
+          String(currentTime.getDate()).padStart(2, "0"),
+        ].join("-");
+        updates.teamDailyGoalDate = localDay;
+        updates.teamDailyGoalCompleted =
+          userData.teamDailyGoalDate === localDay
+            ? Number(userData.teamDailyGoalCompleted || 0) + 1
+            : 1;
 
         if (!hasRecordedStep) {
           updates.answeredStepIds = arrayUnion(currentStep);
@@ -3570,6 +3600,19 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
 
         if (Object.keys(updates).length > 0) {
           await updateDoc(userDocRef, updates);
+        }
+
+        // Publish the team snapshot when progress is saved, even if the Teams
+        // panel is closed. The Teams view's listener remains a fallback for
+        // initial sync and profile name changes.
+        const savedSnapshot = await getDoc(userDocRef);
+        if (savedSnapshot.exists()) {
+          publishCourseProgress(
+            userId,
+            makeCourseProgressSnapshot(savedSnapshot.data()),
+          ).catch((error) =>
+            console.error("Failed to publish team course progress", error),
+          );
         }
       }
     } catch (error) {
@@ -3754,7 +3797,8 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
         dailyProgress: updatedDailyProgress,
         dailyGoals: dailyGoalTarget,
         dailyGoalLabel: translation[userLanguage]["dailyGoal"],
-        message: celebrationMessage || getRandomCelebrationMessage(userLanguage),
+        message:
+          celebrationMessage || getRandomCelebrationMessage(userLanguage),
         detail: salaryText,
       };
     };
@@ -4419,29 +4463,8 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
           justifyContent="center"
           px={{ base: 2, md: 6 }}
         >
-          <Box
-            width="100%"
-            maxW="460px"
-            height={{ base: "560px", md: "600px" }}
-            maxH="72dvh"
-            color="appText"
-            bg="appBg"
-            border="1px solid var(--chakra-colors-appBorderStrong)"
-            borderRadius="32px"
-            boxShadow="0 24px 60px rgba(2, 6, 23, 0.34)"
-            overflow="hidden"
-          >
-            <OrbCanvas
-              hasStreamedText={false}
-              instructions={
-                <Markdown components={ChakraUIRenderer(newTheme)}>
-                  {`${translation[userLanguage]["analyzer"]}\n\n${
-                    newQuestionMessages[newQuestionMessages.length - 1]
-                      ?.content || ""
-                  }`.trimStart()}
-                </Markdown>
-              }
-            />
+          <Box width="100%" maxW="460px" color="appText">
+            <VoiceOrbLoader label={translation[userLanguage]["analyzer"]} />
           </Box>
         </Box>
       ) : showChapterReview && chapterReviewNodes.length > 0 ? (
@@ -4701,7 +4724,15 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
                     )}
 
                     {/* the question title */}
-                    <Text fontSize="xl" fontWeight="bold">
+                    <Text
+                      fontSize={{ base: "2xl", sm: "3xl", md: "4xl" }}
+                      fontWeight="bold"
+                      sx={{
+                        "@media (min-width: 390px) and (max-width: 479px)": {
+                          fontSize: "var(--chakra-fontSizes-3xl)",
+                        },
+                      }}
+                    >
                       {step.title}
                     </Text>
                   </HStack>
@@ -4713,7 +4744,12 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
               <Text
                 width="100%"
                 maxWidth={step.isStudyGuide ? 600 : 600}
-                fontSize="medium"
+                fontSize={{ base: "lg", sm: "xl", md: "2xl" }}
+                sx={{
+                  "@media (min-width: 390px) and (max-width: 479px)": {
+                    fontSize: "var(--chakra-fontSizes-xl)",
+                  },
+                }}
                 color="appText"
                 textAlign={"left"}
               >
@@ -4938,28 +4974,9 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
           isEmpty(suggestionMessage) &&
           !step?.isTerminal ? (
             <Box p={4} textAlign="center" mt={4}>
-              {/* <CloudCanvas isLoader={true} /> */}
-              <Box marginTop={"-52px"}>
-                <Suspense
-                  fallback={
-                    <CloudCanvas isLoader={true} regulateWidth={false} />
-                  }
-                >
-                  <RoleCanvas
-                    role={"sphere"}
-                    width={400}
-                    height={400}
-                    trailOpacity={0.08}
-                    transparentFade
-                    backgroundColorX="247,245,239"
-                    backgroundColorDark="9,17,35"
-                  />
-                </Suspense>
-              </Box>
-
-              <Text mt={2}>
-                {translation[userLanguage]["loading.suggestion"]}
-              </Text>
+              <VoiceOrbLoader
+                label={translation[userLanguage]["loading.suggestion"]}
+              />
             </Box>
           ) : !isAdaptiveLearning ||
             step.isTerminal ? null : suggestionMessage.length > 0 ? (
@@ -4975,6 +4992,15 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
                 border="1px solid var(--chakra-colors-appBorderStrong)"
                 textAlign={"left"}
                 width="100%"
+                sx={{
+                  '& div[class*="language-"]': {
+                    scrollbarWidth: "none",
+                    msOverflowStyle: "none",
+                  },
+                  '& div[class*="language-"]::-webkit-scrollbar': {
+                    display: "none",
+                  },
+                }}
                 initial="hidden"
                 animate="visible"
                 variants={adaptiveSuggestionVariants}
@@ -5388,29 +5414,11 @@ const LandingHeader = ({
   >
     <HStack minH={{ base: "40px", md: "44px" }} justify="space-between">
       <HStack spacing={{ base: 1.5, md: 2.5 }} minW={0} textAlign="left">
-        <Box
-          width={{ base: "36px", md: "42px" }}
-          height={{ base: "36px", md: "42px" }}
-          flex="0 0 auto"
-          overflow="hidden"
-          aria-hidden="true"
-          sx={{
-            "& > div, & > div > div": {
-              width: "100%",
-              height: "100%",
-            },
-            "& canvas": {
-              width: "100% !important",
-              height: "100% !important",
-              display: "block",
-            },
-          }}
-        >
-          <CloudCanvas
-            outlineColor={colorMode === "dark" ? "#f8fafc" : "#111827"}
-          />
+        <Box width="42px" height="42px" flex="0 0 auto" overflow="hidden">
+          <VoiceOrbNext size={42} centered={false} force3D />
         </Box>
         <Text
+          display={showActions ? { base: "none", md: "block" } : "block"}
           fontSize={{ base: "11px", sm: "13px", md: "14px" }}
           fontWeight="700"
           lineHeight="1.05"
@@ -5809,16 +5817,6 @@ const Home = ({
 }) => {
   const bgUrl =
     "https://res.cloudinary.com/dtkeyccga/image/upload/v1755215290/Untitled_800_x_600_px_1_dmtcwn.gif";
-  const roles = [
-    "chores",
-    "sphere",
-    "plan",
-    "meals",
-    "finance",
-    "sleep",
-    "emotions",
-    "counselor",
-  ];
   const [showSplash, setShowSplash] = useState(false);
   // const [view, setView] = useState("buttons");
   const [loadingMessage, setLoadingMessage] = useState(
@@ -5836,7 +5834,6 @@ const Home = ({
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [isColorSchema, setIColorSchema] = useState(false);
   const socket = "socket";
-  const [role, setRole] = useState("chores");
   const topRef = useRef();
   const landingHeroRef = useRef(null);
   const [isLandingHeaderScrolled, setIsLandingHeaderScrolled] = useState(false);
@@ -5992,14 +5989,7 @@ const Home = ({
   }, []);
 
   useEffect(() => {
-    let index = 0;
-    const interval = setInterval(() => {
-      index = (index + 1) % roles.length;
-      setRole(roles[index]);
-    }, 2500);
-
     topRef.current?.scrollIntoView();
-    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -6210,24 +6200,21 @@ const Home = ({
       }
 
       const npub = localStorage.getItem("local_npub");
-      const userName = localStorage.getItem("displayName");
 
       if (!npub) {
         throw new Error("Sign in did not return a user id. Please try again.");
       }
 
       await ensureAppCheckReady();
+      const { savedUser: existingUserData, name: userName } =
+        await nameForSignedInAccount(npub);
       const userData = await createUser(npub, userName, userLanguage);
+      localStorage.setItem("displayName", userData.name || userName);
       localStorage.setItem("userLanguage", userLanguage);
       applyUserThemePreferences(userData, setColorMode);
       setIsAdaptiveLearning(userData?.isAdaptiveLearning !== false);
 
       const defaultInterval = 2880;
-      const existingUserData = await getUserData(npub).catch((error) => {
-        console.error("Failed to load user data after sign in", error);
-        return null;
-      });
-
       if (
         !existingUserData?.startTime ||
         !existingUserData?.endTime ||
@@ -6307,24 +6294,21 @@ const Home = ({
       }
 
       const npub = localStorage.getItem("local_npub");
-      const userName = localStorage.getItem("displayName");
 
       if (!npub) {
         throw new Error("Extension sign-in did not return a user id.");
       }
 
       await ensureAppCheckReady();
+      const { savedUser: existingUserData, name: userName } =
+        await nameForSignedInAccount(npub);
       const userData = await createUser(npub, userName, userLanguage);
+      localStorage.setItem("displayName", userData.name || userName);
       localStorage.setItem("userLanguage", userLanguage);
       applyUserThemePreferences(userData, setColorMode);
       setIsAdaptiveLearning(userData?.isAdaptiveLearning !== false);
 
       const defaultInterval = 2880;
-      const existingUserData = await getUserData(npub).catch((error) => {
-        console.error("Failed to load user data after sign in", error);
-        return null;
-      });
-
       if (
         !existingUserData?.startTime ||
         !existingUserData?.endTime ||
@@ -6935,7 +6919,9 @@ const Home = ({
               alignItems="center"
               pb={24}
             >
-              <RoleCanvas role={role} width={400} height={400} />
+              <Box width="100%" maxWidth="320px" aspectRatio={1}>
+                <VoiceOrbNext size="100%" />
+              </Box>
               <VStack spacing={6} alignItems="flex-start">
                 <Text fontSize="2xl" textAlign="center" width="100%" mt={4}>
                   {translation[userLanguage]["landing.whyLearn.title"]}
@@ -7014,9 +7000,6 @@ const Home = ({
               pb={24}
             >
               <VStack spacing={6} alignItems="flex-start">
-                <Box width="100%">
-                  <SunsetCanvas />
-                </Box>
                 <Text fontSize="2xl" textAlign="center" width="100%" mt={4}>
                   {translation[userLanguage]["landing.mission.title"]}
                 </Text>
@@ -7275,7 +7258,12 @@ const Home = ({
             flexDirection={"column"}
             justifyContent={"center"}
           >
-            <div>{isSigningIn ? <CloudCanvas /> : null}</div>
+            {isSigningIn ? (
+              <VoiceOrbLoader
+                size={96}
+                label={translation[userLanguage]["loading"]}
+              />
+            ) : null}
 
             <Text fontSize="sm">
               {translation[userLanguage]["signIn.instructions"]}
@@ -7842,11 +7830,7 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
   }, [correctPasscode, isOldAccount, navigate]);
 
   if (isLoading) {
-    return (
-      <Box minH="100dvh" bg="appBg">
-        <CloudCanvas />
-      </Box>
-    );
+    return <AppLoadingScreen />;
   }
 
   return (
@@ -8144,6 +8128,37 @@ function App({ isShutDown }) {
   const activePatreonNpub = String(
     localStorage.getItem("local_npub") || "",
   ).trim();
+  useEffect(() => {
+    if (!isSignedIn || !activePatreonNpub) return;
+    let active = true;
+    const npub = activePatreonNpub;
+    let pubkey;
+    try {
+      pubkey = toHexPubkey(npub);
+    } catch {
+      return;
+    }
+    loadNostrProfileNames([pubkey])
+      .then(async (names) => {
+        const name = names.get(pubkey);
+        if (!name || !active || localStorage.getItem("local_npub") !== npub)
+          return;
+        localStorage.setItem("displayName", name);
+        await ensureAppCheckReady();
+        const saved = await getUserData(npub);
+        if (
+          active &&
+          saved &&
+          saved.name !== name &&
+          localStorage.getItem("local_npub") === npub
+        )
+          await updateDoc(doc(database, "users", npub), { name });
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [isSignedIn, activePatreonNpub]);
   const creatorAuthorized = isCreatorAccount(activePatreonNpub);
   const patreonAuthorized = Boolean(
     activePatreonNpub && patreonAuthorizedNpub === activePatreonNpub,
@@ -8159,7 +8174,7 @@ function App({ isShutDown }) {
     creatorAuthorized,
   }).authorized;
 
-  const [allowPosts, setAllowPosts] = useState(false);
+  const [allowPosts, setAllowPosts] = useState(true);
   const [isAdaptiveLearning, setIsAdaptiveLearning] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(() => {
     if (typeof window === "undefined") return true;
@@ -8496,16 +8511,16 @@ function App({ isShutDown }) {
                   // Use the value from Firestore (even if it's false)
                   setAllowPosts(userData.allowPosts);
                 } else {
-                  // If the field doesn't exist, update the document to set allowPosts to false
-                  setAllowPosts(false);
+                  // If the field doesn't exist, enable posts by default.
+                  setAllowPosts(true);
                   const userDocRef = doc(
                     database,
                     "users",
                     localStorage.getItem("local_npub"),
                   );
-                  updateDoc(userDocRef, { allowPosts: false })
+                  updateDoc(userDocRef, { allowPosts: true })
                     .then(() =>
-                      console.log("allowPosts field added with value false"),
+                      console.log("allowPosts field added with value true"),
                     )
                     .catch((error) =>
                       console.error("Error updating allowPosts:", error),
@@ -8717,25 +8732,7 @@ function App({ isShutDown }) {
   }, [navigate, setColorMode]);
 
   if (loading) {
-    return (
-      <Box minH="100dvh" position="relative" overflow="hidden">
-        <Box
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            height: "100vh",
-            alignItems: "center",
-          }}
-          textAlign="center"
-          fontSize="xl"
-          p={4}
-          position="relative"
-          zIndex={1}
-        >
-          <CloudCanvas isLoader hasInitialFade={false} />
-        </Box>
-      </Box>
-    );
+    return <AppLoadingScreen label={translation[userLanguage]?.loading} />;
   }
 
   // let list = steps["en"];
@@ -8863,7 +8860,7 @@ function App({ isShutDown }) {
               alignItems="center"
               minH="50vh"
             >
-              <CloudCanvas isLoader hasInitialFade={false} />
+              <VoiceOrbLoader label={translation[userLanguage]?.loading} />
             </Box>
           }
         >

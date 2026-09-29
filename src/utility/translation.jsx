@@ -64,10 +64,10 @@ export let translation = {
     "button.generateNewQuestion": "Generate New Question",
     "button.nextAIQuestion": "Next AI Question",
     "label.aiGenerated": "AI Generated",
-    "socialFeed.title": "Social Progress",
+    "socialFeed.title": "Teams",
     "socialFeed.tab.globalFeed": "Global Feed",
     "socialFeed.tab.createTeam": "Create Team",
-    "socialFeed.tab.viewTeam": "View Team",
+    "socialFeed.tab.viewTeam": "Your teams",
     "teamCreation.errorTitle": "Error",
     "teamCreation.invalidNpub": "Please enter a valid npub",
     "teamCreation.invalidNpubFormat":
@@ -84,6 +84,8 @@ export let translation = {
     "teamCreation.successFailSuffix": ", {failCount} failed",
     "teamCreation.errorCreate": "Failed to create team",
     "teamCreation.heading": "Create a New Team",
+    "teamCreation.createTeamButton": "Create team",
+    "teamCreation.copyYourId": "Copy Your ID",
     "teamCreation.teamNameLabel": "Team Name",
     "teamCreation.teamNamePlaceholder": "Enter team name",
     "teamCreation.addMembersLabel": "Add Team Members",
@@ -1109,6 +1111,7 @@ reverse(head) {
     "settings.selfPace": "Self-pace",
     "settings.button.selfPace": "Self-pace",
     "settings.button.socialProgress": "Social Progress",
+    "settings.button.teams": "Teams",
     "settings.button.adaptiveLearning": "Proactive learning",
     "settings.button.bitcoinMode": "Wallet",
 
@@ -1846,10 +1849,10 @@ reverse(head) {
     "button.generateNewQuestion": "Generar Nueva Pregunta",
     "button.nextAIQuestion": "Siguiente Pregunta IA",
     "label.aiGenerated": "Generado por IA",
-    "socialFeed.title": "Progreso social",
+    "socialFeed.title": "Equipos",
     "socialFeed.tab.globalFeed": "Feed global",
     "socialFeed.tab.createTeam": "Crear equipo",
-    "socialFeed.tab.viewTeam": "Ver equipo",
+    "socialFeed.tab.viewTeam": "Tus equipos",
     "teamCreation.errorTitle": "Error",
     "teamCreation.invalidNpub": "Por favor ingresa un npub válido",
     "teamCreation.invalidNpubFormat":
@@ -1867,6 +1870,8 @@ reverse(head) {
     "teamCreation.successFailSuffix": ", {failCount} fallidas",
     "teamCreation.errorCreate": "No se pudo crear el equipo",
     "teamCreation.heading": "Crea un equipo nuevo",
+    "teamCreation.createTeamButton": "Crear equipo",
+    "teamCreation.copyYourId": "Copiar tu ID",
     "teamCreation.teamNameLabel": "Nombre del equipo",
     "teamCreation.teamNamePlaceholder": "Ingresa el nombre del equipo",
     "teamCreation.addMembersLabel": "Agregar miembros",
@@ -2106,6 +2111,7 @@ reverse(head) {
     "onboarding.step3.launchAppButton": "Completar configuración de la cuenta",
     "onboarding.final.launch": "Iniciar aplicación",
     "settings.button.socialProgress": "Progreso Social",
+    "settings.button.teams": "Equipos",
     "modal.dailyGoal.instruction":
       "Elige cuántas preguntas completar para alcanzar tu meta diaria. El temporizador de la meta se reinicia cada 24 horas.",
     "toast.title.idCopied": "ID copiada.",
@@ -4507,6 +4513,7 @@ reverse(head) {
     "settings.selfPace": "Self-pace",
     "settings.button.selfPace": "Self-pace",
     "settings.button.socialProgress": "Social Progress",
+    "settings.button.teams": "Teams",
     "settings.button.adaptiveLearning": "Proactive learning",
     "settings.button.bitcoinMode": "Wallet",
 
@@ -6140,6 +6147,7 @@ reverse(head) {
     "settings.selfPace": "Self-pace",
     "settings.button.selfPace": "Self-pace",
     "settings.button.socialProgress": "Social Progress",
+    "settings.button.teams": "Teams",
     "settings.button.adaptiveLearning": "Proactive learning",
     "settings.button.bitcoinMode": "Wallet",
 
@@ -7789,6 +7797,7 @@ reverse(head) {
     "settings.selfPace": "Self-pace",
     "settings.button.selfPace": "Self-pace",
     "settings.button.socialProgress": "Social Progress",
+    "settings.button.teams": "Teams",
     "settings.button.adaptiveLearning": "Proactive learning",
     "settings.button.bitcoinMode": "Wallet",
 
@@ -9436,6 +9445,7 @@ reverse(head) {
     "settings.selfPace": "Self-pace",
     "settings.button.selfPace": "Self-pace",
     "settings.button.socialProgress": "Social Progress",
+    "settings.button.teams": "Teams",
     "settings.button.adaptiveLearning": "Proactive learning",
     "settings.button.bitcoinMode": "Wallet",
 

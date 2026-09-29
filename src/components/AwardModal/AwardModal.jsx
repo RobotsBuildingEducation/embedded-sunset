@@ -18,7 +18,7 @@ import {
   videoTranscript,
   computerScienceTranscript,
 } from "../../utility/transcript";
-import { CloudCanvas } from "../../elements/SunsetCanvas";
+import VoiceOrbLoader from "../VoiceOrbNext/VoiceOrbLoader.jsx";
 import { useSharedNostr } from "../../hooks/useNOSTR";
 import { soundManager } from "../../utility/soundManager";
 import { getDittoBadgeUrl } from "../../utility/badgeUrl";
@@ -202,12 +202,12 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage }) => {
           </b>
 
           {areBadgesLoading ? (
-            <div style={{ width: "fit-content", margin: "0 auto" }}>
-              <CloudCanvas />{" "}
-              {translation?.[userLanguage]?.["loading"] ||
+            <VoiceOrbLoader
+              size={80}
+              label={translation?.[userLanguage]?.["loading"] ||
                 translation?.[langKey]?.["loading"] ||
                 "Loading"}
-            </div>
+            />
           ) : badges.length < 1 ? (
             <div>
               {translation?.[userLanguage]?.["noTranscriptFound"] ||

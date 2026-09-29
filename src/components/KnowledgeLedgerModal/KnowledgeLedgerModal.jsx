@@ -28,7 +28,7 @@ import { database } from "../../database/firebaseResources";
 import { useKnowledgeLedgerModalGeminiChat } from "../../hooks/useGeminiChat";
 import { translation } from "../../utility/translation";
 const LiveReactEditorModal = lazy(() => import("../LiveCodeEditor/LiveCodeEditor"));
-import { CloudCanvas } from "../../elements/SunsetCanvas";
+import VoiceOrbLoader from "../VoiceOrbNext/VoiceOrbLoader.jsx";
 import { soundManager } from "../../utility/soundManager";
 import {
   nativeDrawerMotionProps,
@@ -432,8 +432,7 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
       {/* Streaming state: safe monospace preview */}
       {isStreaming ? (
         <VStack w="100%" pt="2" align="stretch">
-          <CloudCanvas />
-          <Text>{translation[userLanguage]["loading.suggestion"]}</Text>
+          <VoiceOrbLoader label={translation[userLanguage]["loading.suggestion"]} />
           <Box
             mt={2}
             p={3}
@@ -452,7 +451,7 @@ function KnowledgeLedgerContent({ steps, step, userLanguage, onContinue }) {
         </VStack>
       ) : (
         // Final: Split layout (desktop) / stacked (mobile)
-        <Suspense fallback={<CloudCanvas isLoader={true} regulateWidth={false} />}>
+        <Suspense fallback={<VoiceOrbLoader label={translation[userLanguage]["loading.suggestion"]} />}>
           <Flex
             direction={{ base: "column", md: "row" }}
             gap={4}
