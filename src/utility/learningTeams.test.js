@@ -13,14 +13,18 @@ const signed = (secret, tags, created_at, content = "") => finalizeEvent({ kind:
 const team = (created_at, extraTags = []) => signed(creatorSecret, [["d", `learning-team:${id}`], ["t", "learning-team"], ["name", "Study"], ["p", creator], ["p", member], ...extraTags], created_at, JSON.stringify({ name: "Study", createdAt: 100 }));
 const leave = (created_at) => signed(memberSecret, [["d", `learning-team-left:${creator}:${id}`], ["t", "learning-team-left"], ["a", `30078:${creator}:learning-team:${id}`]], created_at);
 
-test("team address uses the creator, kind, id, and both relays", () => {
+test("team address uses the creator, kind, id, and configured relays", () => {
   assert.equal(toHexPubkey(nip19.npubEncode(member)), member);
   const decoded = nip19.decode(teamNaddr(creator, id));
   assert.equal(decoded.type, "naddr");
   assert.equal(decoded.data.kind, 30078);
   assert.equal(decoded.data.pubkey, creator);
   assert.equal(decoded.data.identifier, `learning-team:${id}`);
-  assert.deepEqual(decoded.data.relays, ["wss://relay.primal.net", "wss://relay.ditto.pub"]);
+  assert.deepEqual(decoded.data.relays, [
+    "wss://relay.primal.net",
+    "wss://relay.ditto.pub",
+    "wss://nos.lol",
+  ]);
 });
 
 test("newest replacement, leave, re-add, and delete control membership", () => {

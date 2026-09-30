@@ -6,7 +6,11 @@ import {
   verifyEvent,
 } from "nostr-tools";
 
-export const TEAM_RELAYS = ["wss://relay.primal.net", "wss://relay.ditto.pub"];
+export const TEAM_RELAYS = [
+  "wss://relay.primal.net",
+  "wss://relay.ditto.pub",
+  "wss://nos.lol",
+];
 const KIND = 30078;
 const pool = new SimplePool();
 const lastPublished = new Map();
