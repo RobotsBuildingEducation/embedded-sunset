@@ -450,6 +450,8 @@ const CloudTransition = ({
   message,
   detail,
   onContinue,
+  showContinueButton = true,
+  onContinueReadyChange,
   currentStepIndex,
   stepsMap,
   children,
@@ -458,6 +460,7 @@ const CloudTransition = ({
   const isDarkMode = colorMode === "dark";
   const canvasRef = useRef(null);
   const [canContinue, setCanContinue] = useState(false);
+  const isNightTransition = String(clonedStep).toLowerCase() === "night";
   const [renderRichContent, setRenderRichContent] = useState(isActive);
   const [displaySalary, setDisplaySalary] = useState(salary);
   const prevSalary = useRef(salary);
@@ -827,19 +830,21 @@ const CloudTransition = ({
   useEffect(() => {
     if (!isActive) {
       setCanContinue(false);
+      onContinueReadyChange?.(false);
       return;
     }
     setCanContinue(false);
-    const id = setTimeout(() => setCanContinue(true), 200);
+    onContinueReadyChange?.(false);
+    const id = setTimeout(() => { setCanContinue(true); onContinueReadyChange?.(true); }, 200);
 
-    if (String(clonedStep).toLowerCase() !== "night") {
+    if (!isNightTransition) {
       soundManager.play("sparkle");
     } else {
       soundManager.play("success");
     }
 
     return () => clearTimeout(id);
-  }, [isActive, clonedStep]);
+  }, [isActive, isNightTransition, onContinueReadyChange]);
 
   // salary count-up
   useEffect(() => {
@@ -1085,6 +1090,7 @@ const CloudTransition = ({
           exit={{ opacity: 0 }}
           bg={`linear-gradient(180deg, ${transitionTheme.skyTop} 0%, ${transitionTheme.skyBottom} 100%)`}
           overflowY="auto"
+          pb={showContinueButton ? 0 : "260px"}
           display="flex"
           flexDirection="column"
           alignItems="center"
@@ -1247,7 +1253,7 @@ const CloudTransition = ({
                 </Text>
               )}
 
-              <Button
+              {showContinueButton && <Button
                 as={motion.button}
                 mt={8}
                 bg={buttonBg}
@@ -1289,7 +1295,7 @@ const CloudTransition = ({
                 }}
               >
                 Continue
-              </Button>
+              </Button>}
 
               {hasSkillTree && (
                 <MotionBox

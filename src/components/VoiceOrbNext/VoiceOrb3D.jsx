@@ -11,6 +11,8 @@ export default function VoiceOrb3D({
   voiceLevel = 0.65, audioLevelRef, reaction, paused = false,
   reducedMotion = false, followPointer = true, dark = false, onInteract, onReactionComplete,
   interactive = true, compact = false, showShadow = true, fallback = null,
+  palettes, orbFlow, reactionDurations, reactionPose, resolveOrbMood, expressions, sharedRenderer = false,
+  maxDpr,
 }) {
   const hostRef = useRef(null);
   const sceneRef = useRef(null);
@@ -18,9 +20,14 @@ export default function VoiceOrb3D({
   const [unavailable, setUnavailable] = useState(false);
 
   useEffect(() => {
-    optionsRef.current = { state, mood, palette, colors, energy, voiceLevel, audioLevelRef, reaction, paused, reducedMotion, followPointer, dark, onInteract, onReactionComplete, interactive, compact, showShadow };
+    optionsRef.current = {
+      state, mood, palette, colors, energy, voiceLevel, audioLevelRef, reaction, paused,
+      reducedMotion, followPointer, dark, onInteract, onReactionComplete,
+      interactive, compact, showShadow, palettes, orbFlow, reactionDurations,
+      reactionPose, resolveOrbMood, expressions, sharedRenderer, maxDpr,
+    };
     sceneRef.current?.update(optionsRef.current);
-  }, [state, mood, palette, colors, energy, voiceLevel, audioLevelRef, reaction, paused, reducedMotion, followPointer, dark, onInteract, onReactionComplete, interactive, compact, showShadow]);
+  }, [state, mood, palette, colors, energy, voiceLevel, audioLevelRef, reaction, paused, reducedMotion, followPointer, dark, onInteract, onReactionComplete, interactive, compact, showShadow, palettes, orbFlow, reactionDurations, reactionPose, resolveOrbMood, expressions, sharedRenderer, maxDpr]);
 
   useEffect(() => {
     let scene;
@@ -41,7 +48,8 @@ export default function VoiceOrb3D({
   // With no renderer, keep the accessible reaction message temporary as well.
   useEffect(() => {
     if (!unavailable || !reaction || paused) return;
-    const timeout = setTimeout(() => onReactionComplete?.(reaction.id), (REACTION_DURATION[reaction.kind] || 2) * 1000);
+    const duration = optionsRef.current?.reactionDurations?.[reaction.kind] || REACTION_DURATION[reaction.kind] || 2;
+    const timeout = setTimeout(() => onReactionComplete?.(reaction.id), duration * 1000);
     return () => clearTimeout(timeout);
   }, [unavailable, reaction, paused, onReactionComplete]);
 

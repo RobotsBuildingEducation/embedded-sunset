@@ -1,3 +1,9 @@
+import { useAchievementAccount } from "./achievements/useAchievementUnlock.js";
+import { previewAchievementUnlock } from "./achievements/unlockStore.js";
+import * as achievementServices from "./utility/achievements.js";
+import { correctQuestionEvents } from "./achievements/learningCounts.js";
+import { awardRobotsProgress, studyDayEvent } from "./utility/robotsAchievementProgress.js";
+import { localDayKey } from "./achievements/progressionEvidence.js";
 import "regenerator-runtime/runtime";
 import "@coinbase/onchainkit/styles.css";
 import React, {
@@ -327,6 +333,9 @@ const VoiceOrbNext = lazy(
 const ChartsPage = lazy(() => import("./charts/ChartsPage"));
 import VoiceOrbLoader from "./components/VoiceOrbNext/VoiceOrbLoader.jsx";
 import AppLoadingScreen from "./components/AppLoadingScreen.jsx";
+import AchievementCelebrationModal from "./components/AchievementCelebrationModal.jsx";
+import { achievementText } from "./achievements/copy.js";
+import { awardRandomAchievement } from "./utility/achievements.js";
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
 import QuestionMode, {
   CodePanel,
@@ -1980,6 +1989,7 @@ const deriveChapterLabel = (group, primaryMap, fallbackMap) => {
 const Step = ({
   currentStep,
   startInContinuingMode = false,
+  isTransitionActive = false,
   requestedContinuingQuestionCount = null,
   userLanguage,
   setUserLanguage,
@@ -2033,6 +2043,27 @@ const Step = ({
   const [isTimerExpired, setIsTimerExpired] = useState(true);
   const [isBuildReady, setIsBuildReady] = useState(false);
   const [simulatedTerminalOutput, setSimulatedTerminalOutput] = useState("");
+  const [celebrationAchievement, setCelebrationAchievement] = useState(null);
+  const [isAchievementModalOpen, setIsAchievementModalOpen] = useState(false);
+  const [isAwardingAchievement, setIsAwardingAchievement] = useState(false);
+
+  const handleTestAchievement = async () => {
+    // Open the collection before waiting for relay sync or signing.
+    setIsAchievementModalOpen(true);
+    if (isAwardingAchievement) return;
+    try {
+      setIsAwardingAchievement(true);
+      const achievement = await awardRandomAchievement(
+        localStorage.getItem("local_npub"),
+        "robotsbuildingeducation",
+      );
+      setCelebrationAchievement(achievement);
+    } catch (err) {
+      console.error("Failed to award test achievement:", err);
+    } finally {
+      setIsAwardingAchievement(false);
+    }
+  };
 
   const nextQuestionPressLockRef = useRef(false);
 
@@ -2771,6 +2802,7 @@ const Step = ({
     const fetchUserData = async () => {
       const userId = localStorage.getItem("local_npub");
       const userData = (await getUserData(userId)) || {};
+      void awardRobotsProgress({ npub: userId, course: userLanguage, courseSteps: steps[userLanguage] }).catch(error => console.warn("Achievement restore:", error));
 
       setIsAdaptiveLearning(userData?.isAdaptiveLearning !== false);
       setStreak(userData.streak || 0);
@@ -3674,6 +3706,20 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
           }
 
           if (jsonResponse.isCorrect) {
+            const events = jsonResponse.isCorrect === true ? [studyDayEvent()] : [];
+            events.push(...correctQuestionEvents({
+              course: userLanguage,
+              question: step.question,
+              isCorrect: jsonResponse.isCorrect,
+              isPostCourse: isAILearningMode,
+              stepIndex: Number(currentStep),
+              questionNumber: viewedContinuingQuestionCount,
+            }));
+            if (jsonResponse.isCorrect === true && (dailyGoals ?? 5) > 0 && dailyProgress < (dailyGoals ?? 5) && dailyProgress + 1 >= (dailyGoals ?? 5)) {
+              events.push({ metric: "daily_goals", id: localDayKey() });
+            }
+            void awardRobotsProgress({ npub: localStorage.getItem("local_npub"), course: userLanguage, courseSteps: steps[userLanguage], events })
+              .catch(error => console.warn("Graded achievement:", error));
             setGrade(jsonResponse.grade);
             const dailyGoalTarget = dailyGoals ?? 5;
             const completesDailyGoal =
@@ -3850,6 +3896,12 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
 
     // console.log("currentStep...", currentStep);
     // console.log("fSTEPS", steps);
+    if (!isAILearningMode) {
+      void awardRobotsProgress({ npub: localStorage.getItem("local_npub"), course: userLanguage, courseSteps: steps[userLanguage],
+        events: [{ metric: "course_steps", id: `${userLanguage}:${currentStep}` }, studyDayEvent()],
+      }).catch(error => console.warn("Course achievement:", error));
+    }
+
     const nextStep = currentStep + 1;
     const npub = localStorage.getItem("local_npub");
     const shouldGoToSubscription =
@@ -4438,7 +4490,7 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
       width="100%"
       px={4}
       pt={showChapterReview ? { base: 0, md: 0 } : 10}
-      pb={showChapterReview ? { base: 14, md: 24 } : { base: 40, md: 44 }}
+      pb={{ base: 40, md: 44 }}
       minH="100dvh"
       justifyContent={showChapterReview ? "center" : "flex-start"}
       boxSizing="border-box"
@@ -4473,6 +4525,7 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
           nodes={chapterReviewNodes}
           text={chapterReviewText}
           onStart={dismissChapterReview}
+          showStartButton={false}
         />
       ) : (
         <>
@@ -4740,6 +4793,25 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
                 </HStack>
               </b>
             </Text>
+
+            {(currentStep === 0 || currentStep === 1) && (
+              <Box width="100%" maxWidth="600px" my={2}>
+                {currentStep === 1 && <Button
+                  size="sm"
+                  colorScheme="purple"
+                  variant="outline"
+                  borderRadius="full"
+                  aria-busy={isAwardingAchievement}
+                  onClick={handleTestAchievement}
+                  leftIcon={<span>🏆</span>}
+                >
+                  {achievementText("test", userLanguage)}
+                </Button>}
+                <Button ml={currentStep === 1 ? 2 : 0} size="sm" colorScheme="yellow" variant="outline" borderRadius="full" onClick={() => previewAchievementUnlock("robotsbuildingeducation")}>
+                  {achievementText("testUnlock", userLanguage)}
+                </Button>
+              </Box>
+            )}
 
             {step.question && (
               <Text
@@ -5017,46 +5089,6 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
             </Box>
           ) : null}
 
-          {!isAwardModalOpen && !isLectureModalOpen && (
-            <BottomActionBar
-              currentStep={currentStep}
-              step={step}
-              steps={steps}
-              userLanguage={userLanguage}
-              translation={translation}
-              isCorrect={isCorrect}
-              feedback={feedback}
-              grade={grade}
-              incorrectAttempts={incorrectAttempts}
-              isSending={isSending}
-              isTimerExpired={isTimerExpired}
-              handleTimerExpire={handleTimerExpire}
-              isAILearningMode={isAILearningMode}
-              animatedProgress={animatedProgress}
-              chapterMetricLabel={chapterMetricLabel}
-              metricTooltips={metricTooltips}
-              streak={streak}
-              goalCount={goalCount}
-              handleAnswerClick={handleAnswerClick}
-              handleNextQuestionButtonPress={handleNextQuestionButtonPress}
-              handleGenerateNewQuestion={handleGenerateNewQuestion}
-              handleLearnClick={handleLearnClick}
-              handleModalCheck={handleModalCheck}
-              openSurfaceModal={openSurfaceModal}
-              showLearnSparkles={showLearnSparkles}
-              learnSparkleFloat={learnSparkleFloat}
-              learnHaloDrift={learnHaloDrift}
-              triggerHaptic={triggerHaptic}
-              playActionBarSound={playActionBarSound}
-              soundManager={soundManager}
-              interval={interval}
-              handleSelfPacedSettingsSaved={handleSelfPacedSettingsSaved}
-              isPostingWithNostr={isPostingWithNostr}
-              isActionBarTourActive={isActionBarTourActive}
-              renderActionBarTour={renderActionBarTour}
-            />
-          )}
-
           <Suspense fallback={null}>
             {isLectureModalOpen ? (
               <LectureModal
@@ -5078,6 +5110,16 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
               />
             ) : null}
           </Suspense>
+
+          <AchievementCelebrationModal
+            isOpen={isAchievementModalOpen}
+            onClose={() => setIsAchievementModalOpen(false)}
+            achievement={celebrationAchievement}
+            npub={localStorage.getItem("local_npub")}
+            appSource="robotsbuildingeducation"
+            language={userLanguage}
+            onAchievementAwarded={(newAch) => setCelebrationAchievement(newAch)}
+          />
           {/* newmodal */}
           {/* <ExternalLinkModal
             isOpen={isExternalLinkModalOpen}
@@ -5116,6 +5158,47 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
           </>
         </>
       )}
+          {!isAwardModalOpen && !isLectureModalOpen && !isTransitionActive && (
+            <BottomActionBar
+              primaryAction={showChapterReview ? { label: chapterReviewText.cta, onClick: dismissChapterReview } : null}
+              currentStep={currentStep}
+              step={step}
+              steps={steps}
+              userLanguage={userLanguage}
+              translation={translation}
+              isCorrect={showChapterReview ? null : isCorrect}
+              feedback={showChapterReview ? "" : feedback}
+              grade={grade}
+              incorrectAttempts={incorrectAttempts}
+              isSending={isSending || (isEmpty(generatedQuestion) && (isContinuingQuestionRestoring || isNewQuestionLoading || newQuestionMessages.length > 0))}
+              isTimerExpired={isTimerExpired}
+              handleTimerExpire={handleTimerExpire}
+              isAILearningMode={isAILearningMode}
+              animatedProgress={animatedProgress}
+              chapterMetricLabel={chapterMetricLabel}
+              metricTooltips={metricTooltips}
+              streak={streak}
+              goalCount={goalCount}
+              handleAnswerClick={handleAnswerClick}
+              handleNextQuestionButtonPress={handleNextQuestionButtonPress}
+              handleGenerateNewQuestion={handleGenerateNewQuestion}
+              handleLearnClick={handleLearnClick}
+              handleModalCheck={handleModalCheck}
+              openSurfaceModal={openSurfaceModal}
+              showLearnSparkles={showLearnSparkles}
+              learnSparkleFloat={learnSparkleFloat}
+              learnHaloDrift={learnHaloDrift}
+              triggerHaptic={triggerHaptic}
+              playActionBarSound={playActionBarSound}
+              soundManager={soundManager}
+              interval={interval}
+              handleSelfPacedSettingsSaved={handleSelfPacedSettingsSaved}
+              isPostingWithNostr={isPostingWithNostr}
+              isActionBarTourActive={isActionBarTourActive}
+              renderActionBarTour={renderActionBarTour}
+            />
+          )}
+
     </VStack>
   );
 };
@@ -8239,7 +8322,9 @@ function App({ isShutDown }) {
     }
   }, [soundEnabled]);
 
+  useAchievementAccount(activePatreonNpub, achievementServices, userLanguage);
   const [showClouds, setShowClouds] = useState(false);
+  const [transitionReady, setTransitionReady] = useState(false);
   const [pendingPath, setPendingPath] = useState(null);
   const [pendingStep, setPendingStep] = useState(null);
   const [lectureNextPath, setLectureNextPath] = useState(null);
@@ -8290,6 +8375,8 @@ function App({ isShutDown }) {
   };
 
   const handleTransitionContinue = () => {
+    if (!showClouds || !transitionReady) return;
+    setTransitionReady(false);
     const nextPath = pendingPath;
     const nextStep = pendingStep;
 
@@ -8785,6 +8872,8 @@ function App({ isShutDown }) {
         userLanguage={userLanguage}
         clonedStep={clonedStep}
         isActive={showClouds}
+        showContinueButton={false}
+        onContinueReadyChange={setTransitionReady}
         salary={transitionStats.salary}
         salaryProgress={transitionStats.salaryProgress}
         stepProgress={transitionStats.stepProgress}
@@ -8799,6 +8888,11 @@ function App({ isShutDown }) {
         currentStepIndex={currentStep}
         stepsMap={steps}
       />
+      {showClouds && <BottomActionBar
+        currentStep={currentStep} step={steps?.[userLanguage]?.[currentStep]} steps={steps}
+        userLanguage={userLanguage} translation={translation} isCorrect={null} feedback=""
+        layer={2100} primaryAction={{ label: achievementText("continue", userLanguage), onClick: handleTransitionContinue, disabled: !transitionReady }}
+      />}
       {alert.isOpen && (
         <Alert
           status={alert.status}
@@ -8949,6 +9043,7 @@ function App({ isShutDown }) {
                       setAllowPosts={setAllowPosts}
                       currentStep={routedAuthoredStep}
                       startInContinuingMode={isContinuingQuestionRoute}
+                      isTransitionActive={showClouds}
                       requestedContinuingQuestionCount={
                         isContinuingQuestionRoute
                           ? requestedQuestionStep - lastAuthoredStep

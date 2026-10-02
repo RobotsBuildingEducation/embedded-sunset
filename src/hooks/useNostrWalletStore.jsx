@@ -1,3 +1,4 @@
+import { awardProgressionAchievements, pubkeyFromNpub } from "../utility/achievements.js";
 // src/hooks/useNostrWalletStore.js
 // NIP-60 (Cashu Wallets) and NIP-61 (Nutzaps) implementation
 // Zustand store for global wallet state
@@ -652,6 +653,7 @@ export const useNostrWalletStore = create((set, get) => ({
     recipientNpub = DEFAULT_RECEIVER,
     retryCount = 0,
   ) => {
+    const ownerNpub = localStorage.getItem("local_npub");
     const {
       cashuWallet,
       ndkInstance,
@@ -748,7 +750,12 @@ export const useNostrWalletStore = create((set, get) => ({
       });
 
       await nutzapEvent.sign(signer);
-      await nutzapEvent.publish();
+      const acknowledged = await nutzapEvent.publish();
+      if (acknowledged?.size > 0 && pubkeyFromNpub(ownerNpub) === nutzapEvent.pubkey && nutzapEvent.pubkey !== recipientHex.toLowerCase()) {
+        void awardProgressionAchievements({ npub: ownerNpub, source: "robotsbuildingeducation", events: [{
+          metric: "spent_sats", id: nutzapEvent.id, amount, status: "confirmed", purpose: "tip", sender: nutzapEvent.pubkey, recipient: recipientHex,
+        }] }).catch(error => console.warn("Spend achievement:", error));
+      }
       console.log("[Wallet] Nutzap published!");
 
       await verifyAndUpdateBalance();

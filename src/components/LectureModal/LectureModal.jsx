@@ -1,3 +1,6 @@
+import BottomActionBar from "../BottomActionBar/BottomActionBar.jsx";
+import { watchedSeconds } from "../../achievements/codingProgress.js";
+import { awardRobotsProgress } from "../../utility/robotsAchievementProgress.js";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Button,
@@ -217,6 +220,12 @@ const LectureModal = ({
   userLanguage,
   handleNextClick,
 }) => {
+  const [isAdvancing, setIsAdvancing] = useState(false);
+  const advanceReview = async () => {
+    if (isAdvancing) return;
+    setIsAdvancing(true);
+    try { await handleNextClick(); onClose(); } finally { setIsAdvancing(false); }
+  };
   let navigate = useNavigate();
   const { getLastNotesByNpub, assignExistingBadgeToNpub } = useSharedNostr(
     localStorage.getItem("local_npub"),
@@ -235,6 +244,8 @@ const LectureModal = ({
   const [videoDurationDetection, setVideoDurationDetection] = useState(false);
 
   const videoRef = useRef(null);
+  const viewedRangesRef = useRef([]);
+  const lastVideoTimeRef = useRef(null);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   const step = steps[userLanguage][currentStep];
@@ -264,7 +275,7 @@ const LectureModal = ({
             stepGroup = "tutorial";
           }
 
-          const currentProgress = userData.moduleProgress?.[stepGroup] || {
+          const currentProgress = userData.moduleProgressByCourse?.[userLanguage]?.[stepGroup] || {
             videoWatched: false,
             summaryViewed: false,
             practiceCompleted: false,
@@ -289,6 +300,26 @@ const LectureModal = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
+
+  const handleVideoTimeUpdate = () => {
+    const video = videoRef.current;
+    if (!video || video.paused || video.seeking) return;
+    const previous = lastVideoTimeRef.current;
+    const next = video.currentTime;
+    if (previous !== null && next > previous && next - previous <= 2) viewedRangesRef.current.push([previous, next]);
+    lastVideoTimeRef.current = next;
+  };
+  const handleVideoEnded = () => {
+    const video = videoRef.current;
+    const watched = watchedSeconds(viewedRangesRef.current);
+    if (!Number.isFinite(video?.duration) || video.duration <= 0 || watched < video.duration * 0.95) return;
+    const npub = localStorage.getItem("local_npub");
+    const group = step.group === "introduction" ? "tutorial" : String(step.group);
+    void awardRobotsProgress({ npub, course: userLanguage, courseSteps: steps[userLanguage],
+      events: [{ metric: "review_videos", id: `${userLanguage}:${group}` }],
+    }).catch(error => console.warn("Video achievement:", error));
+  };
+  useEffect(() => { viewedRangesRef.current = []; lastVideoTimeRef.current = null; }, [userLanguage, step.group]);
 
   const handlePlay = () => {
     setIsVideoPlaying(true);
@@ -420,7 +451,7 @@ const LectureModal = ({
         stepGroup = "tutorial";
       }
 
-      const currentProgress = userData.moduleProgress?.[stepGroup] || {
+      const currentProgress = userData.moduleProgressByCourse?.[userLanguage]?.[stepGroup] || {
         videoWatched: false,
         summaryViewed: false,
         practiceCompleted: false,
@@ -442,7 +473,14 @@ const LectureModal = ({
 
       await updateDoc(userDocRef, {
         moduleProgress: updatedProgress,
+        [`moduleProgressByCourse.${userLanguage}.${stepGroup}`]: updatedModuleProgress,
       });
+
+      if (updatedModuleProgress.videoWatched && updatedModuleProgress.summaryViewed && updatedModuleProgress.practiceCompleted) {
+        void awardRobotsProgress({ npub, course: userLanguage, courseSteps: steps[userLanguage],
+          events: [{ metric: "review_checklists", id: `${userLanguage}:${stepGroup}` }],
+        }).catch(error => console.warn("Checklist achievement:", error));
+      }
 
       if (
         updatedModuleProgress.videoWatched &&
@@ -531,7 +569,7 @@ const LectureModal = ({
   if (!isOpen) return null;
 
   return (
-    <CloudTransition clonedStep="night" isActive={isOpen}>
+    <CloudTransition clonedStep="night" isActive={isOpen} showContinueButton={false}>
       {/* <Heading as="h1" color="purple">
         Module Review
       </Heading> */}
@@ -637,6 +675,9 @@ const LectureModal = ({
                   ref={videoRef}
                   playsInline
                   onPlay={handlePlay}
+                  onTimeUpdate={handleVideoTimeUpdate}
+                  onSeeking={() => { lastVideoTimeRef.current = null; }}
+                  onEnded={handleVideoEnded}
                 >
                   <source src={transcriptObject.videoSrc} type="video/mp4" />
                   <source src={transcriptObject.videoSrc} type="video/mov" />
@@ -713,26 +754,9 @@ const LectureModal = ({
           practiceCompleted={hasPracticedModule}
         />
 
-        <Box p={4} display="flex" justifyContent="flex-end" alignItems="center">
-          <Button
-            mt={4}
-            onMouseDown={async () => {
-              await handleNextClick();
-              onClose();
-            }}
-            onKeyDown={async (e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                await handleNextClick();
-                onClose();
-              }
-            }}
-            variant="solid"
-            size="lg"
-            boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
-          >
-            Next
-          </Button>
-        </Box>
+        <BottomActionBar currentStep={currentStep} step={step} steps={steps} userLanguage={userLanguage}
+          translation={translation} isCorrect={null} feedback="" layer={2100}
+          primaryAction={{ label: translation[userLanguage]?.["app.button.nextQuestion"] || "Next", loading: isAdvancing, onClick: advanceReview }} />
       </Box>
     </CloudTransition>
   );

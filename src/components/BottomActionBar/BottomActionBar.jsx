@@ -1,3 +1,6 @@
+import AchievementFeedback from "../../achievements/AchievementFeedback.jsx";
+import { achievementText as achievementLabel } from "../../achievements/copy.js";
+import { useAchievementUnlock } from "../../achievements/useAchievementUnlock.js";
 import React, { useState, useRef, useEffect } from "react";
 import {
   Box,
@@ -139,7 +142,10 @@ export const BottomActionBar = ({
   isPostingWithNostr = false,
   isActionBarTourActive = false,
   renderActionBarTour = (child) => child,
+  primaryAction = null,
+  layer = 1200,
 }) => {
+  const { unlock, dismiss } = useAchievementUnlock();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const teamAccountNpub = localStorage.getItem("local_npub");
   useEffect(() => {
@@ -164,7 +170,7 @@ export const BottomActionBar = ({
   const feedbackContentRef = useRef(null);
 
   const isFeedbackActive = Boolean(feedback || isCorrect !== null);
-  const hasFeedback = Boolean(isSending || isCorrect || isFeedbackActive);
+  const hasFeedback = Boolean(unlock || isSending || isCorrect || isFeedbackActive);
 
   useEffect(() => {
     if (!feedbackContentRef.current) return;
@@ -181,9 +187,9 @@ export const BottomActionBar = ({
       ro.observe(el);
       return () => ro.disconnect();
     }
-  }, [hasFeedback, isSending, isCorrect, isFeedbackActive, feedback]);
+  }, [hasFeedback, isSending, isCorrect, isFeedbackActive, feedback, unlock]);
 
-  const targetFeedbackHeight = isSending
+  const targetFeedbackHeight = unlock ? feedbackHeight || 112 : isSending
     ? feedbackHeight || 54
     : isCorrect
       ? feedbackHeight || 250
@@ -247,6 +253,15 @@ export const BottomActionBar = ({
   const successShadow = useColorModeValue(
     "0 12px 36px rgba(46, 125, 50, 0.22)",
     "0 16px 40px rgba(4, 120, 87, 0.35)",
+  );
+
+  // Achievement feedback uses the same card treatment as answer feedback.
+  const achievementBg = useColorModeValue("#fff8e6", "#382b14");
+  const achievementBorder = useColorModeValue("#d5ad50", "#9d7829");
+  const achievementText = useColorModeValue("#694b13", "#fef3c7");
+  const achievementShadow = useColorModeValue(
+    "0 12px 36px rgba(160, 114, 15, 0.22)",
+    "0 16px 40px rgba(146, 101, 14, 0.35)",
   );
 
   // Incorrect feedback colors (light red/pink card, red border)
@@ -352,7 +367,11 @@ export const BottomActionBar = ({
   let currentBorder = defaultBarBorder;
   let currentShadow = defaultShadow;
 
-  if (isSending) {
+  if (unlock) {
+    currentBg = achievementBg;
+    currentBorder = achievementBorder;
+    currentShadow = achievementShadow;
+  } else if (isSending) {
     currentBg = loadingBg;
     currentBorder = loadingBorder;
     currentShadow = loadingShadow;
@@ -420,7 +439,8 @@ export const BottomActionBar = ({
       justifyContent="center"
       alignItems="flex-end"
       pointerEvents="none"
-      zIndex={1200}
+      zIndex={layer}
+      data-achievement-rail={unlock ? "gold" : undefined}
       px={{ base: 3, sm: 4 }}
     >
       <Box
@@ -428,6 +448,7 @@ export const BottomActionBar = ({
         position="relative"
         width={{ base: "100%", sm: "460px", md: "500px" }}
         bg={currentBg}
+        color={unlock ? achievementText : "appText"}
         border="1px solid"
         borderColor={currentBorder}
         borderRadius="4px"
@@ -496,7 +517,9 @@ export const BottomActionBar = ({
             >
               <Box ref={feedbackContentRef} width="100%">
                 <AnimatePresence mode="wait">
-                  {isSending ? (
+                  {unlock ? (
+                    <AchievementFeedback key={unlock.key} unlock={unlock} language={userLanguage} onDismiss={dismiss} />
+                  ) : isSending ? (
                     <motion.div
                       key="loading-content"
                       initial={{ opacity: 0, y: 6 }}
@@ -779,7 +802,29 @@ export const BottomActionBar = ({
           />
 
           {/* Correct State: wide 'Next question →' primary button */}
-          {isCorrect ? (
+          {unlock ? (
+            <Button
+              key="achievement-continue"
+              flex="1"
+              height={{ base: "44px", sm: "48px" }}
+              borderRadius="8px"
+              bg="#a97916"
+              color="white"
+              fontWeight="700"
+              boxShadow="0 4px 0 #785411, 0 6px 16px rgba(160, 114, 15, 0.22)"
+              _hover={{ bg: "#8e6410" }}
+              _active={{ transform: "translateY(2px)", boxShadow: "0 2px 0 #785411" }}
+              onClick={dismiss}
+            >
+              {achievementLabel("continue", userLanguage)}
+            </Button>
+          ) : primaryAction ? (
+            <Button flex="1" height={{ base: "44px", sm: "48px" }} borderRadius="8px"
+              bg={unlock ? "#a97916" : primaryButtonBg} color="white" fontWeight="700"
+              boxShadow={primaryButtonShadow} _hover={{ bg: unlock ? "#8e6410" : primaryButtonHoverBg }}
+              isDisabled={primaryAction.disabled} isLoading={primaryAction.loading}
+              onClick={primaryAction.onClick}>{primaryAction.label}</Button>
+          ) : isCorrect ? (
             <Button
               flex="1"
               height={{ base: "44px", sm: "48px" }}
