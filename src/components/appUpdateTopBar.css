@@ -1,0 +1,73 @@
+.app-update-top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1500;
+  padding: calc(env(safe-area-inset-top, 0px) + 8px) 8px 8px;
+  color: var(--chakra-colors-appText, #ecf2ff);
+  background: var(--chakra-colors-appBg, #0c1528);
+  border-bottom: none;
+  font-family: inherit;
+}
+.app-update-top-bar-row,
+.app-update-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.app-update-top-bar-row { justify-content: flex-end; }
+/* Piyali's teal xs button: same theme colors, size, squircle, and press motion. */
+.app-update-actions .app-update-apply {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 9999px;
+  corner-shape: superellipse(2);
+  padding: 0 12px;
+  min-width: 24px;
+  height: 30px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  user-select: none;
+  background: #319795;
+  color: #ffffff;
+  box-shadow: none;
+  transform: translateY(0);
+  cursor: pointer;
+  transition: transform 0.1s ease-out, background-color 0.15s ease;
+}
+.app-update-actions .app-update-apply:hover { background: #2c7a7b; box-shadow: none; }
+.app-update-actions .app-update-apply:active { background: #285e61; transform: scale(0.94); box-shadow: none; }
+.app-update-actions .app-update-apply:disabled { background: #319795; opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+.app-update-actions .app-update-apply:focus-visible { outline: 2px solid #319795; outline-offset: 3px; }
+.app-update-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  animation: app-update-spin 0.45s linear infinite;
+}
+@keyframes app-update-spin { to { transform: rotate(360deg); } }
+@media (min-width: 48em) { .app-update-top-bar { padding-inline: 12px; } }
+.app-update-error { margin: 8px 0 0; font-size: 13px; line-height: 1.4; }
+.app-update-spacer { height: calc(env(safe-area-inset-top, 0px) + 46px); }
+
+.chess-page .app-update-top-bar {
+  background: var(--bg-page);
+  color: var(--ink);
+  border-color: var(--line);
+}
+.investing-page .app-update-top-bar {
+  background: var(--inv-bg);
+  color: var(--inv-ink);
+  border-color: var(--inv-line);
+}

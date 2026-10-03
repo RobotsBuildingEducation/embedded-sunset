@@ -1,3 +1,4 @@
+import { useUpdateBlocker } from "../pwa/updateSafety.js";
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Box,
@@ -116,6 +117,7 @@ export const ChartsPage = () => {
   const [savedCharts, setSavedCharts] = useState([]);
   const [isLoadingSaved, setIsLoadingSaved] = useState(false);
   const [deletingChartId, setDeletingChartId] = useState(null);
+  useUpdateBlocker("chart-write", isSaving || Boolean(deletingChartId), "Chart save in progress");
 
   // Drawer & Alert states
   const { isOpen: isDrawerOpen, onOpen: onOpenDrawer, onClose: onCloseDrawer } = useDisclosure();

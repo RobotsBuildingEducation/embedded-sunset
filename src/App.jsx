@@ -6,6 +6,8 @@ import { awardRobotsProgress, studyDayEvent } from "./utility/robotsAchievementP
 import { localDayKey } from "./achievements/progressionEvidence.js";
 import "regenerator-runtime/runtime";
 import "@coinbase/onchainkit/styles.css";
+import AppUpdateTopBar from "./components/AppUpdateTopBar.jsx";
+import { useUpdateBlocker } from "./pwa/updateSafety.js";
 import React, {
   Suspense,
   lazy,
@@ -903,6 +905,7 @@ export const VoiceInput = ({
     browserSupportsSpeechRecognition,
     isMicrophoneAvailable,
   } = useSpeechRecognition();
+  useUpdateBlocker("speech-recording", listening, "Voice recording in progress");
   const [isListening, setIsListening] = useState(false);
   const [aiListening, setAiListening] = useState(false);
   const [aiTranscript, setAiTranscript] = useState("");
@@ -935,6 +938,8 @@ export const VoiceInput = ({
     submitPrompt: submitEducationalPrompt,
     loading,
   } = useSimpleGeminiChat();
+
+  useUpdateBlocker("learning-response", loading, "Learning response in progress");
 
   const [educationalContent, setEducationalContent] = useState([]);
 
@@ -2025,6 +2030,7 @@ const Step = ({
   const [items, setItems] = useState([]); // For Select Order
   const [modeAnswer, setModeAnswer] = useState(null);
   const [isSending, setIsSending] = useState(false);
+  useUpdateBlocker("answer-save", isSending, "Answer save in progress");
   const [isCorrect, setIsCorrect] = useState(null);
   const [feedback, setFeedback] = useState("");
   const [resetVoiceState, setResetVoiceState] = useState(false);
@@ -2772,6 +2778,7 @@ const Step = ({
     submitPrompt: submitSuggestionMessages,
     loading: isSuggestionModelLoading,
   } = useAdaptiveLearningGeminiChat();
+  useUpdateBlocker("question-generation", isNewQuestionLoading || isSuggestionModelLoading, "Question generation in progress");
 
   useEffect(() => {
     if (!isAILearningMode) {
@@ -8868,6 +8875,7 @@ function App({ isShutDown }) {
 
   return (
     <Box ref={topRef} minH="100dvh" position="relative" bg="transparent">
+      <AppUpdateTopBar language={userLanguage} />
       <CloudTransition
         userLanguage={userLanguage}
         clonedStep={clonedStep}
