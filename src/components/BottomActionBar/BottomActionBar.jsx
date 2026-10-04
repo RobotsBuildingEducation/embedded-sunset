@@ -451,9 +451,9 @@ export const BottomActionBar = ({
         color={unlock ? achievementText : "appText"}
         border="1px solid"
         borderColor={currentBorder}
-        borderRadius="4px"
+        borderRadius={{ base: "18px", sm: "20px" }}
         boxShadow={currentShadow}
-        px={
+        pl={
           isSending
             ? { base: 4, sm: 5 }
             : isCorrect
@@ -461,6 +461,15 @@ export const BottomActionBar = ({
               : isFeedbackActive
                 ? { base: 4, sm: 5 }
                 : { base: 3.5, sm: 4.5 }
+        }
+        pr={
+          isSending
+            ? { base: 5, sm: 6.5 }
+            : isCorrect
+              ? { base: 5.5, sm: 7, md: 7.5 }
+              : isFeedbackActive
+                ? { base: 5, sm: 6.5 }
+                : { base: 5.5, sm: 7 }
         }
         py={
           isSending
@@ -807,7 +816,7 @@ export const BottomActionBar = ({
               key="achievement-continue"
               flex="1"
               height={{ base: "44px", sm: "48px" }}
-              borderRadius="8px"
+              borderRadius="12px"
               bg="#a97916"
               color="white"
               fontWeight="700"
@@ -819,7 +828,7 @@ export const BottomActionBar = ({
               {achievementLabel("continue", userLanguage)}
             </Button>
           ) : primaryAction ? (
-            <Button flex="1" height={{ base: "44px", sm: "48px" }} borderRadius="8px"
+            <Button flex="1" height={{ base: "44px", sm: "48px" }} borderRadius="12px"
               bg={unlock ? "#a97916" : primaryButtonBg} color="white" fontWeight="700"
               boxShadow={primaryButtonShadow} _hover={{ bg: unlock ? "#8e6410" : primaryButtonHoverBg }}
               isDisabled={primaryAction.disabled} isLoading={primaryAction.loading}
@@ -828,7 +837,7 @@ export const BottomActionBar = ({
             <Button
               flex="1"
               height={{ base: "44px", sm: "48px" }}
-              borderRadius="8px"
+              borderRadius="12px"
               bg={primaryNextButtonBg}
               color="white"
               fontWeight="700"
@@ -927,7 +936,7 @@ export const BottomActionBar = ({
                 <Button
                   flex="1"
                   height={{ base: "44px", sm: "48px" }}
-                  borderRadius="8px"
+                  borderRadius="12px"
                   bg={primaryButtonBg}
                   color="white"
                   fontWeight="700"
@@ -949,7 +958,7 @@ export const BottomActionBar = ({
                 <Button
                   flex="1"
                   height={{ base: "44px", sm: "48px" }}
-                  borderRadius="8px"
+                  borderRadius="12px"
                   bg={primaryButtonBg}
                   color="white"
                   fontWeight="700"
@@ -1005,7 +1014,7 @@ export const BottomActionBar = ({
                 <Button
                   flex="1"
                   height={{ base: "44px", sm: "48px" }}
-                  borderRadius="8px"
+                  borderRadius="12px"
                   bg={primaryButtonBg}
                   color="white"
                   fontWeight="700"

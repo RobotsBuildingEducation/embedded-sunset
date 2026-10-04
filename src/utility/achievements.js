@@ -1,5 +1,6 @@
 import { earnedProgressionIds, meetsProgressionRequirement } from "../achievements/progressionEvidence.js";
 import { unlockStore } from "../achievements/unlockStore.js";
+import { applyAchievementBackfill, finishAchievementBackfill } from "../achievements/backfill.js";
 import { createRetrySync } from "../achievements/retrySync.js";
 import { localJournal } from "../achievements/localJournal.js";
 import { syncStatus } from "../achievements/syncStatus.js";
@@ -65,13 +66,15 @@ async function syncCloudAchievements(npub) {
   storeAchievements(npub, merged, { schedule: false });
   if (JSON.stringify(current) !== JSON.stringify(merged)) relaySync.schedule(npub);
   PROGRESS_SOURCES.forEach((source, index) => mergeStoredProgress(npub, source, remoteProgress[index]));
+  const backfill = await withSyncDeadline(adapter.prepareBackfill?.(npub));
+  await applyAchievementBackfill(npub, backfill, { awardProgressionAchievements, awardAchievements });
   await evaluateRestoredProgress(npub, adapter);
   const awards = getStoredAchievements(npub);
   const ledgers = PROGRESS_SOURCES.map(source => readProgressLedger(npub, source));
-  await withSyncDeadline(Promise.all([
+  await withSyncDeadline(finishAchievementBackfill(npub, adapter, () => Promise.all([
     adapter.save(npub, awards),
     ...PROGRESS_SOURCES.map((source, index) => adapter.saveProgress(npub, source, ledgers[index])),
-  ]));
+  ])));
   localJournal.confirmRemoteSave(`${LOCAL_STORAGE_KEY_PREFIX}${npub}`, awards);
   PROGRESS_SOURCES.forEach((source, index) => localJournal.confirmRemoteSave(`learning_achievement_progress_v4:${npub}:${source}`, ledgers[index]));
 }
@@ -369,17 +372,17 @@ export function completeCourseAward(unlocked) {
 // Serialize writes for one identity. Simultaneous learning handlers must not
 // publish different replaceable events that each omit the other's award.
 const awardQueues = new Map();
-export const awardAchievements = ({ npub, achievementIds, test = false, progressionEvidence }) => {
+export const awardAchievements = ({ npub, achievementIds, test = false, progressionEvidence, notify = true }) => {
   const { npub: effectiveNpub } = resolveEffectiveIdentity(npub);
   const key = effectiveNpub || "guest";
   const pending = (awardQueues.get(key) || Promise.resolve()).catch(() => {}).then(() =>
-    awardAchievementBatch({ npub: effectiveNpub, achievementIds, test, progressionEvidence }));
+    awardAchievementBatch({ npub: effectiveNpub, achievementIds, test, progressionEvidence, notify }));
   awardQueues.set(key, pending);
   void pending.finally(() => { if (awardQueues.get(key) === pending) awardQueues.delete(key); }).catch(() => {});
   return pending;
 };
 
-async function awardAchievementBatch({ npub: effectiveNpub, achievementIds, test, progressionEvidence }) {
+async function awardAchievementBatch({ npub: effectiveNpub, achievementIds, test, progressionEvidence, notify }) {
   let currentUnlocked = getStoredAchievements(effectiveNpub);
   const alreadyRecorded = id => currentUnlocked[id] && (!currentUnlocked[id].test || test);
   const ids = [...new Set(achievementIds)].filter(isCatalogAchievement).filter(id => !alreadyRecorded(id));
@@ -401,7 +404,7 @@ async function awardAchievementBatch({ npub: effectiveNpub, achievementIds, test
   }
   if (!awarded.length) return [];
   storeAchievements(effectiveNpub, updatedUnlocked);
-  for (const [id, record] of Object.entries(updatedUnlocked)) {
+  for (const [id, record] of notify ? Object.entries(updatedUnlocked) : []) {
     const previous = currentUnlocked[id];
     if (isCatalogAchievement(id) && (!previous || (previous.test && !record.test))) {
       unlockStore.enqueue(effectiveNpub || "", ACHIEVEMENTS[id], { test: Boolean(record.test) });
@@ -416,14 +419,14 @@ export const awardAchievement = async ({ npub, achievementId, test = false }) =>
   return awarded[0] || null;
 };
 
-// Only call this with the earned, contiguous curriculum unlock. Do not pass
-// placement, selected lesson difficulty, or the adaptive practice Score.
-export const awardProgressionAchievements = async ({ npub, source, evidence = {}, events = [] }) => {
+// Evaluate confirmed completion evidence; placement, selected lesson difficulty
+// and the adaptive practice Score do not prove completed work.
+export const awardProgressionAchievements = async ({ npub, source, evidence = {}, events = [], notify = true }) => {
   if (!npub) return [];
   const snapshot = progressionSnapshot(npub, source, evidence, events);
   const current = getStoredAchievements(npub);
   const ids = earnedProgressionIds(source, snapshot).filter(id => !hasEarnedRequirement(current, [id]));
-  return ids.length ? awardAchievements({ npub, achievementIds: ids, progressionEvidence: snapshot }) : [];
+  return ids.length ? awardAchievements({ npub, achievementIds: ids, progressionEvidence: snapshot, notify }) : [];
 };
 
 export const awardTutorLevelAchievements = async ({ npub, level }) => {

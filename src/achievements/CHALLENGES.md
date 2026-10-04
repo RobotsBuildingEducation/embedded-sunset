@@ -1,6 +1,8 @@
 # Learning completion requirements
 
-104 active awards, catalog v7. Numbers are permanent protocol slots; retired slots remain reserved. See README.md for evidence and synchronization details.
+104 active awards, catalog v8. Numbers are permanent protocol slots; retired slots remain reserved. See README.md for evidence and synchronization details.
+
+Proficiency awards include completion at higher levels in the same category. Placement alone does not count.
 
 | # | App | Achievement | Requirement |
 | --- | --- | --- | --- |
@@ -8,41 +10,41 @@
 | 34 | Piyali | Spread Your Wings · B1 | Reach B1 in Tutor lessons. |
 | 67 | Piyali | Flying High · B2 | Reach B2 in Tutor lessons. |
 | 100 | Piyali + Robots Building Education | Two worlds mastered | Complete a full language course in Piyali and a full coding course in Robots Building Education. |
-| 101 | Piyali | Tutor Triumph · Pre-A1 | Complete all Pre-A1 Tutor lessons. |
-| 102 | Piyali | Tutor Triumph · A1 | Complete all A1 Tutor lessons. |
-| 103 | Piyali | Tutor Triumph · A2 | Complete all A2 Tutor lessons. |
-| 104 | Piyali | Tutor Triumph · B1 | Complete all B1 Tutor lessons. |
-| 105 | Piyali | Tutor Triumph · B2 | Complete all B2 Tutor lessons. |
-| 106 | Piyali | Tutor Triumph · C1 | Complete all C1 Tutor lessons. |
-| 107 | Piyali | Tutor Triumph · C2 | Complete all C2 Tutor lessons. |
-| 108 | Piyali | Level Explorer · Pre-A1 | Complete all Pre-A1 lessons. |
-| 109 | Piyali | Level Explorer · A1 | Complete all A1 lessons. |
-| 110 | Piyali | Level Explorer · A2 | Complete all A2 lessons. |
-| 111 | Piyali | Level Explorer · B1 | Complete all B1 lessons. |
-| 112 | Piyali | Level Explorer · B2 | Complete all B2 lessons. |
-| 113 | Piyali | Level Explorer · C1 | Complete all C1 lessons. |
-| 114 | Piyali | Level Explorer · C2 | Complete all C2 lessons. |
-| 115 | Piyali | Word Wizard · Pre-A1 | Complete all Pre-A1 flashcards. |
-| 116 | Piyali | Word Wizard · A1 | Complete all A1 flashcards. |
-| 117 | Piyali | Word Wizard · A2 | Complete all A2 flashcards. |
-| 118 | Piyali | Word Wizard · B1 | Complete all B1 flashcards. |
-| 119 | Piyali | Word Wizard · B2 | Complete all B2 flashcards. |
-| 120 | Piyali | Word Wizard · C1 | Complete all C1 flashcards. |
-| 121 | Piyali | Word Wizard · C2 | Complete all C2 flashcards. |
-| 122 | Piyali | Mission Accomplished · Pre-A1 | Complete a Pre-A1 plan in personal goal practice. |
-| 123 | Piyali | Mission Accomplished · A1 | Complete a A1 plan in personal goal practice. |
-| 124 | Piyali | Mission Accomplished · A2 | Complete a A2 plan in personal goal practice. |
-| 125 | Piyali | Mission Accomplished · B1 | Complete a B1 plan in personal goal practice. |
-| 126 | Piyali | Mission Accomplished · B2 | Complete a B2 plan in personal goal practice. |
-| 127 | Piyali | Mission Accomplished · C1 | Complete a C1 plan in personal goal practice. |
-| 128 | Piyali | Mission Accomplished · C2 | Complete a C2 plan in personal goal practice. |
-| 129 | Piyali | Comeback Kid · Pre-A1 | Complete a Pre-A1 plan in repair practice. |
-| 130 | Piyali | Comeback Kid · A1 | Complete a A1 plan in repair practice. |
-| 131 | Piyali | Comeback Kid · A2 | Complete a A2 plan in repair practice. |
-| 132 | Piyali | Comeback Kid · B1 | Complete a B1 plan in repair practice. |
-| 133 | Piyali | Comeback Kid · B2 | Complete a B2 plan in repair practice. |
-| 134 | Piyali | Comeback Kid · C1 | Complete a C1 plan in repair practice. |
-| 135 | Piyali | Comeback Kid · C2 | Complete a C2 plan in repair practice. |
+| 101 | Piyali | Tutor Triumph · Pre-A1 | Complete all Tutor lessons at Pre-A1 or higher. |
+| 102 | Piyali | Tutor Triumph · A1 | Complete all Tutor lessons at A1 or higher. |
+| 103 | Piyali | Tutor Triumph · A2 | Complete all Tutor lessons at A2 or higher. |
+| 104 | Piyali | Tutor Triumph · B1 | Complete all Tutor lessons at B1 or higher. |
+| 105 | Piyali | Tutor Triumph · B2 | Complete all Tutor lessons at B2 or higher. |
+| 106 | Piyali | Tutor Triumph · C1 | Complete all Tutor lessons at C1 or higher. |
+| 107 | Piyali | Tutor Triumph · C2 | Complete all Tutor lessons at C2 or higher. |
+| 108 | Piyali | Level Explorer · Pre-A1 | Complete all lessons at Pre-A1 or higher. |
+| 109 | Piyali | Level Explorer · A1 | Complete all lessons at A1 or higher. |
+| 110 | Piyali | Level Explorer · A2 | Complete all lessons at A2 or higher. |
+| 111 | Piyali | Level Explorer · B1 | Complete all lessons at B1 or higher. |
+| 112 | Piyali | Level Explorer · B2 | Complete all lessons at B2 or higher. |
+| 113 | Piyali | Level Explorer · C1 | Complete all lessons at C1 or higher. |
+| 114 | Piyali | Level Explorer · C2 | Complete all lessons at C2 or higher. |
+| 115 | Piyali | Word Wizard · Pre-A1 | Complete all flashcards at Pre-A1 or higher. |
+| 116 | Piyali | Word Wizard · A1 | Complete all flashcards at A1 or higher. |
+| 117 | Piyali | Word Wizard · A2 | Complete all flashcards at A2 or higher. |
+| 118 | Piyali | Word Wizard · B1 | Complete all flashcards at B1 or higher. |
+| 119 | Piyali | Word Wizard · B2 | Complete all flashcards at B2 or higher. |
+| 120 | Piyali | Word Wizard · C1 | Complete all flashcards at C1 or higher. |
+| 121 | Piyali | Word Wizard · C2 | Complete all flashcards at C2 or higher. |
+| 122 | Piyali | Mission Accomplished · Pre-A1 | Complete a plan at Pre-A1 or higher in personal goal practice. |
+| 123 | Piyali | Mission Accomplished · A1 | Complete a plan at A1 or higher in personal goal practice. |
+| 124 | Piyali | Mission Accomplished · A2 | Complete a plan at A2 or higher in personal goal practice. |
+| 125 | Piyali | Mission Accomplished · B1 | Complete a plan at B1 or higher in personal goal practice. |
+| 126 | Piyali | Mission Accomplished · B2 | Complete a plan at B2 or higher in personal goal practice. |
+| 127 | Piyali | Mission Accomplished · C1 | Complete a plan at C1 or higher in personal goal practice. |
+| 128 | Piyali | Mission Accomplished · C2 | Complete a plan at C2 or higher in personal goal practice. |
+| 129 | Piyali | Comeback Kid · Pre-A1 | Complete a plan at Pre-A1 or higher in repair practice. |
+| 130 | Piyali | Comeback Kid · A1 | Complete a plan at A1 or higher in repair practice. |
+| 131 | Piyali | Comeback Kid · A2 | Complete a plan at A2 or higher in repair practice. |
+| 132 | Piyali | Comeback Kid · B1 | Complete a plan at B1 or higher in repair practice. |
+| 133 | Piyali | Comeback Kid · B2 | Complete a plan at B2 or higher in repair practice. |
+| 134 | Piyali | Comeback Kid · C1 | Complete a plan at C1 or higher in repair practice. |
+| 135 | Piyali | Comeback Kid · C2 | Complete a plan at C2 or higher in repair practice. |
 | 136 | Piyali | Sound Collector | Complete all phonics cards. |
 | 137 | Piyali | Sound Safari · 1 | Complete one phonics deck. |
 | 138 | Piyali | Sound Safari · 5 | Complete 5 phonics decks. |
@@ -64,7 +66,7 @@
 | 213 | Robots Building Education | Beyond the Diploma · 1 | Solve one post-course question. |
 | 214 | Robots Building Education | Beyond the Diploma · 25 | Solve 25 post-course questions. |
 | 215 | Robots Building Education | Beyond the Diploma · 100 | Solve 100 post-course questions. |
-| 222 | Piyali | Language Legend | Complete all lessons, Tutor lessons and flashcards from Pre-A1 to C2 in one language. |
+| 222 | Piyali | Language Legend | Complete all C2 lessons, Tutor lessons and flashcards in one language; earlier level awards are included. |
 | 223 | Robots Building Education | Code Legend | Complete a coding course, including every chapter and review. |
 | 224 | Piyali | Tutor Trailblazer · 5 | Complete 5 Tutor lessons. |
 | 225 | Piyali | Tutor Trailblazer · 10 | Complete 10 Tutor lessons. |

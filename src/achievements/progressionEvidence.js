@@ -1,4 +1,5 @@
 import { ACHIEVEMENTS } from "./catalog.js";
+import { atOrAboveProficiency } from "./proficiencyCompletion.js";
 
 const integer = value => Number.isSafeInteger(value) && value >= 0;
 export const levelKey = level => String(level).toLowerCase().replaceAll("-", "_");
@@ -11,8 +12,11 @@ const completeSet = set => Array.isArray(set?.required) && set.required.length >
 export function meetsProgressionRequirement(requirement, evidence = {}) {
   const { type, metric, target } = requirement;
   switch (type) {
-    case "level_set": return Boolean(evidence.language) && completeLevel(evidence.levels?.[metric]?.[levelKey(requirement.level)]);
-    case "level_counter": return integer(evidence.levelCounts?.[metric]?.[levelKey(requirement.level)]) && evidence.levelCounts[metric][levelKey(requirement.level)] >= target;
+    case "level_set": return Boolean(evidence.language) && atOrAboveProficiency(requirement.level, level => completeLevel(evidence.levels?.[metric]?.[levelKey(level)]));
+    case "level_counter": return atOrAboveProficiency(requirement.level, level => {
+      const count = evidence.levelCounts?.[metric]?.[levelKey(level)];
+      return integer(count) && count >= target;
+    });
     case "counter": return integer(evidence.counters?.[metric]) && evidence.counters[metric] >= target;
     case "complete_set": return Boolean(evidence.course || evidence.language) && completeSet(evidence.sets?.[metric]);
     case "chapter_completion": return Boolean(evidence.course) && evidence.chapters?.completed?.includes(requirement.chapter) === true;
@@ -21,7 +25,7 @@ export function meetsProgressionRequirement(requirement, evidence = {}) {
     case "any_member": return requirement.members.some(member => evidence.members?.[metric]?.includes(member));
     case "members": return requirement.members.every(member => evidence.members?.[metric]?.includes(member));
     case "score": return Number.isFinite(evidence.score) && evidence.score >= target && integer(evidence.gradedCount) && evidence.gradedCount > 0;
-    case "full_language_course": return Boolean(evidence.language) && requirement.modes.every(mode => requirement.levels.every(level => completeLevel(evidence.levels?.[mode]?.[levelKey(level)])));
+    case "full_language_course": return Boolean(evidence.language) && requirement.modes.every(mode => requirement.levels.every(level => atOrAboveProficiency(level, completed => completeLevel(evidence.levels?.[mode]?.[levelKey(completed)]))));
     case "full_coding_course": return Boolean(evidence.course) && requirement.metrics.every(key => completeSet(evidence.sets?.[key]));
     default: return false;
   }

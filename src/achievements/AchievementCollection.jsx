@@ -358,10 +358,10 @@ export default function AchievementCollection({
           </HStack>
 
           {sections.map(({ status, count, groups }) => (
-            <Box as="section" key={status} mb={7} aria-label={t(status)}>
+            <Box as="section" key={status} mb={7} aria-label={t(status === "unlocked" ? "completed" : "locked")}>
               <Flex align="center" gap={2} mb={4}>
                 <Text as="h3" fontSize="xl" fontWeight="700" color={themeColors.textPrimary}>
-                  {t(status)}
+                  {t(status === "unlocked" ? "completed" : "locked")}
                 </Text>
                 <Badge borderRadius="full" px={2.5}
                   bg={status === "unlocked" ? themeColors.badgeCompletedBg : themeColors.badgeUncompletedBg}
@@ -373,9 +373,9 @@ export default function AchievementCollection({
                 <Text color={themeColors.textSecondary} fontSize="sm" mb={4}>{t("empty")}</Text>
               )}
               <SimpleGrid columns={{ base: 2, sm: 3, md: 4 }} spacing={3}>
-                {groups.flatMap(({ tiers }) => tiers.flatMap(({ items }) => items)).map(item => {
+                {groups.flatMap(({ items }) => items).map(item => {
                   const completed = Boolean(unlocked[item.id]);
-                  const status = unlocked[item.id]?.test ? "testAward" : completed ? "completed" : "uncompleted";
+                  const status = completed ? "completed" : "locked";
                   return (
                     <Box
                       key={item.id}
@@ -402,11 +402,6 @@ export default function AchievementCollection({
                       <Text fontSize="10px" lineHeight="1.4" color={themeColors.textSecondary}>
                         {item.desc}
                       </Text>
-                      <Badge mt={2} borderRadius="full" px={2} whiteSpace="normal"
-                        bg={completed ? themeColors.badgeCompletedBg : themeColors.badgeUncompletedBg}
-                        color={completed ? themeColors.badgeCompletedColor : themeColors.badgeUncompletedColor}>
-                        {t(status)}
-                      </Badge>
                     </Box>
                   );
                 })}

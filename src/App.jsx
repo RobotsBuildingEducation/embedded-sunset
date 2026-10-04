@@ -1,5 +1,4 @@
 import { useAchievementAccount } from "./achievements/useAchievementUnlock.js";
-import { previewAchievementUnlock } from "./achievements/unlockStore.js";
 import * as achievementServices from "./utility/achievements.js";
 import { correctQuestionEvents } from "./achievements/learningCounts.js";
 import { awardRobotsProgress, studyDayEvent } from "./utility/robotsAchievementProgress.js";
@@ -334,9 +333,7 @@ const VoiceOrbNext = lazy(
 const ChartsPage = lazy(() => import("./charts/ChartsPage"));
 import VoiceOrbLoader from "./components/VoiceOrbNext/VoiceOrbLoader.jsx";
 import AppLoadingScreen from "./components/AppLoadingScreen.jsx";
-import AchievementCelebrationModal from "./components/AchievementCelebrationModal.jsx";
 import { achievementText } from "./achievements/copy.js";
-import { awardRandomAchievement } from "./utility/achievements.js";
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
 import QuestionMode, {
   CodePanel,
@@ -2047,28 +2044,6 @@ const Step = ({
   const [isTimerExpired, setIsTimerExpired] = useState(true);
   const [isBuildReady, setIsBuildReady] = useState(false);
   const [simulatedTerminalOutput, setSimulatedTerminalOutput] = useState("");
-  const [celebrationAchievement, setCelebrationAchievement] = useState(null);
-  const [isAchievementModalOpen, setIsAchievementModalOpen] = useState(false);
-  const [isAwardingAchievement, setIsAwardingAchievement] = useState(false);
-
-  const handleTestAchievement = async () => {
-    // Open the collection before waiting for relay sync or signing.
-    setIsAchievementModalOpen(true);
-    if (isAwardingAchievement) return;
-    try {
-      setIsAwardingAchievement(true);
-      const achievement = await awardRandomAchievement(
-        localStorage.getItem("local_npub"),
-        "robotsbuildingeducation",
-      );
-      setCelebrationAchievement(achievement);
-    } catch (err) {
-      console.error("Failed to award test achievement:", err);
-    } finally {
-      setIsAwardingAchievement(false);
-    }
-  };
-
   const nextQuestionPressLockRef = useRef(false);
 
   const shouldInitiallyRestoreContinuingQuestion =
@@ -3277,8 +3252,20 @@ In addition to the grading fields already requested, return updatedLearningSumma
         );
       }
 
+      if (!isAILearningMode) {
+        void awardRobotsProgress({
+          npub: localStorage.getItem("local_npub"),
+          course: userLanguage,
+          courseSteps: steps[userLanguage],
+          events: [
+            { metric: "course_steps", id: `${userLanguage}:${currentStep}` },
+            studyDayEvent(),
+          ],
+        }).catch((error) => console.warn("Course achievement:", error));
+      }
+
       useConversationReviewStore?.getState?.()?.resetReviewState?.();
-      onAwardModalOpen();
+      onLectureModalOpen();
       return;
     }
 
@@ -4790,25 +4777,6 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
               </b>
             </Text>
 
-            {(currentStep === 0 || currentStep === 1) && (
-              <Box width="100%" maxWidth="600px" my={2}>
-                {currentStep === 1 && <Button
-                  size="sm"
-                  colorScheme="purple"
-                  variant="outline"
-                  borderRadius="full"
-                  aria-busy={isAwardingAchievement}
-                  onClick={handleTestAchievement}
-                  leftIcon={<span>🏆</span>}
-                >
-                  {achievementText("test", userLanguage)}
-                </Button>}
-                <Button ml={currentStep === 1 ? 2 : 0} size="sm" colorScheme="yellow" variant="outline" borderRadius="full" onClick={() => previewAchievementUnlock("robotsbuildingeducation")}>
-                  {achievementText("testUnlock", userLanguage)}
-                </Button>
-              </Box>
-            )}
-
             {step.question && (
               <Text
                 width="100%"
@@ -5107,15 +5075,6 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
             ) : null}
           </Suspense>
 
-          <AchievementCelebrationModal
-            isOpen={isAchievementModalOpen}
-            onClose={() => setIsAchievementModalOpen(false)}
-            achievement={celebrationAchievement}
-            npub={localStorage.getItem("local_npub")}
-            appSource="robotsbuildingeducation"
-            language={userLanguage}
-            onAchievementAwarded={(newAch) => setCelebrationAchievement(newAch)}
-          />
           {/* newmodal */}
           {/* <ExternalLinkModal
             isOpen={isExternalLinkModalOpen}

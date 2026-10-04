@@ -21,10 +21,10 @@ const setGoal = (source, family, metric, name) => goal(`${source}_${metric}_all`
 export const PROGRESSION_ACHIEVEMENTS = [
   ...["tutor", "skillTree", "flashcards"].flatMap(mode => PROFICIENCY_LEVELS.map(level =>
     goal(`piyali_${mode}_complete_${levelKey(level)}`, piyali, mode === "tutor" ? "voice" : mode === "flashcards" ? "memory" : "journey",
-      mode, "level", { type: "level_set", metric: mode, level, nonempty: true, scope: "one_language" }, levelTier(level), { level }))),
+      mode, "level", { type: "level_set", metric: mode, level, nonempty: true, scope: "one_language", cumulative: true }, levelTier(level), { level }))),
   ...["goals", "repairs"].flatMap(metric => PROFICIENCY_LEVELS.map(level =>
     goal(`piyali_${metric}_complete_${levelKey(level)}`, piyali, "journey", metric, "levelTask",
-      { type: "level_counter", metric, level, target: 1, allAssignedModes: true }, levelTier(level), { level }))),
+      { type: "level_counter", metric, level, target: 1, allAssignedModes: true, cumulative: true }, levelTier(level), { level }))),
   setGoal(piyali, "discovery", "phonics_cards", "phonicsCards"),
   ...counts(piyali, "discovery", "phonics_decks", "phonicsDecks", [1, 5, 20], "decks"),
   ...counts(piyali, "discovery", "immersion_checklists", "immersionChecklists", [1, 10, 30]),
@@ -37,7 +37,7 @@ export const PROGRESSION_ACHIEVEMENTS = [
   setGoal(robots, "builder", "review_checklists", "allChecklists"),
   ...counts(robots, "builder", "post_course_questions", "postCourse", [1, 25, 100], "postCourse"),
   goal("piyali_full_curriculum_v4", piyali, "journey", "fullPiyali", "fullPiyali",
-    { type: "full_language_course", modes: ["tutor", "skillTree", "flashcards"], levels: PROFICIENCY_LEVELS, scope: "one_language" }),
+    { type: "full_language_course", modes: ["tutor", "skillTree", "flashcards"], levels: PROFICIENCY_LEVELS, scope: "one_language", cumulative: true }),
   goal("robots_full_curriculum_v4", robots, "builder", "fullRobots", "fullRobots",
     { type: "full_coding_course", metrics: ["course_steps", "chapters", "review_videos", "review_checklists"], scope: "one_course" }),
   // Append new protocol slots; keep every existing number and orb identity.

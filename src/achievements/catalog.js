@@ -2,8 +2,9 @@
 import { PROGRESSION_ACHIEVEMENTS } from "./progression.js";
 import { ACHIEVEMENT_SLOTS } from "./slots.js";
 import { achievementOrbTheme } from "./orbThemes.js";
+import { proficiencyIndex, tutorLevelFromCompletions } from "./proficiencyCompletion.js";
 
-export const CATALOG_VERSION = 7;
+export const CATALOG_VERSION = 8;
 export const TIERS = ["beginner", "intermediate", "advanced", "completion"];
 export const ACHIEVEMENT_LOCALES = ["en", "es", "pt", "it", "fr", "de", "ja", "hi", "ar", "zh"];
 
@@ -98,6 +99,30 @@ export function hasEarnedRequirement(unlocked, ids) {
 
 export function completeCollectionAwards(unlocked) {
   let result = unlocked;
+  // Recover earlier milestones from existing genuine awards on either host.
+  // This needs no rescan of learning history and never fabricates lesson counts.
+  for (const [id, record] of Object.entries(unlocked)) {
+    const earned = ACHIEVEMENTS[id];
+    if (!earned || !hasEarnedRequirement(unlocked, [id])) continue;
+    const requirement = earned.requirement;
+    const tutorLevel = requirement.type === "level_set" && requirement.metric === "tutor"
+      ? tutorLevelFromCompletions({ [requirement.level]: { isComplete: true } })
+      : id === "piyali_full_curriculum_v4" ? "C2" : null;
+    for (const item of Object.values(ACHIEVEMENTS)) {
+      const candidate = item.requirement;
+      const sameLadder = ["level_set", "level_counter", "level"].includes(requirement.type) &&
+        candidate.type === requirement.type && candidate.metric === requirement.metric &&
+        proficiencyIndex(candidate.level) >= 0 && proficiencyIndex(candidate.level) <= proficiencyIndex(requirement.level);
+      const fullCourseTrack = id === "piyali_full_curriculum_v4" && candidate.type === "level_set" &&
+        requirement.modes.includes(candidate.metric);
+      const tutorReach = tutorLevel && candidate.type === "level" && candidate.metric === "tutorEarnedLevel" &&
+        proficiencyIndex(candidate.level) <= proficiencyIndex(tutorLevel);
+      if (!(sameLadder || fullCourseTrack || tutorReach) || hasEarnedRequirement(result, [item.id])) continue;
+      result = { ...result, [item.id]: {
+        unlockedAt: record.unlockedAt, source: item.source, catalogVersion: CATALOG_VERSION,
+      } };
+    }
+  }
   for (const item of Object.values(ACHIEVEMENTS).filter(item => item.requirement.type === "collection")) {
     if (hasEarnedRequirement(result, [item.id]) || !hasEarnedRequirement(result, item.requirement.all)) continue;
     result = { ...result, [item.id]: {

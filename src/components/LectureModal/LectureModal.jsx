@@ -1,5 +1,5 @@
 import BottomActionBar from "../BottomActionBar/BottomActionBar.jsx";
-import { watchedSeconds } from "../../achievements/codingProgress.js";
+import { hasWatchedReviewVideo, reviewCompletionEvents } from "../../utility/reviewCompletion.js";
 import { awardRobotsProgress } from "../../utility/robotsAchievementProgress.js";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -25,7 +25,7 @@ import {
 import { steps } from "../../utility/content";
 import { videoTranscript } from "../../utility/transcript";
 import { useSharedNostr } from "../../hooks/useNOSTR";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { doc, getDoc, runTransaction } from "firebase/firestore";
 import { database } from "../../database/firebaseResources";
 import { translation } from "../../utility/translation";
 import Markdown from "react-markdown";
@@ -234,11 +234,10 @@ const LectureModal = ({
   const [videoDurationDetection, setVideoDurationDetection] = useState(false);
 
   const videoRef = useRef(null);
-  const viewedRangesRef = useRef([]);
-  const lastVideoTimeRef = useRef(null);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [loadedReviewIdentity, setLoadedReviewIdentity] = useState(null);
 
   const step = steps[userLanguage][currentStep];
+  const reviewIdentity = `${userLanguage}:${step.group}`;
 
   const transcriptObject =
     step.group === "introduction"
@@ -246,13 +245,19 @@ const LectureModal = ({
       : videoTranscript[step.group];
 
   useEffect(() => {
+    let cancelled = false;
+    setLoadedReviewIdentity(null);
+    setVideoDurationDetection(false);
+    setHasViewedSummary(false);
+    setHasPracticedModule(false);
     async function getProgress() {
       try {
         const npub = localStorage.getItem("local_npub");
         if (npub) {
           const userDocRef = doc(database, "users", npub);
           const userSnapshot = await getDoc(userDocRef);
-          const userData = userSnapshot.data();
+          const userData = userSnapshot.data() || {};
+          if (cancelled) return;
 
           let stepGroup = step.group;
           if (stepGroup === "introduction") {
@@ -265,9 +270,11 @@ const LectureModal = ({
             practiceCompleted: false,
           };
 
-          setVideoDurationDetection(currentProgress.videoWatched || false);
-          setHasViewedSummary(currentProgress.summaryViewed || false);
-          setHasPracticedModule(currentProgress.practiceCompleted || false);
+          // A slow initial read must not erase actions taken while it loaded.
+          setVideoDurationDetection(current => current || currentProgress.videoWatched === true);
+          setHasViewedSummary(current => current || currentProgress.summaryViewed === true);
+          setHasPracticedModule(current => current || currentProgress.practiceCompleted === true);
+          setLoadedReviewIdentity(reviewIdentity);
         } else {
           console.error("No npub found in localStorage");
         }
@@ -279,87 +286,18 @@ const LectureModal = ({
     if (isOpen) {
       getProgress();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
+    return () => { cancelled = true; };
+  }, [isOpen, userLanguage, step.group, reviewIdentity]);
 
-  const handleVideoTimeUpdate = () => {
-    const video = videoRef.current;
-    if (!video || video.paused || video.seeking) return;
-    const previous = lastVideoTimeRef.current;
-    const next = video.currentTime;
-    if (previous !== null && next > previous && next - previous <= 2) viewedRangesRef.current.push([previous, next]);
-    lastVideoTimeRef.current = next;
-  };
-  const handleVideoEnded = () => {
-    const video = videoRef.current;
-    const watched = watchedSeconds(viewedRangesRef.current);
-    if (!Number.isFinite(video?.duration) || video.duration <= 0 || watched < video.duration * 0.95) return;
+  const handleVideoProgress = () => {
+    if (videoDurationDetection || !hasWatchedReviewVideo(videoRef.current)) return;
+    setVideoDurationDetection(true);
     const npub = localStorage.getItem("local_npub");
-    const group = step.group === "introduction" ? "tutorial" : String(step.group);
+    // Unlock at the 90% timeline checkpoint, including when seeking ahead.
     void awardRobotsProgress({ npub, course: userLanguage, courseSteps: steps[userLanguage],
-      events: [{ metric: "review_videos", id: `${userLanguage}:${group}` }],
+      events: reviewCompletionEvents(userLanguage, step.group, { videoWatched: true }),
     }).catch(error => console.warn("Video achievement:", error));
   };
-  useEffect(() => { viewedRangesRef.current = []; lastVideoTimeRef.current = null; }, [userLanguage, step.group]);
-
-  const handlePlay = () => {
-    setIsVideoPlaying(true);
-  };
-
-  useEffect(() => {
-    const videoElement = videoRef.current;
-    if (!videoElement) return;
-
-    let periodicCheckInterval;
-
-    const handlePause = () => {
-      setIsVideoPlaying(false);
-      if (periodicCheckInterval) {
-        clearInterval(periodicCheckInterval);
-      }
-    };
-
-    const checkVideoProgress = async () => {
-      if (!videoElement || videoDurationDetection) return;
-
-      const ninetyPercentDuration = videoElement.duration * 0.9;
-
-      if (
-        videoElement.currentTime >= ninetyPercentDuration &&
-        !videoDurationDetection
-      ) {
-        setVideoDurationDetection(true);
-        if (periodicCheckInterval) {
-          clearInterval(periodicCheckInterval);
-        }
-
-        checkAndUpdateProgress();
-      }
-    };
-
-    const handleMetadataLoaded = () => {
-      // duration available
-    };
-
-    periodicCheckInterval = setInterval(() => {
-      checkVideoProgress();
-    }, 10000);
-
-    videoElement.addEventListener("loadedmetadata", handleMetadataLoaded);
-    videoElement.addEventListener("play", handlePlay);
-    videoElement.addEventListener("pause", handlePause);
-    videoElement.addEventListener("ended", handlePause);
-
-    return () => {
-      videoElement.removeEventListener("loadedmetadata", handleMetadataLoaded);
-      videoElement.removeEventListener("play", handlePlay);
-      videoElement.addEventListener("pause", handlePause);
-      if (periodicCheckInterval) {
-        clearInterval(periodicCheckInterval);
-      }
-      videoElement.removeEventListener("ended", handlePause);
-    };
-  }, [videoDurationDetection, isVideoPlaying]);
 
   const handleCopyKeys = () => {
     const keysToCopy = `${localStorage.getItem("local_nsec")}`;
@@ -391,53 +329,44 @@ const LectureModal = ({
   };
 
   const checkAndUpdateProgress = async () => {
+    if (!isOpen || loadedReviewIdentity !== reviewIdentity) return;
     try {
       const npub = localStorage.getItem("local_npub");
-      if (!npub) {
-        console.error("No npub found in localStorage");
-        return;
-      }
-
+      if (!npub) return;
       const userDocRef = doc(database, "users", npub);
-      const userSnapshot = await getDoc(userDocRef);
-      const userData = userSnapshot.data();
-
-      let stepGroup = step.group;
-      if (stepGroup === "introduction") {
-        stepGroup = "tutorial";
-      }
-
-      const currentProgress = userData.moduleProgressByCourse?.[userLanguage]?.[stepGroup] || {
-        videoWatched: false,
-        summaryViewed: false,
-        practiceCompleted: false,
-      };
-
-      const updatedModuleProgress = {
-        ...currentProgress,
-        videoWatched: videoDurationDetection || currentProgress.videoWatched,
-        summaryViewed: hasViewedSummary || currentProgress.summaryViewed,
-        practiceCompleted:
-          hasPracticedModule || currentProgress.practiceCompleted,
-      };
-
-      const updatedProgress = {
-        ...userData.moduleProgress,
-        [stepGroup]: updatedModuleProgress,
-      };
-
-      await updateDoc(userDocRef, {
-        moduleProgress: updatedProgress,
-        [`moduleProgressByCourse.${userLanguage}.${stepGroup}`]: updatedModuleProgress,
+      const stepGroup = step.group === "introduction" ? "tutorial" : String(step.group);
+      // The local award journal queues synchronization if the profile save fails.
+      await awardRobotsProgress({ npub, course: userLanguage, courseSteps: steps[userLanguage],
+        events: reviewCompletionEvents(userLanguage, stepGroup, {
+          videoWatched: videoDurationDetection,
+          summaryViewed: hasViewedSummary,
+          practiceCompleted: hasPracticedModule,
+        }),
       });
-
-      if (updatedModuleProgress.videoWatched && updatedModuleProgress.summaryViewed && updatedModuleProgress.practiceCompleted) {
-        void awardRobotsProgress({ npub, course: userLanguage, courseSteps: steps[userLanguage],
-          events: [{ metric: "review_checklists", id: `${userLanguage}:${stepGroup}` }],
-        }).catch(error => console.warn("Checklist achievement:", error));
-      }
+      // Merge inside a transaction so simultaneous video/summary/practice saves
+      // cannot replace a completed flag with an older false value.
+      const updatedModuleProgress = await runTransaction(database, async transaction => {
+        const userData = (await transaction.get(userDocRef)).data() || {};
+        const currentProgress = userData.moduleProgressByCourse?.[userLanguage]?.[stepGroup] || {};
+        const progress = {
+          ...currentProgress,
+          videoWatched: videoDurationDetection || currentProgress.videoWatched === true,
+          summaryViewed: hasViewedSummary || currentProgress.summaryViewed === true,
+          practiceCompleted: hasPracticedModule || currentProgress.practiceCompleted === true,
+        };
+        transaction.update(userDocRef, {
+          [`moduleProgress.${stepGroup}`]: progress,
+          [`moduleProgressByCourse.${userLanguage}.${stepGroup}`]: progress,
+        });
+        return progress;
+      });
+      // Also reconcile saved reviews, including a video whose Encore award was
+      // previously missed. Completion IDs make this safe on every reopening.
+      await awardRobotsProgress({ npub, course: userLanguage, courseSteps: steps[userLanguage],
+        events: reviewCompletionEvents(userLanguage, stepGroup, updatedModuleProgress),
+      });
     } catch (error) {
-      console.error("Error updating progress:", error);
+      console.error("Error updating review progress:", error);
     }
   };
 
@@ -450,25 +379,11 @@ const LectureModal = ({
   };
 
   useEffect(() => {
-    if (videoDurationDetection) {
-      checkAndUpdateProgress();
+    if (videoDurationDetection || hasViewedSummary || hasPracticedModule) {
+      void checkAndUpdateProgress();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [videoDurationDetection]);
-
-  useEffect(() => {
-    if (hasViewedSummary) {
-      checkAndUpdateProgress();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasViewedSummary]);
-
-  useEffect(() => {
-    if (hasPracticedModule) {
-      checkAndUpdateProgress();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasPracticedModule]);
+  }, [isOpen, userLanguage, step.group, loadedReviewIdentity, videoDurationDetection, hasViewedSummary, hasPracticedModule]);
 
   if (!isOpen) return null;
 
@@ -519,6 +434,7 @@ const LectureModal = ({
             <Box display="flex" justifyContent={"center"}>
               <RiseUpAnimation speed="0.75s">
                 <video
+                  key={reviewIdentity}
                   poster="https://res.cloudinary.com/dtkeyccga/image/upload/v1706481474/Untitled_Desktop_Wallpaper_qrpmgm.png"
                   style={{
                     width: "100%",
@@ -533,10 +449,9 @@ const LectureModal = ({
                   autoPlay={false}
                   ref={videoRef}
                   playsInline
-                  onPlay={handlePlay}
-                  onTimeUpdate={handleVideoTimeUpdate}
-                  onSeeking={() => { lastVideoTimeRef.current = null; }}
-                  onEnded={handleVideoEnded}
+                  onTimeUpdate={handleVideoProgress}
+                  onSeeked={handleVideoProgress}
+                  onEnded={handleVideoProgress}
                 >
                   <source src={transcriptObject.videoSrc} type="video/mp4" />
                   <source src={transcriptObject.videoSrc} type="video/mov" />

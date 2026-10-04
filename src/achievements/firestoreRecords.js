@@ -1,6 +1,7 @@
 import { ACHIEVEMENTS, CATALOG_VERSION } from "./catalog.js";
 import { localizeAchievement } from "./copy.js";
 import { mergeProgressLedgers } from "./progressionRuntime.js";
+import { flashcardEvidenceForLedger } from "./flashcardProgress.js";
 
 export const PROGRESS_SOURCES = ["nosabos", "robotsbuildingeducation"];
 export async function completionDocumentId(metric, id) {
@@ -42,7 +43,10 @@ export function createAchievementPersistence({ database, collection, doc, getDoc
     return progressFromSnapshot(snapshot, source);
   };
   return {
-    evidenceForProgress: (source, ledger) => progressEvidence?.(source, ledger) || [],
+    evidenceForProgress: (source, ledger) => [
+      ...(source === "nosabos" ? flashcardEvidenceForLedger(ledger) : []),
+      ...(progressEvidence?.(source, ledger) || []),
+    ],
     async loadProgress(npub, source) {
       if (!isAchievementAccount(npub) || !PROGRESS_SOURCES.includes(source)) return {};
       const snapshot = await getDocs(collection(database, "users", npub, "achievementProgress", source, "events"));

@@ -11,13 +11,13 @@ test("every requested proficiency track, goal and repair level has a milestone",
   for (const metric of ["phonics_decks", "immersion_checklists", "immersion_tasks"]) assert.ok(Object.values(ACHIEVEMENTS).some(item => item.source === source && item.requirement.metric === metric));
   for (const metric of ["chapters", "review_videos", "review_checklists", "post_course_questions"]) assert.ok(Object.values(ACHIEVEMENTS).some(item => item.source === "robotsbuildingeducation" && item.requirement.metric === metric));
 });
-test("full language course requires every track and exact nonempty totals in one language", () => {
+test("full language course requires complete C2 in every track in one language", () => {
   const complete = fullLanguage();
   assert.ok(earnedProgressionIds(source, complete).includes("piyali_full_curriculum_v4"));
   for (const mode of ["tutor", "skillTree", "flashcards"]) for (const level of PROFICIENCY_LEVELS) {
     const partial = fullLanguage(); partial.levels[mode][levelKey(level)].completed = 99;
-    assert.equal(earnedProgressionIds(source, partial).includes("piyali_full_curriculum_v4"), false);
-    assert.equal(earnedProgressionIds(source, partial).includes(`piyali_${mode}_complete_${levelKey(level)}`), false);
+    assert.equal(earnedProgressionIds(source, partial).includes("piyali_full_curriculum_v4"), level !== "C2");
+    assert.equal(earnedProgressionIds(source, partial).includes(`piyali_${mode}_complete_${levelKey(level)}`), level !== "C2");
   }
   for (const bad of [undefined, { total: 0, completed: 0 }, {total:100,completed:99.99}, {total:100,completed:Infinity}]) {
     const partial = fullLanguage(); partial.levels.tutor.c2 = bad;

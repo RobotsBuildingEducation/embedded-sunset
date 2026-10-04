@@ -761,15 +761,29 @@ const LiveReactEditorModal = ({
                     height="100%"
                     width="100%"
                     maxWidth="100%"
-                    overflow="hidden"
+                    overflowY="auto"
+                    overflowX="auto"
                     boxSizing="border-box"
                     p={mode === "preview" ? 0 : 2}
                     sx={{
+                      WebkitOverflowScrolling: "touch",
+                      scrollbarWidth: "none",
+                      msOverflowStyle: "none",
+                      "&::-webkit-scrollbar": {
+                        display: "none",
+                      },
+                      "& *": {
+                        scrollbarWidth: "none",
+                        msOverflowStyle: "none",
+                      },
+                      "& *::-webkit-scrollbar": {
+                        display: "none",
+                      },
                       "& .react-live-preview": {
                         width: "100%",
                         maxWidth: "100%",
+                        minHeight: "100%",
                         boxSizing: "border-box",
-                        overflowX: "auto",
                       },
                       "& .react-live-preview > *": {
                         maxWidth: "100%",

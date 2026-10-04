@@ -17,6 +17,30 @@ const METRIC_CATEGORIES = {
   solved_questions: "questions", post_course_questions: "questions",
 };
 
+// Keep each series together across difficulty tiers. Use requirement metadata,
+// not translated titles, earned timestamps, or the currently visible subset.
+const CATEGORY_SERIES = {
+  tutor: ["tutor:level_set", "tutorEarnedLevel:level", "tutor_lessons:counter"],
+  skillTree: ["skillTree:level_set", "skill_tree_lessons:counter"],
+  flashcards: ["flashcards:level_set", "flashcards_completed:counter"],
+  conversations: ["conversation_goals:counter"],
+  goals: ["goals:level_counter"],
+  repairs: ["repairs:level_counter"],
+  phonics: ["phonics_decks:counter", "phonics_cards:complete_set"],
+  immersion: ["immersion_checklists:counter", "immersion_tasks:counter"],
+  chapters: ["chapters:chapter_completion", "chapters:counter", "chapters:complete_set"],
+  reviews: ["review_checklists:chapter_review", "review_videos:counter", "review_videos:complete_set", "review_checklists:counter", "review_checklists:complete_set"],
+  questions: ["solved_questions:counter", "post_course_questions:counter"],
+  courseCompletion: [":full_language_course", ":full_coding_course", ":collection"],
+};
+
+function seriesRank(item) {
+  const { metric = "", type } = item.requirement;
+  const rank = CATEGORY_SERIES[transcriptCategory(item)].indexOf(`${metric}:${type}`);
+  if (rank < 0) throw new Error(`Missing transcript series: ${item.id}`);
+  return rank;
+}
+
 export function transcriptCategory(item) {
   const { type, metric } = item.requirement;
   if (["collection", "full_language_course", "full_coding_course"].includes(type)) return "courseCompletion";
@@ -30,7 +54,8 @@ function compareDifficulty(a, b) {
     const rank = TUTOR_LEVELS.indexOf(item.level || item.requirement.level);
     return rank < 0 ? TUTOR_LEVELS.length : rank;
   };
-  return levelRank(a) - levelRank(b) ||
+  return TIERS.indexOf(a.tier) - TIERS.indexOf(b.tier) ||
+    levelRank(a) - levelRank(b) ||
     (a.chapterNumber ?? Infinity) - (b.chapterNumber ?? Infinity) ||
     a.target - b.target || a.number - b.number;
 }
@@ -39,10 +64,8 @@ export function groupTranscriptAchievements(items) {
   return TRANSCRIPT_CATEGORIES.flatMap(category => {
     const categoryItems = items.filter(item => transcriptCategory(item) === category);
     if (!categoryItems.length) return [];
-    return [{ category, tiers: TIERS.flatMap(tier => {
-      const tierItems = categoryItems.filter(item => item.tier === tier).sort(compareDifficulty);
-      return tierItems.length ? [{ tier, items: tierItems }] : [];
-    }) }];
+    return [{ category, items: categoryItems.sort((a, b) =>
+      seriesRank(a) - seriesRank(b) || compareDifficulty(a, b)) }];
   });
 }
 

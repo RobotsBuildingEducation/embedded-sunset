@@ -6,6 +6,7 @@ const localized = (values) => Object.fromEntries(ACHIEVEMENT_LOCALES.map((locale
 const lines = (text) => localized(text.split(" | "));
 
 export const UI_COPY = Object.fromEntries(Object.entries({
+  achievements: "Achievements | Logros | Conquistas | Obiettivi | Succès | Erfolge | 実績 | उपलब्धियाँ | الإنجازات | 成就",
   testUnlock: "Test unlock | Probar desbloqueo | Testar desbloqueio | Prova sblocco | Tester le déblocage | Freischaltung testen | 獲得表示をテスト | अनलॉक परीक्षण | اختبار الفتح | 测试解锁",
   continue: "Continue | Continuar | Continuar | Continua | Continuer | Weiter | 続ける | जारी रखें | متابعة | 继续",
   achievementUnlocked: "Achievement unlocked! | ¡Logro desbloqueado! | Conquista desbloqueada! | Obiettivo sbloccato! | Succès débloqué ! | Erfolg freigeschaltet! | 実績を獲得！ | उपलब्धि अनलॉक! | تم فتح إنجاز! | 成就已解锁！",
@@ -21,7 +22,7 @@ export const UI_COPY = Object.fromEntries(Object.entries({
   completion: "Course completion | Curso completado | Curso concluído | Corso completato | Cours terminé | Kursabschluss | コース修了 | पाठ्यक्रम पूरा | إتمام الدورة | 课程完成",
   all: "All | Todos | Todos | Tutti | Tous | Alle | すべて | सभी | الكل | 全部",
   collected: "Collected | Obtenidos | Conquistados | Ottenuti | Obtenus | Gesammelt | 獲得済み | प्राप्त | المُجمّعة | 已收集",
-  locked: "To discover | Por descubrir | A descobrir | Da scoprire | À découvrir | Noch zu entdecken | 未獲得 | अभी बाकी | بانتظار الاكتشاف | 待解锁",
+  locked: "Locked | Bloqueados | Bloqueados | Bloccati | Verrouillés | Gesperrt | ロック中 | लॉक | المقفلة | 未解锁",
   unlocked: "Unlocked | Desbloqueado | Desbloqueado | Sbloccato | Débloqué | Freigeschaltet | 獲得済み | अनलॉक | تم الفتح | 已解锁",
   requirement: "Completion requirement | Requisito de finalización | Requisito de conclusão | Requisito di completamento | Condition de réussite | Abschlussanforderung | 修了条件 | पूर्णता की शर्त | شرط الإتمام | 完成条件",
   earnedRequirement: "Completed learning | Aprendizaje completado | Aprendizagem concluída | Apprendimento completato | Apprentissage terminé | Abgeschlossene Lerninhalte | 完了した学び | पूरा किया गया सीखना | التعلّم المكتمل | 已完成的学习",

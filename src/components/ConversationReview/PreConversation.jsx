@@ -132,6 +132,7 @@ const CodeBlock = ({ inline, className, children, ...props }) => {
         code={String(children).replace(/\n$/, "")}
         hideRunButton={hideRunButton}
         autoRun={autoRun}
+        previewHeight={{ base: "420px", md: "500px" }}
       />
     </Suspense>
   ) : (
