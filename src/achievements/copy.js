@@ -32,6 +32,8 @@ export const UI_COPY = Object.fromEntries(Object.entries({
   empty: "Your transcript grows as you complete lessons, levels and courses. | Tu historial crece al completar lecciones, niveles y cursos. | Seu histórico cresce ao concluir lições, níveis e cursos. | Il tuo registro cresce completando lezioni, livelli e corsi. | Votre relevé grandit à chaque leçon, niveau et cours terminé. | Dein Lernnachweis wächst mit abgeschlossenen Lektionen, Stufen und Kursen. | レッスン、レベル、コースを修了すると記録が増えていきます。 | पाठ, स्तर और पाठ्यक्रम पूरे करने पर आपका रिकॉर्ड बढ़ता है। | ينمو سجلك بإتمام الدروس والمستويات والدورات. | 完成课时、等级和课程，逐步丰富你的学习记录。",
   close: "Close | Cerrar | Fechar | Chiudi | Fermer | Schließen | 閉じる | बंद करें | إغلاق | 关闭",
   sync: "Sync | Sincronizar | Sincronizar | Sincronizza | Synchroniser | Synchronisieren | 同期 | सिंक करें | مزامنة | 同步",
+  syncPending: "Sync pending | Sincronización pendiente | Sincronização pendente | Sincronizzazione in sospeso | Synchronisation en attente | Synchronisierung ausstehend | 同期待ち | सिंक लंबित है | المزامنة معلّقة | 等待同步",
+  storageWarning: "Device storage unavailable. Keep the app open until sync finishes. | El almacenamiento del dispositivo no está disponible. Mantén la app abierta hasta que termine la sincronización. | Armazenamento do dispositivo indisponível. Mantenha o app aberto até a sincronização terminar. | Memoria del dispositivo non disponibile. Tieni aperta l’app fino al termine della sincronizzazione. | Stockage de l’appareil indisponible. Gardez l’app ouverte jusqu’à la fin de la synchronisation. | Gerätespeicher nicht verfügbar. Lass die App geöffnet, bis die Synchronisierung abgeschlossen ist. | 端末に保存できません。同期が完了するまでアプリを開いたままにしてください。 | डिवाइस पर सेव नहीं हो रहा। सिंक पूरा होने तक ऐप खुला रखें। | تخزين الجهاز غير متاح. أبقِ التطبيق مفتوحًا حتى تكتمل المزامنة. | 设备存储不可用。请保持应用打开，直到同步完成。",
   syncDone: "Collection refreshed | Colección actualizada | Coleção atualizada | Collezione aggiornata | Collection actualisée | Sammlung aktualisiert | コレクションを更新しました | संग्रह अपडेट हुआ | تم تحديث المجموعة | 成就集已更新",
   syncError: "Could not sync. Your local collection is saved. | No se pudo sincronizar. Tu colección local está guardada. | Não foi possível sincronizar. Sua coleção local está salva. | Sincronizzazione non riuscita. La collezione locale è salvata. | Synchronisation impossible. Votre collection locale est enregistrée. | Synchronisierung fehlgeschlagen. Deine lokale Sammlung ist gespeichert. | 同期できませんでした。端末のコレクションは保存されています。 | सिंक नहीं हो सका। आपका स्थानीय संग्रह सुरक्षित है। | تعذّرت المزامنة. مجموعتك المحلية محفوظة. | 同步失败，本地成就集已保存。",
   local: "Saved on this device | Guardado en este dispositivo | Salvo neste dispositivo | Salvato su questo dispositivo | Enregistré sur cet appareil | Auf diesem Gerät gespeichert | この端末に保存 | इस डिवाइस पर सेव है | محفوظة على هذا الجهاز | 已保存在此设备",
@@ -53,6 +55,21 @@ export const UI_COPY = Object.fromEntries(Object.entries({
   chapter: "Path | Camino | Caminho | Percorso | Parcours | Lernpfad | 学習パス | सीखने का पथ | المسار | 路径",
   collectionLabel: "{count} of {total} collected | {count} de {total} obtenidos | {count} de {total} conquistados | {count} di {total} ottenuti | {count} sur {total} obtenus | {count} von {total} gesammelt | {total}個中{count}個獲得 | {total} में से {count} प्राप्त | {count} من {total} مُجمّعة | 已收集 {count} / {total}",
   awardError: "Could not award this reward. Try again. | No se pudo otorgar el logro. Inténtalo de nuevo. | Não foi possível conceder a conquista. Tente novamente. | Impossibile assegnare il premio. Riprova. | Impossible d’attribuer la récompense. Réessayez. | Der Erfolg konnte nicht vergeben werden. Versuche es erneut. | 報酬を付与できませんでした。もう一度お試しください。 | पुरस्कार नहीं दिया जा सका। फिर कोशिश करें। | تعذّر منح المكافأة. حاول مجددًا. | 无法授予奖励，请重试。",
+}).map(([key, value]) => [key, lines(value)]));
+
+export const CATEGORY_COPY = Object.fromEntries(Object.entries({
+  tutor: "Tutor lessons | Lecciones del tutor | Lições do tutor | Lezioni del tutor | Leçons du tuteur | Tutor-Lektionen | チューターレッスン | ट्यूटर पाठ | دروس المعلّم | 导师课程",
+  skillTree: "Skill tree | Árbol de habilidades | Árvore de habilidades | Albero delle abilità | Arbre de compétences | Fertigkeitenbaum | スキルツリー | कौशल वृक्ष | شجرة المهارات | 技能树",
+  flashcards: "Flashcards | Tarjetas | Cartões | Schede | Cartes mémoire | Lernkarten | 単語カード | शब्द कार्ड | البطاقات التعليمية | 单词卡",
+  conversations: "Conversations | Conversaciones | Conversas | Conversazioni | Conversations | Gespräche | 会話 | बातचीत | المحادثات | 会话",
+  goals: "Personal goals | Metas personales | Metas pessoais | Obiettivi personali | Objectifs personnels | Persönliche Ziele | 個人目標 | व्यक्तिगत लक्ष्य | الأهداف الشخصية | 个人目标",
+  repairs: "Repair practice | Práctica de reparación | Prática de recuperação | Pratica di recupero | Remédiation | Förderpraxis | 弱点克服の練習 | सुधार अभ्यास | ممارسة العلاج | 修复练习",
+  phonics: "Phonics | Fonética | Fonética | Fonetica | Phonétique | Aussprache | 発音 | उच्चारण | الصوتيات | 语音",
+  immersion: "Immersion | Inmersión | Imersão | Immersione | Immersion | Immersion | イマージョン | इमर्शन | الانغماس | 沉浸",
+  chapters: "Chapters | Capítulos | Capítulos | Capitoli | Chapitres | Kapitel | チャプター | अध्याय | الفصول | 章节",
+  reviews: "Chapter reviews | Repasos de capítulos | Revisões de capítulos | Ripassi dei capitoli | Révisions des chapitres | Kapitelwiederholungen | チャプター復習 | अध्याय समीक्षा | مراجعات الفصول | 章节复习",
+  questions: "Coding questions | Preguntas de programación | Questões de programação | Domande di programmazione | Questions de programmation | Programmieraufgaben | プログラミング問題 | प्रोग्रामिंग प्रश्न | أسئلة البرمجة | 编程问题",
+  courseCompletion: "Course completion | Curso completado | Curso concluído | Corso completato | Cours terminé | Kursabschluss | コース修了 | पाठ्यक्रम पूरा | إتمام الدورة | 课程完成",
 }).map(([key, value]) => [key, lines(value)]));
 
 export const FAMILY_COPY = Object.fromEntries(Object.entries({

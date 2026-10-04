@@ -14,7 +14,6 @@ import {
   AccordionIcon,
   Switch,
   Progress,
-  useDisclosure,
 } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import { GiBullseye } from "react-icons/gi";
@@ -50,9 +49,6 @@ const KnowledgeLedgerOnboarding = lazy(() =>
   import("./components/KnowledgeLedgerOnboarding/KnowledgeLedgerOnboarding"),
 );
 import { Image } from "@chakra-ui/image";
-import AwardModalOnboarding from "./components/AwardModalOnboarding/AwardModalOnboarding";
-import { onboardingTranscript } from "./utility/transcript";
-import { useSharedNostr } from "./hooks/useNOSTR";
 import WaveBar from "./components/WaveBar";
 import { soundManager } from "./utility/soundManager";
 
@@ -74,10 +70,6 @@ export const Onboarding = ({
   userLanguage,
   setCurrentStep,
 }) => {
-  const { assignExistingBadgeToNpub } = useSharedNostr(
-    localStorage.getItem("local_npub"),
-    localStorage.getItem("local_nsec"),
-  );
   const { step } = useParams();
   const [interval, setInterval] = useState(2880);
   const navigate = useNavigate();
@@ -88,21 +80,9 @@ export const Onboarding = ({
     soundManager.play("next");
   };
 
-  const {
-    isOpen: isAwardModalOpen,
-    onOpen: onAwardModalOpen,
-    onClose: onAwardModalClose,
-  } = useDisclosure();
-
   const handleActuallyLaunchApp = () => {
     playOnboardingChord();
-    // setOnboardingToDone(localStorage.getItem("local_npub"));
-    assignExistingBadgeToNpub(
-      onboardingTranscript["name"][userLanguage].replace(/ /g, "-"),
-    );
-
-    // navigate("/q/0");
-    onAwardModalOpen();
+    handleActuallyReallySeriouslyLaunchApp();
   };
 
   const handleActuallyReallySeriouslyLaunchApp = () => {
@@ -1113,18 +1093,7 @@ export const Onboarding = ({
         </Box>
       )}
 
-      {isAwardModalOpen ? (
-        <AwardModalOnboarding
-          isOpen={isAwardModalOpen}
-          onClose={onAwardModalClose}
-          // educationalMessages={educationalMessages}
-          // educationalContent={educationalContent}
-          userLanguage={userLanguage}
-          handleActuallyReallySeriouslyLaunchApp={
-            handleActuallyReallySeriouslyLaunchApp
-          }
-        />
-      ) : null}
+
     </Box>
   );
 };

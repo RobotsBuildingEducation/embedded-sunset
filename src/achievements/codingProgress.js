@@ -1,4 +1,10 @@
 import { solvedQuestionCount } from "./learningCounts.js";
+export function codingEvidenceForLedger(courseMap, ledger, videoGroups) {
+  const courses = new Set(["course_steps", "review_videos", "review_checklists"].flatMap(metric =>
+    Object.keys(ledger[metric] || {}).map(id => id.split(":")[0])));
+  return [...courses].filter(course => courseMap[course]?.length).map(course =>
+    codingCourseEvidence(course, courseMap[course], ledger, videoGroups));
+}
 // Numeric legacy step IDs do not identify a course. New completion events use
 // course-prefixed IDs, and chapter totals come from the current manifest.
 export function codingCourseEvidence(course, courseSteps, ledger, videoGroups) {

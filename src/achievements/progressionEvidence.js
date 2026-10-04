@@ -47,7 +47,7 @@ export function longestCalendarStreak(days = []) {
 }
 
 // Only finite event IDs survive. The identity/source-specific ledger is a
-// local history of completion evidence, never published practice/private text.
+// completion history contains IDs only, never practice/private text.
 export function addProgressEvents(ledger = {}, events = []) {
   const next = { ...ledger };
   for (const event of events) {

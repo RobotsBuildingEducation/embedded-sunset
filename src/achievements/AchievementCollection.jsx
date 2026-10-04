@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Badge, Box, Button, Flex, HStack, Modal, ModalBody, ModalCloseButton,
-  ModalContent, ModalFooter, ModalHeader, ModalOverlay, SimpleGrid,
+  ModalContent, ModalFooter, ModalOverlay, SimpleGrid,
   Text, VStack, useColorMode,
 } from "@chakra-ui/react";
 import { motion, useReducedMotion } from "framer-motion";
 import { SORTED_ACHIEVEMENTS, normalizeAchievementLocale } from "./catalog.js";
 import { achievementText, localizeAchievement } from "./copy.js";
+import { transcriptSections } from "./transcriptGroups.js";
 import AchievementOrb from "./AchievementOrb.jsx";
-import { useAchievementUnlock } from "./useAchievementUnlock.js";
+import { useAchievementUnlock, useAchievementSyncStatus } from "./useAchievementUnlock.js";
 
 const MotionG = motion.g;
 
@@ -221,6 +222,7 @@ export default function AchievementCollection({
   const epoch = useRef(0);
   const identity = services?.resolveEffectiveIdentity?.(npub) || { npub: "" };
   const effectiveNpub = identity.npub;
+  const syncState = useAchievementSyncStatus(effectiveNpub);
 
   const items = useMemo(() => SORTED_ACHIEVEMENTS.map(item => localizeAchievement(item, locale)), [locale]);
 
@@ -262,7 +264,7 @@ export default function AchievementCollection({
 
   const currentTabItems = activeTab === "robotsbuildingeducation" ? robotsItems : piyaliItems;
   const currentCompletedList = activeTab === "robotsbuildingeducation" ? robotsCompleted : piyaliCompleted;
-  const currentUncompletedList = useMemo(() => currentTabItems.filter(item => !unlocked[item.id]), [currentTabItems, unlocked]);
+  const sections = useMemo(() => transcriptSections(currentTabItems, unlocked), [currentTabItems, unlocked]);
 
   const tabTotal = currentTabItems.length;
   const tabCount = currentCompletedList.length;
@@ -275,17 +277,21 @@ export default function AchievementCollection({
       <ModalOverlay bg={themeColors.modalOverlay} backdropFilter="blur(12px)" />
       <ModalContent
         className="achievement-collection"
+        aria-label={t("title")}
         dir={locale === "ar" ? "rtl" : "ltr"}
         lang={locale}
         bg={themeColors.modalBg}
         color={themeColors.textPrimary}
         border="1px solid"
         borderColor={themeColors.border}
-        borderRadius={{ base: "0", md: "28px" }}
-        mx={{ base: 0, md: 5 }}
+        borderRadius={{ base: "24px", md: "28px" }}
+        w={{ base: "95vw", md: "calc(100% - 40px)" }}
+        maxW={{ base: "95vw", md: "4xl" }}
+        mx="auto"
         my={{ base: 0, md: 6 }}
-        maxH={{ base: "100dvh", md: "92dvh" }}
-        minH={{ base: "100dvh", md: "auto" }}
+        h={{ base: "90dvh", md: "auto" }}
+        maxH={{ base: "90dvh", md: "92dvh" }}
+        overflow="hidden"
       >
         <ModalCloseButton
           aria-label={t("close")}
@@ -295,26 +301,25 @@ export default function AchievementCollection({
           color={themeColors.textSecondary}
           _hover={{ bg: themeColors.badgeUncompletedBg }}
         />
-        <ModalHeader
-          px={{ base: 5, md: 7 }}
-          pt={6}
-          pb={4}
-          pr={locale === "ar" ? 7 : 14}
-          pl={locale === "ar" ? 14 : 7}
-        >
-          <Text as="h2" fontSize={{ base: "22px", md: "28px" }} fontWeight="700" letterSpacing="-.03em" color={themeColors.textPrimary}>
-            {t("title")}
-          </Text>
-          <Text fontWeight="400" fontSize="sm" color={themeColors.textSecondary} mt={1}>
-            {t("subtitle")}
-          </Text>
-        </ModalHeader>
+        <Box h="56px" flexShrink={0} />
 
-        <ModalBody px={{ base: 5, md: 7 }} pb={5}>
+        <ModalBody className="achievement-collection-body" minH={0} px={{ base: 4, md: 7 }} pb={5}>
+          <Box as="header" className="achievement-collection-header" mb={5}>
+            <Text as="h2" fontSize={{ base: "22px", md: "28px" }} fontWeight="700" letterSpacing="-.03em" color={themeColors.textPrimary}>
+              {t("title")}
+            </Text>
+            <Text fontWeight="400" fontSize="sm" color={themeColors.textSecondary} mt={1}>
+              {t("subtitle")}
+            </Text>
+          </Box>
+
           {/* Two tabs: Piyali & Robots Building Education */}
-          <HStack spacing={3} mb={6}>
+          <HStack spacing={3} mb={6} align="stretch">
             <Button
               flex="1"
+              minW={0}
+              h="auto"
+              whiteSpace="normal"
               py={3}
               px={4}
               borderRadius="16px"
@@ -328,10 +333,13 @@ export default function AchievementCollection({
               boxShadow={activeTab === "nosabos" ? (isLight ? "0 4px 12px rgba(15, 23, 42, 0.12)" : "0 4px 14px rgba(0, 0, 0, 0.3)") : "none"}
               transition="all 0.2s ease"
             >
-              <Text fontSize="sm" fontWeight="700">Piyali</Text>
+              <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="700">Piyali</Text>
             </Button>
             <Button
               flex="1"
+              minW={0}
+              h="auto"
+              whiteSpace="normal"
               py={3}
               px={4}
               borderRadius="16px"
@@ -345,117 +353,66 @@ export default function AchievementCollection({
               boxShadow={activeTab === "robotsbuildingeducation" ? (isLight ? "0 4px 12px rgba(15, 23, 42, 0.12)" : "0 4px 14px rgba(0, 0, 0, 0.3)") : "none"}
               transition="all 0.2s ease"
             >
-              <Text fontSize="sm" fontWeight="700">Robots Building Education</Text>
+              <Text fontSize={{ base: "xs", md: "sm" }} fontWeight="700">Robots Building Education</Text>
             </Button>
           </HStack>
 
-          {/* Section 1: Completed Achievements */}
-          {currentCompletedList.length > 0 && (
-            <Box mb={6}>
-              <Flex align="center" gap={2} mb={3}>
-                <Text as="h3" fontSize="sm" fontWeight="700" letterSpacing="0.04em" textTransform="uppercase" color={themeColors.textPrimary}>
-                  {t("completed")}
+          {sections.map(({ status, count, groups }) => (
+            <Box as="section" key={status} mb={7} aria-label={t(status)}>
+              <Flex align="center" gap={2} mb={4}>
+                <Text as="h3" fontSize="xl" fontWeight="700" color={themeColors.textPrimary}>
+                  {t(status)}
                 </Text>
-                <Badge
-                  borderRadius="full"
-                  px={2.5}
-                  py={0.5}
-                  fontSize="xs"
-                  fontWeight="700"
-                  bg={themeColors.badgeCompletedBg}
-                  color={themeColors.badgeCompletedColor}
-                  border="1px solid"
-                  borderColor="rgba(234, 179, 8, 0.4)"
-                >
-                  {format(currentCompletedList.length)}
+                <Badge borderRadius="full" px={2.5}
+                  bg={status === "unlocked" ? themeColors.badgeCompletedBg : themeColors.badgeUncompletedBg}
+                  color={status === "unlocked" ? themeColors.badgeCompletedColor : themeColors.badgeUncompletedColor}>
+                  {format(count)}
                 </Badge>
               </Flex>
+              {count === 0 && status === "unlocked" && (
+                <Text color={themeColors.textSecondary} fontSize="sm" mb={4}>{t("empty")}</Text>
+              )}
               <SimpleGrid columns={{ base: 2, sm: 3, md: 4 }} spacing={3}>
-                {currentCompletedList.map(item => (
-                  <Box
-                    key={item.id}
-                    className="achievement-card is-completed"
-                    bg={themeColors.cardBgCompleted}
-                    border="2px solid"
-                    borderColor={themeColors.cardBorderCompleted}
-                    borderRadius="18px"
-                    p={3.5}
-                    boxShadow={themeColors.cardShadowCompleted}
-                    display="flex"
-                    flexDirection="column"
-                    alignItems="center"
-                    textAlign="center"
-                    aria-label={`${item.title}. ${item.desc}`}
-                  >
-                    <Flex justify="center" align="center" my={1} w="76px" h="76px">
-                      <AchievementOrb achievement={item} size={76} />
-                    </Flex>
-                    <Text fontSize="12px" fontWeight="700" lineHeight="1.3" color={themeColors.textPrimary} mt={2} mb={1} noOfLines={2}>
-                      {item.title}
-                    </Text>
-                    <Text fontSize="10px" lineHeight="1.4" color={themeColors.textSecondary} noOfLines={3}>
-                      {item.desc}
-                    </Text>
-                  </Box>
-                ))}
+                {groups.flatMap(({ tiers }) => tiers.flatMap(({ items }) => items)).map(item => {
+                  const completed = Boolean(unlocked[item.id]);
+                  const status = unlocked[item.id]?.test ? "testAward" : completed ? "completed" : "uncompleted";
+                  return (
+                    <Box
+                      key={item.id}
+                      className={`achievement-card ${completed ? "is-completed" : "is-locked"}`}
+                      bg={completed ? themeColors.cardBgCompleted : themeColors.cardBgUncompleted}
+                      border={completed ? "2px solid" : "1px solid"}
+                      borderColor={completed ? themeColors.cardBorderCompleted : themeColors.cardBorderUncompleted}
+                      borderRadius="18px"
+                      p={3.5}
+                      boxShadow={completed ? themeColors.cardShadowCompleted : "none"}
+                      display="flex"
+                      flexDirection="column"
+                      alignItems="center"
+                      textAlign="center"
+                      minW={0}
+                      aria-label={`${item.title}. ${item.desc} ${t(status)}`}
+                    >
+                      <Flex justify="center" align="center" my={1} w="76px" h="76px">
+                        <AchievementOrb achievement={item} size={76} />
+                      </Flex>
+                      <Text fontSize="12px" fontWeight="700" lineHeight="1.3" color={themeColors.textPrimary} mt={2} mb={1}>
+                        {item.title}
+                      </Text>
+                      <Text fontSize="10px" lineHeight="1.4" color={themeColors.textSecondary}>
+                        {item.desc}
+                      </Text>
+                      <Badge mt={2} borderRadius="full" px={2} whiteSpace="normal"
+                        bg={completed ? themeColors.badgeCompletedBg : themeColors.badgeUncompletedBg}
+                        color={completed ? themeColors.badgeCompletedColor : themeColors.badgeUncompletedColor}>
+                        {t(status)}
+                      </Badge>
+                    </Box>
+                  );
+                })}
               </SimpleGrid>
             </Box>
-          )}
-
-          {/* Section 2: Uncompleted Achievements */}
-          <Box mb={4}>
-            <Flex align="center" gap={2} mb={3}>
-              <Text as="h3" fontSize="sm" fontWeight="700" letterSpacing="0.04em" textTransform="uppercase" color={themeColors.textMuted}>
-                {t("uncompleted")}
-              </Text>
-              <Badge
-                borderRadius="full"
-                px={2.5}
-                py={0.5}
-                fontSize="xs"
-                fontWeight="700"
-                bg={themeColors.badgeUncompletedBg}
-                color={themeColors.badgeUncompletedColor}
-              >
-                {format(currentUncompletedList.length)}
-              </Badge>
-            </Flex>
-            <SimpleGrid columns={{ base: 2, sm: 3, md: 4 }} spacing={3}>
-              {currentUncompletedList.map(item => (
-                <Box
-                  key={item.id}
-                  className="achievement-card is-locked"
-                  bg={themeColors.cardBgUncompleted}
-                  border="1px solid"
-                  borderColor={themeColors.cardBorderUncompleted}
-                  borderRadius="18px"
-                  p={3.5}
-                  display="flex"
-                  flexDirection="column"
-                  alignItems="center"
-                  textAlign="center"
-                  filter="grayscale(100%)"
-                  opacity={0.65}
-                  aria-label={`${item.title}. ${item.desc}`}
-                >
-                  <Flex justify="center" align="center" my={1} w="76px" h="76px" opacity={0.5}>
-                    <AchievementOrb achievement={item} size={76} />
-                  </Flex>
-                  <Text fontSize="12px" fontWeight="600" lineHeight="1.3" color={themeColors.textMuted} mt={2} mb={1} noOfLines={2}>
-                    {item.title}
-                  </Text>
-                  <Text fontSize="10px" lineHeight="1.4" color={themeColors.textMuted} noOfLines={3}>
-                    {item.desc}
-                  </Text>
-                </Box>
-              ))}
-            </SimpleGrid>
-            {currentUncompletedList.length === 0 && (
-              <Text color={themeColors.textSecondary} fontSize="sm" py={6} textAlign="center">
-                {t("empty")}
-              </Text>
-            )}
-          </Box>
+          ))}
         </ModalBody>
 
         {/* Footer: Only dynamic progress bar changing based on active tab */}
@@ -465,10 +422,15 @@ export default function AchievementCollection({
           borderTop="1px solid"
           borderColor={themeColors.border}
           bg={themeColors.footerBg}
-          borderBottomRadius={{ base: "0", md: "28px" }}
+          borderBottomRadius={{ base: "24px", md: "28px" }}
           display="block"
         >
           <VStack w="100%" spacing={2} align="stretch">
+            {(syncState.pending || syncState.storageError) && (
+              <Text role="status" aria-live="polite" fontSize="xs" color={themeColors.textSecondary}>
+                {t(syncState.storageError ? "storageWarning" : "syncPending")}
+              </Text>
+            )}
             <Flex justify="space-between" align="center">
               <Text fontSize="xs" fontWeight="600" color={themeColors.textSecondary}>
                 {t("collectionLabel", { count: format(tabCount), total: format(tabTotal) })}

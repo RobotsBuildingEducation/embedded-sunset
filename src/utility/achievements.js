@@ -1,7 +1,10 @@
 import { earnedProgressionIds, meetsProgressionRequirement } from "../achievements/progressionEvidence.js";
 import { unlockStore } from "../achievements/unlockStore.js";
-import { createBackgroundSync } from "../achievements/backgroundSync.js";
-import { progressionSnapshot } from "../achievements/progressionRuntime.js";
+import { createRetrySync } from "../achievements/retrySync.js";
+import { localJournal } from "../achievements/localJournal.js";
+import { syncStatus } from "../achievements/syncStatus.js";
+import { withSyncDeadline, confirmRelayPublish, createSingleFlight } from "../achievements/syncDeadline.js";
+import { progressionSnapshot, readProgressLedger, mergeStoredProgress, restoreProgressJournal, subscribeProgress, refreshProgressRevision } from "../achievements/progressionRuntime.js";
 import { ACHIEVEMENTS, CATALOG_VERSION, completeCollectionAwards, earnedTutorAchievementIds, hasEarnedRequirement, hasCompletedCourses, isCatalogAchievement } from "../achievements/catalog.js";
 export { ACHIEVEMENTS } from "../achievements/catalog.js";
 import { finalizeEvent, getPublicKey, nip19, SimplePool, verifyEvent } from "nostr-tools";
@@ -19,7 +22,94 @@ const LOCAL_STORAGE_KEY_PREFIX = "learning_achievements_v1_";
 const QUERY_TIMEOUT_MS = 6000;
 const hasBrowserStorage = () => typeof window !== "undefined" && Boolean(window.document);
 const persistence = () => import("../achievements/hostPersistence.js").then(module => module.achievementPersistence);
-const scheduleAchievementSync = createBackgroundSync(npub => syncAchievements(npub));
+const PROGRESS_SOURCES = ["nosabos", "robotsbuildingeducation"];
+const retryOptions = channel => ({ journal: localJournal, channel,
+  onStatus: (npub, pending) => syncStatus.set(npub, channel, pending),
+  onError: error => console.warn(`Achievement ${channel} sync pending:`, error) });
+const cloudSync = createRetrySync(syncCloudAchievements, retryOptions("cloud"));
+const relaySync = createRetrySync(npub => syncAchievements(npub, { strict: true }), retryOptions("relay"));
+const signerRequest = createSingleFlight();
+const scheduleAchievementSync = npub => { cloudSync.schedule(npub); relaySync.schedule(npub); };
+subscribeProgress(npub => { if (hasBrowserStorage()) cloudSync.schedule(npub); });
+
+const hydrated = new Map();
+const storedKey = key => { try { return localStorage.getItem(key) || ""; } catch { return ""; } };
+async function hydrateAchievementJournal(npub) {
+  if (!hydrated.has(npub)) hydrated.set(npub, (async () => {
+    const before = getStoredAchievements(npub);
+    await localJournal.restore(`${LOCAL_STORAGE_KEY_PREFIX}${npub || "guest"}`, mergeAchievementMaps);
+    await Promise.all(PROGRESS_SOURCES.map(source => restoreProgressJournal(npub, source)));
+    if (JSON.stringify(before) !== JSON.stringify(getStoredAchievements(npub))) unlockStore.recordsChanged();
+  })());
+  await hydrated.get(npub);
+}
+
+async function evaluateRestoredProgress(npub, adapter) {
+  for (const source of PROGRESS_SOURCES) {
+    await awardProgressionAchievements({ npub, source });
+    for (const evidence of adapter?.evidenceForProgress(source, readProgressLedger(npub, source)) || []) {
+      await awardProgressionAchievements({ npub, source, evidence });
+    }
+  }
+}
+
+async function syncCloudAchievements(npub) {
+  await withSyncDeadline(hydrateAchievementJournal(npub));
+  const adapter = await persistence();
+  const [remoteAwards, ...remoteProgress] = await withSyncDeadline(Promise.all([
+    adapter.load(npub), ...PROGRESS_SOURCES.map(source => adapter.loadProgress(npub, source)),
+  ]));
+  // Read local state after the network returns: a task may finish during it.
+  const current = getStoredAchievements(npub);
+  const merged = completeCourseAward(mergeAchievementMaps(current, remoteAwards));
+  storeAchievements(npub, merged, { schedule: false });
+  if (JSON.stringify(current) !== JSON.stringify(merged)) relaySync.schedule(npub);
+  PROGRESS_SOURCES.forEach((source, index) => mergeStoredProgress(npub, source, remoteProgress[index]));
+  await evaluateRestoredProgress(npub, adapter);
+  const awards = getStoredAchievements(npub);
+  const ledgers = PROGRESS_SOURCES.map(source => readProgressLedger(npub, source));
+  await withSyncDeadline(Promise.all([
+    adapter.save(npub, awards),
+    ...PROGRESS_SOURCES.map((source, index) => adapter.saveProgress(npub, source, ledgers[index])),
+  ]));
+  localJournal.confirmRemoteSave(`${LOCAL_STORAGE_KEY_PREFIX}${npub}`, awards);
+  PROGRESS_SOURCES.forEach((source, index) => localJournal.confirmRemoteSave(`learning_achievement_progress_v4:${npub}:${source}`, ledgers[index]));
+}
+
+export function resumeAchievementSync(npub) {
+  if (!npub || !hasBrowserStorage()) return;
+  cloudSync.resume(npub); relaySync.resume(npub);
+}
+export function pauseAchievementSync(npub) { cloudSync.pause(npub); relaySync.pause(npub); }
+export function receiveAchievementStorage(npub, event) {
+  if (!npub || !event.newValue) return;
+  try {
+    if (event.key === `${LOCAL_STORAGE_KEY_PREFIX}${npub}`) {
+      storeAchievements(npub, mergeAchievementMaps(getStoredAchievements(npub), JSON.parse(event.newValue)));
+      unlockStore.recordsChanged();
+    }
+    for (const source of PROGRESS_SOURCES) {
+      if (event.key !== `learning_achievement_progress_v4:${npub}:${source}`) continue;
+      mergeStoredProgress(npub, source, JSON.parse(event.newValue));
+      refreshProgressRevision(npub, source);
+      void evaluateRestoredProgress(npub).catch(error => console.warn("Achievement tab progress:", error));
+    }
+  } catch { /* Ignore unrelated/malformed browser storage events. */ }
+}
+export function watchAchievementProgress(npub) {
+  let disposed = false;
+  const unsubscribe = [];
+  if (npub && hasBrowserStorage()) {
+    void persistence().then(adapter => {
+      if (disposed) return;
+      for (const source of PROGRESS_SOURCES) unsubscribe.push(adapter.watchProgress(npub, source, ledger => {
+        mergeStoredProgress(npub, source, ledger);
+        void evaluateRestoredProgress(npub, adapter).catch(error => console.warn("Achievement restored progress:", error));
+      }, () => cloudSync.schedule(npub)));
+    }).catch(() => cloudSync.schedule(npub));
+  }
+  return () => { disposed = true; unsubscribe.forEach(stop => stop()); };
+}
 
 export const pubkeyFromNpub = (npub) => {
   if (!npub) return "";
@@ -37,9 +127,9 @@ export const resolveEffectiveIdentity = (providedNpub) => {
   }
 
   let npub = (providedNpub || "").trim();
-  const storedNpub = (localStorage.getItem("local_npub") || "").trim();
-  const storedNsec = (localStorage.getItem("local_nsec") || "").trim();
-  const isNip07 = localStorage.getItem("nip07_signer") === "true" || storedNsec === "nip07";
+  const storedNpub = storedKey("local_npub").trim();
+  const storedNsec = storedKey("local_nsec").trim();
+  const isNip07 = storedKey("nip07_signer") === "true" || storedNsec === "nip07";
 
   if (!npub) {
     if (storedNpub) {
@@ -142,30 +232,19 @@ export const getStoredAchievements = (npub) => {
   if (typeof window === "undefined") return {};
   const { npub: effectiveNpub } = resolveEffectiveIdentity(npub);
   const effectiveKey = effectiveNpub || "guest";
-  try {
-    const raw = localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${effectiveKey}`);
-    return raw ? mergeAchievementMaps(JSON.parse(raw)) : {};
-  } catch {
-    return {};
-  }
+  return mergeAchievementMaps(localJournal.read(`${LOCAL_STORAGE_KEY_PREFIX}${effectiveKey}`));
 };
 
-export const storeAchievements = (npub, unlockedMap) => {
+export const storeAchievements = (npub, unlockedMap, { schedule = true } = {}) => {
   if (typeof window === "undefined") return;
   const { npub: effectiveNpub } = resolveEffectiveIdentity(npub);
   const effectiveKey = effectiveNpub || "guest";
-  try {
-    localStorage.setItem(
-      `${LOCAL_STORAGE_KEY_PREFIX}${effectiveKey}`,
-      JSON.stringify(unlockedMap)
-    );
-  } catch {
-    // quota exceeded or private mode
+  const current = getStoredAchievements(effectiveNpub);
+  if (JSON.stringify(current) !== JSON.stringify(unlockedMap)) {
+    void localJournal.write(`${LOCAL_STORAGE_KEY_PREFIX}${effectiveKey}`, unlockedMap);
+    unlockStore.recordsChanged();
   }
-  unlockStore.recordsChanged();
-  if (hasBrowserStorage() && effectiveNpub) {
-    void persistence().then(adapter => adapter.save(effectiveNpub, unlockedMap)).catch(error => console.warn("Achievement save:", error));
-  }
+  if (schedule && hasBrowserStorage() && effectiveNpub) scheduleAchievementSync(effectiveNpub);
 };
 
 export const buildAchievementEvent = (unlockedMap) => ({
@@ -198,12 +277,8 @@ export const parseAchievementEvent = (event) => {
 export async function restoreAchievements(npub) {
   const { npub: effectiveNpub } = resolveEffectiveIdentity(npub);
   if (hasBrowserStorage() && effectiveNpub) {
-    const saved = await (await persistence()).load(effectiveNpub);
-    const current = getStoredAchievements(effectiveNpub);
-    const merged = completeCourseAward(mergeAchievementMaps(current, saved));
-    storeAchievements(effectiveNpub, merged);
-    if (JSON.stringify(current) !== JSON.stringify(merged)) scheduleAchievementSync(effectiveNpub);
-    return merged;
+    await hydrateAchievementJournal(effectiveNpub);
+    cloudSync.schedule(effectiveNpub);
   }
   return getStoredAchievements(effectiveNpub);
 }
@@ -221,7 +296,7 @@ export function syncAchievements(npub, options = {}) {
 async function syncAccountAchievements(effectiveNpub, { strict = false } = {}) {
   const hex = pubkeyFromNpub(effectiveNpub);
   let localMap = completeCourseAward(getStoredAchievements(effectiveNpub));
-  storeAchievements(effectiveNpub, localMap);
+  storeAchievements(effectiveNpub, localMap, { schedule: false });
   if (!hex) return localMap;
 
   const pool = new SimplePool();
@@ -235,7 +310,9 @@ async function syncAccountAchievements(effectiveNpub, { strict = false } = {}) {
     if (event && verifyEvent(event)) {
       const remoteUnlocked = parseAchievementEvent(event) || {};
       localMap = completeCourseAward(mergeAchievementMaps(getStoredAchievements(effectiveNpub), remoteUnlocked));
-      storeAchievements(effectiveNpub, localMap);
+      const before = getStoredAchievements(effectiveNpub);
+      storeAchievements(effectiveNpub, localMap, { schedule: false });
+      if (hasBrowserStorage() && JSON.stringify(before) !== JSON.stringify(localMap)) cloudSync.schedule(effectiveNpub);
 
       // If local has unlocked items that remote event didn't include yet, publish the unified union back to Nostr!
       const hasNewLocal = Object.entries(localMap).some(([id, record]) => JSON.stringify(record) !== JSON.stringify(remoteUnlocked[id]));
@@ -249,6 +326,7 @@ async function syncAccountAchievements(effectiveNpub, { strict = false } = {}) {
   } catch (err) {
     console.warn("Nostr achievement sync warning:", err);
     if (strict) throw err;
+    if (hasBrowserStorage()) relaySync.schedule(effectiveNpub);
   } finally {
     pool.destroy();
   }
@@ -257,11 +335,14 @@ async function syncAccountAchievements(effectiveNpub, { strict = false } = {}) {
 }
 
 async function publishStoredAchievements(npub, pool) {
-  const signer = await getSigner(npub);
-  if (!signer) return;
+  const signer = await withSyncDeadline(signerRequest(`${npub}:key`, () => getSigner(npub)));
+  if (!signer) throw new Error("A matching signer is needed to publish achievements");
   // Include awards earned while the relay read or signer was waiting.
-  const signed = await signer(buildAchievementEvent(getStoredAchievements(npub)));
-  if (verifyEvent(signed)) await Promise.allSettled(pool.publish(ACHIEVEMENT_RELAYS, signed));
+  const signed = await withSyncDeadline(signerRequest(`${npub}:sign`, () => signer(buildAchievementEvent(getStoredAchievements(npub)))));
+  if (!verifyEvent(signed) || signed.pubkey !== pubkeyFromNpub(npub)) throw new Error("Invalid achievement signature");
+  // At least one relay must acknowledge the event. Waiting for every relay
+  // would let a stalled one hide a successful publish to another.
+  await confirmRelayPublish(pool.publish(ACHIEVEMENT_RELAYS, signed));
 }
 
 // Awards from older catalogs remain in the event, but only current IDs count

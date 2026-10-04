@@ -238,7 +238,6 @@ import RandomCharacter, {
 } from "./elements/RandomCharacter";
 import MultipleAnswerQuestion from "./components/MultipleAnswerQuestion/MultipleAnswerQuestion";
 import { DataTags } from "./elements/DataTag";
-import { transcript } from "./utility/transcript";
 const AwardModal = lazy(() => import("./components/AwardModal/AwardModal"));
 import SurfaceModalHost from "./components/SurfaceModalHost";
 import CodeCompletionQuestion from "./components/CodeCompletionQuestion/CodeCompletionQuestion";
@@ -2001,7 +2000,6 @@ const Step = ({
   isAdaptiveLearning,
   setIsAdaptiveLearning,
   postNostrContent,
-  assignExistingBadgeToNpub,
   emailStep,
   allowPosts,
   setAllowPosts,
@@ -3277,15 +3275,6 @@ In addition to the grading fields already requested, return updatedLearningSumma
         postNostrContent(
           `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} 100% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://robotsbuildingeducation.com \n\n${step.question?.questionText} #LearnWithNostr`,
         );
-      }
-
-      const badgeName = transcript[step?.group]?.name;
-      const rawBadgeName =
-        typeof badgeName === "string"
-          ? badgeName
-          : badgeName?.en || badgeName?.es || "";
-      if (rawBadgeName) {
-        assignExistingBadgeToNpub(rawBadgeName.replace(/ /g, "-"));
       }
 
       useConversationReviewStore?.getState?.()?.resetReviewState?.();
@@ -8426,7 +8415,6 @@ function App({ isShutDown }) {
   //   generateNostrKeys,
   //   auth,
   //   postNostrContent,
-  //   assignExistingBadgeToNpub,
   // } = useSharedNostr(
   //   localStorage.getItem("local_npub"),
   //   localStorage.getItem("local_nsec")
@@ -8437,7 +8425,6 @@ function App({ isShutDown }) {
     auth,
     authWithExtension,
     postNostrContent,
-    assignExistingBadgeToNpub,
   } = useSharedNostr(
     localStorage.getItem("local_npub"),
     localStorage.getItem("local_nsec"),
@@ -9060,7 +9047,6 @@ function App({ isShutDown }) {
                       userLanguage={userLanguage}
                       setUserLanguage={setUserLanguage}
                       postNostrContent={postNostrContent}
-                      assignExistingBadgeToNpub={assignExistingBadgeToNpub}
                       emailStep={clonedStep}
                       subscriptionAuthorized={subscriptionAuthorized}
                       setCurrentStep={setCurrentStep}

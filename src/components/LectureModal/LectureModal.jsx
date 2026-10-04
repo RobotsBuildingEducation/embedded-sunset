@@ -6,7 +6,6 @@ import {
   Button,
   Text,
   Box,
-  Image,
   Accordion,
   AccordionItem,
   AccordionButton,
@@ -38,10 +37,8 @@ import CloudTransition from "../../elements/CloudTransition";
 import { useNavigate } from "react-router-dom";
 import {
   FadeInComponent,
-  PanRightComponent,
   RiseUpAnimation,
 } from "../../elements/RandomCharacter";
-import { getDittoBadgeUrl } from "../../utility/badgeUrl";
 
 const newTheme = {
   h1: (props) => (
@@ -149,7 +146,7 @@ const ProgressDisplay = ({
     <FadeInComponent speed="1s">
       <Box mb={4} p={4} bg="whiteAlpha.200" borderRadius="md" color="white">
         <Text fontSize="lg" fontWeight="bold" mb={2}>
-          To earn a chapter review badge
+          To earn a chapter review achievement
         </Text>
         <VStack align="start" spacing={2}>
           <HStack>
@@ -227,18 +224,11 @@ const LectureModal = ({
     try { await handleNextClick(); onClose(); } finally { setIsAdvancing(false); }
   };
   let navigate = useNavigate();
-  const { getLastNotesByNpub, assignExistingBadgeToNpub } = useSharedNostr(
+  const { getLastNotesByNpub } = useSharedNostr(
     localStorage.getItem("local_npub"),
     localStorage.getItem("local_nsec"),
   );
   const toast = useToast();
-  const [badges, setBadges] = useState([]);
-  const [areBadgesLoading, setAreBadgesLoading] = useState(true);
-  const { getUserBadges } = useSharedNostr(
-    localStorage.getItem("local_npub"),
-    localStorage.getItem("local_nsec"),
-  );
-
   const [hasViewedSummary, setHasViewedSummary] = useState(false);
   const [hasPracticedModule, setHasPracticedModule] = useState(false);
   const [videoDurationDetection, setVideoDurationDetection] = useState(false);
@@ -254,12 +244,6 @@ const LectureModal = ({
     step.group === "introduction"
       ? videoTranscript["tutorial"]
       : videoTranscript[step.group];
-
-  const getBadges = async () => {
-    const data = await getUserBadges();
-    setBadges(data);
-    setAreBadgesLoading(false);
-  };
 
   useEffect(() => {
     async function getProgress() {
@@ -294,9 +278,6 @@ const LectureModal = ({
 
     if (isOpen) {
       getProgress();
-      getBadges();
-    } else {
-      setAreBadgesLoading(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
@@ -380,31 +361,6 @@ const LectureModal = ({
     };
   }, [videoDurationDetection, isVideoPlaying]);
 
-  const extractImageSources = (transcriptData) => {
-    let images = [];
-    if (transcriptData.tutorial?.imgSrc) {
-      images.push({
-        imageLink: transcriptData.tutorial.imgSrc,
-        badgeLink: getDittoBadgeUrl(transcriptData.tutorial.address),
-      });
-    }
-
-    const numericKeys = Object.keys(transcriptData)
-      .filter((key) => !isNaN(key))
-      .sort((a, b) => Number(a) - Number(b));
-
-    numericKeys.forEach((key) => {
-      if (transcriptData[key]?.imgSrc) {
-        images.push({
-          imageLink: transcriptData[key].imgSrc,
-          badgeLink: getDittoBadgeUrl(transcriptData[key].address),
-        });
-      }
-    });
-
-    return images;
-  };
-
   const handleCopyKeys = () => {
     const keysToCopy = `${localStorage.getItem("local_nsec")}`;
     navigator.clipboard.writeText(keysToCopy);
@@ -455,7 +411,6 @@ const LectureModal = ({
         videoWatched: false,
         summaryViewed: false,
         practiceCompleted: false,
-        badgeAwarded: false,
       };
 
       const updatedModuleProgress = {
@@ -480,38 +435,6 @@ const LectureModal = ({
         void awardRobotsProgress({ npub, course: userLanguage, courseSteps: steps[userLanguage],
           events: [{ metric: "review_checklists", id: `${userLanguage}:${stepGroup}` }],
         }).catch(error => console.warn("Checklist achievement:", error));
-      }
-
-      if (
-        updatedModuleProgress.videoWatched &&
-        updatedModuleProgress.summaryViewed &&
-        updatedModuleProgress.practiceCompleted &&
-        !updatedModuleProgress.badgeAwarded
-      ) {
-        updatedModuleProgress.badgeAwarded = true;
-
-        const updatedProgressWithBadge = {
-          ...userData.moduleProgress,
-          [stepGroup]: updatedModuleProgress,
-        };
-
-        await updateDoc(userDocRef, {
-          moduleProgress: updatedProgressWithBadge,
-        });
-
-        toast({
-          title: "Badge awarded",
-          description: `Great job! You've earned the ${transcriptObject.name} badge on your decentralized transcript!`,
-          status: "success",
-          duration: 3000,
-          position: "top",
-          isClosable: true,
-        });
-
-        await assignExistingBadgeToNpub(
-          transcriptObject.name.replace(/ /g, "-"),
-        );
-        getBadges();
       }
     } catch (error) {
       console.error("Error updating progress:", error);
@@ -546,25 +469,6 @@ const LectureModal = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasPracticedModule]);
-
-  const badgeImages = extractImageSources(videoTranscript);
-
-  // ---- Progressive badge reveal (smooth trail) ----
-  const [visibleCount, setVisibleCount] = useState(0);
-  useEffect(() => {
-    if (!isOpen) return;
-
-    setVisibleCount(0); // restart when opening
-    let i = 0;
-    const id = setInterval(() => {
-      i += 1;
-      setVisibleCount((prev) => (prev < badgeImages.length ? i : prev));
-      if (i >= badgeImages.length) clearInterval(id);
-    }, 120); // delay between each badge (ms)
-
-    return () => clearInterval(id);
-  }, [isOpen, badgeImages.length]);
-  // -------------------------------------------------
 
   if (!isOpen) return null;
 
@@ -606,51 +510,6 @@ const LectureModal = ({
           </Accordion>
 
           <Box mb={4}>
-            <Box display="flex" flexDirection="row">
-              <br />
-              {badgeImages.slice(0, visibleCount).map((bdge, index) => {
-                const isBadgeEarned = badges.some(
-                  (badge) => badge.image === bdge.imageLink,
-                );
-
-                return (
-                  <PanRightComponent key={bdge.imageLink ?? index}>
-                    <Box position="relative" m={1} mb={4}>
-                      <Link href={bdge.badgeLink} target="_blank">
-                        <Image
-                          src={bdge.imageLink}
-                          loading="lazy"
-                          decoding="async"
-                          width="60px"
-                          borderRadius="20px"
-                          alt={`Badge ${index + 1}`}
-                          style={{
-                            transition:
-                              "opacity 240ms ease, transform 240ms ease",
-                          }}
-                          boxShadow="0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)"
-                        />
-                      </Link>
-                      {!isBadgeEarned && (
-                        <Link href={bdge.badgeLink} target="_blank">
-                          <Box
-                            position="absolute"
-                            top="0"
-                            left="0"
-                            right="0"
-                            bottom="0"
-                            bg="appSurface"
-                            opacity="0.7"
-                            borderRadius="20px"
-                          />
-                        </Link>
-                      )}
-                    </Box>
-                  </PanRightComponent>
-                );
-              })}
-            </Box>
-
             <ProgressDisplay
               videoWatched={videoDurationDetection}
               summaryViewed={hasViewedSummary}

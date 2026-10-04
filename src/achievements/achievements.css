@@ -17,12 +17,25 @@
 .achievement-card.is-completed {
   border-color: #eab308 !important;
 }
-.achievement-card.is-locked {
-  filter: grayscale(100%);
-  opacity: 0.65;
-}
 .achievement-card.is-locked .achievement-orb {
   filter: grayscale(100%) contrast(0.85);
   opacity: 0.45;
 }
 
+
+/* Keep touch, wheel and keyboard scrolling without visible scrollbar tracks. */
+html:has(.achievement-collection),
+body:has(.achievement-collection),
+.chakra-modal__content-container:has(> .achievement-collection),
+.achievement-collection-body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html:has(.achievement-collection)::-webkit-scrollbar,
+body:has(.achievement-collection)::-webkit-scrollbar,
+.chakra-modal__content-container:has(> .achievement-collection)::-webkit-scrollbar,
+.achievement-collection-body::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
