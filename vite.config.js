@@ -43,8 +43,12 @@ export default defineConfig(({ mode, command }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const projectId = env.VITE_FIREBASE_PROJECT_ID || "test-data-895e2";
 
-  const buildId = env.VITE_BUILD_ID || process.env.VITE_BUILD_ID ||
-    (command === "build" ? `${Date.now()}-${crypto.randomUUID().slice(0, 8)}` : "development");
+  const buildId =
+    env.VITE_BUILD_ID ||
+    process.env.VITE_BUILD_ID ||
+    (command === "build"
+      ? `${Date.now()}-${crypto.randomUUID().slice(0, 8)}`
+      : "development");
   const builtAt = new Date().toISOString();
 
   return {
@@ -88,7 +92,11 @@ export default defineConfig(({ mode, command }) => {
           clientsClaim: true,
           maximumFileSizeToCacheInBytes: 10000000, // Set to 10MB to accommodate large bundles
           // OAuth callbacks and API requests must always reach the Function.
-          navigateFallbackDenylist: [/^\/api(?:\/|$)/, /^\/version\.json$/, /^\/firebase-messaging-sw\.js$/],
+          navigateFallbackDenylist: [
+            /^\/api(?:\/|$)/,
+            /^\/version\.json$/,
+            /^\/firebase-messaging-sw\.js$/,
+          ],
           globIgnores: ["**/version.json"],
         },
         manifest: {
