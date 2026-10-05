@@ -159,6 +159,7 @@ export let translation = {
     goodJob: "Good job!",
     nextStep: "Next step",
     generatingCode: "Generating code...",
+    generatingApp: "Generating app...",
     "buildYourApp.onboarding.instruction":
       "This app will grow and adapts with you when you learn and make progress. For now, we'll start with a light app to show you some things you'll learn. You can change your idea later.",
     skip: "Skip",
@@ -1950,6 +1951,7 @@ reverse(head) {
     goodJob: "¡Buen trabajo!",
     nextStep: "Siguiente paso",
     generatingCode: "Generando código...",
+    generatingApp: "Generando app...",
     "buildYourApp.onboarding.instruction":
       "Esta aplicación crecerá y se adaptará contigo a medida que aprendes y avanzas. Por ahora, comenzaremos con una aplicación sencilla para mostrarte algunas cosas que vas a aprender. Más adelante podrás cambiar tu idea.",
     skip: "Saltar",
@@ -3610,6 +3612,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     goodJob: "Good job!",
     nextStep: "Next step",
     generatingCode: "Generating code...",
+    generatingApp: "Generating app...",
     "buildYourApp.onboarding.instruction":
       "This app will grow and adapts with you when you learn and make progress. For now, we'll start with a light app to show you some things you'll learn. You can change your idea later.",
     skip: "Skip",
@@ -5244,6 +5247,7 @@ reverse(head) {
     goodJob: "Good job!",
     nextStep: "Next step",
     generatingCode: "Generating code...",
+    generatingApp: "Generating app...",
     "buildYourApp.onboarding.instruction":
       "This app will grow and adapts with you when you learn and make progress. For now, we'll start with a light app to show you some things you'll learn. You can change your idea later.",
     skip: "Skip",
@@ -6894,6 +6898,7 @@ reverse(head) {
     goodJob: "Good job!",
     nextStep: "Next step",
     generatingCode: "Generating code...",
+    generatingApp: "Generating app...",
     "buildYourApp.onboarding.instruction":
       "This app will grow and adapts with you when you learn and make progress. For now, we'll start with a light app to show you some things you'll learn. You can change your idea later.",
     skip: "Skip",
@@ -8543,6 +8548,7 @@ reverse(head) {
     goodJob: "Good job!",
     nextStep: "Next step",
     generatingCode: "Generating code...",
+    generatingApp: "Generating app...",
     "buildYourApp.onboarding.instruction":
       "This app will grow and adapts with you when you learn and make progress. For now, we'll start with a light app to show you some things you'll learn. You can change your idea later.",
     skip: "Skip",

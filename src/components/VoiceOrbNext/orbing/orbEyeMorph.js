@@ -112,22 +112,29 @@ function expression(mood) {
 
 const EXPRESSIONS = Object.fromEntries(["neutral", "joy", "curious", "love", "excited", "surprised", "sleepy", "sad"].map((mood) => [mood, expression(mood)]));
 
-export function createEyeMorph(mood = "neutral") {
+export { resample, arc, capsule, arch, heart, expression, EXPRESSIONS, COLOR, BLUSH, TAU };
+
+export function createEyeMorph(mood = "neutral", expressions = EXPRESSIONS) {
+  const dict = expressions || EXPRESSIONS;
   return {
-    values: new Float64Array(EXPRESSIONS[mood] || EXPRESSIONS.neutral),
+    values: new Float64Array(dict[mood] || dict.neutral || EXPRESSIONS.neutral),
     velocity: new Float64Array(EYE_COORDINATES + 7),
+    changed: true,
   };
 }
 
-export function advanceEyeMorph(morph, { mood, state = "idle", time = 0, dt = 0, immediate = false }) {
-  const target = EXPRESSIONS[mood] || EXPRESSIONS.neutral;
+export function advanceEyeMorph(morph, { mood, state = "idle", time = 0, dt = 0, immediate = false, expressions = EXPRESSIONS }) {
+  const dict = expressions || EXPRESSIONS;
+  const target = dict[mood] || dict.neutral || EXPRESSIONS.neutral;
   const gaze = mood === "curious" && state === "thinking" ? Math.sin(time * 0.9) * 7 : 0;
   const step = Math.max(0, dt);
   const frequency = 14;
   const decay = Math.exp(-frequency * step);
+  let changed = false;
   for (let index = 0; index < target.length; index++) {
     const destination = target[index] + (index < EYE_COORDINATES && index % 2 === 0 ? gaze : 0);
     if (immediate) {
+      if (morph.values[index] !== destination) changed = true;
       morph.values[index] = destination;
       morph.velocity[index] = 0;
       continue;
@@ -137,9 +144,15 @@ export function advanceEyeMorph(morph, { mood, state = "idle", time = 0, dt = 0,
     const offset = morph.values[index] - destination;
     const velocity = morph.velocity[index];
     const impulse = velocity + frequency * offset;
-    morph.values[index] = destination + (offset + impulse * step) * decay;
-    morph.velocity[index] = (velocity - frequency * impulse * step) * decay;
+    const nextVal = destination + (offset + impulse * step) * decay;
+    const nextVel = (velocity - frequency * impulse * step) * decay;
+    if (!changed && (Math.abs(nextVal - morph.values[index]) > 0.01 || Math.abs(nextVel) > 0.05)) {
+      changed = true;
+    }
+    morph.values[index] = nextVal;
+    morph.velocity[index] = nextVel;
   }
+  morph.changed = immediate ? true : changed;
   return morph;
 }
 

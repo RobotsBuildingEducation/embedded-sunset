@@ -1,5 +1,12 @@
+import { useAchievementAccount } from "./achievements/useAchievementUnlock.js";
+import * as achievementServices from "./utility/achievements.js";
+import { correctQuestionEvents } from "./achievements/learningCounts.js";
+import { awardRobotsProgress, studyDayEvent } from "./utility/robotsAchievementProgress.js";
+import { localDayKey } from "./achievements/progressionEvidence.js";
 import "regenerator-runtime/runtime";
 import "@coinbase/onchainkit/styles.css";
+import AppUpdateTopBar from "./components/AppUpdateTopBar.jsx";
+import { useUpdateBlocker } from "./pwa/updateSafety.js";
 import React, {
   Suspense,
   lazy,
@@ -230,7 +237,6 @@ import RandomCharacter, {
 } from "./elements/RandomCharacter";
 import MultipleAnswerQuestion from "./components/MultipleAnswerQuestion/MultipleAnswerQuestion";
 import { DataTags } from "./elements/DataTag";
-import { transcript } from "./utility/transcript";
 const AwardModal = lazy(() => import("./components/AwardModal/AwardModal"));
 import SurfaceModalHost from "./components/SurfaceModalHost";
 import CodeCompletionQuestion from "./components/CodeCompletionQuestion/CodeCompletionQuestion";
@@ -327,6 +333,7 @@ const VoiceOrbNext = lazy(
 const ChartsPage = lazy(() => import("./charts/ChartsPage"));
 import VoiceOrbLoader from "./components/VoiceOrbNext/VoiceOrbLoader.jsx";
 import AppLoadingScreen from "./components/AppLoadingScreen.jsx";
+import { achievementText } from "./achievements/copy.js";
 import PromptWritingQuestion from "./components/PromptWritingQuestion/PromptWritingQuestion";
 import QuestionMode, {
   CodePanel,
@@ -894,6 +901,7 @@ export const VoiceInput = ({
     browserSupportsSpeechRecognition,
     isMicrophoneAvailable,
   } = useSpeechRecognition();
+  useUpdateBlocker("speech-recording", listening, "Voice recording in progress");
   const [isListening, setIsListening] = useState(false);
   const [aiListening, setAiListening] = useState(false);
   const [aiTranscript, setAiTranscript] = useState("");
@@ -926,6 +934,8 @@ export const VoiceInput = ({
     submitPrompt: submitEducationalPrompt,
     loading,
   } = useSimpleGeminiChat();
+
+  useUpdateBlocker("learning-response", loading, "Learning response in progress");
 
   const [educationalContent, setEducationalContent] = useState([]);
 
@@ -1980,13 +1990,13 @@ const deriveChapterLabel = (group, primaryMap, fallbackMap) => {
 const Step = ({
   currentStep,
   startInContinuingMode = false,
+  isTransitionActive = false,
   requestedContinuingQuestionCount = null,
   userLanguage,
   setUserLanguage,
   isAdaptiveLearning,
   setIsAdaptiveLearning,
   postNostrContent,
-  assignExistingBadgeToNpub,
   emailStep,
   allowPosts,
   setAllowPosts,
@@ -2015,6 +2025,7 @@ const Step = ({
   const [items, setItems] = useState([]); // For Select Order
   const [modeAnswer, setModeAnswer] = useState(null);
   const [isSending, setIsSending] = useState(false);
+  useUpdateBlocker("answer-save", isSending, "Answer save in progress");
   const [isCorrect, setIsCorrect] = useState(null);
   const [feedback, setFeedback] = useState("");
   const [resetVoiceState, setResetVoiceState] = useState(false);
@@ -2033,7 +2044,6 @@ const Step = ({
   const [isTimerExpired, setIsTimerExpired] = useState(true);
   const [isBuildReady, setIsBuildReady] = useState(false);
   const [simulatedTerminalOutput, setSimulatedTerminalOutput] = useState("");
-
   const nextQuestionPressLockRef = useRef(false);
 
   const shouldInitiallyRestoreContinuingQuestion =
@@ -2741,6 +2751,7 @@ const Step = ({
     submitPrompt: submitSuggestionMessages,
     loading: isSuggestionModelLoading,
   } = useAdaptiveLearningGeminiChat();
+  useUpdateBlocker("question-generation", isNewQuestionLoading || isSuggestionModelLoading, "Question generation in progress");
 
   useEffect(() => {
     if (!isAILearningMode) {
@@ -2771,6 +2782,7 @@ const Step = ({
     const fetchUserData = async () => {
       const userId = localStorage.getItem("local_npub");
       const userData = (await getUserData(userId)) || {};
+      void awardRobotsProgress({ npub: userId, course: userLanguage, courseSteps: steps[userLanguage] }).catch(error => console.warn("Achievement restore:", error));
 
       setIsAdaptiveLearning(userData?.isAdaptiveLearning !== false);
       setStreak(userData.streak || 0);
@@ -3240,17 +3252,20 @@ In addition to the grading fields already requested, return updatedLearningSumma
         );
       }
 
-      const badgeName = transcript[step?.group]?.name;
-      const rawBadgeName =
-        typeof badgeName === "string"
-          ? badgeName
-          : badgeName?.en || badgeName?.es || "";
-      if (rawBadgeName) {
-        assignExistingBadgeToNpub(rawBadgeName.replace(/ /g, "-"));
+      if (!isAILearningMode) {
+        void awardRobotsProgress({
+          npub: localStorage.getItem("local_npub"),
+          course: userLanguage,
+          courseSteps: steps[userLanguage],
+          events: [
+            { metric: "course_steps", id: `${userLanguage}:${currentStep}` },
+            studyDayEvent(),
+          ],
+        }).catch((error) => console.warn("Course achievement:", error));
       }
 
       useConversationReviewStore?.getState?.()?.resetReviewState?.();
-      onAwardModalOpen();
+      onLectureModalOpen();
       return;
     }
 
@@ -3674,6 +3689,20 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
           }
 
           if (jsonResponse.isCorrect) {
+            const events = jsonResponse.isCorrect === true ? [studyDayEvent()] : [];
+            events.push(...correctQuestionEvents({
+              course: userLanguage,
+              question: step.question,
+              isCorrect: jsonResponse.isCorrect,
+              isPostCourse: isAILearningMode,
+              stepIndex: Number(currentStep),
+              questionNumber: viewedContinuingQuestionCount,
+            }));
+            if (jsonResponse.isCorrect === true && (dailyGoals ?? 5) > 0 && dailyProgress < (dailyGoals ?? 5) && dailyProgress + 1 >= (dailyGoals ?? 5)) {
+              events.push({ metric: "daily_goals", id: localDayKey() });
+            }
+            void awardRobotsProgress({ npub: localStorage.getItem("local_npub"), course: userLanguage, courseSteps: steps[userLanguage], events })
+              .catch(error => console.warn("Graded achievement:", error));
             setGrade(jsonResponse.grade);
             const dailyGoalTarget = dailyGoals ?? 5;
             const completesDailyGoal =
@@ -3850,6 +3879,12 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
 
     // console.log("currentStep...", currentStep);
     // console.log("fSTEPS", steps);
+    if (!isAILearningMode) {
+      void awardRobotsProgress({ npub: localStorage.getItem("local_npub"), course: userLanguage, courseSteps: steps[userLanguage],
+        events: [{ metric: "course_steps", id: `${userLanguage}:${currentStep}` }, studyDayEvent()],
+      }).catch(error => console.warn("Course achievement:", error));
+    }
+
     const nextStep = currentStep + 1;
     const npub = localStorage.getItem("local_npub");
     const shouldGoToSubscription =
@@ -4438,7 +4473,7 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
       width="100%"
       px={4}
       pt={showChapterReview ? { base: 0, md: 0 } : 10}
-      pb={showChapterReview ? { base: 14, md: 24 } : { base: 40, md: 44 }}
+      pb={{ base: 40, md: 44 }}
       minH="100dvh"
       justifyContent={showChapterReview ? "center" : "flex-start"}
       boxSizing="border-box"
@@ -4473,6 +4508,7 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
           nodes={chapterReviewNodes}
           text={chapterReviewText}
           onStart={dismissChapterReview}
+          showStartButton={false}
         />
       ) : (
         <>
@@ -4954,6 +4990,7 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
                 fallback={<CloudCanvas isLoader={true} regulateWidth={false} />}
               >
                 <ConversationReview
+                  key={`${currentStep}-${step?.group || ""}`}
                   question={step.question}
                   userLanguage={userLanguage}
                   steps={steps}
@@ -5017,46 +5054,6 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
             </Box>
           ) : null}
 
-          {!isAwardModalOpen && !isLectureModalOpen && (
-            <BottomActionBar
-              currentStep={currentStep}
-              step={step}
-              steps={steps}
-              userLanguage={userLanguage}
-              translation={translation}
-              isCorrect={isCorrect}
-              feedback={feedback}
-              grade={grade}
-              incorrectAttempts={incorrectAttempts}
-              isSending={isSending}
-              isTimerExpired={isTimerExpired}
-              handleTimerExpire={handleTimerExpire}
-              isAILearningMode={isAILearningMode}
-              animatedProgress={animatedProgress}
-              chapterMetricLabel={chapterMetricLabel}
-              metricTooltips={metricTooltips}
-              streak={streak}
-              goalCount={goalCount}
-              handleAnswerClick={handleAnswerClick}
-              handleNextQuestionButtonPress={handleNextQuestionButtonPress}
-              handleGenerateNewQuestion={handleGenerateNewQuestion}
-              handleLearnClick={handleLearnClick}
-              handleModalCheck={handleModalCheck}
-              openSurfaceModal={openSurfaceModal}
-              showLearnSparkles={showLearnSparkles}
-              learnSparkleFloat={learnSparkleFloat}
-              learnHaloDrift={learnHaloDrift}
-              triggerHaptic={triggerHaptic}
-              playActionBarSound={playActionBarSound}
-              soundManager={soundManager}
-              interval={interval}
-              handleSelfPacedSettingsSaved={handleSelfPacedSettingsSaved}
-              isPostingWithNostr={isPostingWithNostr}
-              isActionBarTourActive={isActionBarTourActive}
-              renderActionBarTour={renderActionBarTour}
-            />
-          )}
-
           <Suspense fallback={null}>
             {isLectureModalOpen ? (
               <LectureModal
@@ -5078,6 +5075,7 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
               />
             ) : null}
           </Suspense>
+
           {/* newmodal */}
           {/* <ExternalLinkModal
             isOpen={isExternalLinkModalOpen}
@@ -5116,6 +5114,47 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
           </>
         </>
       )}
+          {!isAwardModalOpen && !isLectureModalOpen && !isTransitionActive && (
+            <BottomActionBar
+              primaryAction={showChapterReview ? { label: chapterReviewText.cta, onClick: dismissChapterReview } : null}
+              currentStep={currentStep}
+              step={step}
+              steps={steps}
+              userLanguage={userLanguage}
+              translation={translation}
+              isCorrect={showChapterReview ? null : isCorrect}
+              feedback={showChapterReview ? "" : feedback}
+              grade={grade}
+              incorrectAttempts={incorrectAttempts}
+              isSending={isSending || (isEmpty(generatedQuestion) && (isContinuingQuestionRestoring || isNewQuestionLoading || newQuestionMessages.length > 0))}
+              isTimerExpired={isTimerExpired}
+              handleTimerExpire={handleTimerExpire}
+              isAILearningMode={isAILearningMode}
+              animatedProgress={animatedProgress}
+              chapterMetricLabel={chapterMetricLabel}
+              metricTooltips={metricTooltips}
+              streak={streak}
+              goalCount={goalCount}
+              handleAnswerClick={handleAnswerClick}
+              handleNextQuestionButtonPress={handleNextQuestionButtonPress}
+              handleGenerateNewQuestion={handleGenerateNewQuestion}
+              handleLearnClick={handleLearnClick}
+              handleModalCheck={handleModalCheck}
+              openSurfaceModal={openSurfaceModal}
+              showLearnSparkles={showLearnSparkles}
+              learnSparkleFloat={learnSparkleFloat}
+              learnHaloDrift={learnHaloDrift}
+              triggerHaptic={triggerHaptic}
+              playActionBarSound={playActionBarSound}
+              soundManager={soundManager}
+              interval={interval}
+              handleSelfPacedSettingsSaved={handleSelfPacedSettingsSaved}
+              isPostingWithNostr={isPostingWithNostr}
+              isActionBarTourActive={isActionBarTourActive}
+              renderActionBarTour={renderActionBarTour}
+            />
+          )}
+
     </VStack>
   );
 };
@@ -8239,7 +8278,9 @@ function App({ isShutDown }) {
     }
   }, [soundEnabled]);
 
+  useAchievementAccount(activePatreonNpub, achievementServices, userLanguage);
   const [showClouds, setShowClouds] = useState(false);
+  const [transitionReady, setTransitionReady] = useState(false);
   const [pendingPath, setPendingPath] = useState(null);
   const [pendingStep, setPendingStep] = useState(null);
   const [lectureNextPath, setLectureNextPath] = useState(null);
@@ -8290,6 +8331,8 @@ function App({ isShutDown }) {
   };
 
   const handleTransitionContinue = () => {
+    if (!showClouds || !transitionReady) return;
+    setTransitionReady(false);
     const nextPath = pendingPath;
     const nextStep = pendingStep;
 
@@ -8332,7 +8375,6 @@ function App({ isShutDown }) {
   //   generateNostrKeys,
   //   auth,
   //   postNostrContent,
-  //   assignExistingBadgeToNpub,
   // } = useSharedNostr(
   //   localStorage.getItem("local_npub"),
   //   localStorage.getItem("local_nsec")
@@ -8343,7 +8385,6 @@ function App({ isShutDown }) {
     auth,
     authWithExtension,
     postNostrContent,
-    assignExistingBadgeToNpub,
   } = useSharedNostr(
     localStorage.getItem("local_npub"),
     localStorage.getItem("local_nsec"),
@@ -8781,10 +8822,13 @@ function App({ isShutDown }) {
 
   return (
     <Box ref={topRef} minH="100dvh" position="relative" bg="transparent">
+      <AppUpdateTopBar language={userLanguage} />
       <CloudTransition
         userLanguage={userLanguage}
         clonedStep={clonedStep}
         isActive={showClouds}
+        showContinueButton={false}
+        onContinueReadyChange={setTransitionReady}
         salary={transitionStats.salary}
         salaryProgress={transitionStats.salaryProgress}
         stepProgress={transitionStats.stepProgress}
@@ -8799,6 +8843,11 @@ function App({ isShutDown }) {
         currentStepIndex={currentStep}
         stepsMap={steps}
       />
+      {showClouds && <BottomActionBar
+        currentStep={currentStep} step={steps?.[userLanguage]?.[currentStep]} steps={steps}
+        userLanguage={userLanguage} translation={translation} isCorrect={null} feedback=""
+        layer={2100} primaryAction={{ label: achievementText("continue", userLanguage), onClick: handleTransitionContinue, disabled: !transitionReady }}
+      />}
       {alert.isOpen && (
         <Alert
           status={alert.status}
@@ -8949,6 +8998,7 @@ function App({ isShutDown }) {
                       setAllowPosts={setAllowPosts}
                       currentStep={routedAuthoredStep}
                       startInContinuingMode={isContinuingQuestionRoute}
+                      isTransitionActive={showClouds}
                       requestedContinuingQuestionCount={
                         isContinuingQuestionRoute
                           ? requestedQuestionStep - lastAuthoredStep
@@ -8957,7 +9007,6 @@ function App({ isShutDown }) {
                       userLanguage={userLanguage}
                       setUserLanguage={setUserLanguage}
                       postNostrContent={postNostrContent}
-                      assignExistingBadgeToNpub={assignExistingBadgeToNpub}
                       emailStep={clonedStep}
                       subscriptionAuthorized={subscriptionAuthorized}
                       setCurrentStep={setCurrentStep}

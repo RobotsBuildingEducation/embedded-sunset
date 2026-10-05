@@ -1,3 +1,6 @@
+import AchievementFeedback from "../../achievements/AchievementFeedback.jsx";
+import { achievementText as achievementLabel } from "../../achievements/copy.js";
+import { useAchievementUnlock } from "../../achievements/useAchievementUnlock.js";
 import React, { useState, useRef, useEffect } from "react";
 import {
   Box,
@@ -8,10 +11,12 @@ import {
   Button,
   IconButton,
   Icon,
+  useColorMode,
   useColorModeValue,
   useToken,
   Tooltip,
   Portal,
+  DarkMode,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -139,7 +144,11 @@ export const BottomActionBar = ({
   isPostingWithNostr = false,
   isActionBarTourActive = false,
   renderActionBarTour = (child) => child,
+  primaryAction = null,
+  layer = 1200,
+  colorMode: colorModeProp,
 }) => {
+  const { unlock, dismiss } = useAchievementUnlock();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const teamAccountNpub = localStorage.getItem("local_npub");
   useEffect(() => {
@@ -164,7 +173,7 @@ export const BottomActionBar = ({
   const feedbackContentRef = useRef(null);
 
   const isFeedbackActive = Boolean(feedback || isCorrect !== null);
-  const hasFeedback = Boolean(isSending || isCorrect || isFeedbackActive);
+  const hasFeedback = Boolean(unlock || isSending || isCorrect || isFeedbackActive);
 
   useEffect(() => {
     if (!feedbackContentRef.current) return;
@@ -181,9 +190,9 @@ export const BottomActionBar = ({
       ro.observe(el);
       return () => ro.disconnect();
     }
-  }, [hasFeedback, isSending, isCorrect, isFeedbackActive, feedback]);
+  }, [hasFeedback, isSending, isCorrect, isFeedbackActive, feedback, unlock]);
 
-  const targetFeedbackHeight = isSending
+  const targetFeedbackHeight = unlock ? feedbackHeight || 112 : isSending
     ? feedbackHeight || 54
     : isCorrect
       ? feedbackHeight || 250
@@ -213,57 +222,71 @@ export const BottomActionBar = ({
     `${themeColor}.800`,
   ]);
 
-  const themeIconColor = useColorModeValue(
+  const { colorMode: contextColorMode } = useColorMode();
+  const effectiveColorMode = colorModeProp || contextColorMode;
+  const isDark = effectiveColorMode === "dark";
+  const resolveColor = (lightVal, darkVal) => (isDark ? darkVal : lightVal);
+
+  const themeIconColor = resolveColor(
     accent600 || "#d946ef",
     accent300 || "#f0abfc",
   );
 
   // Color tokens
-  const defaultBarBg = useColorModeValue("appSurfaceElevated", "#10192e");
-  const defaultBarBorder = useColorModeValue(
+  const defaultBarBg = resolveColor("appSurfaceElevated", "#10192e");
+  const defaultBarBorder = resolveColor(
     "appBorderStrong",
     "rgba(148, 163, 184, 0.22)",
   );
-  const defaultShadow = useColorModeValue(
+  const defaultShadow = resolveColor(
     "0 12px 32px rgba(15, 23, 42, 0.12)",
     "0 16px 40px rgba(2, 6, 23, 0.5)",
   );
 
   // Loading feedback colors (white/theme)
-  const loadingBg = useColorModeValue("white", "#10192e");
-  const loadingBorder = useColorModeValue(
+  const loadingBg = resolveColor("white", "#10192e");
+  const loadingBorder = resolveColor(
     accent200 || "appBorderStrong",
     accent700 || "rgba(148, 163, 184, 0.28)",
   );
-  const loadingShadow = useColorModeValue(
+  const loadingShadow = resolveColor(
     "0 12px 32px rgba(15, 23, 42, 0.12)",
     "0 16px 40px rgba(2, 6, 23, 0.5)",
   );
 
   // Correct feedback colors (light green card, green border)
-  const successBg = useColorModeValue("#eaf7ee", "#143522");
-  const successBorder = useColorModeValue("#81c995", "#2e7d32");
-  const successText = useColorModeValue("#1e4620", "#d1fae5");
-  const successShadow = useColorModeValue(
+  const successBg = resolveColor("#eaf7ee", "#143522");
+  const successBorder = resolveColor("#81c995", "#2e7d32");
+  const successText = resolveColor("#1e4620", "#d1fae5");
+  const successShadow = resolveColor(
     "0 12px 36px rgba(46, 125, 50, 0.22)",
     "0 16px 40px rgba(4, 120, 87, 0.35)",
   );
 
+  // Achievement feedback uses the same card treatment as answer feedback.
+  const achievementBg = resolveColor("#fff8e6", "#382b14");
+  const achievementBorder = resolveColor("#d5ad50", "#9d7829");
+  const achievementText = resolveColor("#694b13", "#fef3c7");
+  const achievementShadow = resolveColor(
+    "0 12px 36px rgba(160, 114, 15, 0.22)",
+    "0 16px 40px rgba(146, 101, 14, 0.35)",
+  );
+
   // Incorrect feedback colors (light red/pink card, red border)
-  const errorBg = useColorModeValue("#fde8e8", "#381818");
-  const errorBorder = useColorModeValue("#f98080", "#771d1d");
-  const errorText = useColorModeValue("#9b1c1c", "#ffe4e6");
-  const errorShadow = useColorModeValue(
+  const errorBg = resolveColor("#fde8e8", "#381818");
+  const errorBorder = resolveColor("#f98080", "#771d1d");
+  const errorText = resolveColor("#9b1c1c", "#ffe4e6");
+  const errorShadow = resolveColor(
     "0 12px 36px rgba(224, 36, 36, 0.22)",
     "0 16px 40px rgba(127, 29, 29, 0.35)",
   );
 
   // Primary button colors themed with active theme color
-  const primaryButtonBg = useColorModeValue(
+  const primaryButtonBg = resolveColor(
     accent400 || "#a78bfa",
     accent500 || "#8b5cf6",
   );
-  const primaryButtonHoverBg = useColorModeValue(
+  const primaryButtonHoverBg = resolveColor(
     accent500 || "#9061f9",
     accent600 || "#7c3aed",
   );
@@ -271,7 +294,7 @@ export const BottomActionBar = ({
   const primaryNextButtonHoverBg = "#157347";
 
   // Dynamic box shadow using accents of the active theme base color
-  const primaryButtonBevel = useColorModeValue(
+  const primaryButtonBevel = resolveColor(
     accent600 || accent700 || "#c2410c",
     accent700 || accent800 || "#9a3412",
   );
@@ -279,7 +302,7 @@ export const BottomActionBar = ({
   const primaryButtonShadow = `0 4px 0 ${primaryButtonBevel}, 0 6px 16px ${primaryButtonGlow}`;
   const primaryButtonActiveShadow = `0 2px 0 ${primaryButtonBevel}`;
 
-  const feedbackHeartColor = useColorModeValue("#dc2626", "#fb7185");
+  const feedbackHeartColor = resolveColor("#dc2626", "#fb7185");
   const learnGlowColor = accent400 || "#a78bfa";
   const learnGlowSoft = accent300 || "#c4b5fd";
 
@@ -338,10 +361,12 @@ export const BottomActionBar = ({
     maxW: "260px",
     borderRadius: "xl",
     borderWidth: "1px",
-    borderColor: "pink.200",
-    bg: "appSurfaceElevated",
+    borderColor: isDark ? "rgba(148, 163, 184, 0.22)" : "pink.200",
+    bg: isDark ? "#10192e" : "appSurfaceElevated",
     color: "appText",
-    boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+    boxShadow: isDark
+      ? "0 8px 24px rgba(0,0,0,0.4)"
+      : "0 8px 24px rgba(0,0,0,0.15)",
     fontSize: "xs",
     fontWeight: "semibold",
     lineHeight: "1.45",
@@ -352,7 +377,11 @@ export const BottomActionBar = ({
   let currentBorder = defaultBarBorder;
   let currentShadow = defaultShadow;
 
-  if (isSending) {
+  if (unlock) {
+    currentBg = achievementBg;
+    currentBorder = achievementBorder;
+    currentShadow = achievementShadow;
+  } else if (isSending) {
     currentBg = loadingBg;
     currentBorder = loadingBorder;
     currentShadow = loadingShadow;
@@ -420,19 +449,25 @@ export const BottomActionBar = ({
       justifyContent="center"
       alignItems="flex-end"
       pointerEvents="none"
-      zIndex={1200}
+      zIndex={layer}
+      data-achievement-rail={unlock ? "gold" : undefined}
       px={{ base: 3, sm: 4 }}
     >
       <Box
         pointerEvents="auto"
         position="relative"
         width={{ base: "100%", sm: "460px", md: "500px" }}
+        data-theme={effectiveColorMode}
+        className={isDark ? "chakra-ui-dark" : "chakra-ui-light"}
         bg={currentBg}
+        color={unlock ? achievementText : "appText"}
         border="1px solid"
         borderColor={currentBorder}
-        borderRadius="4px"
+        borderRadius={{ base: "18px", sm: "20px" }}
         boxShadow={currentShadow}
-        px={
+        backdropFilter={isDark ? "blur(16px)" : undefined}
+        WebkitBackdropFilter={isDark ? "blur(16px)" : undefined}
+        pl={
           isSending
             ? { base: 4, sm: 5 }
             : isCorrect
@@ -440,6 +475,15 @@ export const BottomActionBar = ({
               : isFeedbackActive
                 ? { base: 4, sm: 5 }
                 : { base: 3.5, sm: 4.5 }
+        }
+        pr={
+          isSending
+            ? { base: 5, sm: 6.5 }
+            : isCorrect
+              ? { base: 5.5, sm: 7, md: 7.5 }
+              : isFeedbackActive
+                ? { base: 5, sm: 6.5 }
+                : { base: 5.5, sm: 7 }
         }
         py={
           isSending
@@ -472,6 +516,7 @@ export const BottomActionBar = ({
           onOpenPatreon={handleOpenPatreon}
           userLanguage={userLanguage}
           translation={translation}
+          colorMode={effectiveColorMode}
         />
 
         {/* Dynamic Island Expandable Feedback Section */}
@@ -496,7 +541,9 @@ export const BottomActionBar = ({
             >
               <Box ref={feedbackContentRef} width="100%">
                 <AnimatePresence mode="wait">
-                  {isSending ? (
+                  {unlock ? (
+                    <AchievementFeedback key={unlock.key} unlock={unlock} language={userLanguage} onDismiss={dismiss} />
+                  ) : isSending ? (
                     <motion.div
                       key="loading-content"
                       initial={{ opacity: 0, y: 6 }}
@@ -553,7 +600,7 @@ export const BottomActionBar = ({
                     px={2.5}
                     py={1}
                     borderRadius="full"
-                    bg={useColorModeValue("white", "rgba(255, 255, 255, 0.08)")}
+                    bg={resolveColor("white", "rgba(255, 255, 255, 0.08)")}
                     border="1px solid rgba(102, 133, 255, 0.45)"
                     boxShadow="0 1px 3px rgba(0,0,0,0.04)"
                     tabIndex={0}
@@ -579,7 +626,7 @@ export const BottomActionBar = ({
                       px={2}
                       py={1}
                       borderRadius="full"
-                      bg={useColorModeValue("white", "rgba(255, 255, 255, 0.08)")}
+                      bg={resolveColor("white", "rgba(255, 255, 255, 0.08)")}
                       border="1px solid rgba(246, 173, 85, 0.45)"
                       boxShadow="0 1px 3px rgba(0,0,0,0.04)"
                       tabIndex={0}
@@ -604,7 +651,7 @@ export const BottomActionBar = ({
                       px={2}
                       py={1}
                       borderRadius="full"
-                      bg={useColorModeValue("white", "rgba(255, 255, 255, 0.08)")}
+                      bg={resolveColor("white", "rgba(255, 255, 255, 0.08)")}
                       border="1px solid rgba(252, 129, 129, 0.45)"
                       boxShadow="0 1px 3px rgba(0,0,0,0.04)"
                       tabIndex={0}
@@ -629,7 +676,7 @@ export const BottomActionBar = ({
                       px={2}
                       py={1}
                       borderRadius="full"
-                      bg={useColorModeValue("white", "rgba(255, 255, 255, 0.08)")}
+                      bg={resolveColor("white", "rgba(255, 255, 255, 0.08)")}
                       border="1px solid rgba(183, 148, 244, 0.5)"
                       boxShadow="0 1px 3px rgba(0,0,0,0.04)"
                       tabIndex={0}
@@ -769,8 +816,8 @@ export const BottomActionBar = ({
             minW={{ base: "44px", sm: "48px" }}
             borderRadius="full"
             color={themeIconColor}
-            _hover={{ bg: "appSurfaceMuted" }}
-            _active={{ bg: "appSurfaceInset" }}
+            _hover={{ bg: isDark ? "whiteAlpha.100" : "appSurfaceMuted" }}
+            _active={{ bg: isDark ? "whiteAlpha.200" : "appSurfaceInset" }}
             onClick={() => {
               triggerHaptic();
               playActionBarSound("next");
@@ -779,11 +826,49 @@ export const BottomActionBar = ({
           />
 
           {/* Correct State: wide 'Next question →' primary button */}
-          {isCorrect ? (
+          {unlock ? (
+            <Button
+              key="achievement-continue"
+              flex="1"
+              height={{ base: "44px", sm: "48px" }}
+              borderRadius="12px"
+              bg="#a97916"
+              color="white"
+              fontWeight="700"
+              boxShadow="0 4px 0 #785411, 0 6px 16px rgba(160, 114, 15, 0.22)"
+              _hover={{ bg: "#8e6410" }}
+              _active={{ transform: "translateY(2px)", boxShadow: "0 2px 0 #785411" }}
+              onClick={dismiss}
+            >
+              {achievementLabel("continue", userLanguage)}
+            </Button>
+          ) : primaryAction ? (
             <Button
               flex="1"
               height={{ base: "44px", sm: "48px" }}
-              borderRadius="8px"
+              borderRadius="12px"
+              bg={unlock ? "#a97916" : primaryButtonBg}
+              color="white"
+              fontWeight="700"
+              fontSize="md"
+              boxShadow={primaryButtonShadow}
+              _hover={{ bg: unlock ? "#8e6410" : primaryButtonHoverBg }}
+              _active={{
+                bg: unlock ? "#8e6410" : primaryButtonHoverBg,
+                transform: "translateY(2px)",
+                boxShadow: primaryButtonActiveShadow,
+              }}
+              isDisabled={primaryAction.disabled}
+              isLoading={primaryAction.loading}
+              onClick={primaryAction.onClick}
+            >
+              {primaryAction.label}
+            </Button>
+          ) : isCorrect ? (
+            <Button
+              flex="1"
+              height={{ base: "44px", sm: "48px" }}
+              borderRadius="12px"
               bg={primaryNextButtonBg}
               color="white"
               fontWeight="700"
@@ -865,8 +950,8 @@ export const BottomActionBar = ({
                   minW={{ base: "44px", sm: "48px" }}
                   borderRadius="full"
                   color={themeIconColor}
-                  _hover={{ bg: "appSurfaceMuted" }}
-                  _active={{ bg: "appSurfaceInset" }}
+                  _hover={{ bg: isDark ? "whiteAlpha.100" : "appSurfaceMuted" }}
+                  _active={{ bg: isDark ? "whiteAlpha.200" : "appSurfaceInset" }}
                   position="relative"
                   zIndex={1}
                   onClick={() => {
@@ -882,7 +967,7 @@ export const BottomActionBar = ({
                 <Button
                   flex="1"
                   height={{ base: "44px", sm: "48px" }}
-                  borderRadius="8px"
+                  borderRadius="12px"
                   bg={primaryButtonBg}
                   color="white"
                   fontWeight="700"
@@ -904,7 +989,7 @@ export const BottomActionBar = ({
                 <Button
                   flex="1"
                   height={{ base: "44px", sm: "48px" }}
-                  borderRadius="8px"
+                  borderRadius="12px"
                   bg={primaryButtonBg}
                   color="white"
                   fontWeight="700"
@@ -960,7 +1045,7 @@ export const BottomActionBar = ({
                 <Button
                   flex="1"
                   height={{ base: "44px", sm: "48px" }}
-                  borderRadius="8px"
+                  borderRadius="12px"
                   bg={primaryButtonBg}
                   color="white"
                   fontWeight="700"
@@ -991,7 +1076,17 @@ export const BottomActionBar = ({
     </Box>
   );
 
-  return <Portal>{renderActionBarTour(barContent)}</Portal>;
+  const renderedContent = isDark ? (
+    <DarkMode>
+      <Box data-theme="dark" className="chakra-ui-dark" display="contents">
+        {barContent}
+      </Box>
+    </DarkMode>
+  ) : (
+    barContent
+  );
+
+  return <Portal>{renderActionBarTour(renderedContent)}</Portal>;
 };
 
 export default BottomActionBar;

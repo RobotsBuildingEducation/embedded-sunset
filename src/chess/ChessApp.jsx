@@ -1,3 +1,5 @@
+import { useUpdateBlocker } from "../pwa/updateSafety.js";
+import AppUpdateTopBar from "../components/AppUpdateTopBar.jsx";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   BrowserRouter,
@@ -85,6 +87,7 @@ function ChessRoom() {
   const [flipped, setFlipped] = useState(false);
   const [resignConfirm, setResignConfirm] = useState(false);
   const [difficultyOpen, setDifficultyOpen] = useState(false);
+  useUpdateBlocker("chess-move", busy || thinking, "Chess move in progress");
   const moveLock = useRef(false);
   const botAttempt = useRef("");
   const boardRef = useRef(null);
@@ -564,6 +567,7 @@ function ChessRoom() {
 
   return (
     <main className={`chess-page theme-${themeMode}`}>
+      <AppUpdateTopBar language={userLanguage} />
       <header className="chess-header">
         <div className="chess-header-controls">
           <button

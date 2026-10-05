@@ -16,7 +16,7 @@ function MiniOrb({ state, palette, mood, reaction }) {
 }
 
 /** Display and loader orbs choose their own personality; tutor orbs follow the live voice state. */
-export default function VoiceOrbNext({ state: explicitState, theme, palette, size = 75, centered = true, variant = "display", excludeThinking = false, callActive = true, feedback = null, force3D = false, showShadow = true, mood: explicitMood }) {
+export default function VoiceOrbNext({ state: explicitState, theme, palette, size = 75, centered = true, variant = "display", excludeThinking = false, callActive = true, feedback = null, force3D = false, showShadow = true, mood: explicitMood, sharedRenderer, maxDpr }) {
   const { colorMode } = useColorMode();
   const themeColor = useThemeStore((store) => store.themeColor);
   const dark = (theme || colorMode) === "dark";
@@ -115,6 +115,8 @@ export default function VoiceOrbNext({ state: explicitState, theme, palette, siz
           reaction={currentReaction}
           compact
           showShadow={showShadow}
+          sharedRenderer={sharedRenderer}
+          maxDpr={maxDpr}
           fallback={<MiniOrb state={voiceState} palette={resolvedPalette} mood={mood} reaction={currentReaction} />}
         />
       )}

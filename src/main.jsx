@@ -1,6 +1,11 @@
 import React, { Suspense, lazy } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
+import { initAppUpdateCoordinator } from "./pwa/appUpdateCoordinator.js";
+
+initAppUpdateCoordinator().catch((error) => {
+  console.warn("[PWA Update] Initialization failed:", error);
+});
 // localStorage.clear();
 
 const AppWrapper = lazy(() =>
@@ -32,10 +37,12 @@ const BootFallback = () => {
   );
 };
 
-if ("serviceWorker" in navigator) {
+if (!import.meta.env.DEV && "serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("/firebase-messaging-sw.js")
+      .register("/firebase-messaging-sw.js", {
+        scope: "/firebase-cloud-messaging-push-scope",
+      })
       .then((registration) => {
         console.log(
           "Service Worker registered with scope:",

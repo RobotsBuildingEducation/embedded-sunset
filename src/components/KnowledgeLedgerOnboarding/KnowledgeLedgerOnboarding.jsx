@@ -411,9 +411,10 @@ export default function KnowledgeLedgerOnboarding({
               {hasRunCode ? (
                 <>
                   <br />
-                  <Text> {translation[userLanguage]["goodJob"]}</Text>
+                  <Text mb={2}> {translation[userLanguage]["goodJob"]}</Text>
                   <Button
                     onClick={moveToNext}
+                    width="100%"
                     mb={2}
                     boxShadow="0.5px 0.5px 1px 0px rgba(0,0,0,0.75)"
                     data-sound-ignore-select="true"

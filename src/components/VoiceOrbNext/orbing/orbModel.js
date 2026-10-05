@@ -61,6 +61,10 @@ export const ORB_PALETTES = [
   { id: "purple", name: "Purple", swatch: "#9f7aea", colors: ["#6b46c1", "#b794f4", "#f3e8ff"] },
   { id: "green", name: "Green", swatch: "#48bb78", colors: ["#2f855a", "#68d391", "#e8fff0"] },
   { id: "pink", name: "Pink", swatch: "#ed64a6", colors: ["#b83280", "#f687b3", "#fff0f7"] },
+  { id: "gold", name: "Solar gold", swatch: "#f6c445", colors: ["#c67d0a", "#f6c445", "#fff6d6"] },
+  { id: "rose", name: "Ruby rose", swatch: "#fb7185", colors: ["#b91c1c", "#fb7185", "#ffe4e6"] },
+  { id: "emerald", name: "Emerald", swatch: "#34d399", colors: ["#047857", "#34d399", "#ecfdf5"] },
+  { id: "obsidian", name: "Obsidian", swatch: "#6366f1", colors: ["#1e1b4b", "#6366f1", "#e0e7ff"] },
 ];
 
 export const DEFAULT_ORB_PALETTE = "orange";

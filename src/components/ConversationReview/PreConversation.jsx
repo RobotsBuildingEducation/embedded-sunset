@@ -26,6 +26,7 @@ import {
   GENERATED_REACT_RUNTIME_REQUIREMENTS,
   normalizeGeneratedReactCode,
 } from "../../utility/generatedReactCode";
+import { buildAppPrompt } from "../../utility/buildAppPrompt";
 import {
   useConversationReviewStore,
   calculateConversationReviewState,
@@ -57,6 +58,8 @@ const writeBuildFallback = (userId, groupId, payload) => {
     );
   } catch {}
 };
+
+const CHAPTER_GROUPS = ["tutorial", "1", "2", "3", "4", "5", "6"];
 
 export const transcriptDisplay = {
   tutorial: {
@@ -132,6 +135,7 @@ const CodeBlock = ({ inline, className, children, ...props }) => {
         code={String(children).replace(/\n$/, "")}
         hideRunButton={hideRunButton}
         autoRun={autoRun}
+        previewHeight={{ base: "420px", md: "500px" }}
       />
     </Suspense>
   ) : (
@@ -159,10 +163,13 @@ const PreConversation = ({ steps, step, userLanguage, onSubmit, onBuildReady }) 
   const [savedIdea, setSavedIdea] = useState("");
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [hasGeneratedForCurrentStep, setHasGeneratedForCurrentStep] = useState(false);
   const { submitPrompt, messages, resetMessages } =
     useConversationReviewGeminiChat();
 
   useEffect(() => {
+    setHasGeneratedForCurrentStep(false);
+    resetMessages();
     const fetchData = async () => {
       try {
         const userId = localStorage.getItem("local_npub");
@@ -176,7 +183,20 @@ const PreConversation = ({ steps, step, userLanguage, onSubmit, onBuildReady }) 
             const data = snap.data();
             loadedIdea = data.userBuild || "";
             const buildCode = data.buildCode || {};
-            if (buildCode[step?.group]) loadedCode = buildCode[step?.group];
+            if (buildCode[step?.group]) {
+              loadedCode = buildCode[step?.group];
+            } else {
+              // Carry over latest previous app code so learner can preview their app
+              const currentGroupIndex = CHAPTER_GROUPS.indexOf(String(step?.group));
+              const searchLimit = currentGroupIndex > 0 ? currentGroupIndex : CHAPTER_GROUPS.length;
+              for (let i = searchLimit - 1; i >= 0; i--) {
+                const prevGroup = CHAPTER_GROUPS[i];
+                if (buildCode[prevGroup]) {
+                  loadedCode = buildCode[prevGroup];
+                  break;
+                }
+              }
+            }
           }
 
           const codeSnap = await getDoc(
@@ -191,6 +211,27 @@ const PreConversation = ({ steps, step, userLanguage, onSubmit, onBuildReady }) 
         const fallback = readBuildFallback(userId, step?.group);
         if (!loadedIdea && fallback?.idea) loadedIdea = fallback.idea;
         if (!loadedCode && fallback?.code) loadedCode = fallback.code;
+
+        // If fallback code is not present for this group, check previous groups
+        if (!loadedCode) {
+          const currentGroupIndex = CHAPTER_GROUPS.indexOf(String(step?.group));
+          const searchLimit = currentGroupIndex > 0 ? currentGroupIndex : CHAPTER_GROUPS.length;
+          for (let i = searchLimit - 1; i >= 0; i--) {
+            const prevFallback = readBuildFallback(userId, CHAPTER_GROUPS[i]);
+            if (prevFallback?.code) {
+              loadedCode = prevFallback.code;
+              if (!loadedIdea && prevFallback?.idea) loadedIdea = prevFallback.idea;
+              break;
+            }
+          }
+        }
+
+        if (!loadedIdea && typeof window !== "undefined") {
+          try {
+            loadedIdea = window.localStorage.getItem("userBuild") || "";
+          } catch {}
+        }
+
         loadedCode = normalizeGeneratedReactCode(loadedCode);
 
         setIdea(loadedIdea);
@@ -218,21 +259,32 @@ const PreConversation = ({ steps, step, userLanguage, onSubmit, onBuildReady }) 
       saveBuild(normalizedCode, "build");
       if (normalizedCode.trim()) {
         onBuildReady?.(true);
+        setHasGeneratedForCurrentStep(true);
       }
     }
   }, [messages]);
 
   const fetchHistory = async () => {
     try {
+      const currentGroupIndex = CHAPTER_GROUPS.indexOf(String(step?.group));
       const userId = localStorage.getItem("local_npub");
-      if (!userId) return [];
+      if (!userId) {
+        const searchLimit = currentGroupIndex > 0 ? currentGroupIndex : 0;
+        const localHistory = [];
+        for (let i = 0; i < searchLimit; i++) {
+          const fb = readBuildFallback(null, CHAPTER_GROUPS[i]);
+          if (fb?.code) localHistory.push(fb.code);
+        }
+        return localHistory;
+      }
       const ref = collection(database, `users/${userId}/buildHistory`);
       const docs = await getDocs(ref);
       return docs.docs
-        .filter(
-          (d) => !isNaN(parseInt(d.id)) && parseInt(d.id) < parseInt(step?.group)
-        )
-        .sort((a, b) => parseInt(a.id) - parseInt(b.id))
+        .filter((d) => {
+          const idx = CHAPTER_GROUPS.indexOf(String(d.id));
+          return idx !== -1 && (currentGroupIndex === -1 || idx < currentGroupIndex);
+        })
+        .sort((a, b) => CHAPTER_GROUPS.indexOf(String(a.id)) - CHAPTER_GROUPS.indexOf(String(b.id)))
         .map((d) => d.data().code)
         .filter(Boolean);
     } catch (e) {
@@ -248,29 +300,13 @@ const PreConversation = ({ steps, step, userLanguage, onSubmit, onBuildReady }) 
     const completed = steps[userLanguage].slice(1, idx).map((s) => s.title);
     const history = await fetchHistory();
 
-    let prompt =
-      `Context for the prompt:
-      The individual is using an education app and learning about computer science and how to code, starting with elementary knowledge and ending with the ability to create apps. Based on the user's completed steps: ${JSON.stringify(
-        completed
-      )}, write an app that the user can copy and experiment with HTML or React (choose whichever is appropriate based on the user's progress).` +
-      (history.length
-        ? ` Previous code snippets in order: ${JSON.stringify(history)}.`
-        : "") +
-      `\n\n` +
-      `Strict requirements: 
-      
-      1. This is the MOST important to understand: The code should be progressively and appropriately built based on the user's progress to incentivize further interest, excitement and progress, so you should implement the app in a way that highlights the user's progress. For example, if the user's most recent progress/group has learned how to use firebase, then implement firebase features. If the user has recently learned react, implement react UIs, etc. If it's just javascript, then use HMTL. The goal is to build out a simple but real demo that users can operate and preview in an editor and to generate an awesome user experience to highlight one's growth.\n\n` +
-      `2. When generating your response, you MUST format your software in this manner:\n  Globally: Never use imports. Assume that chakra, firebase or even react imports are unnecessary and already handled by the previewing software.\n\n  
-      - A. If you are upgrading to React, do NOT include any import statements or define dependencies (for example, if you use useEffect or useState, you use React.useEffect and React.useState),and conclude the component or components with render(<TheComponentYouCreated />). This means React code is only ever about writing component functions, nothing else.\n  
-      ${GENERATED_REACT_RUNTIME_REQUIREMENTS}\n
-      - B. If you are generating plain html, use !DOCTYPE\n  
-      - C. Do NOT return purely plain JavaScript snippets. Use React components or HTML only based on the criteria.\n  
-      - D. If you are writing firebase (with or without react), use v9, and you MUST use a unique document in the 'experiments' collection. Never use any other collection or your firebase software will fail. Never use imports or we will fail. Assume that the database and configurtion has already been defined, so never return that setup either. Refer to the database element as "database" and not "db" or anything else. Do not use auth. Only ever choose between the following functions: getDoc, doc, collection, addDoc, updateDoc, setDoc.\n  
-      - E. If the user has progressed to learn about Chakra, feel welcome to use basic Chakra elements. Never use the ChakraProvider element.\n\n` +
-      `3. Strictly return only code written by a formatted backticked code block. Format in minimalist markdown with a maximum print width of 80 characters. Finally do not add any language mentioning that you understand the request - it should the code only, without any exceptions. I repeat, do not return anything other than code or appropriate comments with the code. \n\n` +
-      `4. The user is speaking in ${userLanguage?.includes("en") ? "English" : "Spanish"}. So theme the code that you're writing based on the language.` +
-      `5. The user is also interested in building the following idea: ${idea}. Make the code about that theme in good faith.` +
-      `6. The code you return MUST be responsive for both mobile and desktop views. Do not allow renders that awkwardly break out of containers, err on the side of being as mobile friendly as possible!`;
+    const prompt = buildAppPrompt({
+      completed,
+      history,
+      idea,
+      userLanguage,
+      group: step?.group,
+    });
 
     submitPrompt(prompt).then(() => setIsLoading(false));
   };
@@ -354,6 +390,7 @@ const PreConversation = ({ steps, step, userLanguage, onSubmit, onBuildReady }) 
       savedIdea,
       code,
       isLoading,
+      hasGeneratedForCurrentStep,
     });
 
     useConversationReviewStore.getState().setReviewState({
@@ -363,7 +400,7 @@ const PreConversation = ({ steps, step, userLanguage, onSubmit, onBuildReady }) 
       onCreateOrUpdate: handleSaveIdeaAndGenerate,
       onComplete: handleCompleteChapter,
     });
-  }, [idea, savedIdea, code, isLoading]);
+  }, [idea, savedIdea, code, isLoading, hasGeneratedForCurrentStep]);
 
   useEffect(() => {
     return () => {
@@ -400,7 +437,14 @@ const PreConversation = ({ steps, step, userLanguage, onSubmit, onBuildReady }) 
       />
 
       {isLoading && (
-        <VoiceOrbLoader label={translation[userLanguage]["loading.suggestion"]} />
+        <VoiceOrbLoader
+          label={
+            translation[userLanguage]?.generatingApp ||
+            (userLanguage?.startsWith("es")
+              ? "Generando app..."
+              : "Generating app...")
+          }
+        />
       )}
 
       {code && (

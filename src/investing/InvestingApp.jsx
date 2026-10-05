@@ -1,3 +1,4 @@
+import AppUpdateTopBar from "../components/AppUpdateTopBar.jsx";
 import { useCallback, useEffect, useId, useMemo, useState } from "react";
 import {
   FiArrowUpRight,
@@ -303,6 +304,7 @@ export default function InvestingApp() {
 
   return (
     <div className="investing-page" data-theme={themeMode}>
+      <AppUpdateTopBar language={userLanguage} />
       <header className="inv-header">
         <div className="inv-brand">
           <div className="inv-brand-symbol">✳</div>

@@ -1,3 +1,4 @@
+import AppUpdateTopBar from "../components/AppUpdateTopBar.jsx";
 import React, { Suspense } from "react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
@@ -8,6 +9,7 @@ import ChartsPage from "./ChartsPage.jsx";
 export default function ChartsApp() {
   return (
     <ChakraProvider theme={appTheme}>
+      <AppUpdateTopBar />
       <BrowserRouter>
         <Suspense fallback={<AppLoadingScreen />}>
           <Routes>
