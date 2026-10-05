@@ -147,3 +147,83 @@ test("chapter completion flow triggers onComplete and allows immediate review re
   assert.equal(stateAfter.onComplete, null);
 });
 
+test("when navigating to a new chapter with an existing saved app, status is 'update' before generation", () => {
+  const state = calculateConversationReviewState({
+    idea: "Flashcard tutor",
+    savedIdea: "Flashcard tutor",
+    code: "function App() { return <div>Previous Chapter App</div>; }",
+    isLoading: false,
+    hasGeneratedForCurrentStep: false,
+  });
+
+  assert.equal(state.status, "update");
+  assert.equal(state.isDisabled, false);
+});
+
+test("in a new chapter, generating code updates hasGeneratedForCurrentStep and transitions status to 'complete'", () => {
+  // Arriving at chapter review: status is update
+  const beforeState = calculateConversationReviewState({
+    idea: "Flashcard tutor",
+    savedIdea: "Flashcard tutor",
+    code: "function App() { return <div>Previous Chapter App</div>; }",
+    isLoading: false,
+    hasGeneratedForCurrentStep: false,
+  });
+  assert.equal(beforeState.status, "update");
+  assert.equal(beforeState.isDisabled, false);
+
+  // During generation: status is update, disabled is true
+  const generatingState = calculateConversationReviewState({
+    idea: "Flashcard tutor",
+    savedIdea: "Flashcard tutor",
+    code: "function App() { return <div>Previous Chapter App</div>; }",
+    isLoading: true,
+    hasGeneratedForCurrentStep: false,
+  });
+  assert.equal(generatingState.status, "update");
+  assert.equal(generatingState.isDisabled, true);
+
+  // After generation for current chapter completes: status becomes complete
+  const afterState = calculateConversationReviewState({
+    idea: "Flashcard tutor",
+    savedIdea: "Flashcard tutor",
+    code: "function App() { return <div>Progressively Updated App</div>; }",
+    isLoading: false,
+    hasGeneratedForCurrentStep: true,
+  });
+  assert.equal(afterState.status, "complete");
+  assert.equal(afterState.isDisabled, false);
+});
+
+test("when an existing app is present in a new chapter, editing idea keeps status as 'update'", () => {
+  const state = calculateConversationReviewState({
+    idea: "Flashcard tutor with spaced repetition",
+    savedIdea: "Flashcard tutor",
+    code: "function App() { return <div>Previous Chapter App</div>; }",
+    isLoading: false,
+    hasGeneratedForCurrentStep: false,
+  });
+
+  assert.equal(state.status, "update");
+  assert.equal(state.isDisabled, false);
+});
+
+test("translation contains generatingApp label for loader across all languages", async () => {
+  const fs = await import("node:fs");
+  const content = fs.readFileSync(
+    new URL("../../utility/translation.jsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.ok(
+    content.includes('generatingApp: "Generating app...",'),
+    "contains generatingApp for English",
+  );
+  assert.ok(
+    content.includes('generatingApp: "Generando app...",'),
+    "contains generatingApp for Spanish",
+  );
+  const matches = content.match(/generatingApp:\s*["'][^"']+["']/g);
+  assert.equal(matches?.length, 6);
+});
+

@@ -40,6 +40,9 @@ const escapeRegExp = (value) =>
 
 export const normalizeGeneratedReactCode = (source = "") => {
   let code = String(source);
+  if (/^\s*<!DOCTYPE/i.test(code) || /^\s*<html[\s>]/i.test(code)) {
+    return code.trim();
+  }
   const hookAliases = new Map();
   const chakraAliases = new Map();
 

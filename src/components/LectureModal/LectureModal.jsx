@@ -21,6 +21,7 @@ import {
   Icon,
   OrderedList,
   CloseButton,
+  DarkMode,
 } from "@chakra-ui/react";
 import { steps } from "../../utility/content";
 import { videoTranscript } from "../../utility/transcript";
@@ -528,9 +529,28 @@ const LectureModal = ({
           practiceCompleted={hasPracticedModule}
         />
 
-        <BottomActionBar currentStep={currentStep} step={step} steps={steps} userLanguage={userLanguage}
-          translation={translation} isCorrect={null} feedback="" layer={2100}
-          primaryAction={{ label: translation[userLanguage]?.["app.button.nextQuestion"] || "Next", loading: isAdvancing, onClick: advanceReview }} />
+        <DarkMode>
+          <Box data-theme="dark" className="chakra-ui-dark" display="contents">
+            <BottomActionBar
+              currentStep={currentStep}
+              step={step}
+              steps={steps}
+              userLanguage={userLanguage}
+              translation={translation}
+              isCorrect={null}
+              feedback=""
+              layer={2100}
+              colorMode="dark"
+              primaryAction={{
+                label:
+                  translation[userLanguage]?.["app.button.nextQuestion"] ||
+                  "Next",
+                loading: isAdvancing,
+                onClick: advanceReview,
+              }}
+            />
+          </Box>
+        </DarkMode>
       </Box>
     </CloudTransition>
   );

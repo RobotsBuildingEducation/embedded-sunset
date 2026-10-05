@@ -4990,6 +4990,7 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
                 fallback={<CloudCanvas isLoader={true} regulateWidth={false} />}
               >
                 <ConversationReview
+                  key={`${currentStep}-${step?.group || ""}`}
                   question={step.question}
                   userLanguage={userLanguage}
                   steps={steps}

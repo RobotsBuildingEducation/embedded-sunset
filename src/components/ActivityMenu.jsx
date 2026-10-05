@@ -4,6 +4,7 @@ import {
   IconButton,
   Portal,
   Text,
+  useColorMode,
   useColorModeValue,
   useToken,
 } from "@chakra-ui/react";
@@ -295,7 +296,13 @@ export const ActivityMenu = ({
   onOpenPatreon,
   userLanguage = "en",
   translation = {},
+  colorMode: colorModeProp,
 }) => {
+  const { colorMode: contextColorMode } = useColorMode();
+  const effectiveColorMode = colorModeProp || contextColorMode;
+  const isDark = effectiveColorMode === "dark";
+  const resolveColor = (lightVal, darkVal) => (isDark ? darkVal : lightVal);
+
   const themeColor = useThemeStore((state) => state.themeColor);
   const unseenTeamInvite = useSurfaceModalStore((state) => state.unseenTeamInvite);
 
@@ -311,47 +318,47 @@ export const ActivityMenu = ({
     ],
   );
 
-  const themeIconColor = useColorModeValue(
+  const themeIconColor = resolveColor(
     theme600 || "#d946ef",
     theme300 || "#f0abfc",
   );
-  const themeIconBg = useColorModeValue(
+  const themeIconBg = resolveColor(
     theme50 || "rgba(236, 72, 153, 0.08)",
     "rgba(255, 255, 255, 0.06)",
   );
-  const themeIconBorder = useColorModeValue(
+  const themeIconBorder = resolveColor(
     theme200 || "rgba(236, 72, 153, 0.22)",
     "rgba(255, 255, 255, 0.12)",
   );
 
   // Liquid Glass Material Tokens
-  const cardBg = useColorModeValue(
+  const cardBg = resolveColor(
     "rgba(247, 243, 237, 0.94)",
     "rgba(26, 26, 26, 0.94)",
   );
-  const cardBorder = useColorModeValue(
+  const cardBorder = resolveColor(
     "rgba(180, 164, 144, 0.65)",
     "rgba(255, 255, 255, 0.16)",
   );
-  const cardShadow = useColorModeValue(
+  const cardShadow = resolveColor(
     "0 20px 50px rgba(15, 23, 42, 0.18)",
     "0 24px 60px rgba(2, 6, 23, 0.65)",
   );
 
   // Bento Tile Tokens
-  const tileBg = useColorModeValue(
+  const tileBg = resolveColor(
     "rgba(255, 255, 255, 0.72)",
     "rgba(255, 255, 255, 0.05)",
   );
-  const tileBorder = useColorModeValue(
+  const tileBorder = resolveColor(
     "rgba(180, 164, 144, 0.35)",
     "rgba(255, 255, 255, 0.08)",
   );
-  const tileHoverBg = useColorModeValue(
+  const tileHoverBg = resolveColor(
     "rgba(255, 255, 255, 0.96)",
     "rgba(255, 255, 255, 0.09)",
   );
-  const dragHandleBg = useColorModeValue(
+  const dragHandleBg = resolveColor(
     "rgba(180, 164, 144, 0.7)",
     "rgba(255, 255, 255, 0.3)",
   );
@@ -438,6 +445,8 @@ export const ActivityMenu = ({
           <MotionBox
             ref={cardRef}
             data-activity-menu-card="true"
+            data-theme={effectiveColorMode}
+            className={isDark ? "chakra-ui-dark" : "chakra-ui-light"}
             style={{ y: dragY }}
             initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}

@@ -291,21 +291,28 @@ const LiveReactEditorModal = ({
   }, [controlledCode, code]); // eslint-disable-line
 
   // ---------------- detection helpers
-  const looksLikeReact = (src = "") =>
-    /render\s*\(/i.test(src) ||
-    /ReactDOM\s*\.\s*render\s*\(/i.test(src) ||
-    /createRoot\s*\(/i.test(src) ||
-    /ReactDOM\s*\.\s*createRoot\s*\(/i.test(src) ||
-    /<\s*[a-zA-Z]/i.test(src) ||
-    /useState|useEffect|useRef|useMemo/i.test(src) ||
-    /className\s*=/i.test(src) ||
-    /style\s*=\s*\{\{/i.test(src);
+  const isFullHTMLDocument = (src = "") =>
+    /<!DOCTYPE/i.test(src) ||
+    /<html[\s>]/i.test(src) ||
+    /<body[\s>]/i.test(src);
 
   const looksLikeHTML = (src = "") =>
-    /<!DOCTYPE/i.test(src) ||
-    /<html/i.test(src) ||
-    /<body/i.test(src) ||
+    isFullHTMLDocument(src) ||
     /<\/?[a-z-]+/i.test(src);
+
+  const looksLikeReact = (src = "") => {
+    if (isFullHTMLDocument(src)) return false;
+    return (
+      /render\s*\(/i.test(src) ||
+      /ReactDOM\s*\.\s*render\s*\(/i.test(src) ||
+      /createRoot\s*\(/i.test(src) ||
+      /ReactDOM\s*\.\s*createRoot\s*\(/i.test(src) ||
+      /useState|useEffect|useRef|useMemo/i.test(src) ||
+      /className\s*=/i.test(src) ||
+      /style\s*=\s*\{\{/i.test(src) ||
+      /<\s*[A-Z][a-zA-Z0-9_]*/.test(src)
+    );
+  };
 
   const cleanCode = (inputCode) =>
     (inputCode || "").replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, "").trim();
@@ -317,6 +324,7 @@ const LiveReactEditorModal = ({
 
   // Normalize React 18 root/render patterns to react-live's `render(el)`
   const normalizeReactEntry = (src = "") => {
+    if (isFullHTMLDocument(src)) return src;
     let s = normalizeGeneratedReactCode(src).trim();
 
     // ReactDOM.createRoot(root).render(<App />)
@@ -403,12 +411,12 @@ const LiveReactEditorModal = ({
 
     const sanitized = cleanCode(currentCode);
 
-    if (looksLikeReact(sanitized)) {
-      // react-live path — nothing else to do
+    if (isFullHTMLDocument(currentCode) || looksLikeHTML(currentCode)) {
+      runHTMLCode(currentCode);
       return;
     }
-    if (looksLikeHTML(currentCode)) {
-      runHTMLCode(currentCode);
+    if (looksLikeReact(sanitized)) {
+      // react-live path — nothing else to do
       return;
     }
     runJavaScriptCode(sanitized);
@@ -797,14 +805,19 @@ const LiveReactEditorModal = ({
                 </LiveProvider>
               </ChakraProvider>
             </Box>
-          ) : looksLikeHTML(currentCode) ? (
+          ) : isFullHTMLDocument(currentCode) || looksLikeHTML(currentCode) ? (
             // HTML preview
             <Box width="100%" height="100%" borderRadius="md">
               <iframe
                 key={instanceKey}
                 ref={iframeRef}
                 title="Live Preview"
-                style={{ width: "100%", height: "100%" }}
+                srcDoc={
+                  currentCode.startsWith("<!DOCTYPE")
+                    ? currentCode
+                    : `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8" /><title>Live HTML Preview</title></head><body>${currentCode}</body></html>`
+                }
+                style={{ width: "100%", height: "100%", border: "none" }}
               />
             </Box>
           ) : isPreviewing || autoRun ? (
