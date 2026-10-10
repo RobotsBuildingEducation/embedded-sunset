@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { translation } from "../utility/translation";
 
-export const CountdownTimer = ({ onTimerExpire, userLanguage }) => {
+export const CountdownTimer = ({ onTimerExpire, userLanguage, expiresAt }) => {
   const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
     // Retrieve expiry time from localStorage and parse it as a number
-    const expiryTime = parseInt(localStorage.getItem("incorrectExpiry"), 10);
+    const expiryTime = expiresAt ?? parseInt(localStorage.getItem("incorrectExpiry"), 10);
 
     if (!expiryTime) return; // Exit if no expiry time is found
 
@@ -31,7 +31,7 @@ export const CountdownTimer = ({ onTimerExpire, userLanguage }) => {
 
     // Clean up the interval on component unmount
     return () => clearInterval(intervalId);
-  }, [onTimerExpire]); // Empty dependency array since `expiryTime` doesn't change
+  }, [onTimerExpire, expiresAt]);
 
   // Convert milliseconds to minutes and seconds
   const minutes = Math.floor(timeLeft / 60000);

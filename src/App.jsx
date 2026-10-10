@@ -94,6 +94,7 @@ import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
 import BottomActionBar from "./components/BottomActionBar/BottomActionBar";
 import WaveBar from "./components/WaveBar";
 import ChapterReview from "./components/ChapterReview";
+import LandingSections from "./components/Landing/LandingSections.jsx";
 import DailyGoalCelebrationModal from "./components/DailyGoalCelebrationModal/DailyGoalCelebrationModal";
 import { MiniKitContextProvider } from "./providers/MiniKitProvider.jsx";
 import AnimatedBackground from "./components/AnimatedBackground/AnimatedBackground";
@@ -118,7 +119,6 @@ import {
   updateUserData,
   incrementQuestionsAnswered,
   subscribeToQuestionsAnswered,
-  BASE_QUESTION_COUNT,
   generatePromotionCode,
 } from "./utility/nosql";
 import {
@@ -364,6 +364,7 @@ import {
   getInstantSurfacePressProps,
   runImmediateSurfaceUpdate,
 } from "./utility/instantSurface";
+import { buildObjectiveGradingPrompt } from "./utility/objectiveGrading.js";
 
 async function nameForSignedInAccount(npub) {
   const pubkey = toHexPubkey(npub);
@@ -3311,15 +3312,7 @@ In addition to the grading fields already requested, return updatedLearningSumma
       await submitQuestionGradingPrompt(
         [
           {
-            content: `The learner is completing a ${getQuestionType(step)} exercise.
-Question: ${JSON.stringify(step.question.questionText)}
-Expected answer, when the exercise has one: ${JSON.stringify(step.question.answer)}
-Success checks, when the exercise uses a rubric: ${JSON.stringify(step.question.tests || [])}
-Submitted answer: ${JSON.stringify(answer)}
-
-For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-implementation, and fix-the-bug questions with an expected answer, grade by comparing the submitted and expected values. Parsons order matters. Matching keys and values must all match. Relevant-line order does not matter. For refactoring challenges, judge whether the submitted code satisfies every success check while preserving valid, readable code. Return only JSON using { "isCorrect": boolean, "feedback": string, "grade": string }. Do not reveal the complete solution. If correct, grade 100. The learner is speaking ${
-              userLanguage === "es" ? "Spanish" : "English"
-            }.`,
+            content: buildObjectiveGradingPrompt(step, answer, userLanguage),
             role: "user",
           },
         ],
@@ -3347,13 +3340,7 @@ For code tracing, fill-in-the-blanks, Parsons, matching, relevant-line, best-imp
       // console.log("    step.question.answer", step.question.answer);
       await submitQuestionGradingPrompt([
         {
-          content: `The user is answering the following question "${
-            step.question.questionText
-          }". The question's answer is defined as "${
-            step.question.answer
-          }" and the user submitted the following answer "${answer}". Is this answer correct? Determine by strictly comparing the question's answer and the submitted user answer, they must match. Only the question's answer is acceptable. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. Your feedback will include a grade ranging from 0-100 based on the quality of the answer  -  however if the answer is correct just reward a 100. The user is speaking ${
-            userLanguage === "es" ? "spanish" : "english"
-          }.`,
+          content: buildObjectiveGradingPrompt(step, answer, userLanguage),
           role: "user",
         },
       ]);
@@ -5855,8 +5842,6 @@ const Home = ({
   setCurrentStep,
   setIsAdaptiveLearning,
 }) => {
-  const bgUrl =
-    "https://res.cloudinary.com/dtkeyccga/image/upload/v1755215290/Untitled_800_x_600_px_1_dmtcwn.gif";
   const [showSplash, setShowSplash] = useState(false);
   // const [view, setView] = useState("buttons");
   const [loadingMessage, setLoadingMessage] = useState(
@@ -5886,13 +5871,9 @@ const Home = ({
     `${themeColor}.300`,
   );
 
-  const [questionsAnswered, setQuestionsAnswered] =
-    useState(BASE_QUESTION_COUNT);
-  const QUESTION_GOAL = 7500;
-  const questionProgress = Math.min(
-    (questionsAnswered / QUESTION_GOAL) * 100,
-    100,
-  );
+  const [questionsAnswered, setQuestionsAnswered] = useState(null);
+  const [questionCountUnavailable, setQuestionCountUnavailable] =
+    useState(false);
 
   const landingFallbackTranslation = translation.en || {};
   const landingTranslationMap =
@@ -5982,45 +5963,27 @@ const Home = ({
       }));
   }, [landingFallbackTranslation, landingLocaleSteps, landingTranslationMap]);
 
-  const landingChapterReviewText = useMemo(
-    () => ({
-      title:
-        landingTranslationMap["chapterReview.title"] ||
-        landingFallbackTranslation["chapterReview.title"] ||
-        "Chapter Skill Journey",
-      subtitle:
-        landingTranslationMap["chapterReview.subtitle"] ||
-        landingFallbackTranslation["chapterReview.subtitle"] ||
-        "Preview the milestones you'll tackle in this chapter before diving in.",
-      cta:
-        landingTranslationMap["chapterReview.cta"] ||
-        landingFallbackTranslation["chapterReview.cta"] ||
-        "Start chapter",
-      expand:
-        landingTranslationMap["chapterReview.expand"] ||
-        landingFallbackTranslation["chapterReview.expand"] ||
-        "Show more",
-      drawerTitle:
-        landingTranslationMap["chapterReview.drawerTitle"] ||
-        landingFallbackTranslation["chapterReview.drawerTitle"] ||
-        "Inside this chapter",
-    }),
-    [landingFallbackTranslation, landingTranslationMap],
-  );
-
   useEffect(() => {
-    let unsubscribe = () => {};
     let isActive = true;
 
-    ensureAppCheckReady()
-      .then(() => {
-        if (isActive) {
-          unsubscribe = subscribeToQuestionsAnswered(setQuestionsAnswered);
-        }
-      })
-      .catch((error) => {
-        console.error("App Check blocked question count subscription", error);
-      });
+    const handleCountError = (error) => {
+      if (!isActive) return;
+      setQuestionsAnswered(null);
+      setQuestionCountUnavailable(true);
+      console.error("Failed to load question count", error);
+    };
+
+    // Use the same global listener as the in-course community counter.
+    // Firestore handles its own App Check token; a separate readiness gate
+    // can prevent this public count from loading in local previews.
+    const unsubscribe = subscribeToQuestionsAnswered(
+      (total) => {
+        if (!isActive) return;
+        setQuestionsAnswered(total);
+        setQuestionCountUnavailable(false);
+      },
+      handleCountError,
+    );
 
     return () => {
       isActive = false;
@@ -6077,15 +6040,6 @@ const Home = ({
   const toast = useToast();
   // const { width, height } = useWindow();
   // const { authWithSigner } = useSharedNostr();
-
-  const handleChapterReviewStart = useCallback(() => {
-    if (isSignedIn) {
-      navigate("/q/0");
-      return;
-    }
-
-    setView("signIn");
-  }, [isSignedIn, navigate, setView]);
 
   const createLandingAccount = async (accountName) => {
     if (isCreatingAccount || isNsecSecretKey(accountName)) {
@@ -6737,556 +6691,18 @@ const Home = ({
               </VStack>
             </Box>
 
-            {/* "https://res.cloudinary.com/dtkeyccga/image/upload/v1755215290/Untitled_800_x_600_px_1_dmtcwn.gif" */}
-
-            <Box as="section" scrollSnapAlign="start" bg="#474d7e">
-              {/* Mobile: banner + content */}
-              <Box
-                display={{ base: "block", md: "none" }}
-                minH="80dvh"
-                // px={4}
-                // py={6}
-                sx={
-                  {
-                    // paddingTop: "max(env(safe-area-inset-top), 16px)",
-                    // paddingBottom: "max(env(safe-area-inset-bottom), 24px)",
-                  }
-                }
-              >
-                {/* Banner shows full image without cropping */}
-                <Box
-                  w="100%"
-                  // bg="blackAlpha.500"
-                  // borderRadius="xl"
-                  overflow="hidden"
-                  // mb={6}
-                  // border="1px solid red"
-                >
-                  <Image
-                    src={bgUrl}
-                    alt="Hero banner"
-                    w="100%"
-                    maxH="40vh"
-                    // objectFit="contain" // no crop on mobile
-                  />
-                </Box>
-
-                <VStack
-                  // spacing={2}
-                  align="center"
-                  bg="blackAlpha.400"
-                  borderRadius="xl"
-                  backdropFilter="blur(4px)"
-                  height="50vh"
-                  display="flex"
-                  flexDirection={"column"}
-                  justifyContent="center"
-                >
-                  <Text
-                    color="white"
-                    textAlign="center"
-                    fontSize="lg"
-                    fontWeight="semibold"
-                  >
-                    {translation[userLanguage]["landing.questionsAnswered"]}
-                  </Text>
-                  <Text
-                    color="white"
-                    textAlign="center"
-                    fontSize="6xl"
-                    fontWeight="black"
-                    lineHeight="1"
-                  >
-                    {questionsAnswered}
-                  </Text>
-
-                  <VStack>
-                    <Text
-                      color="white"
-                      textAlign="center"
-                      fontSize="lg"
-                      fontWeight="semibold"
-                    >
-                      {/* {translation[userLanguage]["landing.questionsAnswered"]} */}
-                      {translation[userLanguage]["landing.scholarshipsCreated"]}
-                    </Text>
-                    <Text
-                      color="white"
-                      textAlign="center"
-                      fontSize="7xl"
-                      fontWeight="black"
-                      lineHeight="1"
-                    >
-                      $12,000
-                    </Text>
-                  </VStack>
-
-                  <Box
-                    w="80%"
-                    maxW="400px"
-                    mt={6}
-                    color="white"
-                    fontWeight="bold"
-                    fontSize="md"
-                  >
-                    {translation[userLanguage]["communityGoal"]}
-                    {questionsAnswered}/7500{" "}
-                    {translation[userLanguage]["questions"]}
-                    <WaveBar
-                      value={questionProgress}
-                      start="#fce09d"
-                      end="#fab002"
-                    />
-                  </Box>
-                </VStack>
-              </Box>
-
-              {/* Desktop/tablet: full hero with background cover */}
-              <Box
-                display={{ base: "none", md: "flex" }}
-                pos="relative"
-                minH="100vh"
-                px={8}
-                py={16}
-                alignItems="center"
-                justifyContent="center"
-                bgImage={`linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('${bgUrl}')`}
-                bgRepeat="no-repeat"
-                bgSize="cover"
-                bgPos="center"
-              >
-                <Box
-                  maxW="container.md"
-                  w="100%"
-                  bg="rgba(0,0,0,0.25)"
-                  backdropFilter="blur(4px)"
-                  borderRadius="xl"
-                  px={8}
-                  py={10}
-                >
-                  <VStack spacing={3} align="center">
-                    <Text
-                      color="white"
-                      textAlign="center"
-                      fontSize="2xl"
-                      fontWeight="semibold"
-                    >
-                      {translation[userLanguage]["landing.questionsAnswered"]}
-                    </Text>
-                    <Text
-                      color="white"
-                      textAlign="center"
-                      fontSize="7xl"
-                      fontWeight="black"
-                      lineHeight="1"
-                    >
-                      {questionsAnswered}
-                    </Text>
-                  </VStack>
-
-                  <VStack spacing={3} align="center" mt={12}>
-                    <Text
-                      color="white"
-                      textAlign="center"
-                      fontSize="2xl"
-                      fontWeight="semibold"
-                    >
-                      {translation[userLanguage]["landing.scholarshipsCreated"]}
-                    </Text>
-                    <Text
-                      color="white"
-                      textAlign="center"
-                      fontSize="7xl"
-                      fontWeight="black"
-                      lineHeight="1"
-                    >
-                      $12,000
-                    </Text>
-
-                    <Box
-                      w="80%"
-                      maxW="400px"
-                      mt={12}
-                      color="white"
-                      fontWeight="bold"
-                    >
-                      {translation[userLanguage]["communityGoal"]}
-                      {questionsAnswered}/7500{" "}
-                      {translation[userLanguage]["questions"]}
-                      <WaveBar
-                        value={questionProgress}
-                        start="#fce09d"
-                        end="#fab002"
-                      />
-                    </Box>
-                  </VStack>
-                </Box>
-              </Box>
-            </Box>
-            {landingChapterReviewNodes.length > 0 && (
-              <Box
-                as="section"
-                scrollSnapAlign="start"
-                position="relative"
-                overflow="hidden"
-                px={{ base: 2, md: 6 }}
-                py={{ base: 12, md: 20 }}
-                display="flex"
-                justifyContent="center"
-                style={{
-                  backgroundImage:
-                    "radial-gradient(circle at 50% 6%, rgba(96,165,250,0.14), transparent 34%), linear-gradient(180deg, var(--chakra-colors-appBgMuted) 0%, var(--chakra-colors-appSurfaceMuted) 54%, var(--chakra-colors-appBgMuted) 100%)",
-                }}
-              >
-                <ChapterReview
-                  nodes={landingChapterReviewNodes}
-                  text={landingChapterReviewText}
-                  onStart={handleChapterReviewStart}
-                  defaultExpanded
-                  showExpandControl={false}
-                  showStartButton={false}
-                />
-              </Box>
-            )}
-            {/* First slide: Why Learn */}
-            <Box
-              height="100%"
-              scrollSnapAlign="start"
-              p={8}
-              bg="appBgMuted"
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              pb={24}
-            >
-              <Box width="100%" maxWidth="320px" aspectRatio={1}>
-                <VoiceOrbNext size="100%" />
-              </Box>
-              <VStack spacing={6} alignItems="flex-start">
-                <Text fontSize="2xl" textAlign="center" width="100%" mt={4}>
-                  {translation[userLanguage]["landing.whyLearn.title"]}
-                </Text>
-                <Text fontSize="md" fontWeight="bold">
-                  {translation[userLanguage]["landing.whyLearn.section1.title"]}
-                </Text>
-                <Text fontSize="md" maxWidth="650px" textAlign="left">
-                  {
-                    translation[userLanguage][
-                      "landing.whyLearn.section1.content"
-                    ]
-                  }
-                </Text>
-                <Image
-                  width="100%"
-                  maxWidth="600px"
-                  borderRadius="12px"
-                  boxShadow="0px 0.5px 0.5px black"
-                  src={
-                    userLanguage !== "es"
-                      ? "https://res.cloudinary.com/dtkeyccga/image/upload/v1738251300/rzhhloly1rbsvx7f1qz3.png"
-                      : "https://res.cloudinary.com/dtkeyccga/image/upload/v1755251476/260db5ec-13ba-4893-a098-5f8dd2aa506b_sodjix.png"
-                  }
-                />
-                <Text fontSize="md" fontWeight="bold">
-                  {translation[userLanguage]["landing.whyLearn.section2.title"]}
-                </Text>{" "}
-                <Text fontSize="md" maxWidth="675px" textAlign="left">
-                  {
-                    translation[userLanguage][
-                      "landing.whyLearn.section2.content"
-                    ]
-                  }
-                </Text>
-                <Image
-                  maxWidth="600px"
-                  width="100%"
-                  borderRadius="12px"
-                  boxShadow="0px 0.5px 0.5px black"
-                  src={
-                    userLanguage !== "es"
-                      ? "https://res.cloudinary.com/dtkeyccga/image/upload/v1755239709/Screenshot_2025-08-15_at_12.32.37_AM_yea3uh.png"
-                      : "https://res.cloudinary.com/dtkeyccga/image/upload/v1755252228/ChatGPT_Image_Aug_15_2025_04_03_39_AM_khx1xe.png"
-                  }
-                />
-                <Text fontSize="md" fontWeight="bold">
-                  {translation[userLanguage]["landing.whyLearn.section3.title"]}
-                </Text>
-                <Text fontSize="md" maxWidth="675px" textAlign="left">
-                  {
-                    translation[userLanguage][
-                      "landing.whyLearn.section3.content"
-                    ]
-                  }
-                </Text>
-                <Image
-                  maxWidth="600px"
-                  width="100%"
-                  borderRadius="12px"
-                  boxShadow="0px 0.5px 0.5px black"
-                  src="https://res.cloudinary.com/dtkeyccga/image/upload/v1755245865/4049a20a-4f49-4d8e-9579-23cfb7623011_w1cixo.png"
-                />
-              </VStack>
-            </Box>
-
-            {/* Second slide: The Mission */}
-            <Box
-              height="100%"
-              scrollSnapAlign="start"
-              p={8}
-              bg="appSurfaceMuted"
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              pb={24}
-            >
-              <VStack spacing={6} alignItems="flex-start">
-                <Text fontSize="2xl" textAlign="center" width="100%" mt={4}>
-                  {translation[userLanguage]["landing.mission.title"]}
-                </Text>
-
-                <Text fontSize="md" maxWidth="675px" textAlign="left">
-                  {translation[userLanguage]["landing.mission.paragraph1"]}
-                </Text>
-                <Text fontSize="md" maxWidth="675px" textAlign="left">
-                  {translation[userLanguage]["landing.mission.paragraph2"]}
-                </Text>
-                <Text fontSize="md" maxWidth="675px" textAlign="left">
-                  {translation[userLanguage]["landing.mission.paragraph3"]}
-                </Text>
-              </VStack>
-            </Box>
-
-            {/* FAQs */}
-            <Box
-              height="100%"
-              scrollSnapAlign="start"
-              p={8}
-              bg="appSurface"
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              pb={24}
-            >
-              <VStack spacing={6} alignItems="flex-start" width="100%">
-                <Text fontSize="2xl" textAlign="center" width="100%" mt={4}>
-                  FAQs
-                </Text>
-
-                <Accordion allowMultiple width="100%">
-                  <AccordionItem>
-                    <AccordionButton padding={6}>
-                      <Box flex="1" textAlign="left">
-                        {translation[userLanguage]["faq_1_question"]}
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                    <AccordionPanel pb={4}>
-                      <Text textAlign="left" fontSize="sm">
-                        {translation[userLanguage]["faq_1_item_1"]}
-                        <br />
-                        <br />
-                        {translation[userLanguage]["faq_1_item_2"]}
-                        <br />
-                        <br />
-                        {translation[userLanguage]["faq_1_item_3"]}
-                      </Text>
-                    </AccordionPanel>
-                  </AccordionItem>
-
-                  <AccordionItem>
-                    <AccordionButton padding={6}>
-                      <Box flex="1" textAlign="left">
-                        {translation[userLanguage]["faq_2_question"]}
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                    <AccordionPanel pb={4}>
-                      <Text textAlign="left" fontSize="sm">
-                        {translation[userLanguage]["faq_2_item_1"]}
-                        <br />
-                        <br />
-                        {translation[userLanguage]["faq_2_item_2"]}
-                        <br />
-                        <br />
-                        {translation[userLanguage]["faq_2_item_3"]}
-                      </Text>
-                    </AccordionPanel>
-                  </AccordionItem>
-
-                  <AccordionItem>
-                    <AccordionButton padding={6}>
-                      <Box flex="1" textAlign="left">
-                        {translation[userLanguage]["faq_3_question"]}
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                    <AccordionPanel pb={4}>
-                      <Text textAlign="left" fontSize="sm">
-                        {translation[userLanguage]["faq_3_item_1"]}
-                        <br />
-                        <br />
-                        {translation[userLanguage]["faq_3_item_2"]}
-                        <br />
-                        <br />
-                        {translation[userLanguage]["faq_3_item_3"]}
-                        <br />
-                        <br />
-                        {translation[userLanguage]["faq_3_item_4"]}
-                      </Text>
-                    </AccordionPanel>
-                  </AccordionItem>
-
-                  <AccordionItem>
-                    <AccordionButton padding={6}>
-                      <Box flex="1" textAlign="left">
-                        {translation[userLanguage]["faq_4_question"]}
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                    <AccordionPanel pb={4}>
-                      <Text textAlign="left" fontSize="sm">
-                        {translation[userLanguage]["faq_4_item_1"]}
-                        <br />
-                        <br />
-                        {translation[userLanguage]["faq_4_item_2"]}
-                        <br />
-                        <br />
-                        {translation[userLanguage]["faq_4_item_3"]}
-                      </Text>
-                    </AccordionPanel>
-                  </AccordionItem>
-
-                  <AccordionItem>
-                    <AccordionButton padding={6}>
-                      <Box flex="1" textAlign="left">
-                        {translation[userLanguage]["faq_5_question"]}
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                    <AccordionPanel pb={4}>
-                      <Text textAlign="left" fontSize="sm">
-                        {translation[userLanguage]["faq_5_item_1"]}
-                        <br />
-                        <br />
-                        {translation[userLanguage]["faq_5_item_2"]}
-                        <br />
-                        <br />
-                        {translation[userLanguage]["faq_5_item_3"]}
-                      </Text>
-                    </AccordionPanel>
-                  </AccordionItem>
-
-                  <AccordionItem>
-                    <AccordionButton padding={6}>
-                      <Box flex="1" textAlign="left">
-                        {translation[userLanguage]["faq_6_question"]}
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                    <AccordionPanel pb={4}>
-                      <Text textAlign="left" fontSize="sm">
-                        {translation[userLanguage]["faq_6_item_1"]}
-                        <br />
-                        <br />
-                        {translation[userLanguage]["faq_6_item_2"]}
-                      </Text>
-                    </AccordionPanel>
-                  </AccordionItem>
-
-                  <AccordionItem>
-                    <AccordionButton padding={6}>
-                      <Box flex="1" textAlign="left">
-                        {translation[userLanguage]["faq_7_question"]}
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                    <AccordionPanel pb={4}>
-                      <Text textAlign="left" fontSize="sm">
-                        {translation[userLanguage]["faq_7_item_1"]}
-                        <br />
-                        <br />
-                        {translation[userLanguage]["faq_7_item_2"]}
-                      </Text>
-                    </AccordionPanel>
-                  </AccordionItem>
-
-                  {/* <AccordionItem>
-                  <AccordionButton padding={6}>
-                    <Box flex="1" textAlign="left">
-                      {translation[userLanguage]["faq_8_question"]}
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                  <AccordionPanel pb={4}>
-                    <Text textAlign="left" fontSize="sm">
-                      {translation[userLanguage]["faq_8_item_1"]}
-                      <br />
-                      <br />
-                      {translation[userLanguage]["faq_8_item_2"]}
-                    </Text>
-                  </AccordionPanel>
-                </AccordionItem> */}
-                </Accordion>
-              </VStack>
-            </Box>
-
-            {/* Start Learning */}
-            <VStack display="flex" justifyContent="center" alignItems="center">
-              <RandomCharacter notSoRandomCharacter="9" />
-              <Text mt={0}>
-                {translation[userLanguage]["landing.startLearning"]}
-              </Text>
-              <Box width="100%" mt={4}>
-                <Input
-                  mt="-3"
-                  pt={0}
-                  style={{
-                    maxWidth: 300,
-                    boxShadow: "0.5px 0.5px 1px rgba(0,0,0,0.75)",
-                  }}
-                  placeholder={
-                    translation[userLanguage]["createAccount.input.placeholder"]
-                  }
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
-                  backgroundColor="appSurface"
-                />
-                {secretKeyDetected ? (
-                  <SecretKeyDetectedMessage userLanguage={userLanguage} />
-                ) : null}
-              </Box>
-              <VStack w="100%" mt={4} mb={12} spacing={3}>
-                <Button
-                  onKeyDown={(e) =>
-                    (e.key === "Enter" || e.key === " ") && televise()
-                  }
-                  onMouseDown={televise}
-                  colorScheme={themeColor}
-                  variant="outline"
-                  isDisabled={userName.trim().length < 2 || secretKeyDetected}
-                  width="150px"
-                >
-                  {translation[userLanguage]["landing.button.telemetry"]}
-                </Button>
-                <Text fontSize="xs">{translation[userLanguage]["or"]}</Text>
-                <Button
-                  colorScheme="pink"
-                  backgroundColor="appAccentSoft"
-                  variant="outline"
-                  border="1px solid var(--chakra-colors-appBorder)"
-                  minWidth="150px"
-                  width="fit-content"
-                  maxWidth="100%"
-                  px={6}
-                  onMouseDown={() => setView("signIn")}
-                  onKeyDown={(e) =>
-                    (e.key === "Enter" || e.key === " ") && setView("signIn")
-                  }
-                >
-                  {translation[userLanguage]["landing.button.signIn"]}
-                </Button>
-              </VStack>
-            </VStack>
+            <LandingSections
+              userLanguage={userLanguage}
+              chapters={landingChapterReviewNodes}
+              questionsAnswered={questionsAnswered}
+              questionCountUnavailable={questionCountUnavailable}
+              userName={userName}
+              setUserName={setUserName}
+              onCreateAccount={televise}
+              onSignIn={() => setView("signIn")}
+              isCreatingAccount={isCreatingAccount}
+              errorMessage={errorMessage ? getErrorMessage(errorMessage) : ""}
+            />
           </>
         )}
 

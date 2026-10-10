@@ -362,6 +362,7 @@ export const useGeminiGradingChatCompletion = () => {
           };
         }),
       );
+      return finalContent;
     } catch (error) {
       console.error("Error grading with Gemini:", error);
       throw error;

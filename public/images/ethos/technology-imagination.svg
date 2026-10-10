@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="280" viewBox="0 0 320 280" fill="none">
+  <title>From a sketch to something that moves</title>
+  <desc>A small homemade rover with a visible circuit board, carefully connected wires and parallel rubber wheels mounted beneath its chassis, beside its notebook sketch.</desc>
+  <g stroke="#364c43" stroke-linecap="round" stroke-linejoin="round">
+    <!-- The plan rests beside the rover, clear of its wheels. -->
+    <g transform="translate(1 53) scale(.78)">
+    <path d="m38 166 74-15 38 82-78 18Z" fill="#9dad92" stroke-width="1.6"/>
+    <path d="m36 160 73-15 36 82-77 18Z" fill="#fcf6e8" stroke-width="1.6"/>
+    <path d="m43 164 61-13m-60 17 62-13m-31 85 66-15" stroke="#c8bea6" stroke-width=".8"/>
+    <path d="m49 156-2-5m11 3-2-5m12 3-2-5m12 3-2-5m12 3-2-5m12 3-2-5" stroke-width="1.4"/>
+    <path d="m63 180 34-7 12 25-34 7Z" stroke="#819b83" stroke-width="1.2"/>
+    <path d="m69 192 32-7m-24 1 4 11m10-15 5 11m-20-17-2-7 17-4 3 7m-11 18 6-2m-22 4-5 1m42-10 6-2" stroke="#819b83" stroke-width="1"/>
+    <ellipse cx="79" cy="204" rx="5" ry="7" transform="rotate(-23 79 204)" stroke="#819b83" stroke-width="1"/>
+    <ellipse cx="107" cy="198" rx="5" ry="7" transform="rotate(-23 107 198)" stroke="#819b83" stroke-width="1"/>
+    <path d="m79 220 39-9m-36 15 28-7m-57-47 3 10m-7-7 4-3 4 1" stroke="#b9745b" stroke-width=".9"/>
+    </g>
+    <!-- One tire drawing keeps all three visible wheels consistent. -->
+    <defs>
+    <g id="rover-wheel">
+      <path d="M151 179c-9 0-16 10-16 23s7 23 16 23l8 5v-46Z" fill="#596a5b" stroke-width="1.5"/>
+      <path d="m144 183 8 5m-13 2 8 5m-11 4 8 5m-8 5 8 5m-5 5 8 5" stroke="#c0cab0" stroke-width=".85"/>
+      <ellipse cx="159" cy="207" rx="16" ry="23" fill="#7d8d76" stroke-width="1.6"/>
+      <ellipse cx="159" cy="207" rx="9" ry="14" fill="#ede2c8" stroke-width="1.2"/>
+      <ellipse cx="159" cy="207" rx="3" ry="4.5" fill="#bba783" stroke-width=".9"/>
+      <path d="m154 191 2-1m10 7 1 3m-17 15 1 3m11 5 2-2" stroke="#b9c2a9" stroke-width=".75"/>
+    </g>
+    </defs>
+    <!-- Axle housings are behind the tires, never drawn across their hub faces. -->
+    <path d="m122 177 9-4 28 28-6 6Z" fill="#788878" stroke-width="1.2"/>
+    <path d="m215 173 10-2 10 15-6 8-9-9Z" fill="#819b83" stroke-width="1.3"/>
+    <!-- The far tire is slightly smaller and tucked under the rear deck edge. -->
+    <use href="#rover-wheel" transform="translate(-15.75 4) scale(.86)"/>
+    <use href="#rover-wheel"/>
+    <use href="#rover-wheel" transform="translate(77 -17)"/>
+    <!-- A plywood chassis, brass standoffs, and the exposed controller. -->
+    <path d="m112 160 105-19 33 25-105 23-33-20Z" fill="#e1bd78" stroke-width="1.6"/>
+    <path d="m145 189 105-23 0 9-105 23-33-29 0-9Z" fill="#cda56a" stroke-width="1.3"/>
+    <path d="m119 171 20 17m12 5 88-20" stroke-width=".75"/>
+    <path d="m135 151 0 16 5 2 0-19m64-11 1 15 5-1-1-15m-54 17 1 18 5-1-1-18" fill="#d8ab55" stroke-width="1"/>
+    <path d="m126 138 72-14 32 24-74 18-30-21Z" fill="#819b83" stroke-width="1.5"/>
+    <path d="m131 139 67-12 26 20-68 15Z" stroke="#d2dcc1" stroke-width=".75"/>
+    <path d="m154 140 23-5 13 10-24 6Z" fill="#45594d" stroke-width="1.1"/>
+    <path d="m157 138-3-3m8 2-3-3m8 2-3-3m8 2-3-3m-3 20 3 3m2-4 3 3m2-4 3 3m2-4 3 3" stroke-width=".85"/>
+    <path d="m140 139 6 4-3 4-6-4Zm56-2 8-2 7 5-8 2Z" fill="#e3be72" stroke-width="1"/>
+    <path d="m159 157 5-1 1-5m23 2 5-1-1-5 17-4m-64 6 9 6 2 0m23-23 10-2 5 4" stroke="#d2dcc1" stroke-width=".9"/>
+    <circle cx="134" cy="140" r="1.4" fill="#fcf6e8" stroke-width=".6"/>
+    <circle cx="217" cy="147" r="1.4" fill="#fcf6e8" stroke-width=".6"/>
+    <circle cx="157" cy="159" r="1.4" fill="#fcf6e8" stroke-width=".6"/>
+    <!-- The ultrasonic sensor is mounted on a bent metal bracket. -->
+    <path d="m168 120 0-27 13-3 2 29" fill="#c4cbb5" stroke-width="1.3"/>
+    <path d="m132 81 65-10 16 12-64 12Z" fill="#a7b79b" stroke-width="1.4"/>
+    <path d="m149 95 64-12 0 31-64 13-17-13 0-33Z" fill="#8ea38a" stroke-width="1.6"/>
+    <path d="m149 95 0 32m-17-46 17 14" stroke-width="1"/>
+    <ellipse cx="165" cy="109" rx="11" ry="12" fill="#f5edd9" stroke-width="1.5"/>
+    <ellipse cx="196" cy="103" rx="11" ry="12" fill="#f5edd9" stroke-width="1.5"/>
+    <ellipse cx="166" cy="109" rx="6" ry="7" fill="#596a5b" stroke-width="1"/>
+    <ellipse cx="197" cy="103" rx="6" ry="7" fill="#596a5b" stroke-width="1"/>
+    <path d="m162 105 7 6m-7-2 6 5m-4-11 5 5m24-9 7 6m-7-2 6 5m-4-11 5 5" stroke="#afbaa1" stroke-width=".7"/>
+    <path d="M145 114c-23 9-34-20-23-37 9-14 12-13 13-23" stroke="#b9745b" stroke-width="2.2"/>
+    <path d="M137 112c-24-2-28-24-16-41 7-9 13-12 14-17" stroke="#d8ab55" stroke-width="1.8"/>
+    <path d="M197 124c24-8 40-1 35 9-4 8-23 6-24 2m-43-9-1 11" stroke="#b9745b" stroke-width="1.7"/>
+    <path d="m132 54 6 0 0-7-5 0Z" fill="#ede2c8" stroke-width="1"/>
+    <!-- Short contact shadows follow the same plane as the wheels. -->
+    <path d="m141 236 27-6m-20 9 32-8m42-7 28-6m-20 9 30-7m-161 34 24-5m-15 7 24-5" stroke="#acb2a0" stroke-width=".8"/>
+  </g>
+</svg>

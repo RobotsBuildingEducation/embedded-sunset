@@ -147,10 +147,16 @@ export const BottomActionBar = ({
   primaryAction = null,
   layer = 1200,
   colorMode: colorModeProp,
+  embedded = false,
+  showMenu = true,
+  submitDisabled = false,
+  lockoutExpiresAt,
 }) => {
-  const { unlock, dismiss } = useAchievementUnlock();
+  const achievement = useAchievementUnlock();
+  const unlock = embedded ? null : achievement.unlock;
+  const dismiss = achievement.dismiss;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const teamAccountNpub = localStorage.getItem("local_npub");
+  const teamAccountNpub = embedded ? null : localStorage.getItem("local_npub");
   useEffect(() => {
     if (!teamAccountNpub) return;
     return subscribeToTeamInvites(teamAccountNpub, (invites) => {
@@ -440,23 +446,24 @@ export const BottomActionBar = ({
 
   const barContent = (
     <Box
-      position="fixed"
-      bottom={{ base: "14px", md: "20px" }}
-      left="0"
-      right="0"
+      position={embedded ? "static" : "fixed"}
+      bottom={embedded ? undefined : { base: "14px", md: "20px" }}
+      left={embedded ? undefined : "0"}
+      right={embedded ? undefined : "0"}
       width="100%"
       display="flex"
       justifyContent="center"
       alignItems="flex-end"
       pointerEvents="none"
-      zIndex={layer}
+      zIndex={embedded ? undefined : layer}
       data-achievement-rail={unlock ? "gold" : undefined}
-      px={{ base: 3, sm: 4 }}
+      px={embedded ? 0 : { base: 3, sm: 4 }}
     >
       <Box
         pointerEvents="auto"
         position="relative"
-        width={{ base: "100%", sm: "460px", md: "500px" }}
+        width={embedded ? "100%" : { base: "100%", sm: "460px", md: "500px" }}
+        data-embedded-action-bar={embedded ? "true" : undefined}
         data-theme={effectiveColorMode}
         className={isDark ? "chakra-ui-dark" : "chakra-ui-light"}
         bg={currentBg}
@@ -498,7 +505,7 @@ export const BottomActionBar = ({
         transition="background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, padding 0.2s ease"
       >
         {/* 9-dot flyout popover menu */}
-        <NineDotMenu
+        {showMenu && <NineDotMenu
           isOpen={isMenuOpen}
           onClose={() => setIsMenuOpen(false)}
           onOpenSettings={() => {
@@ -517,7 +524,7 @@ export const BottomActionBar = ({
           userLanguage={userLanguage}
           translation={translation}
           colorMode={effectiveColorMode}
-        />
+        />}
 
         {/* Dynamic Island Expandable Feedback Section */}
         <AnimatePresence>
@@ -539,7 +546,7 @@ export const BottomActionBar = ({
               style={{ overflow: "hidden" }}
               width="100%"
             >
-              <Box ref={feedbackContentRef} width="100%">
+              <Box ref={feedbackContentRef} width="100%" role="status" aria-live="polite" aria-busy={isSending}>
                 <AnimatePresence mode="wait">
                   {unlock ? (
                     <AchievementFeedback key={unlock.key} unlock={unlock} language={userLanguage} onDismiss={dismiss} />
@@ -793,6 +800,7 @@ export const BottomActionBar = ({
                     <CountdownTimer
                       onTimerExpire={handleTimerExpire}
                       userLanguage={userLanguage}
+                      expiresAt={lockoutExpiresAt}
                     />
                   </Box>
                 )}
@@ -808,7 +816,7 @@ export const BottomActionBar = ({
         {/* Action Bar Bottom Row: 9-Dot Button | Learn Icon | Answer / Next */}
         <HStack spacing={3} width="100%" justify="space-between" align="center">
           {/* 9-Dot Menu Button applying theme */}
-          <IconButton
+          {showMenu && <IconButton
             aria-label="Open menu"
             icon={<NineDotIcon />}
             variant="ghost"
@@ -823,7 +831,7 @@ export const BottomActionBar = ({
               playActionBarSound("next");
               setIsMenuOpen((prev) => !prev);
             }}
-          />
+          />}
 
           {/* Correct State: wide 'Next question →' primary button */}
           {unlock ? (
@@ -1058,7 +1066,7 @@ export const BottomActionBar = ({
                     boxShadow: primaryButtonActiveShadow,
                   }}
                   isLoading={isSending}
-                  isDisabled={isLockout || isPostingWithNostr || isActionBarTourActive}
+                  isDisabled={submitDisabled || isLockout || isPostingWithNostr || isActionBarTourActive}
                   onClick={() => {
                     triggerHaptic();
                     soundManager?.resume?.();
@@ -1086,7 +1094,9 @@ export const BottomActionBar = ({
     barContent
   );
 
-  return <Portal>{renderActionBarTour(renderedContent)}</Portal>;
+  return embedded
+    ? renderActionBarTour(renderedContent)
+    : <Portal>{renderActionBarTour(renderedContent)}</Portal>;
 };
 
 export default BottomActionBar;

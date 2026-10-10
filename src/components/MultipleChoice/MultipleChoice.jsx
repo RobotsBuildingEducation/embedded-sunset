@@ -12,6 +12,7 @@ const MultipleChoiceQuestion = ({
   question,
   selectedOption,
   setSelectedOption,
+  isDisabled = false,
 }) => {
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const optionRefs = useRef([]);
@@ -25,6 +26,7 @@ const MultipleChoiceQuestion = ({
   );
 
   const handleKeyDown = (e) => {
+    if (isDisabled) return;
     switch (e.key) {
       case "ArrowUp":
         e.preventDefault();
@@ -74,6 +76,7 @@ const MultipleChoiceQuestion = ({
       <VStack align={"stretch"} width="100%" maxWidth={"600px"}>
         {question.options.map((option, index) => (
           <Button
+            isDisabled={isDisabled}
             ref={(el) => (optionRefs.current[index] = el)}
             p={6}
             height="auto"

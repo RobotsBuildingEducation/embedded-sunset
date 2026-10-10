@@ -10,6 +10,7 @@ import {
 import { getVertexAI, getGenerativeModel } from "@firebase/vertexai";
 import { getMessaging, isSupported } from "firebase/messaging";
 import { firebaseConfig, appCheckSiteKey } from "./firebaseConfig.js";
+import { getLocalAppCheckDebugToken } from "./appCheckDebug.js";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -20,8 +21,14 @@ import { firebaseConfig, appCheckSiteKey } from "./firebaseConfig.js";
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 
-if (window.location.hostname === "localhost") {
-  self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+// A reusable, registered token makes localhost and loopback previews share
+// the same development verification. Debug tokens are excluded from builds.
+if (import.meta.env.DEV) {
+  const debugToken = getLocalAppCheckDebugToken(
+    window.location.hostname,
+    import.meta.env.VITE_FIREBASE_APPCHECK_DEBUG_TOKEN,
+  );
+  if (debugToken) self.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
 }
 
 export const appCheck = initializeAppCheck(app, {

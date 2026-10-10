@@ -1,0 +1,11 @@
+# Landing ethos artwork
+
+A shared set of three original SVG vignettes for Robots Building Education and Piyali/Nosabos. The illustrations use fine forest-green ink, warm paper, sage, ochre, and small terracotta accents. All details belong to the subject: metal casings, fasteners and optical sensors, school clocks, classroom wings and network connections, circuit traces, and wheel treads.
+
+- `human-guidance.svg` — **A robot with heart.** A simple heart-shaped metal casing with a raised rim, brass fasteners, and fine casing seams. The sage casing echoes the rover, connecting care with technology through one recognizable object. No face or service panel.
+- `community-scholarships.svg` — **Schools, connected.** Five schools linked by a seven-edge mesh, without a single central hub. Classroom wings, a clock pediment, double entrance doors, broad front steps, and a small flag distinguish each building as a school. The schools share one SVG definition with varied roof colors; every route joins a doorstep connection port.
+- `technology-imagination.svg` — **From a sketch to something that moves.** A small rover and its notebook plan: curiosity made tangible through building. All three visible tires reuse one SVG wheel definition, with matching tread and hub details. The far wheel is reduced for depth and partly hidden beneath the deck; axle housings stay behind the wheel faces. Parallel wheels mount beneath the chassis in a consistent perspective; the notebook rests clear of them. No screwdriver or loose tools.
+
+The SVGs are the editable source, with a 320 × 280 viewBox. They use no fonts, embedded bitmaps, external resources, filters, or animation. Keep the two projects' copies identical. The surrounding headings and text convey the principles; the images remain decorative (`alt=""`) in the landing pages. Each SVG also has a title and description for standalone viewing.
+
+Display at the natural 8:7 ratio, with no arbitrary rotation or hover movement. The drawings are 216px wide on desktop, 168px on tablet, and 128px on mobile. Dark mode adds a warm paper backing so fine ink lines remain legible.

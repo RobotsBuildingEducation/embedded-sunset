@@ -27,6 +27,8 @@ import {
   normalizeContinuingLearningSummary,
 } from "./questionGeneration";
 import { steps } from "./content";
+import { getTotalQuestionsAnswered } from "./questionCount.js";
+export { BASE_QUESTION_COUNT } from "./questionCount.js";
 
 export const CURRICULUM_VERSION = 3;
 const EXPANDED_TUTORIAL_OFFSET = 9;
@@ -658,15 +660,28 @@ export const fetchUsersWithToken = async () => {
 
 // Global question count utilities
 const questionDoc = doc(database, "analytics", "questionsAnswered");
-export const BASE_QUESTION_COUNT = 4200;
 export const COURSE_LESSON_COUNT =
   Array.isArray(steps?.en) && steps.en.length > 0 ? steps.en.length : 141;
 
-export const subscribeToQuestionsAnswered = (callback) =>
-  onSnapshot(questionDoc, (snap) => {
-    const extra = snap.data()?.count || 0;
-    callback(BASE_QUESTION_COUNT + extra);
-  });
+export const subscribeToQuestionsAnswered = (
+  callback,
+  onError = (error) => console.error("Failed to load question count", error),
+) =>
+  onSnapshot(
+    questionDoc,
+    { includeMetadataChanges: true },
+    (snap) => {
+      // Wait for a server-confirmed count rather than treating an empty cache as zero.
+      if (snap.metadata.fromCache) return;
+      const total = getTotalQuestionsAnswered(snap.data()?.count);
+      if (total === null) {
+        onError(new Error("The recorded question count is missing or invalid."));
+        return;
+      }
+      callback(total);
+    },
+    onError,
+  );
 
 export const incrementQuestionsAnswered = async () => {
   await setDoc(questionDoc, { count: increment(1) }, { merge: true });

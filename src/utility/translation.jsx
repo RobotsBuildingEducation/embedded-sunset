@@ -39,10 +39,10 @@ export let translation = {
     "landing.whyLearn.title": "Why Learn With Robots Building Education?",
     "landing.whyLearn.section1.title": "1. Human-centered Design",
     "landing.whyLearn.section1.content":
-      "Save time, energy and money learning new skills with AI in the right places. AI is combined with human-touch to keep learning speed up, material quality high and costs low. You'll learn faster and more effectively here because we focus on software engineering fundamentals so people can build with AI the right way sooner.",
+      "Save time, energy and money learning new skills with intelligence in the right places. Intelligence is combined with human-touch to keep learning speed up, material quality high and costs low. You'll learn faster and more effectively here because we focus on software engineering fundamentals so people can build with intelligence the right way sooner.",
     "landing.whyLearn.section2.title": "2. Community-oriented Infrastructure",
     "landing.whyLearn.section2.content":
-      "The platform builds on top of decentralized protocols that allow us to create cross-platform features. This lets us use Bitcoin in ways where your progress and learning effort sends money to organizations. In other words, you're in a borderless classroom creating scholarships and grants with learning! 🤯",
+      "A borderless classroom where learning can create scholarships and grants. Decentralized protocols let you create cross-platform teams and achievements. You own your learning progress and transcript, so you can take your progress and identity to other platforms. With our optional, experimental Bitcoin feature, your learning effort can send small contributions to a recipient you choose.",
     "landing.whyLearn.section3.title": "3. Technology-driven Imagination",
     "landing.whyLearn.section3.content":
       "What's the point of being a technology education platform without being obsessed with technology? We're here to unlock awesome experiences to modernize education technology.",
@@ -52,7 +52,7 @@ export let translation = {
     "landing.mission.paragraph2":
       "The future of education technology is a system where the act of studying and learning creates real monetary value for communities. Just think about it – billions of hours are spent by students every day, but it's never represented anywhere until schools issue final grades. If an engineering student drops out in the 4th year, society treats that student as if they've done nothing at all!",
     "landing.mission.paragraph3":
-      "So we think that AI and decentralized technology's place in the education sector isn't to replace teachers but to provide infrastructure to make online education more real and meaningful in-and-out of the real world. You'll find many new technologies that are easy to use that unlock experiences you can't find elsewhere, like the ability to create scholarships with learning and other cross-platform features like the ability to take your progress and transcripts to other platforms that build on top of decentralized and borderless protocols.",
+      "So we think that intelligence and decentralized technology's place in the education sector isn't to replace teachers but to provide infrastructure to make online education more real and meaningful in-and-out of the real world. You'll find many new technologies that are easy to use that unlock experiences you can't find elsewhere, like the ability to create scholarships with learning and other cross-platform features like the ability to take your progress and transcripts to other platforms that build on top of decentralized and borderless protocols.",
     "landing.startLearning": "Start Learning",
     viewProgress: "View Progress",
     "modal.progress.title": "View Progress",
@@ -1823,11 +1823,11 @@ reverse(head) {
       "¿Por qué aprender con Robots Building Education?",
     "landing.whyLearn.section1.title": "1. Diseño centrado en el ser humano",
     "landing.whyLearn.section1.content":
-      "Ahorra tiempo, energía y dinero aprendiendo nuevas habilidades con IA en los lugares adecuados. La IA se combina con un toque humano para mantener la velocidad de aprendizaje, la alta calidad del material y los costos bajos. Aprenderás más rápido y de manera más efectiva aquí porque nos enfocamos en los fundamentos de la ingeniería de software para que las personas puedan construir con IA de la manera correcta lo antes posible.",
+      "Ahorra tiempo, energía y dinero aprendiendo nuevas habilidades con inteligencia en los lugares adecuados. La inteligencia se combina con un toque humano para mantener la velocidad de aprendizaje, la alta calidad del material y los costos bajos. Aprenderás más rápido y de manera más efectiva aquí porque nos enfocamos en los fundamentos de la ingeniería de software para que las personas puedan construir con inteligencia de la manera correcta lo antes posible.",
     "landing.whyLearn.section2.title":
       "2. Infraestructura orientada a la comunidad",
     "landing.whyLearn.section2.content":
-      "La plataforma se basa en protocolos descentralizados que nos permiten crear funciones multiplataforma. Esto nos permite usar Bitcoin de maneras en las que tu progreso y esfuerzo de aprendizaje envían dinero a las organizaciones. En otras palabras, ¡estás en un aula sin fronteras creando becas y subvenciones aprendiendo! 🤯",
+      "Un aula sin fronteras donde aprender puede crear becas y subvenciones. Los protocolos descentralizados te permiten crear equipos y logros multiplataforma. Tu progreso de aprendizaje y tu historial de estudios te pertenecen, así que puedes llevar tu progreso e identidad a otras plataformas. Con nuestra función opcional y experimental de Bitcoin, tu esfuerzo de aprendizaje puede enviar pequeñas contribuciones al destinatario que elijas.",
     "landing.whyLearn.section3.title":
       "3. Imaginación impulsada por la tecnología",
     "landing.whyLearn.section3.content":
@@ -1838,7 +1838,7 @@ reverse(head) {
     "landing.mission.paragraph2":
       "El futuro de la tecnología educativa es un sistema donde el acto de estudiar y aprender crea un valor monetario real para las comunidades. Solo piénsalo: miles de millones de horas son dedicadas por los estudiantes cada día, pero no se representan en ningún lugar hasta que las escuelas emiten calificaciones finales. ¡Si un estudiante de ingeniería abandona en el cuarto año, la sociedad trata a ese estudiante como si no hubiera hecho nada en absoluto!",
     "landing.mission.paragraph3":
-      "Por eso creemos que el lugar de la IA y la tecnología descentralizada en el sector educativo no es reemplazar a los profesores, sino proporcionar infraestructura para hacer que la educación en línea sea más real y significativa dentro y fuera del mundo real. Encontrarás muchas tecnologías nuevas que son fáciles de usar y desbloquean experiencias que no puedes encontrar en ningún otro lugar, como la capacidad de crear becas con el aprendizaje y otras funciones multiplataforma, como llevar tu progreso y transcripciones a otras plataformas construidas sobre protocolos descentralizados y sin fronteras.",
+      "Por eso creemos que el lugar de la inteligencia y la tecnología descentralizada en el sector educativo no es reemplazar a los profesores, sino proporcionar infraestructura para hacer que la educación en línea sea más real y significativa dentro y fuera del mundo real. Encontrarás muchas tecnologías nuevas que son fáciles de usar y desbloquean experiencias que no puedes encontrar en ningún otro lugar, como la capacidad de crear becas con el aprendizaje y otras funciones multiplataforma, como llevar tu progreso y transcripciones a otras plataformas construidas sobre protocolos descentralizados y sin fronteras.",
     "landing.startLearning": "Comenzar a aprender",
     viewProgress: "Ver progreso",
     "modal.progress.title": "Ver progreso",
@@ -3563,10 +3563,10 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "landing.whyLearn.title": "Why Learn With Robots Building Education?",
     "landing.whyLearn.section1.title": "1. Human-centered Design",
     "landing.whyLearn.section1.content":
-      "Save time, energy and money learning new skills with AI in the right places. AI is combined with human-touch to keep learning speed up, material quality high and costs low. You'll learn faster and more effectively here because we focus on software engineering fundamentals so people can build with AI the right way sooner.",
+      "Save time, energy and money learning new skills with intelligence in the right places. Intelligence is combined with human-touch to keep learning speed up, material quality high and costs low. You'll learn faster and more effectively here because we focus on software engineering fundamentals so people can build with intelligence the right way sooner.",
     "landing.whyLearn.section2.title": "2. Community-oriented Infrastructure",
     "landing.whyLearn.section2.content":
-      "The platform builds on top of decentralized protocols that allow us to create cross-platform features. This lets us use Bitcoin in ways where your progress and learning effort sends money to organizations. In other words, you're in a borderless classroom creating scholarships and grants with learning! 🤯",
+      "A borderless classroom where learning can create scholarships and grants. Decentralized protocols let you create cross-platform teams and achievements. You own your learning progress and transcript, so you can take your progress and identity to other platforms. With our optional, experimental Bitcoin feature, your learning effort can send small contributions to a recipient you choose.",
     "landing.whyLearn.section3.title": "3. Technology-driven Imagination",
     "landing.whyLearn.section3.content":
       "What's the point of being a technology education platform without being obsessed with technology? We're here to unlock awesome experiences to modernize education technology.",
@@ -3576,7 +3576,7 @@ Las Estructuras de Datos y Algoritmos es una materia que a menudo intimida a los
     "landing.mission.paragraph2":
       "The future of education technology is a system where the act of studying and learning creates real monetary value for communities. Just think about it – billions of hours are spent by students every day, but it's never represented anywhere until schools issue final grades. If an engineering student drops out in the 4th year, society treats that student as if they've done nothing at all!",
     "landing.mission.paragraph3":
-      "So we think that AI and decentralized technology's place in the education sector isn't to replace teachers but to provide infrastructure to make online education more real and meaningful in-and-out of the real world. You'll find many new technologies that are easy to use that unlock experiences you can't find elsewhere, like the ability to create scholarships with learning and other cross-platform features like the ability to take your progress and transcripts to other platforms that build on top of decentralized and borderless protocols.",
+      "So we think that intelligence and decentralized technology's place in the education sector isn't to replace teachers but to provide infrastructure to make online education more real and meaningful in-and-out of the real world. You'll find many new technologies that are easy to use that unlock experiences you can't find elsewhere, like the ability to create scholarships with learning and other cross-platform features like the ability to take your progress and transcripts to other platforms that build on top of decentralized and borderless protocols.",
     "landing.startLearning": "Start Learning",
     viewProgress: "View Progress",
     "modal.progress.title": "View Progress",
@@ -5196,10 +5196,10 @@ reverse(head) {
     "landing.whyLearn.title": "Why Learn With Robots Building Education?",
     "landing.whyLearn.section1.title": "1. Human-centered Design",
     "landing.whyLearn.section1.content":
-      "Save time, energy and money learning new skills with AI in the right places. AI is combined with human-touch to keep learning speed up, material quality high and costs low. You'll learn faster and more effectively here because we focus on software engineering fundamentals so people can build with AI the right way sooner.",
+      "Save time, energy and money learning new skills with intelligence in the right places. Intelligence is combined with human-touch to keep learning speed up, material quality high and costs low. You'll learn faster and more effectively here because we focus on software engineering fundamentals so people can build with intelligence the right way sooner.",
     "landing.whyLearn.section2.title": "2. Community-oriented Infrastructure",
     "landing.whyLearn.section2.content":
-      "The platform builds on top of decentralized protocols that allow us to create cross-platform features. This lets us use Bitcoin in ways where your progress and learning effort sends money to organizations. In other words, you're in a borderless classroom creating scholarships and grants with learning! 🤯",
+      "A borderless classroom where learning can create scholarships and grants. Decentralized protocols let you create cross-platform teams and achievements. You own your learning progress and transcript, so you can take your progress and identity to other platforms. With our optional, experimental Bitcoin feature, your learning effort can send small contributions to a recipient you choose.",
     "landing.whyLearn.section3.title": "3. Technology-driven Imagination",
     "landing.whyLearn.section3.content":
       "What's the point of being a technology education platform without being obsessed with technology? We're here to unlock awesome experiences to modernize education technology.",
@@ -5209,7 +5209,7 @@ reverse(head) {
     "landing.mission.paragraph2":
       "The future of education technology is a system where the act of studying and learning creates real monetary value for communities. Just think about it – billions of hours are spent by students every day, but it's never represented anywhere until schools issue final grades. If an engineering student drops out in the 4th year, society treats that student as if they've done nothing at all!",
     "landing.mission.paragraph3":
-      "So we think that AI and decentralized technology's place in the education sector isn't to replace teachers but to provide infrastructure to make online education more real and meaningful in-and-out of the real world. You'll find many new technologies that are easy to use that unlock experiences you can't find elsewhere, like the ability to create scholarships with learning and other cross-platform features like the ability to take your progress and transcripts to other platforms that build on top of decentralized and borderless protocols.",
+      "So we think that intelligence and decentralized technology's place in the education sector isn't to replace teachers but to provide infrastructure to make online education more real and meaningful in-and-out of the real world. You'll find many new technologies that are easy to use that unlock experiences you can't find elsewhere, like the ability to create scholarships with learning and other cross-platform features like the ability to take your progress and transcripts to other platforms that build on top of decentralized and borderless protocols.",
     "landing.startLearning": "Start Learning",
     viewProgress: "View Progress",
     "modal.progress.title": "View Progress",
@@ -6848,10 +6848,10 @@ reverse(head) {
     "landing.whyLearn.title": "Why Learn With Robots Building Education?",
     "landing.whyLearn.section1.title": "1. Human-centered Design",
     "landing.whyLearn.section1.content":
-      "Save time, energy and money learning new skills with AI in the right places. AI is combined with human-touch to keep learning speed up, material quality high and costs low. You'll learn faster and more effectively here because we focus on software engineering fundamentals so people can build with AI the right way sooner.",
+      "Save time, energy and money learning new skills with intelligence in the right places. Intelligence is combined with human-touch to keep learning speed up, material quality high and costs low. You'll learn faster and more effectively here because we focus on software engineering fundamentals so people can build with intelligence the right way sooner.",
     "landing.whyLearn.section2.title": "2. Community-oriented Infrastructure",
     "landing.whyLearn.section2.content":
-      "The platform builds on top of decentralized protocols that allow us to create cross-platform features. This lets us use Bitcoin in ways where your progress and learning effort sends money to organizations. In other words, you're in a borderless classroom creating scholarships and grants with learning! 🤯",
+      "A borderless classroom where learning can create scholarships and grants. Decentralized protocols let you create cross-platform teams and achievements. You own your learning progress and transcript, so you can take your progress and identity to other platforms. With our optional, experimental Bitcoin feature, your learning effort can send small contributions to a recipient you choose.",
     "landing.whyLearn.section3.title": "3. Technology-driven Imagination",
     "landing.whyLearn.section3.content":
       "What's the point of being a technology education platform without being obsessed with technology? We're here to unlock awesome experiences to modernize education technology.",
@@ -6861,7 +6861,7 @@ reverse(head) {
     "landing.mission.paragraph2":
       "The future of education technology is a system where the act of studying and learning creates real monetary value for communities. Just think about it – billions of hours are spent by students every day, but it's never represented anywhere until schools issue final grades. If an engineering student drops out in the 4th year, society treats that student as if they've done nothing at all!",
     "landing.mission.paragraph3":
-      "So we think that AI and decentralized technology's place in the education sector isn't to replace teachers but to provide infrastructure to make online education more real and meaningful in-and-out of the real world. You'll find many new technologies that are easy to use that unlock experiences you can't find elsewhere, like the ability to create scholarships with learning and other cross-platform features like the ability to take your progress and transcripts to other platforms that build on top of decentralized and borderless protocols.",
+      "So we think that intelligence and decentralized technology's place in the education sector isn't to replace teachers but to provide infrastructure to make online education more real and meaningful in-and-out of the real world. You'll find many new technologies that are easy to use that unlock experiences you can't find elsewhere, like the ability to create scholarships with learning and other cross-platform features like the ability to take your progress and transcripts to other platforms that build on top of decentralized and borderless protocols.",
     "landing.startLearning": "Start Learning",
     viewProgress: "View Progress",
     "modal.progress.title": "View Progress",
@@ -8498,10 +8498,10 @@ reverse(head) {
     "landing.whyLearn.title": "Why Learn With Robots Building Education?",
     "landing.whyLearn.section1.title": "1. Human-centered Design",
     "landing.whyLearn.section1.content":
-      "Save time, energy and money learning new skills with AI in the right places. AI is combined with human-touch to keep learning speed up, material quality high and costs low. You'll learn faster and more effectively here because we focus on software engineering fundamentals so people can build with AI the right way sooner.",
+      "Save time, energy and money learning new skills with intelligence in the right places. Intelligence is combined with human-touch to keep learning speed up, material quality high and costs low. You'll learn faster and more effectively here because we focus on software engineering fundamentals so people can build with intelligence the right way sooner.",
     "landing.whyLearn.section2.title": "2. Community-oriented Infrastructure",
     "landing.whyLearn.section2.content":
-      "The platform builds on top of decentralized protocols that allow us to create cross-platform features. This lets us use Bitcoin in ways where your progress and learning effort sends money to organizations. In other words, you're in a borderless classroom creating scholarships and grants with learning! 🤯",
+      "A borderless classroom where learning can create scholarships and grants. Decentralized protocols let you create cross-platform teams and achievements. You own your learning progress and transcript, so you can take your progress and identity to other platforms. With our optional, experimental Bitcoin feature, your learning effort can send small contributions to a recipient you choose.",
     "landing.whyLearn.section3.title": "3. Technology-driven Imagination",
     "landing.whyLearn.section3.content":
       "What's the point of being a technology education platform without being obsessed with technology? We're here to unlock awesome experiences to modernize education technology.",
@@ -8511,7 +8511,7 @@ reverse(head) {
     "landing.mission.paragraph2":
       "The future of education technology is a system where the act of studying and learning creates real monetary value for communities. Just think about it – billions of hours are spent by students every day, but it's never represented anywhere until schools issue final grades. If an engineering student drops out in the 4th year, society treats that student as if they've done nothing at all!",
     "landing.mission.paragraph3":
-      "So we think that AI and decentralized technology's place in the education sector isn't to replace teachers but to provide infrastructure to make online education more real and meaningful in-and-out of the real world. You'll find many new technologies that are easy to use that unlock experiences you can't find elsewhere, like the ability to create scholarships with learning and other cross-platform features like the ability to take your progress and transcripts to other platforms that build on top of decentralized and borderless protocols.",
+      "So we think that intelligence and decentralized technology's place in the education sector isn't to replace teachers but to provide infrastructure to make online education more real and meaningful in-and-out of the real world. You'll find many new technologies that are easy to use that unlock experiences you can't find elsewhere, like the ability to create scholarships with learning and other cross-platform features like the ability to take your progress and transcripts to other platforms that build on top of decentralized and borderless protocols.",
     "landing.startLearning": "Start Learning",
     viewProgress: "View Progress",
     "modal.progress.title": "View Progress",
