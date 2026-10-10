@@ -23,7 +23,7 @@ const copy = {
     debug: "Fix a bug",
     traceQuestion: "What does this program print?",
     debugQuestion:
-      "People aged 18 or older should be allowed in. Which condition fixes the bug?",
+      "People aged 21 or older should be allowed in. Which condition fixes the bug?",
     learn: "Learn",
     submit: "Submit",
     gradingError: "We couldn’t check your answer. Please try submitting again.",
@@ -189,7 +189,7 @@ const copy = {
     debug: "Corrige un error",
     traceQuestion: "¿Qué imprime este programa?",
     debugQuestion:
-      "Las personas de 18 años o más deben poder entrar. ¿Qué condición corrige el error?",
+      "Las personas de 21 años o más deben poder entrar. ¿Qué condición corrige el error?",
     learn: "Aprender",
     submit: "Enviar",
     gradingError: "No pudimos evaluar tu respuesta. Intenta enviarla de nuevo.",

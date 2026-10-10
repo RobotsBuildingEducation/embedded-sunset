@@ -233,6 +233,10 @@ import {
 import Editor from "@monaco-editor/react";
 import { LiveError, LivePreview, LiveProvider } from "react-live";
 import { appTheme } from "../../theme";
+import {
+  LoopTraceVisualization,
+  AgeBoundaryVisualization,
+} from "./CourseVisualPreview.jsx";
 import { normalizeGeneratedReactCode } from "../../utility/generatedReactCode";
 
 import { database } from "../../database/firebaseResources";
@@ -529,6 +533,8 @@ const LiveReactEditorModal = ({
                   noInline={true}
                   scope={{
                     React,
+                    LoopTraceVisualization,
+                    AgeBoundaryVisualization,
                     useState: React.useState,
                     useEffect: React.useEffect,
                     useCallback: React.useCallback,

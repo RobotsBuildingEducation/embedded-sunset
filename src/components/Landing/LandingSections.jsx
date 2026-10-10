@@ -7,6 +7,8 @@ import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-jsx";
 import { LinksPageLink, PrivacyPolicyLink } from "../PrivacyPolicy.jsx";
 import MultipleChoiceQuestion from "../MultipleChoice/MultipleChoice.jsx";
+import LiveReactEditorModal from "../LiveCodeEditor/LiveCodeEditor.jsx";
+import { steps as courseSteps } from "../../utility/content.jsx";
 import BottomActionBar from "../BottomActionBar/BottomActionBar.jsx";
 import { useGeminiGradingChatCompletion } from "../../hooks/useGeminiChat.jsx";
 import {
@@ -53,10 +55,10 @@ import {
 } from "../../utility/readingListDemo.js";
 import "./landing.css";
 
-const TRACE_CODE =
-  "let count = 1;\nfor (let i = 0; i < 3; i++) {\n  count *= 2;\n}\nconsole.log(count);";
-const BUG_CODE =
-  "function canEnter(age) {\n  if (age > 18) {\n    return true;\n  }\n  return false;\n}";
+const DEMO_PREVIEW_NAMES = {
+  trace: "LoopTracePreview",
+  debug: "AgeBoundaryPreview",
+};
 const EMPTY_DEMO_GRADE = {
   isCorrect: null,
   feedback: "",
@@ -149,9 +151,23 @@ function ExerciseDemo({ copy, userLanguage }) {
   } = useGeminiGradingChatCompletion();
   const openLearnModal = useSurfaceModalStore((state) => state.openLearnModal);
   const isTrace = mode === "trace";
+  const courseStep = useMemo(
+    () =>
+      courseSteps[userLanguage === "es" ? "es" : "en"].find((step) =>
+        step.question?.previewCode?.startsWith(
+          `function ${DEMO_PREVIEW_NAMES[mode]}()`,
+        ),
+      ),
+    [mode, userLanguage],
+  );
+  const ageVariable = userLanguage === "es" ? "edad" : "age";
   const options = isTrace
-    ? ["8", "6", "4", "16"]
-    : ["age > 18", "age >= 18", "age === 18"];
+    ? courseStep.question.options
+    : [
+        `${ageVariable} > 21`,
+        `${ageVariable} >= 21`,
+        `${ageVariable} === 21`,
+      ];
   const demoStep = {
     group: "1",
     title: isTrace ? copy.trace : copy.debug,
@@ -159,19 +175,21 @@ function ExerciseDemo({ copy, userLanguage }) {
     isMultipleChoice: !isTrace,
     question: {
       questionText: isTrace ? copy.traceQuestion : copy.debugQuestion,
-      code: isTrace ? TRACE_CODE : BUG_CODE,
+      code: courseStep.question.code || courseStep.question.starterCode,
+      previewCode: courseStep.question.previewCode,
       options,
-      answer: isTrace ? "8" : "age >= 18",
+      answer: isTrace ? courseStep.question.answer : `${ageVariable} >= 21`,
     },
   };
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    setAnswer(null);
+    setResult(EMPTY_DEMO_GRADE);
+    return () => {
       requestRef.current.version += 1;
       requestRef.current.pending = false;
       resetGradingMessages();
-    },
-    [resetGradingMessages],
-  );
+    };
+  }, [userLanguage, resetGradingMessages]);
 
   const changeMode = (next) => {
     requestRef.current.version += 1;
@@ -258,6 +276,16 @@ function ExerciseDemo({ copy, userLanguage }) {
       </div>
       <div className="lp-exercise-body">
         <p className="lp-question">{demoStep.question.questionText}</p>
+        <div className="lp-demo-preview">
+          <LiveReactEditorModal
+            key={`${mode}-${userLanguage}`}
+            code={demoStep.question.previewCode}
+            mode="preview"
+            autoRun={true}
+            hideRunButton={true}
+            previewHeight="auto"
+          />
+        </div>
         <CodeSample code={demoStep.question.code} />
         <div
           className="lp-answers"
