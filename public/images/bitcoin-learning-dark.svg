@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="360" viewBox="0 0 480 360" fill="none">
+  <title>Learning that travels — dark palette</title>
+  <desc>An open learning folio holds code, a transcript and an achievement seal. An engraved brass Bitcoin coin rises from its pages. Continuous routes connect equal peers around the folio, linking learning, portable progress and community support.</desc>
+  <g stroke="#abc5b7" stroke-linecap="round" stroke-linejoin="round">
+    <!-- A connected mesh: routes continue behind the objects, rather than orbiting a central hub. -->
+    <g stroke="#729e91" stroke-width="1.15">
+      <path d="M48 164C27 104 96 49 195 51S393 65 430 178C457 257 381 319 269 324S82 275 48 164Z"/>
+      <path d="M48 164C131 161 131 76 195 51M195 51C214 117 371 119 430 178M48 164C168 217 344 259 430 178"/>
+      <path d="M89 92C179 11 369 18 416 133M38 192C34 236 79 283 139 301" stroke="#49695f" stroke-width=".8"/>
+    </g>
+    <g fill="#20343b" stroke-width="1.3">
+      <circle cx="48" cy="164" r="8"/><circle cx="195" cy="51" r="8"/><circle cx="430" cy="178" r="8"/>
+    </g>
+    <g fill="#c79b54" stroke-width=".8">
+      <circle cx="48" cy="164" r="3"/><circle cx="195" cy="51" r="3"/><circle cx="430" cy="178" r="3"/>
+    </g>
+    <!-- The folio: a stitched cloth cover, several visible page edges, and a sewn spine. -->
+    <path d="m78 185 154 39 150-43 10 100-156 53-165-44Z" fill="#805746" stroke-width="1.6"/>
+    <path d="m82 187 151 41 148-43 7 91-153 52-158-43Z" fill="#876f50" stroke-width="1.2"/>
+    <path d="m89 182 144 43 142-45 7 91-147 51-152-44Z" fill="#354a4d" stroke-width="1.25"/>
+    <path d="m89 267 146 47 141-48m-287-6 146 47 140-48" stroke="#729083" stroke-width=".8"/>
+    <path d="M91 176c49-7 99 12 143 39 43-28 94-50 139-44l3 89c-49-1-95 24-141 52-47-26-96-44-151-44Z" fill="#20343b" stroke-width="1.7"/>
+    <path d="M234 215c-4 34-3 64 1 97" stroke-width="1.25"/>
+    <path d="M228 218c-4 26-3 57 1 82m11-84c-3 25-2 52 1 80" stroke="#567970" stroke-width=".75"/>
+    <path d="m87 291 147 35 150-47" stroke="#c3a57d" stroke-width=".85" stroke-dasharray="2 5"/>
+    <path d="m235 323-3 10 8 3 9-4-2-12" fill="#416658" stroke-width="1"/>
+    <!-- Code on one page, a learner's own transcript on the other. -->
+    <g transform="matrix(1 .28 -.06 .86 111 195)">
+      <path d="m0 0 33 0m-33 5 52 0" stroke="#c79072" stroke-width="1.5"/>
+      <g stroke="#8aaf9c" stroke-width="1.25">
+        <path d="m7 23-7 6 7 6m33-12 7 6-7 6m-13-14-7 16"/>
+        <path d="m0 49 16 0m6 0 40 0m-55 9 22 0m6 0 39 0m-60 9 12 0m6 0 32 0m-60 9 18 0m6 0 20 0"/>
+      </g>
+      <path d="m78 50 2 3 5-6m-7 15 2 3 5-6m-7 15 2 3 5-6" stroke="#abc5b7" stroke-width="1"/>
+    </g>
+    <g transform="matrix(.9 -.315 .018 .9 255 215)">
+      <path d="m0 0 39 0m-39 5 55 0" stroke="#c79072" stroke-width="1.5"/>
+      <path d="m0 22 20 0m17 0 36 0m-73 10 20 0m17 0 36 0m-73 10 20 0m17 0 36 0m-73 10 20 0m17 0 36 0" stroke="#8aaf9c" stroke-width="1"/>
+      <path d="m28 18 0 37" stroke="#49695f" stroke-width=".75"/>
+      <path d="m4 70 23 0m-23 4 36 0" stroke="#85a897" stroke-width=".85"/>
+      <path d="m58 60 8 2 8-2 3 8 6 5-4 8-1 8-9 2-7 5-7-5-9-2-1-8-4-8 6-5Z" fill="#c79b54" stroke-width="1"/>
+      <circle cx="66" cy="76" r="9" stroke-width=".8"/>
+      <path d="m62 76 3 3 6-7" stroke-width="1.3"/>
+    </g>
+    <!-- A narrow woven bookmark follows the page, instead of floating beside it. -->
+    <path d="M349 173c-7 24-6 52-2 81l-10-5-8 10c-5-33-5-56 3-81Z" fill="#3c6658" stroke-width="1.1"/>
+    <path d="M341 178c-5 21-6 44-3 65" stroke="#9bbaa0" stroke-width=".85"/>
+    <!-- The coin is struck metal: an extruded edge, cut rim, and an engraved vector symbol. -->
+    <g transform="rotate(-17 303 108)">
+      <ellipse cx="309" cy="115" rx="64" ry="70" fill="#8d683f" stroke-width="1.5"/>
+      <g stroke="#755e3c" stroke-width=".85"><path d="m330.05 44.56 6 7"/><path d="m338.79 49.97 6 7"/><path d="m346.65 56.81 6 7"/><path d="m353.43 64.90 6 7"/><path d="m358.98 74.06 6 7"/><path d="m363.14 84.06 6 7"/><path d="m365.82 94.64 6 7"/><path d="m366.96 105.56 6 7"/><path d="m366.52 116.53 6 7"/><path d="m364.52 127.29 6 7"/><path d="m361.00 137.58 6 7"/><path d="m356.06 147.14 6 7"/><path d="m349.81 155.74 6 7"/><path d="m342.40 163.16 6 7"/><path d="m334.03 169.22 6 7"/><path d="m324.89 173.78 6 7"/><path d="m315.21 176.71 6 7"/><path d="m305.23 177.96 6 7"/><path d="m295.20 177.48 6 7"/><path d="m285.36 175.29 6 7"/><path d="m275.95 171.44 6 7"/><path d="m267.21 166.03 6 7"/><path d="m259.35 159.19 6 7"/></g>
+      <ellipse cx="303" cy="108" rx="64" ry="70" fill="#c79b54" stroke-width="1.7"/>
+      <ellipse cx="303" cy="108" rx="58.5" ry="64.5" stroke="#f0d69b" stroke-width="1.2"/>
+      <g stroke="#806743" stroke-width=".8"><path d="M357.00 108.00 354.50 108.00"/><path d="M356.18 118.42 353.72 117.98"/><path d="M353.74 128.52 351.39 127.67"/><path d="M349.77 138.00 347.60 136.75"/><path d="M344.37 146.57 342.45 144.96"/><path d="M337.71 153.96 336.10 152.05"/><path d="M330.00 159.96 328.75 157.80"/><path d="M321.47 164.38 320.61 162.03"/><path d="M312.38 167.09 311.94 164.63"/><path d="M303.00 168.00 303.00 165.50"/><path d="M293.62 167.09 294.06 164.63"/><path d="M284.53 164.38 285.39 162.03"/><path d="M276.00 159.96 277.25 157.80"/><path d="M268.29 153.96 269.90 152.05"/><path d="M261.63 146.57 263.55 144.96"/><path d="M256.23 138.00 258.40 136.75"/><path d="M252.26 128.52 254.61 127.67"/><path d="M249.82 118.42 252.28 117.98"/><path d="M249.00 108.00 251.50 108.00"/><path d="M249.82 97.58 252.28 98.02"/><path d="M252.26 87.48 254.61 88.33"/><path d="M256.23 78.00 258.40 79.25"/><path d="M261.63 69.43 263.55 71.04"/><path d="M268.29 62.04 269.90 63.95"/><path d="M276.00 56.04 277.25 58.20"/><path d="M284.53 51.62 285.39 53.97"/><path d="M293.62 48.91 294.06 51.37"/><path d="M303.00 48.00 303.00 50.50"/><path d="M312.38 48.91 311.94 51.37"/><path d="M321.47 51.62 320.61 53.97"/><path d="M330.00 56.04 328.75 58.20"/><path d="M337.71 62.04 336.10 63.95"/><path d="M344.37 69.43 342.45 71.04"/><path d="M349.77 78.00 347.60 79.25"/><path d="M353.74 87.48 351.39 88.33"/><path d="M356.18 97.58 353.72 98.02"/></g>
+      <ellipse cx="303" cy="108" rx="48" ry="54" fill="#ddbd7d" stroke="#806743" stroke-width=".85"/>
+      <path d="M289 77v62m-6-61h24c23 0 25 27 2 29h-20m0 0h20c29 0 27 31 0 31h-26m13-70v10m13-10v10m-13 60v10m13-10v10" stroke="#695536" stroke-width="5.1"/>
+      <path d="M267 91c4-16 14-28 27-32" stroke="#fff0c3" stroke-width="1.5"/>
+      <path d="m330 130 7-5m-10 12 12-8m-16 16 13-9m-19 16 14-10" stroke="#ad8b53" stroke-width=".8"/>
+    </g>
+    <!-- Fine contact lines ground the object on the same plane as the folio. -->
+    <g stroke="#4d7267" stroke-width=".8">
+      <path d="m102 313 67 18m-56-11 31 8m151 7 69-25m-51 24 42-15"/>
+    </g>
+  </g>
+</svg>

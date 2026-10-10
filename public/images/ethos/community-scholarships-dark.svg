@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="280" viewBox="0 0 320 280" fill="none">
+  <title>Schools, connected — dark palette</title>
+  <desc>Five schools form a connected mesh. Each has classroom wings, a clock above double entrance doors, front steps, and a small flag. Seven links join their doorstep connection ports, with no single central hub.</desc>
+  <defs>
+    <!-- Every school has the same standing in the network. Roof colors vary. -->
+    <g id="network-school" stroke="#abc5b7" stroke-linecap="round" stroke-linejoin="round">
+      <!-- Low classroom wings make the building institutional rather than a house. -->
+      <path d="m1 32 24-1 0 26-24 0Zm54-1 25 1 0 25-25 0Z" fill="#20343b" stroke-width="1.3"/>
+      <path d="m80 32 6-4 0 25-6 4Z" fill="#314c43" stroke-width="1.05"/>
+      <path d="m-2 32 5-7 22 0 0 8Zm57-7 23 0 8 3-6 5-25 0Z" fill="currentColor" stroke-width="1.25"/>
+      <path d="m1 51 23 0m32 0 24 0" stroke="#789689" stroke-width=".75"/>
+      <!-- A raised central entrance, clock pediment, and paired school doors. -->
+      <path d="m24 21 16-13 17 12 0 38-33 0Z" fill="#20343b" stroke-width="1.35"/>
+      <path d="m57 20 5-3 0 36-5 5Z" fill="#314c43" stroke-width="1.05"/>
+      <path d="m20 21 20-17 23 13-6 3L40 10 25 23Z" fill="currentColor" stroke-width="1.35"/>
+      <path d="m40 4 5-1 23 13-5 1Z" fill="#725e49" stroke-width=".9"/>
+      <circle cx="40" cy="25" r="5.3" fill="#354a4d" stroke-width=".95"/>
+      <path d="m40 21 0 4 3 1" stroke-width=".85"/>
+      <path d="m31 36 18 0 0 22-18 0Z" fill="#c79b54" stroke-width="1"/>
+      <path d="m40 37 0 21m-6-18 3 0 0 7-3 0Zm9 0 3 0 0 7-3 0Z" fill="#638779" stroke-width=".65"/>
+      <path d="m38 50 0 2m4-2 0 2m-13-19 22 0" stroke-width=".7"/>
+      <!-- Repeated classroom windows and broad entrance steps. -->
+      <path d="m6 37 6 0 0 9-6 0Zm10 0 6 0 0 9-6 0Zm44 0 6 0 0 9-6 0Zm10 0 6 0 0 9-6 0Z" fill="#487b69" stroke-width=".8"/>
+      <path d="m6 41 6 0m4 0 6 0m38 0 6 0m4 0 6 0" stroke-width=".6"/>
+      <path d="m28 58 24 0 3 3-30 0Z" fill="#4d6257" stroke-width=".9"/>
+      <path d="m1 59 21 0m36 0 21 0m-39 2 0 6" stroke-width=".85"/>
+      <!-- The flag and clock read as a school even at the smaller display size. -->
+      <path d="m41 5 0-16" stroke-width="1.05"/>
+      <path d="M42-10c4-2 7 3 12 1v7c-5 2-8-3-12-1Z" fill="#d8b674" stroke-width=".85"/>
+      <circle cx="40" cy="67" r="3.7" fill="#d8b674" stroke-width="1.05"/>
+      <path d="m5 63 12 0m44 0 13 0" stroke="#5c7c73" stroke-width=".7"/>
+    </g>
+  </defs>
+  <g stroke="#abc5b7" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Seven continuous links connect five equal peers. Routes meet at ports. -->
+    <g stroke-width="1.7">
+      <path d="M160 94C105 77 73 91 58 155M160 94C207 77 245 99 261 156M58 155C49 192 65 214 99 239M99 239C136 256 177 254 216 239M216 239C254 225 281 190 261 156"/>
+      <path d="M160 94C154 139 127 195 99 239M58 155C110 145 176 171 216 239"/>
+    </g>
+    <g stroke="#789689" stroke-width=".8">
+      <path d="M144 87c-25-7-47-1-61 14m111-16c17 2 29 9 40 20M51 166c0 14 4 25 12 34m64 51c22 6 41 5 61-1m52-24c17-15 28-32 28-49"/>
+    </g>
+  </g>
+  <use href="#network-school" transform="translate(120 27)" color="#aa7863"/>
+  <use href="#network-school" transform="translate(18 88)" color="#436957"/>
+  <use href="#network-school" transform="translate(221 89)" color="#c79b54"/>
+  <use href="#network-school" transform="translate(59 172)" color="#aa7863"/>
+  <use href="#network-school" transform="translate(176 172)" color="#436957"/>
+</svg>

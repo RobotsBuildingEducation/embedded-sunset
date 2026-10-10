@@ -1,4 +1,5 @@
 import React from "react";
+import { useColorMode } from "@chakra-ui/react";
 import { translation } from "../../utility/translation.jsx";
 
 const ARTWORK = [
@@ -8,6 +9,8 @@ const ARTWORK = [
 ];
 
 export default function WhyLearnSection({ copy, userLanguage }) {
+  const { colorMode } = useColorMode();
+  const artworkSuffix = colorMode === "dark" ? "-dark" : "";
   const localized = translation[userLanguage === "es" ? "es" : "en"];
   return (
     <section className="lp-why-section" aria-labelledby="landing-why-title">
@@ -28,7 +31,7 @@ export default function WhyLearnSection({ copy, userLanguage }) {
               <article className="lp-why-principle" key={number}>
                 <img
                   className="lp-why-illustration"
-                  src={`/images/ethos/${ARTWORK[index]}.svg`}
+                  src={`/images/ethos/${ARTWORK[index]}${artworkSuffix}.svg`}
                   alt=""
                   width="320"
                   height="280"

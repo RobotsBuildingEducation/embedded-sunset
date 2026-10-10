@@ -8,4 +8,4 @@ A shared set of three original SVG vignettes for Robots Building Education and P
 
 The SVGs are the editable source, with a 320 × 280 viewBox. They use no fonts, embedded bitmaps, external resources, filters, or animation. Keep the two projects' copies identical. The surrounding headings and text convey the principles; the images remain decorative (`alt=""`) in the landing pages. Each SVG also has a title and description for standalone viewing.
 
-Display at the natural 8:7 ratio, with no arbitrary rotation or hover movement. The drawings are 216px wide on desktop, 168px on tablet, and 128px on mobile. Dark mode adds a warm paper backing so fine ink lines remain legible.
+Display at the natural 8:7 ratio, with no arbitrary rotation or hover movement. The drawings are 216px wide on desktop, 168px on tablet, and 128px on mobile. Dark mode selects the matching `-dark.svg` asset: transparent backgrounds, deep teal surfaces, pale sage linework and warm brass accents. No paper backing or CSS filter is used.

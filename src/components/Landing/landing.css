@@ -575,10 +575,6 @@ html[data-theme-mode="dark"] .lp-code,
   aspect-ratio: 8 / 7;
   object-fit: contain;
 }
-html[data-theme-mode="dark"] .lp-why-illustration {
-  background: #fcf6e8;
-  border-radius: 6px;
-}
 .lp-community {
   display: grid;
   grid-template-columns: 1fr 0.85fr;
@@ -614,8 +610,9 @@ html[data-theme-mode="dark"] .lp-why-illustration {
 .lp-bitcoin-graphic {
   display: block;
   grid-column: 1 / -1;
-  width: min(100%, 300px);
+  width: min(100%, 360px);
   height: auto;
+  aspect-ratio: 4 / 3;
   justify-self: center;
   margin-bottom: 22px;
 }

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="280" viewBox="0 0 320 280" fill="none">
+  <title>A robot with heart — dark palette</title>
+  <desc>A simple mechanical heart with a sage metal shell, a raised rim, brass fasteners, and fine casing seams.</desc>
+  <g stroke="#abc5b7" stroke-linecap="round" stroke-linejoin="round">
+    <!-- The narrow side wall gives the heart a tangible, assembled casing. -->
+    <path d="M270 101c9 24 7 39-8 59-23 30-76 70-97 86l-9-9 31-52 60-85Z" fill="#25443d" stroke-width="1.75"/>
+    <path d="M158 237C142 225 62 170 50 130 38 91 58 56 94 53c27-3 48 14 64 33 17-20 38-36 65-32 35 4 54 36 44 73-11 40-92 100-109 110Z" fill="#52766a" stroke-width="1.9"/>
+    <path d="M158 225C140 211 71 162 60 126 50 94 66 65 95 63c26-2 44 16 63 37 19-22 39-40 64-36 28 4 45 30 36 61-11 35-80 87-100 100Z" fill="#31584e" stroke-width="1.25"/>
+    <path d="M66 97c3-13 14-23 26-25m10-1c13 1 25 9 36 19m89-16c11 3 18 11 22 21" stroke="#92b5a0" stroke-width="1.15"/>
+    <path d="m167 235 6 6m38-36 5 5m36-43 6 4" stroke="#87a996" stroke-width=".9"/>
+
+    <!-- Brass fasteners and casing seams complete the simple metal heart. -->
+    <g fill="#d8b674" stroke-width=".85">
+      <circle cx="84" cy="91" r="3"/>
+      <circle cx="233" cy="91" r="3"/>
+      <circle cx="84" cy="151" r="3"/>
+      <circle cx="232" cy="151" r="3"/>
+      <circle cx="158" cy="215" r="2.8"/>
+    </g>
+    <path d="m82.5 91 3 0m146 0 3 0m-152 60 3 0m145 0 3 0m-76 64 3 0" stroke-width=".7"/>
+    <path d="m58 121 11 0m180 0 11 0m-63 69 7 8m-83-8-7 8" stroke-width="1"/>
+  </g>
+</svg>
