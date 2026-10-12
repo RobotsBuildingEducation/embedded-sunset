@@ -115,6 +115,7 @@ export const BottomActionBar = ({
   translation = {},
   isCorrect,
   feedback,
+  onDismissIncorrectFeedback,
   grade,
   incorrectAttempts = 0,
   isSending = false,
@@ -177,9 +178,32 @@ export const BottomActionBar = ({
 
   const [feedbackHeight, setFeedbackHeight] = useState(0);
   const feedbackContentRef = useRef(null);
+  const actionBarRef = useRef(null);
 
   const isFeedbackActive = Boolean(feedback || isCorrect !== null);
   const hasFeedback = Boolean(unlock || isSending || isCorrect || isFeedbackActive);
+
+  useEffect(() => {
+    if (
+      !isFeedbackActive || isCorrect || isSending || unlock ||
+      typeof onDismissIncorrectFeedback !== "function"
+    ) return;
+
+    const handleOutsidePress = (event) => {
+      const bar = actionBarRef.current;
+      if (!bar || bar.contains(event.target)) return;
+      onDismissIncorrectFeedback();
+    };
+
+    // Capture the press before question controls handle it, without preventing
+    // that same click or tap from updating the answer.
+    document.addEventListener("pointerdown", handleOutsidePress, true);
+    document.addEventListener("click", handleOutsidePress, true);
+    return () => {
+      document.removeEventListener("pointerdown", handleOutsidePress, true);
+      document.removeEventListener("click", handleOutsidePress, true);
+    };
+  }, [isFeedbackActive, isCorrect, isSending, unlock, onDismissIncorrectFeedback]);
 
   useEffect(() => {
     if (!feedbackContentRef.current) return;
@@ -460,6 +484,7 @@ export const BottomActionBar = ({
       px={embedded ? 0 : { base: 3, sm: 4 }}
     >
       <Box
+        ref={actionBarRef}
         pointerEvents="auto"
         position="relative"
         width={embedded ? "100%" : { base: "100%", sm: "460px", md: "500px" }}
@@ -794,16 +819,6 @@ export const BottomActionBar = ({
                   />
                 </Box>
 
-                {/* Lockout countdown message if attempts >= 5 */}
-                {isLockout && (
-                  <Box mt={2} p={2} bg="appSurface" borderRadius="xl" fontSize="xs">
-                    <CountdownTimer
-                      onTimerExpire={handleTimerExpire}
-                      userLanguage={userLanguage}
-                      expiresAt={lockoutExpiresAt}
-                    />
-                  </Box>
-                )}
               </Box>
             </motion.div>
           ) : null}
@@ -812,6 +827,17 @@ export const BottomActionBar = ({
             </MotionBox>
           )}
         </AnimatePresence>
+
+        {/* Keep the retry timer running even after feedback is dismissed. */}
+        {isLockout && (
+          <Box mb={2} p={2} bg="appSurface" borderRadius="xl" fontSize="xs">
+            <CountdownTimer
+              onTimerExpire={handleTimerExpire}
+              userLanguage={userLanguage}
+              expiresAt={lockoutExpiresAt}
+            />
+          </Box>
+        )}
 
         {/* Action Bar Bottom Row: 9-Dot Button | Learn Icon | Answer / Next */}
         <HStack spacing={3} width="100%" justify="space-between" align="center">

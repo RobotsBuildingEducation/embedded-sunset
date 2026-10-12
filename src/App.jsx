@@ -357,6 +357,7 @@ import { buildProactiveLearningPrompt } from "./utility/proactiveLearning";
 import { simulateCliCommand } from "./utility/terminalSimulator";
 import { getTutorialEndIndex } from "./utility/curriculumRevamp";
 import CloudTransition from "./elements/CloudTransition";
+import { createQuestionTransitionCadence } from "./utility/questionTransitionCadence.js";
 import { TbWorld } from "react-icons/tb";
 const SoundExperiment = lazy(() => import("./experiments/SoundExperiment"));
 import { useSurfaceModalStore } from "./useSurfaceModalStore";
@@ -2004,7 +2005,7 @@ const Step = ({
   subscriptionAuthorized,
   setCurrentStep,
   navigateWithTransition,
-  setTransitionStats,
+  isNextTransitionDue,
   incorrectAttempts,
   setIncorrectAttempts,
   lectureNextPath,
@@ -3206,6 +3207,12 @@ In addition to the grading fields already requested, return updatedLearningSumma
   };
 
   // Handle answer submission
+  const dismissIncorrectFeedback = useCallback(() => {
+    setIsCorrect(null);
+    setFeedback("");
+    setGrade("");
+  }, []);
+
   const handleAnswerClick = async () => {
     if (step?.isConversationReview) {
       soundManager?.resume?.();
@@ -3905,9 +3912,10 @@ In addition to the grading fields already requested, return updatedLearningSumma
     }
 
     const nextTransitionStats = buildTransitionStats();
-    setTransitionStats(nextTransitionStats);
-    showImmediateTransitionShell();
-    navigateWithTransition(nextPath, nextStep, nextTransitionStats);
+    if (isNextTransitionDue(currentStep)) {
+      showImmediateTransitionShell();
+    }
+    navigateWithTransition(nextPath, nextStep, nextTransitionStats, currentStep);
 
     runAfterTransitionPaint(async () => {
       recordQuestionCompletion();
@@ -3952,7 +3960,9 @@ In addition to the grading fields already requested, return updatedLearningSumma
     }
 
     nextQuestionPressLockRef.current = true;
-    if (currentStep !== 0) {
+    const willShowTransition =
+      currentStep !== 0 && isNextTransitionDue(currentStep);
+    if (willShowTransition) {
       showImmediateTransitionShell();
     }
 
@@ -3973,7 +3983,7 @@ In addition to the grading fields already requested, return updatedLearningSumma
     // yield, the main thread stays busy and mobile devices see a 1-2s
     // delay where nothing visible changes between the tap and the cloud
     // transition mount.
-    if (typeof window !== "undefined" && currentStep !== 0) {
+    if (typeof window !== "undefined" && willShowTransition) {
       window.requestAnimationFrame(() => {
         window.setTimeout(runNext, 0);
       });
@@ -5111,6 +5121,7 @@ In addition to the grading fields already requested, return updatedLearningSumma
               translation={translation}
               isCorrect={showChapterReview ? null : isCorrect}
               feedback={showChapterReview ? "" : feedback}
+              onDismissIncorrectFeedback={dismissIncorrectFeedback}
               grade={grade}
               incorrectAttempts={incorrectAttempts}
               isSending={isSending || (isEmpty(generatedQuestion) && (isContinuingQuestionRestoring || isNewQuestionLoading || newQuestionMessages.length > 0))}
@@ -7568,6 +7579,16 @@ function App({ isShutDown }) {
   const { setColorMode } = useColorMode();
   const navigate = useNavigate();
   const location = useLocation();
+  // BrowserRouter changes navigate's identity on route changes. Startup
+  // restoration must not restart as learners move through onboarding.
+  const startupNavigateRef = useRef(navigate);
+  useLayoutEffect(() => {
+    startupNavigateRef.current = navigate;
+  }, [navigate]);
+  const navigateOnStartup = useCallback(
+    (...args) => startupNavigateRef.current(...args),
+    [],
+  );
   const topRef = useRef();
   const alert = useAlertStore((s) => s.alert);
   const hideAlert = useAlertStore((s) => s.hideAlert);
@@ -7721,12 +7742,30 @@ function App({ isShutDown }) {
     defaultTransitionStats,
   );
   const resetStatsTimeoutRef = useRef(null);
+  const questionTransitionCadenceRef = useRef(null);
+  if (questionTransitionCadenceRef.current === null) {
+    questionTransitionCadenceRef.current = createQuestionTransitionCadence();
+  }
+  const isNextTransitionDue = (questionIndex) =>
+    questionTransitionCadenceRef.current.isNextTransitionDue(questionIndex);
 
   const navigateWithTransition = (
     path,
     nextStep = null,
     nextTransitionStats = null,
+    completedQuestionIndex = null,
   ) => {
+    if (
+      !questionTransitionCadenceRef.current.completeQuestion(completedQuestionIndex)
+    ) {
+      if (nextStep !== null) {
+        setCurrentStep(nextStep);
+      }
+      navigate(path);
+      scrollToTopInstantly();
+      return;
+    }
+
     if (resetStatsTimeoutRef.current) {
       clearTimeout(resetStatsTimeoutRef.current);
       resetStatsTimeoutRef.current = null;
@@ -7831,6 +7870,14 @@ function App({ isShutDown }) {
 
   useEffect(() => {
     let isMounted = true;
+    const startupPathname = window.location.pathname;
+    const restoreStartupRoute = (...args) => {
+      // A slow startup request must not override a route the user has
+      // already chosen after the startup loading timeout.
+      if (isMounted && window.location.pathname === startupPathname) {
+        navigateOnStartup(...args);
+      }
+    };
 
     const stopLoading = () => {
       if (isMounted) {
@@ -8053,6 +8100,9 @@ function App({ isShutDown }) {
                 // surface. Do not let normal progress restoration replace it
                 // with the next onboarding/question route before Patreon is
                 // resolved by the gate or subscription modal.
+              } else if (/^\/onboarding\/[1-6]\/?$/.test(startupPathname)) {
+                // An explicit onboarding screen owns its Continue action.
+                // Its course-progress save may still be catching up.
               } else if (location.pathname === "/experiment") {
               } else if (
                 location.pathname === "/about" ||
@@ -8064,12 +8114,12 @@ function App({ isShutDown }) {
                 (step > tutorialEndIndex && !startupSubscriptionAuthorized)
               ) {
                 if (location.pathname !== "/subscription") {
-                  navigate("/subscription");
+                  restoreStartupRoute("/subscription");
                 }
               } else if (continuingResumeRoute) {
-                navigate(continuingResumeRoute, { replace: true });
+                restoreStartupRoute(continuingResumeRoute, { replace: true });
               } else if (step === "award") {
-                navigate(
+                restoreStartupRoute(
                   await resolveStoredProgressRoute(step, npub, userLanguage),
                   { replace: true },
                 );
@@ -8079,7 +8129,7 @@ function App({ isShutDown }) {
               ) {
                 const firstChapterStep = tutorialEndIndex + 1;
                 setCurrentStep(firstChapterStep);
-                navigate(`/q/${firstChapterStep}`);
+                restoreStartupRoute(`/q/${firstChapterStep}`);
               } else if (
                 location.pathname === "/subscription" &&
                 step <= tutorialEndIndex
@@ -8092,7 +8142,7 @@ function App({ isShutDown }) {
                 // topRef.current?.scrollIntoView();
                 window.scrollTo(0, 0);
 
-                navigate(`/q/${step}`);
+                restoreStartupRoute(`/q/${step}`);
               } else {
                 if (location.pathname.startsWith("/charts")) {
                   return;
@@ -8108,9 +8158,11 @@ function App({ isShutDown }) {
                   parseInt(onboardingProgress, 10) <= 6 &&
                   parseInt(onboardingProgress, 10) === step + 1
                 ) {
-                  navigate(`/onboarding/${parseInt(onboardingProgress, 10)}`);
+                  restoreStartupRoute(
+                    `/onboarding/${parseInt(onboardingProgress, 10)}`,
+                  );
                 } else {
-                  navigate(`/q/${step}`);
+                  restoreStartupRoute(`/q/${step}`);
                 }
                 // }
               }
@@ -8120,9 +8172,9 @@ function App({ isShutDown }) {
                 if (startupCreatorAuthorized) {
                   const firstChapterStep = tutorialEndIndex + 1;
                   setCurrentStep(firstChapterStep);
-                  navigate(`/q/${firstChapterStep}`);
+                  restoreStartupRoute(`/q/${firstChapterStep}`);
                 } else if (location.pathname !== "/subscription") {
-                  navigate("/subscription");
+                  restoreStartupRoute("/subscription");
                 }
               } else if (step === "onboarding") {
                 const matchnumber = windowurl.match(/\/onboarding\/(\d+)$/);
@@ -8151,7 +8203,7 @@ function App({ isShutDown }) {
                 if (step > 6) {
                   setOnboardingToDone(localStorage.getItem("local_npub"), 0);
 
-                  navigate("/q/0");
+                  restoreStartupRoute("/q/0");
                 } else {
                   // navigate("q/0");
                   if (!step) {
@@ -8159,7 +8211,7 @@ function App({ isShutDown }) {
                   }
 
                   setIsSignedIn(true);
-                  navigate(`/onboarding/${step}`);
+                  restoreStartupRoute(`/onboarding/${step}`);
                 }
               }
             }
@@ -8197,7 +8249,7 @@ function App({ isShutDown }) {
       isMounted = false;
       clearTimeout(bootTimeoutId);
     };
-  }, [navigate, setColorMode]);
+  }, [navigateOnStartup, setColorMode]);
 
   if (loading) {
     return <AppLoadingScreen label={translation[userLanguage]?.loading} />;
@@ -8427,7 +8479,7 @@ function App({ isShutDown }) {
                       subscriptionAuthorized={subscriptionAuthorized}
                       setCurrentStep={setCurrentStep}
                       navigateWithTransition={navigateWithTransition}
-                      setTransitionStats={setTransitionStats}
+                      isNextTransitionDue={isNextTransitionDue}
                       incorrectAttempts={incorrectAttempts}
                       setIncorrectAttempts={setIncorrectAttempts}
                       lectureNextPath={lectureNextPath}
